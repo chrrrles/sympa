@@ -393,7 +393,7 @@ sub conf_2_db {
     ## Load configuration file. Ignoring database config and get result
     my $global_conf;
     unless ($global_conf= Conf::load($config_file,1,'return_result')) {
-    &fatal_err("Configuration file $config_file has errors.");  
+    &Log::fatal_err("Configuration file $config_file has errors.");  
     }
     
     for my $i ( 0 .. $#conf_parameters ) {
@@ -649,27 +649,30 @@ sub checkfiles {
 }
 
 ## return 1 if the parameter is a known robot
+## Valid options : 
+##    'just_try' : prevent error logs if robot is not valid
 sub valid_robot {
     my $robot = shift;
+    my $options = shift;
 
     ## Main host
     return 1 if ($robot eq $Conf{'domain'});
 
     ## Missing etc directory
     unless (-d $Conf{'etc'}.'/'.$robot) {
-    &Log::do_log('err', 'Robot %s undefined ; no %s directory', $robot, $Conf{'etc'}.'/'.$robot);
+    &Log::do_log('err', 'Robot %s undefined ; no %s directory', $robot, $Conf{'etc'}.'/'.$robot) unless ($options->{'just_try'});
     return undef;
     }
 
     ## Missing expl directory
     unless (-d $Conf{'home'}.'/'.$robot) {
-    &Log::do_log('err', 'Robot %s undefined ; no %s directory', $robot, $Conf{'home'}.'/'.$robot);
+    &Log::do_log('err', 'Robot %s undefined ; no %s directory', $robot, $Conf{'home'}.'/'.$robot) unless ($options->{'just_try'});
     return undef;
     }
     
     ## Robot not loaded
     unless (defined $Conf{'robots'}{$robot}) {
-    &Log::do_log('err', 'Robot %s was not loaded by this Sympa process', $robot);
+    &Log::do_log('err', 'Robot %s was not loaded by this Sympa process', $robot) unless ($options->{'just_try'});
     return undef;
     }
 
@@ -1616,12 +1619,10 @@ sub _set_listmasters_entry{
             }
         }
     }else{
-        printf STDERR "Conf::_set_listmasters_entry(): Robot %s config: No listmaster found in hash\n",$param->{'config_hash'}{'host'};
         if ($param->{'main_config'}) {
-			printf STDERR "Conf::_set_listmasters_entry(): This is the main config. It MUST define at least one listmaster. Stopping here.\n.";
+			printf STDERR "Conf::_set_listmasters_entry(): Robot %s config: No listmaster defined. This is the main config. It MUST define at least one listmaster. Stopping here.\n.";
 			return undef;
 		}else{
-			printf STDERR "Conf::_set_listmasters_entry(): Defaulting to the main server listmasters\n.";
 			$param->{'config_hash'}{'listmasters'} = $Conf{'listmasters'};
 			$param->{'config_hash'}{'listmaster'} = $Conf{'listmaster'};
 			$number_of_valid_email = $#{$param->{'config_hash'}{'listmasters'}};

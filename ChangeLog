@@ -1,4 +1,408 @@
 ------------------------------------------------------------------------
+r7191 | sympa-authors | 2011-08-24 18:53:20 +0200 (mer 24 aoû 2011) | 1 ligne
+Chemins modifiés :
+   M /branches/sympa-6.2-branch/po/ar.po
+   M /branches/sympa-6.2-branch/po/bg.po
+   M /branches/sympa-6.2-branch/po/br.po
+   M /branches/sympa-6.2-branch/po/ca.po
+   M /branches/sympa-6.2-branch/po/cs.po
+   M /branches/sympa-6.2-branch/po/de.po
+   M /branches/sympa-6.2-branch/po/el.po
+   M /branches/sympa-6.2-branch/po/en_US.po
+   M /branches/sympa-6.2-branch/po/es.po
+   M /branches/sympa-6.2-branch/po/et.po
+   M /branches/sympa-6.2-branch/po/eu.po
+   M /branches/sympa-6.2-branch/po/fi.po
+   M /branches/sympa-6.2-branch/po/fr.po
+   M /branches/sympa-6.2-branch/po/hu.po
+   M /branches/sympa-6.2-branch/po/id.po
+   M /branches/sympa-6.2-branch/po/it.po
+   M /branches/sympa-6.2-branch/po/ja.po
+   M /branches/sympa-6.2-branch/po/ko.po
+   M /branches/sympa-6.2-branch/po/la.po
+   M /branches/sympa-6.2-branch/po/ml.po
+   M /branches/sympa-6.2-branch/po/nb_NO.po
+   M /branches/sympa-6.2-branch/po/nl.po
+   M /branches/sympa-6.2-branch/po/oc.po
+   M /branches/sympa-6.2-branch/po/pl.po
+   M /branches/sympa-6.2-branch/po/pt.po
+   M /branches/sympa-6.2-branch/po/pt_BR.po
+   M /branches/sympa-6.2-branch/po/ro.po
+   M /branches/sympa-6.2-branch/po/ru.po
+   M /branches/sympa-6.2-branch/po/sv.po
+   M /branches/sympa-6.2-branch/po/sympa.pot
+   M /branches/sympa-6.2-branch/po/tr.po
+   M /branches/sympa-6.2-branch/po/vi.po
+   M /branches/sympa-6.2-branch/po/zh_CN.po
+   M /branches/sympa-6.2-branch/po/zh_TW.po
+
+[-feature]Committing updated catalogues from Pootle
+------------------------------------------------------------------------
+r7190 | david.verdin | 2011-08-24 18:33:47 +0200 (mer 24 aoû 2011) | 2 lignes
+Chemins modifiés :
+   M /branches/sympa-6.2-branch/src/lib/Message.pm
+
+[bug] In Message::new, when a MIME entity was passed as argument, the "file" parameter was used instead of the "mimeentity" parameter. It lead to the creation of empty Message objects.
+
+------------------------------------------------------------------------
+r7189 | david.verdin | 2011-08-24 18:31:47 +0200 (mer 24 aoû 2011) | 2 lignes
+Chemins modifiés :
+   M /branches/sympa-6.2-branch/src/lib/List.pm
+
+[-change] Cosmetic changes to List.pm. Also, now we test that the message object is defined before testing its class.
+
+------------------------------------------------------------------------
+r7188 | david.verdin | 2011-08-24 18:29:39 +0200 (mer 24 aoû 2011) | 2 lignes
+Chemins modifiés :
+   M /branches/sympa-6.2-branch/src/lib/mail.pm
+
+[-change] The validity of the message object is now tested at the beginning of mail::mail_message function. This function accepts Message objects only as parameter and MUST return undef if anything else is passed.
+
+------------------------------------------------------------------------
+r7187 | david.verdin | 2011-08-24 18:27:05 +0200 (mer 24 aoû 2011) | 2 lignes
+Chemins modifiés :
+   M /branches/sympa-6.2-branch/src/lib/Bulk.pm
+
+[bug] Bulk::store is supposed to return an undefined value is the message storing went well. Until now, it didn't return anything at the end of the function. Making it return true explicitely to prevent any surprise.
+
+------------------------------------------------------------------------
+r7185 | sympa-authors | 2011-08-23 14:09:45 +0200 (mar 23 aoû 2011) | 1 ligne
+Chemins modifiés :
+   M /branches/sympa-6.2-branch/ChangeLog
+   M /branches/sympa-6.2-branch/NEWS
+   M /branches/sympa-6.2-branch/configure.ac
+
+[-release]Preparing version 6.2a.11
+------------------------------------------------------------------------
+r7184 | sympa-authors | 2011-08-23 14:02:35 +0200 (mar 23 aoû 2011) | 1 ligne
+Chemins modifiés :
+   M /branches/sympa-6.2-branch/po/et.po
+   M /branches/sympa-6.2-branch/po/ja.po
+   M /branches/sympa-6.2-branch/po/nl.po
+
+[-feature]Committing updated catalogues from Pootle
+------------------------------------------------------------------------
+r7183 | sympa-authors | 2011-08-23 13:52:29 +0200 (mar 23 aoû 2011) | 1 ligne
+Chemins modifiés :
+   M /branches/sympa-6.2-branch/po/et.po
+   M /branches/sympa-6.2-branch/po/ja.po
+   M /branches/sympa-6.2-branch/po/nl.po
+
+[-feature]Committing latest translations from Pootle
+------------------------------------------------------------------------
+r7182 | david.verdin | 2011-08-23 13:43:00 +0200 (mar 23 aoû 2011) | 2 lignes
+Chemins modifiés :
+   M /branches/sympa-6.2-branch/soap/sympa_soap_server.fcgi.in
+   M /branches/sympa-6.2-branch/soap/sympasoap.pm
+   M /branches/sympa-6.2-branch/src/bulk.pl.in
+   M /branches/sympa-6.2-branch/src/etc/script/mod2html.pl.in
+   M /branches/sympa-6.2-branch/src/etc/script/testlogs.pl.in
+   M /branches/sympa-6.2-branch/src/etc/script/tpl2tt2.pl.in
+   M /branches/sympa-6.2-branch/src/lib/Archive.pm
+   M /branches/sympa-6.2-branch/src/lib/Commands.pm
+   M /branches/sympa-6.2-branch/src/lib/Conf.pm
+   M /branches/sympa-6.2-branch/src/lib/Config_XML.pm
+   M /branches/sympa-6.2-branch/src/lib/DBManipulatorMySQL.pm
+   M /branches/sympa-6.2-branch/src/lib/DBManipulatorOracle.pm
+   M /branches/sympa-6.2-branch/src/lib/DBManipulatorSQLite.pm
+   M /branches/sympa-6.2-branch/src/lib/DBManipulatorSybase.pm
+   M /branches/sympa-6.2-branch/src/lib/Family.pm
+   M /branches/sympa-6.2-branch/src/lib/Fetch.pm
+   M /branches/sympa-6.2-branch/src/lib/LDAPSource.pm
+   M /branches/sympa-6.2-branch/src/lib/Language.pm
+   M /branches/sympa-6.2-branch/src/lib/List.pm
+   M /branches/sympa-6.2-branch/src/lib/Lock.pm
+   M /branches/sympa-6.2-branch/src/lib/Log.pm
+   M /branches/sympa-6.2-branch/src/lib/Message.pm
+   M /branches/sympa-6.2-branch/src/lib/SDM.pm
+   M /branches/sympa-6.2-branch/src/lib/SQLSource.pm
+   M /branches/sympa-6.2-branch/src/lib/Scenario.pm
+   M /branches/sympa-6.2-branch/src/lib/Task.pm
+   M /branches/sympa-6.2-branch/src/lib/Upgrade.pm
+   M /branches/sympa-6.2-branch/src/lib/admin.pm
+   M /branches/sympa-6.2-branch/src/lib/mail.pm
+   M /branches/sympa-6.2-branch/src/lib/report.pm
+   M /branches/sympa-6.2-branch/src/lib/tools.pm
+   M /branches/sympa-6.2-branch/src/lib/tt2.pm
+   M /branches/sympa-6.2-branch/src/sympa.pl.in
+   M /branches/sympa-6.2-branch/src/task_manager.pl.in
+   M /branches/sympa-6.2-branch/wwsympa/Auth.pm
+   M /branches/sympa-6.2-branch/wwsympa/Challenge.pm
+   M /branches/sympa-6.2-branch/wwsympa/SharedDocument.pm
+   M /branches/sympa-6.2-branch/wwsympa/archived.pl.in
+   M /branches/sympa-6.2-branch/wwsympa/bounced.pl.in
+   M /branches/sympa-6.2-branch/wwsympa/cookielib.pm
+   M /branches/sympa-6.2-branch/wwsympa/wwslib.pm
+   M /branches/sympa-6.2-branch/wwsympa/wwsympa.fcgi.in
+
+[change] functions from Log.pm are no longer exported. Therefore, they can't be called in the local namespace of the caller and must always be prefixed by 'Log::'.
+
+------------------------------------------------------------------------
+r7181 | olivier.salaun | 2011-08-12 13:38:41 +0200 (ven 12 aoû 2011) | 2 lignes
+Chemins modifiés :
+   M /branches/sympa-6.2-branch/soap/SympaTransport.pm
+
+[-bug]SOAP server could not set the SYMPA_ROBOT correctly. No more use defined function because entries of $Conf::Conf{'robot_by_soap_url'} seem to be defined but empty
+
+------------------------------------------------------------------------
+r7180 | olivier.salaun | 2011-08-11 15:59:15 +0200 (jeu 11 aoû 2011) | 2 lignes
+Chemins modifiés :
+   M /branches/sympa-6.2-branch/src/lib/Conf.pm
+
+[-change]remove warning at processes startup "Conf::_set_listmasters_entry(): Defaulting to the main server listmasters"
+
+------------------------------------------------------------------------
+r7179 | olivier.salaun | 2011-08-11 15:54:54 +0200 (jeu 11 aoû 2011) | 2 lignes
+Chemins modifiés :
+   M /branches/sympa-6.2-branch/src/etc/script/sympa.in
+
+[bug]Fixed bug introduced in revision 7045 : variable name was sympa_piddir instead of sympapiddir
+
+------------------------------------------------------------------------
+r7177 | sympa-authors | 2011-08-11 14:48:21 +0200 (jeu 11 aoû 2011) | 1 ligne
+Chemins modifiés :
+   M /branches/sympa-6.2-branch/ChangeLog
+   M /branches/sympa-6.2-branch/configure.ac
+
+[-release]Preparing version 6.2a.10
+------------------------------------------------------------------------
+r7176 | sympa-authors | 2011-08-11 14:38:38 +0200 (jeu 11 aoû 2011) | 1 ligne
+Chemins modifiés :
+   M /branches/sympa-6.2-branch/po/ar.po
+   M /branches/sympa-6.2-branch/po/bg.po
+   M /branches/sympa-6.2-branch/po/br.po
+   M /branches/sympa-6.2-branch/po/ca.po
+   M /branches/sympa-6.2-branch/po/cs.po
+   M /branches/sympa-6.2-branch/po/de.po
+   M /branches/sympa-6.2-branch/po/el.po
+   M /branches/sympa-6.2-branch/po/en_US.po
+   M /branches/sympa-6.2-branch/po/es.po
+   M /branches/sympa-6.2-branch/po/et.po
+   M /branches/sympa-6.2-branch/po/eu.po
+   M /branches/sympa-6.2-branch/po/fi.po
+   M /branches/sympa-6.2-branch/po/fr.po
+   M /branches/sympa-6.2-branch/po/hu.po
+   M /branches/sympa-6.2-branch/po/id.po
+   M /branches/sympa-6.2-branch/po/it.po
+   M /branches/sympa-6.2-branch/po/ja.po
+   M /branches/sympa-6.2-branch/po/ko.po
+   M /branches/sympa-6.2-branch/po/la.po
+   M /branches/sympa-6.2-branch/po/ml.po
+   M /branches/sympa-6.2-branch/po/nb_NO.po
+   M /branches/sympa-6.2-branch/po/nl.po
+   M /branches/sympa-6.2-branch/po/oc.po
+   M /branches/sympa-6.2-branch/po/pl.po
+   M /branches/sympa-6.2-branch/po/pt.po
+   M /branches/sympa-6.2-branch/po/pt_BR.po
+   M /branches/sympa-6.2-branch/po/ro.po
+   M /branches/sympa-6.2-branch/po/ru.po
+   M /branches/sympa-6.2-branch/po/sv.po
+   M /branches/sympa-6.2-branch/po/sympa.pot
+   M /branches/sympa-6.2-branch/po/tr.po
+   M /branches/sympa-6.2-branch/po/vi.po
+   M /branches/sympa-6.2-branch/po/zh_CN.po
+   M /branches/sympa-6.2-branch/po/zh_TW.po
+   M /branches/sympa-6.2-branch/po-wwsympa/hu.po
+
+[-feature]Committing updated catalogues from Pootle
+------------------------------------------------------------------------
+r7175 | sympa-authors | 2011-08-11 14:25:49 +0200 (jeu 11 aoû 2011) | 1 ligne
+Chemins modifiés :
+   M /branches/sympa-6.2-branch/po/br.po
+   M /branches/sympa-6.2-branch/po/en_US.po
+   M /branches/sympa-6.2-branch/po/fr.po
+   M /branches/sympa-6.2-branch/po/pt_BR.po
+   M /branches/sympa-6.2-branch/po-wwsympa/hu.po
+
+[-feature]Committing latest translations from Pootle
+------------------------------------------------------------------------
+r7174 | olivier.salaun | 2011-08-11 11:45:54 +0200 (jeu 11 aoû 2011) | 6 lignes
+Chemins modifiés :
+   M /branches/sympa-6.2-branch/mail_tt2/moderate.tt2
+   M /branches/sympa-6.2-branch/po/en_US.po
+
+[change]fi moderation message when topics are required:
+ - keep the standard Subject
+ - don't refer to the viewmod web page, it does not allow tagging
+ - added attached message
+ - made spam-related string localized
+
+------------------------------------------------------------------------
+r7173 | olivier.salaun | 2011-08-10 17:21:02 +0200 (mer 10 aoû 2011) | 2 lignes
+Chemins modifiés :
+   M /branches/sympa-6.2-branch/src/lib/Conf.pm
+   M /branches/sympa-6.2-branch/src/lib/Message.pm
+   M /branches/sympa-6.2-branch/src/sympa.pl.in
+
+[-bug]Prevent useless error messages in sympa.pl about unknown list and unknown robot. This happens because we try to find out if a mail in the spool is a list message or a service message for a person. Now using 'just_try' options for List::new() and Conf::valir_robot().
+
+------------------------------------------------------------------------
+r7172 | olivier.salaun | 2011-08-10 14:43:12 +0200 (mer 10 aoû 2011) | 2 lignes
+Chemins modifiés :
+   M /branches/sympa-6.2-branch/wwsympa/wwsympa.fcgi.in
+
+[feature]Added stack traces to log level 'err'
+
+------------------------------------------------------------------------
+r7171 | olivier.salaun | 2011-08-10 14:42:32 +0200 (mer 10 aoû 2011) | 2 lignes
+Chemins modifiés :
+   M /branches/sympa-6.2-branch/src/lib/Log.pm
+
+[feature]Added stack traces to log entries when log level is 'err'
+
+------------------------------------------------------------------------
+r7170 | olivier.salaun | 2011-08-10 13:34:21 +0200 (mer 10 aoû 2011) | 3 lignes
+Chemins modifiés :
+   M /branches/sympa-6.2-branch/src/lib/List.pm
+
+[-bug]Fix bug introduced in revision 7044: include_file and include_remote_file no more allowed gecos. Code has been fixed, also running &tools::clean_email() refore &tools:valid_email(). 
+Also added a check of $sth in get_global_user()
+
+------------------------------------------------------------------------
+r7169 | olivier.salaun | 2011-08-09 17:23:27 +0200 (mar 09 aoû 2011) | 2 lignes
+Chemins modifiés :
+   M /branches/sympa-6.2-branch/src/lib/List.pm
+   M /branches/sympa-6.2-branch/src/lib/SQLSource.pm
+   M /branches/sympa-6.2-branch/src/lib/Scenario.pm
+
+[-bug]include_sql_query would fail with DBD not being one of Oracle, Sybase, mysql, SQLite, Pg. It even makes Sympa processes die with the folllowing error message: "Can't call method "connect" on an undefined value at /home/sympa/bin/List.pm line 7838". Fixed SQLSource::new() to use the DBManipulatorDefault + prevent dying of processes.
+
+------------------------------------------------------------------------
+r7167 | sympa-authors | 2011-07-29 16:42:24 +0200 (ven 29 jui 2011) | 1 ligne
+Chemins modifiés :
+   M /branches/sympa-6.2-branch/ChangeLog
+   M /branches/sympa-6.2-branch/NEWS
+   M /branches/sympa-6.2-branch/configure.ac
+
+[-release]Preparing version 6.2a.9
+------------------------------------------------------------------------
+r7166 | sympa-authors | 2011-07-29 16:35:56 +0200 (ven 29 jui 2011) | 1 ligne
+Chemins modifiés :
+   M /branches/sympa-6.2-branch/po/ar.po
+   M /branches/sympa-6.2-branch/po/bg.po
+   M /branches/sympa-6.2-branch/po/br.po
+   M /branches/sympa-6.2-branch/po/ca.po
+   M /branches/sympa-6.2-branch/po/cs.po
+   M /branches/sympa-6.2-branch/po/de.po
+   M /branches/sympa-6.2-branch/po/el.po
+   M /branches/sympa-6.2-branch/po/en_US.po
+   M /branches/sympa-6.2-branch/po/es.po
+   M /branches/sympa-6.2-branch/po/et.po
+   M /branches/sympa-6.2-branch/po/eu.po
+   M /branches/sympa-6.2-branch/po/fi.po
+   M /branches/sympa-6.2-branch/po/fr.po
+   M /branches/sympa-6.2-branch/po/hu.po
+   M /branches/sympa-6.2-branch/po/id.po
+   M /branches/sympa-6.2-branch/po/it.po
+   M /branches/sympa-6.2-branch/po/ja.po
+   M /branches/sympa-6.2-branch/po/ko.po
+   M /branches/sympa-6.2-branch/po/la.po
+   M /branches/sympa-6.2-branch/po/ml.po
+   M /branches/sympa-6.2-branch/po/nb_NO.po
+   M /branches/sympa-6.2-branch/po/nl.po
+   M /branches/sympa-6.2-branch/po/oc.po
+   M /branches/sympa-6.2-branch/po/pl.po
+   M /branches/sympa-6.2-branch/po/pt.po
+   M /branches/sympa-6.2-branch/po/pt_BR.po
+   M /branches/sympa-6.2-branch/po/ro.po
+   M /branches/sympa-6.2-branch/po/ru.po
+   M /branches/sympa-6.2-branch/po/sv.po
+   M /branches/sympa-6.2-branch/po/sympa.pot
+   M /branches/sympa-6.2-branch/po/tr.po
+   M /branches/sympa-6.2-branch/po/vi.po
+   M /branches/sympa-6.2-branch/po/zh_CN.po
+   M /branches/sympa-6.2-branch/po/zh_TW.po
+
+[-feature]Committing updated catalogues from Pootle
+------------------------------------------------------------------------
+r7165 | sympa-authors | 2011-07-29 16:23:16 +0200 (ven 29 jui 2011) | 1 ligne
+Chemins modifiés :
+   M /branches/sympa-6.2-branch/po/fr.po
+
+[-feature]Committing latest translations from Pootle
+------------------------------------------------------------------------
+r7164 | david.verdin | 2011-07-29 15:56:51 +0200 (ven 29 jui 2011) | 2 lignes
+Chemins modifiés :
+   M /branches/sympa-6.2-branch/src/lib/confdef.pm
+
+[change] In the parameters config definition, the empty default values were replaced by a mention stating that the parameter is optional. That way, it won't be written automatically in the config.
+
+------------------------------------------------------------------------
+r7162 | sympa-authors | 2011-07-28 14:22:18 +0200 (jeu 28 jui 2011) | 1 ligne
+Chemins modifiés :
+   M /branches/sympa-6.2-branch/ChangeLog
+   M /branches/sympa-6.2-branch/NEWS
+   M /branches/sympa-6.2-branch/configure.ac
+
+[-release]Preparing version 6.2a.8
+------------------------------------------------------------------------
+r7161 | sympa-authors | 2011-07-28 14:13:49 +0200 (jeu 28 jui 2011) | 1 ligne
+Chemins modifiés :
+   M /branches/sympa-6.2-branch/po/ar.po
+   M /branches/sympa-6.2-branch/po/bg.po
+   M /branches/sympa-6.2-branch/po/br.po
+   M /branches/sympa-6.2-branch/po/ca.po
+   M /branches/sympa-6.2-branch/po/cs.po
+   M /branches/sympa-6.2-branch/po/de.po
+   M /branches/sympa-6.2-branch/po/el.po
+   M /branches/sympa-6.2-branch/po/en_US.po
+   M /branches/sympa-6.2-branch/po/es.po
+   M /branches/sympa-6.2-branch/po/et.po
+   M /branches/sympa-6.2-branch/po/eu.po
+   M /branches/sympa-6.2-branch/po/fi.po
+   M /branches/sympa-6.2-branch/po/fr.po
+   M /branches/sympa-6.2-branch/po/hu.po
+   M /branches/sympa-6.2-branch/po/id.po
+   M /branches/sympa-6.2-branch/po/it.po
+   M /branches/sympa-6.2-branch/po/ja.po
+   M /branches/sympa-6.2-branch/po/ko.po
+   M /branches/sympa-6.2-branch/po/la.po
+   M /branches/sympa-6.2-branch/po/ml.po
+   M /branches/sympa-6.2-branch/po/nb_NO.po
+   M /branches/sympa-6.2-branch/po/nl.po
+   M /branches/sympa-6.2-branch/po/oc.po
+   M /branches/sympa-6.2-branch/po/pl.po
+   M /branches/sympa-6.2-branch/po/pt.po
+   M /branches/sympa-6.2-branch/po/pt_BR.po
+   M /branches/sympa-6.2-branch/po/ro.po
+   M /branches/sympa-6.2-branch/po/ru.po
+   M /branches/sympa-6.2-branch/po/sv.po
+   M /branches/sympa-6.2-branch/po/sympa.pot
+   M /branches/sympa-6.2-branch/po/tr.po
+   M /branches/sympa-6.2-branch/po/vi.po
+   M /branches/sympa-6.2-branch/po/zh_CN.po
+   M /branches/sympa-6.2-branch/po/zh_TW.po
+   M /branches/sympa-6.2-branch/po-wwsympa/ja.po
+
+[-feature]Committing updated catalogues from Pootle
+------------------------------------------------------------------------
+r7160 | sympa-authors | 2011-07-28 14:03:10 +0200 (jeu 28 jui 2011) | 1 ligne
+Chemins modifiés :
+   M /branches/sympa-6.2-branch/po/ja.po
+   M /branches/sympa-6.2-branch/po-wwsympa/ja.po
+
+[-feature]Committing latest translations from Pootle
+------------------------------------------------------------------------
+r7159 | david.verdin | 2011-07-28 13:55:30 +0200 (jeu 28 jui 2011) | 1 ligne
+Chemins modifiés :
+   M /branches/sympa-6.2-branch/src/lib/confdef.pm
+
+[-bug] Fixing bad parameter definition, making Sympa to fail starting when optional parameters were missing.
+------------------------------------------------------------------------
+r7158 | sympa-authors | 2011-07-28 08:37:49 +0200 (jeu 28 jui 2011) | 1 ligne
+Chemins modifiés :
+   A /branches/sympa-6.2-branch (de /trunk:7157)
+
+[-release]Creating branch for version 6.2a.7
+------------------------------------------------------------------------
+r7156 | sympa-authors | 2011-07-28 08:37:42 +0200 (jeu 28 jui 2011) | 1 ligne
+Chemins modifiés :
+   M /trunk/ChangeLog
+   M /trunk/NEWS
+   M /trunk/configure.ac
+
+[-release]Preparing version 6.2a.7
+------------------------------------------------------------------------
 r7155 | david.verdin | 2011-07-27 16:31:22 +0200 (mer 27 jui 2011) | 1 ligne
 Chemins modifiés :
    M /trunk/NEWS

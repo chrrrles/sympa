@@ -32,7 +32,7 @@ use List;
 
 
 our @ISA = qw(Exporter);
-our @EXPORT = qw(fatal_err do_log do_openlog $log_level %levels);
+our @EXPORT = qw($log_level %levels);
 
 my ($log_facility, $log_socket_type, $log_service,$sth,@sth_stack,$rows_nb);
 # When logs are not available, period of time to wait before sending another warning to listmaster.
@@ -54,6 +54,12 @@ our %levels = (
 
 our $last_date_aggregation;
 
+##sub import {
+	##my @call = caller(1);
+	##printf "Import from $call[3]\n";
+	##Log->export_to_level(1, @_);
+##}
+##
 sub fatal_err {
     my $m  = shift;
     my $errno  = $!;
@@ -100,12 +106,31 @@ sub do_log {
         }
     }
 
-    ## Determine calling function and parameters
-    my @call = caller(1);
-    ## wwslog already adds this information
-    unless ($call[3] =~ /wwslog$/) {
-        $message = $call[3] . '() ' . $message if ($call[3]);
+    ## Determine calling function
+    my $caller_string;
+   
+    ## If in 'err' level, build a stack trace
+    if ($level eq 'err'){
+	my $go_back = 1;
+	my @calls;
+	while (my @call = caller($go_back)) {
+		unshift @calls, $call[3].'#'.$call[2];
+		$go_back++;
+	}
+	
+	$caller_string = join(' > ',@calls);
+    }else {
+	my @call = caller(1);
+	
+	## If called via wwslog, go one step ahead
+	if ($call[3] =~ /wwslog$/) {
+		my @call = caller(2);
+	}
+	
+	$caller_string = $call[3].'()';
     }
+    
+    $message = $caller_string. ' ' . $message if ($caller_string);
 
     ## Add facility to log entry
     $message = $level.' '.$message;
