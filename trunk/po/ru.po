@@ -10729,14 +10729,6 @@ msgstr "без писем (полезно для отпускников)"
 msgid "you do not receive your own posts"
 msgstr "Вы не получаете свои же письма"
 
-#: ../src/lib/confdef.pm:43
-msgid "Directories and file location"
-msgstr ""
-
-#: ../src/lib/confdef.pm:234
-msgid "Syslog"
-msgstr ""
-
 #~ msgid "Article to be tagged for list %1 from %2"
 #~ msgstr "Статья, ожидающая присвоения метки, для рассылки %1 от %2"
 

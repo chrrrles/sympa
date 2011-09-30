@@ -10911,39 +10911,6 @@ msgstr "nincs kézbesítés (pl. szabadság esetén)"
 msgid "you do not receive your own posts"
 msgstr "nem kapja meg a saját leveleit"
 
-#. (+cpt)
-#: ../web_tt2/javascript.tt2:1056
-msgid "microcal"
-msgstr ""
-
-#: ../web_tt2/javascript.tt2:1096
-msgid "\"+src.id+\"_cal"
-msgstr ""
-
-#: ../web_tt2/edit_config.tt2:7
-msgid "[%confparam.title%]"
-msgstr ""
-
-#: ../web_tt2/edit_config.tt2:16
-msgid "[% confparam.title %]"
-msgstr ""
-
-#: ../web_tt2/edit_config.tt2:28
-msgid "[% confparam.query %]"
-msgstr ""
-
-#: ../src/lib/confdef.pm:43
-msgid "Directories and file location"
-msgstr ""
-
-#: ../src/lib/confdef.pm:234
-msgid "Syslog"
-msgstr ""
-
-#: ../src/lib/confdef.pm:260
-msgid "Log intensity"
-msgstr ""
-
 #, fuzzy
 #~ msgid "Article to be tagged for list %1 from %2"
 #~ msgstr "Engedélyezésre váró levél a(z) %1 listán %2-tól/-től"

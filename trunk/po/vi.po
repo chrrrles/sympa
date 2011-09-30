@@ -10876,39 +10876,6 @@ msgstr "không thư (có ích khi đi nghỉ)"
 msgid "you do not receive your own posts"
 msgstr "bạn không nhận bài thư được mình gửi"
 
-#. (+cpt)
-#: ../web_tt2/javascript.tt2:1056
-msgid "microcal"
-msgstr ""
-
-#: ../web_tt2/javascript.tt2:1096
-msgid "\"+src.id+\"_cal"
-msgstr ""
-
-#: ../web_tt2/edit_config.tt2:7
-msgid "[%confparam.title%]"
-msgstr ""
-
-#: ../web_tt2/edit_config.tt2:16
-msgid "[% confparam.title %]"
-msgstr ""
-
-#: ../web_tt2/edit_config.tt2:28
-msgid "[% confparam.query %]"
-msgstr ""
-
-#: ../src/lib/confdef.pm:43
-msgid "Directories and file location"
-msgstr ""
-
-#: ../src/lib/confdef.pm:234
-msgid "Syslog"
-msgstr ""
-
-#: ../src/lib/confdef.pm:260
-msgid "Log intensity"
-msgstr ""
-
 #~ msgid "Article to be tagged for list %1 from %2"
 #~ msgstr "Bài cần đặt thẻ cho hộp thư chung %1 từ %2"
 
