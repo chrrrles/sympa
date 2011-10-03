@@ -8725,9 +8725,15 @@ Sends back the list creation edition form.
 	 &report::reject_report_web('intern','unable_to_load_list_of_topics',{},$param->{'action'},'',$param->{'user'}{'email'},$robot);
      }
      $param->{'list_of_topics'} = \%topics;
-
-     $param->{'list_of_topics'}{$in{'topics'}}{'selected'} = 1
-	 if ($in{'topics'});
+	
+	if ($in{'topics'}) {
+		my ($topic, $subtopic) = split('/', $in{'topics'});
+		if($subtopic) {
+			$param->{'list_of_topics'}{$topic}{'sub'}{$subtopic}{'selected'} = 1;
+		}else{
+			$param->{'list_of_topics'}{$topic}{'selected'} = 1;
+		}
+	}
 
      unless ($param->{'list_list_tpl'} = &tools::get_list_list_tpl($robot)) {
 	 &report::reject_report_web('intern','unable_to_load_create_list_templates',{},$param->{'action'},'',$param->{'user'}{'email'},$robot);
