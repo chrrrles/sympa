@@ -167,7 +167,15 @@ sub db_struct {
 				 },
 			       'conf_table' => {'robot_conf' => 'varchar(80)',
 						'label_conf' => 'varchar(80)',
-						'value_conf' => 'varchar(300)'}
+						'value_conf' => 'varchar(300)'},
+					'oauthconsumer_sessions' => {
+						'user_oauthconsumer' => 'varchar(100)',
+						'provider_oauthconsumer' => 'varchar(100)',
+						'tmp_token_oauthconsumer' => 'varchar(100)',
+						'tmp_secret_oauthconsumer' => 'varchar(100)',
+						'access_token_oauthconsumer' => 'varchar(100)',
+						'access_secret_oauthconsumer' => 'varchar(100)'
+					}
 			   },
 		   );
   
@@ -259,7 +267,9 @@ our %not_null = ('email_user' => 1,
 		'data_counter' => 1,
 		'robot_counter' => 1,
 		'date_notification' => 1,
-		'pk_notification' => 1
+		'pk_notification' => 1,
+		'user_oauthconsumer' => 1,
+		'provider_oauthconsumer' => 1
 	);
 
 our %primary = ('user_table' => ['email_user'],
@@ -275,7 +285,8 @@ our %primary = ('user_table' => ['email_user'],
 	       'conf_table' => ['robot_conf','label_conf'],
 	       'stat_table' => ['id_stat'],
 	       'stat_counter_table' => ['id_counter'],
-	       'notification_table' => ['pk_notification']
+	       'notification_table' => ['pk_notification'],
+	       'oauthconsumer_sessions' => ['user_oauthconsumer', 'provider_oauthconsumer']
 	       );
 	       
 our %autoincrement = ('notification_table' => 'pk_notification');
