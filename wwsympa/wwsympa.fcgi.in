@@ -74,6 +74,8 @@ use tracking;
 use Mail::Header;
 use Mail::Address;
 
+use VOOTConsumer;
+
 my $crypt_openssl_x509_ok;
 BEGIN {
     if (eval "require Crypt::OpenSSL::X509") {
@@ -243,6 +245,16 @@ my %comm = ('home' => 'do_home',
 	 'help' => 'do_help',
 	 'edit_list_request' => 'do_edit_list_request',
 	 'edit_list' => 'do_edit_list',
+	 'edit_list_request' => 'do_edit_list_request',
+	 
+	 'oauth_check' => 'do_oauth_check',
+	 'oauth_ready' => 'do_oauth_ready',
+	 
+	 'opensocial' => 'do_opensocial',
+	 'select_voot_provider_request' => 'do_select_voot_provider_request',
+	 'select_voot_groups_request' => 'do_select_voot_groups_request',
+	 'select_voot_groups' => 'do_select_voot_groups',
+	 
 	 'create_list_request' => 'do_create_list_request',
 	 'create_list' => 'do_create_list',
 	 'get_pending_lists' => 'do_get_pending_lists', 
@@ -421,6 +433,15 @@ my %action_args = ('default' => ['list'],
 		'attach' => ['list','dir','file'],
 		'stats' => ['list'],
 		'edit_list_request' => ['list','group'],
+		
+		'oauth_check' => ['oauth_provider'],
+		'oauth_ready' => ['oauth_provider', 'ticket'],
+		 
+		'opensocial' => ['list'],
+		'select_voot_provider_request' => ['list'],
+		'select_voot_groups_request' => ['list', 'voot_provider'],
+		'select_voot_groups' => ['list', 'voot_provider'],
+		
 		'rename_list' => ['list','new_list','new_robot'],
 		'copy_list' => ['list','new_list','new_robot'],
 		'redirect' => [],
@@ -504,6 +525,15 @@ my %required_args = ('active_lists' => ['for|count'],
 		     'dump_scenario' => ['param.list','pname'],
 		     'edit_list' => ['param.user.email','param.list'],
 		     'edit_list_request' => ['param.user.email','param.list'],
+		     
+			 'oauth_check' => ['param.user.email', 'oauth_provider'],
+			 'oauth_ready' => ['oauth_provider', 'ticket', 'oauth_token', 'oauth_verifier'],
+			 
+		     'opensocial' => ['param.user.email','param.list'],
+			 'select_voot_provider_request' => ['param.user.email','param.list'],
+		     'select_voot_groups_request' => ['param.user.email','param.list', 'voot_provider'],
+		     'select_voot_groups' => ['param.user.email','param.list', 'voot_provider'],
+		     
 		     'edit_template' => ['webormail'],
 		     'editfile' => ['param.user.email'],
 		     'editsubscriber' => ['param.list','param.user.email','email'],
@@ -595,6 +625,15 @@ my %required_privileges = ('admin' => ['owner','editor'],
 			   'dump_scenario' => ['listmaster'],
 			   'edit_list' => ['owner'],
 			   'edit_list_request' => ['owner'],
+			   
+				 #'oauth_check' => ['everybody'],
+				 #'oauth_ready' => ['everybody'],
+				 
+				 'opensocial' => ['owner'],
+				 'select_voot_provider_request' => ['owner'],
+				 'select_voot_groups_request' => ['owner'],
+				 'select_voot_groups' => ['owner'],
+				 
 			   'edit_template' => ['listmaster'],
 			   'editsubscriber' => ['owner'],
 			   'get_closed_lists' => ['listmaster'],
@@ -877,6 +916,8 @@ my %in_regexp = (
 		 ## custom actions
 		 'cap' => '.*',
 		 'lcap' => '.*',
+		 
+		 'oauth_provider' => '[^:]+:.+',
 		 );
 
 ## Regexp applied on incoming parameters (%in)
@@ -1773,7 +1814,7 @@ sub get_header_field {
 # input ENV{'PATH_INFO'} like string, output in the global $param hash
 sub _split_params {
     my $args_string = shift;
-
+    
     &Log::do_log('debug', "PATH_INFO: %s",$ENV{'PATH_INFO'});
     
     $args_string =~ s+^/++;
@@ -9139,6 +9180,159 @@ sub do_home {
      &web_db_log({'status' => 'success'});
      return 'serveradmin';
  }
+
+
+# User ask for access token check
+sub do_oauth_check {
+	&wwslog('info', 'do_oauth_check()');
+	
+	$param->{'oauth_provider_ok'} = undef;
+	$param->{'oauth_config_ok'} = undef;
+	$param->{'oauth_check_ok'} = undef;
+	
+	return 1 unless($in{'oauth_provider'} =~ /^([^:]+):(.+)$/);
+	my $type = $1;
+	my $provider = $2;
+	my $consumer = undef;
+	
+	$param->{'oauth_provider_ok'} = 1;
+	
+	if($type eq 'voot') {
+		$consumer = VOOTConsumer->new(user => $param->{'user'}{'email'}, provider => $provider);
+	}#elsif($type eq 'foo') {
+	#	$consumer = FOOConsumer->new(user => $param->{'user'}{'email'}, provider => $provider);
+	#}
+	
+	return 1 unless(defined $consumer);
+	
+	$param->{'oauth_config_ok'} = 1;
+	
+	$consumer->getOAuthConsumer()->setWebEnv(
+		robot => $robot,
+		here_path => 'oauth_check/'.$in{'oauth_provider'},
+		base_path => $param->{'base_url'}.$param->{'path_cgi'}
+	);
+	
+	my $data = $consumer->check();
+	unless(defined $data) {
+		my $url = $consumer->getOAuthConsumer()->mustRedirect();
+		return &do_redirect($url) if(defined $url);
+	}
+	$param->{'oauth_check_ok'} = 1;
+	
+	$param->{'oauth_access_renewed'} = defined($in{'oauth_ready_done'});
+
+	return 1;
+}
+
+# Got back from OAuth workflow (provider), needs to get authorization token and call the right action
+sub do_oauth_ready {
+	&wwslog('info', 'do_oauth_ready()');
+	
+	my $callback = &do_ticket();
+	
+	$in{'oauth_ready_done'} = 1;
+	
+	return undef unless($in{'oauth_provider'} =~ /^([^:]+):(.+)$/);
+	my $type = $1;
+	my $provider = $2;
+	my $consumer = undef;
+	
+	if($type eq 'voot') {
+		$consumer = VOOTConsumer->new(user => $param->{'user'}{'email'}, provider => $provider);
+	}#elsif($type eq 'foo') {
+	#	$consumer = FOOConsumer->new(user => $param->{'user'}{'email'}, provider => $provider);
+	#}
+	
+	return undef unless(defined $consumer);
+	$consumer = $consumer->getOAuthConsumer();
+	
+	return undef unless($consumer->getAccessToken(
+		verifier => $in{'oauth_verifier'},
+		token => $in{'oauth_token'}
+	));
+	
+	return $callback;
+}
+			 
+# OpenSocial "home"
+sub do_opensocial {
+	&wwslog('info', 'do_opensocial()');
+	
+	return 'select_voot_provider_request';
+}
+
+# Displays VOOT providers list
+sub do_select_voot_provider_request {
+	&wwslog('info', 'do_select_voot_provider_request()');
+	
+	$param->{'voot_providers'} = &VOOTConsumer::getProviders();
+	
+	return 1;
+}
+
+# Display groups list for user/VOOT_provider
+sub do_select_voot_groups_request {
+	&wwslog('info', 'select_voot_groups_request()');
+	
+	$param->{'voot_provider'} = $in{'voot_provider'};
+	
+	my $consumer = new VOOTConsumer(
+		user => $param->{'user'}{'email'},
+		provider => $in{'voot_provider'}
+	);
+	return undef unless(defined $consumer);
+	$consumer->getOAuthConsumer()->setWebEnv(
+		robot => $robot,
+		here_path => 'select_voot_groups_request/'.$param->{'list'}.'/'.$param->{'voot_provider'},
+		base_path => $param->{'base_url'}.$param->{'path_cgi'}
+	) unless(defined $in{'oauth_ready_done'});
+
+	$param->{'voot_groups'} = $consumer->isMemberOf();
+	unless(defined $param->{'voot_groups'}) {
+		my $url = $consumer->getOAuthConsumer()->mustRedirect();
+		return &do_redirect($url) if(defined $url);
+	}
+	
+	return 1;
+}
+
+# VOOT groups choosen, generate config
+sub do_select_voot_groups {
+	&wwslog('info', 'select_voot_groups()');
+	
+	$param->{'voot_provider'} = $in{'voot_provider'};
+	$param->{'voot_groups'} = [];
+	foreach my $k (keys(%in)) {
+		next unless($k =~ /^voot_groups\[([^\]]+)\]$/);
+		next unless($in{$k} eq '1');
+		push(@{$param->{'voot_groups'}}, $1);
+	}
+	
+	foreach my $gid (@{$param->{'voot_groups'}}) {
+		push(@{$list->{'admin'}{'include_voot_group'}}, {
+			name => $param->{'voot_provider'}.'::'.$gid,
+			user => $param->{'user'}{'email'},
+			provider => $param->{'voot_provider'},
+			group => $gid
+		});
+		delete $list->{'admin'}{'defaults'}{'include_voot_group'}; # No save otherwise ...
+	}
+	
+	if($list->save_config($param->{'user'}{'email'})) {
+		if($list->on_the_fly_sync_include('use_ttl'=>0)) {
+			&report::notice_report_web('subscribers_updated', {}, $param->{'action'});
+		}else {
+			&report::reject_report_web('intern', 'sync_include_failed', {}, $param->{'action'}, $list,$param->{'user'}{'email'}, $robot);
+		}
+		return 'review';
+	}else{
+		&report::reject_report_web('intern', 'cannot_save_config', {}, $param->{'action'}, $list, $param->{'user'}{'email'}, $robot);
+		&wwslog('info', 'do_select_voot_groups: Cannot save config file');
+		&web_db_log({'status' => 'error', 'error_type' => 'internal'});
+		return undef;
+	}	
+}
 
  ## Search among lists
  sub do_edit_attributes {
