@@ -175,6 +175,23 @@ sub db_struct {
 						'tmp_secret_oauthconsumer' => 'varchar(100)',
 						'access_token_oauthconsumer' => 'varchar(100)',
 						'access_secret_oauthconsumer' => 'varchar(100)'
+					},
+					'oauthprovider_sessions' => {
+						'id_oauthprovider' => 'int(11)',
+						'token_oauthprovider' => 'varchar(32)',
+						'secret_oauthprovider' => 'varchar(32)',
+						'isaccess_oauthprovider' => 'tinyint(1)',
+						'consumer_oauthprovider' => 'varchar(100)',
+						'user_oauthprovider' => 'varchar(100)',
+						'firsttime_oauthprovider' => 'int(11)',
+						'lasttime_oauthprovider' => 'int(11)',
+						'verifier_oauthprovider' => 'varchar(32)',
+						'callback_oauthprovider' => 'varchar(100)'
+					},
+					'oauthprovider_nonce' => {
+						'id_oauthprovider' => 'int(11)',
+						'nonce_oauthprovider' => 'varchar(100)',
+						'time_oauthprovider' => 'int(11)'
 					}
 			   },
 		   );
@@ -268,7 +285,14 @@ our %not_null = ('email_user' => 1,
 		'robot_counter' => 1,
 		'date_notification' => 1,
 		'pk_notification' => 1,
+		'id_oauthprovider' => 1,
 		'user_oauthconsumer' => 1,
+		'token_oauthprovider' => 1,
+		'secret_oauthprovider' => 1,
+		'consumer_oauthprovider' => 1,
+		'fisrttime_oauthprovider' => 1,
+		'lasttime_oauthprovider' => 1,
+		'nonce_oauthprovider' => 1,
 		'provider_oauthconsumer' => 1
 	);
 
@@ -286,10 +310,14 @@ our %primary = ('user_table' => ['email_user'],
 	       'stat_table' => ['id_stat'],
 	       'stat_counter_table' => ['id_counter'],
 	       'notification_table' => ['pk_notification'],
-	       'oauthconsumer_sessions' => ['user_oauthconsumer', 'provider_oauthconsumer']
+	       'oauthconsumer_sessions' => ['user_oauthconsumer', 'provider_oauthconsumer'],
+	       'oauthprovider_sessions' => ['id_oauthprovider']
 	       );
 	       
-our %autoincrement = ('notification_table' => 'pk_notification');
+our %autoincrement = (
+	'notification_table' => 'pk_notification',
+	'oauthprovider_sessions' => 'id_oauthprovider'
+);
 
 ## List the required INDEXES
 ##   1st key is the concerned table
