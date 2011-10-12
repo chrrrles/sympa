@@ -74,6 +74,9 @@ use tracking;
 use Mail::Header;
 use Mail::Address;
 
+use OAuthProvider;
+use OAuthConsumer;
+use VOOTProvider;
 use VOOTConsumer;
 
 my $crypt_openssl_x509_ok;
@@ -250,7 +253,13 @@ my %comm = ('home' => 'do_home',
 	 'oauth_check' => 'do_oauth_check',
 	 'oauth_ready' => 'do_oauth_ready',
 	 
+	 'oauth_temporary' => 'do_oauth_temporary',
+	 'oauth_authorize' => 'do_oauth_authorize',
+	 'oauth_authorize_ok' => 'do_oauth_authorize_ok',
+	 'oauth_access' => 'do_oauth_access',
+	 
 	 'opensocial' => 'do_opensocial',
+	 'voot' => 'do_voot',
 	 'select_voot_provider_request' => 'do_select_voot_provider_request',
 	 'select_voot_groups_request' => 'do_select_voot_groups_request',
 	 'select_voot_groups' => 'do_select_voot_groups',
@@ -438,6 +447,7 @@ my %action_args = ('default' => ['list'],
 		'oauth_ready' => ['oauth_provider', 'ticket'],
 		 
 		'opensocial' => ['list'],
+		'voot' => ['@voot_path'],
 		'select_voot_provider_request' => ['list'],
 		'select_voot_groups_request' => ['list', 'voot_provider'],
 		'select_voot_groups' => ['list', 'voot_provider'],
@@ -526,6 +536,8 @@ my %required_args = ('active_lists' => ['for|count'],
 		     'edit_list' => ['param.user.email','param.list'],
 		     'edit_list_request' => ['param.user.email','param.list'],
 		     
+			 'oauth_authorize' => ['param.user.email', 'oauth_token'],
+			 'oauth_authorize_ok' => ['param.user.email', 'oauth_token'],
 			 'oauth_check' => ['param.user.email', 'oauth_provider'],
 			 'oauth_ready' => ['oauth_provider', 'ticket', 'oauth_token', 'oauth_verifier'],
 			 
@@ -918,6 +930,9 @@ my %in_regexp = (
 		 'lcap' => '.*',
 		 
 		 'oauth_provider' => '[^:]+:.+',
+		 'oauth_signature' => '[a-zA-Z0-9\+\/\=\%]+',
+		 'oauth_callback' => '[^\\\$\*\"\'\`\^\|\<\>\n]+',
+		 'voot_path' => '[^<>\\\*\$\n]+',
 		 );
 
 ## Regexp applied on incoming parameters (%in)
@@ -1186,6 +1201,12 @@ my $birthday = time ;
 	 &wwslog('info','Failed to create session');
 	 $session->{'email'}= 'nobody'; $session->{'id_session'} = &get_random();
      }
+     
+     # Retreive oauth_token from session if it exists and if we have a (newly) identified user
+     if(defined($session->{'oauth_token'}) && $session->{'oauth_token'} ne '' && $session->{'email'} ne 'nobody') {
+		 $in{'oauth_token'} = $session->{'oauth_token'};
+		 delete $session->{'oauth_token'};
+	 }
 
      $param->{'session'} = $session->as_hashref();
      
@@ -1462,6 +1483,9 @@ my $birthday = time ;
 	 $param->{'main_title'} = $param->{'title'} = &Conf::get_robot_conf($robot,'title');
 	 $param->{'title_clear_txt'} = $param->{'title'};
      }
+     
+     # Store oauth_token in session if present and no user so that it will not be lost during login process
+     $session->{'oauth_token'} = $in{'oauth_token'} if(defined($in{'oauth_token'}) && $in{'oauth_token'} ne '' && $session->{'email'} eq 'nobody');
 
      ## store in session table this session contexte
      $session->store();
@@ -9181,6 +9205,107 @@ sub do_home {
      return 'serveradmin';
  }
 
+# Consumer requests a temporary token
+sub do_oauth_temporary {
+	&wwslog('info', 'do_oauth_temporary()');
+	$param->{'bypass'} = 'extreme';
+	
+	#### Using HTTP_AUTHORIZATION header requires httpd config customization :
+	# <Location /sympa>
+	#   RewriteEngine on
+	#   RewriteBase /sympa/
+	#   RewriteCond %{HTTP:Authorization} (.+)
+	#   RewriteRule ^ - [e=HTTP_AUTHORIZATION:%1,L]
+	#   SetHandler fcgid-script
+	# </Location>
+	my $provider = new OAuthProvider(
+		method => $ENV{'REQUEST_METHOD'},
+		url => $param->{'base_url'}.$param->{'path_cgi'}.'/oauth_temporary',
+		authorization_header => $ENV{'HTTP_AUTHORIZATION'},
+		request_parameters => \%in
+	);
+	
+	my $bad = defined($provider) ? $provider->checkRequest() : 400;
+	my $http_code = $bad ? $bad : 200;
+	my $http_str = $bad ? (defined($provider) ? $provider->{'util'}->errstr : 'Bad Request') : 'OK';
+	
+	print 'Status: '.$http_code.' '.$http_str."\n";
+	print "Cache-control: no-cache\n";
+	print "Content-type: text/plain\n\n";
+	
+	print $provider->generateTemporary() unless($bad);
+	
+	return 1;
+}
+
+# User needs to authorize access
+sub do_oauth_authorize {
+	&wwslog('info', 'do_oauth_authorize()');
+	
+	$param->{'oauth_token'} = $in{'oauth_token'};
+	
+	my $key = &OAuthProvider::consumerFromToken($in{'oauth_token'});
+	return undef unless($key);
+	
+	$param->{'consumer_key'} = $key;
+	
+	return 1;
+}
+
+# User authorized access
+sub do_oauth_authorize_ok {
+	&wwslog('info', 'do_oauth_authorize()');
+	
+	my $key = &OAuthProvider::consumerFromToken($in{'oauth_token'});
+	return undef unless($key);
+	
+	my $provider = new OAuthProvider(
+		method => $ENV{'REQUEST_METHOD'},
+		request_parameters => {
+			oauth_token => $in{'oauth_token'},
+			oauth_consumer_key => $key
+		}
+	);
+	return undef unless($provider);
+	
+	my $r = $provider->generateVerifier(
+		token => $in{'oauth_token'},
+		user => $param->{'user'}{'email'}
+	);
+	return undef unless($r);
+	
+	&do_redirect($r);
+	
+	return 1;
+}
+
+# Consumer requests an access token
+sub do_oauth_access {
+	&wwslog('info', 'do_oauth_access()');
+	$param->{'bypass'} = 'extreme';
+	
+	my $provider = new OAuthProvider(
+		method => $ENV{'REQUEST_METHOD'},
+		url => $param->{'base_url'}.$param->{'path_cgi'}.'/oauth_access',
+		authorization_header => $ENV{'HTTP_AUTHORIZATION'},
+		request_parameters => \%in
+	);
+	
+	my $bad = defined($provider) ? $provider->checkRequest(checktoken => 1) : 400;
+	my $http_code = $bad ? $bad : 200;
+	my $http_str = $bad ? (defined($provider) ? $provider->{'util'}->errstr : 'Bad Request') : 'OK';
+	
+	print 'Status: '.$http_code.' '.$http_str."\n";
+	print "Cache-control: no-cache\n";
+	print "Content-type: text/plain\n\n";
+	
+	print $provider->generateAccess(
+		token => $provider->{'params'}{'oauth_token'},
+		verifier => $provider->{'params'}{'oauth_verifier'}
+	) unless($bad);
+	
+	return 1;
+}
 
 # User ask for access token check
 sub do_oauth_check {
@@ -9260,6 +9385,33 @@ sub do_opensocial {
 	&wwslog('info', 'do_opensocial()');
 	
 	return 'select_voot_provider_request';
+}
+
+# VOOT request
+sub do_voot {
+	&wwslog('info', 'do_voot(%s)', $in{'voot_path'});
+	$param->{'bypass'} = 'extreme';
+	
+	my $provider = new VOOTProvider(
+		voot_path => $in{'voot_path'},
+		method => $ENV{'REQUEST_METHOD'},
+		url => $param->{'base_url'}.$param->{'path_cgi'}.'/voot/'.$in{'voot_path'},
+		authorization_header => $ENV{'HTTP_AUTHORIZATION'},
+		request_parameters => \%in,
+		robot => $robot
+	);
+	
+	my $bad = defined($provider) ? $provider->checkRequest() : 400;
+	my $http_code = $bad ? $bad : 200;
+	my $http_str = $bad ? (defined($provider) ? $provider->getOAuthProvider()->{'util'}->errstr : 'Bad Request') : 'OK';
+	
+	print 'Status: '.$http_code.' '.$http_str."\n";
+	print "Cache-control: no-cache\n";
+	print "Content-type: text/plain\n\n";
+	
+	print $provider->response();
+	
+	return 1;
 }
 
 # Displays VOOT providers list
