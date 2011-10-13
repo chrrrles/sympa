@@ -168,7 +168,7 @@ sub db_struct {
 			       'conf_table' => {'robot_conf' => 'varchar(80)',
 						'label_conf' => 'varchar(80)',
 						'value_conf' => 'varchar(300)'},
-					'oauthconsumer_sessions' => {
+					'oauthconsumer_sessions_table' => {
 						'user_oauthconsumer' => 'varchar(100)',
 						'provider_oauthconsumer' => 'varchar(100)',
 						'tmp_token_oauthconsumer' => 'varchar(100)',
@@ -176,11 +176,12 @@ sub db_struct {
 						'access_token_oauthconsumer' => 'varchar(100)',
 						'access_secret_oauthconsumer' => 'varchar(100)'
 					},
-					'oauthprovider_sessions' => {
+					'oauthprovider_sessions_table' => {
 						'id_oauthprovider' => 'int(11)',
 						'token_oauthprovider' => 'varchar(32)',
 						'secret_oauthprovider' => 'varchar(32)',
 						'isaccess_oauthprovider' => 'tinyint(1)',
+						'accessgranted_oauthprovider' => 'tinyint(1)',
 						'consumer_oauthprovider' => 'varchar(100)',
 						'user_oauthprovider' => 'varchar(100)',
 						'firsttime_oauthprovider' => 'int(11)',
@@ -188,7 +189,7 @@ sub db_struct {
 						'verifier_oauthprovider' => 'varchar(32)',
 						'callback_oauthprovider' => 'varchar(100)'
 					},
-					'oauthprovider_nonce' => {
+					'oauthprovider_nonce_table' => {
 						'id_oauthprovider' => 'int(11)',
 						'nonce_oauthprovider' => 'varchar(100)',
 						'time_oauthprovider' => 'int(11)'
@@ -310,13 +311,13 @@ our %primary = ('user_table' => ['email_user'],
 	       'stat_table' => ['id_stat'],
 	       'stat_counter_table' => ['id_counter'],
 	       'notification_table' => ['pk_notification'],
-	       'oauthconsumer_sessions' => ['user_oauthconsumer', 'provider_oauthconsumer'],
-	       'oauthprovider_sessions' => ['id_oauthprovider']
+	       'oauthconsumer_sessions_table' => ['user_oauthconsumer', 'provider_oauthconsumer'],
+	       'oauthprovider_sessions_table' => ['id_oauthprovider']
 	       );
 	       
 our %autoincrement = (
 	'notification_table' => 'pk_notification',
-	'oauthprovider_sessions' => 'id_oauthprovider'
+	'oauthprovider_sessions_table' => 'id_oauthprovider'
 );
 
 ## List the required INDEXES

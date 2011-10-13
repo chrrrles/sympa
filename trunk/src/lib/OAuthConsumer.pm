@@ -127,7 +127,7 @@ sub new {
 	);
 	
 	my $sth;
-	unless($sth = &SDM::do_prepared_query('SELECT tmp_token_oauthconsumer AS tmp_token, tmp_secret_oauthconsumer AS tmp_secret, access_token_oauthconsumer AS access_token, access_secret_oauthconsumer AS access_secret FROM oauthconsumer_sessions WHERE user_oauthconsumer=? AND provider_oauthconsumer=?', $param{'user'}, $param{'provider'})) {
+	unless($sth = &SDM::do_prepared_query('SELECT tmp_token_oauthconsumer AS tmp_token, tmp_secret_oauthconsumer AS tmp_secret, access_token_oauthconsumer AS access_token, access_secret_oauthconsumer AS access_secret FROM oauthconsumer_sessions_table WHERE user_oauthconsumer=? AND provider_oauthconsumer=?', $param{'user'}, $param{'provider'})) {
 		&Log::do_log('err','Unable to load token data %s %s', $param{'user'}, $param{'provider'});
 		return undef;
     }
@@ -348,12 +348,12 @@ sub triggerFlow {
 	}
 	
 	if(defined $self->{'session'}{'defined'}) {
-		unless(&SDM::do_query('UPDATE oauthconsumer_sessions SET tmp_token_oauthconsumer=%s, tmp_secret_oauthconsumer=%s WHERE user_oauthconsumer=%s AND provider_oauthconsumer=%s', &SDM::quote($tmp->{'token'}), &SDM::quote($tmp->{'secret'}), &SDM::quote($self->{'user'}), &SDM::quote($self->{'provider'}))) {
+		unless(&SDM::do_query('UPDATE oauthconsumer_sessions_table SET tmp_token_oauthconsumer=%s, tmp_secret_oauthconsumer=%s WHERE user_oauthconsumer=%s AND provider_oauthconsumer=%s', &SDM::quote($tmp->{'token'}), &SDM::quote($tmp->{'secret'}), &SDM::quote($self->{'user'}), &SDM::quote($self->{'provider'}))) {
 			&Log::do_log('err', 'Unable to update token record %s %s in database', $self->{'user'}, $self->{'provider'});
 			return undef;
 		}
 	}else{
-		unless(&SDM::do_query('INSERT INTO oauthconsumer_sessions(user_oauthconsumer, provider_oauthconsumer, tmp_token_oauthconsumer, tmp_secret_oauthconsumer) VALUES (%s, %s, %s, %s)', &SDM::quote($self->{'user'}), &SDM::quote($self->{'provider'}), &SDM::quote($tmp->{'token'}), &SDM::quote($tmp->{'secret'}))) {
+		unless(&SDM::do_query('INSERT INTO oauthconsumer_sessions_table(user_oauthconsumer, provider_oauthconsumer, tmp_token_oauthconsumer, tmp_secret_oauthconsumer) VALUES (%s, %s, %s, %s)', &SDM::quote($self->{'user'}), &SDM::quote($self->{'provider'}), &SDM::quote($tmp->{'token'}), &SDM::quote($tmp->{'secret'}))) {
 			&Log::do_log('err', 'Unable to add new token record %s %s in database', $self->{'user'}, $self->{'provider'});
 			return undef;
 		}
@@ -423,7 +423,7 @@ sub getAccessToken {
 	$self->{'session'}{'access'} = $access;
 	$self->{'session'}{'tmp'} = undef;
 	
-	unless(&SDM::do_query('UPDATE oauthconsumer_sessions SET tmp_token_oauthconsumer=NULL, tmp_secret_oauthconsumer=NULL, access_token_oauthconsumer=%s, access_secret_oauthconsumer=%s WHERE user_oauthconsumer=%s AND provider_oauthconsumer=%s', &SDM::quote($access->{'token'}), &SDM::quote($access->{'secret'}), &SDM::quote($self->{'user'}), &SDM::quote($self->{'provider'}))) {
+	unless(&SDM::do_query('UPDATE oauthconsumer_sessions_table SET tmp_token_oauthconsumer=NULL, tmp_secret_oauthconsumer=NULL, access_token_oauthconsumer=%s, access_secret_oauthconsumer=%s WHERE user_oauthconsumer=%s AND provider_oauthconsumer=%s', &SDM::quote($access->{'token'}), &SDM::quote($access->{'secret'}), &SDM::quote($self->{'user'}), &SDM::quote($self->{'provider'}))) {
 		&Log::do_log('err', 'Unable to update token record %s %s in database', $self->{'user'}, $self->{'provider'});
 		return undef;
 	}
