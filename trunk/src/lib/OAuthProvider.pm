@@ -140,6 +140,14 @@ sub new {
 	$provider->{'util'}->support_signature_method('HMAC-SHA1');
 	$provider->{'util'}->allow_extra_params(qw/oauth_callback oauth_verifier/);
 	
+	unless(&SDM::do_query(
+		'DELETE FROM oauthprovider_sessions_table WHERE isaccess_oauthprovider IS NULL AND lasttime_oauthprovider<%d',
+		time - $provider->{'constants'}{'temporary_timeout'}
+	)) {
+		&Log::do_log('err', 'Unable to delete old temporary tokens in database');
+		return undef;
+	}
+	
 	return bless $provider, $pkg;
 }
 
@@ -147,7 +155,7 @@ sub consumerFromToken {
 	my $token = shift;
 	
 	my $sth;
-	unless($sth = &SDM::do_prepared_query('SELECT consumer_oauthprovider AS consumer FROM oauthprovider_sessions WHERE token_oauthprovider=?', $token)) {
+	unless($sth = &SDM::do_prepared_query('SELECT consumer_oauthprovider AS consumer FROM oauthprovider_sessions_table WHERE token_oauthprovider=?', $token)) {
 		&Log::do_log('err','Unable to load token data %s', $token);
 		return undef;
 	}
@@ -281,7 +289,7 @@ sub checkRequest {
 	
 	return 401 unless($timestamp > time - $self->{'constants'}{'old_request_timeout'});
 	
-	unless(&SDM::do_query('DELETE FROM oauthprovider_nonce WHERE time_oauthprovider<?', time - $self->{'constants'}{'nonce_timeout'})) {
+	unless(&SDM::do_query('DELETE FROM oauthprovider_nonce_table WHERE time_oauthprovider<%d', time - $self->{'constants'}{'nonce_timeout'})) {
 		&Log::do_log('err', 'Unable to clean nonce store in database');
 		return 401;
 	}
@@ -289,7 +297,7 @@ sub checkRequest {
 	if($checktoken) {
 		my $sth;
 		unless($sth = &SDM::do_prepared_query(
-			'SELECT id_oauthprovider AS id FROM oauthprovider_sessions WHERE consumer_oauthprovider=? AND token_oauthprovider=?',
+			'SELECT id_oauthprovider AS id FROM oauthprovider_sessions_table WHERE consumer_oauthprovider=? AND token_oauthprovider=?',
 			$self->{'consumer_key'},
 			$token
 		)) {
@@ -301,7 +309,7 @@ sub checkRequest {
 			my $id = $data->{'id'};
 			
 			unless($sth = &SDM::do_prepared_query(
-				'SELECT nonce_oauthprovider AS nonce FROM oauthprovider_nonce WHERE id_oauthprovider=? AND nonce_oauthprovider=?',
+				'SELECT nonce_oauthprovider AS nonce FROM oauthprovider_nonce_table WHERE id_oauthprovider=? AND nonce_oauthprovider=?',
 				$id,
 				$nonce
 			)) {
@@ -312,7 +320,7 @@ sub checkRequest {
 			return 401 if($sth->fetchrow_hashref('NAME_lc')); # Already used nonce
 			
 			unless(&SDM::do_query(
-				'INSERT INTO oauthprovider_nonce(id_oauthprovider, nonce_oauthprovider, time_oauthprovider) VALUES (%d, %s, %d)',
+				'INSERT INTO oauthprovider_nonce_table(id_oauthprovider, nonce_oauthprovider, time_oauthprovider) VALUES (%d, %s, %d)',
 				$id,
 				&SDM::quote($nonce),
 				time
@@ -326,7 +334,7 @@ sub checkRequest {
 	my $secret = '';
 	if($checktoken) {
 		my $sth;
-		unless($sth = &SDM::do_prepared_query('SELECT secret_oauthprovider AS secret FROM oauthprovider_sessions WHERE token_oauthprovider=?', $token)) {
+		unless($sth = &SDM::do_prepared_query('SELECT secret_oauthprovider AS secret FROM oauthprovider_sessions_table WHERE token_oauthprovider=?', $token)) {
 			&Log::do_log('err','Unable to load token data %s', $token);
 			return undef;
 		}
@@ -391,7 +399,7 @@ sub generateTemporary {
 	my $secret = &_generateRandomString(32); # may be sha1-ed or such ...
 	
 	unless(&SDM::do_query(
-		'INSERT INTO oauthprovider_sessions(token_oauthprovider, secret_oauthprovider, isaccess_oauthprovider, consumer_oauthprovider, user_oauthprovider, firsttime_oauthprovider, lasttime_oauthprovider, verifier_oauthprovider, callback_oauthprovider) VALUES (%s, %s, NULL, %s, NULL, %d, %d, NULL, %s)',
+		'INSERT INTO oauthprovider_sessions_table(token_oauthprovider, secret_oauthprovider, isaccess_oauthprovider, accessgranted_oauthprovider, consumer_oauthprovider, user_oauthprovider, firsttime_oauthprovider, lasttime_oauthprovider, verifier_oauthprovider, callback_oauthprovider) VALUES (%s, %s, NULL, NULL, %s, NULL, %d, %d, NULL, %s)',
 		&SDM::quote($token),
 		&SDM::quote($secret),
 		&SDM::quote($self->{'consumer_key'}),
@@ -458,7 +466,7 @@ sub getTemporary {
 	
 	my $sth;
 	unless($sth = &SDM::do_prepared_query(
-		'SELECT id_oauthprovider AS id, token_oauthprovider AS token, secret_oauthprovider AS secret, firsttime_oauthprovider AS firsttime, lasttime_oauthprovider AS lasttime, callback_oauthprovider AS callback, verifier_oauthprovider AS verifier FROM oauthprovider_sessions WHERE isaccess_oauthprovider IS NULL AND consumer_oauthprovider=? AND token_oauthprovider=?', $self->{'consumer_key'}, $param{'token'})) {
+		'SELECT id_oauthprovider AS id, token_oauthprovider AS token, secret_oauthprovider AS secret, firsttime_oauthprovider AS firsttime, lasttime_oauthprovider AS lasttime, callback_oauthprovider AS callback, verifier_oauthprovider AS verifier FROM oauthprovider_sessions_table WHERE isaccess_oauthprovider IS NULL AND consumer_oauthprovider=? AND token_oauthprovider=?', $self->{'consumer_key'}, $param{'token'})) {
 		&Log::do_log('err','Unable to load token data %s %s', $self->{'consumer_key'}, $param{'token'});
 		return undef;
 	}
@@ -514,16 +522,26 @@ Create the verifier for a temporary token
 sub generateVerifier {
 	my $self = shift;
 	my %param = @_;
-	&Log::do_log('debug2', 'OAuthProvider::generateVerifier(%s, %s)', $param{'token'}, $self->{'consumer_key'});
+	&Log::do_log('debug2', 'OAuthProvider::generateVerifier(%s, %s, %s, %s)', $param{'token'}, $param{'user'}, $param{'granted'}, $self->{'consumer_key'});
 	
 	return undef unless(my $tmp = $self->getTemporary(token => $param{'token'}));
 	
 	my $verifier = &_generateRandomString(32);
 	
 	unless(&SDM::do_query(
-		'UPDATE oauthprovider_sessions SET verifier_oauthprovider=%s, user_oauthprovider=%s, lasttime_oauthprovider=%d WHERE isaccess_oauthprovider IS NULL AND consumer_oauthprovider=%s AND token_oauthprovider=%s',
+		'DELETE FROM oauthprovider_sessions_table WHERE user_oauthprovider=%s AND consumer_oauthprovider=%s AND isaccess_oauthprovider=1',
+		&SDM::quote($param{'user'}),
+		&SDM::quote($self->{'consumer_key'})
+	)) {
+		&Log::do_log('err', 'Unable to delete other already granted access tokens for this user %s %s in database', &SDM::quote($param{'user'}), $self->{'consumer_key'});
+		return undef;
+	}
+	
+	unless(&SDM::do_query(
+		'UPDATE oauthprovider_sessions_table SET verifier_oauthprovider=%s, user_oauthprovider=%s, accessgranted_oauthprovider=%d, lasttime_oauthprovider=%d WHERE isaccess_oauthprovider IS NULL AND consumer_oauthprovider=%s AND token_oauthprovider=%s',
 		&SDM::quote($verifier),
 		&SDM::quote($param{'user'}),
+		$param{'granted'} ? 1 : 0,
 		time,
 		&SDM::quote($self->{'consumer_key'}),
 		&SDM::quote($param{'token'})
@@ -591,7 +609,7 @@ sub generateAccess {
 	my $secret = &_generateRandomString(32);
 	
 	unless(&SDM::do_query(
-		'UPDATE oauthprovider_sessions SET token_oauthprovider=%s, secret_oauthprovider=%s, isaccess_oauthprovider=1, lasttime_oauthprovider=%d, verifier_oauthprovider=NULL, callback_oauthprovider=NULL WHERE token_oauthprovider=%s AND verifier_oauthprovider=%s',
+		'UPDATE oauthprovider_sessions_table SET token_oauthprovider=%s, secret_oauthprovider=%s, isaccess_oauthprovider=1, lasttime_oauthprovider=%d, verifier_oauthprovider=NULL, callback_oauthprovider=NULL WHERE token_oauthprovider=%s AND verifier_oauthprovider=%s',
 		&SDM::quote($token),
 		&SDM::quote($secret),
 		time,
@@ -653,7 +671,7 @@ sub getAccess {
 	
 	my $sth;
 	unless($sth = &SDM::do_prepared_query(
-		'SELECT token_oauthprovider AS token, secret_oauthprovider AS secret, lasttime_oauthprovider AS lasttime, user_oauthprovider AS user FROM oauthprovider_sessions WHERE isaccess_oauthprovider=1 AND consumer_oauthprovider=? AND token_oauthprovider=?', $self->{'consumer_key'}, $param{'token'})) {
+		'SELECT token_oauthprovider AS token, secret_oauthprovider AS secret, lasttime_oauthprovider AS lasttime, user_oauthprovider AS user, accessgranted_oauthprovider AS accessgranted FROM oauthprovider_sessions_table WHERE isaccess_oauthprovider=1 AND consumer_oauthprovider=? AND token_oauthprovider=?', $self->{'consumer_key'}, $param{'token'})) {
 		&Log::do_log('err','Unable to load token data %s %s', $self->{'consumer_key'}, $param{'token'});
 		return undef;
     }
