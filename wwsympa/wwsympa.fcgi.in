@@ -255,7 +255,6 @@ my %comm = ('home' => 'do_home',
 	 
 	 'oauth_temporary' => 'do_oauth_temporary',
 	 'oauth_authorize' => 'do_oauth_authorize',
-	 'oauth_authorize_ok' => 'do_oauth_authorize_ok',
 	 'oauth_access' => 'do_oauth_access',
 	 
 	 'opensocial' => 'do_opensocial',
@@ -537,7 +536,6 @@ my %required_args = ('active_lists' => ['for|count'],
 		     'edit_list_request' => ['param.user.email','param.list'],
 		     
 			 'oauth_authorize' => ['param.user.email', 'oauth_token'],
-			 'oauth_authorize_ok' => ['param.user.email', 'oauth_token'],
 			 'oauth_check' => ['param.user.email', 'oauth_provider'],
 			 'oauth_ready' => ['oauth_provider', 'ticket', 'oauth_token', 'oauth_verifier'],
 			 
@@ -930,6 +928,8 @@ my %in_regexp = (
 		 'lcap' => '.*',
 		 
 		 'oauth_provider' => '[^:]+:.+',
+		 'oauth_authorize_ok' => '.+',
+		 'oauth_authorize_no' => '.+',
 		 'oauth_signature' => '[a-zA-Z0-9\+\/\=\%]+',
 		 'oauth_callback' => '[^\\\$\*\"\'\`\^\|\<\>\n]+',
 		 'voot_path' => '[^<>\\\*\$\n]+',
@@ -9249,15 +9249,20 @@ sub do_oauth_authorize {
 	
 	$param->{'consumer_key'} = $key;
 	
-	return 1;
-}
-
-# User authorized access
-sub do_oauth_authorize_ok {
-	&wwslog('info', 'do_oauth_authorize()');
+	if(
+		!defined($session->{'oauth_authorize_verifier'})
+		|| $session->{'oauth_authorize_verifier'} eq ''
+		|| !defined($in{'oauth_authorize_verifier'})
+		|| $in{'oauth_authorize_verifier'} eq ''
+		|| $session->{'oauth_authorize_verifier'} ne $in{'oauth_authorize_verifier'}
+	) {
+		$session->{'oauth_authorize_verifier'} = &OAuthProvider::_generateRandomString(32);
+		$param->{'oauth_authorize_verifier'} = $session->{'oauth_authorize_verifier'};
+		
+		return 1;
+	}
 	
-	my $key = &OAuthProvider::consumerFromToken($in{'oauth_token'});
-	return undef unless($key);
+	delete $session->{'oauth_authorize_verifier'};
 	
 	my $provider = new OAuthProvider(
 		method => $ENV{'REQUEST_METHOD'},
@@ -9268,9 +9273,12 @@ sub do_oauth_authorize_ok {
 	);
 	return undef unless($provider);
 	
+	my $ok = defined($in{'oauth_authorize_ok'}) && !defined($in{'oauth_authorize_no'});
+	
 	my $r = $provider->generateVerifier(
 		token => $in{'oauth_token'},
-		user => $param->{'user'}{'email'}
+		user => $param->{'user'}{'email'},
+		granted => $ok
 	);
 	return undef unless($r);
 	
@@ -9405,11 +9413,17 @@ sub do_voot {
 	my $http_code = $bad ? $bad : 200;
 	my $http_str = $bad ? (defined($provider) ? $provider->getOAuthProvider()->{'util'}->errstr : 'Bad Request') : 'OK';
 	
+	my $r = $provider->response();
+	if(defined $provider->{'error'}) {
+		my @error = split(' ', $provider->{'error'});
+		$http_code = shift @error;
+		$http_str = join(' ', @error);
+	}
+	
 	print 'Status: '.$http_code.' '.$http_str."\n";
 	print "Cache-control: no-cache\n";
 	print "Content-type: text/plain\n\n";
-	
-	print $provider->response();
+	print $r unless(defined $provider->{'error'});
 	
 	return 1;
 }
