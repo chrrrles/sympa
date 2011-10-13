@@ -182,6 +182,7 @@ sub checkRequest {
 		token => $self->{'oauth_provider'}{'params'}{'oauth_token'}
 	);
 	return 401 unless($access->{'user'});
+	return 403 unless($access->{'accessgranted'});
 	
 	$self->{'user'} = $access->{'user'};
 	
@@ -240,9 +241,9 @@ sub response {
 		return undef if($#args < 1);
 		return undef unless($args[1] eq '@me');
 		return undef unless($args[0] eq 'groups' || $args[0] eq 'people');
-		return undef if($args[0] eq 'people' && ($#args < 2 || $args[3] eq ''));
+		return undef if($args[0] eq 'people' && ($#args < 2 || $args[2] eq ''));
 		
-		$r->{'entry'} = ($args[0] eq 'groups') ? $self->getGroups() : $self->getGroupMembers(group => $args[3]);
+		$r->{'entry'} = ($args[0] eq 'groups') ? $self->getGroups() : $self->getGroupMembers(group => $args[2]);
 		$r->{'totalResults'} = $#{$r->{'entry'}} + 1;
 	}
 	
@@ -314,7 +315,7 @@ sub _list_to_group {
 		id => $list->{'name'},
 		title => $list->{'admin'}{'subject'},
 		description => $list->get_info(),
-		voot_membershipt_role => $role
+		voot_membership_role => $role
 	};
 }
 
@@ -361,22 +362,32 @@ sub getGroupMembers {
 	&Log::do_log('debug2', 'VOOTProvider::getGroupMembers(%s, %s)', $self->{'user'}, $param{'group'});
 	
 	my @entries = ();
-	  # for (my $user = $list->get_first_list_member(); $user; $user = $list->get_next_list_member()) {
-
+	
+	my $list = new List($param{'group'}, $self->{'robot'});
+	if(defined $list) {
+		my $r = $list->check_list_authz('review', 'md5', {'sender' => $self->{'user'}});
+		
+		if(ref($r) ne 'HASH' || $r->{'action'} !~ /do_it/i) {
+			$self->{'error'} = '403 Forbiden';
+		}else{
+			for(my $user = $list->get_first_list_member(); $user; $user = $list->get_next_list_member()) {
+				push(@entries, $self->_subscriber_to_member($user, 'member'));
+			}
+		}
+	}
 	
 	return \@entries;
 }
 
 sub _subscriber_to_member {
 	my $self = shift;
-	my $list = shift;
+	my $user = shift;
 	my $role = shift;
 	
 	return {
-		id => $list->{'name'},
-		title => $list->{'admin'}{'subject'},
-		description => $list->get_info(),
-		voot_membershipt_role => $role
+		displayName => $user->{'gecos'},
+		emails => [$user->{'email'}],
+		voot_membership_role => $role
 	};
 }
 
