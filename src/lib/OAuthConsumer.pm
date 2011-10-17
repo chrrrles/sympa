@@ -343,7 +343,7 @@ sub triggerFlow {
 	);
 
 	unless(defined $tmp) {
-		&Log::do_log('err', 'Unable to get tmp token for %s %s', $self->{'user'}, $self->{'provider'});
+		&Log::do_log('err', 'Unable to get tmp token for %s %s %s', $self->{'user'}, $self->{'provider'}, $self->{'handler'}->errstr);
 		return undef;
 	}
 	
