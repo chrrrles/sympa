@@ -174,7 +174,7 @@ sub db_struct {
 						'tmp_token_oauthconsumer' => 'varchar(100)',
 						'tmp_secret_oauthconsumer' => 'varchar(100)',
 						'access_token_oauthconsumer' => 'varchar(100)',
-						'access_secret_oauthconsumer' => 'varchar(100)'
+						'access_secret_oauthconsumer' => 'varchar(100)',
 					},
 					'oauthprovider_sessions_table' => {
 						'id_oauthprovider' => 'int(11)',
@@ -187,12 +187,13 @@ sub db_struct {
 						'firsttime_oauthprovider' => 'int(11)',
 						'lasttime_oauthprovider' => 'int(11)',
 						'verifier_oauthprovider' => 'varchar(32)',
-						'callback_oauthprovider' => 'varchar(100)'
+						'callback_oauthprovider' => 'varchar(100)',
 					},
-					'oauthprovider_nonce_table' => {
+					'oauthprovider_nonces_table' => {
+						'id_nonce' => 'int(11)',
 						'id_oauthprovider' => 'int(11)',
 						'nonce_oauthprovider' => 'varchar(100)',
-						'time_oauthprovider' => 'int(11)'
+						'time_oauthprovider' => 'int(11)',
 					}
 			   },
 		   );
@@ -294,7 +295,8 @@ our %not_null = ('email_user' => 1,
 		'fisrttime_oauthprovider' => 1,
 		'lasttime_oauthprovider' => 1,
 		'nonce_oauthprovider' => 1,
-		'provider_oauthconsumer' => 1
+		'provider_oauthconsumer' => 1,
+		'id_nonce' => 1,
 	);
 
 our %primary = ('user_table' => ['email_user'],
@@ -312,12 +314,14 @@ our %primary = ('user_table' => ['email_user'],
 	       'stat_counter_table' => ['id_counter'],
 	       'notification_table' => ['pk_notification'],
 	       'oauthconsumer_sessions_table' => ['user_oauthconsumer', 'provider_oauthconsumer'],
-	       'oauthprovider_sessions_table' => ['id_oauthprovider']
+	       'oauthprovider_sessions_table' => ['id_oauthprovider'],
+	       'oauthprovider_nonces_table' => ['id_nonce'],
 	       );
 	       
 our %autoincrement = (
 	'notification_table' => 'pk_notification',
-	'oauthprovider_sessions_table' => 'id_oauthprovider'
+	'oauthprovider_sessions_table' => 'id_oauthprovider',
+	'oauthprovider_nonces_table' => 'id_nonce',
 );
 
 ## List the required INDEXES
