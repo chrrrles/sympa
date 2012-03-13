@@ -1357,6 +1357,7 @@ sub which {
 				$result_item->{'bounceCode'} = $1;
 				}	
 			}
+			$result_item->{'bounceScore'} = $subscriber->{'bounce_score'};
 		}
 	}
 	
