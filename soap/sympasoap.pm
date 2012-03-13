@@ -1353,7 +1353,7 @@ sub which {
 				$result_item->{'firstBounceDate'} =  $1;
 				$result_item->{'lastBounceDate'} = $2;
 				$result_item->{'bounceCount'} = $3;
-				if ($4 =~ /^(\d+\.(\d+\.\d+))$/) {
+				if ($4 =~ /^\s*(\d+\.(\d+\.\d+))$/) {
 				$result_item->{'bounceCode'} = $1;
 				}	
 			}
