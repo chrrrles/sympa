@@ -73,6 +73,7 @@ sub db_struct {
 						 'info_admin' =>  'varchar(150)',
 						 'profile_admin' => "enum('privileged','normal')"},
 			       'exclusion_table' => {'list_exclusion' => 'varchar(50)',
+						     'robot_exclusion' => 'varchar(50)',
 						     'user_exclusion' => 'varchar(100)',
 						     'date_exclusion' => 'int(11)'},
 			       'netidmap_table' => {'netid_netidmap' => 'varchar(100)',
@@ -130,7 +131,6 @@ sub db_struct {
 						     'dkim_selector_bulkspool' => 'varchar(50)',
 						     'dkim_d_bulkspool' => 'varchar(50)',
 						     'dkim_i_bulkspool' => 'varchar(100)',
-						     'dkim_header_list_bulkspool' => 'varchar(500)',
 						 },
 			       'notification_table' => {'pk_notification' => 'bigint(20)',
 							'message_id_notification' => 'varchar(100)',
@@ -194,7 +194,18 @@ sub db_struct {
 						'id_oauthprovider' => 'int(11)',
 						'nonce_oauthprovider' => 'varchar(100)',
 						'time_oauthprovider' => 'int(11)',
-					}
+					},
+					'list_table' => {'name_list'=>'varchar(100)',
+									'path_list'=>'varchar(100)',
+                                    'robot_list'=>'varchar(100)',
+                                    'status_list'=>"enum('open','closed','pending','error_config','family_closed')",
+                                    'creation_email_list'=>'varchar(100)',
+                                    'creation_epoch_list'=>'datetime',
+                                    'subject_list'=>'varchar(100)',
+                                    'web_archive_list'=>'tinyint(1)',
+                                    'topics_list'=>'varchar(100)',
+                                    'editors_list'=>'varchar(100)',
+                                    'owners_list'=>'varchar(100)'},
 			   },
 		   );
   
@@ -220,10 +231,10 @@ sub db_struct {
 	  $trans_pg =~ s/^smallint.*/int4/g;
 	  $trans_pg =~ s/^tinyint\(.*\)/int2/g;
 	  $trans_pg =~ s/^bigint.*/int8/g;
-	  $trans_pg =~ s/^enum.*/varchar(15)/g;
 	  $trans_pg =~ s/^text.*/varchar(500)/g;
 	  $trans_pg =~ s/^longtext.*/text/g;
 	  $trans_pg =~ s/^datetime.*/timestamptz/g;
+	  $trans_pg =~ s/^enum.*/varchar(15)/g;
 #Sybase		
 	  $trans_syb =~ s/^int.*/numeric/g;
 	  $trans_syb =~ s/^text.*/varchar(500)/g;
@@ -233,11 +244,12 @@ sub db_struct {
 	  $trans_syb =~ s/^enum.*/varchar(15)/g;
 #Sqlite		
 	  $trans_sq =~ s/^varchar.*/text/g;
-	  $trans_sq =~ s/^int\(1\).*/boolean/g;
+	  $trans_sq =~ s/^int\(1\).*/numeric/g;
 	  $trans_sq =~ s/^int.*/integer/g;
+	  $trans_sq =~ s/^tinyint.*/integer/g;
 	  $trans_sq =~ s/^bigint.*/integer/g;
 	  $trans_sq =~ s/^smallint.*/integer/g;
-	  $trans_sq =~ s/^datetime.*/timestamp/g;
+	  $trans_sq =~ s/^datetime.*/numeric/g;
 	  $trans_sq =~ s/^enum.*/text/g;	 
 	  
 	  $db_struct{'Pg'}{$table}{$field} = $trans_pg;
@@ -262,6 +274,7 @@ our %not_null = ('email_user' => 1,
 		'date_admin' => 1,
 		'list_exclusion' => 1,
 		'user_exclusion' => 1,
+		'robot_exclusion' => 1,
 		'netid_netidmap' => 1,
 		'serviceid_netidmap' => 1,
 		'robot_netidmap' => 1,
@@ -297,12 +310,14 @@ our %not_null = ('email_user' => 1,
 		'nonce_oauthprovider' => 1,
 		'provider_oauthconsumer' => 1,
 		'id_nonce' => 1,
+		'name_list' => 1,
+		'robot_list' => 1,
 	);
 
 our %primary = ('user_table' => ['email_user'],
 	       'subscriber_table' => ['robot_subscriber','list_subscriber','user_subscriber'],
 	       'admin_table' => ['robot_admin','list_admin','role_admin','user_admin'],
-	       'exclusion_table' => ['list_exclusion','user_exclusion'],
+	       'exclusion_table' => ['list_exclusion','user_exclusion','robot_exclusion'],
 	       'netidmap_table' => ['netid_netidmap','serviceid_netidmap','robot_netidmap'],
 	       'logs_table' => ['id_logs'],
 	       'session_table' => ['id_session'],
@@ -313,6 +328,7 @@ our %primary = ('user_table' => ['email_user'],
 	       'stat_table' => ['id_stat'],
 	       'stat_counter_table' => ['id_counter'],
 	       'notification_table' => ['pk_notification'],
+		   'list_table' => ['name_list','robot_list'],
 	       'oauthconsumer_sessions_table' => ['user_oauthconsumer', 'provider_oauthconsumer'],
 	       'oauthprovider_sessions_table' => ['id_oauthprovider'],
 	       'oauthprovider_nonces_table' => ['id_nonce'],

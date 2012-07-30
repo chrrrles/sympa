@@ -44,7 +44,8 @@ use Sympa::Constants;
 		  60    => {'gettext_id' => "1 hour"},
 		  360   => {'gettext_id' => "6 hours"},
 		  1440  => {'gettext_id' => "1 day"}, 
-		  43200 => {'gettext_id' => "1 week"});
+		  10800 => {'gettext_id' => "1 week"},
+		  43200 => {'gettext_id' => "30 days"});
 
 %visibility_mode = ('noconceal' => {'gettext_id' => "listed in the list review page"},
 		    'conceal' => {'gettext_id' => "concealed"}
@@ -140,7 +141,7 @@ sub load_config {
 
     ## Valid params
     foreach my $key (keys %Conf::params) {
-	if ($Conf::params{$key}{'file'} eq 'wwsympa.conf') {
+	if (defined $Conf::params{$key}{'file'} && $Conf::params{$key}{'file'} eq 'wwsympa.conf') {
 	    $default_conf{$key} = $Conf::params{$key}{'default'};
 	}
     }

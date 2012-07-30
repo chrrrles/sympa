@@ -16,15 +16,15 @@ msgstr ""
 "Project-Id-Version: Sympa-5.4.6, 6.0, 6.1a.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2007-11-13 14:50+0200\n"
-"PO-Revision-Date: 2011-12-15 07:22+0200\n"
-"Last-Translator: shirayuki <shirayuking@gmail.com>\n"
+"PO-Revision-Date: 2012-07-20 04:11+0200\n"
+"Last-Translator: IKEDA Soji <hatuka@nezumi.nu>\n"
 "Language-Team: 日本語\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Language: ja\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Pootle 2.1.2\n"
+"X-Generator: Pootle 2.1.5\n"
 
 #: ../web_tt2/help.tt2:11
 msgid "Subscriber, moderator and owner documentation"
@@ -634,9 +634,10 @@ msgstr ""
 
 # 原文のURLはリンク切れのためリンクを張りません。
 #: ../web_tt2/help_introduction.tt2:117
+#, fuzzy
 msgid ""
-"In most mailing list services, subscribers receive a List subscribers "
-"charter on subscription. Then they are obliged to respect all the rules "
+"In most mailing list services, subscribers receive a 'List subscribers "
+"charter' on subscription. Then they are obliged to respect all the rules "
 "contained in that charter."
 msgstr ""
 "多くのリストサービスでは、読者は読者登録の際に「リストの読者の約款」を受け取"
@@ -645,18 +646,20 @@ msgstr ""
 
 # 仮訳です。
 #: ../web_tt2/help_introduction.tt2:118
+#, fuzzy
 msgid ""
-"If available, list owners and moderators have to conform to the Owner and "
-"moderator charter."
+"If available, list owners and moderators have to conform to the 'Owner and "
+"moderator charter'."
 msgstr ""
 "オーナーやモデレータは、「オーナーやモデレータの約款」があるのならその内容を"
 "知っていなければなりません。"
 
 # See the comment for "Good Practices".
 #: ../web_tt2/help_introduction.tt2:119
+#, fuzzy
 msgid ""
 "The use of mailing lists naturally means respecting the rules of good "
-"practices as regards email (the \"Netiquette\")."
+"practices as regards to email."
 msgstr ""
 "メーリングリストのサービスを利用するということは、電子メールのマナー (「ネチ"
 "ケット」などと言うこともあります) についてのとりきめを尊重するということでも"
@@ -689,7 +692,7 @@ msgid ""
 "Sympa</strong>. This software comes with a <strong>web mailing list "
 "environment</strong>."
 msgstr ""
-"当サイトでは、リストのサービスを<strong>リスト管理ソフトウェア Sympa (シンパ)"
+"当サイトでは、リストのサービスを<strong>リスト管理ソフトウェア Sympa (サンパ)"
 "</strong> によって提供しています。このソフトウェアでは、<strong>リストごとに"
 "ウェブインタフェースが設けてあります</strong>。"
 
@@ -828,12 +831,12 @@ msgstr ""
 "strong> (「リスト名」を自分が読者登録したいリストの名前に置き換え、半角の空白"
 "を空けて、その後に自分自身の名前を書きます) と書く。"
 
-#: ../web_tt2/help_user.tt2:168 ../web_tt2/help_user.tt2:34
+#: ../web_tt2/help_user.tt2:172 ../web_tt2/help_user.tt2:34
 msgid "<strong>Leave the message body blank</strong>."
 msgstr ""
 "<strong>メッセージの本文は空にしておき</strong>、メッセージを送信する。"
 
-#: ../web_tt2/help_user.tt2:169 ../web_tt2/help_user.tt2:35
+#: ../web_tt2/help_user.tt2:173 ../web_tt2/help_user.tt2:35
 msgid ""
 "To save some time, you can also send several commands in a single message. "
 "To do that, follow the instructions available in the <a href=\"#howitworks"
@@ -943,8 +946,8 @@ msgstr ""
 #. (path_cgi)
 #: ../web_tt2/help_arc.tt2:12 ../web_tt2/help_arc.tt2:77
 #: ../web_tt2/help_arc.tt2:93 ../web_tt2/help_shared.tt2:9
-#: ../web_tt2/help_user.tt2:100 ../web_tt2/help_user.tt2:128
-#: ../web_tt2/help_user.tt2:173 ../web_tt2/help_user.tt2:50
+#: ../web_tt2/help_user.tt2:101 ../web_tt2/help_user.tt2:129
+#: ../web_tt2/help_user.tt2:177 ../web_tt2/help_user.tt2:50
 msgid ""
 "Go to the list environment <strong><a href=\"%1/home\">homepage</a></strong> "
 "and <strong>log on</strong>."
@@ -1139,8 +1142,17 @@ msgstr ""
 "リストの<a href=\"#subscribers\">読者一覧を見る</a> (見られるようになっていれ"
 "ば)、"
 
-# # "<a href=\"#unsubscribe\">vous désabonner</a> de la liste."
+#. (path_cgi)
 #: ../web_tt2/help_user.tt2:83
+msgid ""
+"<a href=\"%1/help/suspend\">suspend or resume</a> your subscription of each "
+"list;"
+msgstr ""
+"リストごとに受け取りを<a href=\"%1/help/suspend\">休止したり再開したりする</"
+"a>。"
+
+# # "<a href=\"#unsubscribe\">vous désabonner</a> de la liste."
+#: ../web_tt2/help_user.tt2:84
 msgid "<a href=\"#unsubscribe\">unsubscribe</a> from the list."
 msgstr "リストの<a href=\"#unsubscribe\">登録解除</a>をする。"
 
@@ -1153,7 +1165,7 @@ msgstr "リストの<a href=\"#unsubscribe\">登録解除</a>をする。"
 # # "l'<strong>adresse e-mail</strong> et le <strong>nom</strong> de chacun "
 # # "des abonnés (la mention ou non du nom dépend de la méthode employée lors "
 # # "de l'abonnement)."
-#: ../web_tt2/help_user.tt2:85
+#: ../web_tt2/help_user.tt2:86
 msgid ""
 "The <strong>number of people subscribed</strong> to the list is permanently "
 "displayed in the <strong>left menu</strong>. <strong>To review the list "
@@ -1172,7 +1184,7 @@ msgstr ""
 "<strong>名前</strong>を見ることができます (読者登録のやりかたによっては、名前"
 "が出ないこともあります)。"
 
-#: ../web_tt2/help_user.tt2:86
+#: ../web_tt2/help_user.tt2:87
 msgid ""
 "By default, each page displays 25&#160;subscribers. You can browse through "
 "the pages by using the browsing arrows or display more subscribers per page. "
@@ -1191,7 +1203,7 @@ msgstr ""
 # # "<strong>nomdelaliste-request@%1</strong> (remplacez 'nomdelaliste' par le "
 # # "nom de la liste en question)."
 #. (conf.host)
-#: ../web_tt2/help_user.tt2:87
+#: ../web_tt2/help_user.tt2:88
 msgid ""
 "<strong>The names of the list owners and moderators are displayed in the "
 "left menu</strong>. You should never write directly to a list owner or "
@@ -1209,7 +1221,7 @@ msgstr ""
 # # "<strong>date de dernière mise à jour de vos options d'abonné</strong>, "
 # # "<strong>cliquez sur le lien 'Options d'abonné'</strong> dans le menu de "
 # # "gauche."
-#: ../web_tt2/help_user.tt2:88
+#: ../web_tt2/help_user.tt2:89
 msgid ""
 "To know <strong>when you subscribed to the list</strong> and <strong>when "
 "you last updated your subscriber options</strong>, <strong>click on the "
@@ -1219,14 +1231,14 @@ msgstr ""
 "えたのはいつか</strong>を知りたいときは、左側のメニューの<strong>「読者登録の"
 "設定」のリンクをクリックします</strong>。"
 
-#: ../web_tt2/help_user.tt2:90
+#: ../web_tt2/help_user.tt2:91
 msgid "Managing your preferences"
 msgstr "個人設定"
 
 # # "Pour une <strong>plus grande souplesse</strong> dans votre utilisation "
 # # "des listes, <strong>il vous est possible de définir certaines préférences "
 # # "personnelles</strong>. Ces préférences se décomposent en deux volets :"
-#: ../web_tt2/help_user.tt2:91
+#: ../web_tt2/help_user.tt2:92
 msgid ""
 "To allow you to <strong>use lists more easily</strong>, <strong>you can "
 "define a number of personal preferences</strong>. There are two types of "
@@ -1238,7 +1250,7 @@ msgstr ""
 
 # # "vos <strong>options d'abonné</strong>, qui sont à choisir liste par liste "
 # # ";"
-#: ../web_tt2/help_user.tt2:93
+#: ../web_tt2/help_user.tt2:94
 msgid ""
 "your <strong>subscriber options</strong>, which can vary according to the "
 "list;"
@@ -1246,21 +1258,21 @@ msgstr "<strong>読者登録の設定</strong> (リストごとに異なる)、"
 
 # # "vos <strong>préférences générales</strong>, valables pour tout "
 # # "l'environnement de listes Sympa."
-#: ../web_tt2/help_user.tt2:94
+#: ../web_tt2/help_user.tt2:95
 msgid ""
 "your <strong>general preferences</strong>, which apply to the entire Sympa "
 "mailing list environment."
 msgstr ""
 "<strong>個人設定</strong> (Sympa のメーリングリストウェブサイト全体で共通)。"
 
-#: ../web_tt2/help_user.tt2:97
+#: ../web_tt2/help_user.tt2:98
 msgid "Changing your subscriber options"
 msgstr "読者登録の設定を変える"
 
 # # "<strong>Les options d'abonné sont relatives à chaque liste</strong> et "
 # # "peuvent donc différer d'une liste à l'autre. Pour modifier vos options "
 # # "d'abonné, procédez comme suit :"
-#: ../web_tt2/help_user.tt2:98
+#: ../web_tt2/help_user.tt2:99
 msgid ""
 "<strong>Your subscriber options can vary from a list to another</strong>. To "
 "change them, do as follows:"
@@ -1270,7 +1282,7 @@ msgstr ""
 
 # # "Allez sur la <strong><a href=\"%1/home\">page d'accueil</a></strong> de "
 # # "l'environnement de listes et <strong>authentifiez-vous</strong>."
-#: ../web_tt2/help_user.tt2:101
+#: ../web_tt2/help_user.tt2:102
 msgid ""
 "<strong>Go to the information page of the list</strong> for which you want "
 "to change your subscriber options."
@@ -1280,7 +1292,7 @@ msgstr ""
 
 # # "<strong>Allez sur la page d'information de la liste</strong> pour "
 # # "laquelle vous souhaitez modifier vos options d'abonné."
-#: ../web_tt2/help_user.tt2:102
+#: ../web_tt2/help_user.tt2:103
 msgid ""
 "In the left menu, <strong>click on the 'Subscriber options' link</strong>."
 msgstr ""
@@ -1289,7 +1301,7 @@ msgstr ""
 
 # # "Dans le menu de gauche, <strong>cliquez sur le lien 'Options "
 # # "d'abonné'</strong>."
-#: ../web_tt2/help_user.tt2:103
+#: ../web_tt2/help_user.tt2:104
 msgid ""
 "strong>Choose a message delivery mode</strong> (those options are mutually "
 "exclusive, thus you can not select several of them):"
@@ -1300,7 +1312,7 @@ msgstr ""
 # # "<strong>Choisissez un mode de réception des messages</strong> (ces "
 # # "options sont exclusives, vous ne pouvez donc pas en sélectionner deux "
 # # "différentes) :"
-#: ../web_tt2/help_user.tt2:105
+#: ../web_tt2/help_user.tt2:106
 msgid ""
 "<strong>digest MIME format</strong>: instead of receiving the list messages "
 "in a normal manner, you will get a digest of them on a regular basis. This "
@@ -1322,7 +1334,7 @@ msgstr ""
 # # "title=\"Multipurpose Internet Mail Extension\">MIME</acronym> "
 # # "multipart/digest. La périodicité d'envoi des compilations est définie par "
 # # "le gestionnaire de la liste."
-#: ../web_tt2/help_user.tt2:106
+#: ../web_tt2/help_user.tt2:107
 msgid ""
 "<strong>digest plain text format</strong>: instead of receiving the list "
 "messages in a normal manner, you will get a digest of them on a regular "
@@ -1338,7 +1350,7 @@ msgstr ""
 # # "recevrez périodiquement une compilation, excepté qu'il s'agit cette fois "
 # # "uniquement d'un index des messages. Si vous souhaitez les lire dans leur "
 # # "entier, vous devrez aller consulter les archives de la liste en ligne."
-#: ../web_tt2/help_user.tt2:107
+#: ../web_tt2/help_user.tt2:108
 msgid ""
 "<strong>summary mode</strong>: instead of receiving the list messages in a "
 "normal manner, you will get a list of them on a regular basis. To read the "
@@ -1352,7 +1364,7 @@ msgstr ""
 # # "de ne plus recevoir les messages de la liste tout en y restant abonné. "
 # # "Cela évite par exemple de devoir se désabonner d'une liste pendant une "
 # # "période d'absence puis de se réabonner lorsque l'on revient."
-#: ../web_tt2/help_user.tt2:108
+#: ../web_tt2/help_user.tt2:109
 msgid ""
 "<strong>notice mode</strong>: with this mode, you will receive all the "
 "messages with a blank body: this way you are informed of every message sent "
@@ -1366,7 +1378,7 @@ msgstr ""
 # # "ne recevoir que la version texte (text/plain) des messages postés aux "
 # # "deux formats (texte et <acronym lang=\"en\" xml:lang=\"en\" "
 # # "title=\"HyperText Markup Language\">HTML</acronym>)."
-#: ../web_tt2/help_user.tt2:109
+#: ../web_tt2/help_user.tt2:110
 msgid ""
 "<strong>no mail (useful for vacations)</strong>: this mode makes it possible "
 "not to receive the messages of the list. It is especially useful when you "
@@ -1383,7 +1395,7 @@ msgstr ""
 # # "Markup Language\">HTML</acronym> (text/html) des messages postés aux deux "
 # # "formats (texte et <acronym lang=\"en\" xml:lang=\"en\" title=\"HyperText "
 # # "Markup Language\">HTML</acronym>)."
-#: ../web_tt2/help_user.tt2:110
+#: ../web_tt2/help_user.tt2:111
 msgid ""
 "<strong>text only mode</strong>: this mode allows you to receive only the "
 "text version (text/plain) of messages sent in both formats (plain text and "
@@ -1399,7 +1411,7 @@ msgstr ""
 # # "ne pas recevoir les documents attachés. Ceux-ci sont remplacés dans le "
 # # "message par une <acronym title=\"Uniform Resource Locator\" lang=\"en\" "
 # # "xml:lang=\"en\">URL</acronym> pointant vers l'interface web."
-#: ../web_tt2/help_user.tt2:111
+#: ../web_tt2/help_user.tt2:112
 msgid ""
 "<strong>HTML only mode</strong>: this mode allows you to receive only the "
 "<acronym lang=\"en\" xml:lang=\"en\" title=\"HyperText Markup Language"
@@ -1412,21 +1424,21 @@ msgstr ""
 
 # # "<strong>Pour ne pas recevoir ses propres messages</strong> : ce mode "
 # # "permet de ne pas recevoir une copie de ses propres messages."
-#: ../web_tt2/help_user.tt2:112
+#: ../web_tt2/help_user.tt2:113
 msgid ""
 "<strong>urlize mode</strong>: this mode allows you not to receive attached "
 "documents. However these documents are available in the list archive and you "
 "can access them through a <acronym title=\"Uniform Resource Locator\" lang="
 "\"en\" xml:lang=\"en\">URL</acronym> provided in the message."
 msgstr ""
-"<strong>添付ファイルをURLにして送る</strong> (urlize): このモードでは、添付"
-"ファイルを受け取らなくてすみます。その添付ファイルのかわりにメッセージには "
+"<strong>添付ファイルを URL にする</strong> (urlize): このモードでは、添付ファ"
+"イルを受け取らなくてすみます。その添付ファイルのかわりにメッセージには "
 "<acronym title=\"Uniform Resource Locator\" lang=\"en\" xml:lang=\"en\">URL</"
 "acronym> が入っているので、それを使えば投稿保管庫で読めます。"
 
 # # "<strong>Normal</strong> : ce mode est le mode de réception par défaut ; "
 # # "il permet d'annuler les autres modes d'abonnement."
-#: ../web_tt2/help_user.tt2:113
+#: ../web_tt2/help_user.tt2:114
 msgid ""
 "<strong>you do not receive your own posts</strong>: this mode allows you not "
 "to receive a copy of your own messages."
@@ -1435,7 +1447,7 @@ msgstr ""
 "と、自分が投稿したものの写しを受け取らないようになります。"
 
 # # "<strong>Choisissez une option de visibilité</strong> :"
-#: ../web_tt2/help_user.tt2:114
+#: ../web_tt2/help_user.tt2:115
 msgid ""
 "<strong>standard (direct reception)</strong>: this mode is the default "
 "delivery mode; it cancels any other delivery mode."
@@ -1443,7 +1455,7 @@ msgstr ""
 "<strong>標準 (直接受け取る)</strong> (mail): 最初はこの受け取りモードになって"
 "いて、ほかのモードははたらきません。"
 
-#: ../web_tt2/help_user.tt2:115
+#: ../web_tt2/help_user.tt2:116
 msgid ""
 "<strong>suspended</strong>: this mode allows you to suspend your "
 "subscription to one or more lists for a specified period or not. Unlike "
@@ -1457,14 +1469,14 @@ msgstr ""
 
 # # "<strong>Référencé dans la liste des abonnés</strong> : vous serez visible "
 # # "dans la liste des abonnés (si l'accès à celle-ci est autorisé)."
-#: ../web_tt2/help_user.tt2:117
+#: ../web_tt2/help_user.tt2:118
 msgid "<strong>Choose a visibility option</strong>:"
 msgstr "読者一覧での<strong>見えかた</strong>を決められます。"
 
 # # "<strong>Non visible</strong> : vous ne serez plus visible dans la liste "
 # # "des abonnés. Votre adresse e-mail sera néanmoins visible dans les "
 # # "archives des messages si vous en avez envoyé."
-#: ../web_tt2/help_user.tt2:119
+#: ../web_tt2/help_user.tt2:120
 msgid ""
 "<strong>listed in the list review page</strong>: your name and email address "
 "will be displayed in the members list (if the list owner allowed subscribers "
@@ -1475,7 +1487,7 @@ msgstr ""
 "うにしている場合)。"
 
 # # "<strong>Cliquez sur le bouton 'Mise à jour'</strong>."
-#: ../web_tt2/help_user.tt2:120
+#: ../web_tt2/help_user.tt2:121
 msgid ""
 "<strong>concealed</strong>: your name and email address will not be "
 "displayed in the members list. However you email address will be visible in "
@@ -1486,18 +1498,18 @@ msgstr ""
 "レスが残ります。"
 
 # # "..."
-#: ../web_tt2/help_user.tt2:122
+#: ../web_tt2/help_user.tt2:123
 msgid "<strong>Click on the 'Update' button</strong>."
 msgstr "<strong>「更新」ボタンをクリックします</strong>。"
 
-#: ../web_tt2/help_user.tt2:125
+#: ../web_tt2/help_user.tt2:126
 msgid "Changing your general preferences"
 msgstr "個人設定を変える"
 
 # # "Les préférences générales sont relatives à l'ensemble de vos abonnements "
 # # "et à la manière dont se présente votre interface de listes Sympa. Pour "
 # # "modifier vos préférences, procédez comme suit :"
-#: ../web_tt2/help_user.tt2:126
+#: ../web_tt2/help_user.tt2:127
 msgid ""
 "The general preferences apply to all your subscriptions as well as to the "
 "way your Sympa mailing list web interface displays. To change your "
@@ -1510,7 +1522,7 @@ msgstr ""
 #
 # # "Dans la boîte en haut de la colonne de gauche, <strong>cliquez sur le "
 # # "lien 'Vos préférences'</strong>."
-#: ../web_tt2/help_user.tt2:129
+#: ../web_tt2/help_user.tt2:130
 msgid ""
 "In the form displayed on top of the left column, <strong>click on the 'Your "
 "preferences' link</strong>."
@@ -1518,26 +1530,26 @@ msgstr ""
 "画面の上のほうの<strong>「個人設定」のリンクをクリックします</strong>。"
 
 # # "<strong>Modifiez vos préférences</strong>."
-#: ../web_tt2/help_user.tt2:130
+#: ../web_tt2/help_user.tt2:131
 msgid "<strong>Change your preferences</strong>."
 msgstr "<strong>設定を変えます</strong>。"
 
 # # "<strong>Cliquez sur 'Valider' pour chaque option</strong> que vous "
 # # "modifiez."
-#: ../web_tt2/help_user.tt2:131
+#: ../web_tt2/help_user.tt2:132
 msgid "<strong>Click on 'Submit' for every option</strong> you change."
 msgstr ""
 "<strong>「設定」をクリックする</strong>と、オプションがすべて変わります。"
 
 # # "Vous pouvez modifier :"
-#: ../web_tt2/help_user.tt2:133
+#: ../web_tt2/help_user.tt2:134
 msgid "You can change:"
 msgstr "次のものを変えられます。"
 
 # # "votre <strong>nom</strong> ; si vous vous abonnez à une liste depuis "
 # # "l'interface web du serveur de listes, le champ 'Nom' sera automatiquement "
 # # "renseigné dans la liste des abonnés ;"
-#: ../web_tt2/help_user.tt2:135
+#: ../web_tt2/help_user.tt2:136
 msgid ""
 "your <strong>name</strong>; if you subscribe to a list from the mailing list "
 "server web interface, the 'Name' field will automatically be filled in in "
@@ -1551,7 +1563,7 @@ msgstr ""
 # # "langue est disponible sur toutes les pages de l'interface de listes ; "
 # # "votre choix sera conservé même si vous modifiez la langue de l'interface "
 # # "sans passer par la page 'Préférences' ;"
-#: ../web_tt2/help_user.tt2:136
+#: ../web_tt2/help_user.tt2:137
 msgid ""
 "the <strong>language in which the Sympa web interface is displayed</strong> "
 "(you can change language on every page of the web interface; your choice "
@@ -1567,7 +1579,7 @@ msgstr ""
 # # "expire lorsque vous fermez votre navigateur ; si vous utilisez les listes "
 # # "de manière intensive, nous vous conseillons de choisir une durée plus "
 # # "longue ;"
-#: ../web_tt2/help_user.tt2:137
+#: ../web_tt2/help_user.tt2:138
 msgid ""
 "the <strong>lifetime of the cookie placed on your computer by Sympa</strong> "
 "('Connection expiration period'). By default, the session expires when you "
@@ -1583,7 +1595,7 @@ msgstr ""
 # # "souvent temporairement, sur votre disque dur, pour vous identifier sur "
 # # "son service. Il contient quelques informations de référence vous "
 # # "concernant : nom, adresse e-mail, date de dernière connexion, etc."
-#: ../web_tt2/help_user.tt2:138
+#: ../web_tt2/help_user.tt2:139
 msgid ""
 "A cookie is a small file a web server stores on your hard disk, most "
 "generally temporarily, in order to identify you as a user of its service. It "
@@ -1598,7 +1610,7 @@ msgstr ""
 # # "l'<strong>adresse e-mail avec laquelle vous êtes abonné</strong> aux "
 # # "listes (si vous êtes abonné aux listes avec plusieurs adresses, l'adresse "
 # # "remplacée sera celle avec laquelle vous êtes authentifié) ;"
-#: ../web_tt2/help_user.tt2:139
+#: ../web_tt2/help_user.tt2:140
 msgid ""
 "the <strong>email address with which you subscribed</strong> to the lists "
 "(if you subscribed with several email addresses, the address to be replaced "
@@ -1611,7 +1623,7 @@ msgstr ""
 # # "vous ne souhaitez changer d'adresse e-mail que pour une seule liste, il "
 # # "vaut mieux vous désabonner de cette liste et vous y réabonner avec "
 # # "l'adresse idoine."
-#: ../web_tt2/help_user.tt2:140
+#: ../web_tt2/help_user.tt2:141
 msgid ""
 "Be careful: this will change your subscriptions to all your lists. If you "
 "want to change address for a single mailing list, you had better unsubscribe "
@@ -1622,13 +1634,13 @@ msgstr ""
 "子メールアドレスで読者登録しなおすとよいでしょう。"
 
 # # "votre <strong>mot de passe de listes</strong>."
-#: ../web_tt2/help_user.tt2:141
+#: ../web_tt2/help_user.tt2:142
 msgid "your <strong>list password</strong>."
 msgstr "自分の<strong>メーリングリストのパスワード</strong>。"
 
 # # "La section '<strong>Vos autres adresses e-mail</strong>' équivaut à un "
 # # "changement d'adresse e-mail."
-#: ../web_tt2/help_user.tt2:143
+#: ../web_tt2/help_user.tt2:144
 msgid ""
 "The '<strong>Your other email addresses</strong>' section acts like an email "
 "address change."
@@ -1636,13 +1648,13 @@ msgstr ""
 "「<strong>他の電子メールアドレス</strong>」の項目で、アドレス変更と同じような"
 "ことができます。"
 
-#: ../web_tt2/help_user.tt2:145
+#: ../web_tt2/help_user.tt2:146
 msgid "Searching for a mailing list"
 msgstr "リストを探す"
 
 # # "Vous pouvez avoir besoin de rechercher une liste. Pour cela, vous avez "
 # # "trois possibilités :"
-#: ../web_tt2/help_user.tt2:146
+#: ../web_tt2/help_user.tt2:147
 msgid ""
 "You may need to search for a mailing list. To do that, you have three "
 "options:"
@@ -1653,7 +1665,7 @@ msgstr ""
 # # "<strong>parcourir les différentes rubriques</strong> listées en <a "
 # # "href=\"%1/home\">page d'accueil du serveur de listes</a> ;"
 #. (path_cgi)
-#: ../web_tt2/help_user.tt2:148
+#: ../web_tt2/help_user.tt2:149
 msgid ""
 "<strong>browse the different sections</strong> displayed on the <a href=\"%1/"
 "home\">list environment homepage</a>;"
@@ -1665,7 +1677,7 @@ msgstr ""
 # # "chaîne recherchée renverra tous les résultats trouvés dans les noms et "
 # # "les descriptions des listes (les descriptions des listes se résument "
 # # "généralement à une courte phrase) ;"
-#: ../web_tt2/help_user.tt2:149
+#: ../web_tt2/help_user.tt2:150
 msgid ""
 "search for a list via the <strong>search box</strong>: the searched string "
 "will return all the lists whose name or description matches your search "
@@ -1678,7 +1690,7 @@ msgstr ""
 # # "cliquer sur l'onglet '<a href=\"%1/lists\">Liste des listes</a>' en haut "
 # # "de page pour <strong>afficher l'intégralité des listes</strong>."
 #. (path_cgi)
-#: ../web_tt2/help_user.tt2:150
+#: ../web_tt2/help_user.tt2:151
 msgid ""
 "click on the '<a href=\"%1/lists\">List of lists</a>' tab on top of page to "
 "<strong>display all available lists</strong>."
@@ -1692,7 +1704,7 @@ msgstr ""
 # # "accès aux mêmes listes. Vous pouvez malgré tout vous abonner aux listes "
 # # "qui vous sont cachées si vous connaissez leur nom. Pour cela, <a "
 # # "href=\"#abbo\">utilisez votre client de messagerie</a>."
-#: ../web_tt2/help_user.tt2:152
+#: ../web_tt2/help_user.tt2:153
 msgid ""
 "According to the domain to which your email address belongs (example: <em "
 "class=\"example\">cru.fr</em>, <em class=\"example\">fai.com</em>, etc.) and "
@@ -1706,12 +1718,12 @@ msgstr ""
 "すが、表示されないリストでもリスト名を知っていれば読者登録できます。<a href="
 "\"#subscribe\">電子メールクライアントを使う</a>やりかたを見てください。"
 
-#: ../web_tt2/help_user.tt2:154
+#: ../web_tt2/help_user.tt2:155
 msgid "Reading a list archive online"
 msgstr "ウェブで投稿保管庫の投稿を読む"
 
 #. (path_cgi)
-#: ../web_tt2/help_user.tt2:155
+#: ../web_tt2/help_user.tt2:156
 msgid ""
 "Please refer to the <a href=\"%1/help/arc\"><strong>archive documentation</"
 "strong></a>."
@@ -1719,12 +1731,12 @@ msgstr ""
 "<a href=\"%1/help/arc\"><strong>アーカイブ ドキュメント</strong></a>を見てく"
 "ださい。"
 
-#: ../web_tt2/help_sendmsg.tt2:3 ../web_tt2/help_user.tt2:157
+#: ../web_tt2/help_sendmsg.tt2:3 ../web_tt2/help_user.tt2:158
 msgid "Sending a message"
 msgstr "メッセージを送る"
 
 #. (path_cgi)
-#: ../web_tt2/help_user.tt2:158
+#: ../web_tt2/help_user.tt2:159
 msgid ""
 "Please refer to the <a href=\"%1/help/sendmsg\"><strong>documentation about "
 "sending messages</strong></a>."
@@ -1732,12 +1744,12 @@ msgstr ""
 "<a href=\"%1/help/sendmsg\"><strong>メッセージの送りかたの説明</strong></a>を"
 "見てください。"
 
-#: ../web_tt2/help_shared.tt2:3 ../web_tt2/help_user.tt2:160
+#: ../web_tt2/help_shared.tt2:3 ../web_tt2/help_user.tt2:161
 msgid "Using the shared document web space"
 msgstr "共有文書置き場を使う"
 
 #. (path_cgi)
-#: ../web_tt2/help_user.tt2:161
+#: ../web_tt2/help_user.tt2:162
 msgid ""
 "Please refer to the <a href=\"%1/help/shared\"><strong>shared document web "
 "space documentation</strong></a>."
@@ -1745,16 +1757,29 @@ msgstr ""
 "<a href=\"%1/help/shared\"><strong>共有文書置き場の説明</strong></a>を見てく"
 "ださい。"
 
-#: ../web_tt2/help_user.tt2:163
+#: ../web_tt2/help_user.tt2:164
+msgid "Suspending or resuming your subscription of each list"
+msgstr "リストごとに受け取りを休止したり再開したりする"
+
+#. (path_cgi)
+#: ../web_tt2/help_user.tt2:165
+msgid ""
+"Please refer to the <a href=\"%1/help/suspend\"><strong>subscription "
+"management documentation</strong></a>."
+msgstr ""
+"<a href=\"%1/help/suspend\"><strong>受け取り休止/再開の説明</strong></a>を見"
+"てください。"
+
+#: ../web_tt2/help_user.tt2:167
 msgid "Unsubscribing from lists"
 msgstr "リストの登録解除をする"
 
-#: ../web_tt2/help_user.tt2:164
+#: ../web_tt2/help_user.tt2:168
 msgid "To unsubscribe from a list, do as follows:"
 msgstr "リストの登録解除をするには、次のようにしてください——"
 
 #. (conf.email,conf.host)
-#: ../web_tt2/help_user.tt2:166
+#: ../web_tt2/help_user.tt2:170
 msgid ""
 "From the address with which you subscribed to the list, send a "
 "<strong>message to %1@%2</strong>."
@@ -1762,7 +1787,7 @@ msgstr ""
 "リストに読者登録していたアドレスを解除するには、<strong>%1@%2 にメッセージを"
 "</strong>送ります。"
 
-#: ../web_tt2/help_user.tt2:167
+#: ../web_tt2/help_user.tt2:171
 msgid ""
 "In the subject line of your email, type in: <strong>unsubscribe "
 "nameofthelist</strong> (replace 'nameofthelist' by the name of the list you "
@@ -1771,7 +1796,7 @@ msgstr ""
 "メッセージの表題 (Subject) に、次のように書きます: <strong>unsubscribe リスト"
 "名</strong> (「リスト名」を、登録解除したいリストの名前で置き換えます)。"
 
-#: ../web_tt2/help_user.tt2:171
+#: ../web_tt2/help_user.tt2:175
 msgid ""
 "You can also unsubscribe through the mailing list web interface (you will "
 "need to repeat the operation for each list you want to unsubscribe from):"
@@ -1779,13 +1804,13 @@ msgstr ""
 "リストのウェブインタフェースで登録解除することもできます (登録解除したいリス"
 "トごとに同じ手順を繰り返されければいけません) ——"
 
-#: ../web_tt2/help_user.tt2:174
+#: ../web_tt2/help_user.tt2:178
 msgid ""
 "<strong>Go to the information page of the list</strong> you want to "
 "unsubscribe from."
 msgstr "登録解除したい<strong>リストの案内ページへ行きます</strong>。"
 
-#: ../web_tt2/help_user.tt2:175
+#: ../web_tt2/help_user.tt2:179
 msgid "<strong>In the left menu, click on the 'Unsubscribe' link</strong>."
 msgstr ""
 "<strong>左側のメニューで、「登録解除」のリンクをクリックします</strong>。"
@@ -3348,10 +3373,9 @@ msgstr ""
 "ジ設定</a>で行います。"
 
 #: ../web_tt2/help_admin.tt2:257
+#, fuzzy
 msgid ""
-"When available, the <a target=\"_blank\" title=\"Example of charter aimed at "
-"owners and moderators (French)\" href=\"http://listes.cru.fr/cnil/charte."
-"proprio.html\">Owner and moderator charter</a> provides list owners and "
+"When available, the 'Owner and moderator charter' provides list owners and "
 "moderators with all the necessary information to carry out their roles. This "
 "Charter involves all the rights and responsibilities of owners and "
 "moderators."
@@ -4456,57 +4480,47 @@ msgstr ""
 
 #: ../web_tt2/help_editlist.tt2:101
 msgid ""
-"This parameter will be interpreted only if the user_data_source value is set "
-"to include. The file should contain one e-mail address per line (lines "
-"beginning with a \"#\" are ignored)."
+"Include subscribers from this file.  The file should contain one e-mail "
+"address per line (lines beginning with a \"#\" are ignored)."
 msgstr ""
-"このパラメータは、user_data_source の値が取り込み (include) に設定してある場"
-"合にのみ使います。ファイル形式は1行につきひとつの電子メールアドレスです (行頭"
-"が「#」のものは無視されます)。"
+"ここで設定したファイルから読者を取り込みます。ファイル形式は1行につきひとつの"
+"電子メールアドレスです (行頭が「#」のものは無視されます)。"
 
 #: ../web_tt2/help_editlist.tt2:103
 msgid ""
 "This paragraph defines parameters for a two-level query returning a list of "
 "subscribers. Usually the first-level query returns a list of DNs and the "
-"second-level queries convert the DNs into e-mail addresses. This paragraph "
-"is used only if user_data_source is set to include. This feature requires "
-"the Net::LDAP (perlldap) PERL module."
+"second-level queries convert the DNs into e-mail addresses. This feature "
+"requires the Net::LDAP (perlldap) PERL module."
 msgstr ""
 "ここでは、読者一覧を返す 二段階クエリのパラメータを設定します。通常、第一段階"
-"のクエリでは識別名 (DN) の一覧を取得し、第二段階では識別名を電子メールアドレ"
-"スに変換します。ここでの設定は、パラメータ user_data_source が include に設定"
-"してあるときにだけ使います。この機能には Net::LDAP (perlldap) PERL モジュール"
-"が必要です。"
+"のクエリで識別名 (DN) の一覧を取得し、第二段階で識別名を電子メールアドレスに"
+"変換します。この機能には Net::LDAP (perlldap) Perl モジュールが必要です。"
 
 #: ../web_tt2/help_editlist.tt2:105
 msgid ""
 "This paragraph defines parameters for a query returning a list of "
-"subscribers. This paragraph is used only if user_data_source is set to "
-"include. This feature requires the Net::LDAP (perlldap) PERL module."
+"subscribers. This feature requires the Net::LDAP (perlldap) PERL module."
 msgstr ""
-"ここでは、読者一覧を返すクエリのパラメータを設定します。ここでの設定は、パラ"
-"メータ user_data_source が include に設定してあるときにだけ使います。この機能"
-"には Net::LDAP (perlldap) PERL モジュールが必要です。"
+"ここでは、読者一覧を返すクエリのパラメータを設定します。この機能には Net::"
+"LDAP (perlldap) Perl モジュールが必要です。"
 
 #: ../web_tt2/help_editlist.tt2:107
 msgid ""
-"This parameter will be interpreted only if user_data_source is set to "
-"include. All subscribers of list listname become subscribers of the current "
-"list. You may include as many lists as required, using one include_list "
-"listname line for each included list. Any list at all may be included; the "
-"user_data_source definition of the included list is irrelevant, and you may "
-"therefore include lists which are also defined by the inclusion of other "
-"lists. Be careful, however, not to include list A in list B and then list B "
-"in list A, since this will give rise to an infinite loop."
+"Include subscribers from other list. All subscribers of list listname become "
+"subscribers of the current list. You may include as many lists as required, "
+"using one include_list listname line for each included list. Any list at all "
+"may be included; you may therefore include lists which are also defined by "
+"the inclusion of other lists. Be careful, however, not to include list A in "
+"list B and then list B in list A, since this will give rise to an infinite "
+"loop."
 msgstr ""
-"このパラメータは user_data_source に include が設定してあるときにだけ使いま"
-"す。include_list に設定してある名前のリストの読者はすべて、このリストの読者に"
-"なります。取り込みたいリストについて一行ずつ include_list 行を書くことで、い"
-"くつでも必要なだけリストを取り込むことができます。たとえ取り込み先のリストの "
-"user_data_source 設定が不適切でも、さらにはほかのリストを取り込んでいるリスト"
-"であっても、取り込むことができます。なお、A メーリングリストを B メーリングリ"
-"ストに取り込み、さらに A メーリングリストに B メーリングリストを取り込むと、"
-"無限ループを引き起こします。ご注意ください。"
+"他のリストから読者を取り込みます。設定したリストの読者はすべて、このリストの"
+"読者になります。取り込みたいリストについて一行ずつ include_list 行を書くこと"
+"で、いくつでも必要なだけリストを取り込むことができます。ほかのリストを取り込"
+"んでいるリストであっても、取り込むことができます。なお、A メーリングリストを "
+"B メーリングリストに取り込み、さらに A メーリングリストに B メーリングリスト"
+"を取り込むと、無限ループを引き起こします。ご注意ください。"
 
 #: ../web_tt2/help_editlist.tt2:109
 msgid ""
@@ -4535,12 +4549,9 @@ msgstr ""
 
 #: ../web_tt2/help_editlist.tt2:112
 msgid ""
-"This parameter will be interpreted only if the user_data_source value is set "
-"to include, and is used to begin a paragraph defining the SQL query "
+"This parameter is used to begin a paragraph defining the SQL query "
 "parameters. "
-msgstr ""
-"このパラメータは user_data_source の値が取り込み (include) に設定してあるとき"
-"にのみ使います。ここから SQL クエリを決める設定が始まります。 "
+msgstr "ここから、SQL クエリを決める設定が始まります。"
 
 #: ../web_tt2/help_editlist.tt2:114
 msgid ""
@@ -4746,18 +4757,6 @@ msgstr ""
 
 #: ../web_tt2/help_editlist.tt2:165
 msgid ""
-"Sympa allows the list owner to choose how Sympa loads list member data. "
-"Subscriber information can be stored in a text file or relational database, "
-"or included from various external sources (list, flat file, result of or "
-"query)."
-msgstr ""
-"Sympaでは、Sympaがどのような方法でリストメンバーのデータを取得するかをリスト"
-"のオーナーが選択できます。読者情報は、テキストファイルやリレーショナルデータ"
-"ベースに格納することができます。また、様々な外部ソース (他のリスト、ファイ"
-"ル、クエリの結果) から取り込むことも可能です。"
-
-#: ../web_tt2/help_editlist.tt2:167
-msgid ""
 "This parameter indicates whether the list should feature in the output "
 "generated in response to a LISTS command or should be shown in the list "
 "overview of the web-interface."
@@ -4765,11 +4764,11 @@ msgstr ""
 "このパラメータは、LISTS コマンドでの一覧にリストを出すか、また ウェブインタ"
 "フェースのリスト一覧ににリストを表示するかを設定します。"
 
-#: ../web_tt2/help_editlist.tt2:169
+#: ../web_tt2/help_editlist.tt2:167
 msgid "Defines who can access the web archive for the list."
 msgstr "リストの投稿保管庫の中を見られる人を決めます。"
 
-#: ../web_tt2/help_editlist.tt2:171
+#: ../web_tt2/help_editlist.tt2:169
 msgid ""
 "Idem spam_protection is provided but it can be used only for web archives. "
 "Access requires a cookie, and users must submit a small form in order to "
@@ -4782,7 +4781,7 @@ msgstr ""
 "なります。これで、Google をはじめあらゆる検索エンジン情報収集ソフトウェアから"
 "守れます。"
 
-#: ../web_tt2/help_editlist.tt2:173
+#: ../web_tt2/help_editlist.tt2:171
 msgid ""
 "If set to unique, the welcome message is sent using a unique return path in "
 "order to remove the subscriber immediately in the case of a bounce."
@@ -4790,7 +4789,7 @@ msgstr ""
 "ここを unique に設定した場合、歓迎メッセージの送信元を読者ごとに変えて送信し"
 "ます。そして、配送エラーがおきた場合には読者を削除します。"
 
-#: ../web_tt2/help_editlist.tt2:175
+#: ../web_tt2/help_editlist.tt2:173
 msgid ""
 "This paragraph defines a topic used to tag a message of a list, named by "
 "msg_topic.name (\"other\" is a reserved word), its title is msg_topic.title. "
@@ -4803,7 +4802,7 @@ msgstr ""
 "が、あればこれを使って自動的にトピックの印をつけます。ここにはキーワードをい"
 "れます (複数のキーワードを並べるときは半角の「,」で区切ります)。"
 
-#: ../web_tt2/help_editlist.tt2:177
+#: ../web_tt2/help_editlist.tt2:175
 msgid ""
 "This parameter indicates which part of the message is used to perform "
 "automatic tagging."
@@ -4811,14 +4810,14 @@ msgstr ""
 "このパラメータで、メッセージのどの部分を使って自動的にトピックの印をつけるか"
 "を指定します。"
 
-#: ../web_tt2/help_editlist.tt2:179
+#: ../web_tt2/help_editlist.tt2:177
 msgid ""
 "This parameter indicates if the tagging is optional or required for a list."
 msgstr ""
 "このパラメータで、このリストではトピックの印が必須か、なくてもよいかを指定し"
 "ます。"
 
-#: ../web_tt2/help_editlist.tt2:181
+#: ../web_tt2/help_editlist.tt2:179
 msgid "No Comment"
 msgstr "まだ説明がありません"
 
@@ -5081,8 +5080,8 @@ msgstr ""
 "<strong>メールボックスになんらかの制限がある</strong>。添付ファイルのあるメッ"
 "セージを受け付けなかったり、ある種の添付ファイルを禁止していたり、受け取れる"
 "メッセージの大きさに制限があったりする。こういう場合は、<a href=\"%1/help/"
-"user#deliverymode\">添付ファイルを URL にして送る</a>モードに変えることをお勧"
-"めします。"
+"user#deliverymode\">添付ファイルを URL にする</a>モードに変えることをお勧めし"
+"ます。"
 
 #: ../web_tt2/help_faquser.tt2:45
 msgid "You can not send messages to a list"
@@ -5352,28 +5351,17 @@ msgstr "イントラネット内のみ (intranet)。"
 msgid "no conceal (noconceal);"
 msgstr "公開 (noconceal)。"
 
-# # "visible des abonnés (private) ;"
-#: ../web_tt2/help_listconfig.tt2:23
-msgid "subscribers (private);"
-msgstr "読者 (private)。"
-
 # # "liste cachée même aux abonnés (secret) ;"
-#: ../web_tt2/help_listconfig.tt2:24
+#: ../web_tt2/help_listconfig.tt2:23
 msgid "conceal even for subscribers (secret);"
 msgstr "読者にも見えない (secret)。"
-
-# 存在しないシナリオ名。
-# # "abonné à nos grosses listes techniques (semipublic)."
-#: ../web_tt2/help_listconfig.tt2:25
-msgid "semipublic (semipublic)."
-msgstr "<!-- semipublic -->"
 
 # # "Si vous souhaitez restreindre la visibilité de la liste suivant d'autres "
 # # "critères, faites-en la demande aux listmasters : il est probable qu'ils "
 # # "puissent créer une nouvelle option correspondant à vos besoins (exemple : "
 # # "liste visible uniquement par les membres d'un groupe d'utilisateurs, d'un "
 # # "domaine internet, etc.)."
-#: ../web_tt2/help_listconfig.tt2:27
+#: ../web_tt2/help_listconfig.tt2:25
 msgid ""
 "If you want to limit the list visibility according to other criteria, you "
 "should ask the listmasters: they may be able to create a new option matching "
@@ -5388,7 +5376,7 @@ msgstr ""
 # # "Dans les zones 'Propriétaires' et 'Modérateurs', vous pouvez "
 # # "<strong>ajouter des propriétaires et des modérateurs</strong> à la liste "
 # # "ou <strong>modifier leurs informations</strong> :"
-#: ../web_tt2/help_listconfig.tt2:28
+#: ../web_tt2/help_listconfig.tt2:26
 msgid ""
 "In the 'Owners' and 'Moderators' areas, you can <strong>add owners and "
 "moderators</strong> to the list or <strong>change their personal "
@@ -5400,7 +5388,7 @@ msgstr ""
 
 # # "Pour chaque propriétaire/modérateur, vous devez obligatoirement saisir "
 # # "une <strong>adresse e-mail</strong> et un <strong>nom</strong>."
-#: ../web_tt2/help_listconfig.tt2:30
+#: ../web_tt2/help_listconfig.tt2:28
 msgid ""
 "For each owner/moderator, you have to indicate an <strong>email address</"
 "strong> and a <strong>name</strong>."
@@ -5413,7 +5401,7 @@ msgstr ""
 # # "fonction, etc.) ; ces informations ne seront visibles que par les "
 # # "listmasters et les propriétaires de listes possédant un profil de type "
 # # "'Privileged'."
-#: ../web_tt2/help_listconfig.tt2:31
+#: ../web_tt2/help_listconfig.tt2:29
 msgid ""
 "You can also add the information of your choice in the '<strong>Private "
 "information</strong>' input box (phone number, function, etc.); this "
@@ -5426,7 +5414,7 @@ msgstr ""
 
 # # "Vous pouvez modifier le <strong>mode de réception</strong> des messages "
 # # "(les seules options disponibles sur cette page sont 'mail' et 'nomail')."
-#: ../web_tt2/help_listconfig.tt2:32
+#: ../web_tt2/help_listconfig.tt2:30
 msgid ""
 "You can change the <strong>message delivery mode</strong> (the only options "
 "available on this page are 'mail' and 'nomail')."
@@ -5437,7 +5425,7 @@ msgstr ""
 # # "Le paramètre 'Profil' n'est pas modifiable : le <strong>profil "
 # # "'Privileged'</strong> est réservé au créateur de la liste (les autres "
 # # "propriétaires ont un profil du type 'Normal')."
-#: ../web_tt2/help_listconfig.tt2:33
+#: ../web_tt2/help_listconfig.tt2:31
 msgid ""
 "The 'Profile' parameter can not be changed: the <strong>'Privileged' "
 "profile</strong> is reserved to the list creator (other owners have a "
@@ -5451,7 +5439,7 @@ msgstr ""
 # # "n'implique pas d'être abonné automatiquement à cette liste. Les "
 # # "propriétaires et modérateurs doivent donc faire la démarche de s'abonner "
 # # "à la liste."
-#: ../web_tt2/help_listconfig.tt2:35
+#: ../web_tt2/help_listconfig.tt2:33
 msgid ""
 "Be careful: becoming owner or moderator of a list does not mean that you are "
 "automatically subscribed to that list. Thus owners and moderators have to "
@@ -5464,7 +5452,7 @@ msgstr ""
 # # "Pour <strong>supprimer des propriétaires/modérateurs</strong>, effacez le "
 # # "contenu des champs de texte relatifs au propriétaire/modérateur que vous "
 # # "souhaitez supprimer et cliquez sur le bouton 'Mise à jour'."
-#: ../web_tt2/help_listconfig.tt2:36
+#: ../web_tt2/help_listconfig.tt2:34
 msgid ""
 "To <strong>delete owners/moderators</strong>, clear the content of the input "
 "boxes relating to the person you want to delete and click on the 'Update' "
@@ -5477,7 +5465,7 @@ msgstr ""
 # # "ainsi que sa <strong>langue</strong>. Si vous changez la langue de la "
 # # "liste, tous les messages prédéfinis seront envoyés dans la langue choisie "
 # # "(attention : sous réserve que la traduction existe !)."
-#: ../web_tt2/help_listconfig.tt2:37
+#: ../web_tt2/help_listconfig.tt2:35
 msgid ""
 "You can also change the <strong>list topic</strong> as well as its "
 "<strong>language</strong>. If you change the list language, all predefined "
@@ -5491,7 +5479,7 @@ msgstr ""
 
 # # "Vous ne pouvez pas modifier le <strong>domaine internet</strong> de la "
 # # "liste : seul les listmasters peuvent modifier ce paramètre."
-#: ../web_tt2/help_listconfig.tt2:38
+#: ../web_tt2/help_listconfig.tt2:36
 msgid ""
 "You can not change the <strong>Internet domain</strong> of the list: only "
 "the listmasters can change this parameter."
@@ -5501,8 +5489,8 @@ msgstr ""
 
 # # "<strong>ATTENTION : n'oubliez pas de cliquer sur 'Mise à jour'</strong> "
 # # "au bas de la page pour enregistrer tous vos changements."
-#: ../web_tt2/help_listconfig.tt2:127 ../web_tt2/help_listconfig.tt2:178
-#: ../web_tt2/help_listconfig.tt2:39 ../web_tt2/help_listconfig.tt2:55
+#: ../web_tt2/help_listconfig.tt2:125 ../web_tt2/help_listconfig.tt2:176
+#: ../web_tt2/help_listconfig.tt2:37 ../web_tt2/help_listconfig.tt2:53
 msgid ""
 "<strong>BE CAREFUL: do not forget to click on the 'Update' button</strong> "
 "on bottom of page to save all your changes."
@@ -5510,13 +5498,13 @@ msgstr ""
 "<strong>注意: 「更新」ボタンをクリックすることを忘れずに</strong>。ページの下"
 "部にあり、変更をすべて反映します。"
 
-#: ../web_tt2/help_listconfig.tt2:41
+#: ../web_tt2/help_listconfig.tt2:39
 msgid "Sending/receiving"
 msgstr "送受信"
 
 # # "À partir de cette page, vous pouvez tout d'abord <strong>décider qui peut "
 # # "envoyer des messages sur la liste</strong>."
-#: ../web_tt2/help_listconfig.tt2:42
+#: ../web_tt2/help_listconfig.tt2:40
 msgid ""
 "From this page, you can <strong>decide who will be allowed to post messages "
 "on the list</strong>."
@@ -5531,7 +5519,7 @@ msgstr ""
 # # "compilations soient envoyées. Choisissez ensuite un <strong>horaire "
 # # "d'envoi</strong> des compilations (évitez de choisir un horaire compris "
 # # "entre 23h et minuit)."
-#: ../web_tt2/help_listconfig.tt2:43
+#: ../web_tt2/help_listconfig.tt2:41
 msgid ""
 "In the '<strong>Digest frequency</strong>' area, you can define how "
 "frequently compiled messages are sent (Digest and Summary delivery modes): "
@@ -5547,7 +5535,7 @@ msgstr ""
 # # "Dans la liste '<strong>Options d'abonné disponibles</strong>', "
 # # "sélectionnez toutes les options d'abonné que vous souhaitez offrir à vos "
 # # "abonnés. Par défaut, toutes les options sont sélectionnées."
-#: ../web_tt2/help_listconfig.tt2:44
+#: ../web_tt2/help_listconfig.tt2:42
 msgid ""
 "In the '<strong>Available subscription options</strong>' list, select all "
 "the subscriber options you want to offer to your subscribers. By default, "
@@ -5560,7 +5548,7 @@ msgstr ""
 # # "La zone '<strong>Adresse de réponse</strong>' vous permet de définir les "
 # # "destinataires par défaut lors d'une réponse à un message envoyé sur la "
 # # "liste :"
-#: ../web_tt2/help_listconfig.tt2:45
+#: ../web_tt2/help_listconfig.tt2:43
 msgid ""
 "The '<strong>Reply address</strong>' area allows you to define the default "
 "recipients of any reply to a message sent to the list:"
@@ -5571,7 +5559,7 @@ msgstr ""
 # # "Lorsque la valeur choisie est '<strong>All</strong>', la réponse est "
 # # "envoyée à l'<strong>expéditeur du message</strong> ET à la "
 # # "<strong>liste</strong>."
-#: ../web_tt2/help_listconfig.tt2:47
+#: ../web_tt2/help_listconfig.tt2:45
 msgid ""
 "With the '<strong>All</strong>' value, the reply is sent to both the "
 "<strong>message sender</strong> AND the <strong>list</strong>."
@@ -5581,7 +5569,7 @@ msgstr ""
 
 # # "Lorsque la valeur choisie est '<strong>List</strong>', la réponse est "
 # # "envoyée à la <strong>liste</strong>."
-#: ../web_tt2/help_listconfig.tt2:48
+#: ../web_tt2/help_listconfig.tt2:46
 msgid ""
 "With the '<strong>List</strong>' value, the reply is sent to the "
 "<strong>list</strong>."
@@ -5593,7 +5581,7 @@ msgstr ""
 # # "montre que les abonnés ne vérifient pas toujours l'adresse à laquelle ils "
 # # "expédient leur réponse. Ils risquent donc d'envoyer des messages privés à "
 # # "l'ensemble des abonnés en pensant répondre uniquement à une personne..."
-#: ../web_tt2/help_listconfig.tt2:49
+#: ../web_tt2/help_listconfig.tt2:47
 msgid ""
 "Be careful: use this option carefully! Experience shows that subscribers do "
 "not always check the address to which they send their reply. Thus, they "
@@ -5609,7 +5597,7 @@ msgstr ""
 # # "est envoyée à une <strong>adresse prédéfinie</strong>. Si vous choisissez "
 # # "cette option, vous devez <strong>saisir une adresse e-mail dans le champ "
 # # "'Autre adresse email'</strong>."
-#: ../web_tt2/help_listconfig.tt2:50
+#: ../web_tt2/help_listconfig.tt2:48
 msgid ""
 "With the '<strong>Other_email</strong>' value, the reply is sent to a "
 "<strong>predefined address</strong>. If you choose this option, you will "
@@ -5623,7 +5611,7 @@ msgstr ""
 # # "Lorsque la valeur choisie est '<strong>Sender</strong>', la réponse est "
 # # "envoyée à l'<strong>expéditeur du message</strong>. C'est la valeur que "
 # # "nous vous conseillons de choisir."
-#: ../web_tt2/help_listconfig.tt2:51
+#: ../web_tt2/help_listconfig.tt2:49
 msgid ""
 "With the '<strong>Sender</strong>' value, the reply is sent to the "
 "<strong>message sender</strong>. This is the option you should probably "
@@ -5636,7 +5624,7 @@ msgstr ""
 # # "permet de choisir le traitement du champ d'en-tête SMTP 'Reply-To' dans "
 # # "les messages entrants. L'option '<strong>Respect</strong>' préserve ce "
 # # "champ tandis que l'option '<strong>Forced</strong>' permet de l'écraser."
-#: ../web_tt2/help_listconfig.tt2:53
+#: ../web_tt2/help_listconfig.tt2:51
 msgid ""
 "The '<strong>Respect of existing header field</strong>' drop-down list "
 "allows you to choose how the 'Reply-To' SMTP header field will be processed "
@@ -5656,7 +5644,7 @@ msgstr ""
 # # "<strong>nom de la liste entouré de crochets</strong> (les crochets sont "
 # # "rajoutés automatiquement par le système, il est inutile de les indiquer "
 # # "vous-même)."
-#: ../web_tt2/help_listconfig.tt2:54
+#: ../web_tt2/help_listconfig.tt2:52
 msgid ""
 "Last, the '<strong>Subject tagging</strong>' option lets you choose the "
 "<strong>text included before the subject of all messages</strong> sent to "
@@ -5673,18 +5661,18 @@ msgstr ""
 "<strong>リスト名を角括弧で囲んだもの</strong>になっています (角括弧はシステム"
 "が自動的に付け加えますから、自分で入れる必要はありません)。"
 
-#: ../web_tt2/help_listconfig.tt2:57
+#: ../web_tt2/help_listconfig.tt2:55
 msgid "Privileges"
 msgstr "権限"
 
 # # "À partir de cette page, vous pouvez décider :"
-#: ../web_tt2/help_listconfig.tt2:58
+#: ../web_tt2/help_listconfig.tt2:56
 msgid "From this page, you can decide:"
 msgstr "このページでは、次のことを決められます。"
 
 # # "<strong>qui a accès aux informations sur la liste</strong>. Les options "
 # # "disponibles sont les suivantes :"
-#: ../web_tt2/help_listconfig.tt2:60
+#: ../web_tt2/help_listconfig.tt2:58
 msgid ""
 "<strong>who can view list information</strong>. The following options are "
 "available:"
@@ -5692,87 +5680,87 @@ msgstr ""
 "<strong>リストの案内を見ることができるのは</strong>。次の選択肢があります。"
 
 # # "pour tous (open) - <em>option par défaut</em> ;"
-#: ../web_tt2/help_listconfig.tt2:62
+#: ../web_tt2/help_listconfig.tt2:60
 msgid "for anyone (open) - <em>default option</em>;"
 msgstr "誰でも (open) - <em>オプションの初期値</em>。"
 
 # # "réservé aux abonnés (private)."
-#: ../web_tt2/help_listconfig.tt2:63
+#: ../web_tt2/help_listconfig.tt2:61
 msgid "restricted to subscribers (private)."
 msgstr "読者のみ (private)。"
 
 # # "<strong>qui peut s'abonner à la liste</strong>. Les options disponibles "
 # # "sont les suivantes :"
-#: ../web_tt2/help_listconfig.tt2:65
+#: ../web_tt2/help_listconfig.tt2:63
 msgid ""
 "who can subscribe to the list</strong>. The following options are available:"
 msgstr "リストへ読者登録をできるのは</strong>。次の選択肢があります。"
 
 # # "demande d'abonnement après confirmation (auth) ;"
-#: ../web_tt2/help_listconfig.tt2:67
+#: ../web_tt2/help_listconfig.tt2:65
 msgid "subscription request confirmed (auth);"
 msgstr "読者登録申込には本人確認が必要 (auth)。"
 
 # # "soumis à authentification (notification des proprios) (auth_notify) ;"
-#: ../web_tt2/help_listconfig.tt2:68
+#: ../web_tt2/help_listconfig.tt2:66
 msgid "need authentication (notification is sent to owners) (auth_notify);"
 msgstr "本人確認が必要 (オーナーに報告を送る) (auth_notify)。"
 
 # # "soumis à authentification puis accord du proprio (auth_owner) ;"
-#: ../web_tt2/help_listconfig.tt2:69
+#: ../web_tt2/help_listconfig.tt2:67
 msgid "requires authentication then owner approval (auth_owner);"
 msgstr "本人確認とオーナーの承認が必要 (auth_owner)。"
 
 # # "abonnement impossible (closed) ;"
-#: ../web_tt2/help_listconfig.tt2:70
+#: ../web_tt2/help_listconfig.tt2:68
 msgid "subscribe is impossible (closed);"
 msgstr "読者登録はできない (closed)。"
 
 # # "limité aux utilisateurs du domaine local (intranet) ;"
-#: ../web_tt2/help_listconfig.tt2:133 ../web_tt2/help_listconfig.tt2:71
+#: ../web_tt2/help_listconfig.tt2:131 ../web_tt2/help_listconfig.tt2:69
 msgid "restricted to local domain users (intranet);"
 msgstr "ローカルドメインのユーザのみ (intranet)。"
 
 # # "usager du domaine local ou via autorisation du proprio "
 # # "(intranetorowner) ;"
-#: ../web_tt2/help_listconfig.tt2:72
+#: ../web_tt2/help_listconfig.tt2:70
 msgid "local domain users or owner approval (intranetorowner);"
 msgstr ""
 "ローカルドメインのユーザ。それ以外はオーナーの承認が必要 (intranetorowner)。"
 
 # # "ouvert à tous sans authentification (open) - <em>option par défaut</em> ;"
-#: ../web_tt2/help_listconfig.tt2:73
+#: ../web_tt2/help_listconfig.tt2:71
 msgid "for anyone without authentication (open) - <em>default option</em>;"
 msgstr "誰でもできる。本人確認不要 (open) - <em>初期値</em>。"
 
 # # "ouvert à tous, notification du propriétaire (open_notify) ;"
-#: ../web_tt2/help_listconfig.tt2:74
+#: ../web_tt2/help_listconfig.tt2:72
 msgid "anyone, notification is sent to list owner (open_notify);"
 msgstr "誰でもできる。リストのオーナーに報告を送る (open_notify)。"
 
 # # "n'importe qui pas de bienvenue (open_quiet) ;"
-#: ../web_tt2/help_listconfig.tt2:75
+#: ../web_tt2/help_listconfig.tt2:73
 msgid "anyone, no welcome message (open_quiet);"
 msgstr "誰でもできる。歓迎メッセージは送らない (open_quiet)。"
 
 # # "ouvert à tous après autorisation du proprio (owner) ;"
-#: ../web_tt2/help_listconfig.tt2:76
+#: ../web_tt2/help_listconfig.tt2:74
 msgid "owner approval (owner);"
 msgstr "オーナーの承認が必要 (owner)。"
 
 # # "demande d'abonnement avec signature par certificat (smime) ;"
-#: ../web_tt2/help_listconfig.tt2:77
+#: ../web_tt2/help_listconfig.tt2:75
 msgid "requires S/MIME signed (smime);"
 msgstr "S/MIME署名が必要 (smime)。"
 
 # # "ouvert à tous après autorisation du proprio ou avec signature par "
 # # "certificat (smimeorowner)."
-#: ../web_tt2/help_listconfig.tt2:78
+#: ../web_tt2/help_listconfig.tt2:76
 msgid "requires S/MIME signed or owner approval (smimeorowner)."
 msgstr "S/MIME署名かオーナーの承認が必要 (smimeorowner)。"
 
 # # "XXXX..."
-#: ../web_tt2/help_listconfig.tt2:79
+#: ../web_tt2/help_listconfig.tt2:77
 msgid ""
 "You should always choose an option involving the 'auth' parameter: this way, "
 "the system requires confirmation from the future subscriber by email before "
@@ -5787,7 +5775,7 @@ msgstr ""
 
 # # "<strong>qui peut se désabonner de la liste</strong>. Les options "
 # # "disponibles sont les suivantes :"
-#: ../web_tt2/help_listconfig.tt2:80
+#: ../web_tt2/help_listconfig.tt2:78
 msgid ""
 "<strong>who can unsubscribe from the list</strong>. The following options "
 "are available:"
@@ -5795,33 +5783,33 @@ msgstr ""
 "リストから<strong>登録解除をできるのは</strong>。次の選択肢があります。"
 
 # # "possible après authentification (auth) ;"
-#: ../web_tt2/help_listconfig.tt2:82
+#: ../web_tt2/help_listconfig.tt2:80
 msgid "need authentication (auth);"
 msgstr "本人確認が必要 (auth)。"
 
 # # "authentification demandée, notification du proprio (auth_notify) ;"
-#: ../web_tt2/help_listconfig.tt2:83
+#: ../web_tt2/help_listconfig.tt2:81
 msgid "authentication requested, notification sent to owner (auth_notify);"
 msgstr "本人確認が必要。オーナーに報告を送る (auth_notify)。"
 
 # # "impossible (closed) ;"
-#: ../web_tt2/help_listconfig.tt2:84
+#: ../web_tt2/help_listconfig.tt2:82
 msgid "impossible (closed);"
 msgstr "できない (closed)。"
 
 # # "autorisé à tous sans authentification (open) - <em>option par défaut</em> "
 # # ";"
-#: ../web_tt2/help_listconfig.tt2:85
+#: ../web_tt2/help_listconfig.tt2:83
 msgid "open (open) - <em>default option</em>;"
 msgstr "誰でも (open) - <em>初期値</em>。"
 
 # # "pas d'authentification (notification au proprio) (open_notify) ;"
-#: ../web_tt2/help_listconfig.tt2:86
+#: ../web_tt2/help_listconfig.tt2:84
 msgid "open with mail confirmation, owner is notified (open_notify);"
 msgstr "誰でもメールで本人確認すればできる。オーナーに報告する (open_notify)。"
 
 # # "soumis à autorisation du proprio (owner)."
-#: ../web_tt2/help_listconfig.tt2:87
+#: ../web_tt2/help_listconfig.tt2:85
 msgid "owner approval (owner)."
 msgstr "オーナーの承認が必要 (owner)。"
 
@@ -5829,7 +5817,7 @@ msgstr "オーナーの承認が必要 (owner)。"
 # # "'auth' : ainsi, le système demandera confirmation par e-mail à l'abonné "
 # # "avant de le désabonner. Ceci permet d'éviter que des personnes "
 # # "malintentionnées ne désabonnent des abonnés à leur insu."
-#: ../web_tt2/help_listconfig.tt2:88
+#: ../web_tt2/help_listconfig.tt2:86
 msgid ""
 "You should always choose an option involving the 'auth' parameter: this way, "
 "the system requires confirmation from the subscriber by email before "
@@ -5843,7 +5831,7 @@ msgstr ""
 
 # # "<strong>qui peut inviter une nouvelle personne à s'abonner à la "
 # # "liste</strong>. Les options disponibles sont les suivantes :"
-#: ../web_tt2/help_listconfig.tt2:90
+#: ../web_tt2/help_listconfig.tt2:88
 msgid ""
 "who can invite people to subscribe to the list</strong>. The following "
 "options are available:"
@@ -5851,28 +5839,28 @@ msgstr ""
 "リストに読者登録するよう招待できるのは</strong>。次の選択肢があります。"
 
 # # "fermé (closed) ;"
-#: ../web_tt2/help_listconfig.tt2:132 ../web_tt2/help_listconfig.tt2:92
+#: ../web_tt2/help_listconfig.tt2:130 ../web_tt2/help_listconfig.tt2:90
 msgid "closed (closed);"
 msgstr "だれもできない (closed)。"
 
 # # "invitation par le proprio sans authentification (owner) ;"
-#: ../web_tt2/help_listconfig.tt2:93
+#: ../web_tt2/help_listconfig.tt2:91
 msgid "list owner, no authentication (owner);"
 msgstr "オーナー。本人確認なし (owner)。"
 
 # # "réservé aux abonnés (private) - <em>option par défaut</em> ;"
-#: ../web_tt2/help_listconfig.tt2:114 ../web_tt2/help_listconfig.tt2:94
+#: ../web_tt2/help_listconfig.tt2:112 ../web_tt2/help_listconfig.tt2:92
 msgid "restricted to subscribers (private) - <em>default option</em>;"
 msgstr "読者のみ (private) - <em>初期値</em>。"
 
 # # "public (public)."
-#: ../web_tt2/help_listconfig.tt2:138 ../web_tt2/help_listconfig.tt2:95
+#: ../web_tt2/help_listconfig.tt2:136 ../web_tt2/help_listconfig.tt2:93
 msgid "public (public)."
 msgstr "公開 (public)。"
 
 # # "<strong>qui a accès à la liste des abonnés</strong>. Les options "
 # # "disponibles sont les suivantes :"
-#: ../web_tt2/help_listconfig.tt2:97
+#: ../web_tt2/help_listconfig.tt2:95
 msgid ""
 "<strong>who can review subscribers</strong>. The following options are "
 "available:"
@@ -5880,35 +5868,35 @@ msgstr ""
 "<strong>読者一覧を見ることができるのは</strong>。次の選択肢があります。"
 
 # # "pour personne (closed) ;"
-#: ../web_tt2/help_listconfig.tt2:99
+#: ../web_tt2/help_listconfig.tt2:97
 msgid "no one can review (closed);"
 msgstr "誰も読者一覧を見ることができない (closed)。"
 
 # # "les abonnés ou le domaine local (intranet) ;"
-#: ../web_tt2/help_listconfig.tt2:100 ../web_tt2/help_listconfig.tt2:112
+#: ../web_tt2/help_listconfig.tt2:110 ../web_tt2/help_listconfig.tt2:98
 msgid "restricted to subscribers or local domain users (intranet);"
 msgstr "読者かローカルドメインのユーザのみ (intranet)。"
 
 # # "listmaster seulement (listmaster) ;"
-#: ../web_tt2/help_listconfig.tt2:101
+#: ../web_tt2/help_listconfig.tt2:99
 msgid "listmaster only (listmaster);"
 msgstr "リストシステム管理者のみ (listmaster)。"
 
 # # "proprio de liste seulement (et listmaster) (owner) - <em>option par "
 # # "défaut</em> ;"
-#: ../web_tt2/help_listconfig.tt2:102
+#: ../web_tt2/help_listconfig.tt2:100
 msgid "only owner (and listmaster) (owner) - <em>default option</em>;"
 msgstr ""
 "オーナー (かリストシステム管理者) のみ。本人確認不要 (owner)。 - <em>初期値</"
 "em>。"
 
 # # "réservé aux abonnés (private) ;"
-#: ../web_tt2/help_listconfig.tt2:103 ../web_tt2/help_listconfig.tt2:121
+#: ../web_tt2/help_listconfig.tt2:101 ../web_tt2/help_listconfig.tt2:119
 msgid "restricted to subscribers (private);"
 msgstr "読者のみ (private)。"
 
 # # "accessible à tous (public)."
-#: ../web_tt2/help_listconfig.tt2:104
+#: ../web_tt2/help_listconfig.tt2:102
 msgid "anyone can do it! (public)."
 msgstr "誰でもできてしまう (public)。"
 
@@ -5917,7 +5905,7 @@ msgstr "誰でもできてしまう (public)。"
 # # "permettre à ceux-ci de communiquer entre eux sans passer par la liste. "
 # # "Cette option est néanmoins à éviter dans le cas d'une liste de type "
 # # "annonce regroupant des abonnés sans aucun lien entre eux."
-#: ../web_tt2/help_listconfig.tt2:105
+#: ../web_tt2/help_listconfig.tt2:103
 msgid ""
 "You should in no case make the members list accessible to anyone. The "
 "'Restricted to subscribers' option may be interesting in order to allow "
@@ -5935,7 +5923,7 @@ msgstr ""
 # # "à l'espace de stockage partagé</strong> (section 'Documents' de la liste, "
 # # "accessible via un lien dans le menu de gauche). On distingue les droits "
 # # "de consultation et les droits d'édition des documents : "
-#: ../web_tt2/help_listconfig.tt2:108
+#: ../web_tt2/help_listconfig.tt2:106
 msgid ""
 "From this page, you can also <strong>define the access rights applying to "
 "the shared document web space</strong> ('Shared documents' section of the "
@@ -5948,7 +5936,7 @@ msgstr ""
 
 # # "Pour les <strong>droits de consultation</strong>, les options suivantes "
 # # "sont disponibles :"
-#: ../web_tt2/help_listconfig.tt2:110
+#: ../web_tt2/help_listconfig.tt2:108
 msgid ""
 "The following options are available in the '<strong>Who can view</strong>' "
 "drop-down list:"
@@ -5957,18 +5945,18 @@ msgstr ""
 "肢があります。"
 
 # # "limité aux propriétaires de la liste (owner) ;"
-#: ../web_tt2/help_listconfig.tt2:113
+#: ../web_tt2/help_listconfig.tt2:111
 msgid "restricted to list owners (owner);"
 msgstr "リストのオーナーのみ (owner)。"
 
 # # "documents publics (public)."
-#: ../web_tt2/help_listconfig.tt2:115 ../web_tt2/help_listconfig.tt2:122
+#: ../web_tt2/help_listconfig.tt2:113 ../web_tt2/help_listconfig.tt2:120
 msgid "public documents (public)."
 msgstr "公開文書 (public)。"
 
 # # "Pour les <strong>droits d'édition</strong>, les options suivantes sont "
 # # "disponibles :"
-#: ../web_tt2/help_listconfig.tt2:117
+#: ../web_tt2/help_listconfig.tt2:115
 msgid ""
 "The following options are available in the '<strong>Who can edit</strong>' "
 "drop-down list:"
@@ -5978,12 +5966,12 @@ msgstr ""
 
 # # "limité aux propriétaires de la liste (owner) - <em>option par défaut</em> "
 # # ";"
-#: ../web_tt2/help_listconfig.tt2:119
+#: ../web_tt2/help_listconfig.tt2:117
 msgid "restricted to list owners (owner) - <em>default option</em>;"
 msgstr "リストのオーナーのみ (owner)。 - <em>初期値</em>。"
 
 # # "limité aux abonnés (private) ;"
-#: ../web_tt2/help_listconfig.tt2:120
+#: ../web_tt2/help_listconfig.tt2:118
 msgid "moderated for subscribers (editor);"
 msgstr "読者。投稿はモデレーションを受ける (editor)。"
 
@@ -5994,7 +5982,7 @@ msgstr "読者。投稿はモデレーションを受ける (editor)。"
 # # "mais bien celle de l'ensemble des documents publiés sur la liste. Elle "
 # # "est exprimée en kilo-octets. Lorsqu'un abonné tente de publier un fichier "
 # # "trop gros par rapport à l'espace restant, il reçoit un message d'erreur."
-#: ../web_tt2/help_listconfig.tt2:125
+#: ../web_tt2/help_listconfig.tt2:123
 msgid ""
 "The '<strong>Quota</strong>' input box allows you to define a "
 "<strong>maximum size not to be exceeded for the shared document web space</"
@@ -6016,7 +6004,7 @@ msgstr ""
 # # "href=\"%1/help/shared\">Utiliser l'espace de stockage partagé</a> du "
 # # "Guide de l'utilisateur."
 #. (path_cgi)
-#: ../web_tt2/help_listconfig.tt2:126
+#: ../web_tt2/help_listconfig.tt2:124
 msgid ""
 "To know <strong>more about the management of the shared document web space</"
 "strong> (how to organize it, change access rights, name documents, etc.), "
@@ -6027,7 +6015,7 @@ msgstr ""
 "セス権限の変えかた、文書に名前を付ける方法、など) は、『利用者のための説明』"
 "の「<a href=\"%1/help/shared\">共有文書置き場を使う</a>」の節を見てください。"
 
-#: ../web_tt2/help_listconfig.tt2:129
+#: ../web_tt2/help_listconfig.tt2:127
 msgid "Archive"
 msgstr "投稿保管庫"
 
@@ -6035,7 +6023,7 @@ msgstr "投稿保管庫"
 # # "archives de la liste en ligne</strong> (messages envoyés consultables sur "
 # # "l'interface web du serveur de listes). Les différentes options "
 # # "disponibles sont :"
-#: ../web_tt2/help_listconfig.tt2:130
+#: ../web_tt2/help_listconfig.tt2:128
 msgid ""
 "From this page, you can <strong>decide who can access the online list "
 "archive</strong> (messages readable on the mailing list web interface). The "
@@ -6046,26 +6034,26 @@ msgstr ""
 "る</strong>ことができます。次の選択肢があります。"
 
 # # "listmaster (listmaster) ;"
-#: ../web_tt2/help_listconfig.tt2:134
+#: ../web_tt2/help_listconfig.tt2:132
 msgid "listmaster (listmaster);"
 msgstr "リストシステム管理者 (listmaster)。"
 
 # # "proprio de liste (owner) ;"
-#: ../web_tt2/help_listconfig.tt2:135
+#: ../web_tt2/help_listconfig.tt2:133
 msgid "owner (owner);"
 msgstr "オーナー (owner)。"
 
 # # "XXXXX..."
-#: ../web_tt2/help_listconfig.tt2:136
+#: ../web_tt2/help_listconfig.tt2:134
 msgid "moderator (moderator);"
 msgstr "モデレータ (moderator)。"
 
 # # "les abonnés seulement (private) ;"
-#: ../web_tt2/help_listconfig.tt2:137
+#: ../web_tt2/help_listconfig.tt2:135
 msgid "subscribers only (private);"
 msgstr "読者のみ (private)。"
 
-#: ../web_tt2/help_listconfig.tt2:140
+#: ../web_tt2/help_listconfig.tt2:138
 msgid ""
 "The '<strong>Quota</strong>' input box allows you to define a "
 "<strong>maximum size not to be exceeded for the message archive</strong>. "
@@ -6080,7 +6068,7 @@ msgstr ""
 
 # # "Même si les messages cessent d'être archivés, il reste évidemment "
 # # "possible d'envoyer des messages sur la liste."
-#: ../web_tt2/help_listconfig.tt2:141
+#: ../web_tt2/help_listconfig.tt2:139
 msgid ""
 "Even though messages stop being archived, it is naturally still possible to "
 "send messages to the list."
@@ -6100,7 +6088,7 @@ msgstr ""
 # # "détaillés pour chaque message. Le paramètre '<strong>Archives "
 # # "textuelles</strong>' vous permet de définir :"
 #. (conf.email,conf.host)
-#: ../web_tt2/help_listconfig.tt2:142
+#: ../web_tt2/help_listconfig.tt2:140
 msgid ""
 "It is also possible to <strong>access the list archive by email</strong>, by "
 "sending <strong>%1@%2</strong> the following command: <span class=\"commande"
@@ -6123,7 +6111,7 @@ msgstr ""
 
 # # "<strong>qui a le droit</strong> de se faire envoyer par e-mail les "
 # # "archives récapitulatives des messages de la liste ;"
-#: ../web_tt2/help_listconfig.tt2:144
+#: ../web_tt2/help_listconfig.tt2:142
 msgid ""
 "<strong>who is allowed</strong> to receive the list message archive by email;"
 msgstr ""
@@ -6133,7 +6121,7 @@ msgstr ""
 # # "si la périodicité est 'month', l'ensemble des messages envoyés sur la "
 # # "liste en un mois sera regroupé dans un message d'archives unique qui "
 # # "pourra être demandé par e-mail au serveur."
-#: ../web_tt2/help_listconfig.tt2:145
+#: ../web_tt2/help_listconfig.tt2:143
 msgid ""
 "<strong>how frequently these archive files will be created</strong>. For "
 "example, if the frequency is set to 'month', all messages distributed to the "
@@ -6145,7 +6133,7 @@ msgstr ""
 # # "Si ce paramètre n'est pas défini, la liste n'aura aucune archive "
 # # "consultable par e-mail. Attention : <strong>seuls les listmasters ont le "
 # # "pouvoir de modifier ce paramètre.</strong>"
-#: ../web_tt2/help_listconfig.tt2:147
+#: ../web_tt2/help_listconfig.tt2:145
 msgid ""
 "If this parameter is not defined, the list will have no archive accessible "
 "by email. Be careful: <strong>only the listmasters have the power to change "
@@ -6160,7 +6148,7 @@ msgstr ""
 # # "Extensions\">S/MIME</acronym></strong> sur la liste. L'option "
 # # "'<strong>Archivage des messages cryptés</strong>' vous permet de définir "
 # # "comment ces messages vont être archivés :"
-#: ../web_tt2/help_listconfig.tt2:148
+#: ../web_tt2/help_listconfig.tt2:146
 msgid ""
 "It is possible to send <strong>messages encrypted in <acronym lang=\"en\" "
 "xml:lang=\"en\" title=\"Secure/Multipurpose Internet Mail Extensions\">S/"
@@ -6176,7 +6164,7 @@ msgstr ""
 
 # # "L'option '<strong>Decrypted</strong>' archive le message sans qu'il ne "
 # # "soit chiffré."
-#: ../web_tt2/help_listconfig.tt2:150
+#: ../web_tt2/help_listconfig.tt2:148
 msgid ""
 "The '<strong>Decrypted</strong>' option archives the message after removing "
 "the encryption."
@@ -6186,7 +6174,7 @@ msgstr ""
 
 # # "L'option '<strong>Original</strong>' archive le message sous sa forme "
 # # "originale."
-#: ../web_tt2/help_listconfig.tt2:151
+#: ../web_tt2/help_listconfig.tt2:149
 msgid ""
 "The '<strong>Original</strong>' option archives the message under its "
 "original encrypted form."
@@ -6198,7 +6186,7 @@ msgstr ""
 # # "aux archives en ligne, ainsi qu'aux compilations de messages envoyées aux "
 # # "personnes qui ont souscrit leur abonnement avec le mode de réception "
 # # "Digest."
-#: ../web_tt2/help_listconfig.tt2:153
+#: ../web_tt2/help_listconfig.tt2:151
 msgid ""
 "This option applies to both the text archive and the online archive, as well "
 "as to the compilations sent to those who chose the 'Digest' delivery mode."
@@ -6209,7 +6197,7 @@ msgstr ""
 
 # # "ATTENTION : n'oubliez pas de cliquer sur <strong>'Mise à jour'</strong> "
 # # "au bas de la page pour enregistrer tous vos changements."
-#: ../web_tt2/help_listconfig.tt2:154 ../web_tt2/help_listconfig.tt2:171
+#: ../web_tt2/help_listconfig.tt2:152 ../web_tt2/help_listconfig.tt2:169
 msgid ""
 "BE CAREFUL: do not forget to click on the 'Update' button</strong> on bottom "
 "of page to save all your changes."
@@ -6217,7 +6205,7 @@ msgstr ""
 "注意: 「更新」ボタンをクリックすることを忘れずに</strong>。ページの下部にあ"
 "り、変更をすべて反映します。"
 
-#: ../web_tt2/help_listconfig.tt2:156
+#: ../web_tt2/help_listconfig.tt2:154
 msgid "Bounces"
 msgstr "配送エラーの管理"
 
@@ -6227,7 +6215,7 @@ msgstr "配送エラーの管理"
 # # "adresses qui n'existent plus, adresses momentanément indisponibles au "
 # # "moment de l'envoi de messages, capacité de la boîte de réception "
 # # "atteinte, etc."
-#: ../web_tt2/help_listconfig.tt2:157
+#: ../web_tt2/help_listconfig.tt2:155
 msgid ""
 "\"<strong>Bounces</strong>\" represent the <strong>subscribers whose address "
 "is in error</strong>, i.e. subscribers who can not receive the messages sent "
@@ -6242,7 +6230,7 @@ msgstr ""
 "が満杯になっていた、などです。"
 
 # # "La section '<strong>Gestion des bounces</strong>' définit deux seuils :"
-#: ../web_tt2/help_listconfig.tt2:158
+#: ../web_tt2/help_listconfig.tt2:156
 msgid "The '<strong>Bounce management</strong>' section defines two rates:"
 msgstr "「<strong>配送エラー管理</strong>」では、2 つのレートを決めます。"
 
@@ -6250,7 +6238,7 @@ msgstr "「<strong>配送エラー管理</strong>」では、2 つのレート�
 # # "partir duquel le propriétaire de la liste recevra une "
 # # "<strong>notification intitulée 'Taux de bounces trop élevé'</strong> "
 # # "l'invitant à supprimer de sa liste les abonnés en erreur."
-#: ../web_tt2/help_listconfig.tt2:160
+#: ../web_tt2/help_listconfig.tt2:158
 msgid ""
 "The <strong>warn rate</strong> indicates the bouncing email addresses rate "
 "from which the list owner will receive a <strong>notice entitled 'Bounce "
@@ -6265,7 +6253,7 @@ msgstr ""
 # # "partir duquel <strong>la distribution des messages de la liste sera "
 # # "automatiquement interrompue</strong> jusqu'à régularisation de la "
 # # "situation (généralement via la suppression des abonnés en erreur)."
-#: ../web_tt2/help_listconfig.tt2:161
+#: ../web_tt2/help_listconfig.tt2:159
 msgid ""
 "The <strong>halt rate</strong> indicates the bouncing email addresses rate "
 "from which <strong>the message distribution will automatically be stopped</"
@@ -6280,7 +6268,7 @@ msgstr ""
 # # "Les sections '<strong>bouncers_level1</strong>' et "
 # # "'<strong>bouncers_level2</strong>' permettent d'effectuer automatiquement "
 # # "des actions en direction des abonnés en erreur. Vous pouvez définir :"
-#: ../web_tt2/help_listconfig.tt2:163
+#: ../web_tt2/help_listconfig.tt2:161
 msgid ""
 "The '<strong>Management of bouncers, 1st level</strong>' and "
 "'<strong>Management of bouncers, 2nd level</strong>' sections allow you to "
@@ -6290,7 +6278,7 @@ msgstr ""
 "第二段階</strong>」で、配送エラーを起こしている読者に対する自動処理を実施でき"
 "ます。次のことを決められます。"
 
-#: ../web_tt2/help_listconfig.tt2:165
+#: ../web_tt2/help_listconfig.tt2:163
 msgid ""
 "the <strong>score ranges that define level&#160;1 and level&#160;2 bouncers</"
 "strong>. By default, level&#160;1 bouncers have a score comprised between 45 "
@@ -6303,7 +6291,7 @@ msgstr ""
 # # "Le score est déterminé par le nombre, le type et la fréquence des "
 # # "erreurs. Si la période de réception des erreurs est trop courte ou s'il "
 # # "n'y a pas eu beaucoup d'erreurs, aucun score n'est affecté au bouncer."
-#: ../web_tt2/help_listconfig.tt2:166
+#: ../web_tt2/help_listconfig.tt2:164
 msgid ""
 "The score depends on the number, type and frequency of errors. If the "
 "bouncing time is too short or if there have not been many errors, the "
@@ -6315,7 +6303,7 @@ msgstr ""
 # # "l'<strong>action à effectuer en direction des abonnés "
 # # "concernés</strong> : aucune action, notification, suppression de la liste "
 # # "des abonnés ;"
-#: ../web_tt2/help_listconfig.tt2:167
+#: ../web_tt2/help_listconfig.tt2:165
 msgid ""
 "the <strong>task to perform towards the subscribers concerned</strong>: no "
 "task, notice, deletion from the list;"
@@ -6328,7 +6316,7 @@ msgstr ""
 # # "notification envoyée lorsqu'une action est effectuée en direction des "
 # # "abonnés en erreur comprend les adresses de tous les abonnés concernés "
 # # "ainsi que le détail de l'action effectuée."
-#: ../web_tt2/help_listconfig.tt2:168
+#: ../web_tt2/help_listconfig.tt2:166
 msgid ""
 "the <strong>person to be notified</strong> when a task is carried out: no "
 "one, the list owners, the listmasters. The notice sent when a task is "
@@ -6346,7 +6334,7 @@ msgstr ""
 # # "href=\"%1/help/admin#manage_bounces\">Erreurs</a>' du module "
 # # "d'administration de la liste."
 #. (path_cgi)
-#: ../web_tt2/help_listconfig.tt2:170
+#: ../web_tt2/help_listconfig.tt2:168
 msgid ""
 "<strong>To manage bounces</strong> (reset errors for some subscribers, "
 "unsubscribe bouncing subscribers, request a subscription reminder, etc.), "
@@ -6358,7 +6346,7 @@ msgstr ""
 "は、リスト管理モジュールの<strong>「<a href=\"%1/help/admin#manage_bounces\">"
 "配送エラー</a>」ページへ行きます</strong>。"
 
-#: ../web_tt2/help_listconfig.tt2:173
+#: ../web_tt2/help_listconfig.tt2:171
 msgid "Miscellaneous"
 msgstr "その他"
 
@@ -6369,7 +6357,7 @@ msgstr "その他"
 # # "liste. S'ils ne le renouvellent pas, ils seront automatiquement "
 # # "désabonnés. Cette procédure permet de s'assurer que toutes les personnes "
 # # "abonnées à la liste sont réellement concernées et intéressées."
-#: ../web_tt2/help_listconfig.tt2:174
+#: ../web_tt2/help_listconfig.tt2:172
 msgid ""
 "The '<strong>Periodical subscription expiration task</strong>' option allows "
 "you to define an <strong>automatic expiration deadline for subscriptions</"
@@ -6389,7 +6377,7 @@ msgstr ""
 # # "L'option '<strong>Remind_task</strong>' vous permet d'<strong>envoyer des "
 # # "rappels d'abonnements à intervalles réguliers</strong> à tous les abonnés "
 # # "de la liste."
-#: ../web_tt2/help_listconfig.tt2:175
+#: ../web_tt2/help_listconfig.tt2:173
 msgid ""
 "The '<strong>Periodical subscription reminder task</strong>' option allows "
 "you to <strong>send subscription reminders</strong> to list members on a "
@@ -6402,7 +6390,7 @@ msgstr ""
 # # "spammeurs</strong>' permet d'éviter que les adresses e-mail des abonnés "
 # # "ne soient récupérées par des robots à des fins de spam. Cette option est "
 # # "valable pour l'ensemble des pages relatives à la liste."
-#: ../web_tt2/help_listconfig.tt2:176
+#: ../web_tt2/help_listconfig.tt2:174
 msgid ""
 "The '<strong>email address protection method</strong>' option ensures that "
 "the subscribers' email addresses will not be collected by robots for "
@@ -6416,7 +6404,7 @@ msgstr ""
 # # "la dernière mise à jour de la liste</strong> (qui l'a effectuée et à "
 # # "quelle date) ainsi que sur le <strong>nombre de changements de "
 # # "configuration</strong> depuis la création de la liste."
-#: ../web_tt2/help_listconfig.tt2:177
+#: ../web_tt2/help_listconfig.tt2:175
 msgid ""
 "On this page, you can also view <strong>information about the last update of "
 "the list</strong> (who made it and when), as well as the <strong>number of "
@@ -8084,6 +8072,70 @@ msgstr ""
 "strong>ようにしましょう。<strong>明確で短い名前</strong>を付け、<strong>空"
 "白、特殊記号、全角の英数字や半角の片仮名は使わない</strong>ようにしましょう。"
 
+#: ../web_tt2/help_suspend.tt2:3
+msgid "Manage your subscriptions"
+msgstr "受け取り休止/再開"
+
+#: ../web_tt2/help_suspend.tt2:5
+msgid "How does the suspension work?"
+msgstr "受け取りを休止するには"
+
+#: ../web_tt2/help_suspend.tt2:6
+msgid ""
+"In order to <strong>suspend your subscription</strong> to one or more lists, "
+"follow these steps:"
+msgstr ""
+"あるリストだけ<strong>受け取りを休止</strong>するには、次の手順を踏みます"
+
+#: ../web_tt2/help_suspend.tt2:8
+msgid ""
+"Select a start date through the calendar that appears when you click on the "
+"\"start date\" field;"
+msgstr ""
+"「開始日」の欄をクリックするとカレンダーがでますので、そこから開始日を選びま"
+"す。"
+
+#: ../web_tt2/help_suspend.tt2:9
+msgid ""
+"if you wish, you can specify the date when you want your subscription to "
+"resume. Do it using the \"end date\" field. You can click on \"indefinite.\" "
+"In this case, you will have to return to this page to resume your "
+"subscription;"
+msgstr ""
+"受け取りを再開する日をあらかじめ決めてあるときは、「終了日」の欄で同じように"
+"選びます。「無期限」をクリックでき、その場合受け取りを再開したくなったらまた"
+"このページに来る必要があります。"
+
+#: ../web_tt2/help_suspend.tt2:10
+msgid ""
+"Select the lists which you want to suspend your subscription for. The "
+"\"Toogle selection\" button allows you to invert the selection;"
+msgstr ""
+"受け取りを休止したいリストを選びます。「選択を逆転」ボタンで選択を逆転できま"
+"す。"
+
+#: ../web_tt2/help_suspend.tt2:11
+msgid "Click on \"Suspend my subscriptions\" to confirm the suspension."
+msgstr "「受け取りを休止」をクリックすると、休止します"
+
+#: ../web_tt2/help_suspend.tt2:13
+msgid ""
+"<strong>To resume your subscription</strong> to one or more lists, follow "
+"these steps:"
+msgstr "<strong>受け取りを再開するには</strong>、次の手順を踏みます。"
+
+#: ../web_tt2/help_suspend.tt2:15
+msgid ""
+"Select the list(s) you want to reactivate. The \"Toogle selection\" button "
+"allows you to invert the selection;"
+msgstr ""
+"受け取りを再開したいリストを選びます (複数可)。「選択を逆転」ボタンで選択を逆"
+"転できます。"
+
+#: ../web_tt2/help_suspend.tt2:16
+msgid "Click \"Resume\"."
+msgstr "「再開」をクリックします。"
+
 #: ../web_tt2/help_user_options.tt2:3
 msgid ""
 "This is a description of the receivie modes available in Sympa. These "
@@ -8216,6 +8268,15 @@ msgstr ""
 "読者が nomail (なにも受け取らない) モードにしていた場合、リストからのメッセー"
 "ジをまた一通ずつ受け取れるようになります。"
 
+# # "visible des abonnés (private) ;"
+#~ msgid "subscribers (private);"
+#~ msgstr "読者 (private)。"
+
+# 存在しないシナリオ名。
+# # "abonné à nos grosses listes techniques (semipublic)."
+#~ msgid "semipublic (semipublic)."
+#~ msgstr "<!-- semipublic -->"
+
 #~ msgid ""
 #~ "If available, list owners and moderators have to conform to the <a target="
 #~ "\"_blank\" title=\"Example of charter aimed at owners and moderators "
@@ -8226,6 +8287,17 @@ msgstr ""
 #~ "デレータのための約款の例 (フランス語)\" href=\"http://listes.cru.fr/cnil/"
 #~ "charte.proprio.html\">オーナー、ファシリテーター、モデレータの約款</a>を "
 #~ "(もしあれば) 守らなければなりません。"
+
+#~ msgid ""
+#~ "Sympa allows the list owner to choose how Sympa loads list member data. "
+#~ "Subscriber information can be stored in a text file or relational "
+#~ "database, or included from various external sources (list, flat file, "
+#~ "result of or query)."
+#~ msgstr ""
+#~ "Sympaでは、Sympaがどのような方法でリストメンバーのデータを取得するかをリス"
+#~ "トのオーナーが選択できます。読者情報は、テキストファイルやリレーショナル"
+#~ "データベースに格納することができます。また、様々な外部ソース (他のリスト、"
+#~ "ファイル、クエリの結果) から取り込むことも可能です。"
 
 # # "L'option '<strong>Cleartext</strong>' archive le message sous sa forme "
 # # "cryptée originale."

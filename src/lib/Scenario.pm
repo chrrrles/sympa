@@ -546,8 +546,8 @@ sub verify {
     
     if (defined ($context->{'msg'})) {
 	my $header = $context->{'msg'}->head;
-	unless (($header->get('to') && ($header->get('to') =~ /$context->{'listname'}/i)) || 
-		($header->get('cc') && ($header->get('cc') =~ /$context->{'listname'}/i))) {
+	unless (($header->get('to') && (join(', ', $header->get('to')) =~ /$context->{'listname'}/i)) || 
+		($header->get('cc') && (join(', ', $header->get('cc')) =~ /$context->{'listname'}/i))) {
 	    $context->{'is_bcc'} = 1;
 	}else{
 	    $context->{'is_bcc'} = 0;
@@ -587,6 +587,11 @@ sub verify {
 	## Custom vars
 	if ($value =~ /\[custom_vars\-\>([\w\-]+)\]/i) {
 	    $value =~ s/\[custom_vars\-\>([\w\-]+)\]/$context->{'custom_vars'}{$1}/;
+	}
+	
+	## Family vars
+	if ($value =~ /\[family\-\>([\w\-]+)\]/i) {
+	    $value =~ s/\[family\-\>([\w\-]+)\]/$context->{'family'}{$1}/;
 	}
 	
 	## Config param
@@ -667,14 +672,12 @@ sub verify {
 	    return -1 * $negation unless (defined ($context->{'msg'}));
 	    
 	    my @bodies;
-	    my @parts = $context->{'msg'}->parts();
-	    
-	    ## Should be recurcive...
-	    foreach my $i (0..$#parts) {
-		next unless ($parts[$i]->effective_type() =~ /^text/);
-		next unless (defined $parts[$i]->bodyhandle);
+	    ## FIXME:Should be recurcive...
+	    foreach my $part ($context->{'msg'}->parts) {
+		next unless ($part->effective_type() =~ /^text/);
+		next unless (defined $part->bodyhandle);
 		
-		push @bodies, $parts[$i]->bodyhandle->as_string();
+		push @bodies, $part->bodyhandle->as_string();
 	    }
 	    $value = \@bodies;
 	    
@@ -682,9 +685,8 @@ sub verify {
 	    return -1 * $negation unless (defined ($context->{'msg'}));
 	    
 	    my @types;
-	    my @parts = $context->{'msg'}->parts();
-	    foreach my $i (0..$#parts) {
-		push @types, $parts[$i]->effective_type();
+	    foreach my $part ($context->{'msg'}->parts) {
+		push @types, $part->effective_type();
 	    }
 	    $value = \@types;
 
@@ -857,16 +859,29 @@ sub verify {
             $regexp =~ s/\[host\]/$reghost/g ;
 	}
 
+	# wrap matches with eval{} to avoid crash by malformed regexp.
+	my $r = 0;
 	if (ref($args[0])) {
-	    foreach my $arg (@{$args[0]}) {
-		return $negation 
-		    if ($arg =~ /$regexp/i);
-	    }
-	}else {
-	    if ($args[0] =~ /$regexp/i) {
-		return $negation ;
-	    }
+	    eval {
+		foreach my $arg (@{$args[0]}) {
+		    if ($arg =~ /$regexp/i) {
+			$r = 1;
+			last;
+		    }
+		}
+	    };
+	} else {
+	    eval {
+		if ($args[0] =~ /$regexp/i) {
+		    $r = 1;
+		}
+	    };
 	}
+	if ($@) {
+	    &Log::do_log('err', 'cannot evaluate match: %s', $@);
+	    return undef;
+	}
+	return $negation if $r;
 	
 	return -1 * $negation ;
 
@@ -895,12 +910,11 @@ sub verify {
 	    foreach my $arg (@{$args[0]}) {
 		&Log::do_log('debug3', 'ARG: %s', $arg);
 		return $negation 
-		    if ($arg =~ /^$args[1]$/i);
+		    if lc($arg) eq lc($args[1]);
 	    }
-	}else {
-	    if ($args[0] =~ /^$args[1]$/i) {
-		return $negation ;
-	    }
+	} else {
+	    return $negation
+		if lc($args[0]) eq lc($args[1]);
 	}
 	return -1 * $negation ;
     }
