@@ -601,7 +601,7 @@ msgstr ""
 #: ../web_tt2/picture_upload.tt2:21 ../web_tt2/pref.tt2:4
 #: ../web_tt2/rename_list_request.tt2:3 ../web_tt2/review.tt2:5
 #: ../web_tt2/reviewbouncing.tt2:3 ../web_tt2/suboptions.tt2:20
-#: ../web_tt2/subscriber_table.tt2:106
+#: ../web_tt2/subscriber_table.tt2:118
 msgid "Open in a new window"
 msgstr ""
 
@@ -1455,7 +1455,7 @@ msgid "Size (Kb)"
 msgstr ""
 
 #: ../web_tt2/d_read.tt2:69 ../web_tt2/d_read.tt2:71
-#: ../web_tt2/latest_d_read.tt2:18 ../web_tt2/subscriber_table.tt2:59
+#: ../web_tt2/latest_d_read.tt2:18 ../web_tt2/subscriber_table.tt2:66
 msgid "Last update"
 msgstr ""
 
@@ -2130,7 +2130,7 @@ msgstr ""
 msgid "The period is too long (%1 days)"
 msgstr ""
 
-#: ../web_tt2/error.tt2:65
+#: ../web_tt2/error.tt2:65 ../web_tt2/subscriber_table.tt2:170
 msgid "List has no subscribers"
 msgstr ""
 
@@ -2510,7 +2510,7 @@ msgstr ""
 #: ../web_tt2/modindex.tt2:135 ../web_tt2/review.tt2:143
 #: ../web_tt2/reviewbouncing.tt2:131 ../web_tt2/reviewbouncing.tt2:60
 #: ../web_tt2/subindex.tt2:10 ../web_tt2/subindex.tt2:57
-#: ../web_tt2/subscriber_table.tt2:7
+#: ../web_tt2/subscriber_table.tt2:9
 msgid "Toggle Selection"
 msgstr ""
 
@@ -2590,130 +2590,130 @@ msgstr ""
 msgid "on %1"
 msgstr ""
 
-#: ../web_tt2/javascript.tt2:30
+#: ../web_tt2/javascript.tt2:26
 msgid "January"
 msgstr ""
 
-#: ../web_tt2/javascript.tt2:30
+#: ../web_tt2/javascript.tt2:26
 msgid "February"
 msgstr ""
 
-#: ../web_tt2/javascript.tt2:30
+#: ../web_tt2/javascript.tt2:26
 #, fuzzy
 msgid "March"
 msgstr "Cari milis"
 
-#: ../web_tt2/javascript.tt2:30
+#: ../web_tt2/javascript.tt2:26
 msgid "April"
 msgstr ""
 
-#: ../web_tt2/javascript.tt2:30
+#: ../web_tt2/javascript.tt2:26
 msgid "May"
 msgstr ""
 
-#: ../web_tt2/javascript.tt2:30
+#: ../web_tt2/javascript.tt2:26
 msgid "June"
 msgstr ""
 
-#: ../web_tt2/javascript.tt2:30
+#: ../web_tt2/javascript.tt2:26
 msgid "July"
 msgstr ""
 
-#: ../web_tt2/javascript.tt2:30
+#: ../web_tt2/javascript.tt2:26
 msgid "August"
 msgstr ""
 
-#: ../web_tt2/javascript.tt2:30
+#: ../web_tt2/javascript.tt2:26
 #, fuzzy
 msgid "September"
 msgstr "Pratilik Anggota-anggota"
 
-#: ../web_tt2/javascript.tt2:30
+#: ../web_tt2/javascript.tt2:26
 #, fuzzy
 msgid "October"
 msgstr "Lainnya"
 
-#: ../web_tt2/javascript.tt2:30
+#: ../web_tt2/javascript.tt2:26
 #, fuzzy
 msgid "November"
 msgstr "Pratilik Anggota-anggota"
 
-#: ../web_tt2/javascript.tt2:30
+#: ../web_tt2/javascript.tt2:26
 #, fuzzy
 msgid "December"
 msgstr "Pratilik Anggota-anggota"
 
-#: ../web_tt2/javascript.tt2:31
+#: ../web_tt2/javascript.tt2:27
 msgid "Su"
 msgstr ""
 
-#: ../web_tt2/javascript.tt2:31
+#: ../web_tt2/javascript.tt2:27
 #, fuzzy
 msgid "Mo"
 msgstr "Moderasi"
 
-#: ../web_tt2/javascript.tt2:31
+#: ../web_tt2/javascript.tt2:27
 msgid "Tu"
 msgstr ""
 
-#: ../web_tt2/javascript.tt2:31
+#: ../web_tt2/javascript.tt2:27
 msgid "We"
 msgstr ""
 
-#: ../web_tt2/javascript.tt2:31
+#: ../web_tt2/javascript.tt2:27
 msgid "Th"
 msgstr ""
 
-#: ../web_tt2/javascript.tt2:31
+#: ../web_tt2/javascript.tt2:27
 msgid "Fr"
 msgstr ""
 
-#: ../web_tt2/javascript.tt2:31
+#: ../web_tt2/javascript.tt2:27
 msgid "Sa"
 msgstr ""
 
-#: ../web_tt2/javascript.tt2:32
+#: ../web_tt2/javascript.tt2:28
 msgid "Sunday"
 msgstr ""
 
-#: ../web_tt2/javascript.tt2:32
+#: ../web_tt2/javascript.tt2:28
 msgid "Monday"
 msgstr ""
 
-#: ../web_tt2/javascript.tt2:32
+#: ../web_tt2/javascript.tt2:28
 msgid "Tuesday"
 msgstr ""
 
-#: ../web_tt2/javascript.tt2:32
+#: ../web_tt2/javascript.tt2:28
 msgid "Wednesday"
 msgstr ""
 
-#: ../web_tt2/javascript.tt2:32
+#: ../web_tt2/javascript.tt2:28
 msgid "Thursday"
 msgstr ""
 
-#: ../web_tt2/javascript.tt2:32
+#: ../web_tt2/javascript.tt2:28
 msgid "Friday"
 msgstr ""
 
-#: ../web_tt2/javascript.tt2:32
+#: ../web_tt2/javascript.tt2:28
 msgid "Saturday"
 msgstr ""
 
-#: ../web_tt2/javascript.tt2:33
+#: ../web_tt2/javascript.tt2:29
 msgid "Calendar"
 msgstr ""
 
-#: ../web_tt2/javascript.tt2:34
+#: ../web_tt2/javascript.tt2:30
 msgid "today"
 msgstr ""
 
-#: ../web_tt2/javascript.tt2:46
+#: ../web_tt2/javascript.tt2:42
 #, fuzzy
 msgid "Start date"
 msgstr "Tanggal pembuatan"
 
-#: ../web_tt2/javascript.tt2:47
+#: ../web_tt2/javascript.tt2:43
 msgid "End date"
 msgstr ""
 
@@ -2748,7 +2748,7 @@ msgid "Most recent documents for this list "
 msgstr ""
 
 #: ../web_tt2/latest_d_read.tt2:19 ../web_tt2/subindex.tt2:12
-#: ../web_tt2/subscriber_table.tt2:33 ../web_tt2/subscriber_table.tt2:36
+#: ../web_tt2/subscriber_table.tt2:39 ../web_tt2/subscriber_table.tt2:42
 msgid "Name"
 msgstr ""
 
@@ -3603,7 +3603,7 @@ msgstr ""
 
 #: ../web_tt2/review.tt2:153 ../web_tt2/reviewbouncing.tt2:61
 #: ../web_tt2/show_exclude.tt2:15 ../web_tt2/subindex.tt2:11
-#: ../web_tt2/subscriber_table.tt2:12 ../web_tt2/subscriber_table.tt2:15
+#: ../web_tt2/subscriber_table.tt2:15 ../web_tt2/subscriber_table.tt2:18
 #: ../web_tt2/viewlogs.tt2:54 ../web_tt2/viewlogs.tt2:63
 msgid "Email"
 msgstr ""
@@ -4754,33 +4754,33 @@ msgstr "Apakah Anda benar-benar ingin daftar milis %1?"
 msgid "List members"
 msgstr ""
 
-#: ../web_tt2/subscriber_table.tt2:20 ../web_tt2/subscriber_table.tt2:23
+#: ../web_tt2/subscriber_table.tt2:23 ../web_tt2/subscriber_table.tt2:26
 msgid "Domain"
 msgstr ""
 
-#: ../web_tt2/subscriber_table.tt2:28
+#: ../web_tt2/subscriber_table.tt2:32
 msgid "Picture"
 msgstr ""
 
-#: ../web_tt2/subscriber_table.tt2:41 ../web_tt2/suspend_request.tt2:12
+#: ../web_tt2/subscriber_table.tt2:48 ../web_tt2/suspend_request.tt2:12
 msgid "Reception"
 msgstr ""
 
-#: ../web_tt2/subscriber_table.tt2:45 ../web_tt2/subscriber_table.tt2:48
+#: ../web_tt2/subscriber_table.tt2:52 ../web_tt2/subscriber_table.tt2:55
 msgid "Sources"
 msgstr ""
 
-#: ../web_tt2/subscriber_table.tt2:53 ../web_tt2/subscriber_table.tt2:56
+#: ../web_tt2/subscriber_table.tt2:60 ../web_tt2/subscriber_table.tt2:63
 #: ../web_tt2/viewlogs.tt2:123
 msgid "Sub date"
 msgstr ""
 
-#: ../web_tt2/subscriber_table.tt2:89
+#: ../web_tt2/subscriber_table.tt2:101
 msgid "bouncing"
 msgstr ""
 
 #. (u.email)
-#: ../web_tt2/subscriber_table.tt2:106
+#: ../web_tt2/subscriber_table.tt2:118
 msgid "%1's picture"
 msgstr ""
 
@@ -5010,7 +5010,7 @@ msgstr ""
 #. (date_to_formated)
 #. This entry is a date/time format
 #. Check the strftime manpage for format details : http://docs.freebsd.org/info/gawk/gawk.info.Time_Functions.html
-#: ../web_tt2/viewlogs.tt2:113 ../wwsympa/wwsympa.fcgi.in:16993
+#: ../web_tt2/viewlogs.tt2:113 ../wwsympa/wwsympa.fcgi.in:16997
 msgid "%d %b %Y %H:%M:%S"
 msgstr ""
 
@@ -8388,7 +8388,7 @@ msgstr ""
 
 #. This entry is a date/time format
 #. Check the strftime manpage for format details : http://docs.freebsd.org/info/gawk/gawk.info.Time_Functions.html
-#: ../src/lib/Commands.pm:966 ../wwsympa/wwsympa.fcgi.in:10609
+#: ../src/lib/Commands.pm:966 ../wwsympa/wwsympa.fcgi.in:10613
 msgid "%A"
 msgstr ""
 
@@ -9170,9 +9170,9 @@ msgstr "Angka Kesalahan:"
 #. Check the strftime manpage for format details : http://docs.freebsd.org/info/gawk/gawk.info.Time_Functions.html
 #: ../src/lib/Family.pm:2642 ../src/lib/Family.pm:397 ../src/lib/Family.pm:674
 #: ../src/lib/List.pm:2675 ../wwsympa/Auth.pm:435
-#: ../wwsympa/wwsympa.fcgi.in:1190 ../wwsympa/wwsympa.fcgi.in:2802
-#: ../wwsympa/wwsympa.fcgi.in:3076 ../wwsympa/wwsympa.fcgi.in:3089
-#: ../wwsympa/wwsympa.fcgi.in:3210
+#: ../wwsympa/wwsympa.fcgi.in:1195 ../wwsympa/wwsympa.fcgi.in:2807
+#: ../wwsympa/wwsympa.fcgi.in:3081 ../wwsympa/wwsympa.fcgi.in:3094
+#: ../wwsympa/wwsympa.fcgi.in:3215
 msgid "%d %b %Y at %H:%M:%S"
 msgstr ""
 
@@ -9959,19 +9959,19 @@ msgstr ""
 #. This entry is a date/time format
 #. Check the strftime manpage for format details : http://docs.freebsd.org/info/gawk/gawk.info.Time_Functions.html
 #: ../src/lib/List.pm:3853 ../src/lib/List.pm:3854 ../src/lib/List.pm:3858
-#: ../wwsympa/wwsympa.fcgi.in:11807 ../wwsympa/wwsympa.fcgi.in:11876
-#: ../wwsympa/wwsympa.fcgi.in:12078 ../wwsympa/wwsympa.fcgi.in:12425
-#: ../wwsympa/wwsympa.fcgi.in:15811 ../wwsympa/wwsympa.fcgi.in:15818
-#: ../wwsympa/wwsympa.fcgi.in:16554 ../wwsympa/wwsympa.fcgi.in:16604
-#: ../wwsympa/wwsympa.fcgi.in:17374 ../wwsympa/wwsympa.fcgi.in:17375
-#: ../wwsympa/wwsympa.fcgi.in:4492 ../wwsympa/wwsympa.fcgi.in:4547
-#: ../wwsympa/wwsympa.fcgi.in:5131 ../wwsympa/wwsympa.fcgi.in:5132
-#: ../wwsympa/wwsympa.fcgi.in:6688 ../wwsympa/wwsympa.fcgi.in:7824
-#: ../wwsympa/wwsympa.fcgi.in:8449 ../wwsympa/wwsympa.fcgi.in:8496
-#: ../wwsympa/wwsympa.fcgi.in:8498 ../wwsympa/wwsympa.fcgi.in:8528
-#: ../wwsympa/wwsympa.fcgi.in:9050 ../wwsympa/wwsympa.fcgi.in:9051
-#: ../wwsympa/wwsympa.fcgi.in:9085 ../wwsympa/wwsympa.fcgi.in:9086
-#: ../wwsympa/wwsympa.fcgi.in:9265 ../wwsympa/wwsympa.fcgi.in:9266
+#: ../wwsympa/wwsympa.fcgi.in:11811 ../wwsympa/wwsympa.fcgi.in:11880
+#: ../wwsympa/wwsympa.fcgi.in:12082 ../wwsympa/wwsympa.fcgi.in:12429
+#: ../wwsympa/wwsympa.fcgi.in:15815 ../wwsympa/wwsympa.fcgi.in:15822
+#: ../wwsympa/wwsympa.fcgi.in:16558 ../wwsympa/wwsympa.fcgi.in:16608
+#: ../wwsympa/wwsympa.fcgi.in:17378 ../wwsympa/wwsympa.fcgi.in:17379
+#: ../wwsympa/wwsympa.fcgi.in:4496 ../wwsympa/wwsympa.fcgi.in:4551
+#: ../wwsympa/wwsympa.fcgi.in:5135 ../wwsympa/wwsympa.fcgi.in:5136
+#: ../wwsympa/wwsympa.fcgi.in:6692 ../wwsympa/wwsympa.fcgi.in:7828
+#: ../wwsympa/wwsympa.fcgi.in:8453 ../wwsympa/wwsympa.fcgi.in:8500
+#: ../wwsympa/wwsympa.fcgi.in:8502 ../wwsympa/wwsympa.fcgi.in:8532
+#: ../wwsympa/wwsympa.fcgi.in:9054 ../wwsympa/wwsympa.fcgi.in:9055
+#: ../wwsympa/wwsympa.fcgi.in:9089 ../wwsympa/wwsympa.fcgi.in:9090
+#: ../wwsympa/wwsympa.fcgi.in:9269 ../wwsympa/wwsympa.fcgi.in:9270
 msgid "%d %b %Y"
 msgstr ""
 
@@ -10092,66 +10092,66 @@ msgstr ""
 
 #. This entry is a date/time format
 #. Check the strftime manpage for format details : http://docs.freebsd.org/info/gawk/gawk.info.Time_Functions.html
-#: ../wwsympa/wwsympa.fcgi.in:1191
+#: ../wwsympa/wwsympa.fcgi.in:1196
 msgid "%H:%M:%S"
 msgstr ""
 
-#: ../wwsympa/wwsympa.fcgi.in:5026
+#: ../wwsympa/wwsympa.fcgi.in:5030
 msgid "Unable to add user %s in list %s : %s"
 msgstr ""
 
-#: ../wwsympa/wwsympa.fcgi.in:6413
+#: ../wwsympa/wwsympa.fcgi.in:6417
 msgid "Unable to add users in list %s : %s"
 msgstr ""
 
 #. This entry is a date/time format
 #. Check the strftime manpage for format details : http://docs.freebsd.org/info/gawk/gawk.info.Time_Functions.html
 #: ../wwsympa/SympaSession.pm:355 ../wwsympa/SympaSession.pm:356
-#: ../wwsympa/wwsympa.fcgi.in:12659 ../wwsympa/wwsympa.fcgi.in:12792
-#: ../wwsympa/wwsympa.fcgi.in:15135 ../wwsympa/wwsympa.fcgi.in:8406
+#: ../wwsympa/wwsympa.fcgi.in:12663 ../wwsympa/wwsympa.fcgi.in:12796
+#: ../wwsympa/wwsympa.fcgi.in:15139 ../wwsympa/wwsympa.fcgi.in:8410
 msgid "%d %b %y  %H:%M"
 msgstr ""
 
-#: ../wwsympa/wwsympa.fcgi.in:15993
+#: ../wwsympa/wwsympa.fcgi.in:15997
 msgid "Your unsubscription request to list %s was sent to the list owner."
 msgstr ""
 
-#: ../wwsympa/wwsympa.fcgi.in:15995
+#: ../wwsympa/wwsympa.fcgi.in:15999
 #, fuzzy
 msgid "You were successfully unsubscribed from list %s."
 msgstr "Apakah Anda benar-benar ingin daftar milis %1?"
 
-#: ../wwsympa/wwsympa.fcgi.in:15999
+#: ../wwsympa/wwsympa.fcgi.in:16003
 msgid ""
 "Unsubscription from list %s denied: Unsubscription from this list is closed."
 msgstr ""
 
-#: ../wwsympa/wwsympa.fcgi.in:16001
+#: ../wwsympa/wwsympa.fcgi.in:16005
 #, fuzzy
 msgid "Unsubscription from list %s failed."
 msgstr "Apakah Anda benar-benar ingin daftar milis %1?"
 
-#: ../wwsympa/wwsympa.fcgi.in:16593
+#: ../wwsympa/wwsympa.fcgi.in:16597
 msgid "Mail sending"
 msgstr ""
 
-#: ../wwsympa/wwsympa.fcgi.in:16594
+#: ../wwsympa/wwsympa.fcgi.in:16598
 #, fuzzy
 msgid "Subscription additions"
 msgstr "Pendaftaran"
 
-#: ../wwsympa/wwsympa.fcgi.in:16595
+#: ../wwsympa/wwsympa.fcgi.in:16599
 #, fuzzy
 msgid "Unsubscription"
 msgstr "Pendaftaran"
 
-#: ../wwsympa/wwsympa.fcgi.in:16596
+#: ../wwsympa/wwsympa.fcgi.in:16600
 msgid "Users deleted by admin"
 msgstr ""
 
 #. This entry is a date/time format
 #. Check the strftime manpage for format details : http://docs.freebsd.org/info/gawk/gawk.info.Time_Functions.html
-#: ../wwsympa/wwsympa.fcgi.in:16975 ../wwsympa/wwsympa.fcgi.in:16976
+#: ../wwsympa/wwsympa.fcgi.in:16979 ../wwsympa/wwsympa.fcgi.in:16980
 msgid "%Y-%m-%d-%H-%M-%S"
 msgstr ""
 
@@ -10306,158 +10306,6 @@ msgstr ""
 #: ../wwsympa/wwslib.pm:37
 msgid "you do not receive your own posts"
 msgstr "Anda tidak menerima kiriman Anda sendiri"
-
-#: ../web_tt2/compose_mail.tt2:78
-msgid "URL:"
-msgstr ""
-
-#: ../web_tt2/edit_attributes.tt2:7
-msgid "[% k.name %]:"
-msgstr ""
-
-#: ../web_tt2/error.tt2:14
-msgid "Failed to inlude members"
-msgstr ""
-
-#. (+cpt)
-#: ../web_tt2/javascript.tt2:1056
-msgid "microcal"
-msgstr ""
-
-#: ../web_tt2/javascript.tt2:1096
-msgid "\"+src.id+\"_cal"
-msgstr ""
-
-#: ../web_tt2/modindex.tt2:25
-msgid ""
-"You should probably not reject message detected as spam with notification "
-"because the message sender is probably spoofed. Do you really want to reject "
-"those messages with notification?"
-msgstr ""
-
-#: ../web_tt2/modindex.tt2:41
-msgid "Add to blacklist"
-msgstr ""
-
-#: ../web_tt2/modindex.tt2:120
-msgid "Reject and blacklist sender"
-msgstr ""
-
-#: ../web_tt2/modindex.tt2:128
-msgid "Toggle spams"
-msgstr ""
-
-#: ../mail_tt2/listmaster_notification.tt2:42
-msgid "Previous process crashed"
-msgstr ""
-
-#: ../mail_tt2/listmaster_notification.tt2:44
-msgid "Previous process has died unexpectedly."
-msgstr ""
-
-#. (list.name,msg_from)
-#: ../mail_tt2/moderate.tt2:3
-msgid "Article to be tagged for list %1 from %2"
-msgstr ""
-
-#. (list.name)
-#: ../mail_tt2/moderate.tt2:21
-msgid ""
-"To tag the message in list %1 for the appropriate topic, please use the "
-"following link:"
-msgstr ""
-
-#. (list.name)
-#: ../mail_tt2/user_notification.tt2:53
-msgid ""
-"You have requested to removed from list %1. To confirm and get removed from "
-"the list, please click the link below: "
-msgstr ""
-
-#: ../src/lib/confdef.pm:1197
-msgid "List of headers to be included into the message for signature"
-msgstr ""
-
-#: ../src/lib/mail.pm:922
-msgid "Unable to create a channel in smtpto: %m"
-msgstr ""
-
-#: ../web_tt2/editfile.tt2:32
-msgid ""
-"List description: This text is sent as an answer to the mail command\n"
-"INFO. It can also be included in the <em>Welcome message</em>."
-msgstr ""
-
-#: ../web_tt2/edit_config.tt2:7
-msgid "[%confparam.title%]"
-msgstr ""
-
-#: ../web_tt2/edit_config.tt2:16
-msgid "[% confparam.title %]"
-msgstr ""
-
-#: ../web_tt2/edit_config.tt2:28
-msgid "[% confparam.query %]"
-msgstr ""
-
-#: ../src/lib/confdef.pm:43
-msgid "Directories and file location"
-msgstr ""
-
-#: ../src/lib/confdef.pm:234
-msgid "Syslog"
-msgstr ""
-
-#: ../src/lib/confdef.pm:260
-msgid "Log intensity"
-msgstr ""
-
-#: ../src/lib/confdef.pm:289
-msgid "General definition"
-msgstr ""
-
-#: ../src/lib/confdef.pm:573
-msgid "Internationalization"
-msgstr ""
-
-#: ../src/lib/confdef.pm:592
-msgid "Errors management"
-msgstr ""
-
-#: ../src/lib/confdef.pm:626
-msgid "MTA related"
-msgstr ""
-
-#: ../src/lib/confdef.pm:833
-msgid "Database"
-msgstr ""
-
-#. (init_email)
-#: ../web_tt2/sso_login.tt2:32
-msgid ""
-"A confirmation password has been sent to your email address %1.<br />Please "
-"check your e-mail box for the message containing the confirmation password "
-"needed below."
-msgstr ""
-
-#: ../web_tt2/sso_login.tt2:51
-msgid "Validate Address"
-msgstr ""
-
-#: ../mail_tt2/sendssopasswd.tt2:7
-msgid ""
-"To complete your account setup actions you need to confirm that you have \n"
-"supplied a working email address.  Please enter the following email and "
-"password\n"
-"in the setup wizard to complete your account configuration."
-msgstr ""
-
-#. (list.name)
-#: ../mail_tt2/message_report.tt2:52
-msgid ""
-"Your message could not be sent because its size \n"
-"was over the maximum size allowed on this list."
-msgstr ""
 
 #, fuzzy
 #~ msgid "List informations"
