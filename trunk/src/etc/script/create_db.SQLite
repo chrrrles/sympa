@@ -2,6 +2,75 @@
 
 -- --------------------------------------------------------
 --
+-- Table structure for table `admin_table`
+-- 
+
+CREATE TABLE admin_table ( 
+	 date_admin 	numeric NOT NULL, 
+	 update_admin 	numeric, 
+	 info_admin 	text, 
+	 list_admin 	text NOT NULL, 
+	 reception_admin 	text, 
+	 comment_admin 	text, 
+	 subscribed_admin 	numeric, 
+	 profile_admin 	text, 
+	 role_admin 	text NOT NULL, 
+	 included_admin 	numeric, 
+	 user_admin 	text NOT NULL, 
+	 include_sources_admin 	text, 
+	 robot_admin 	text NOT NULL, 
+	 visibility_admin 	text, 
+	 PRIMARY KEY (robot_admin, list_admin, role_admin, user_admin) 
+ );
+
+CREATE INDEX admin_user_index ON admin_table ( user_admin ); 
+
+
+-- --------------------------------------------------------
+--
+-- Table structure for table `bulkmailer_table`
+-- 
+
+CREATE TABLE bulkmailer_table ( 
+	 priority_packet_bulkmailer 	integer, 
+	 receipients_bulkmailer 	text, 
+	 reception_date_bulkmailer 	integer, 
+	 packetid_bulkmailer 	text NOT NULL, 
+	 priority_message_bulkmailer 	integer, 
+	 verp_bulkmailer 	numeric, 
+	 merge_bulkmailer 	numeric, 
+	 tracking_bulkmailer 	text, 
+	 returnpath_bulkmailer 	text, 
+	 messageid_bulkmailer 	text, 
+	 messagekey_bulkmailer 	text NOT NULL, 
+	 listname_bulkmailer 	text, 
+	 delivery_date_bulkmailer 	integer, 
+	 robot_bulkmailer 	text, 
+	 lock_bulkmailer 	text, 
+	 PRIMARY KEY (messagekey_bulkmailer, packetid_bulkmailer) 
+ );
+
+
+-- --------------------------------------------------------
+--
+-- Table structure for table `bulkspool_table`
+-- 
+
+CREATE TABLE bulkspool_table ( 
+	 dkim_selector_bulkspool 	text, 
+	 dkim_d_bulkspool 	text, 
+	 dkim_privatekey_bulkspool 	text, 
+	 messageid_bulkspool 	text, 
+	 dkim_i_bulkspool 	text, 
+	 messagekey_bulkspool 	text NOT NULL, 
+	 message_bulkspool 	longtext, 
+	 lock_bulkspool 	numeric, 
+	 PRIMARY KEY (messagekey_bulkspool) 
+ );
+
+
+-- --------------------------------------------------------
+--
 -- Table structure for table `conf_table`
 -- 
 
@@ -15,22 +84,36 @@ CREATE TABLE conf_table (
 
 -- --------------------------------------------------------
 --
--- Table structure for table `notification_table`
+-- Table structure for table `exclusion_table`
 -- 
 
-CREATE TABLE notification_table ( 
-	 type_notification 	text, 
-	 arrival_date_notification 	text, 
-	 status_notification 	text, 
-	 recipient_notification 	text, 
-	 message_notification 	longtext, 
-	 message_id_notification 	text, 
-	 date_notification 	integer NOT NULL, 
-	 reception_option_notification 	text, 
-	 pk_notification 	integer NOT NULL, 
-	 list_notification 	text, 
-	 robot_notification 	text, 
-	 PRIMARY KEY (pk_notification) 
+CREATE TABLE exclusion_table ( 
+	 robot_exclusion 	text NOT NULL, 
+	 user_exclusion 	text NOT NULL, 
+	 date_exclusion 	integer, 
+	 list_exclusion 	text NOT NULL, 
+	 PRIMARY KEY (list_exclusion, user_exclusion, robot_exclusion) 
+ );
+
+
+-- --------------------------------------------------------
+--
+-- Table structure for table `list_table`
+-- 
+
+CREATE TABLE list_table ( 
+	 creation_epoch_list 	numeric, 
+	 name_list 	text NOT NULL, 
+	 topics_list 	text, 
+	 robot_list 	text NOT NULL, 
+	 status_list 	text, 
+	 path_list 	text, 
+	 web_archive_list 	integer, 
+	 owners_list 	text, 
+	 subject_list 	text, 
+	 creation_email_list 	text, 
+	 editors_list 	text, 
+	 PRIMARY KEY (name_list, robot_list) 
  );
 
 
@@ -59,34 +142,104 @@ CREATE TABLE logs_table (
 
 -- --------------------------------------------------------
 --
--- Table structure for table `user_table`
+-- Table structure for table `netidmap_table`
 -- 
 
-CREATE TABLE user_table ( 
-	 email_user 	text NOT NULL, 
-	 last_login_date_user 	integer, 
-	 attributes_user 	text, 
-	 data_user 	text, 
-	 cookie_delay_user 	integer, 
-	 last_login_host_user 	text, 
-	 gecos_user 	text, 
-	 password_user 	text, 
-	 lang_user 	text, 
-	 wrong_login_count_user 	integer, 
-	 PRIMARY KEY (email_user) 
+CREATE TABLE netidmap_table ( 
+	 netid_netidmap 	text NOT NULL, 
+	 email_netidmap 	text, 
+	 robot_netidmap 	text NOT NULL, 
+	 serviceid_netidmap 	text NOT NULL, 
+	 PRIMARY KEY (netid_netidmap, serviceid_netidmap, robot_netidmap) 
  );
 
 
 -- --------------------------------------------------------
 --
--- Table structure for table `exclusion_table`
+-- Table structure for table `notification_table`
 -- 
 
-CREATE TABLE exclusion_table ( 
-	 user_exclusion 	text NOT NULL, 
-	 date_exclusion 	integer, 
-	 list_exclusion 	text NOT NULL, 
-	 PRIMARY KEY (list_exclusion, user_exclusion) 
+CREATE TABLE notification_table ( 
+	 type_notification 	text, 
+	 arrival_date_notification 	text, 
+	 status_notification 	text, 
+	 recipient_notification 	text, 
+	 message_notification 	longtext, 
+	 message_id_notification 	text, 
+	 date_notification 	integer NOT NULL, 
+	 reception_option_notification 	text, 
+	 pk_notification 	integer NOT NULL, 
+	 list_notification 	text, 
+	 robot_notification 	text, 
+	 PRIMARY KEY (pk_notification) 
+ );
+
+
+-- --------------------------------------------------------
+--
+-- Table structure for table `oauthconsumer_sessions_table`
+-- 
+
+CREATE TABLE oauthconsumer_sessions_table ( 
+	 tmp_secret_oauthconsumer 	text, 
+	 user_oauthconsumer 	text NOT NULL, 
+	 provider_oauthconsumer 	text NOT NULL, 
+	 access_token_oauthconsumer 	text, 
+	 tmp_token_oauthconsumer 	text, 
+	 access_secret_oauthconsumer 	text, 
+	 PRIMARY KEY (user_oauthconsumer, provider_oauthconsumer) 
+ );
+
+
+-- --------------------------------------------------------
+--
+-- Table structure for table `oauthprovider_nonces_table`
+-- 
+
+CREATE TABLE oauthprovider_nonces_table ( 
+	 id_oauthprovider 	integer NOT NULL, 
+	 id_nonce 	integer NOT NULL, 
+	 nonce_oauthprovider 	text NOT NULL, 
+	 time_oauthprovider 	integer, 
+	 PRIMARY KEY (id_nonce) 
+ );
+
+
+-- --------------------------------------------------------
+--
+-- Table structure for table `oauthprovider_sessions_table`
+-- 
+
+CREATE TABLE oauthprovider_sessions_table ( 
+	 accessgranted_oauthprovider 	integer, 
+	 user_oauthprovider 	text, 
+	 token_oauthprovider 	text NOT NULL, 
+	 firsttime_oauthprovider 	integer, 
+	 isaccess_oauthprovider 	integer, 
+	 lasttime_oauthprovider 	integer NOT NULL, 
+	 verifier_oauthprovider 	text, 
+	 id_oauthprovider 	integer NOT NULL, 
+	 secret_oauthprovider 	text NOT NULL, 
+	 callback_oauthprovider 	text, 
+	 consumer_oauthprovider 	text NOT NULL, 
+	 PRIMARY KEY (id_oauthprovider) 
+ );
+
+
+-- --------------------------------------------------------
+--
+-- Table structure for table `one_time_ticket_table`
+-- 
+
+CREATE TABLE one_time_ticket_table ( 
+	 data_one_time_ticket 	text, 
+	 status_one_time_ticket 	text, 
+	 ticket_one_time_ticket 	text, 
+	 remote_addr_one_time_ticket 	text, 
+	 robot_one_time_ticket 	text, 
+	 date_one_time_ticket 	integer, 
+	 email_one_time_ticket 	text, 
+	 PRIMARY KEY (ticket_one_time_ticket) 
  );
 
 
@@ -110,101 +263,42 @@ CREATE TABLE session_table (
 
 -- --------------------------------------------------------
 --
--- Table structure for table `netidmap_table`
+-- Table structure for table `stat_counter_table`
 -- 
 
-CREATE TABLE netidmap_table ( 
-	 netid_netidmap 	text NOT NULL, 
-	 email_netidmap 	text, 
-	 robot_netidmap 	text NOT NULL, 
-	 serviceid_netidmap 	text NOT NULL, 
-	 PRIMARY KEY (netid_netidmap, serviceid_netidmap, robot_netidmap) 
+CREATE TABLE stat_counter_table ( 
+	 end_date_counter 	integer, 
+	 list_counter 	text, 
+	 id_counter 	integer NOT NULL, 
+	 robot_counter 	text NOT NULL, 
+	 beginning_date_counter 	integer NOT NULL, 
+	 data_counter 	text NOT NULL, 
+	 variation_counter 	integer, 
+	 total_counter 	integer, 
+	 PRIMARY KEY (id_counter) 
  );
 
 
 -- --------------------------------------------------------
 --
--- Table structure for table `bulkspool_table`
+-- Table structure for table `stat_table`
 -- 
 
-CREATE TABLE bulkspool_table ( 
-	 dkim_selector_bulkspool 	text, 
-	 dkim_d_bulkspool 	text, 
-	 dkim_privatekey_bulkspool 	text, 
-	 messageid_bulkspool 	text, 
-	 dkim_i_bulkspool 	text, 
-	 dkim_header_list_bulkspool 	text, 
-	 messagekey_bulkspool 	text NOT NULL, 
-	 message_bulkspool 	longtext, 
-	 lock_bulkspool 	boolean, 
-	 PRIMARY KEY (messagekey_bulkspool) 
+CREATE TABLE stat_table ( 
+	 daemon_stat 	text, 
+	 list_stat 	text, 
+	 parameter_stat 	text, 
+	 id_stat 	integer NOT NULL, 
+	 email_stat 	text, 
+	 operation_stat 	text NOT NULL, 
+	 user_ip_stat 	text, 
+	 read_stat 	integer NOT NULL, 
+	 date_stat 	integer NOT NULL, 
+	 robot_stat 	text NOT NULL, 
+	 PRIMARY KEY (id_stat) 
  );
 
-
--- --------------------------------------------------------
---
--- Table structure for table `admin_table`
--- 
-
-CREATE TABLE admin_table ( 
-	 date_admin 	timestamp NOT NULL, 
-	 update_admin 	timestamp, 
-	 info_admin 	text, 
-	 list_admin 	text NOT NULL, 
-	 reception_admin 	text, 
-	 comment_admin 	text, 
-	 subscribed_admin 	boolean, 
-	 profile_admin 	text, 
-	 role_admin 	text NOT NULL, 
-	 included_admin 	boolean, 
-	 user_admin 	text NOT NULL, 
-	 include_sources_admin 	text, 
-	 robot_admin 	text NOT NULL, 
-	 visibility_admin 	text, 
-	 PRIMARY KEY (robot_admin, list_admin, role_admin, user_admin) 
- );
-
-
--- --------------------------------------------------------
---
--- Table structure for table `one_time_ticket_table`
--- 
-
-CREATE TABLE one_time_ticket_table ( 
-	 data_one_time_ticket 	text, 
-	 status_one_time_ticket 	text, 
-	 ticket_one_time_ticket 	text, 
-	 remote_addr_one_time_ticket 	text, 
-	 robot_one_time_ticket 	text, 
-	 date_one_time_ticket 	integer, 
-	 email_one_time_ticket 	text, 
-	 PRIMARY KEY (ticket_one_time_ticket) 
- );
-
-
--- --------------------------------------------------------
---
--- Table structure for table `bulkmailer_table`
--- 
-
-CREATE TABLE bulkmailer_table ( 
-	 priority_packet_bulkmailer 	integer, 
-	 receipients_bulkmailer 	text, 
-	 reception_date_bulkmailer 	integer, 
-	 packetid_bulkmailer 	text NOT NULL, 
-	 priority_message_bulkmailer 	integer, 
-	 verp_bulkmailer 	boolean, 
-	 merge_bulkmailer 	boolean, 
-	 tracking_bulkmailer 	text, 
-	 returnpath_bulkmailer 	text, 
-	 messageid_bulkmailer 	text, 
-	 messagekey_bulkmailer 	text NOT NULL, 
-	 listname_bulkmailer 	text, 
-	 delivery_date_bulkmailer 	integer, 
-	 robot_bulkmailer 	text, 
-	 lock_bulkmailer 	text, 
-	 PRIMARY KEY (messagekey_bulkmailer, packetid_bulkmailer) 
- );
+CREATE INDEX stats_user_index ON stat_table ( email_stat ); 
 
 
 -- --------------------------------------------------------
@@ -223,35 +317,37 @@ CREATE TABLE subscriber_table (
 	 suspend_end_date_subscriber 	integer, 
 	 bounce_address_subscriber 	text, 
 	 bounce_subscriber 	text, 
-	 included_subscriber 	boolean, 
+	 included_subscriber 	numeric, 
 	 include_sources_subscriber 	text, 
-	 update_subscriber 	timestamp, 
+	 update_subscriber 	numeric, 
 	 user_subscriber 	text NOT NULL, 
 	 topics_subscriber 	text, 
-	 subscribed_subscriber 	boolean, 
-	 date_subscriber 	timestamp NOT NULL, 
+	 subscribed_subscriber 	numeric, 
+	 date_subscriber 	numeric NOT NULL, 
 	 bounce_score_subscriber 	integer, 
-	 number_messages_subscriber 	integer NOT NULL, 
-	 suspend_subscriber 	boolean, 
+	 number_messages_subscriber 	integer, 
+	 suspend_subscriber 	numeric, 
 	 PRIMARY KEY (robot_subscriber, list_subscriber, user_subscriber) 
  );
+
+CREATE INDEX subscriber_user_index ON subscriber_table ( user_subscriber ); 
 
 
 -- --------------------------------------------------------
 --
--- Table structure for table `stat_table`
+-- Table structure for table `user_table`
 -- 
 
-CREATE TABLE stat_table ( 
-	 daemon_stat 	text, 
-	 list_stat 	text, 
-	 parameter_stat 	text, 
-	 id_stat 	integer NOT NULL, 
-	 email_stat 	text, 
-	 operation_stat 	text NOT NULL, 
-	 user_ip_stat 	text, 
-	 read_stat 	tinyint(1) NOT NULL, 
-	 date_stat 	integer NOT NULL, 
-	 robot_stat 	text NOT NULL, 
-	 PRIMARY KEY (id_stat) 
+CREATE TABLE user_table ( 
+	 email_user 	text NOT NULL, 
+	 last_login_date_user 	integer, 
+	 attributes_user 	text, 
+	 data_user 	text, 
+	 cookie_delay_user 	integer, 
+	 last_login_host_user 	text, 
+	 gecos_user 	text, 
+	 password_user 	text, 
+	 lang_user 	text, 
+	 wrong_login_count_user 	integer, 
+	 PRIMARY KEY (email_user) 
  );

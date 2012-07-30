@@ -98,6 +98,11 @@ our @params = (
         'vhost'    => '1',
     },
     {
+        'name'     => 'voot_feature',
+        'default'  => 'off',
+        'file'     => 'sympa.conf',
+    },
+    {
         'name'     => 'max_wrong_password',
         'default'  => '19',
         'vhost'    => '1',
@@ -360,21 +365,6 @@ our @params = (
         'advice'   => gettext('This parameter is a scenario, check sympa documentation about scenarios if you want to define one'),
     },
     {
-        'name'     => 'automatic_list_feature',
-        'default'  => 'off',
-        'vhost'    => '1',
-    },
-    {
-        'name'     => 'automatic_list_creation',
-        'default'  => 'public',
-        'vhost'    => '1',
-    },
-    {
-        'name'     => 'automatic_list_removal',
-        'optional' => '1', ## Can be 'if_empty',
-        'vhost'    => '1',
-    },
-    {
         'name'     => 'global_remind',
         'default'  => 'listmaster',
     },
@@ -465,10 +455,42 @@ our @params = (
         'advice'   => gettext('Proposed value is quite low, you can rise it up to 100, 200 or even 300 with powerfull systems.'),
     },
     {
+        'name'    => 'automatic_list_removal',
+        'default' => 'none',
+        'vhost'   => '1',
+    },
+    {
+        'name'    => 'automatic_list_feature',
+        'default' => 'off',
+        'vhost'   => '1',
+    },
+    {
+        'name'    => 'automatic_list_creation',
+        'default' => 'public',
+        'vhost'   => '1',
+    },
+    {
+        'name'    => 'automatic_list_families',
+        'query'   => 'Defines the name of the family the automatic lists are based on.', 
+        'file'    => 'sympa.conf',
+        'optional' => '1',
+        vhost   => '1',
+    },
+    {
+        'name'    => 'automatic_list_prefix',
+        'query'   => 'Defines the prefix allowing to recognize that a list is an automatic list.', 
+        'file'    => 'sympa.conf',
+        'optional' => '1',
+    },
+    {
         'name'     => 'log_smtp',
         'default'  => 'off',
         'vhost'    => '1',
         'file'     => 'sympa.conf',
+    },
+    {
+        'name'    => 'global_remind',
+        'default' => 'listmaster',
     },
     {
         'name'     => 'use_blacklist',
@@ -518,6 +540,12 @@ our @params = (
         'name'     => 'alias_manager',
         'default'  => Sympa::Constants::SBINDIR . '/alias_manager.pl',
     },
+    {
+        name    => 'db_list_cache',
+        default => 'off',
+        advice  => gettext('Whether or not to cache lists in the database'),
+    },
+    { title => 'Internationalization' },
     {
         'name'     => 'sendmail',
         'default'  => '/usr/sbin/sendmail',
@@ -671,6 +699,14 @@ our @params = (
         'default'  => Sympa::Constants::SPOOLDIR . '/distribute',
         'file'     => 'sympa.conf',
     },
+    ##{
+	##name => 'dkim_header_list',
+        ##vhost => '1',
+	##file   => 'sympa.conf',
+        ##query   => 'list of headers to be included ito the message for signature', 
+        ##default => 'from:sender:reply-to:subject:date:message-id:to:cc:list-id:list-help:list-unsubscribe:list-subscribe:list-post:list-owner:list-archive:in-reply-to:references:resent-date:resent-from:resent-sender:resent-to:resent-cc:resent-message-id:mime-version:content-type:content-transfer-encoding:content-id:content-description', 
+    ##}, 
+    { 'title' => 'S/MIME pluggin' },
     {
         'name'     => 'queuemod',
         'default'  => Sympa::Constants::SPOOLDIR . '/moderation',
@@ -1184,14 +1220,6 @@ our @params = (
         'optional' => '1',
         'file'     => 'sympa.conf',
     },
-    {
-        'name'     => 'dkim_header_list',
-        'vhost'    => '1',
-        'file'     => 'sympa.conf',
-        'query'    => gettext('List of headers to be included into the message for signature'),
-        'default'  => 'from:sender:reply-to:subject:date:message-id:to:cc:list-id:list-help:list-unsubscribe:list-subscribe:list-post:list-owner:list-archive:in-reply-to:references:resent-date:resent-from:resent-sender:resent-to:resent-cc:resent-message-id:mime-version:content-type:content-transfer-encoding:content-id:content-description',
-    },
-
     { 'title' => gettext('Antivirus plug-in') },
 
     {
@@ -1257,6 +1285,7 @@ our @params = (
         'file'     => 'wwsympa.conf',
         'edit'     => '1',
         'advice'   => gettext('Better if not in a critical partition'),
+        'vhost'     => '1',
     },
     {
         'name'     => 'archive_default_index',

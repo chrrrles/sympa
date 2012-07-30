@@ -35,6 +35,7 @@ use Encode::Guess; ## Usefull when encoding should be guessed
 use Encode::MIME::Header;
 use Text::LineFold;
 use MIME::Lite::HTML;
+use Proc::ProcessTable;
 
 use Conf;
 use Language;
@@ -54,6 +55,8 @@ my $separator="------- CUT --- CUT --- CUT --- CUT --- CUT --- CUT --- CUT -----
 ## Regexps for list params
 ## Caution : if this regexp changes (more/less parenthesis), then regexp using it should 
 ## also be changed
+my $time_regexp = '[012]?[0-9](?:\:[0-5][0-9])?';
+my $time_range_regexp = $time_regexp.'-'.$time_regexp;
 my %regexp = ('email' => '([\w\-\_\.\/\+\=\'\&]+|\".*\")\@[\w\-]+(\.[\w\-]+)+',
 	      'family_name' => '[a-z0-9][a-z0-9\-\.\+_]*', 
 	      'template_name' => '[a-zA-Z0-9][a-zA-Z0-9\-\.\+_\s]*', ## Allow \s
@@ -65,6 +68,10 @@ my %regexp = ('email' => '([\w\-\_\.\/\+\=\'\&]+|\".*\")\@[\w\-]+(\.[\w\-]+)+',
 	      'task' => '\w+',
 	      'datasource' => '[\w-]+',
 	      'uid' => '[\w\-\.\+]+',
+	      'time' => $time_regexp,
+	      'time_range' => $time_range_regexp,
+	      'time_ranges' => $time_range_regexp.'(?:\s+'.$time_range_regexp.')*',
+	      're' => '(?i)(?:AW|(?:\xD0\x9D|\xD0\xBD)(?:\xD0\x90|\xD0\xB0)|Re(?:\^\d+|\*\d+|\*\*\d+|\[\d+\])?|Rif|SV|VS)\s*:',
 	      );
 
 my %openssl_errors = (1 => 'an error occurred parsing the command options',
@@ -325,7 +332,6 @@ sub safefork {
 ###################################################### 
 sub checkcommand {
    my($msg, $sender, $robot) = @_;
-   &Log::do_log('debug3', 'tools::checkcommand(msg->head->get(subject): %s,%s)',$msg->head->get('Subject'), $sender);
 
    my($avoid, $i);
 
@@ -333,6 +339,8 @@ sub checkcommand {
 
    ## Check for commands in the subject.
    my $subject = $msg->head->get('Subject');
+
+   &Log::do_log('debug3', 'tools::checkcommand(msg->head->get(subject): %s,%s)', $subject, $sender);
 
    if ($subject) {
        if ($Conf::Conf{'misaddressed_commands_regexp'} && ($subject =~ /^$Conf::Conf{'misaddressed_commands_regexp'}\b/im)) {
@@ -749,14 +757,12 @@ sub get_dkim_parameters {
 	    $data->{'i'} = $list->{'name'}.'-request@'.$robot;
 	}
 	
-	$data->{'header_list'} = $list->{'admin'}{'dkim_parameters'}{'header_list'};
 	$data->{'selector'} = $list->{'admin'}{'dkim_parameters'}{'selector'};
 	$keyfile = $list->{'admin'}{'dkim_parameters'}{'private_key_path'};
     }else{
 	# in robot context
 	$data->{'d'} = &Conf::get_robot_conf($robot, 'dkim_signer_domain');
 	$data->{'i'} = &Conf::get_robot_conf($robot, 'dkim_signer_identity');
-	$data->{'header_list'} = &Conf::get_robot_conf($robot, 'dkim_header_list');
 	$data->{'selector'} = &Conf::get_robot_conf($robot, 'dkim_selector');
 	$keyfile = &Conf::get_robot_conf($robot, 'dkim_private_key_path');
     }
@@ -854,9 +860,8 @@ sub dkim_sign {
     my $dkim_i = $data->{'dkim_i'};
     my $dkim_selector = $data->{'dkim_selector'};
     my $dkim_privatekey = $data->{'dkim_privatekey'};
-    my $dkim_header_list = $data->{'dkim_header_list'};
 
-    &Log::do_log('debug2', 'tools::dkim_sign (msg:%s,dkim_d:%s,dkim_i%s,dkim_selector:%s,dkim_header_list:%s,dkim_privatekey:%s)',substr($msg_as_string,0,30),$dkim_d,$data->{'dkim_i'},$data->{'dkim_selector'},$data->{'dkim_header_list'}, substr($data->{'dkim_privatekey'},0,30));
+    &Log::do_log('debug2', 'tools::dkim_sign (msg:%s,dkim_d:%s,dkim_i%s,dkim_selector:%s,dkim_privatekey:%s)',substr($msg_as_string,0,30),$dkim_d,$dkim_i,$dkim_selector, substr($dkim_privatekey,0,30));
 
     unless ($dkim_selector) {
 	&Log::do_log('err',"DKIM selector is undefined, could not sign message");
@@ -882,6 +887,9 @@ sub dkim_sign {
     unless (eval "require Mail::DKIM::Signer") {
 	&Log::do_log('err', "Failed to load Mail::DKIM::signer perl module, ignoring DKIM signature");
 	return ($msg_as_string); 
+    }
+    unless (eval "require Mail::DKIM::TextWrap") {
+	&Log::do_log('err', "Failed to load Mail::DKIM::TextWrap perl module, signature will not be pretty");
     }
     my $dkim ;
     if ($dkim_i) {
@@ -920,9 +928,15 @@ sub dkim_sign {
 	return undef;
     }
 
-    $dkim->load(\*MSGDUMP);
-
-    close (MSGDUMP);
+    while (<MSGDUMP>)
+    {
+	# remove local line terminators
+	chomp;
+	s/\015$//;
+	# use SMTP line terminators
+	$dkim->PRINT("$_\015\012");
+    }
+    close MSGDUMP;
     unless ($dkim->CLOSE) {
 	&Log::do_log('err', 'Cannot sign (DKIM) message');
 	return ($msg_as_string); 
@@ -939,9 +953,6 @@ sub dkim_sign {
 	unlink ($temporary_file);
     }
     unlink ($temporary_keyfile);
-#    $dkim->signature->headerlist("Message-ID:Date:From:To:Subject:Sender");
-    $dkim->signature->headerlist($dkim_header_list);
-    $dkim->signature->prettify;
     
     $message->{'msg'}->head->add('DKIM-signature',$dkim->signature->as_string);
 
@@ -1026,10 +1037,14 @@ sub smime_sign {
     ## crypted message, add this header in the crypted form.
     my $predefined_headers ;
     foreach my $header ($signed_msg->head->tags) {
-	$predefined_headers->{$header} = 1 if ($signed_msg->head->get($header)) ;
+	$predefined_headers->{lc $header} = 1
+	    if ($signed_msg->head->get($header));
     }
-    foreach my $header ($in_msg->head->tags) {
-	$signed_msg->head->add($header,$in_msg->head->get($header)) unless $predefined_headers->{$header} ;
+    foreach my $header (split /\n(?![ \t])/, $in_msg->head->as_string) {
+	next unless $header =~ /^([^\s:]+)\s*:\s*(.*)$/s;
+	my ($tag, $val) = ($1, $2);
+	$signed_msg->head->add($tag, $val)
+	    unless $predefined_headers->{lc $tag};
     }
     
     my $messageasstring = $signed_msg->as_string ;
@@ -1300,12 +1315,14 @@ unlink ($temporary_file) unless ($main::options{'debug'}) ;
         ## crypted message, add this header in the crypted form.
 	my $predefined_headers ;
 	foreach my $header ($cryptedmsg->head->tags) {
-	    $predefined_headers->{$header} = 1 
+	    $predefined_headers->{lc $header} = 1 
 	        if ($cryptedmsg->head->get($header)) ;
 	}
-	foreach my $header ($msg_header->tags) {
-	    $cryptedmsg->head->add($header,$msg_header->get($header)) 
-	        unless $predefined_headers->{$header} ;
+	foreach my $header (split /\n(?![ \t])/, $msg_header->as_string) {
+	    next unless $header =~ /^([^\s:]+)\s*:\s*(.*)$/s;
+	    my ($tag, $val) = ($1, $2);
+	    $cryptedmsg->head->add($tag, $val) 
+	        unless $predefined_headers->{lc $tag};
 	}
 
     }else{
@@ -1320,8 +1337,9 @@ unlink ($temporary_file) unless ($main::options{'debug'}) ;
 sub smime_decrypt {
     my $msg = shift;
     my $list = shift ; ## the recipient of the msg
-    
-    &Log::do_log('debug2', 'tools::smime_decrypt message msg from %s,%s',$msg->head->get('from'),$list->{'name'});
+    my $from = $msg->head->get('from');
+
+    &do_log('debug2', 'tools::smime_decrypt message msg from %s,%s', $from, $list->{'name'});
 
     ## an empty "list" parameter means mail to sympa@, listmaster@...
     my $dir = $list->{'dir'};
@@ -1410,11 +1428,14 @@ sub smime_decrypt {
     ## decrypted message, add this header in the decrypted form.
     my $predefined_headers ;
     foreach my $header ($decryptedmsg->head->tags) {
-	$predefined_headers->{$header} = 1 if ($decryptedmsg->head->get($header)) ;
+	$predefined_headers->{lc $header} = 1
+	    if ($decryptedmsg->head->get($header));
     }
-    
-    foreach my $header ($msg->head->tags) {
-	$decryptedmsg->head->add($header,$msg->head->get($header)) unless $predefined_headers->{$header} ;
+    foreach my $header (split /\n(?![ \t])/, $msg->head->as_string) {
+	next unless $header =~ /^([^\s:]+)\s*:\s*(.*)$/s;
+	my ($tag, $val) = ($1, $2);
+	$decryptedmsg->head->add($tag, $val)
+	    unless $predefined_headers->{lc $tag};
     }
     ## Some headers from the initial message should not be restored
     ## Content-Disposition and Content-Transfer-Encoding if the result is multipart
@@ -1447,14 +1468,14 @@ sub as_singlepart {
     if ($msg->effective_type() =~ /^$preferred_type$/) {
 	$done = 1;
     }elsif ($msg->effective_type() =~ /^multipart\/alternative/) {
-	my @parts = $msg->parts();
-	foreach my $index (0..$#parts) {
-	    if (($parts[$index]->effective_type() =~ /^$preferred_type$/) ||
+	foreach my $part ($msg->parts) {
+	    if (($part->effective_type() =~ /^$preferred_type$/) ||
 		(
-		 ($parts[$index]->effective_type() =~ /^multipart\/related$/) &&
-		 ($parts[$index]->parts(0)->effective_type() =~ /^$preferred_type$/))) {
+		 ($part->effective_type() =~ /^multipart\/related$/) &&
+		 $part->parts &&
+		 ($part->parts(0)->effective_type() =~ /^$preferred_type$/))) {
 		## Only keep the first matching part
-		$msg->parts([$parts[$index]]);
+		$msg->parts([$part]);
 		$msg->make_singlepart();
 		$done = 1;
 		last;
@@ -1469,14 +1490,13 @@ sub as_singlepart {
 	$done ||= &as_singlepart($msg, $preferred_type, $loops);
 
     }elsif ($msg->effective_type() =~ /^multipart/) {
-	my @parts = $msg->parts();
-	foreach my $index (0..$#parts) {
+	foreach my $part ($msg->parts) {
             
-            next unless (defined $parts[$index]); ## Skip empty parts
+            next unless (defined $part); ## Skip empty parts
  
-	    if ($parts[$index]->effective_type() =~ /^multipart\/alternative/) {
-		if (&as_singlepart($parts[$index], $preferred_type, $loops)) {
-		    $msg->parts([$parts[$index]]);
+	    if ($part->effective_type() =~ /^multipart\/alternative/) {
+		if (&as_singlepart($part, $preferred_type, $loops)) {
+		    $msg->parts([$part]);
 		    $msg->make_singlepart();
 		    $done = 1;
 		}
@@ -1716,7 +1736,7 @@ sub cookie_changed {
 	}
 	umask $umask;
 	chown [getpwnam(Sympa::Constants::USER)]->[2], [getgrnam(Sympa::Constants::GROUP)]->[2], "$Conf::Conf{'etc'}/cookies.history";
-	printf COOK "$current ";
+	print COOK "$current ";
 	close COOK;
 	return(0);
     }
@@ -1762,7 +1782,7 @@ sub load_mime_types {
         next unless (-r $loc);
 
         unless(open (CONF, $loc)) {
-            printf STDERR "load_mime_types: unable to open $loc\n";
+            print STDERR "load_mime_types: unable to open $loc\n";
             return undef;
         }
     }
@@ -2314,7 +2334,14 @@ sub get_filename {
 ######################################################
 sub make_tt2_include_path {
     my ($robot,$dir,$lang,$list) = @_;
-    &Log::do_log('debug3','tools::make_tt2_include_path(%s,%s,%s,%s)',$robot,$dir,$lang,$list);
+
+    my $listname;
+    if (ref $list eq 'List') {
+	$listname = $list->{'name'};
+    } else {
+	$listname = $list;
+    }
+    &Log::do_log('debug3', 'tools::make_tt2_include_path(%s,%s,%s,%s)', $robot, $dir, $lang, $listname);
 
     my @include_path;
 
@@ -2481,54 +2508,54 @@ sub dump_encoding {
 
 ## Remove PID file and STDERR output
 sub remove_pid {
-    my ($pidfile, $pid, $options) = @_;
-
-    ## If in multi_process mode (bulk.pl for instance can have child processes)
-    ## Then the pidfile contains a list of space-separated PIDs on a single line
-    if($options->{'multiple_process'}){
-	unless (open(PFILE, $pidfile)) {
-	   # &Log::fatal_err('Could not open %s, exiting', $pidfile);
-	    &Log::do_log('err','Could not open %s to remove pid %s, ', $pidfile,$pid);
-	    return undef;
-	}
-	my $previous_pid = <PFILE>; chomp $previous_pid;
-	close PFILE;
-	$previous_pid =~ s/$pid//g;
-
-	## If no PID left, then remove the file
-	if ($previous_pid =~ /^\s*$/){
-	    ## Release the lock
-	    unless (unlink $pidfile) {
-		&Log::do_log('err', "Failed to remove $pidfile: %s", $!);
-		return undef;
-	    }
-	}else{
-	    if(-f $pidfile){
-		unless (open(PFILE, ">$pidfile")) {
-		    &Log::do_log('err', "Failed to open $pidfile: %s", $!);
-		    return undef;
-		}
-		print PFILE "$previous_pid\n";
-		close(PFILE);
-	    }else{
-		&Log::do_log('notice','pidfile %s does not exist. Nothing to do.',$pidfile);
-	    }
-	}
-    }else{
-	unless (unlink $pidfile) {
-	    &Log::do_log('err', "Failed to remove $pidfile: %s", $!);
-	    return undef;
-	}
+	my ($pidfile, $pid, $options) = @_;
 	
-	my $err_file = $Conf::Conf{'tmpdir'}.'/'.$pid.'.stderr';
-	if (-f $err_file) {
-	    unless (unlink $err_file) {
-		&Log::do_log('err', "Failed to remove $err_file: %s", $!);
-		return undef;
-	    }
+	## If in multi_process mode (bulk.pl for instance can have child processes)
+	## Then the pidfile contains a list of space-separated PIDs on a single line
+	if($options->{'multiple_process'}) {
+		unless(open(PFILE, $pidfile)) {
+			# fatal_err('Could not open %s, exiting', $pidfile);
+			&Log::do_log('err','Could not open %s to remove pid %s', $pidfile, $pid);
+			return undef;
+		}
+		my $l = <PFILE>;
+		close PFILE;	
+		my @pids = grep {/[0-9]+/} split(/\s+/, $l);
+		@pids = grep {!/^$pid$/} @pids;
+		
+		## If no PID left, then remove the file
+		if($#pids < 0) {
+			## Release the lock
+			unless(unlink $pidfile) {
+				&Log::do_log('err', "Failed to remove $pidfile: %s", $!);
+				return undef;
+			}
+		}else{
+			if(-f $pidfile) {
+				unless(open(PFILE, '> '.$pidfile)) {
+					&Log::do_log('err', "Failed to open $pidfile: %s", $!);
+					return undef;
+				}
+				print PFILE join(' ', @pids)."\n";
+				close(PFILE);
+			}else{
+				&Log::do_log('notice', 'pidfile %s does not exist. Nothing to do.', $pidfile);
+			}
+		}
+	}else{
+		unless(unlink $pidfile) {
+			&Log::do_log('err', "Failed to remove $pidfile: %s", $!);
+			return undef;
+		}
+		my $err_file = $Conf::Conf{'tmpdir'}.'/'.$pid.'.stderr';
+		if(-f $err_file) {
+			unless(unlink $err_file) {
+				&Log::do_log('err', "Failed to remove $err_file: %s", $!);
+				return undef;
+			}
+		}
 	}
-    }
-    return 1;
+	return 1;
 }
 
 # input user agent string and IP. return 1 if suspected to be a crawler.
@@ -2543,110 +2570,135 @@ sub is_a_crawler {
 #	return ($Conf::Conf{$robot}{'crawlers_detection'}{'user_agent_string'}{$context->{'user_agent_string'}});
 #    }
 
-    # open (TMP, ">> /tmp/dump1"); printf TMP "dump de la conf dans is_a_crawler : \n"; &tools::dump_var($Conf::Conf{'crawlers_detection'}, 0,\*TMP);     close TMP;
+    # open (TMP, ">> /tmp/dump1"); print TMP "dump de la conf dans is_a_crawler : \n"; &tools::dump_var($Conf::Conf{'crawlers_detection'}, 0,\*TMP);     close TMP;
     return $Conf::Conf{'crawlers_detection'}{'user_agent_string'}{$context->{'user_agent_string'}};
 }
 
 sub write_pid {
     my ($pidfile, $pid, $options) = @_;
 
-   my $piddir = $pidfile;
+    my $piddir = $pidfile;
     $piddir =~ s/\/[^\/]+$//;
 
     ## Create piddir
-    unless (-d $piddir) {
-	mkdir $piddir, 0755;
-    }
-    
-    unless (&tools::set_file_rights(file => $piddir,
-				    user  => Sympa::Constants::USER,
-				    group => Sympa::Constants::GROUP,
-				    ))
-    {
-	&Log::do_log('err','Unable to set rights on %s',$Conf::Conf{'db_name'});
-	return undef;
+    mkdir($piddir, 0755) unless(-d $piddir);
+
+    unless(&tools::set_file_rights(
+	file => $piddir,
+	user  => Sympa::Constants::USER,
+	group => Sympa::Constants::GROUP,
+    )) {
+	&fatal_err('Unable to set rights on %s. Exiting.', $Conf::Conf{'db_name'});
     }
 
-    ## If pidfile exists, read the PID
-    my ($other_pid);
-    if (-f $pidfile) {
-	open PFILE, $pidfile;
-	$other_pid = <PFILE>; chomp $other_pid;
+    my @pids;
+
+    # Lock pid file
+    my $lock = new Lock ($pidfile);
+    unless (defined $lock) {
+	&fatal_err('Lock could not be created. Exiting.');
+    }
+    $lock->set_timeout(5); 
+    unless ($lock->lock('write')) {
+	&fatal_err('Unable to lock %s file in write mode. Exiting.',$pidfile);
+    }
+    ## If pidfile exists, read the PIDs
+    if(-f $pidfile) {
+	# Read pid file
+	open(PFILE, $pidfile);
+	my $l = <PFILE>;
 	close PFILE;	
+	@pids = grep {/[0-9]+/} split(/\s+/, $l);
     }
 
-    ## If we can have multiple options for the process.
+    ## If we can have multiple instances for the process.
     ## Print other pids + this one
-    if($options->{'multiple_process'}){
-	unless (open(LCK, "> $pidfile")) {
-	    &Log::fatal_err('Could not open %s, exiting', $pidfile);
+    if($options->{'multiple_process'}) {
+	unless(open(PIDFILE, '> '.$pidfile)) {
+	    ## Unlock pid file
+	    $lock->unlock();
+	    &fatal_err('Could not open %s, exiting: %s', $pidfile,$!);
 	}
-
 	## Print other pids + this one
-	print LCK "$other_pid $pid\n";
-
-	close(LCK);
+	push(@pids, $pid);
+	print PIDFILE join(' ', @pids)."\n";
+	close(PIDFILE);
     }else{
 	## Create and write the pidfile
-	unless (open(LOCK, "+>> $pidfile")) {
-	    &Log::fatal_err('Could not open %s, exiting', $pidfile);
+	unless(open(PIDFILE, '+>> '.$pidfile)) {
+	    ## Unlock pid file
+	    $lock->unlock();
+	    &fatal_err('Could not open %s, exiting: %s', $pidfile);
 	}
-	unless (flock(LOCK, 6)) {
-	    &Log::fatal_err('Could not lock %s, process is probably already running : %s', $pidfile, $!);
-	}
-	
 	## The previous process died suddenly, without pidfile cleanup
 	## Send a notice to listmaster with STDERR of the previous process
-	if ($other_pid) {
-	    &Log::do_log('notice', "Previous process $other_pid died suddenly ; notifying listmaster");
-	    my $err_file = $Conf::Conf{'tmpdir'}.'/'.$other_pid.'.stderr';
-	    my (@err_output, $err_date);
-	    if (-f $err_file) {
-		open ERR, $err_file;
-		@err_output = <ERR>;
-		close ERR;
-		
-		$err_date = strftime("%d %b %Y  %H:%M", localtime( (stat($err_file))[9]));
-	    }
-	    
-	    &List::send_notify_to_listmaster('crash', $Conf::Conf{'domain'},
-					     {'crash_err' => \@err_output, 'crash_date' => $err_date});
+	if($#pids >= 0) {
+	    my $other_pid = $pids[0];
+	    &Log::do_log('notice', "Previous process %s died suddenly ; notifying listmaster", $other_pid);
+	    my $pname = $0;
+	    $pname =~ s/.*\/(\w+)/$1/;
+	    &send_crash_report(('pid'=>$other_pid,'pname'=>$pname));
 	}
 	
-	unless (open(LCK, "> $pidfile")) {
+	unless(open(PIDFILE, '> '.$pidfile)) {
+	    ## Unlock pid file
+	    $lock->unlock();
 	    &Log::fatal_err('Could not open %s, exiting', $pidfile);
 	}
-	unless (truncate(LCK, 0)) {
+	unless(truncate(PIDFILE, 0)) {
+	    ## Unlock pid file
+	    $lock->unlock();
 	    &Log::fatal_err('Could not truncate %s, exiting.', $pidfile);
 	}
 	
-	print LCK "$pid\n";
-	close(LCK);
-    }
-    unless (&tools::set_file_rights(file => $pidfile,
-				    user  => Sympa::Constants::USER,
-				    group => Sympa::Constants::GROUP,
-				    ))
-    {
-	&Log::do_log('err','Unable to set rights on %s',$Conf::Conf{'db_name'});
-	return undef;
+	print PIDFILE $pid."\n";
+	close(PIDFILE);
     }
 
-    ## Error output is stored in a file with PID-based name
-    ## Usefull if process crashes
-    unless ($options->{'stderr_to_tty'}) {
-      open(STDERR, '>>',  $Conf::Conf{'tmpdir'}.'/'.$pid.'.stderr') unless ($main::options{'foreground'});
-      unless (&tools::set_file_rights(file => $Conf::Conf{'tmpdir'}.'/'.$pid.'.stderr',
-				      user  => Sympa::Constants::USER,
-				      group => Sympa::Constants::GROUP,
-				     ))
-	{
-	  &Log::do_log('err','Unable to set rights on %s',$Conf::Conf{'db_name'});
-	  return undef;
-	}
+    unless(&tools::set_file_rights(
+	file => $pidfile,
+	user  => Sympa::Constants::USER,
+	group => Sympa::Constants::GROUP,
+    )) {
+	## Unlock pid file
+	$lock->unlock();
+	&Log::fatal_err('Unable to set rights on %s', $Conf::Conf{'db_name'});
     }
+    ## Unlock pid file
+    $lock->unlock();
 
     return 1;
+}
+
+sub direct_stderr_to_file {
+    my %data = @_;
+    ## Error output is stored in a file with PID-based name
+    ## Usefull if process crashes
+    open(STDERR, '>>', $Conf::Conf{'tmpdir'}.'/'.$data{'pid'}.'.stderr');
+    unless(&tools::set_file_rights(
+	file => $Conf::Conf{'tmpdir'}.'/'.$data{'pid'}.'.stderr',
+	user  => Sympa::Constants::USER,
+	group => Sympa::Constants::GROUP,
+    )) {
+	&Log::do_log('err','Unable to set rights on %s', $Conf::Conf{'tmpdir'}.'/'.$data{'pid'}.'.stderr');
+	return undef;
+    }
+    return 1;
+}
+
+# Send content of $pid.stderr to listmaster for process whose pid is $pid.
+sub send_crash_report {
+    my %data = @_;
+    &Log::do_log('debug','Sending crash report for process %s',$data{'pid'}),
+    my $err_file = $Conf::Conf{'tmpdir'}.'/'.$data{'pid'}.'.stderr';
+    my (@err_output, $err_date);
+    if(-f $err_file) {
+	open(ERR, $err_file);
+	@err_output = <ERR>;
+	close ERR;
+	$err_date = strftime("%d %b %Y  %H:%M", localtime((stat($err_file))[9]));
+    }
+    &List::send_notify_to_listmaster('crash', $Conf::Conf{'domain'}, {'crashed_process' => $data{'pname'}, 'crash_err' => \@err_output, 'crash_date' => $err_date, 'pid' => $data{'pid'}});
 }
 
 sub get_message_id {
@@ -3019,7 +3071,7 @@ sub dump_html_var2 {
 	    }    
 	    $html .= '</ul>';
 	}else {
-	    $html .= sprintf "<li>'%s'"."</li>", ref($var);
+	    $html .= sprintf "<li>'%s'</li>", ref($var);
 	}
     }else{
 	if (defined $var) {
@@ -3211,8 +3263,8 @@ sub is_in_array {
 #        * a_file : the full path to a file
 #        * b_file : the full path to a file
 #
-# OUT : string: 'true' it the last modification date of "a_file" is older than "b_file"'s, 'false' otherwise.
-#       return undef if the comparison could not be caried on.
+# OUT : string: 'true' if the last modification date of "a_file" is older than "b_file"'s, 'false' otherwise.
+#       return undef if the comparison could not be carried on.
 #######################################################    
 sub a_is_older_than_b {
     my $param = shift;
@@ -3221,12 +3273,12 @@ sub a_is_older_than_b {
     if (-r $param->{'a_file'}) {
 	$a_file_readable = 1;
     }else{
-	&Log::do_log('err', 'Could not read file %s. Comparison impossible', $param->{'a_file'});
+	&Log::do_log('err', 'Could not read file "%s". Comparison impossible', $param->{'a_file'});
     }
     if (-r $param->{'b_file'}) {
 	$b_file_readable = 1;
     }else{
-	&Log::do_log('err', 'Could not read file %s. Comparison impossible', $param->{'b_file'});
+	&Log::do_log('err', 'Could not read file "%s". Comparison impossible', $param->{'b_file'});
     }
     if ($a_file_readable && $b_file_readable) {
 	my @a_stats = stat ($param->{'a_file'});
@@ -3412,7 +3464,7 @@ sub add_in_blacklist {
 	&Log::do_log('info','do_blacklist : append to file %s',$file);
 	return undef;
     }
-    printf BLACKLIST "$entry\n";
+    print BLACKLIST "$entry\n";
     close BLACKLIST;
 
 }
@@ -3622,8 +3674,8 @@ sub init_db_random {
     my $random = int(rand($range)) + $minimum;
 
     unless (&SDM::do_query('INSERT INTO fingerprint_table VALUES (%d)', $random)) {
-	&Log::do_log('err','Unable to set random value in fingerprint_table');
-	return undef;
+		&Log::do_log('err','Unable to set random value in fingerprint_table');
+		return undef;
     }
     return $random;
 }
@@ -3853,19 +3905,17 @@ sub smart_lessthan {
     } 
 }
 
-## Returns the number of pid identifiers in the pid file.
-sub get_number_of_pids {
-    my $pidfile = shift;
-    my $p_count = 0;
-    unless (open(PFILE, $pidfile)){
-	&Log::do_log('err', "unable to open pidfile %s:%s",$pidfile,$!);
-	return undef;
-    }
-    while (<PFILE>){
-	$p_count += &count_numbers_in_string($_);
-    }
-    close PFILE;
-    return $p_count;
+## Returns the list of pid identifiers in the pid file.
+sub get_pids_in_pid_file {
+	my $pidfile = shift;
+	unless (open(PFILE, $pidfile)) {
+		&Log::do_log('err', "unable to open pidfile %s:%s",$pidfile,$!);
+		return undef;
+	}
+	my $l = <PFILE>;
+	close PFILE;
+	my @pids = grep {/[0-9]+/} split(/\s+/, $l);
+	return \@pids;
 }
 
 ## Returns the counf of numbers found in the string given as argument.
@@ -3959,5 +4009,54 @@ sub create_html_part_from_web_page {
     return $part->as_string;
 }
 
+sub get_children_processes_list {
+    &Log::do_log('debug3','');
+    my @children;
+    for my $p (@{new Proc::ProcessTable->table}){
+	if($p->ppid == $$) {
+	    push @children, $p->pid;
+	}
+    }
+    return @children;
+}
 
+#*******************************************
+# Function : decode_header
+# Description : return header value decoded to UTF-8 or undef.
+#               trailing newline will be removed.
+#               If sep is given, return all occurrances joined by it.
+## IN : msg, tag, [sep]
+#*******************************************
+sub decode_header {
+    my $msg = shift;
+    my $tag = shift;
+    my $sep = shift || undef;
+
+    my $head;
+    if (ref $msg eq 'Message') {
+	$head = $msg->{'msg'}->head;
+    } elsif (ref $msg eq 'MIME::Entity') {
+	$head = $msg->head;
+    } elsif (ref $msg eq 'MIME::Head' or ref $msg eq 'Mail::Header') {
+	$head = $msg;
+    }
+    if (defined $sep) {
+	my @values = $head->get($tag);
+	return undef unless scalar @values;
+	foreach my $val (@values) {
+	    $val = MIME::EncWords::decode_mimewords($val, Charset => 'UTF-8');
+	    chomp $val;
+	}
+	return join $sep, @values;
+    } else {
+	my $val = $head->get($tag);
+	return undef unless defined $val;
+	$val = MIME::EncWords::decode_mimewords($val, Charset => 'UTF-8');
+	chomp $val;
+	return $val;
+    }
+}
+
+sub fix_children {
+}
 1;

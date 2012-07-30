@@ -3,6 +3,571 @@
 
 (See Changelog file for the full changes log)
 
+6.2a.26		July 30, 2012
+
+  Changes:
+
+	[7525] src/lib/Sympa/DatabaseDescription.pm:  Now SQLite fields
+	corresponding to booleans or timestamps are defined as plain numeric.
+
+  Bug fixes:
+
+	[7537] src/bulk.pl.in, src/lib/Conf.pm, src/lib/SQLSource.pm,
+	src/lib/tools.pm, src/sympa.pl.in, src/task_manager.pl.in,
+	web_tt2/menu.tt2, wwsympa/archived.pl.in, wwsympa/bounced.pl.in:  The
+	bulk.pl processes were not logging in the right spool/tmp/<pid>.stderr
+	file. There was a shift due to the saring of the filehadle to STDERR
+	between the master bulk and the slaves bulks.
+	Fixed by removing the opening of the filehandle to STDERR from the
+	write_pid funwtion and putting it in a different sub called
+	direct_stderr_to_file.
+
+	[7526] web_tt2/subscriber_table.tt2, wwsympa/wwsympa.fcgi.in:
+	[#6931][Reported by D. Pritts, Internet2] On the review page for the
+	list without any subscribers, a message "ERROR (review) - List has no
+	subscribers" is shown.	It is not an error.
+
+	[7523] src/etc/script/create_db.Oracle, src/etc/script/create_db.Pg,
+	src/etc/script/create_db.SQLite, src/etc/script/create_db.Sybase,
+	src/etc/script/create_db.mysql:  Updating database creation scripts
+	with correct indexes definition.
+
+6.2a.25		July 24, 2012
+
+  Features:
+
+	[7511] src/lib/tt2.pm, wwsympa/wwsympa.fcgi.in:  Now WWSympa responds
+	with "404 Not Found" status code, instead of sending notification to
+	listmaster, if any random pages under /sympa/help/ are requested.
+	Added new option 'has_header' for tt2::parse_tt2() to prepend newline
+	to page body so that TT2 parse error can be handled before all HTTP
+	headers have been sent.
+
+	[7501] mail_tt2/Makefile.am,
+	mail_tt2/listmaster_groupednotifications.tt2, src/bulk.pl.in,
+	src/lib/List.pm, src/lib/mail.pm, src/sympa.pl.in,
+	src/task_manager.pl.in, wwsympa/archived.pl.in, wwsympa/bounced.pl.in: 
+	Listmaster notifications can now be grouped.
+	If, for a specific robot, several notifications are issued within a
+	short period
+	of time with the same operation code only the first ones are sent, the
+	next ones
+	are stacked. The stacking ends when no notifications are issued
+	anymore, or when
+	the first one is too old. All the stacked notifications are then sent
+	as attachments
+	of a single message.
+	Internal settings :
+	- Stack if more than 3 notifications with the same operation code are
+	issued
+	for the same robot
+	- Send stacked notifications if no new one satisfying the condition
+	above was
+	received for more than 30 seconds
+	- Send stacked notifications if the oldest one was issued more than 60
+	seconds ago
+
+
+
+  Changes:
+
+*****	[7518] src/lib/Conf.pm, src/lib/confdef.pm, wwsympa/archived.pl.in,
+*****	wwsympa/wwsympa.fcgi.in:  The arc_path wwsympa.conf parameter can now
+*****	be defined at the robot level. If you want to use this feature, follow
+*****	these steps:
+*****	1- stop archived.pl
+*****	2- move the robot archives to the location specified in the arc_path
+*****	robot parameter
+*****	3- restart wwsympa.fcgi
+*****	4- start archived.pl
+
+  Bug fixes:
+
+	[7517] src/lib/Conf.pm:  the wwsympa.conf file was not loaded in
+	Conf.pm, thus disabling the main config defaults for virtaul hosts.
+	fixed by loading this file at the beginning of the module.
+
+	[7510] src/lib/List.pm:  gecos attr name was not optionnal in
+	ldap/ldap2 source config
+
+	[7509] src/lib/Conf.pm, src/lib/confdef.pm:  User firendly automatic
+	lists were not robot-enabled. Fixed.
+
+	[7499] src/lib/OAuthConsumer.pm, src/lib/VOOTConsumer.pm,
+	src/lib/VOOTProvider.pm:  VOOTConsumer didn't getting well formed JSON
+	led to process death due to the use of Carp::croak in JSON::XS module
+	Process could die if JSON::XS module failed to encode responses to JSON
+	in VOOTProvider due to the use of Carp::croak Getting HTTP response's
+	"code" instead of non existing "status" in OAuthConsumer
+
+6.2a.24		July 20, 2012
+
+  Features:
+
+	[7486] web_tt2/review.tt2, wwsympa/wwsympa.fcgi.in: [#8318][Submitted
+	by Dominique Fournier] Subscriber search results aren't limited anymore
+	when using a @domain search mask. "similar subscribers" results do not
+	repeat the found subscribers anymore and are limited to 50 results.
+
+	[7485] web_tt2/Makefile.am, web_tt2/get_biggest_lists.tt2,
+	web_tt2/serveradmin.tt2, wwsympa/wwsympa.fcgi.in: [#8338][Submitted by
+	Dominique Marant] Added a "view lists sorted by subscriber count"
+	functionnality to sympa admin.
+
+	[7483] src/lib/List.pm: [#1119][#8403][#8413][#8414][Submitted by
+	Patrick von der Hagen, Renan Manola and Steve Shipway] sql, ldap and
+	ldap2 user inclusions now handles gecos. It uses 2nd returned column
+	for sql and 2nd given attribute for ldap (comma separated).
+
+  Bug fixes:
+
+	[7487] src/lib/Family.pm, src/lib/List.pm, src/lib/admin.pm:
+	[#8116][Submitted by Jean-Hugues Belpois] Added a progressbar to list
+	family instantiation. Fixed dumb list table insert/update workflow that
+	was generating useless errors.
+
+6.2a.23		July 16, 2012
+
+  Bug fixes:
+
+	[7470] soap/sympa_soap_server.fcgi.in, src/alias_manager.pl.in,
+	src/bulk.pl.in, src/lib/Conf.pm, src/lib/confdef.pm, src/lib/tools.pm,
+	src/sympa.pl.in, src/sympa_wizard.pl.in, src/task_manager.pl.in,
+	wwsympa/wwsympa.fcgi.in:  Making sure Sympa will not start when the
+	config have problems.
+
+6.2a.22		July 11, 2012
+
+  Bug fixes:
+
+	[7460] wwsympa/wwsympa.fcgi.in:  The automatic list families loading
+	was done by directly casting the result &Conf::get_parameters, which
+	led wwsympa to crash when no automatic list was defined.
+
+6.2a.21		July 10, 2012
+
+  Features:
+
+	[7448] mail_tt2/user_notification.tt2, src/etc/Makefile.am,
+	src/etc/scenari/automatic_list_creation.family_owner:7447),
+	src/lib/Conf.pm, src/lib/Family.pm, src/lib/List.pm,
+	src/lib/Scenario.pm, src/lib/Upgrade.pm, src/lib/admin.pm,
+	src/lib/confdef.pm, src/sympa.pl.in, web_tt2/Makefile.am,
+	web_tt2/automatic_lists.tt2:7447),
+	web_tt2/automatic_lists_management_request.tt2:7447),
+	web_tt2/automatic_lists_request.tt2:7447),
+	web_tt2/family_signoff.tt2:7447),
+	web_tt2/family_signoff_request.tt2:7447),
+	web_tt2/family_signoff_request2.tt2:7447), web_tt2/menu.tt2,
+	wwsympa/wwsympa.fcgi.in: [Requested and funded by the CNRS] Automatic
+	lists can now be manipulated through the sympa web interface, in a
+	"user friendly" form. This is merely a web layer around the general
+	autmatic lists feature. This feature is fully documented here:
+	https://www.sympa.org/manual_6.2/user_friendly_autolists
+	Additionnally, it is now possible to unsubscribe to all the lists of a
+	given family in two clicks.
+
+	[7414] src/lib/List.pm, src/lib/confdef.pm, src/sympa.pl.in,
+	src/sympa_wizard.pl.in, wwsympa/wwsympa.fcgi.in:  New "voot_feature"
+	sympa.conf paramter. Default value is "off". If set to "on", enables
+	the VOOT feature.
+
+
+
+  Changes:
+
+*****	[7444] mail_tt2/listmaster_notification.tt2, src/bulk.pl.in,
+*****	src/lib/tools.pm, src/sympa_wizard.pl.in: Now the bulk master daemon
+*****	checks its actual children processes, compare the pid found to the list
+*****	of children it created. If some children died, the listmaster is
+*****	notified and new children are created to reach the maximum allowed
+*****	number of processes. This functionnalityt introduces a new dependency
+*****	to the Proc::ProcessTable module. In addition, Sympa processes put a
+*****	lock on pid files when changing its content. This prevents multiple
+*****	instannces process from failing to write to the pid file.
+
+	[7416] src/bulk.pl.in:	Now bulk master daemon checks the number of
+	packets to send at its first loop, preventing it from trying to send
+	packets before forking. This will speed up the distribution process if
+	the bulk starts when a lot of packets are already waiting to be sent.
+
+	[7415] src/lib/tools.pm:  Now a lock is put on pid file before
+	modifying them. This will prevent conflicts when a Sympa process can
+	run in multiple instances.
+
+	[7413] src/lib/Lock.pm:  Now the "new" function in Lock.pm
+	systematically give ownership of the ".lock" files to the Sympa user to
+	prevent lock modification impossibility due to write permission denial.
+
+  Bug fixes:
+
+*****	[7449] src/lib/Upgrade.pm: [#8400][Submitted by M. Deranek] Issue #3
+*****	(#2 was solved): On SQLite, fields with 'NOT NULL' constraint won't be
+*****	added so upgrade process will fail.
+*****	Workaround is to assign DEFAULT value 0 or "" to such fields.
+
+*****	[7443] src/etc/script/create_db.SQLite, src/lib/Upgrade.pm:
+*****	[#8400][Submitted by M. Deranek] Issue #1: On SQLite, data types should
+*****	be normalized.	Otherwise, upgrade process will fail.
+
+*****	[7442] src/bulk.pl.in, src/etc/script/create_db.Oracle,
+*****	src/etc/script/create_db.Pg, src/etc/script/create_db.SQLite,
+*****	src/etc/script/create_db.Sybase, src/etc/script/create_db.mysql,
+*****	src/lib/Bulk.pm, src/lib/Conf.pm, src/lib/List.pm, src/lib/Upgrade.pm,
+*****	src/lib/confdef.pm, src/lib/mail.pm, src/lib/tools.pm:	The
+*****	"dkim_header_list" sympa.conf parameter and "dkim > header_list" list
+*****	parameter are in fact unapplicable using the Mail::DKIM module. This
+*****	doesn't allow the list of headers to be modified. Consequently, anybody
+*****	using these parameters could find the DKIM signature to be broken
+*****	because the list of signed headers in the "h" tag of the DKIM signature
+*****	would not match the actual headers used to compute the signature. Fixed
+*****	by obsoleting this parameter.
+*****	In addition, the algorithm computing the signature now use $dkim->PRINT
+*****	instead of $dkim->load. Indeed, the load function computing time grows
+*****	exponentially relatively to the message size; this is not the case when
+*****	using PRINT directly.
+
+	[7439] wwsympa/wwsympa.fcgi.in: [#7540][Submitted by J.M. Kubeck, univ.
+	J.F. Champollion] Sympa generates two cookies.	Always use
+	cookie_domain parameter instead 'localhost'.
+
+	[7437] src/lib/Archive.pm: [#8377] Subscriber pictures not shown when
+	email contains any punctuations.
+	Now Archive::load_html_message() returns metadata with punctuations
+	decoded.
+
+	[7433] wwsympa/wwsympa.fcgi.in: [#7444][Submitted by A. Bernstein,
+	Electric Embers] very long Message-id will break do_send_me() and
+	do_view_source().
+	Commited a bit improved patch.
+
+*****	[7432] web_tt2/arcsearch.tt2, wwsympa/Marc/Search.pm: [#3918] HTML tags
+*****	escaped in search results.
+*****	Improved Marc::Search:
+*****	- Now it also gives rich text information.
+*****	arcsearch template was modified so that it would build HTML text from
+*****	that information.
+*****	- Strip HTML tags in the file generated from HTML message.
+*****	Entity references are also unescaped.
+*****	- Texts are handled as Unicode instead binary text to perform
+*****	case-insensitive match on non-ASCII characters.
+
+*****	[7430] src/etc/mhonarc-ressources.tt2, web_tt2/arcsearch_form.tt2,
+*****	wwsympa/wwsympa.fcgi.in:  Fixed some bugs on arcsearch.
+*****	- Submission to arcsearch with empty key_word causes "Missing argument
+*****	key_word" error then takes user to empty page.
+*****	Workaround is to check key_word by JavaScript.	To enable it, archives
+*****	must be reconstructed.
+*****	- Escaped key_word is shown in search result and form entry.
+*****	- The key_word with some characters (<>\\\*\$) causes "syntax_errors"
+*****	error
+*****	then takes user to empty page.
+*****	Now these characters are also allowed.
+*****	- Subjects in search result were decoded twice.
+*****	- arcsearch_id could not search message-ID containing regexp
+*****	metacharacters.
+*****	Now regexp metacharacters are properly escaped.
+
+	[7429] web_tt2/Makefile.am:  help_suspend.tt2 was not install by make
+	install, because it was not referenced in Makefile.am.
+
+	[7428] src/lib/mail.pm, wwsympa/wwsympa.fcgi.in: [#8042] 'To' e-mail
+	address(es) of 'list_created' or 'list_rejected' notification sent to
+	listmaster(s) can be "encoded" due to line length.
+	Disabled mime-encoding of 'To' header by mail::mail_file(), because
+	this function will be given not addr-spec but email, and because
+	mime-encoding of structured header should be done with special function
+	such as tools::addrencode().
+	n.b. These notifications to listmaster would like to be compiled into
+	'listmaster_notification' template.
+
+	[7427] src/etc/script/create_db.mysql, src/lib/Upgrade.pm: [Reported by
+	F.P. Goncharov via Debian Project] Sympa must create MySQL database &
+	tables with charset utf8 instead default latin1.
+	cf. http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=574646
+
+	[7425] wwsympa/wwsympa.fcgi.in:  HTTP Date & Last-Modified headers are
+	not RFC-compliant, and strftime format %z is not portable.  Modify
+	format and use GMT.
+
+	[7424] wwsympa/SympaSession.pm:  If 'cookie_domain' parameter is
+	'localhost' (default), when cookie was expired or HTTPd was restarted,
+	user's cookie jar repeatedly sends session cookie with older session
+	ID.
+	Destroy cookie with default domain (no domain parameter) before sending
+	new session id with explicit domain.
+
+	[7423] wwsympa/wwsympa.fcgi.in: [By E. Bouthenot, Debian Project]
+	Properly fix CVE-2012-2352.
+	http://bugs.debian.org/672893
+
+	[7421] src/lib/tools.pm:  Headers in S/MIME encrypted/decrypted/signed
+	messages are broken.
+
+	[7420] wwsympa/wwsympa.fcgi.in: [Submitted by Mitar] static_content_url
+	was not robot-specific.
+
+*****	[7419] src/lib/mail.pm:  mail::send_file() did not complement Date
+*****	header.
+*****	As a result, a message posted from WWSympa were archived as the newest
+*****	messages when archive was reconstructed, and so on.
+
+	[7418] src/task_manager.pl.in:	A call to get_next_user and
+	get_first_user remained in the task_manager, causing it to crash. Fixed
+	by replacing them with get_next_list_member and get_first_list_member.
+
+	[7417] wwsympa/wwsympa.fcgi.in: [#8378] Uploading subscriber pictures
+	with uppercase extension does not work
+
+*****	[7412] src/lib/Upgrade.pm: [#8291][Reported by Heaton Anselm, Netuxo]
+*****	--md5_encode_password does not take case sensitivity in account.
+*****	Use Auth::password_fingerprint() instead of tools::md5_fingerprint().
+
+	[7411] src/lib/List.pm:  Incoherent cached/returned values when getting
+	list member info broke subscription.
+
+*****	[7410] src/lib/Archive.pm, src/lib/Commands.pm, src/lib/List.pm,
+*****	src/lib/PlainDigest.pm, src/lib/Scenario.pm, src/lib/report.pm,
+*****	src/lib/tools.pm, src/sympa.pl.in, wwsympa/wwsympa.fcgi.in:  fix in
+*****	r7387 was not effective.  Fixed again.
+*****	Decode headers to UTF-8 with new function tools::decode_header which
+*****	always returns scalar.	To ensure value of head->get() is scalar,
+*****	assign it to scalar variable then use it in other expressions.
+
+	[7408] src/lib/List.pm:  Appended message header/footer cause
+	"mojibake".  Encode header/footer by charset of body parts.
+
+	[7407] src/lib/List.pm:  the get_list_member function did not return
+	undef when a user was not found in the database, leading to the
+	situation where any address was considered to be already subscribed.
+
+	[7405] src/lib/List.pm:  Save charset info of urlized part.
+
+
+6.2a.20		May 30, 2012
+
+  Changes:
+
+	[7402] src/lib/List.pm:  When a user did not exist in database, trying
+	to retrieve information would lead to a log indicating that it was not
+	possible to retrieve informations about the user in the database.
+	Though true, this message could lead admins to think that connection to
+	the databdase was faulty. Now, the messages clearly distinguish the
+	cases when the database had troubles and when the query did not return
+	any records.
+
+  Bug fixes:
+
+	[7400] src/lib/List.pm:  Got rid of the "Failed to parse custom
+	attributes" errors by checking whether the parsing was actually
+	successful or not.
+
+6.2a.19		May 30, 2012
+
+  Bug fixes:
+
+        Some multi-valued parameters were badly defined, using, as a split
+        charater, a comma stuck to a white space. This lead Sympa to misinterpret
+        lists not using spaces after a comme. Fixed by removing the white space
+        in the split_cchar definition sub-parameter. Also fixed an error in log
+        during upgrade process.
+
+
+6.2a.18		May 29, 2012
+
+  Changes:
+
+	[7381] src/task_manager.pl.in:	Task manager now aggregates stats
+	starting from oldest non-processed stat_table entry,
+	not form 1 year ago like before, in normal use this avoid thousand of
+	useless requests (2 per hour over 1 year,
+	even if there is nothing to process) but still allows processing of
+	stats if the task_manager was stopped for more than 1 day.
+
+  Bug fixes:
+
+	[7372] configure.ac: [Submitted by X. Bachelot] Configure option
+	"--with-staticdir" was broken.
+
+	[7371] src/lib/Scenario.pm: [#8047] sympa.pl may crash if (a) argument
+	of an 'equal' condition were given argument with regexp metacharacter;
+	(b) any of 'match' conditions contain malformed regexp.  Changes are
+	(a) use case-folded comparison instead of regexp; (b) trap fatal error
+	by eval{}.  Moreover, (c) prevent evaluating match with potentially
+	harmful regexp.
+
+6.2a.17		May 29, 2012
+
+	Never released due to problems when building the tar.gz
+
+6.2a.16		May 11, 2012
+
+  Features:
+
+*****	[7325] src/lib/Datasource.pm, src/lib/List.pm, src/lib/tools.pm,
+*****	web_tt2/notice.tt2, web_tt2/review.tt2:  Adding a datasource config
+*****	parameter to disable sync include when in specified time ranges.
+*****	Ranges are described as a space separated list of time periods.
+*****	A time period consists in 2 times separated by an hyphen.
+*****	A time can be either just the hours digits or also hours and minutes if
+*****	separated by a colon.
+*****	Examples of time periods :
+*****	17:45-19:35
+*****	08:20-12:00
+*****	8:20-12
+*****	21-23
+*****	23-02:10
+*****	23-02
+*****	23-2
+*****	As a bonus the big pinfo list parameter description hash gets a new
+*****	indentation for increased readability.
+
+6.2a.15		April 04, 2012
+
+  Features:
+
+	[7311] mail_tt2/invite.tt2, mail_tt2/message_report.tt2,
+	soap/sympa.wsdl, soap/sympasoap.pm, src/lib/List.pm,
+	src/lib/Makefile.am, src/lib/Message.pm,
+	src/lib/OAuthConsumer.pm:7310), src/lib/OAuthProvider.pm:7310),
+	src/lib/Sympa/DatabaseDescription.pm, src/lib/VOOTConsumer.pm:7310),
+	src/lib/VOOTProvider.pm:7310), src/lib/report.pm, web_tt2/Makefile.am,
+	web_tt2/create_list_request.tt2, web_tt2/css.tt2, web_tt2/error.tt2,
+	web_tt2/list_menu.tt2, web_tt2/oauth_authorize.tt2:7310),
+	web_tt2/oauth_check.tt2:7310),
+	web_tt2/select_voot_groups_request.tt2:7310),
+	web_tt2/select_voot_provider_request.tt2:7310),
+	wwsympa/SympaSession.pm, wwsympa/wwsympa.fcgi.in:  Adding OAuth/VOOT
+	provider/consumer capabilities.
+	VOOT is a Opensocial/OAuth based group membership sharing protocol.
+	It allows to easily synchronize external groups with any Sympa list
+	using Opensocial requests.
+	It also allows to include members from an external Opensocial capable
+	group manager in a list.
+	For more information on VOOT, see :
+	https://github.com/andreassolberg/voot/wiki/Protocol
+
+
+  Bug fixes:
+
+	[7299] src/lib/Message.pm:  Malformed spool file caused parsing error
+	and thus sympa.pl crash, adding test to skip message if so.
+
+6.2a.14		February 03, 2012
+
+  Bug fixes:
+
+	[7283] src/lib/List.pm:  The test to verify that the custom attributes
+	were correctly parsed was wrong and returned false even if the ca were
+	correctly loaded. Fixed by testing the umber of keyx in the hash. If
+	the parsing succeeded, it MUST contain at least one key for the root
+	XML element.
+
+6.2a.13		February 02, 2012
+
+  Features:
+
+	[7201] src/lib/admin.pm, src/sympa.pl.in, wwsympa/wwsympa.fcgi.in:  new
+	--change_user_email for sympa.pl. It allows to change a user email
+	address in all virtual robots with a single command
+
+
+
+  Changes:
+
+	[7277] src/lib/admin.pm:  Replacing usage of the "rename" function by
+	"File::Copy::move". this is more likely to work on different systems.
+
+	[7253] src/lib/Bulk.pm, src/lib/SDM.pm, src/lib/SQLSource.pm:  Now
+	queries are cached once prepared to save database workload.
+
+	[7234] src/lib/SQLSource.pm:  Removed the systematic ping when
+	performing a query to the database. The connection check is now done
+	only if a quyery fails, the query is then resubmitted.
+
+	[7219] src/lib/List.pm: Making the email subparameter of the update
+	parameter optional to get rid of useless errors when loading the
+	config.
+
+	[7213] src/lib/admin.pm:  changed code to collect error messages from
+	alias manager
+
+	[7204] src/etc/scenari/send.editorkeyonly,
+	src/etc/scenari/send.editorkeyonlyauth,
+	src/etc/scenari/send.privateandnomultipartoreditorkey,
+	src/etc/scenari/send.privatekeyandeditorkeyonly:  ***** scenarios using
+	the editorkey action needs to be adapted to work with the new code. You
+	should remove rules o
+	f type "is_editor() md5 -> do_it" to prevent message from editor sent
+	throught the web "Post" function to escape from the mo
+	deration process. This change is required because web posted messages
+	now REALLY are considered to have the "md5" authentication method.
+
+  Bug fixes:
+
+	[7278] src/lib/admin.pm:  bounces and archives were not moved when a
+	list was renamed, due to a bad usage of tests on	the list name.
+
+	[7276] web_tt2/title.tt2:  The maililng list service title was no
+	longer displayed in the web interface.
+
+	[7261] src/lib/List.pm: [Reported by J.H. Belpois, univ. Brest] When a
+	lot of lists used inclusions for their members, displaying the list of
+	lists could lead an error 500. This was due to attempts to include list
+	ADMINS even though they were not included from external sources. These
+	attempts led to the creation of write locks (include_admins.lock) that,
+	beyond a certain number of lists, led to automatic collisions with read
+	locks used when gathering the admins mail addresses. After a certain
+	number of collisions, the web request timed out. Fixed by quitting the
+	skipping the admin sync when no admin source is defined.
+
+	[7254] src/bulk.pl.in: [Submitted by P. Vandry, TZoNE.ORG] The VERP
+	return path was never correctly set due to a bad variable
+	initialization.
+
+	[7251] src/bulk.pl.in: [#8094][Submitted by A. Piper, univ. Marburg] In
+	some contexts, using the unsubscription UL
+
+	[7248] src/lib/List.pm: [#7424] Excluding then restoring (eg manually
+	subscribing) an included member resulted in member being included and
+	subscribed at the same time.
+
+	[7218] soap/sympa_soap_server.fcgi.in: wwsympa.fcgi failed to execute
+	alias_manager.pl as user 'sympa'. Running the system command made us
+	loose the Effecive UID of the process. Nom forcing the real UID to the
+	value of the effective UID.
+
+	[7217] wwsympa/wwsympa.fcgi.in: wwsympa.fcgi failed to execute
+	alias_manager.pl as user 'sympa'. Running the system command made us
+	loose the Effective UID of the process. Nom forcing the real UID to the
+	value of the effective UID.
+
+	[7215] src/lib/List.pm, src/lib/Lock.pm: [Reported and boldly tested by
+	O. Menkens] In perl, when the real and effective uids of a sccript are
+	different, the tainted mode is activated. This caused mod_fcgid to
+	issue a lot of "Insecure dependency" errors in the Apache logs. Fixed
+	by untainting the variables causing these errors.
+
+	[7211] mail_tt2/summary.tt2: [Submitted by A. Bernstein,
+	electricembers.net] The summary.tt2 template contained a wrap TT2
+	command that caused the URL to be broken. Fixed by moving this command
+	around parts of the message that don't contain URLs.
+
+	[7208] configure.ac: [Submitted by R. di Cosmo] When installing Sympa,
+	if configure was used with the --enable-fsh option, then the lists
+	directory was incorrectly set.
+
+	[7205] src/sympa_wizard.pl.in:	When using the SOAP server, if the
+	lists subjects or gecos
+	fields included UTF-8 characters. The response content-length header
+	was
+	smaller than the real character count in the response document, thus,
+	clients created too small buffers to process the XML document and
+	validation
+	of said document failed. This issue was due to the fact that libwww is
+	counting characters instead of bytes.
+	Fixed by upgrading to the latest version of SOAP::Lite.
+
 6.1.8		January 09, 2012
 
   Bug fixes:

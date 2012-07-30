@@ -635,8 +635,8 @@ msgstr "The use of a mailing list service means respecting a number of rules:"
 #: ../web_tt2/help_introduction.tt2:117
 #, fuzzy
 msgid ""
-"In most mailing list services, subscribers receive a List subscribers "
-"charter on subscription. Then they are obliged to respect all the rules "
+"In most mailing list services, subscribers receive a 'List subscribers "
+"charter' on subscription. Then they are obliged to respect all the rules "
 "contained in that charter."
 msgstr ""
 "In most mailing list services, subscribers receive a '<a target=\"_blank\" "
@@ -646,14 +646,15 @@ msgstr ""
 
 #: ../web_tt2/help_introduction.tt2:118
 msgid ""
-"If available, list owners and moderators have to conform to the Owner and "
-"moderator charter."
+"If available, list owners and moderators have to conform to the 'Owner and "
+"moderator charter'."
 msgstr ""
 
 #: ../web_tt2/help_introduction.tt2:119
+#, fuzzy
 msgid ""
 "The use of mailing lists naturally means respecting the rules of good "
-"practices as regards email (the \"Netiquette\")."
+"practices as regards to email."
 msgstr ""
 "The use of mailing lists naturally means respecting the rules of good "
 "practices as regards email (the \"Netiquette\")."
@@ -824,11 +825,11 @@ msgstr ""
 "of the list you want to subscribe to and indicate your own first name and "
 "name)."
 
-#: ../web_tt2/help_user.tt2:168 ../web_tt2/help_user.tt2:34
+#: ../web_tt2/help_user.tt2:172 ../web_tt2/help_user.tt2:34
 msgid "<strong>Leave the message body blank</strong>."
 msgstr "<strong>Leave the message body blank</strong>."
 
-#: ../web_tt2/help_user.tt2:169 ../web_tt2/help_user.tt2:35
+#: ../web_tt2/help_user.tt2:173 ../web_tt2/help_user.tt2:35
 msgid ""
 "To save some time, you can also send several commands in a single message. "
 "To do that, follow the instructions available in the <a href=\"#howitworks"
@@ -940,8 +941,8 @@ msgstr ""
 #. (path_cgi)
 #: ../web_tt2/help_arc.tt2:12 ../web_tt2/help_arc.tt2:77
 #: ../web_tt2/help_arc.tt2:93 ../web_tt2/help_shared.tt2:9
-#: ../web_tt2/help_user.tt2:100 ../web_tt2/help_user.tt2:128
-#: ../web_tt2/help_user.tt2:173 ../web_tt2/help_user.tt2:50
+#: ../web_tt2/help_user.tt2:101 ../web_tt2/help_user.tt2:129
+#: ../web_tt2/help_user.tt2:177 ../web_tt2/help_user.tt2:50
 msgid ""
 "Go to the list environment <strong><a href=\"%1/home\">homepage</a></strong> "
 "and <strong>log on</strong>."
@@ -1121,11 +1122,19 @@ msgid "<a href=\"#subscribers\">review members</a> of the list (if available);"
 msgstr ""
 "<a href=\"#subscribers\">review members</a> of the list (if available);"
 
+#. (path_cgi)
 #: ../web_tt2/help_user.tt2:83
+#, fuzzy
+msgid ""
+"<a href=\"%1/help/suspend\">suspend or resume</a> your subscription of each "
+"list;"
+msgstr "a <a href=\"%1/help/user\">user guide</a> about the use of Sympa;"
+
+#: ../web_tt2/help_user.tt2:84
 msgid "<a href=\"#unsubscribe\">unsubscribe</a> from the list."
 msgstr "<a href=\"#unsubscribe\">unsubscribe</a> from the list."
 
-#: ../web_tt2/help_user.tt2:85
+#: ../web_tt2/help_user.tt2:86
 msgid ""
 "The <strong>number of people subscribed</strong> to the list is permanently "
 "displayed in the <strong>left menu</strong>. <strong>To review the list "
@@ -1145,7 +1154,7 @@ msgstr ""
 "indication of the name depends on the subscription method used by the "
 "subscribers)."
 
-#: ../web_tt2/help_user.tt2:86
+#: ../web_tt2/help_user.tt2:87
 msgid ""
 "By default, each page displays 25&#160;subscribers. You can browse through "
 "the pages by using the browsing arrows or display more subscribers per page. "
@@ -1158,22 +1167,22 @@ msgstr ""
 "domain or name by clicking on the corresponding column header."
 
 #. (conf.host)
-#: ../web_tt2/help_user.tt2:87
-msgid ""
-"<strong>The names of the list owners and moderators are displayed in the "
-"left menu</strong>. You should never write directly to a list owner or "
-"moderator. If you want to ask a question or make a comment, you should use "
-"the following address: <strong>nameofthelist-request@%1</strong> (replace "
-"'nameofthelist' by the name of the list in question)."
-msgstr ""
-"<strong>The names of the list owners and moderators are displayed in the "
-"left menu</strong>. You should never write directly to a list owner or "
-"moderator. If you want to ask a question or make a comment, you should use "
-"the following address: <strong>nameofthelist-request@%1</strong> (replace "
-"'nameofthelist' by the name of the list in question)."
-
 #: ../web_tt2/help_user.tt2:88
 msgid ""
+"<strong>The names of the list owners and moderators are displayed in the "
+"left menu</strong>. You should never write directly to a list owner or "
+"moderator. If you want to ask a question or make a comment, you should use "
+"the following address: <strong>nameofthelist-request@%1</strong> (replace "
+"'nameofthelist' by the name of the list in question)."
+msgstr ""
+"<strong>The names of the list owners and moderators are displayed in the "
+"left menu</strong>. You should never write directly to a list owner or "
+"moderator. If you want to ask a question or make a comment, you should use "
+"the following address: <strong>nameofthelist-request@%1</strong> (replace "
+"'nameofthelist' by the name of the list in question)."
+
+#: ../web_tt2/help_user.tt2:89
+msgid ""
 "To know <strong>when you subscribed to the list</strong> and <strong>when "
 "you last updated your subscriber options</strong>, <strong>click on the "
 "'Subscriber options' link</strong> in the left menu."
@@ -1182,11 +1191,11 @@ msgstr ""
 "you last updated your subscriber options</strong>, <strong>click on the "
 "'Subscriber options' link</strong> in the left menu."
 
-#: ../web_tt2/help_user.tt2:90
+#: ../web_tt2/help_user.tt2:91
 msgid "Managing your preferences"
 msgstr "Managing your preferences"
 
-#: ../web_tt2/help_user.tt2:91
+#: ../web_tt2/help_user.tt2:92
 msgid ""
 "To allow you to <strong>use lists more easily</strong>, <strong>you can "
 "define a number of personal preferences</strong>. There are two types of "
@@ -1195,160 +1204,160 @@ msgstr ""
 "To allow you to <strong>use lists more easily</strong>, <strong>you can "
 "define a number of personal preferences</strong>. There are two types of "
 "preferences you can change:"
-
-#: ../web_tt2/help_user.tt2:93
-msgid ""
-"your <strong>subscriber options</strong>, which can vary according to the "
-"list;"
-msgstr ""
-"your <strong>subscriber options</strong>, which can vary according to the "
-"list;"
 
 #: ../web_tt2/help_user.tt2:94
 msgid ""
+"your <strong>subscriber options</strong>, which can vary according to the "
+"list;"
+msgstr ""
+"your <strong>subscriber options</strong>, which can vary according to the "
+"list;"
+
+#: ../web_tt2/help_user.tt2:95
+msgid ""
 "your <strong>general preferences</strong>, which apply to the entire Sympa "
 "mailing list environment."
 msgstr ""
 "your <strong>general preferences</strong>, which apply to the entire Sympa "
 "mailing list environment."
 
-#: ../web_tt2/help_user.tt2:97
+#: ../web_tt2/help_user.tt2:98
 msgid "Changing your subscriber options"
 msgstr "Changing your subscriber options"
 
-#: ../web_tt2/help_user.tt2:98
+#: ../web_tt2/help_user.tt2:99
 msgid ""
 "<strong>Your subscriber options can vary from a list to another</strong>. To "
 "change them, do as follows:"
 msgstr ""
 "<strong>Your subscriber options can vary from a list to another</strong>. To "
 "change them, do as follows:"
-
-#: ../web_tt2/help_user.tt2:101
-msgid ""
-"<strong>Go to the information page of the list</strong> for which you want "
-"to change your subscriber options."
-msgstr ""
-"<strong>Go to the information page of the list</strong> for which you want "
-"to change your subscriber options."
 
 #: ../web_tt2/help_user.tt2:102
 msgid ""
-"In the left menu, <strong>click on the 'Subscriber options' link</strong>."
+"<strong>Go to the information page of the list</strong> for which you want "
+"to change your subscriber options."
 msgstr ""
-"In the left menu, <strong>click on the 'Subscriber options' link</strong>."
+"<strong>Go to the information page of the list</strong> for which you want "
+"to change your subscriber options."
 
 #: ../web_tt2/help_user.tt2:103
 msgid ""
-"strong>Choose a message delivery mode</strong> (those options are mutually "
-"exclusive, thus you can not select several of them):"
+"In the left menu, <strong>click on the 'Subscriber options' link</strong>."
 msgstr ""
-"strong>Choose a message delivery mode</strong> (those options are mutually "
-"exclusive, thus you can not select several of them):"
+"In the left menu, <strong>click on the 'Subscriber options' link</strong>."
 
-#: ../web_tt2/help_user.tt2:105
+#: ../web_tt2/help_user.tt2:104
 msgid ""
-"<strong>digest MIME format</strong>: instead of receiving the list messages "
-"in a normal manner, you will get a digest of them on a regular basis. This "
-"digest compiles a group of messages from the list, using multipart/digest "
-"<acronym lang=\"en\" xml:lang=\"en\" title=\"Multipurpose Internet Mail "
-"Extension\">MIME</acronym> format. The digest frequency is set up by the "
-"list owner."
+"strong>Choose a message delivery mode</strong> (those options are mutually "
+"exclusive, thus you can not select several of them):"
 msgstr ""
-"<strong>digest MIME format</strong>: instead of receiving the list messages "
-"in a normal manner, you will get a digest of them on a regular basis. This "
-"digest compiles a group of messages from the list, using multipart/digest "
-"<acronym lang=\"en\" xml:lang=\"en\" title=\"Multipurpose Internet Mail "
-"Extension\">MIME</acronym> format. The digest frequency is set up by the "
-"list owner."
+"strong>Choose a message delivery mode</strong> (those options are mutually "
+"exclusive, thus you can not select several of them):"
 
 #: ../web_tt2/help_user.tt2:106
 msgid ""
-"<strong>digest plain text format</strong>: instead of receiving the list "
-"messages in a normal manner, you will get a digest of them on a regular "
-"basis. This digest compiles a group of messages from the list, using plain "
-"text format. The digest frequency is set up by the list owner."
+"<strong>digest MIME format</strong>: instead of receiving the list messages "
+"in a normal manner, you will get a digest of them on a regular basis. This "
+"digest compiles a group of messages from the list, using multipart/digest "
+"<acronym lang=\"en\" xml:lang=\"en\" title=\"Multipurpose Internet Mail "
+"Extension\">MIME</acronym> format. The digest frequency is set up by the "
+"list owner."
 msgstr ""
-"<strong>digest plain text format</strong>: instead of receiving the list "
-"messages in a normal manner, you will get a digest of them on a regular "
-"basis. This digest compiles a group of messages from the list, using plain "
-"text format. The digest frequency is set up by the list owner."
+"<strong>digest MIME format</strong>: instead of receiving the list messages "
+"in a normal manner, you will get a digest of them on a regular basis. This "
+"digest compiles a group of messages from the list, using multipart/digest "
+"<acronym lang=\"en\" xml:lang=\"en\" title=\"Multipurpose Internet Mail "
+"Extension\">MIME</acronym> format. The digest frequency is set up by the "
+"list owner."
 
 #: ../web_tt2/help_user.tt2:107
 msgid ""
-"<strong>summary mode</strong>: instead of receiving the list messages in a "
-"normal manner, you will get a list of them on a regular basis. To read the "
-"messages, you will need to browse the online list archive."
+"<strong>digest plain text format</strong>: instead of receiving the list "
+"messages in a normal manner, you will get a digest of them on a regular "
+"basis. This digest compiles a group of messages from the list, using plain "
+"text format. The digest frequency is set up by the list owner."
 msgstr ""
-"<strong>summary mode</strong>: instead of receiving the list messages in a "
-"normal manner, you will get a list of them on a regular basis. To read the "
-"messages, you will need to browse the online list archive."
+"<strong>digest plain text format</strong>: instead of receiving the list "
+"messages in a normal manner, you will get a digest of them on a regular "
+"basis. This digest compiles a group of messages from the list, using plain "
+"text format. The digest frequency is set up by the list owner."
 
 #: ../web_tt2/help_user.tt2:108
 msgid ""
-"<strong>notice mode</strong>: with this mode, you will receive all the "
-"messages with a blank body: this way you are informed of every message sent "
-"to the list real time, without risk of flooding your inbox."
+"<strong>summary mode</strong>: instead of receiving the list messages in a "
+"normal manner, you will get a list of them on a regular basis. To read the "
+"messages, you will need to browse the online list archive."
 msgstr ""
-"<strong>notice mode</strong>: with this mode, you will receive all the "
-"messages with a blank body: this way you are informed of every message sent "
-"to the list real time, without risk of flooding your inbox."
+"<strong>summary mode</strong>: instead of receiving the list messages in a "
+"normal manner, you will get a list of them on a regular basis. To read the "
+"messages, you will need to browse the online list archive."
 
 #: ../web_tt2/help_user.tt2:109
 msgid ""
-"<strong>no mail (useful for vacations)</strong>: this mode makes it possible "
-"not to receive the messages of the list. It is especially useful when you "
-"have no access to your email for a long time and want to remain subscribed "
-"to the list nevertheless."
+"<strong>notice mode</strong>: with this mode, you will receive all the "
+"messages with a blank body: this way you are informed of every message sent "
+"to the list real time, without risk of flooding your inbox."
 msgstr ""
-"<strong>no mail (useful for vacations)</strong>: this mode makes it possible "
-"not to receive the messages of the list. It is especially useful when you "
-"have no access to your email for a long time and want to remain subscribed "
-"to the list nevertheless."
+"<strong>notice mode</strong>: with this mode, you will receive all the "
+"messages with a blank body: this way you are informed of every message sent "
+"to the list real time, without risk of flooding your inbox."
 
 #: ../web_tt2/help_user.tt2:110
 msgid ""
-"<strong>text only mode</strong>: this mode allows you to receive only the "
-"text version (text/plain) of messages sent in both formats (plain text and "
-"<acronym lang=\"en\" xml:lang=\"en\" title=\"HyperText Markup Language"
-"\">HTML</acronym>)."
+"<strong>no mail (useful for vacations)</strong>: this mode makes it possible "
+"not to receive the messages of the list. It is especially useful when you "
+"have no access to your email for a long time and want to remain subscribed "
+"to the list nevertheless."
 msgstr ""
-"<strong>text only mode</strong>: this mode allows you to receive only the "
-"text version (text/plain) of messages sent in both formats (plain text and "
-"<acronym lang=\"en\" xml:lang=\"en\" title=\"HyperText Markup Language"
-"\">HTML</acronym>)."
+"<strong>no mail (useful for vacations)</strong>: this mode makes it possible "
+"not to receive the messages of the list. It is especially useful when you "
+"have no access to your email for a long time and want to remain subscribed "
+"to the list nevertheless."
 
 #: ../web_tt2/help_user.tt2:111
 msgid ""
-"<strong>HTML only mode</strong>: this mode allows you to receive only the "
+"<strong>text only mode</strong>: this mode allows you to receive only the "
+"text version (text/plain) of messages sent in both formats (plain text and "
 "<acronym lang=\"en\" xml:lang=\"en\" title=\"HyperText Markup Language"
-"\">HTML</acronym> version (text/html) of messages sent in both formats."
+"\">HTML</acronym>)."
 msgstr ""
-"<strong>HTML only mode</strong>: this mode allows you to receive only the "
+"<strong>text only mode</strong>: this mode allows you to receive only the "
+"text version (text/plain) of messages sent in both formats (plain text and "
 "<acronym lang=\"en\" xml:lang=\"en\" title=\"HyperText Markup Language"
-"\">HTML</acronym> version (text/html) of messages sent in both formats."
+"\">HTML</acronym>)."
 
 #: ../web_tt2/help_user.tt2:112
 msgid ""
-"<strong>urlize mode</strong>: this mode allows you not to receive attached "
-"documents. However these documents are available in the list archive and you "
-"can access them through a <acronym title=\"Uniform Resource Locator\" lang="
-"\"en\" xml:lang=\"en\">URL</acronym> provided in the message."
+"<strong>HTML only mode</strong>: this mode allows you to receive only the "
+"<acronym lang=\"en\" xml:lang=\"en\" title=\"HyperText Markup Language"
+"\">HTML</acronym> version (text/html) of messages sent in both formats."
 msgstr ""
-"<strong>urlize mode</strong>: this mode allows you not to receive attached "
-"documents. However these documents are available in the list archive and you "
-"can access them through a <acronym title=\"Uniform Resource Locator\" lang="
-"\"en\" xml:lang=\"en\">URL</acronym> provided in the message."
+"<strong>HTML only mode</strong>: this mode allows you to receive only the "
+"<acronym lang=\"en\" xml:lang=\"en\" title=\"HyperText Markup Language"
+"\">HTML</acronym> version (text/html) of messages sent in both formats."
 
 #: ../web_tt2/help_user.tt2:113
 msgid ""
+"<strong>urlize mode</strong>: this mode allows you not to receive attached "
+"documents. However these documents are available in the list archive and you "
+"can access them through a <acronym title=\"Uniform Resource Locator\" lang="
+"\"en\" xml:lang=\"en\">URL</acronym> provided in the message."
+msgstr ""
+"<strong>urlize mode</strong>: this mode allows you not to receive attached "
+"documents. However these documents are available in the list archive and you "
+"can access them through a <acronym title=\"Uniform Resource Locator\" lang="
+"\"en\" xml:lang=\"en\">URL</acronym> provided in the message."
+
+#: ../web_tt2/help_user.tt2:114
+msgid ""
 "<strong>you do not receive your own posts</strong>: this mode allows you not "
 "to receive a copy of your own messages."
 msgstr ""
 "<strong>you do not receive your own posts</strong>: this mode allows you not "
 "to receive a copy of your own messages."
 
-#: ../web_tt2/help_user.tt2:114
+#: ../web_tt2/help_user.tt2:115
 msgid ""
 "<strong>standard (direct reception)</strong>: this mode is the default "
 "delivery mode; it cancels any other delivery mode."
@@ -1356,7 +1365,7 @@ msgstr ""
 "<strong>standard (direct reception)</strong>: this mode is the default "
 "delivery mode; it cancels any other delivery mode."
 
-#: ../web_tt2/help_user.tt2:115
+#: ../web_tt2/help_user.tt2:116
 msgid ""
 "<strong>suspended</strong>: this mode allows you to suspend your "
 "subscription to one or more lists for a specified period or not. Unlike "
@@ -1364,22 +1373,22 @@ msgid ""
 "any time by visiting the \"Manage your subscription\" section."
 msgstr ""
 
-#: ../web_tt2/help_user.tt2:117
+#: ../web_tt2/help_user.tt2:118
 msgid "<strong>Choose a visibility option</strong>:"
 msgstr "<strong>Choose a visibility option</strong>:"
 
-#: ../web_tt2/help_user.tt2:119
-msgid ""
-"<strong>listed in the list review page</strong>: your name and email address "
-"will be displayed in the members list (if the list owner allowed subscribers "
-"to review the list members)."
-msgstr ""
-"<strong>listed in the list review page</strong>: your name and email address "
-"will be displayed in the members list (if the list owner allowed subscribers "
-"to review the list members)."
-
 #: ../web_tt2/help_user.tt2:120
 msgid ""
+"<strong>listed in the list review page</strong>: your name and email address "
+"will be displayed in the members list (if the list owner allowed subscribers "
+"to review the list members)."
+msgstr ""
+"<strong>listed in the list review page</strong>: your name and email address "
+"will be displayed in the members list (if the list owner allowed subscribers "
+"to review the list members)."
+
+#: ../web_tt2/help_user.tt2:121
+msgid ""
 "<strong>concealed</strong>: your name and email address will not be "
 "displayed in the members list. However you email address will be visible in "
 "the list archive if you send messages."
@@ -1388,15 +1397,15 @@ msgstr ""
 "displayed in the members list. However you email address will be visible in "
 "the list archive if you send messages."
 
-#: ../web_tt2/help_user.tt2:122
+#: ../web_tt2/help_user.tt2:123
 msgid "<strong>Click on the 'Update' button</strong>."
 msgstr "<strong>Click on the 'Update' button</strong>."
 
-#: ../web_tt2/help_user.tt2:125
+#: ../web_tt2/help_user.tt2:126
 msgid "Changing your general preferences"
 msgstr "Changing your general preferences"
 
-#: ../web_tt2/help_user.tt2:126
+#: ../web_tt2/help_user.tt2:127
 msgid ""
 "The general preferences apply to all your subscriptions as well as to the "
 "way your Sympa mailing list web interface displays. To change your "
@@ -1405,85 +1414,85 @@ msgstr ""
 "The general preferences apply to all your subscriptions as well as to the "
 "way your Sympa mailing list web interface displays. To change your "
 "preferences, do as follows:"
-
-#: ../web_tt2/help_user.tt2:129
-msgid ""
-"In the form displayed on top of the left column, <strong>click on the 'Your "
-"preferences' link</strong>."
-msgstr ""
-"In the form displayed on top of the left column, <strong>click on the 'Your "
-"preferences' link</strong>."
 
 #: ../web_tt2/help_user.tt2:130
+msgid ""
+"In the form displayed on top of the left column, <strong>click on the 'Your "
+"preferences' link</strong>."
+msgstr ""
+"In the form displayed on top of the left column, <strong>click on the 'Your "
+"preferences' link</strong>."
+
+#: ../web_tt2/help_user.tt2:131
 msgid "<strong>Change your preferences</strong>."
 msgstr "<strong>Change your preferences</strong>."
 
-#: ../web_tt2/help_user.tt2:131
+#: ../web_tt2/help_user.tt2:132
 msgid "<strong>Click on 'Submit' for every option</strong> you change."
 msgstr "<strong>Click on 'Submit' for every option</strong> you change."
 
-#: ../web_tt2/help_user.tt2:133
+#: ../web_tt2/help_user.tt2:134
 msgid "You can change:"
 msgstr "You can change:"
 
-#: ../web_tt2/help_user.tt2:135
-msgid ""
-"your <strong>name</strong>; if you subscribe to a list from the mailing list "
-"server web interface, the 'Name' field will automatically be filled in in "
-"the members list;"
-msgstr ""
-"your <strong>name</strong>; if you subscribe to a list from the mailing list "
-"server web interface, the 'Name' field will automatically be filled in in "
-"the members list;"
-
 #: ../web_tt2/help_user.tt2:136
 msgid ""
-"the <strong>language in which the Sympa web interface is displayed</strong> "
-"(you can change language on every page of the web interface; your choice "
-"will remain even though you change the interface language on another page "
-"than the 'Preferences' page;"
+"your <strong>name</strong>; if you subscribe to a list from the mailing list "
+"server web interface, the 'Name' field will automatically be filled in in "
+"the members list;"
 msgstr ""
-"the <strong>language in which the Sympa web interface is displayed</strong> "
-"(you can change language on every page of the web interface; your choice "
-"will remain even though you change the interface language on another page "
-"than the 'Preferences' page;"
+"your <strong>name</strong>; if you subscribe to a list from the mailing list "
+"server web interface, the 'Name' field will automatically be filled in in "
+"the members list;"
 
 #: ../web_tt2/help_user.tt2:137
 msgid ""
-"the <strong>lifetime of the cookie placed on your computer by Sympa</strong> "
-"('Connection expiration period'). By default, the session expires when you "
-"close your browser; if you use the mailing list service a lot, we advise you "
-"to choose a longer duration;"
+"the <strong>language in which the Sympa web interface is displayed</strong> "
+"(you can change language on every page of the web interface; your choice "
+"will remain even though you change the interface language on another page "
+"than the 'Preferences' page;"
 msgstr ""
-"the <strong>lifetime of the cookie placed on your computer by Sympa</strong> "
-"('Connection expiration period'). By default, the session expires when you "
-"close your browser; if you use the mailing list service a lot, we advise you "
-"to choose a longer duration;"
+"the <strong>language in which the Sympa web interface is displayed</strong> "
+"(you can change language on every page of the web interface; your choice "
+"will remain even though you change the interface language on another page "
+"than the 'Preferences' page;"
 
 #: ../web_tt2/help_user.tt2:138
 msgid ""
-"A cookie is a small file a web server stores on your hard disk, most "
-"generally temporarily, in order to identify you as a user of its service. It "
-"contains a few pieces of personal information about you: name, email "
-"address, latest logon time, etc."
+"the <strong>lifetime of the cookie placed on your computer by Sympa</strong> "
+"('Connection expiration period'). By default, the session expires when you "
+"close your browser; if you use the mailing list service a lot, we advise you "
+"to choose a longer duration;"
 msgstr ""
-"A cookie is a small file a web server stores on your hard disk, most "
-"generally temporarily, in order to identify you as a user of its service. It "
-"contains a few pieces of personal information about you: name, email "
-"address, latest logon time, etc."
+"the <strong>lifetime of the cookie placed on your computer by Sympa</strong> "
+"('Connection expiration period'). By default, the session expires when you "
+"close your browser; if you use the mailing list service a lot, we advise you "
+"to choose a longer duration;"
 
 #: ../web_tt2/help_user.tt2:139
 msgid ""
-"the <strong>email address with which you subscribed</strong> to the lists "
-"(if you subscribed with several email addresses, the address to be replaced "
-"will be the one you logged on with);"
+"A cookie is a small file a web server stores on your hard disk, most "
+"generally temporarily, in order to identify you as a user of its service. It "
+"contains a few pieces of personal information about you: name, email "
+"address, latest logon time, etc."
 msgstr ""
-"the <strong>email address with which you subscribed</strong> to the lists "
-"(if you subscribed with several email addresses, the address to be replaced "
-"will be the one you logged on with);"
+"A cookie is a small file a web server stores on your hard disk, most "
+"generally temporarily, in order to identify you as a user of its service. It "
+"contains a few pieces of personal information about you: name, email "
+"address, latest logon time, etc."
 
 #: ../web_tt2/help_user.tt2:140
 msgid ""
+"the <strong>email address with which you subscribed</strong> to the lists "
+"(if you subscribed with several email addresses, the address to be replaced "
+"will be the one you logged on with);"
+msgstr ""
+"the <strong>email address with which you subscribed</strong> to the lists "
+"(if you subscribed with several email addresses, the address to be replaced "
+"will be the one you logged on with);"
+
+#: ../web_tt2/help_user.tt2:141
+msgid ""
 "Be careful: this will change your subscriptions to all your lists. If you "
 "want to change address for a single mailing list, you had better unsubscribe "
 "from that list and subscribe again with the right email address."
@@ -1492,11 +1501,11 @@ msgstr ""
 "want to change address for a single mailing list, you had better unsubscribe "
 "from that list and subscribe again with the right email address."
 
-#: ../web_tt2/help_user.tt2:141
+#: ../web_tt2/help_user.tt2:142
 msgid "your <strong>list password</strong>."
 msgstr "your <strong>list password</strong>."
 
-#: ../web_tt2/help_user.tt2:143
+#: ../web_tt2/help_user.tt2:144
 msgid ""
 "The '<strong>Your other email addresses</strong>' section acts like an email "
 "address change."
@@ -1504,11 +1513,11 @@ msgstr ""
 "The '<strong>Your other email addresses</strong>' section acts like an email "
 "address change."
 
-#: ../web_tt2/help_user.tt2:145
+#: ../web_tt2/help_user.tt2:146
 msgid "Searching for a mailing list"
 msgstr "Searching for a mailing list"
 
-#: ../web_tt2/help_user.tt2:146
+#: ../web_tt2/help_user.tt2:147
 msgid ""
 "You may need to search for a mailing list. To do that, you have three "
 "options:"
@@ -1517,16 +1526,16 @@ msgstr ""
 "options:"
 
 #. (path_cgi)
-#: ../web_tt2/help_user.tt2:148
-msgid ""
-"<strong>browse the different sections</strong> displayed on the <a href=\"%1/"
-"home\">list environment homepage</a>;"
-msgstr ""
-"<strong>browse the different sections</strong> displayed on the <a href=\"%1/"
-"home\">list environment homepage</a>;"
-
 #: ../web_tt2/help_user.tt2:149
 msgid ""
+"<strong>browse the different sections</strong> displayed on the <a href=\"%1/"
+"home\">list environment homepage</a>;"
+msgstr ""
+"<strong>browse the different sections</strong> displayed on the <a href=\"%1/"
+"home\">list environment homepage</a>;"
+
+#: ../web_tt2/help_user.tt2:150
+msgid ""
 "search for a list via the <strong>search box</strong>: the searched string "
 "will return all the lists whose name or description matches your search "
 "criteria (descriptions of the lists generally consist of a short sentence);"
@@ -1536,7 +1545,7 @@ msgstr ""
 "criteria (descriptions of the lists generally consist of a short sentence);"
 
 #. (path_cgi)
-#: ../web_tt2/help_user.tt2:150
+#: ../web_tt2/help_user.tt2:151
 msgid ""
 "click on the '<a href=\"%1/lists\">List of lists</a>' tab on top of page to "
 "<strong>display all available lists</strong>."
@@ -1544,7 +1553,7 @@ msgstr ""
 "click on the '<a href=\"%1/lists\">List of lists</a>' tab on top of page to "
 "<strong>display all available lists</strong>."
 
-#: ../web_tt2/help_user.tt2:152
+#: ../web_tt2/help_user.tt2:153
 msgid ""
 "According to the domain to which your email address belongs (example: <em "
 "class=\"example\">cru.fr</em>, <em class=\"example\">fai.com</em>, etc.) and "
@@ -1558,12 +1567,12 @@ msgstr ""
 "However you can subscribe to a list that does not display if you know its "
 "name. To do this, <a href=\"#subscribe\">use your email client</a>."
 
-#: ../web_tt2/help_user.tt2:154
+#: ../web_tt2/help_user.tt2:155
 msgid "Reading a list archive online"
 msgstr "Reading a list archive online"
 
 #. (path_cgi)
-#: ../web_tt2/help_user.tt2:155
+#: ../web_tt2/help_user.tt2:156
 msgid ""
 "Please refer to the <a href=\"%1/help/arc\"><strong>archive documentation</"
 "strong></a>."
@@ -1571,12 +1580,12 @@ msgstr ""
 "Please refer to the <a href=\"%1/help/arc\"><strong>archive documentation</"
 "strong></a>."
 
-#: ../web_tt2/help_sendmsg.tt2:3 ../web_tt2/help_user.tt2:157
+#: ../web_tt2/help_sendmsg.tt2:3 ../web_tt2/help_user.tt2:158
 msgid "Sending a message"
 msgstr "Sending a message"
 
 #. (path_cgi)
-#: ../web_tt2/help_user.tt2:158
+#: ../web_tt2/help_user.tt2:159
 msgid ""
 "Please refer to the <a href=\"%1/help/sendmsg\"><strong>documentation about "
 "sending messages</strong></a>."
@@ -1584,12 +1593,12 @@ msgstr ""
 "Please refer to the <a href=\"%1/help/sendmsg\"><strong>documentation about "
 "sending messages</strong></a>."
 
-#: ../web_tt2/help_shared.tt2:3 ../web_tt2/help_user.tt2:160
+#: ../web_tt2/help_shared.tt2:3 ../web_tt2/help_user.tt2:161
 msgid "Using the shared document web space"
 msgstr "Using the shared document web space"
 
 #. (path_cgi)
-#: ../web_tt2/help_user.tt2:161
+#: ../web_tt2/help_user.tt2:162
 msgid ""
 "Please refer to the <a href=\"%1/help/shared\"><strong>shared document web "
 "space documentation</strong></a>."
@@ -1597,42 +1606,57 @@ msgstr ""
 "Please refer to the <a href=\"%1/help/shared\"><strong>shared document web "
 "space documentation</strong></a>."
 
-#: ../web_tt2/help_user.tt2:163
+#: ../web_tt2/help_user.tt2:164
+#, fuzzy
+msgid "Suspending or resuming your subscription of each list"
+msgstr "a <a href=\"%1/help/user\">user guide</a> about the use of Sympa;"
+
+#. (path_cgi)
+#: ../web_tt2/help_user.tt2:165
+#, fuzzy
+msgid ""
+"Please refer to the <a href=\"%1/help/suspend\"><strong>subscription "
+"management documentation</strong></a>."
+msgstr ""
+"Please refer to the <a href=\"%1/help/arc\"><strong>archive documentation</"
+"strong></a>."
+
+#: ../web_tt2/help_user.tt2:167
 msgid "Unsubscribing from lists"
 msgstr "Unsubscribing from lists"
 
-#: ../web_tt2/help_user.tt2:164
+#: ../web_tt2/help_user.tt2:168
 msgid "To unsubscribe from a list, do as follows:"
 msgstr "To unsubscribe from a list, do as follows:"
 
 #. (conf.email,conf.host)
-#: ../web_tt2/help_user.tt2:166
+#: ../web_tt2/help_user.tt2:170
 msgid ""
 "From the address with which you subscribed to the list, send a "
 "<strong>message to %1@%2</strong>."
 msgstr ""
 "From the address with which you subscribed to the list, send a "
 "<strong>message to %1@%2</strong>."
-
-#: ../web_tt2/help_user.tt2:167
-msgid ""
-"In the subject line of your email, type in: <strong>unsubscribe "
-"nameofthelist</strong> (replace 'nameofthelist' by the name of the list you "
-"want to unsubscribe from)."
-msgstr ""
-"In the subject line of your email, type in: <strong>unsubscribe "
-"nameofthelist</strong> (replace 'nameofthelist' by the name of the list you "
-"want to unsubscribe from)."
 
 #: ../web_tt2/help_user.tt2:171
 msgid ""
+"In the subject line of your email, type in: <strong>unsubscribe "
+"nameofthelist</strong> (replace 'nameofthelist' by the name of the list you "
+"want to unsubscribe from)."
+msgstr ""
+"In the subject line of your email, type in: <strong>unsubscribe "
+"nameofthelist</strong> (replace 'nameofthelist' by the name of the list you "
+"want to unsubscribe from)."
+
+#: ../web_tt2/help_user.tt2:175
+msgid ""
 "You can also unsubscribe through the mailing list web interface (you will "
 "need to repeat the operation for each list you want to unsubscribe from):"
 msgstr ""
 "You can also unsubscribe through the mailing list web interface (you will "
 "need to repeat the operation for each list you want to unsubscribe from):"
 
-#: ../web_tt2/help_user.tt2:174
+#: ../web_tt2/help_user.tt2:178
 msgid ""
 "<strong>Go to the information page of the list</strong> you want to "
 "unsubscribe from."
@@ -1640,7 +1664,7 @@ msgstr ""
 "<strong>Go to the information page of the list</strong> you want to "
 "unsubscribe from."
 
-#: ../web_tt2/help_user.tt2:175
+#: ../web_tt2/help_user.tt2:179
 msgid "<strong>In the left menu, click on the 'Unsubscribe' link</strong>."
 msgstr "<strong>In the left menu, click on the 'Unsubscribe' link</strong>."
 
@@ -3063,10 +3087,9 @@ msgstr ""
 "page of the list administration module."
 
 #: ../web_tt2/help_admin.tt2:257
+#, fuzzy
 msgid ""
-"When available, the <a target=\"_blank\" title=\"Example of charter aimed at "
-"owners and moderators (French)\" href=\"http://listes.cru.fr/cnil/charte."
-"proprio.html\">Owner and moderator charter</a> provides list owners and "
+"When available, the 'Owner and moderator charter' provides list owners and "
 "moderators with all the necessary information to carry out their roles. This "
 "Charter involves all the rights and responsibilities of owners and "
 "moderators."
@@ -4007,22 +4030,22 @@ msgstr ""
 "robot.conf file or in file /etc/sympa.conf."
 
 #: ../web_tt2/help_editlist.tt2:101
+#, fuzzy
 msgid ""
-"This parameter will be interpreted only if the user_data_source value is set "
-"to include. The file should contain one e-mail address per line (lines "
-"beginning with a \"#\" are ignored)."
+"Include subscribers from this file.  The file should contain one e-mail "
+"address per line (lines beginning with a \"#\" are ignored)."
 msgstr ""
 "This parameter will be interpreted only if the user_data_source value is set "
 "to include. The file should contain one e-mail address per line (lines "
 "beginning with a \"#\" are ignored)."
 
 #: ../web_tt2/help_editlist.tt2:103
+#, fuzzy
 msgid ""
 "This paragraph defines parameters for a two-level query returning a list of "
 "subscribers. Usually the first-level query returns a list of DNs and the "
-"second-level queries convert the DNs into e-mail addresses. This paragraph "
-"is used only if user_data_source is set to include. This feature requires "
-"the Net::LDAP (perlldap) PERL module."
+"second-level queries convert the DNs into e-mail addresses. This feature "
+"requires the Net::LDAP (perlldap) PERL module."
 msgstr ""
 "This paragraph defines parameters for a two-level query returning a list of "
 "subscribers. Usually the first-level query returns a list of DNs and the "
@@ -4031,25 +4054,25 @@ msgstr ""
 "the Net::LDAP (perlldap) PERL module."
 
 #: ../web_tt2/help_editlist.tt2:105
+#, fuzzy
 msgid ""
 "This paragraph defines parameters for a query returning a list of "
-"subscribers. This paragraph is used only if user_data_source is set to "
-"include. This feature requires the Net::LDAP (perlldap) PERL module."
+"subscribers. This feature requires the Net::LDAP (perlldap) PERL module."
 msgstr ""
 "This paragraph defines parameters for a query returning a list of "
 "subscribers. This paragraph is used only if user_data_source is set to "
 "include. This feature requires the Net::LDAP (perlldap) PERL module."
 
 #: ../web_tt2/help_editlist.tt2:107
+#, fuzzy
 msgid ""
-"This parameter will be interpreted only if user_data_source is set to "
-"include. All subscribers of list listname become subscribers of the current "
-"list. You may include as many lists as required, using one include_list "
-"listname line for each included list. Any list at all may be included; the "
-"user_data_source definition of the included list is irrelevant, and you may "
-"therefore include lists which are also defined by the inclusion of other "
-"lists. Be careful, however, not to include list A in list B and then list B "
-"in list A, since this will give rise to an infinite loop."
+"Include subscribers from other list. All subscribers of list listname become "
+"subscribers of the current list. You may include as many lists as required, "
+"using one include_list listname line for each included list. Any list at all "
+"may be included; you may therefore include lists which are also defined by "
+"the inclusion of other lists. Be careful, however, not to include list A in "
+"list B and then list B in list A, since this will give rise to an infinite "
+"loop."
 msgstr ""
 "This parameter will be interpreted only if user_data_source is set to "
 "include. All subscribers of list listname become subscribers of the current "
@@ -4087,9 +4110,9 @@ msgstr ""
 "scenario."
 
 #: ../web_tt2/help_editlist.tt2:112
+#, fuzzy
 msgid ""
-"This parameter will be interpreted only if the user_data_source value is set "
-"to include, and is used to begin a paragraph defining the SQL query "
+"This parameter is used to begin a paragraph defining the SQL query "
 "parameters. "
 msgstr ""
 "This parameter will be interpreted only if the user_data_source value is set "
@@ -4300,31 +4323,19 @@ msgstr ""
 
 #: ../web_tt2/help_editlist.tt2:165
 msgid ""
-"Sympa allows the list owner to choose how Sympa loads list member data. "
-"Subscriber information can be stored in a text file or relational database, "
-"or included from various external sources (list, flat file, result of or "
-"query)."
+"This parameter indicates whether the list should feature in the output "
+"generated in response to a LISTS command or should be shown in the list "
+"overview of the web-interface."
 msgstr ""
-"Sympa allows the list owner to choose how Sympa loads list member data. "
-"Subscriber information can be stored in a text file or relational database, "
-"or included from various external sources (list, flat file, result of or "
-"query)."
+"This parameter indicates whether the list should feature in the output "
+"generated in response to a LISTS command or should be shown in the list "
+"overview of the web-interface."
 
 #: ../web_tt2/help_editlist.tt2:167
-msgid ""
-"This parameter indicates whether the list should feature in the output "
-"generated in response to a LISTS command or should be shown in the list "
-"overview of the web-interface."
-msgstr ""
-"This parameter indicates whether the list should feature in the output "
-"generated in response to a LISTS command or should be shown in the list "
-"overview of the web-interface."
-
-#: ../web_tt2/help_editlist.tt2:169
 msgid "Defines who can access the web archive for the list."
 msgstr "Defines who can access the web archive for the list."
 
-#: ../web_tt2/help_editlist.tt2:171
+#: ../web_tt2/help_editlist.tt2:169
 msgid ""
 "Idem spam_protection is provided but it can be used only for web archives. "
 "Access requires a cookie, and users must submit a small form in order to "
@@ -4335,42 +4346,42 @@ msgstr ""
 "Access requires a cookie, and users must submit a small form in order to "
 "receive a cookie before browsing the archives. This blocks all robot, even "
 "google and co."
+
+#: ../web_tt2/help_editlist.tt2:171
+msgid ""
+"If set to unique, the welcome message is sent using a unique return path in "
+"order to remove the subscriber immediately in the case of a bounce."
+msgstr ""
+"If set to unique, the welcome message is sent using a unique return path in "
+"order to remove the subscriber immediately in the case of a bounce."
 
 #: ../web_tt2/help_editlist.tt2:173
 msgid ""
-"If set to unique, the welcome message is sent using a unique return path in "
-"order to remove the subscriber immediately in the case of a bounce."
+"This paragraph defines a topic used to tag a message of a list, named by "
+"msg_topic.name (\"other\" is a reserved word), its title is msg_topic.title. "
+"The msg_topic.keywords entry is optional and allows automatic tagging. This "
+"should be a list of keywords, separated by ','."
 msgstr ""
-"If set to unique, the welcome message is sent using a unique return path in "
-"order to remove the subscriber immediately in the case of a bounce."
+"This paragraph defines a topic used to tag a message of a list, named by "
+"msg_topic.name (\"other\" is a reserved word), its title is msg_topic.title. "
+"The msg_topic.keywords entry is optional and allows automatic tagging. This "
+"should be a list of keywords, separated by ','."
 
 #: ../web_tt2/help_editlist.tt2:175
 msgid ""
-"This paragraph defines a topic used to tag a message of a list, named by "
-"msg_topic.name (\"other\" is a reserved word), its title is msg_topic.title. "
-"The msg_topic.keywords entry is optional and allows automatic tagging. This "
-"should be a list of keywords, separated by ','."
+"This parameter indicates which part of the message is used to perform "
+"automatic tagging."
 msgstr ""
-"This paragraph defines a topic used to tag a message of a list, named by "
-"msg_topic.name (\"other\" is a reserved word), its title is msg_topic.title. "
-"The msg_topic.keywords entry is optional and allows automatic tagging. This "
-"should be a list of keywords, separated by ','."
+"This parameter indicates which part of the message is used to perform "
+"automatic tagging."
 
 #: ../web_tt2/help_editlist.tt2:177
 msgid ""
-"This parameter indicates which part of the message is used to perform "
-"automatic tagging."
+"This parameter indicates if the tagging is optional or required for a list."
 msgstr ""
-"This parameter indicates which part of the message is used to perform "
-"automatic tagging."
+"This parameter indicates if the tagging is optional or required for a list."
 
 #: ../web_tt2/help_editlist.tt2:179
-msgid ""
-"This parameter indicates if the tagging is optional or required for a list."
-msgstr ""
-"This parameter indicates if the tagging is optional or required for a list."
-
-#: ../web_tt2/help_editlist.tt2:181
 msgid "No Comment"
 msgstr "No Comment"
 
@@ -4880,18 +4891,10 @@ msgid "no conceal (noconceal);"
 msgstr "no conceal (noconceal);"
 
 #: ../web_tt2/help_listconfig.tt2:23
-msgid "subscribers (private);"
-msgstr "subscribers (private);"
-
-#: ../web_tt2/help_listconfig.tt2:24
 msgid "conceal even for subscribers (secret);"
 msgstr "conceal even for subscribers (secret);"
 
 #: ../web_tt2/help_listconfig.tt2:25
-msgid "semipublic (semipublic)."
-msgstr "semipublic (semipublic)."
-
-#: ../web_tt2/help_listconfig.tt2:27
 msgid ""
 "If you want to limit the list visibility according to other criteria, you "
 "should ask the listmasters: they may be able to create a new option matching "
@@ -4902,97 +4905,97 @@ msgstr ""
 "should ask the listmasters: they may be able to create a new option matching "
 "your needs (example: list visible only by members of a user group, of an "
 "Internet domain, etc.)."
+
+#: ../web_tt2/help_listconfig.tt2:26
+msgid ""
+"In the 'Owners' and 'Moderators' areas, you can <strong>add owners and "
+"moderators</strong> to the list or <strong>change their personal "
+"information</strong>:"
+msgstr ""
+"In the 'Owners' and 'Moderators' areas, you can <strong>add owners and "
+"moderators</strong> to the list or <strong>change their personal "
+"information</strong>:"
 
 #: ../web_tt2/help_listconfig.tt2:28
 msgid ""
-"In the 'Owners' and 'Moderators' areas, you can <strong>add owners and "
-"moderators</strong> to the list or <strong>change their personal "
-"information</strong>:"
+"For each owner/moderator, you have to indicate an <strong>email address</"
+"strong> and a <strong>name</strong>."
 msgstr ""
-"In the 'Owners' and 'Moderators' areas, you can <strong>add owners and "
-"moderators</strong> to the list or <strong>change their personal "
-"information</strong>:"
+"For each owner/moderator, you have to indicate an <strong>email address</"
+"strong> and a <strong>name</strong>."
+
+#: ../web_tt2/help_listconfig.tt2:29
+msgid ""
+"You can also add the information of your choice in the '<strong>Private "
+"information</strong>' input box (phone number, function, etc.); this "
+"information will only be accessible by listmasters and list owners with a "
+"'Privileged' profile."
+msgstr ""
+"You can also add the information of your choice in the '<strong>Private "
+"information</strong>' input box (phone number, function, etc.); this "
+"information will only be accessible by listmasters and list owners with a "
+"'Privileged' profile."
 
 #: ../web_tt2/help_listconfig.tt2:30
 msgid ""
-"For each owner/moderator, you have to indicate an <strong>email address</"
-"strong> and a <strong>name</strong>."
+"You can change the <strong>message delivery mode</strong> (the only options "
+"available on this page are 'mail' and 'nomail')."
 msgstr ""
-"For each owner/moderator, you have to indicate an <strong>email address</"
-"strong> and a <strong>name</strong>."
+"You can change the <strong>message delivery mode</strong> (the only options "
+"available on this page are 'mail' and 'nomail')."
 
 #: ../web_tt2/help_listconfig.tt2:31
 msgid ""
-"You can also add the information of your choice in the '<strong>Private "
-"information</strong>' input box (phone number, function, etc.); this "
-"information will only be accessible by listmasters and list owners with a "
-"'Privileged' profile."
+"The 'Profile' parameter can not be changed: the <strong>'Privileged' "
+"profile</strong> is reserved to the list creator (other owners have a "
+"'Normal' profile)."
 msgstr ""
-"You can also add the information of your choice in the '<strong>Private "
-"information</strong>' input box (phone number, function, etc.); this "
-"information will only be accessible by listmasters and list owners with a "
-"'Privileged' profile."
-
-#: ../web_tt2/help_listconfig.tt2:32
-msgid ""
-"You can change the <strong>message delivery mode</strong> (the only options "
-"available on this page are 'mail' and 'nomail')."
-msgstr ""
-"You can change the <strong>message delivery mode</strong> (the only options "
-"available on this page are 'mail' and 'nomail')."
+"The 'Profile' parameter can not be changed: the <strong>'Privileged' "
+"profile</strong> is reserved to the list creator (other owners have a "
+"'Normal' profile)."
 
 #: ../web_tt2/help_listconfig.tt2:33
 msgid ""
-"The 'Profile' parameter can not be changed: the <strong>'Privileged' "
-"profile</strong> is reserved to the list creator (other owners have a "
-"'Normal' profile)."
+"Be careful: becoming owner or moderator of a list does not mean that you are "
+"automatically subscribed to that list. Thus owners and moderators have to "
+"subscribe themselves to the list."
 msgstr ""
-"The 'Profile' parameter can not be changed: the <strong>'Privileged' "
-"profile</strong> is reserved to the list creator (other owners have a "
-"'Normal' profile)."
+"Be careful: becoming owner or moderator of a list does not mean that you are "
+"automatically subscribed to that list. Thus owners and moderators have to "
+"subscribe themselves to the list."
+
+#: ../web_tt2/help_listconfig.tt2:34
+msgid ""
+"To <strong>delete owners/moderators</strong>, clear the content of the input "
+"boxes relating to the person you want to delete and click on the 'Update' "
+"button."
+msgstr ""
+"To <strong>delete owners/moderators</strong>, clear the content of the input "
+"boxes relating to the person you want to delete and click on the 'Update' "
+"button."
 
 #: ../web_tt2/help_listconfig.tt2:35
 msgid ""
-"Be careful: becoming owner or moderator of a list does not mean that you are "
-"automatically subscribed to that list. Thus owners and moderators have to "
-"subscribe themselves to the list."
+"You can also change the <strong>list topic</strong> as well as its "
+"<strong>language</strong>. If you change the list language, all predefined "
+"messages will be sent in the chosen language (be careful: subject to the "
+"availability of a translation!)."
 msgstr ""
-"Be careful: becoming owner or moderator of a list does not mean that you are "
-"automatically subscribed to that list. Thus owners and moderators have to "
-"subscribe themselves to the list."
+"You can also change the <strong>list topic</strong> as well as its "
+"<strong>language</strong>. If you change the list language, all predefined "
+"messages will be sent in the chosen language (be careful: subject to the "
+"availability of a translation!)."
 
 #: ../web_tt2/help_listconfig.tt2:36
 msgid ""
-"To <strong>delete owners/moderators</strong>, clear the content of the input "
-"boxes relating to the person you want to delete and click on the 'Update' "
-"button."
-msgstr ""
-"To <strong>delete owners/moderators</strong>, clear the content of the input "
-"boxes relating to the person you want to delete and click on the 'Update' "
-"button."
-
-#: ../web_tt2/help_listconfig.tt2:37
-msgid ""
-"You can also change the <strong>list topic</strong> as well as its "
-"<strong>language</strong>. If you change the list language, all predefined "
-"messages will be sent in the chosen language (be careful: subject to the "
-"availability of a translation!)."
-msgstr ""
-"You can also change the <strong>list topic</strong> as well as its "
-"<strong>language</strong>. If you change the list language, all predefined "
-"messages will be sent in the chosen language (be careful: subject to the "
-"availability of a translation!)."
-
-#: ../web_tt2/help_listconfig.tt2:38
-msgid ""
 "You can not change the <strong>Internet domain</strong> of the list: only "
 "the listmasters can change this parameter."
 msgstr ""
 "You can not change the <strong>Internet domain</strong> of the list: only "
 "the listmasters can change this parameter."
 
-#: ../web_tt2/help_listconfig.tt2:127 ../web_tt2/help_listconfig.tt2:178
-#: ../web_tt2/help_listconfig.tt2:39 ../web_tt2/help_listconfig.tt2:55
+#: ../web_tt2/help_listconfig.tt2:125 ../web_tt2/help_listconfig.tt2:176
+#: ../web_tt2/help_listconfig.tt2:37 ../web_tt2/help_listconfig.tt2:53
 msgid ""
 "<strong>BE CAREFUL: do not forget to click on the 'Update' button</strong> "
 "on bottom of page to save all your changes."
@@ -5000,102 +5003,102 @@ msgstr ""
 "<strong>BE CAREFUL: do not forget to click on the 'Update' button</strong> "
 "on bottom of page to save all your changes."
 
-#: ../web_tt2/help_listconfig.tt2:41
+#: ../web_tt2/help_listconfig.tt2:39
 msgid "Sending/receiving"
 msgstr "Sending/receiving"
 
-#: ../web_tt2/help_listconfig.tt2:42
+#: ../web_tt2/help_listconfig.tt2:40
 msgid ""
 "From this page, you can <strong>decide who will be allowed to post messages "
 "on the list</strong>."
 msgstr ""
 "From this page, you can <strong>decide who will be allowed to post messages "
 "on the list</strong>."
+
+#: ../web_tt2/help_listconfig.tt2:41
+msgid ""
+"In the '<strong>Digest frequency</strong>' area, you can define how "
+"frequently compiled messages are sent (Digest and Summary delivery modes): "
+"in the list, select all the <strong>days</strong> for which you want digests "
+"to be sent. Then choose a <strong>delivery time</strong> for digests (please "
+"avoid choosing a time between 11 p.m. and midnight)."
+msgstr ""
+"In the '<strong>Digest frequency</strong>' area, you can define how "
+"frequently compiled messages are sent (Digest and Summary delivery modes): "
+"in the list, select all the <strong>days</strong> for which you want digests "
+"to be sent. Then choose a <strong>delivery time</strong> for digests (please "
+"avoid choosing a time between 11 p.m. and midnight)."
+
+#: ../web_tt2/help_listconfig.tt2:42
+msgid ""
+"In the '<strong>Available subscription options</strong>' list, select all "
+"the subscriber options you want to offer to your subscribers. By default, "
+"all options are selected."
+msgstr ""
+"In the '<strong>Available subscription options</strong>' list, select all "
+"the subscriber options you want to offer to your subscribers. By default, "
+"all options are selected."
 
 #: ../web_tt2/help_listconfig.tt2:43
 msgid ""
-"In the '<strong>Digest frequency</strong>' area, you can define how "
-"frequently compiled messages are sent (Digest and Summary delivery modes): "
-"in the list, select all the <strong>days</strong> for which you want digests "
-"to be sent. Then choose a <strong>delivery time</strong> for digests (please "
-"avoid choosing a time between 11 p.m. and midnight)."
+"The '<strong>Reply address</strong>' area allows you to define the default "
+"recipients of any reply to a message sent to the list:"
 msgstr ""
-"In the '<strong>Digest frequency</strong>' area, you can define how "
-"frequently compiled messages are sent (Digest and Summary delivery modes): "
-"in the list, select all the <strong>days</strong> for which you want digests "
-"to be sent. Then choose a <strong>delivery time</strong> for digests (please "
-"avoid choosing a time between 11 p.m. and midnight)."
-
-#: ../web_tt2/help_listconfig.tt2:44
-msgid ""
-"In the '<strong>Available subscription options</strong>' list, select all "
-"the subscriber options you want to offer to your subscribers. By default, "
-"all options are selected."
-msgstr ""
-"In the '<strong>Available subscription options</strong>' list, select all "
-"the subscriber options you want to offer to your subscribers. By default, "
-"all options are selected."
+"The '<strong>Reply address</strong>' area allows you to define the default "
+"recipients of any reply to a message sent to the list:"
 
 #: ../web_tt2/help_listconfig.tt2:45
 msgid ""
-"The '<strong>Reply address</strong>' area allows you to define the default "
-"recipients of any reply to a message sent to the list:"
+"With the '<strong>All</strong>' value, the reply is sent to both the "
+"<strong>message sender</strong> AND the <strong>list</strong>."
 msgstr ""
-"The '<strong>Reply address</strong>' area allows you to define the default "
-"recipients of any reply to a message sent to the list:"
+"With the '<strong>All</strong>' value, the reply is sent to both the "
+"<strong>message sender</strong> AND the <strong>list</strong>."
+
+#: ../web_tt2/help_listconfig.tt2:46
+msgid ""
+"With the '<strong>List</strong>' value, the reply is sent to the "
+"<strong>list</strong>."
+msgstr ""
+"With the '<strong>List</strong>' value, the reply is sent to the "
+"<strong>list</strong>."
 
 #: ../web_tt2/help_listconfig.tt2:47
 msgid ""
-"With the '<strong>All</strong>' value, the reply is sent to both the "
-"<strong>message sender</strong> AND the <strong>list</strong>."
+"Be careful: use this option carefully! Experience shows that subscribers do "
+"not always check the address to which they send their reply. Thus, they "
+"might send private messages to the whole list when trying to reply to a "
+"single person..."
 msgstr ""
-"With the '<strong>All</strong>' value, the reply is sent to both the "
-"<strong>message sender</strong> AND the <strong>list</strong>."
+"Be careful: use this option carefully! Experience shows that subscribers do "
+"not always check the address to which they send their reply. Thus, they "
+"might send private messages to the whole list when trying to reply to a "
+"single person..."
 
 #: ../web_tt2/help_listconfig.tt2:48
 msgid ""
-"With the '<strong>List</strong>' value, the reply is sent to the "
-"<strong>list</strong>."
+"With the '<strong>Other_email</strong>' value, the reply is sent to a "
+"<strong>predefined address</strong>. If you choose this option, you will "
+"have to <strong>indicate an email address in the 'Other email address' input "
+"box</strong>."
 msgstr ""
-"With the '<strong>List</strong>' value, the reply is sent to the "
-"<strong>list</strong>."
+"With the '<strong>Other_email</strong>' value, the reply is sent to a "
+"<strong>predefined address</strong>. If you choose this option, you will "
+"have to <strong>indicate an email address in the 'Other email address' input "
+"box</strong>."
 
 #: ../web_tt2/help_listconfig.tt2:49
 msgid ""
-"Be careful: use this option carefully! Experience shows that subscribers do "
-"not always check the address to which they send their reply. Thus, they "
-"might send private messages to the whole list when trying to reply to a "
-"single person..."
+"With the '<strong>Sender</strong>' value, the reply is sent to the "
+"<strong>message sender</strong>. This is the option you should probably "
+"choose."
 msgstr ""
-"Be careful: use this option carefully! Experience shows that subscribers do "
-"not always check the address to which they send their reply. Thus, they "
-"might send private messages to the whole list when trying to reply to a "
-"single person..."
-
-#: ../web_tt2/help_listconfig.tt2:50
-msgid ""
-"With the '<strong>Other_email</strong>' value, the reply is sent to a "
-"<strong>predefined address</strong>. If you choose this option, you will "
-"have to <strong>indicate an email address in the 'Other email address' input "
-"box</strong>."
-msgstr ""
-"With the '<strong>Other_email</strong>' value, the reply is sent to a "
-"<strong>predefined address</strong>. If you choose this option, you will "
-"have to <strong>indicate an email address in the 'Other email address' input "
-"box</strong>."
+"With the '<strong>Sender</strong>' value, the reply is sent to the "
+"<strong>message sender</strong>. This is the option you should probably "
+"choose."
 
 #: ../web_tt2/help_listconfig.tt2:51
 msgid ""
-"With the '<strong>Sender</strong>' value, the reply is sent to the "
-"<strong>message sender</strong>. This is the option you should probably "
-"choose."
-msgstr ""
-"With the '<strong>Sender</strong>' value, the reply is sent to the "
-"<strong>message sender</strong>. This is the option you should probably "
-"choose."
-
-#: ../web_tt2/help_listconfig.tt2:53
-msgid ""
 "The '<strong>Respect of existing header field</strong>' drop-down list "
 "allows you to choose how the 'Reply-To' SMTP header field will be processed "
 "in incoming messages. The '<strong>Respect</strong>' option preserves that "
@@ -5106,7 +5109,7 @@ msgstr ""
 "in incoming messages. The '<strong>Respect</strong>' option preserves that "
 "field while the '<strong>Forced</strong>' option allows it to be overwritten."
 
-#: ../web_tt2/help_listconfig.tt2:54
+#: ../web_tt2/help_listconfig.tt2:52
 msgid ""
 "Last, the '<strong>Subject tagging</strong>' option lets you choose the "
 "<strong>text included before the subject of all messages</strong> sent to "
@@ -5124,15 +5127,15 @@ msgstr ""
 "brackets</strong> (the square brackets are automatically added by the "
 "system, thus it is useless that you add them yourself)."
 
-#: ../web_tt2/help_listconfig.tt2:57
+#: ../web_tt2/help_listconfig.tt2:55
 msgid "Privileges"
 msgstr "Privileges"
 
-#: ../web_tt2/help_listconfig.tt2:58
+#: ../web_tt2/help_listconfig.tt2:56
 msgid "From this page, you can decide:"
 msgstr "From this page, you can decide:"
 
-#: ../web_tt2/help_listconfig.tt2:60
+#: ../web_tt2/help_listconfig.tt2:58
 msgid ""
 "<strong>who can view list information</strong>. The following options are "
 "available:"
@@ -5140,69 +5143,69 @@ msgstr ""
 "<strong>who can view list information</strong>. The following options are "
 "available:"
 
-#: ../web_tt2/help_listconfig.tt2:62
+#: ../web_tt2/help_listconfig.tt2:60
 msgid "for anyone (open) - <em>default option</em>;"
 msgstr "for anyone (open) - <em>default option</em>;"
 
-#: ../web_tt2/help_listconfig.tt2:63
+#: ../web_tt2/help_listconfig.tt2:61
 msgid "restricted to subscribers (private)."
 msgstr "restricted to subscribers (private)."
 
-#: ../web_tt2/help_listconfig.tt2:65
+#: ../web_tt2/help_listconfig.tt2:63
 msgid ""
 "who can subscribe to the list</strong>. The following options are available:"
 msgstr ""
 "who can subscribe to the list</strong>. The following options are available:"
 
-#: ../web_tt2/help_listconfig.tt2:67
+#: ../web_tt2/help_listconfig.tt2:65
 msgid "subscription request confirmed (auth);"
 msgstr "subscription request confirmed (auth);"
 
-#: ../web_tt2/help_listconfig.tt2:68
+#: ../web_tt2/help_listconfig.tt2:66
 msgid "need authentication (notification is sent to owners) (auth_notify);"
 msgstr "need authentication (notification is sent to owners) (auth_notify);"
 
-#: ../web_tt2/help_listconfig.tt2:69
+#: ../web_tt2/help_listconfig.tt2:67
 msgid "requires authentication then owner approval (auth_owner);"
 msgstr "requires authentication then owner approval (auth_owner);"
 
-#: ../web_tt2/help_listconfig.tt2:70
+#: ../web_tt2/help_listconfig.tt2:68
 msgid "subscribe is impossible (closed);"
 msgstr "subscribe is impossible (closed);"
 
-#: ../web_tt2/help_listconfig.tt2:133 ../web_tt2/help_listconfig.tt2:71
+#: ../web_tt2/help_listconfig.tt2:131 ../web_tt2/help_listconfig.tt2:69
 msgid "restricted to local domain users (intranet);"
 msgstr "restricted to local domain users (intranet);"
 
-#: ../web_tt2/help_listconfig.tt2:72
+#: ../web_tt2/help_listconfig.tt2:70
 msgid "local domain users or owner approval (intranetorowner);"
 msgstr "local domain users or owner approval (intranetorowner);"
 
-#: ../web_tt2/help_listconfig.tt2:73
+#: ../web_tt2/help_listconfig.tt2:71
 msgid "for anyone without authentication (open) - <em>default option</em>;"
 msgstr "for anyone without authentication (open) - <em>default option</em>;"
 
-#: ../web_tt2/help_listconfig.tt2:74
+#: ../web_tt2/help_listconfig.tt2:72
 msgid "anyone, notification is sent to list owner (open_notify);"
 msgstr "anyone, notification is sent to list owner (open_notify);"
 
-#: ../web_tt2/help_listconfig.tt2:75
+#: ../web_tt2/help_listconfig.tt2:73
 msgid "anyone, no welcome message (open_quiet);"
 msgstr "anyone, no welcome message (open_quiet);"
 
-#: ../web_tt2/help_listconfig.tt2:76
+#: ../web_tt2/help_listconfig.tt2:74
 msgid "owner approval (owner);"
 msgstr "owner approval (owner);"
 
-#: ../web_tt2/help_listconfig.tt2:77
+#: ../web_tt2/help_listconfig.tt2:75
 msgid "requires S/MIME signed (smime);"
 msgstr "requires S/MIME signed (smime);"
 
-#: ../web_tt2/help_listconfig.tt2:78
+#: ../web_tt2/help_listconfig.tt2:76
 msgid "requires S/MIME signed or owner approval (smimeorowner)."
 msgstr "requires S/MIME signed or owner approval (smimeorowner)."
 
-#: ../web_tt2/help_listconfig.tt2:79
+#: ../web_tt2/help_listconfig.tt2:77
 msgid ""
 "You should always choose an option involving the 'auth' parameter: this way, "
 "the system requires confirmation from the future subscriber by email before "
@@ -5215,76 +5218,76 @@ msgstr ""
 "subscribing him/her to the list. This avoids subscriptions with invalid "
 "email addresses and guarantees that no one can be subscribed to the list "
 "without knowing it."
+
+#: ../web_tt2/help_listconfig.tt2:78
+msgid ""
+"<strong>who can unsubscribe from the list</strong>. The following options "
+"are available:"
+msgstr ""
+"<strong>who can unsubscribe from the list</strong>. The following options "
+"are available:"
 
 #: ../web_tt2/help_listconfig.tt2:80
-msgid ""
-"<strong>who can unsubscribe from the list</strong>. The following options "
-"are available:"
-msgstr ""
-"<strong>who can unsubscribe from the list</strong>. The following options "
-"are available:"
-
-#: ../web_tt2/help_listconfig.tt2:82
 msgid "need authentication (auth);"
 msgstr "need authentication (auth);"
 
-#: ../web_tt2/help_listconfig.tt2:83
+#: ../web_tt2/help_listconfig.tt2:81
 msgid "authentication requested, notification sent to owner (auth_notify);"
 msgstr "authentication requested, notification sent to owner (auth_notify);"
 
-#: ../web_tt2/help_listconfig.tt2:84
+#: ../web_tt2/help_listconfig.tt2:82
 msgid "impossible (closed);"
 msgstr "impossible (closed);"
 
-#: ../web_tt2/help_listconfig.tt2:85
+#: ../web_tt2/help_listconfig.tt2:83
 msgid "open (open) - <em>default option</em>;"
 msgstr "open (open) - <em>default option</em>;"
 
-#: ../web_tt2/help_listconfig.tt2:86
+#: ../web_tt2/help_listconfig.tt2:84
 msgid "open with mail confirmation, owner is notified (open_notify);"
 msgstr "open with mail confirmation, owner is notified (open_notify);"
 
-#: ../web_tt2/help_listconfig.tt2:87
+#: ../web_tt2/help_listconfig.tt2:85
 msgid "owner approval (owner)."
 msgstr "owner approval (owner)."
 
+#: ../web_tt2/help_listconfig.tt2:86
+msgid ""
+"You should always choose an option involving the 'auth' parameter: this way, "
+"the system requires confirmation from the subscriber by email before "
+"unsubscribing him/her from the list. This prevents ill-intentioned people "
+"from unsubscribing others without letting them know."
+msgstr ""
+"You should always choose an option involving the 'auth' parameter: this way, "
+"the system requires confirmation from the subscriber by email before "
+"unsubscribing him/her from the list. This prevents ill-intentioned people "
+"from unsubscribing others without letting them know."
+
 #: ../web_tt2/help_listconfig.tt2:88
 msgid ""
-"You should always choose an option involving the 'auth' parameter: this way, "
-"the system requires confirmation from the subscriber by email before "
-"unsubscribing him/her from the list. This prevents ill-intentioned people "
-"from unsubscribing others without letting them know."
-msgstr ""
-"You should always choose an option involving the 'auth' parameter: this way, "
-"the system requires confirmation from the subscriber by email before "
-"unsubscribing him/her from the list. This prevents ill-intentioned people "
-"from unsubscribing others without letting them know."
-
-#: ../web_tt2/help_listconfig.tt2:90
-msgid ""
 "who can invite people to subscribe to the list</strong>. The following "
 "options are available:"
 msgstr ""
 "who can invite people to subscribe to the list</strong>. The following "
 "options are available:"
 
-#: ../web_tt2/help_listconfig.tt2:132 ../web_tt2/help_listconfig.tt2:92
+#: ../web_tt2/help_listconfig.tt2:130 ../web_tt2/help_listconfig.tt2:90
 msgid "closed (closed);"
 msgstr "closed (closed);"
 
-#: ../web_tt2/help_listconfig.tt2:93
+#: ../web_tt2/help_listconfig.tt2:91
 msgid "list owner, no authentication (owner);"
 msgstr "list owner, no authentication (owner);"
 
-#: ../web_tt2/help_listconfig.tt2:114 ../web_tt2/help_listconfig.tt2:94
+#: ../web_tt2/help_listconfig.tt2:112 ../web_tt2/help_listconfig.tt2:92
 msgid "restricted to subscribers (private) - <em>default option</em>;"
 msgstr "restricted to subscribers (private) - <em>default option</em>;"
 
-#: ../web_tt2/help_listconfig.tt2:138 ../web_tt2/help_listconfig.tt2:95
+#: ../web_tt2/help_listconfig.tt2:136 ../web_tt2/help_listconfig.tt2:93
 msgid "public (public)."
 msgstr "public (public)."
 
-#: ../web_tt2/help_listconfig.tt2:97
+#: ../web_tt2/help_listconfig.tt2:95
 msgid ""
 "<strong>who can review subscribers</strong>. The following options are "
 "available:"
@@ -5292,31 +5295,31 @@ msgstr ""
 "<strong>who can review subscribers</strong>. The following options are "
 "available:"
 
-#: ../web_tt2/help_listconfig.tt2:99
+#: ../web_tt2/help_listconfig.tt2:97
 msgid "no one can review (closed);"
 msgstr "no one can review (closed);"
 
-#: ../web_tt2/help_listconfig.tt2:100 ../web_tt2/help_listconfig.tt2:112
+#: ../web_tt2/help_listconfig.tt2:110 ../web_tt2/help_listconfig.tt2:98
 msgid "restricted to subscribers or local domain users (intranet);"
 msgstr "restricted to subscribers or local domain users (intranet);"
 
-#: ../web_tt2/help_listconfig.tt2:101
+#: ../web_tt2/help_listconfig.tt2:99
 msgid "listmaster only (listmaster);"
 msgstr "listmaster only (listmaster);"
 
-#: ../web_tt2/help_listconfig.tt2:102
+#: ../web_tt2/help_listconfig.tt2:100
 msgid "only owner (and listmaster) (owner) - <em>default option</em>;"
 msgstr "only owner (and listmaster) (owner) - <em>default option</em>;"
 
-#: ../web_tt2/help_listconfig.tt2:103 ../web_tt2/help_listconfig.tt2:121
+#: ../web_tt2/help_listconfig.tt2:101 ../web_tt2/help_listconfig.tt2:119
 msgid "restricted to subscribers (private);"
 msgstr "restricted to subscribers (private);"
 
-#: ../web_tt2/help_listconfig.tt2:104
+#: ../web_tt2/help_listconfig.tt2:102
 msgid "anyone can do it! (public)."
 msgstr "anyone can do it! (public)."
 
-#: ../web_tt2/help_listconfig.tt2:105
+#: ../web_tt2/help_listconfig.tt2:103
 msgid ""
 "You should in no case make the members list accessible to anyone. The "
 "'Restricted to subscribers' option may be interesting in order to allow "
@@ -5329,36 +5332,36 @@ msgstr ""
 "subscribers to communicate with each others without posting messages on the "
 "list. However, this is not appropriate in the case of an announcement list "
 "involving subscribers having no particular relationship."
+
+#: ../web_tt2/help_listconfig.tt2:106
+msgid ""
+"From this page, you can also <strong>define the access rights applying to "
+"the shared document web space</strong> ('Shared documents' section of the "
+"list, accessible through a link in the left menu). You can define both the "
+"read and write access rights for the documents: "
+msgstr ""
+"From this page, you can also <strong>define the access rights applying to "
+"the shared document web space</strong> ('Shared documents' section of the "
+"list, accessible through a link in the left menu). You can define both the "
+"read and write access rights for the documents: "
 
 #: ../web_tt2/help_listconfig.tt2:108
 msgid ""
-"From this page, you can also <strong>define the access rights applying to "
-"the shared document web space</strong> ('Shared documents' section of the "
-"list, accessible through a link in the left menu). You can define both the "
-"read and write access rights for the documents: "
-msgstr ""
-"From this page, you can also <strong>define the access rights applying to "
-"the shared document web space</strong> ('Shared documents' section of the "
-"list, accessible through a link in the left menu). You can define both the "
-"read and write access rights for the documents: "
-
-#: ../web_tt2/help_listconfig.tt2:110
-msgid ""
 "The following options are available in the '<strong>Who can view</strong>' "
 "drop-down list:"
 msgstr ""
 "The following options are available in the '<strong>Who can view</strong>' "
 "drop-down list:"
 
-#: ../web_tt2/help_listconfig.tt2:113
+#: ../web_tt2/help_listconfig.tt2:111
 msgid "restricted to list owners (owner);"
 msgstr "restricted to list owners (owner);"
 
-#: ../web_tt2/help_listconfig.tt2:115 ../web_tt2/help_listconfig.tt2:122
+#: ../web_tt2/help_listconfig.tt2:113 ../web_tt2/help_listconfig.tt2:120
 msgid "public documents (public)."
 msgstr "public documents (public)."
 
-#: ../web_tt2/help_listconfig.tt2:117
+#: ../web_tt2/help_listconfig.tt2:115
 msgid ""
 "The following options are available in the '<strong>Who can edit</strong>' "
 "drop-down list:"
@@ -5366,15 +5369,15 @@ msgstr ""
 "The following options are available in the '<strong>Who can edit</strong>' "
 "drop-down list:"
 
-#: ../web_tt2/help_listconfig.tt2:119
+#: ../web_tt2/help_listconfig.tt2:117
 msgid "restricted to list owners (owner) - <em>default option</em>;"
 msgstr "restricted to list owners (owner) - <em>default option</em>;"
 
-#: ../web_tt2/help_listconfig.tt2:120
+#: ../web_tt2/help_listconfig.tt2:118
 msgid "moderated for subscribers (editor);"
 msgstr "moderated for subscribers (editor);"
 
-#: ../web_tt2/help_listconfig.tt2:125
+#: ../web_tt2/help_listconfig.tt2:123
 msgid ""
 "The '<strong>Quota</strong>' input box allows you to define a "
 "<strong>maximum size not to be exceeded for the shared document web space</"
@@ -5393,7 +5396,7 @@ msgstr ""
 "the space left, he/she gets an error message."
 
 #. (path_cgi)
-#: ../web_tt2/help_listconfig.tt2:126
+#: ../web_tt2/help_listconfig.tt2:124
 msgid ""
 "To know <strong>more about the management of the shared document web space</"
 "strong> (how to organize it, change access rights, name documents, etc.), "
@@ -5405,11 +5408,11 @@ msgstr ""
 "please refer to the '<a href=\"%1/help/shared\">Using the shared document "
 "web space</a>' section of the User guide."
 
-#: ../web_tt2/help_listconfig.tt2:129
+#: ../web_tt2/help_listconfig.tt2:127
 msgid "Archive"
 msgstr "Archive"
 
-#: ../web_tt2/help_listconfig.tt2:130
+#: ../web_tt2/help_listconfig.tt2:128
 msgid ""
 "From this page, you can <strong>decide who can access the online list "
 "archive</strong> (messages readable on the mailing list web interface). The "
@@ -5419,23 +5422,23 @@ msgstr ""
 "archive</strong> (messages readable on the mailing list web interface). The "
 "following options are available:"
 
-#: ../web_tt2/help_listconfig.tt2:134
+#: ../web_tt2/help_listconfig.tt2:132
 msgid "listmaster (listmaster);"
 msgstr "listmaster (listmaster);"
 
-#: ../web_tt2/help_listconfig.tt2:135
+#: ../web_tt2/help_listconfig.tt2:133
 msgid "owner (owner);"
 msgstr "owner (owner);"
 
-#: ../web_tt2/help_listconfig.tt2:136
+#: ../web_tt2/help_listconfig.tt2:134
 msgid "moderator (moderator);"
 msgstr "moderator (moderator);"
 
-#: ../web_tt2/help_listconfig.tt2:137
+#: ../web_tt2/help_listconfig.tt2:135
 msgid "subscribers only (private);"
 msgstr "subscribers only (private);"
 
-#: ../web_tt2/help_listconfig.tt2:140
+#: ../web_tt2/help_listconfig.tt2:138
 msgid ""
 "The '<strong>Quota</strong>' input box allows you to define a "
 "<strong>maximum size not to be exceeded for the message archive</strong>. "
@@ -5449,7 +5452,7 @@ msgstr ""
 "archive size reaches 95&#160;% of the allowed size. When the maximum size is "
 "reached, later messages are not archived."
 
-#: ../web_tt2/help_listconfig.tt2:141
+#: ../web_tt2/help_listconfig.tt2:139
 msgid ""
 "Even though messages stop being archived, it is naturally still possible to "
 "send messages to the list."
@@ -5458,7 +5461,7 @@ msgstr ""
 "send messages to the list."
 
 #. (conf.email,conf.host)
-#: ../web_tt2/help_listconfig.tt2:142
+#: ../web_tt2/help_listconfig.tt2:140
 msgid ""
 "It is also possible to <strong>access the list archive by email</strong>, by "
 "sending <strong>%1@%2</strong> the following command: <span class=\"commande"
@@ -5480,71 +5483,71 @@ msgstr ""
 "original formatting; it also involves full headers for each message. The "
 "'<strong>Text archives</strong>' parameter allows you to define:"
 
-#: ../web_tt2/help_listconfig.tt2:144
+#: ../web_tt2/help_listconfig.tt2:142
 msgid ""
 "<strong>who is allowed</strong> to receive the list message archive by email;"
 msgstr ""
 "<strong>who is allowed</strong> to receive the list message archive by email;"
+
+#: ../web_tt2/help_listconfig.tt2:143
+msgid ""
+"<strong>how frequently these archive files will be created</strong>. For "
+"example, if the frequency is set to 'month', all messages distributed to the "
+"list in a month will be gathered in a single archive file."
+msgstr ""
+"<strong>how frequently these archive files will be created</strong>. For "
+"example, if the frequency is set to 'month', all messages distributed to the "
+"list in a month will be gathered in a single archive file."
 
 #: ../web_tt2/help_listconfig.tt2:145
 msgid ""
-"<strong>how frequently these archive files will be created</strong>. For "
-"example, if the frequency is set to 'month', all messages distributed to the "
-"list in a month will be gathered in a single archive file."
+"If this parameter is not defined, the list will have no archive accessible "
+"by email. Be careful: <strong>only the listmasters have the power to change "
+"this parameter.</strong>"
 msgstr ""
-"<strong>how frequently these archive files will be created</strong>. For "
-"example, if the frequency is set to 'month', all messages distributed to the "
-"list in a month will be gathered in a single archive file."
+"If this parameter is not defined, the list will have no archive accessible "
+"by email. Be careful: <strong>only the listmasters have the power to change "
+"this parameter.</strong>"
 
-#: ../web_tt2/help_listconfig.tt2:147
+#: ../web_tt2/help_listconfig.tt2:146
 msgid ""
-"If this parameter is not defined, the list will have no archive accessible "
-"by email. Be careful: <strong>only the listmasters have the power to change "
-"this parameter.</strong>"
+"It is possible to send <strong>messages encrypted in <acronym lang=\"en\" "
+"xml:lang=\"en\" title=\"Secure/Multipurpose Internet Mail Extensions\">S/"
+"MIME</acronym></strong> to the list. The '<strong>Archive encrypted mails as "
+"cleartext</strong>' option allows you to define how those messages will be "
+"archived:"
 msgstr ""
-"If this parameter is not defined, the list will have no archive accessible "
-"by email. Be careful: <strong>only the listmasters have the power to change "
-"this parameter.</strong>"
+"It is possible to send <strong>messages encrypted in <acronym lang=\"en\" "
+"xml:lang=\"en\" title=\"Secure/Multipurpose Internet Mail Extensions\">S/"
+"MIME</acronym></strong> to the list. The '<strong>Archive encrypted mails as "
+"cleartext</strong>' option allows you to define how those messages will be "
+"archived:"
 
 #: ../web_tt2/help_listconfig.tt2:148
 msgid ""
-"It is possible to send <strong>messages encrypted in <acronym lang=\"en\" "
-"xml:lang=\"en\" title=\"Secure/Multipurpose Internet Mail Extensions\">S/"
-"MIME</acronym></strong> to the list. The '<strong>Archive encrypted mails as "
-"cleartext</strong>' option allows you to define how those messages will be "
-"archived:"
+"The '<strong>Decrypted</strong>' option archives the message after removing "
+"the encryption."
 msgstr ""
-"It is possible to send <strong>messages encrypted in <acronym lang=\"en\" "
-"xml:lang=\"en\" title=\"Secure/Multipurpose Internet Mail Extensions\">S/"
-"MIME</acronym></strong> to the list. The '<strong>Archive encrypted mails as "
-"cleartext</strong>' option allows you to define how those messages will be "
-"archived:"
+"The '<strong>Decrypted</strong>' option archives the message after removing "
+"the encryption."
 
-#: ../web_tt2/help_listconfig.tt2:150
+#: ../web_tt2/help_listconfig.tt2:149
 msgid ""
-"The '<strong>Decrypted</strong>' option archives the message after removing "
-"the encryption."
+"The '<strong>Original</strong>' option archives the message under its "
+"original encrypted form."
 msgstr ""
-"The '<strong>Decrypted</strong>' option archives the message after removing "
-"the encryption."
+"The '<strong>Original</strong>' option archives the message under its "
+"original encrypted form."
 
 #: ../web_tt2/help_listconfig.tt2:151
 msgid ""
-"The '<strong>Original</strong>' option archives the message under its "
-"original encrypted form."
-msgstr ""
-"The '<strong>Original</strong>' option archives the message under its "
-"original encrypted form."
-
-#: ../web_tt2/help_listconfig.tt2:153
-msgid ""
 "This option applies to both the text archive and the online archive, as well "
 "as to the compilations sent to those who chose the 'Digest' delivery mode."
 msgstr ""
 "This option applies to both the text archive and the online archive, as well "
 "as to the compilations sent to those who chose the 'Digest' delivery mode."
 
-#: ../web_tt2/help_listconfig.tt2:154 ../web_tt2/help_listconfig.tt2:171
+#: ../web_tt2/help_listconfig.tt2:152 ../web_tt2/help_listconfig.tt2:169
 msgid ""
 "BE CAREFUL: do not forget to click on the 'Update' button</strong> on bottom "
 "of page to save all your changes."
@@ -5552,11 +5555,11 @@ msgstr ""
 "BE CAREFUL: do not forget to click on the 'Update' button</strong> on bottom "
 "of page to save all your changes."
 
-#: ../web_tt2/help_listconfig.tt2:156
+#: ../web_tt2/help_listconfig.tt2:154
 msgid "Bounces"
 msgstr "Bounces"
 
-#: ../web_tt2/help_listconfig.tt2:157
+#: ../web_tt2/help_listconfig.tt2:155
 msgid ""
 "\"<strong>Bounces</strong>\" represent the <strong>subscribers whose address "
 "is in error</strong>, i.e. subscribers who can not receive the messages sent "
@@ -5570,11 +5573,11 @@ msgstr ""
 "addresses temporarily unavailable when messages were sent, inbox quota "
 "exceeded, etc."
 
-#: ../web_tt2/help_listconfig.tt2:158
+#: ../web_tt2/help_listconfig.tt2:156
 msgid "The '<strong>Bounce management</strong>' section defines two rates:"
 msgstr "The '<strong>Bounce management</strong>' section defines two rates:"
 
-#: ../web_tt2/help_listconfig.tt2:160
+#: ../web_tt2/help_listconfig.tt2:158
 msgid ""
 "The <strong>warn rate</strong> indicates the bouncing email addresses rate "
 "from which the list owner will receive a <strong>notice entitled 'Bounce "
@@ -5585,58 +5588,58 @@ msgstr ""
 "from which the list owner will receive a <strong>notice entitled 'Bounce "
 "rate too high'</strong> inviting him/her to delete bouncing subscribers from "
 "the list."
+
+#: ../web_tt2/help_listconfig.tt2:159
+msgid ""
+"The <strong>halt rate</strong> indicates the bouncing email addresses rate "
+"from which <strong>the message distribution will automatically be stopped</"
+"strong> up to the resolution of the problem (generally through the deletion "
+"of bouncing subscribers)."
+msgstr ""
+"The <strong>halt rate</strong> indicates the bouncing email addresses rate "
+"from which <strong>the message distribution will automatically be stopped</"
+"strong> up to the resolution of the problem (generally through the deletion "
+"of bouncing subscribers)."
 
 #: ../web_tt2/help_listconfig.tt2:161
 msgid ""
-"The <strong>halt rate</strong> indicates the bouncing email addresses rate "
-"from which <strong>the message distribution will automatically be stopped</"
-"strong> up to the resolution of the problem (generally through the deletion "
-"of bouncing subscribers)."
+"The '<strong>Management of bouncers, 1st level</strong>' and "
+"'<strong>Management of bouncers, 2nd level</strong>' sections allow you to "
+"perform automatic tasks with regard to bouncing subscribers. You can define:"
 msgstr ""
-"The <strong>halt rate</strong> indicates the bouncing email addresses rate "
-"from which <strong>the message distribution will automatically be stopped</"
-"strong> up to the resolution of the problem (generally through the deletion "
-"of bouncing subscribers)."
+"The '<strong>Management of bouncers, 1st level</strong>' and "
+"'<strong>Management of bouncers, 2nd level</strong>' sections allow you to "
+"perform automatic tasks with regard to bouncing subscribers. You can define:"
 
 #: ../web_tt2/help_listconfig.tt2:163
 msgid ""
-"The '<strong>Management of bouncers, 1st level</strong>' and "
-"'<strong>Management of bouncers, 2nd level</strong>' sections allow you to "
-"perform automatic tasks with regard to bouncing subscribers. You can define:"
+"the <strong>score ranges that define level&#160;1 and level&#160;2 bouncers</"
+"strong>. By default, level&#160;1 bouncers have a score comprised between 45 "
+"and 74 and level&#160;2 bouncers have a score comprised between 75 and 100;"
 msgstr ""
-"The '<strong>Management of bouncers, 1st level</strong>' and "
-"'<strong>Management of bouncers, 2nd level</strong>' sections allow you to "
-"perform automatic tasks with regard to bouncing subscribers. You can define:"
+"the <strong>score ranges that define level&#160;1 and level&#160;2 bouncers</"
+"strong>. By default, level&#160;1 bouncers have a score comprised between 45 "
+"and 74 and level&#160;2 bouncers have a score comprised between 75 and 100;"
+
+#: ../web_tt2/help_listconfig.tt2:164
+msgid ""
+"The score depends on the number, type and frequency of errors. If the "
+"bouncing time is too short or if there have not been many errors, the "
+"bouncer is not given a score."
+msgstr ""
+"The score depends on the number, type and frequency of errors. If the "
+"bouncing time is too short or if there have not been many errors, the "
+"bouncer is not given a score."
 
 #: ../web_tt2/help_listconfig.tt2:165
 msgid ""
-"the <strong>score ranges that define level&#160;1 and level&#160;2 bouncers</"
-"strong>. By default, level&#160;1 bouncers have a score comprised between 45 "
-"and 74 and level&#160;2 bouncers have a score comprised between 75 and 100;"
+"the <strong>task to perform towards the subscribers concerned</strong>: no "
+"task, notice, deletion from the list;"
 msgstr ""
-"the <strong>score ranges that define level&#160;1 and level&#160;2 bouncers</"
-"strong>. By default, level&#160;1 bouncers have a score comprised between 45 "
-"and 74 and level&#160;2 bouncers have a score comprised between 75 and 100;"
+"the <strong>task to perform towards the subscribers concerned</strong>: no "
+"task, notice, deletion from the list;"
 
 #: ../web_tt2/help_listconfig.tt2:166
-msgid ""
-"The score depends on the number, type and frequency of errors. If the "
-"bouncing time is too short or if there have not been many errors, the "
-"bouncer is not given a score."
-msgstr ""
-"The score depends on the number, type and frequency of errors. If the "
-"bouncing time is too short or if there have not been many errors, the "
-"bouncer is not given a score."
-
-#: ../web_tt2/help_listconfig.tt2:167
-msgid ""
-"the <strong>task to perform towards the subscribers concerned</strong>: no "
-"task, notice, deletion from the list;"
-msgstr ""
-"the <strong>task to perform towards the subscribers concerned</strong>: no "
-"task, notice, deletion from the list;"
-
-#: ../web_tt2/help_listconfig.tt2:168
 msgid ""
 "the <strong>person to be notified</strong> when a task is carried out: no "
 "one, the list owners, the listmasters. The notice sent when a task is "
@@ -5649,7 +5652,7 @@ msgstr ""
 "precise information about the task."
 
 #. (path_cgi)
-#: ../web_tt2/help_listconfig.tt2:170
+#: ../web_tt2/help_listconfig.tt2:168
 msgid ""
 "<strong>To manage bounces</strong> (reset errors for some subscribers, "
 "unsubscribe bouncing subscribers, request a subscription reminder, etc.), "
@@ -5661,49 +5664,49 @@ msgstr ""
 "<strong>go to the '<a href=\"%1/help/admin#manage_bounces\">Bounces</a>' "
 "page</strong> of the list administration module."
 
-#: ../web_tt2/help_listconfig.tt2:173
+#: ../web_tt2/help_listconfig.tt2:171
 msgid "Miscellaneous"
 msgstr "Miscellaneous"
 
+#: ../web_tt2/help_listconfig.tt2:172
+msgid ""
+"The '<strong>Periodical subscription expiration task</strong>' option allows "
+"you to define an <strong>automatic expiration deadline for subscriptions</"
+"strong> to the list: on a regular basis (example: once a year), subscribers "
+"will receive a message asking them to renew their subscription to the list. "
+"If they don't, they will automatically be unsubscribed. This procedure "
+"ensures that all people subscribed to the list are really concerned and "
+"interested."
+msgstr ""
+"The '<strong>Periodical subscription expiration task</strong>' option allows "
+"you to define an <strong>automatic expiration deadline for subscriptions</"
+"strong> to the list: on a regular basis (example: once a year), subscribers "
+"will receive a message asking them to renew their subscription to the list. "
+"If they don't, they will automatically be unsubscribed. This procedure "
+"ensures that all people subscribed to the list are really concerned and "
+"interested."
+
+#: ../web_tt2/help_listconfig.tt2:173
+msgid ""
+"The '<strong>Periodical subscription reminder task</strong>' option allows "
+"you to <strong>send subscription reminders</strong> to list members on a "
+"regular basis."
+msgstr ""
+"The '<strong>Periodical subscription reminder task</strong>' option allows "
+"you to <strong>send subscription reminders</strong> to list members on a "
+"regular basis."
+
 #: ../web_tt2/help_listconfig.tt2:174
 msgid ""
-"The '<strong>Periodical subscription expiration task</strong>' option allows "
-"you to define an <strong>automatic expiration deadline for subscriptions</"
-"strong> to the list: on a regular basis (example: once a year), subscribers "
-"will receive a message asking them to renew their subscription to the list. "
-"If they don't, they will automatically be unsubscribed. This procedure "
-"ensures that all people subscribed to the list are really concerned and "
-"interested."
+"The '<strong>email address protection method</strong>' option ensures that "
+"the subscribers' email addresses will not be collected by robots for "
+"spamming purposes. This option applies to all the list pages."
 msgstr ""
-"The '<strong>Periodical subscription expiration task</strong>' option allows "
-"you to define an <strong>automatic expiration deadline for subscriptions</"
-"strong> to the list: on a regular basis (example: once a year), subscribers "
-"will receive a message asking them to renew their subscription to the list. "
-"If they don't, they will automatically be unsubscribed. This procedure "
-"ensures that all people subscribed to the list are really concerned and "
-"interested."
+"The '<strong>email address protection method</strong>' option ensures that "
+"the subscribers' email addresses will not be collected by robots for "
+"spamming purposes. This option applies to all the list pages."
 
 #: ../web_tt2/help_listconfig.tt2:175
-msgid ""
-"The '<strong>Periodical subscription reminder task</strong>' option allows "
-"you to <strong>send subscription reminders</strong> to list members on a "
-"regular basis."
-msgstr ""
-"The '<strong>Periodical subscription reminder task</strong>' option allows "
-"you to <strong>send subscription reminders</strong> to list members on a "
-"regular basis."
-
-#: ../web_tt2/help_listconfig.tt2:176
-msgid ""
-"The '<strong>email address protection method</strong>' option ensures that "
-"the subscribers' email addresses will not be collected by robots for "
-"spamming purposes. This option applies to all the list pages."
-msgstr ""
-"The '<strong>email address protection method</strong>' option ensures that "
-"the subscribers' email addresses will not be collected by robots for "
-"spamming purposes. This option applies to all the list pages."
-
-#: ../web_tt2/help_listconfig.tt2:177
 msgid ""
 "On this page, you can also view <strong>information about the last update of "
 "the list</strong> (who made it and when), as well as the <strong>number of "
@@ -7080,6 +7083,63 @@ msgstr ""
 "names</strong> and <strong>avoid spaces, accents, hyphens and special "
 "characters</strong>."
 
+#: ../web_tt2/help_suspend.tt2:3
+#, fuzzy
+msgid "Manage your subscriptions"
+msgstr "Checking your subscriptions"
+
+#: ../web_tt2/help_suspend.tt2:5
+msgid "How does the suspension work?"
+msgstr ""
+
+#: ../web_tt2/help_suspend.tt2:6
+#, fuzzy
+msgid ""
+"In order to <strong>suspend your subscription</strong> to one or more lists, "
+"follow these steps:"
+msgstr "<strong>date of subscription</strong> to the list;"
+
+#: ../web_tt2/help_suspend.tt2:8
+msgid ""
+"Select a start date through the calendar that appears when you click on the "
+"\"start date\" field;"
+msgstr ""
+
+#: ../web_tt2/help_suspend.tt2:9
+msgid ""
+"if you wish, you can specify the date when you want your subscription to "
+"resume. Do it using the \"end date\" field. You can click on \"indefinite.\" "
+"In this case, you will have to return to this page to resume your "
+"subscription;"
+msgstr ""
+
+#: ../web_tt2/help_suspend.tt2:10
+msgid ""
+"Select the lists which you want to suspend your subscription for. The "
+"\"Toogle selection\" button allows you to invert the selection;"
+msgstr ""
+
+#: ../web_tt2/help_suspend.tt2:11
+msgid "Click on \"Suspend my subscriptions\" to confirm the suspension."
+msgstr ""
+
+#: ../web_tt2/help_suspend.tt2:13
+#, fuzzy
+msgid ""
+"<strong>To resume your subscription</strong> to one or more lists, follow "
+"these steps:"
+msgstr "<strong>date of subscription</strong> to the list;"
+
+#: ../web_tt2/help_suspend.tt2:15
+msgid ""
+"Select the list(s) you want to reactivate. The \"Toogle selection\" button "
+"allows you to invert the selection;"
+msgstr ""
+
+#: ../web_tt2/help_suspend.tt2:16
+msgid "Click \"Resume\"."
+msgstr ""
+
 #: ../web_tt2/help_user_options.tt2:3
 msgid ""
 "This is a description of the receivie modes available in Sympa. These "
@@ -7220,6 +7280,12 @@ msgstr ""
 "in nomail mode, he or she will again receive individual mail messages from "
 "the list."
 
+#~ msgid "subscribers (private);"
+#~ msgstr "subscribers (private);"
+
+#~ msgid "semipublic (semipublic)."
+#~ msgstr "semipublic (semipublic)."
+
 #~ msgid ""
 #~ "If available, list owners and moderators have to conform to the <a target="
 #~ "\"_blank\" title=\"Example of charter aimed at owners and moderators "
@@ -7230,6 +7296,17 @@ msgstr ""
 #~ "\"_blank\" title=\"Example of charter aimed at owners and moderators "
 #~ "(French)\" href=\"http://listes.cru.fr/cnil/charte.proprio.html\">Owner "
 #~ "and moderator charter</a>."
+
+#~ msgid ""
+#~ "Sympa allows the list owner to choose how Sympa loads list member data. "
+#~ "Subscriber information can be stored in a text file or relational "
+#~ "database, or included from various external sources (list, flat file, "
+#~ "result of or query)."
+#~ msgstr ""
+#~ "Sympa allows the list owner to choose how Sympa loads list member data. "
+#~ "Subscriber information can be stored in a text file or relational "
+#~ "database, or included from various external sources (list, flat file, "
+#~ "result of or query)."
 
 #~ msgid ""
 #~ " The '<strong>Cleartext</strong>' option archives the message under its "

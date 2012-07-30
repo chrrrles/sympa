@@ -46,6 +46,8 @@ use Config_XML;
 use File::Copy;
 use Sympa::Constants;
 
+use Term::ProgressBar;
+
 my %list_of_families;
 my @uncompellable_param = ('msg_topic.keywords','owner_include.source_parameters', 'editor_include.source_parameters');
 
@@ -228,6 +230,13 @@ sub new {
     $self->{'name'} = $name;
 
     $self->{'robot'} = $robot;
+
+    ## Adding configuration related to automatic lists.
+    my $all_families_config = &Conf::get_robot_conf($robot,'automatic_list_families');
+    my $family_config = $all_families_config->{$name};
+    foreach my $key (keys %{$family_config}) {
+	$self->{$key} = $family_config->{$key};
+    }
 
     ## family directory
     $self->{'dir'} = $self->_get_directory();
@@ -885,6 +894,19 @@ sub instantiate {
 	return undef;
     }
 
+	my $created = 0;
+	my $total = $#{@{$self->{'list_to_generate'}}} + 1;
+	my $progress = Term::ProgressBar->new({
+		name  => 'Creating lists',
+		count => $total,
+		ETA   => 'linear'
+	});
+	$progress->max_update_rate(1);
+	my $next_update = 0;
+    my $aliasmanager_output_file = $Conf::Conf{'tmpdir'}.'/aliasmanager.stdout.'.$$;
+    my $output_file = $Conf::Conf{'tmpdir'}.'/instantiate_family.stdout.'.$$;
+	my $output = '';
+                                         
     ## EACH FAMILY LIST
     foreach my $listname (@{$self->{'list_to_generate'}}) {
 
@@ -970,8 +992,37 @@ sub instantiate {
 	    &Log::do_log('err','Instantiation stopped on list %s',$list->{'name'});
 	    return undef;
 	}
-
+		$created++;
+		$progress->message(sprintf("List \"%s\" (%i/%i) created/updated", $list->{'name'}, $created, $total));
+		$next_update = $progress->update($created) if($created > $next_update);
+		
+		if(-f $aliasmanager_output_file) {
+			open OUT, $aliasmanager_output_file;
+			while(<OUT>) {
+				$output .= $_;
+			}
+			close OUT;
+			unlink $aliasmanager_output_file; # remove file to catch next call
+		}
     }
+    
+	$progress->update($total);
+	
+	if($output && !$main::options{'quiet'}) {
+		print STDOUT "There is unread output from the instantiation proccess (aliasmanager messages ...), do you want to see it ? (y or n)";
+	    my $answer = <STDIN>;
+	    chomp($answer);
+	    $answer ||= 'n';
+	    print $output if($answer eq 'y');
+	    
+		if(open OUT, '>'.$output_file) {
+			print OUT $output;
+			close OUT;
+			print STDOUT "\nOutput saved in $output_file\n";
+		}else{
+			print STDERR "\nUnable to save output in $output_file\n";
+		}
+	}
 
     ## PREVIOUS LIST LEFT
     foreach my $l (keys %{$previous_family_lists}) {
@@ -1111,7 +1162,7 @@ sub get_instantiation_results {
 	    foreach my $l (keys %{$without_aliases}) {
 		$string .= " $without_aliases->{$l}";
 	    }
-            push(@{$result->{'warn'}}, $string);
+            push(@{$result->{'warn'}}, $string."\n");
 	}
     }
     
@@ -1126,7 +1177,7 @@ sub get_instantiation_results {
 	    foreach my $l (keys %{$aliases_to_install}) {
 		$string .= " $aliases_to_install->{$l}";
 	    }
-            push(@{$result->{'warn'}}, $string);
+            push(@{$result->{'warn'}}, $string."\n");
 	}
     }
     
@@ -1137,7 +1188,7 @@ sub get_instantiation_results {
 	    foreach my $l (keys %{$aliases_to_remove}) {
 		$string .= " $aliases_to_remove->{$l}";
 	    }
-            push(@{$result->{'warn'}}, $string);
+            push(@{$result->{'warn'}}, $string."\n");
 	}
     }
 	    
@@ -2490,26 +2541,24 @@ sub _set_status_changes {
 	$result->{'aliases'} = &admin::remove_aliases($list,$self->{'robot'});
     }
     
-    ## subscribers
-    if (($old_status ne 'pending') && ($old_status ne 'open')) {
-	
-	if ($list->{'admin'}{'user_data_source'} eq 'file') {
-	    $list->{'users'} = &List::_load_list_members_file("$list->{'dir'}/subscribers.closed.dump");
-	}elsif ($list->{'admin'}{'user_data_source'} eq 'database') {
-	    unless (-f "$list->{'dir'}/subscribers.closed.dump") {
-		&Log::do_log('notice', 'No subscribers to restore');
-	    }
-	    my @users = &List::_load_list_members_file("$list->{'dir'}/subscribers.closed.dump");
-	    
-	    ## Insert users in database
-	    $list->add_list_member(@users);
-	    my $total = $list->{'add_outcome'}{'added_members'};
-	    if (defined $list->{'add_outcome'}{'errors'}) {
-		&Log::do_log('err', 'Failed to add users: %s',$list->{'add_outcome'}{'errors'}{'error_message'});
-	    }
-	}
-    }
-	
+##    ## subscribers
+##    if (($old_status ne 'pending') && ($old_status ne 'open')) {
+##	
+##	if ($list->{'admin'}{'user_data_source'} eq 'file') {
+##	    $list->{'users'} = &List::_load_users_file("$list->{'dir'}/subscribers.closed.dump");
+##	}elsif ($list->{'admin'}{'user_data_source'} eq 'database') {
+##	    unless (-f "$list->{'dir'}/subscribers.closed.dump") {
+##		&Log::do_log('notice', 'No subscribers to restore');
+##	    }
+##	    my @users = &List::_load_users_file("$list->{'dir'}/subscribers.closed.dump");
+##	    
+##	    ## Insert users in database
+##	    foreach my $user (@users) {
+##		$list->add_user($user);
+##	    }
+##	}
+##    }
+
     return $result;
 }
 
@@ -2809,8 +2858,69 @@ sub _load_param_constraint_conf {
     return $constraint;
 }
 
+sub create_automatic_list {
+    my $self = shift;
+    my %param = @_;
+    my $auth_level = $param{'auth_level'};
+    my $sender = $param{'sender'};
+    my $message = $param{'message'};
+    my $listname = $param{'listname'};
 
+    unless ($self->is_allowed_to_create_automatic_lists(%param)){
+	&Log::do_log('err', 'Unconsistent scenario evaluation result for automatic list creation of list %s@%s by user %s.', $listname,$self->{'robot'},$sender);
+	return undef;
+    }
+    my $result = $self->add_list({listname=>$listname}, 1);
+    
+    unless (defined $result->{'ok'}) {
+	my $details = $result->{'string_error'} || $result->{'string_info'} || [];
+	&Log::do_log('err', "Failed to add a dynamic list to the family %s : %s", $self->{'name'}, join(';', @{$details}));
+	return undef;
+    }
+    my $list = new List ($listname, $self->{'robot'});
+    unless (defined $list) {
+	&Log::do_log('err', 'sympa::DoFile() : dynamic list %s could not be created',$listname);
+	return undef;
+    }
+    return $list;
+}
 
+# Returns 1 if the user is allowed to create lists based on the family.
+sub is_allowed_to_create_automatic_lists {
+    my $self = shift;
+    my %param = @_;
+    
+    my $auth_level = $param{'auth_level'};
+    my $sender = $param{'sender'};
+    my $message = $param{'message'};
+    my $listname = $param{'listname'};
+    
+    # check authorization
+    my $result = &Scenario::request_action('automatic_list_creation',$auth_level,$self->{'robot'},
+					   {'sender' => $sender, 
+					    'message' => $message, 
+					    'family'=>$self, 
+					    'automatic_listname'=>$listname });
+    my $r_action;
+    unless (defined $result) {
+	&Log::do_log('err', 'Unable to evaluate scenario "automatic_list_creation" for family %s', $self->{'name'});
+	return undef;
+    }
+    
+    if (ref($result) eq 'HASH') {
+	$r_action = $result->{'action'};
+    }else {
+	&Log::do_log('err', 'Unconsistent scenario evaluation result for automatic list creation in family %s', $self->{'name'});
+	return undef;
+    }
+
+    unless ($r_action =~ /do_it/) {
+	&Log::do_log('debug2', 'Automatic list creation refused to user %s for family %s', $sender, $self->{'name'});
+	return undef;
+    }
+    
+    return 1;
+}
 =pod 
 
 =head1 AUTHORS 

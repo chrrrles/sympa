@@ -72,12 +72,12 @@ my $adrlist = {};
 
 # Load WWSympa configuration
 unless ($wwsconf = &wwslib::load_config($wwsympa_conf)) {
-    &Log::fatal_err('error : unable to load config file');
+    &Log::fatal_err("Unable to load sympa configuration, file $wwsympa_conf or one of the vhost robot.conf files contain errors. Exiting.");  
 }
 
 # Load sympa.conf
 unless (Conf::load($sympa_conf_file)) {
-    &Log::fatal_err("error : unable to load sympa configuration, file $sympa_conf_file has errors.");
+    &Log::fatal_err("Unable to load sympa configuration, file $sympa_conf_file or one of the vhost robot.conf files contain errors. Exiting.");  
 }
 
 ## Check databse connectivity
@@ -118,6 +118,10 @@ unless ($main::options{'debug'} || $main::options{'foreground'}) {
 my $options;
 $options->{'stderr_to_tty'} = 1 if ($main::options{'foreground'});
 &tools::write_pid($wwsconf->{'task_manager_pidfile'}, $$, $options);
+unless ($options->{'stderr_to_tty'}) {
+    &tools::direct_stderr_to_file(('pid' => $$));
+}
+
 
 $wwsconf->{'log_facility'}||= $Conf{'syslog'};
 &Log::do_openlog($wwsconf->{'log_facility'}, $Conf{'log_socket_type'}, 'task_manager');
@@ -258,7 +262,8 @@ while (!$end) {
 
     ## Empty cache of the List.pm module
     &List::init_list_cache();
-
+	&List::send_notify_to_listmaster(undef, undef, undef, 1); # Process grouped notifications
+	
    ## List all tasks
     unless (&Task::list_tasks($spool_task)) {
 	&List::send_notify_to_listmaster('intern_error',$Conf{'domain'},{'error' => "Failed to list task files in $spool_task"});
@@ -309,8 +314,7 @@ while (!$end) {
 		    my $model_task_parameter = "$model".'_task';
 		    
 		    if ( $model eq 'sync_include') {
-			next unless (($list->{'admin'}{'user_data_source'} eq 'include2') &&
-				     $list->has_include_data_sources() &&
+			next unless ($list->has_include_data_sources() &&
 				     ($list->{'admin'}{'status'} eq 'open'));
 
 			create ($current_date, 'INIT', $model, 'ttl', \%data);
@@ -459,33 +463,7 @@ sub create {
     #&parser::parse_tpl($Rdata, $model_file, \*TASK);
     close (TASK);
     
-    # special checking for list whose user_data_source config parmater is include. The task won't be created if there is a delete_subs command
-    my $ok = 1;
-    if ($object eq 'list') {
-	my $list = new List($list_name, $robot);
-	if ($list->{'admin'}{'user_data_source'} eq 'include') {
-	    unless ( open (TASK, $task_file) ) {
-		&Log::do_log ('err', "error : unable to read $task_file, checking is impossible");
-		return undef;
-	    }
-	    while (<TASK>) {
-		chomp;
-		if (/.*delete_subs.*/) {
-		    close (TASK);
-		    undef $ok;
-		    &Log::do_log ('err', "error : you are not allowed to use the delete_subs command on a list whose subscribers are included, creation aborted");
-		    return undef;
-		}
-	    }
-	    close (TASK);
-	} 
-    } # end of special checking
-
-    if (!$ok) {
-	&Log::do_log ('err', "$task_file is unappropriate for a list with include");
-    }
-    
-    if  (!$ok or !check ($task_file)) {
+    if (!check($task_file)) {
 	&Log::do_log ('err', "error : syntax error in $task_file, you should check $model_file");
 	unlink ($task_file) ? 
 	    &Log::do_log ('notice', "$task_file deleted") 
@@ -704,7 +682,7 @@ sub chk_cmd {
 		return undef;
 	    }
 	    
-	    $Rused_labels->{$args[1]} =1 if ($cmd eq 'next' && ($args[1]));   
+	    $Rused_labels->{$args[1]} = 1 if ($cmd eq 'next' && ($args[1]));   
 	    $Rused_vars->{$args[0]} = 1 if ($var_commands{$cmd});
 	}
     }
@@ -942,11 +920,6 @@ sub next_cmd {
 	$data{'list'}{'robot'} = $list->{'domain'};
 	
 	if ( $model eq 'sync_include') {
-	    unless ($list->{'admin'}{'user_data_source'} eq 'include2') {
-		error ($filename, "List $list->{'name'} no more require sync_include task");
-		return undef;
-	    }
-
 	    $data{'list'}{'ttl'} = $list->{'admin'}{'ttl'};
 	    $model_choice = 'ttl';
 	}else {
@@ -999,10 +972,8 @@ sub select_subs {
     my %selection; # hash of subscribers who match the condition
     my $list = $task->{'list_object'};
     
-    if ( $list->{'admin'}{'user_data_source'} =~ /database|file|include2/) {
-        for ( my $user = $list->get_first_list_member(); $user; $user = $list->get_next_list_member() ) { 
-            push (@users, $user);
-	}
+    for ( my $user = $list->get_first_list_member(); $user; $user = $list->get_next_list_member() ) { 
+	push (@users, $user);
     }
     
     # parameter of subroutine Scenario::verify
@@ -1133,8 +1104,14 @@ sub purge_logs_table {
     $sec = 0;
     my $date_end = timelocal($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst);
 
-    my $date_deb = $date_end-(86400*365);
-
+	my $sth;
+	unless($sth = &SDM::do_query("SELECT date_stat FROM stat_table WHERE read_stat = 0 ORDER BY date_stat ASC LIMIT 1")) {
+		&Log::do_log('err', 'Unable to retrieve oldest non processed stat');
+		return undef;
+	}
+	my @res = $sth->fetchrow_array;
+	return unless($#res >= 0);
+	my $date_deb = $res[0] - ($res[0] % 3600);
 
     #hour to hour
     for  (my $i=$date_deb; $i <= $date_end; $i=$i+3600){
@@ -1335,10 +1312,6 @@ sub purge_orphan_bounces {
 
 	 # the reference date is the date until which we expire bounces in second
 	 # the latest_distribution_date is the date of last distribution #days from 01 01 1970
-	 if ( ($list->{'admin'}{'user_data_source'} eq 'include' )||( $list->{'admin'}{'user_data_source'} eq 'file' )) {
-	     # &Log::do_log('notice','bounce expiration : skipping list %s because not using database',$listname);
-	     next;
-	 }
 
 	 unless ($list->get_latest_distribution_date()) {
 	     &Log::do_log('debug2','bounce expiration : skipping list %s because could not get latest distribution date',$listname);
@@ -1829,12 +1802,6 @@ sub sync_include {
 
     my $list = $task->{'list_object'};
 
-    unless ( $list->{'admin'}{'user_data_source'} eq 'include2' ) {
-	&Log::do_log('notice', 'sync_include() called for %s but user_data_source is %s', 
-		$list->{'name'}, $list->{'admin'}{'user_data_source'});                                                
-	return undef;                                                          
-    }
- 
     $list->sync_include();
     $list->sync_include_admin() if ((defined $list->{'admin'}{'editor_include'} && $#{$list->{'admin'}{'editor_include'}}>-1) || (defined $list->{'admin'}{'owner_include'} && $#{$list->{'admin'}{'owner_include'}}>-1));
 
