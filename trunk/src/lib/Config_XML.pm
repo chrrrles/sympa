@@ -17,8 +17,7 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package Config_XML;
 
@@ -329,9 +328,8 @@ sub _getChildren {
 	    
 	# TEXT_NODE
 	}elsif ($type == 3) {
-	    my $value = $child->nodeValue;
-#	    $value =~ s/(\s)+//;
-	    $value =~ s/^(\s)+//;
+	    my $value = Encode::encode_utf8($child->nodeValue);
+	    $value =~ s/^\s+//;
 	    unless ($value eq "") {
 		$string = $string.$value;
 		if ($return eq "hash") {
@@ -343,7 +341,7 @@ sub _getChildren {
 
 	# CDATA_SECTION_NODE
 	}elsif ($type == 4) { 
-	    $string = $string.$child->nodeValue;
+	    $string = $string . Encode::encode_utf8($child->nodeValue);
 	    if ($return eq "hash") {
 		$error = 1;
 	    }

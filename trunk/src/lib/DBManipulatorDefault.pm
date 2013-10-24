@@ -17,8 +17,7 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package DBManipulatorDefault;
 
@@ -48,7 +47,7 @@ our @ISA = qw(SQLSource);
 #      - Returns undef if something went wrong.
 sub get_all_primary_keys {
     my $self = shift;
-    &Log::do_log('debug','Retrieving all primary keys in database %s',$self->{'db_name'});
+    &Log::do_log('debug3','Retrieving all primary keys in database %s',$self->{'db_name'});
     my %found_keys = undef;
     foreach my $table (@{$self->get_tables()}) {
 	unless($found_keys{$table} = $self->get_primary_key({'table'=>$table})) {
@@ -70,7 +69,7 @@ sub get_all_primary_keys {
 #      - Returns undef if something went wrong.
 sub get_all_indexes {
     my $self = shift;
-    &Log::do_log('debug','Retrieving all indexes in database %s',$self->{'db_name'});
+    &Log::do_log('debug3','Retrieving all indexes in database %s',$self->{'db_name'});
     my %found_indexes;
     foreach my $table (@{$self->get_tables()}) {
 	unless($found_indexes{$table} = $self->get_indexes({'table'=>$table})) {
@@ -106,7 +105,7 @@ sub get_all_indexes {
 sub check_key {
     my $self = shift;
     my $param = shift;
-    &Log::do_log('debug','Checking %s key structure for table %s',$param->{'key_name'},$param->{'table'});
+    &Log::do_log('debug3','Checking %s key structure for table %s',$param->{'key_name'},$param->{'table'});
     my $keysFound;
     my $result;
     if (lc($param->{'key_name'}) eq 'primary') {
@@ -143,4 +142,28 @@ sub check_key {
     return $result;
 }
 
-return 1;
+# Helper functions to return the binding type and value used by
+# do_prepared_query().
+# Overridden by inherited classes.
+#
+# IN: - parameter value
+#
+# OUT: - One of:
+#	* An array ( { sql_type => SQL_type }, value ).
+#	* Single value (i.e. an array with single item), if special
+#	  treatment won't be needed.
+#	* Empty array () if arguments were not given.
+
+# For DOUBLE type.
+sub AS_DOUBLE {
+    return $_[1] if scalar @_ > 1;
+    return ();
+}
+
+# For BLOB types.
+sub AS_BLOB {
+    return $_[1] if scalar @_ > 1;
+    return ();
+}
+
+1;

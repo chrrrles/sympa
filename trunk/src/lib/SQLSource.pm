@@ -17,8 +17,7 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package SQLSource;
 
@@ -26,10 +25,10 @@ use strict;
 
 use Carp;
 use Log;
-use Conf;
-use List;
-use tools;
-use tt2;
+#use Conf; # not used
+#use List; # not used
+#use tools; # not used
+#use tt2; # not used
 use Exporter;
 use Data::Dumper;
 use Datasource;
@@ -118,9 +117,9 @@ sub new {
 
 sub connect {
     my $self = shift;
-    &Log::do_log('debug',"Checking connection to database %s",$self->{'db_name'});
+    &Log::do_log('debug3',"Checking connection to database %s",$self->{'db_name'});
     if ($self->{'dbh'} && $self->{'dbh'}->ping) {
-	&Log::do_log('debug','Connection to database %s already available',$self->{'db_name'});
+	&Log::do_log('debug3','Connection to database %s already available',$self->{'db_name'});
 	return 1;
     }
     unless($self->establish_connection()) {
@@ -165,8 +164,11 @@ sub establish_connection {
     
     ## Check if DBD is installed
     unless (eval "require DBD::$self->{'db_type'}") {
-	&Log::do_log('err',"No Database Driver installed for $self->{'db_type'} ; you should download and install DBD::$self->{'db_type'} from CPAN");
-	&List::send_notify_to_listmaster('missing_dbd', $Conf::Conf{'domain'},{'db_type' => $self->{'db_type'}});
+	Log::do_log('err',
+	    'No Database Driver installed for %s; you should download and install DBD::%s from CPAN',
+	    $self->{'db_type'}, $self->{'db_type'});
+	Site->send_notify_to_listmaster('missing_dbd',
+	    {'db_type' => $self->{'db_type'}});
 	return undef;
     }
 
@@ -184,26 +186,42 @@ sub establish_connection {
     }
  
     ## First check if we have an active connection with this server
+    ## We require that user also matches (except SQLite).
     if (defined $db_connections{$self->{'connect_string'}} && 
+	($self->{'db_type'} eq 'SQLite' or
+	  $db_connections{$self->{'connect_string'}}{'db_user'} eq
+	    $self->{'db_user'}) &&
 	defined $db_connections{$self->{'connect_string'}}{'dbh'} && 
 	$db_connections{$self->{'connect_string'}}{'dbh'}->ping()) {
-      
-      &Log::do_log('debug', "Use previous connection");
+      Log::do_log('debug3', 'Use previous connection');
       $self->{'dbh'} = $db_connections{$self->{'connect_string'}}{'dbh'};
       return $db_connections{$self->{'connect_string'}}{'dbh'};
-
-    }else {
-      
+    } else {
       ## Set environment variables
       ## Used by Oracle (ORACLE_HOME)
+
+      ## Client encoding derived from the environment variable.
+      ## Set this before parsing db_env to allow override if one knows what
+      ## she is doing.
+      ## Note: on mysql and Pg, "SET NAMES" will be executed below; on SQLite,
+      ## no need to set encoding.
+      if ($self->{'db_type'} eq 'Oracle') {
+	## NLS_LANG.  This needs to be set before connecting, otherwise it's
+	## useless.  Underscore (_) and dot (.) are a vital part as NLS_LANG
+	## has the syntax "language_territory.charset".
+	$ENV{'NLS_LANG'} = '_.UTF8';
+      } elsif ($self->{'db_type'} eq 'Sybase') {
+	$ENV{'SYBASE_CHARSET'} = 'utf8';
+      }
+
       if ($self->{'db_env'}) {
-	foreach my $env (split /;/,$self->{'db_env'}) {
+	foreach my $env (split /;/, $self->{'db_env'}) {
 	  my ($key, $value) = split /=/, $env;
 	  $ENV{$key} = $value if ($key);
 	}
       }
       
-      $self->{'dbh'} = eval {DBI->connect($self->{'connect_string'}, $self->{'db_user'}, $self->{'db_passwd'})} ;
+      $self->{'dbh'} = eval {DBI->connect($self->{'connect_string'}, $self->{'db_user'}, $self->{'db_passwd'}, { PrintError => 0 })} ;
       unless (defined $self->{'dbh'}) {
 	    ## Notify listmaster if warn option was set
 	    ## Unless the 'failed' status was set earlier
@@ -211,9 +229,7 @@ sub establish_connection {
 		unless (defined $db_connections{$self->{'connect_string'}} &&
 		    $db_connections{$self->{'connect_string'}}{'status'} eq 'failed') { 
     
-		    unless (&List::send_notify_to_listmaster('no_db', $Conf::Conf{'domain'},{})) {
-			&Log::do_log('err',"Unable to send notify 'no_db' to listmaster");
-		    }
+		    Site->send_notify_to_listmaster('no_db', {});
 		}
 	    }
 	    if ($self->{'reconnect_options'}{'keep_trying'}) {
@@ -228,34 +244,72 @@ sub establish_connection {
 	    my $sleep_delay = 60;
 	    while (1) {
 		sleep $sleep_delay;
-		eval {$self->{'dbh'} = DBI->connect($self->{'connect_string'}, $self->{'db_user'}, $self->{'db_passwd'})};
+		eval {$self->{'dbh'} = DBI->connect($self->{'connect_string'}, $self->{'db_user'}, $self->{'db_passwd'}, { PrintError => 0 })};
 		last if ($self->{'dbh'} && $self->{'dbh'}->ping());
 		$sleep_delay += 10;
 	    }
 	    
 	    if ($self->{'reconnect_options'}{'warn'}) {
-	    &Log::do_log('notice','Connection to Database %s restored.', $self->{'connect_string'});
-		unless (&List::send_notify_to_listmaster('db_restored', $Conf::Conf{'domain'},{})) {
-		    &Log::do_log('notice',"Unable to send notify 'db_restored' to listmaster");
-		}
+		Log::do_log('notice', 'Connection to Database %s restored.',
+		    $self->{'connect_string'});
+		Site->send_notify_to_listmaster('db_restored', {});
 	    }
       }
-      
-      if ($self->{'db_type'} eq 'Pg') { # Configure Postgres to use ISO format dates
-	$self->{'dbh'}->do ("SET DATESTYLE TO 'ISO';");
+
+      # Configure Postgres to use ISO format dates
+      if ($self->{'db_type'} eq 'Pg') {
+	$self->{'dbh'}->do("SET DATESTYLE TO 'ISO';");
       }
-      
-      ## Set client encoding to UTF8
-      if ($self->{'db_type'} eq 'mysql' ||
-	  $self->{'db_type'} eq 'Pg') {
-	&Log::do_log('debug','Setting client encoding to UTF-8');
+
+      ## mysql or Pg: Set client encoding to UTF8
+      if ($self->{'db_type'} eq 'mysql') {
+	my ($sth, $res, $cset);
+
+	## Set client-side character set according to server-side character
+	## set, "utf8" or "utf8mb4".
+	if ($sth = $self->{'dbh'}->prepare(
+		q{SHOW VARIABLES LIKE 'character_set_server'}
+	    ) and $sth->execute and $sth->rows and
+	    $res = $sth->fetchrow_hashref('NAME_lc')) {
+	    $sth->finish;
+	    $cset = $res->{'value'};
+
+	    if ($cset eq 'utf8mb4' and
+		$sth = $self->{'dbh'}->prepare(q{SET NAMES 'utf8mb4'}) and
+		$sth->execute) {
+		$sth->finish;
+	    } else {
+		## Server-side character set is 'utf8', or server, client or
+		## both is earlier than MySQL 5.5.3.
+		Log::do_log('notice',
+		    'Server-side character set of MySQL is "%s", not ' .
+		    'either "utf8" nor "utf8mb4".  This means possible ' .
+		    'data loss.', $cset
+		) unless $cset eq 'utf8';
+		$self->{'dbh'}->do(q{SET NAMES 'utf8'});
+	    }
+
+	    if ($sth = $self->{'dbh'}->prepare(
+		    q{SHOW VARIABLES LIKE 'character_set_client'}
+		) and $sth->execute and $sth->rows and
+		$res = $sth->fetchrow_hashref('NAME_lc')) {
+		$sth->finish;
+		$cset = $res->{'value'};
+		Log::do_log('debug3',
+		    'Client character set was set to %s', $cset);
+	    } else {
+		Log::do_log('error',
+		    'Cannot determine client-side character set');
+	    }
+	} else {
+	    ## Server may be earlier than MySQL 4.1.1.
+	    Log::do_log('error', 'Cannot get server-side character set');
+	}
+      } elsif ($self->{'db_type'} eq 'Pg') {
+	Log::do_log('debug3','Setting client encoding to UTF-8');
 	$self->{'dbh'}->do("SET NAMES 'utf8'");
-      }elsif ($self->{'db_type'} eq 'oracle') { 
-	$ENV{'NLS_LANG'} = 'UTF8';
-      }elsif ($self->{'db_type'} eq 'Sybase') { 
-	$ENV{'SYBASE_CHARSET'} = 'utf8';
       }
-      
+
       ## added sybase support
       if ($self->{'db_type'} eq 'Sybase') { 
 	my $dbname;
@@ -271,10 +325,31 @@ sub establish_connection {
         $self->{'dbh'}->func( 'func_index', -1, sub { return index($_[0],$_[1]) }, 'create_function' );
 	if(defined $self->{'db_timeout'}) { $self->{'dbh'}->func( $self->{'db_timeout'}, 'busy_timeout' ); } else { $self->{'dbh'}->func( 5000, 'busy_timeout' ); };
       }
-      
+
       $self->{'connect_string'} = $self->{'connect_string'} if $self;     
       $db_connections{$self->{'connect_string'}}{'dbh'} = $self->{'dbh'};
-      &Log::do_log('debug','Connected to Database %s',$self->{'db_name'});
+      $db_connections{$self->{'connect_string'}}{'db_user'} = $self->{'db_user'};
+      Log::do_log('debug3', 'Connected to Database %s', $self->{'db_name'});
+
+      ## We set Long preload length to two times global max message size
+      ## (because of base64 encoding) instead of defaulting to 80 on Oracle
+      ## and 32768 on Sybase.
+      ## This is to avoid error in Bulk::messageasstring when using Oracle or
+      ## Sybase database:
+      ##   bulk[pid]: internal error : current packet 'messagekey= 0c40f56e07d3c8ce34683b98d54b6575 contain a ref to a null message
+      ## FIXME: would be better to use lists' setting, but
+      ##  * list config is not load()-ed at this point, and
+      ##  * when invoked from Bulk::messageasstring, list settings is not even
+      ##    load()-ed later.
+      if ($self->{'db_type'} eq 'Oracle' or $self->{'db_type'} eq 'Sybase') {
+	$self->{'dbh'}->{LongReadLen} = Site->max_size * 2;
+	$self->{'dbh'}->{LongTruncOk} = 0;
+      }
+      Log::do_log('debug3',
+	'Database driver seetings for this session: LongReadLen= %d, LongTruncOk= %d, RaiseError= %d',
+	$self->{'dbh'}->{LongReadLen}, $self->{'dbh'}->{LongTruncOk},
+	$self->{'dbh'}->{RaiseError});
+
       return $self->{'dbh'};
     }
 }
@@ -284,9 +359,14 @@ sub do_query {
     my $query = shift;
     my @params = @_;
 
+    $query =~ s/^\s+//;
+    $query =~ s/\s+$//;
     my $statement = sprintf $query, @params;
 
-    &Log::do_log('debug', "Will perform query '%s'",$statement);
+    my $s = $statement;
+    $s =~ s/\n\s*/ /g;
+    &Log::do_log('debug2', "Will perform query '%s'", $s);
+
     unless ($self->{'sth'} = $self->{'dbh'}->prepare($statement)) {
 	# Check connection to database in case it would be the cause of the problem.
 	unless($self->connect()) {
@@ -333,11 +413,37 @@ sub do_query {
 sub do_prepared_query {
     my $self = shift;
     my $query = shift;
-    my @params = @_;
+    my @params = ();
+    my %types = ();
+
+    ## get binding types and parameters
+    my $i = 0;
+    while (scalar @_) {
+	my $p = shift;
+	if (ref $p eq 'HASH') {
+	    # a hashref { sql_type => SQL_type } etc.
+	    $types{$i} = $p;
+	    push @params, shift;
+	} elsif (ref $p) {
+	    &Log::do_log('err', 'unexpected %s object.  Ask developer',
+			 ref $p);
+	    return undef;
+	} else {
+	    push @params, $p;
+	}
+	$i++;
+    }
 
     my $sth;
 
-    unless ($self->{'cached_prepared_statements'}{$query}) {
+    $query =~ s/^\s+//;
+    $query =~ s/\s+$//;
+    $query =~ s/\n\s*/ /g;
+    &Log::do_log('debug3', "Will perform query '%s'", $query);
+
+    if ($self->{'cached_prepared_statements'}{$query}) {
+	$sth = $self->{'cached_prepared_statements'}{$query};
+    } else {
 	&Log::do_log('debug3','Did not find prepared statement for %s. Doing it.',$query);
 	unless ($sth = $self->{'dbh'}->prepare($query)) {
 	    unless($self->connect()) {
@@ -350,11 +456,16 @@ sub do_prepared_query {
 		}
 	    }
 	}
+
+	## bind parameters with special types
+	## this may be done only once when handle is prepared.
+	foreach my $i (sort keys %types) {
+	    $sth->bind_param($i + 1, $params[$i], $types{$i});
+	}
+
 	$self->{'cached_prepared_statements'}{$query} = $sth;
-    }else {
-	&Log::do_log('debug3','Reusing prepared statement for %s',$query);
     }	
-    unless ($self->{'cached_prepared_statements'}{$query}->execute(@params)) {
+    unless ($sth->execute(@params)) {
 	# Check database connection in case it would be the cause of the problem.
 	unless($self->connect()) {
 	    &Log::do_log('err', 'Unable to get a handle to %s database',$self->{'db_name'});
@@ -371,15 +482,22 @@ sub do_prepared_query {
 		    }
 		}
 	    }
+
+	    ## bind parameters with special types
+	    ## this may be done only once when handle is prepared.
+	    foreach my $i (sort keys %types) {
+		$sth->bind_param($i + 1, $params[$i], $types{$i});
+	    }
+
 	    $self->{'cached_prepared_statements'}{$query} = $sth;
-	    unless ($self->{'cached_prepared_statements'}{$query}->execute(@params)) {
+	    unless ($sth->execute(@params)) {
 		&Log::do_log('err','Unable to execute SQL statement "%s" : %s', $query, $self->{'dbh'}->errstr);
 		return undef;
 	    }
 	}
     }
 
-    return $self->{'cached_prepared_statements'}{$query};
+    return $sth;
 }
 
 sub prepare_query_log_values {
@@ -426,12 +544,12 @@ sub fetch {
 sub disconnect {
     my $self = shift;
     $self->{'sth'}->finish if $self->{'sth'};
-    $self->{'dbh'}->disconnect;
+    if ($self->{'dbh'}) {$self->{'dbh'}->disconnect;}
     delete $db_connections{$self->{'connect_string'}};
 }
 
 sub create_db {
-    &Log::do_log('debug3', 'List::create_db()');    
+    &Log::do_log('debug3', '()');    
     return 1;
 }
 
