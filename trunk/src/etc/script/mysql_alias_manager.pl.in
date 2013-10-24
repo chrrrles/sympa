@@ -26,8 +26,8 @@ unless (Site->load('no_db' => 1)) {
     exit 1;
 }
 
-Log::set_log_level(Site->log_level);
-Log::do_openlog(Site->syslog, Site->log_socket_type, 'alias_manager');
+Sympa::Log::Syslog::set_log_level(Site->log_level);
+Sympa::Log::Syslog::do_openlog(Site->syslog, Site->log_socket_type, 'alias_manager');
 
 ## MYSQL configuration
 my $mysql_host = "localhost";
@@ -96,7 +96,7 @@ if ($operation eq 'add') {
 	    next;
 	}
 	
-	$alias =~ /^([^:]+):\s*(\".*\")$/;
+	$alias =~ /^([^\s:]+)[\s:]+(\".*\")$/;
 	my $alias_value = $1;
 	my $command_value = $2;
 	$command_value =~ s/\"//g;
@@ -126,7 +126,7 @@ if ($operation eq 'add') {
 	    next;
 	}
 
-	$alias =~ /^([^:]+):/; 
+	$alias =~ /^([^\s:]+)[\s:]/; 
 	my $alias_value = $1;
 	$alias_value =~ s/\+/\-/g;
 
@@ -160,7 +160,7 @@ sub already_defined {
 	    next;
 	}
 	
-	$alias =~ /^([^:]+):/; 
+	$alias =~ /^([^\s:]+)[\s:]/; 
 	my $alias_value = $1;
 	$alias_value =~ s/\+/\-/g;	
 

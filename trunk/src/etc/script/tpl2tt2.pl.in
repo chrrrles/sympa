@@ -46,7 +46,7 @@ $| = 1;
 Site->load or die 'config_error';
 
 if (Site->db_name and Site->db_type) {
-    unless (SDM::probe_db()) {
+    unless (SDM::check_db_connect('just_try') and SDM::probe_db()) {
  	die sprintf 'Database %s defined in sympa.conf has not the right structure or is unreachable. If you don\'t use any database, comment db_xxx parameters in sympa.conf', Site->db_name;
     }
 }
@@ -212,7 +212,7 @@ foreach my $tpl (@templates) {
 					mode => 0755,
 					))
 	{
-	    Log::do_log('err', 'Unable to set rights on %s',
+	    Sympa::Log::Syslog::do_log('err', 'Unable to set rights on %s',
 		Site->db_name);
 	    next;
 	}
@@ -265,7 +265,7 @@ sub convert {
 				    group => Sympa::Constants::GROUP
 				    ))
     {
-	&Log::do_log('err','Unable to set rights on %s',$Conf{'db_name'});
+	Sympa::Log::Syslog::do_log('err','Unable to set rights on %s',$Conf{'db_name'});
 	return undef;
     }
 }

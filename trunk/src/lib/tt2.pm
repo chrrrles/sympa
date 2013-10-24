@@ -127,7 +127,7 @@ sub maketext {
 
     ## Strangely the path is sometimes empty...
     ## TODO : investigate
-#    &Log::do_log('notice', "PATH: $path ; $template_name");
+#    Sympa::Log::Syslog::do_log('notice', "PATH: $path ; $template_name");
 
     ## Sample code to dump the STASH
     # my $s = $stash->_dump();    
@@ -208,6 +208,11 @@ sub get_include_path {
     return @other_include_path;
 }
 
+## Clear current INCLUDE_PATH
+sub clear_include_path {
+    @other_include_path = ();
+}
+
 ## Allow inclusion/insertion of file with absolute path
 sub allow_absolute_path {
     $allow_absolute = 1;
@@ -232,7 +237,7 @@ sub parse_tt2 {
 
     ## Add directories that may have been added
     push @{$include_path}, @other_include_path;
-    @other_include_path = (); ## Reset it
+    clear_include_path(); ## Reset it
 
     my $wantarray;
 
@@ -285,8 +290,8 @@ sub parse_tt2 {
 
     unless ($tt2->process($template, $data, $output)) {
 	$last_error = $tt2->error();
-	Log::do_log('err', 'Failed to parse %s : %s', $template, "$last_error");
-	Log::do_log('err', 'Looking for TT2 files in %s', join(',',@{$include_path}));
+	Sympa::Log::Syslog::do_log('err', 'Failed to parse %s : %s', $template, "$last_error");
+	Sympa::Log::Syslog::do_log('err', 'Looking for TT2 files in %s', join(',',@{$include_path}));
 	return undef;
     } 
 
