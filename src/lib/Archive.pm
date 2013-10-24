@@ -16,13 +16,14 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package Archive;
 
 use strict;
-
+use Carp qw(croak);
+use Cwd qw(getcwd);
+use Digest::MD5;
 use Encode qw(decode_utf8 encode_utf8);
 use HTML::Entities qw(decode_entities);
 
@@ -31,50 +32,6 @@ use Log;
 my $serial_number = 0; # incremented on each archived mail
 
 ## RCS identification.
-
-## copie a message in $dir using a unique file name based on liSTNAME
-
-sub outgoing {
-    my($dir,$list_id,$msg) = @_;
-    
-    &Log::do_log ('debug2',"outgoing for list $list_id to directory $dir");
-    
-    return 1 if ($dir eq '/dev/null');
-
-    ## ignoring message with a no-archive flag
-    if (ref($msg) && 
-	($Conf::Conf{'ignore_x_no_archive_header_feature'} ne 'on') && 
-	(($msg->head->get('X-no-archive') =~ /yes/i) || ($msg->head->get('Restrict') =~ /no\-external\-archive/i))) {
-	&Log::do_log('info',"Do not archive message with no-archive flag for list $list_id");
-	return 1;
-    }
-
-    
-    ## Create the archive directory if needed
-    
-    unless (-d $dir) {
-	mkdir ($dir, 0775);
-	chmod 0774, $dir;
-	&Log::do_log('info',"creating $dir");
-    }
-    
-    my @now  = localtime(time);
-#    my $prefix= sprintf("%04d-%02d-%02d-%02d-%02d-%02d",1900+$now[5],$now[4]+1,$now[3],$now[2],$now[1],$now[0]);
-#    my $filename = "$dir"."/"."$prefix-$list_id";
-    my $filename = sprintf '%s/%s.%d.%d.%d', $dir, $list_id, time, $$, $serial_number;
-    $serial_number = ($serial_number+1)%100000;
-    unless ( open(OUT, "> $filename")) {
-	&Log::do_log('info',"error unable open outgoing dir $dir for list $list_id");
-	return undef;
-    }
-    &Log::do_log('debug',"put message in $filename");
-    if (ref ($msg)) {
-  	$msg->print(\*OUT);
-    }else {
- 	print OUT $msg;
-    }
-    close (OUT);
-}
 
 ## Does the real job : stores the message given as an argument into
 ## the indicated directory.
@@ -87,7 +44,7 @@ sub store_last {
     my($filename, $newfile);
     
     return unless $list->is_archived();
-    my $dir = $list->{'dir'}.'/archives';
+    my $dir = $list->dir.'/archives';
     
     ## Create the archive directory if needed
     mkdir ($dir, "0775") if !(-d $dir);
@@ -152,25 +109,29 @@ sub scan_dir_archive {
 	next unless ($file =~ /^\d+$/);
 	&Log::do_log ('debug',"archive::scan_dir_archive($dir, $month): start parsing message $dir/$month/arctxt/$file");
 
-	my $mail = new Message({'file'=>"$dir/$month/arctxt/$file",'noxsympato'=>'noxsympato'});
-	unless (defined $mail) {
-	    &Log::do_log('err', 'Unable to create Message object %s', $file);
+	my $message = Message->new({
+	    'file' => "$dir/$month/arctxt/$file", 'noxsympato' => 'noxsympato'
+	});
+	unless ($message) {
+	    Log::do_log('err',
+		'Unable to create Message object from file %s', $file);
 	    return undef;
 	}
-	
-	&Log::do_log('debug',"MAIL object : $mail");
+
+	Log::do_log('debug', 'MAIL object : %s', $message);
 
 	$i++;
 	my $msg = {};
 	$msg->{'id'} = $i;
 
-	$msg->{'subject'} = &tools::decode_header($mail, 'Subject');
-	$msg->{'from'} = &tools::decode_header($mail, 'From');
-	$msg->{'date'} = &tools::decode_header($mail, 'Date');
+	$msg->{'subject'} = tools::decode_header($message, 'Subject');
+	$msg->{'from'}    = tools::decode_header($message, 'From');
+	$msg->{'date'}    = tools::decode_header($message, 'Date');
 
-	$msg->{'full_msg'} = $mail->{'msg'}->as_string;
+	$msg->{'full_msg'} = $message->as_string(); # raw message
 
-	&Log::do_log('debug','Archive::scan_dir_archive adding message %s in archive to send', $msg->{'subject'});
+	Log::do_log('debug', 'Adding message %s in archive to send',
+	    $msg->{'subject'});
 
 	push @{$all_msg}, $msg ;
     }
@@ -202,11 +163,11 @@ sub search_msgid {
 	&Log::do_log('err','remove_arc: no message id found');return undef;
     } 
     unless ($dir =~ /\d\d\d\d\-\d\d\/arctxt/) {
-	&Log::do_log ('info',"archive::search_msgid : dir $dir look unproper");
+	&Log::do_log ('err',"archive::search_msgid : dir $dir look improper");
 	return undef;
     }
     unless (opendir (ARC, "$dir")){
-	&Log::do_log ('info',"archive::scan_dir_archive($dir, $msgid): unable to open dir $dir");
+	&Log::do_log ('err',"archive::scan_dir_archive($dir, $msgid): unable to open dir $dir");
 	return undef;
     }
     chomp $msgid ;
@@ -244,12 +205,12 @@ sub last_path {
     
     my $list = shift;
 
-    &Log::do_log('debug', 'Archived::last_path(%s)', $list->{'name'});
+    &Log::do_log('debug', 'Archived::last_path(%s)', $list->name);
 
     return undef unless ($list->is_archived());
-    my $file = $list->{'dir'}.'/archives/last_message';
+    my $file = $list->dir.'/archives/last_message';
 
-    return ($list->{'dir'}.'/archives/last_message') if (-f $list->{'dir'}.'/archives/last_message'); 
+    return ($list->dir.'/archives/last_message') if (-f $list->dir.'/archives/last_message'); 
     return undef;
 
 }
@@ -287,6 +248,209 @@ sub load_html_message {
     return \%metadata;
 }
 
+
+sub clean_archive_directory {
+    Log::do_log('debug2', '(%s, %s)', @_);
+    my $robot = shift;
+    my $dir_to_rebuild = shift;
+
+    my $arc_root = $robot->arc_path;
+    my $answer;
+    $answer->{'dir_to_rebuild'} = $arc_root . '/' . $dir_to_rebuild;
+    $answer->{'cleaned_dir'} = Site->tmpdir . '/' . $dir_to_rebuild;
+    unless(my $number_of_copies = &tools::copy_dir($answer->{'dir_to_rebuild'},$answer->{'cleaned_dir'})){
+	&Log::do_log('err',"Unable to create a temporary directory where to store files for HTML escaping (%s). Cancelling.",$number_of_copies);
+	return undef;
+    }
+    if(opendir ARCDIR,$answer->{'cleaned_dir'}){
+	my $files_left_uncleaned = 0;
+	foreach my $file (readdir(ARCDIR)){
+	    next if($file =~ /^\./);	    
+	    $file = $answer->{'cleaned_dir'}.'/'.$file;
+	    $files_left_uncleaned++
+		unless(clean_archived_message($robot, $file, $file)); 
+	}
+	closedir DIR;
+	if ($files_left_uncleaned) {
+	    &Log::do_log('err',"HTML cleaning failed for %s files in the directory %s.",$files_left_uncleaned,$answer->{'dir_to_rebuild'});
+	}
+	$answer->{'dir_to_rebuild'} = $answer->{'cleaned_dir'};
+    }else{
+	&Log::do_log('err','Unable to open directory %s: %s',$answer->{'dir_to_rebuild'},$!);
+	&tools::del_dir($answer->{'cleaned_dir'});
+	return undef;
+    }
+    return $answer;
+}
+
+sub clean_archived_message {
+    Log::do_log('debug2', '(%s, %s, %s)', @_);
+    my $robot = shift;
+    my $input = shift;
+    my $output = shift;
+    my $message = Message->new({'file' => $input, 'noxsympato' => 1});
+
+    if ($message->clean_html($robot)) {
+	if (open TMP, '>', $output) {
+	    print TMP $message->as_string();
+	    close TMP;
+	} else {
+	    Log::do_log('err',
+		'Unable to create a temporary file %s to write clean HTML',
+		$output);
+	    return undef;
+	}
+    } else {
+	Log::do_log('err', 'HTML cleaning in file %s failed.', $output);
+	return undef;
+    }
+}
+
+#############################
+# convert a message to HTML. 
+#    result is stored in $destination_dir
+#    attachement_url is used to link attachement
+#    
+# NOTE: This might be moved to Site package as a mutative method.
+# NOTE: convert_single_msg_2_html() was deprecated.
+sub convert_single_message {
+    my $that = shift; # List or Robot object
+    my $message = shift; # Message object or hashref
+    my %opts = @_;
+
+    my $robot;
+    my $listname;
+    my $hostname;
+    if (ref $that and ref $that eq 'List') {
+	$robot = $that->robot;
+	$listname = $that->name;
+    } elsif (ref $that and ref $that eq 'Robot') {
+	$robot = $that;
+	$listname = '';
+    } else {
+	croak 'bug in logic.  Ask developer';
+    }
+    $hostname = $that->host;
+
+    my $msg_as_string;
+    my $messagekey;
+    if (ref $message eq 'Message') {
+	$msg_as_string = $message->get_message_as_string;
+	$messagekey = $message->{'messagekey'};
+    } elsif (ref $message eq 'HASH') {
+	$msg_as_string = $message->{'messageasstring'};
+	$messagekey = $message->{'messagekey'};
+    } else {
+        croak 'bug in logic.  Ask developer';
+    }
+
+    my $destination_dir = $opts{'destination_dir'};
+    my $attachement_url = $opts{'attachement_url'};
+
+    my $mhonarc_ressources = $that->get_etc_filename(
+	'mhonarc-ressources.tt2'
+    );
+    unless ($mhonarc_ressources) {
+	Log::do_log('notice', 'Cannot find any MhOnArc ressource file');
+	return undef;
+    }
+
+    unless (-d $destination_dir) {
+	unless (tools::mkdir_all($destination_dir, 0755)) {
+	    Log::do_log('err', 'Unable to create %s', $destination_dir);
+	    return undef;
+	}
+    }
+
+    my $msg_file = $destination_dir . '/msg00000.txt';
+    unless (open OUT, '>', $msg_file) {
+	Log::do_log('notice', 'Could Not open %s', $msg_file);
+	return undef;
+    }
+    print OUT $msg_as_string;
+    close OUT;
+
+    # mhonarc require du change workdir so this proc must retore it    
+    my $pwd = getcwd;
+
+    ## generate HTML
+    unless (chdir $destination_dir) {
+	Log::do_log('err', 'Could not change working directory to %s',
+	    $destination_dir);
+	return undef;
+    }
+
+    my $tag = get_tag($that);
+    my $exitcode = system(
+	$robot->mhonarc, '-single',
+	'-rcfile' => $mhonarc_ressources,
+	'-definevars' => "listname='$listname' hostname=$hostname tag=$tag",
+	'-outdir' => $destination_dir,
+	'-attachmentdir' => $destination_dir,
+	'-attachmenturl' => $attachement_url,
+	'-umask' => Site->umask,
+	'-stdout' => "$destination_dir/msg00000.html",
+	'--', $msg_file
+    ) >> 8;
+
+    # restore current wd 
+    chdir $pwd;		
+
+    if ($exitcode) {
+	Log::do_log('err', 'Command %s failed with exit code %d',
+	    $robot->mhonarc, $exitcode
+	);
+    }
+
+    return 1;
+}
+
+=head2 sub get_tag(OBJECT $that)
+
+Returns a tag derived from the listname.
+
+=head3 Arguments 
+
+=over 
+
+=item * I<$that>, a List or Robot object.
+
+=back 
+
+=head3 Return 
+
+=over 
+
+=item * I<a character string>, corresponding to the 10 last characters of a 32 bytes string containing the MD5 digest of the concatenation of the following strings (in this order):
+
+=over 4
+
+=item - the cookie config parameter
+
+=item - a slash: "/"
+
+=item - name attribute of the I<$that> argument
+
+=back 
+
+=back
+
+=head3 Calls 
+
+=over 
+
+=item * Digest::MD5::md5_hex
+
+=back 
+
+=cut 
+
+sub get_tag {
+    my $that = shift;
+
+    return substr(
+	Digest::MD5::md5_hex(join '/', Site->cookie, $that->name), -10
+    );
+}
+
 1;
-
-

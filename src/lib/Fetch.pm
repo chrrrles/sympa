@@ -18,8 +18,7 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package Fetch;
 
@@ -41,7 +40,7 @@ sub get_https{
 	&Log::do_log ('debug','get_https (%s,%s,%s,%s,%s,%s,%s,%s)',$host,$port,$path,$client_cert,$client_key,$key_passwd,$trusted_ca_file,$trusted_ca_path );
 
 	unless ( -r ($trusted_ca_file) ||  (-d $trusted_ca_path )) {
-	    &Log::do_log ('err',"error : incorrect access to cafile $trusted_ca_file bor capath $trusted_ca_path");
+	    &Log::do_log ('err',"error : incorrect access to cafile $trusted_ca_file or capath $trusted_ca_path");
 	    return undef;
 	}
 
@@ -115,14 +114,14 @@ sub get_https2{
 	my $ssl_data= shift;
 
 	my $trusted_ca_file = $ssl_data->{'cafile'};
-	$trusted_ca_file ||= $Conf::Conf{'cafile'};
+	$trusted_ca_file ||= Site->cafile;
 	my $trusted_ca_path = $ssl_data->{'capath'};
-	$trusted_ca_path ||= $Conf::Conf{'capath'};
+	$trusted_ca_path ||= Site->capath;
 
 	&Log::do_log ('debug','Fetch::get_https2 (%s,%s,%s,%s,%s)',$host,$port,$path,$trusted_ca_file,$trusted_ca_path );
 
 	unless ( -r ($trusted_ca_file) ||  (-d $trusted_ca_path )) {
-	    &Log::do_log ('err',"error : incorrect access to cafile $trusted_ca_file bor capath $trusted_ca_path");
+	    &Log::do_log ('err',"error : incorrect access to cafile $trusted_ca_file or capath $trusted_ca_path");
 	    return undef;
 	}
 

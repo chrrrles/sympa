@@ -16,17 +16,16 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Softwarec
-# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package DBManipulatorPostgres;
 
 use strict;
+#use Carp; # not used
+# tentative
 use Data::Dumper;
 
-use Carp;
 use Log;
-
 use DBManipulatorDefault;
 
 our @ISA = qw(DBManipulatorDefault);
@@ -51,7 +50,7 @@ our %date_format = (
 # OUT: Nothing
 sub build_connect_string{
     my $self = shift;
-    &Log::do_log('debug','Building connect string');
+    &Log::do_log('debug3','Building connect string');
     $self->{'connect_string'} = "DBI:Pg:dbname=$self->{'db_name'};host=$self->{'db_host'}";
 }
 
@@ -74,7 +73,7 @@ sub get_substring_clause {
 sub get_limit_clause {
     my $self = shift;
     my $param = shift;
-    &Log::do_log('debug','Building limit clause');
+    &Log::do_log('debug3','Building limit clause');
     if ($param->{'offset'}) {
 	return "LIMIT ".$param->{'rows_count'}." OFFSET ".$param->{'offset'};
     }else{
@@ -95,7 +94,7 @@ sub get_limit_clause {
 sub get_formatted_date {
     my $self = shift;
     my $param = shift;
-    &Log::do_log('debug','Building SQL date formatting');
+    &Log::do_log('debug3','Building SQL date formatting');
     if (lc($param->{'mode'}) eq 'read') {
 	return sprintf 'date_part(\'epoch\',%s)',$param->{'target'};
     }elsif(lc($param->{'mode'}) eq 'write') {
@@ -115,7 +114,7 @@ sub get_formatted_date {
 sub is_autoinc {
     my $self = shift;
     my $param = shift;
-    &Log::do_log('debug','Checking whether field %s.%s is an autoincrement',$param->{'table'},$param->{'field'});
+    &Log::do_log('debug3','Checking whether field %s.%s is an autoincrement',$param->{'table'},$param->{'field'});
     my $seqname = $param->{'table'}.'_'.$param->{'field'}.'_seq';
     my $sth;
     unless ($sth = $self->do_query("SELECT relname FROM pg_class WHERE relname = '%s' AND relkind = 'S'  AND relnamespace IN ( SELECT oid  FROM pg_namespace WHERE nspname NOT LIKE 'pg_%' AND nspname != 'information_schema' )",$seqname)) {
@@ -135,7 +134,7 @@ sub is_autoinc {
 sub set_autoinc {
     my $self = shift;
     my $param = shift;
-    &Log::do_log('debug','Setting field %s.%s as an auto increment',$param->{'table'},$param->{'field'});
+    &Log::do_log('debug3','Setting field %s.%s as an auto increment',$param->{'table'},$param->{'field'});
     my $seqname = $param->{'table'}.'_'.$param->{'field'}.'_seq';
     unless ($self->do_query("CREATE SEQUENCE %s",$seqname)) {
 	&Log::do_log('err','Unable to create sequence %s',$seqname);
@@ -159,13 +158,43 @@ sub set_autoinc {
 # Returns the list of the tables in the database.
 # Returns undef if something goes wrong.
 #
-# OUT: a ref to an array containing the list of the tables names in the database, undef if something went wrong
+# OUT: a ref to an array containing the list of the tables names in the
+# database, undef if something went wrong
+#
+# Note: Pg searches tables in schemas listed in search_path, defaults to be
+#   '"$user",public'.
 sub get_tables {
     my $self = shift;
-    &Log::do_log('debug','Getting the list of tables in database %s',$self->{'db_name'});
+    Log::do_log('debug3','Getting the list of tables in database %s',$self->{'db_name'});
+
+    ## get search_path.
+    my $sth;
+    unless ($sth = $self->do_query('SELECT current_schemas(false)')) {
+	Log::do_log('err', 'Unable to get search_path of database %s',
+	    $self->{'db_name'});
+	return undef;
+    }
+    my $search_path = $sth->fetchrow;
+    $sth->finish;
+
+    ## get table names.
     my @raw_tables;
-    unless (@raw_tables = $self->{'dbh'}->tables(undef,'public',undef,'TABLE',{pg_noprefix => 1} )) {
-	&Log::do_log('err','Unable to retrieve the list of tables from database %s',$self->{'db_name'});
+    my %raw_tables;
+    foreach my $schema (@{$search_path || []}) {
+	my @tables = $self->{'dbh'}->tables(
+	    undef, $schema, undef, 'TABLE', {pg_noprefix => 1}
+	);
+	foreach my $t (@tables) {
+	    next if $raw_tables{$t};
+	    push @raw_tables, $t;
+	    $raw_tables{$t} = 1;
+	}
+    }
+    unless (@raw_tables) {
+	Log::do_log('err',
+	    'Unable to retrieve the list of tables from database %s',
+	    $self->{'db_name'}
+	);
 	return undef;
     }
     return \@raw_tables;
@@ -179,7 +208,7 @@ sub get_tables {
 sub add_table {
     my $self = shift;
     my $param = shift;
-    &Log::do_log('debug','Adding table %s',$param->{'table'});
+    &Log::do_log('debug3','Adding table %s',$param->{'table'});
     unless ($self->do_query("CREATE TABLE %s (temporary INT)",$param->{'table'})) {
 	&Log::do_log('err', 'Could not create table %s in database %s', $param->{'table'}, $self->{'db_name'});
 	return undef;
@@ -199,7 +228,7 @@ sub add_table {
 sub get_fields {
     my $self = shift;
     my $param = shift;
-    &Log::do_log('debug','Getting the list of fields in table %s, database %s',$param->{'table'}, $self->{'db_name'});
+    &Log::do_log('debug3','Getting the list of fields in table %s, database %s',$param->{'table'}, $self->{'db_name'});
     my $sth;
     my %result;
     unless ($sth = $self->do_query("SELECT a.attname AS field, t.typname AS type, a.atttypmod AS length FROM pg_class c, pg_attribute a, pg_type t WHERE a.attnum > 0 and a.attrelid = c.oid and c.relname = '%s' and a.atttypid = t.oid order by a.attnum",$param->{'table'})) {
@@ -229,19 +258,50 @@ sub get_fields {
 sub update_field {
     my $self = shift;
     my $param = shift;
-    &Log::do_log('debug','Updating field %s in table %s (%s, %s)',$param->{'field'},$param->{'table'},$param->{'type'},$param->{'notnull'});
-    my $options;
+    my $table = $param->{'table'};
+    my $field = $param->{'field'};
+    my $type = $param->{'type'};
+    Log::do_log('debug3', 'Updating field %s in table %s (%s, %s)',
+	$field, $table, $type, $param->{'notnull'});
+    my $options = '';
     if ($param->{'notnull'}) {
 	$options .= ' NOT NULL ';
     }
-    my $report = sprintf("ALTER TABLE %s ALTER COLUMN %s TYPE %s %s",$param->{'table'},$param->{'field'},$param->{'type'},$options);
-    &Log::do_log('notice', "ALTER TABLE %s ALTER COLUMN %s TYPE %s %s",$param->{'table'},$param->{'field'},$param->{'type'},$options);
-    unless ($self->do_query("ALTER TABLE %s ALTER COLUMN %s TYPE %s %s",$param->{'table'},$param->{'field'},$param->{'type'},$options)) {
-	&Log::do_log('err', 'Could not change field \'%s\' in table\'%s\'.',$param->{'field'}, $param->{'table'});
-	return undef;
+    my $report;
+    my @sql;
+
+    ## Conversion between timestamp and integer is not obvious.
+    ## So create new column then copy contents.
+    my $fields = $self->get_fields({'table' => $table});
+    if ($fields->{$field} eq 'timestamptz' and $type =~ /^int/i) {
+	@sql = (
+	    "ALTER TABLE list_table RENAME $field TO ${field}_tmp",
+	    "ALTER TABLE list_table ADD $field $type$options",
+	    "UPDATE list_table SET $field = date_part('epoch', ${field}_tmp)",
+	    "ALTER TABLE list_table DROP ${field}_tmp"
+	);	
+    } else {
+	@sql = sprintf("ALTER TABLE %s ALTER COLUMN %s TYPE %s %s",
+	    $table, $field, $type, $options);
     }
-    $report .= sprintf('\nField %s in table %s, structure updated', $param->{'field'}, $param->{'table'});
-    &Log::do_log('info', 'Field %s in table %s, structure updated', $param->{'field'}, $param->{'table'});
+    foreach my $sql (@sql) {
+	Log::do_log('notice', '%s', $sql);
+	if ($report) {
+	    $report .= "\n$sql";
+	} else {
+	    $report = $sql;
+	}
+	unless ($self->do_query('%s', $sql)) {
+	    Log::do_log('err',
+		'Could not change field \'%s\' in table\'%s\'.',
+		$param->{'field'}, $param->{'table'});
+	    return undef;
+	}
+    }
+    $report .= sprintf("\nField %s in table %s, structure updated",
+	$field, $table);
+    &Log::do_log('info', 'Field %s in table %s, structure updated',
+	$field, $table);
     return $report;
 }
 
@@ -259,7 +319,7 @@ sub update_field {
 sub add_field {
     my $self = shift;
     my $param = shift;
-    &Log::do_log('debug','Adding field %s in table %s (%s, %s, %s, %s)',$param->{'field'},$param->{'table'},$param->{'type'},$param->{'notnull'},$param->{'autoinc'},$param->{'primary'});
+    &Log::do_log('debug3','Adding field %s in table %s (%s, %s, %s, %s)',$param->{'field'},$param->{'table'},$param->{'type'},$param->{'notnull'},$param->{'autoinc'},$param->{'primary'});
     my $options;
     # To prevent "Cannot add a NOT NULL column with default value NULL" errors
     if ($param->{'notnull'}) {
@@ -289,7 +349,7 @@ sub add_field {
 sub delete_field {
     my $self = shift;
     my $param = shift;
-    &Log::do_log('debug','Deleting field %s from table %s',$param->{'field'},$param->{'table'});
+    &Log::do_log('debug3','Deleting field %s from table %s',$param->{'field'},$param->{'table'});
 
     unless ($self->do_query("ALTER TABLE %s DROP COLUMN %s",$param->{'table'},$param->{'field'})) {
 	&Log::do_log('err', 'Could not delete field %s from table %s in database %s', $param->{'field'}, $param->{'table'}, $self->{'db_name'});
@@ -312,7 +372,7 @@ sub get_primary_key {
     my $self = shift;
     my $param = shift;
 
-    &Log::do_log('debug','Getting primary key for table %s',$param->{'table'});
+    &Log::do_log('debug3','Getting primary key for table %s',$param->{'table'});
     my %found_keys;
     my $sth;
     unless ($sth = $self->do_query("SELECT pg_attribute.attname AS field FROM pg_index, pg_class, pg_attribute WHERE pg_class.oid ='%s'::regclass AND indrelid = pg_class.oid AND pg_attribute.attrelid = pg_class.oid AND pg_attribute.attnum = any(pg_index.indkey) AND indisprimary",$param->{'table'})) {
@@ -336,13 +396,40 @@ sub get_primary_key {
 sub unset_primary_key {
     my $self = shift;
     my $param = shift;
-    &Log::do_log('debug','Removing primary key from table %s',$param->{'table'});
+    &Log::do_log('debug3','Removing primary key from table %s',$param->{'table'});
 
     my $sth;
-    unless ($sth = $self->do_query("ALTER TABLE %s DROP PRIMARY KEY",$param->{'table'})) {
-	&Log::do_log('err', 'Could not drop primary key from table %s in database %s', $param->{'table'}, $self->{'db_name'});
+
+    ## PostgreSQL does not have 'ALTER TABLE ... DROP PRIMARY KEY'.
+    ## Instead, get a name of constraint then drop it.
+    my $key_name;
+
+    unless ($sth = $self->do_query(
+	q{SELECT tc.constraint_name
+	  FROM information_schema.table_constraints AS tc
+	  WHERE tc.table_catalog = %s AND tc.table_name = %s AND
+		tc.constraint_type = 'PRIMARY KEY'},
+	&SDM::quote($self->{'db_name'}), &SDM::quote($param->{'table'})
+    )) {
+	&Log::do_log('err', 'Could not search primary key from table %s in database %s', $param->{'table'}, $self->{'db_name'});
 	return undef;
     }
+
+    $key_name = $sth->fetchrow_array();
+    $sth->finish;
+    unless (defined $key_name) {
+	&Log::do_log('err', 'Could not get primary key from table %s in database %s', $param->{'table'}, $self->{'db_name'});
+	return undef;
+    }
+
+    unless ($sth = $self->do_query(
+	q{ALTER TABLE %s DROP CONSTRAINT "%s"},
+	$param->{'table'}, $key_name
+    )) {
+	&Log::do_log('err', 'Could not drop primary key "%s" from table %s in database %s', $key_name, $param->{'table'}, $self->{'db_name'});
+	return undef;
+    }
+
     my $report = "Table $param->{'table'}, PRIMARY KEY dropped";
     &Log::do_log('info', 'Table %s, PRIMARY KEY dropped', $param->{'table'});
 
@@ -361,14 +448,27 @@ sub set_primary_key {
     my $param = shift;
 
     my $sth;
+
+    ## Give fixed key name if possible.
+    my $key;
+    if ($param->{'table'} =~ /^(.+)_table$/) {
+	$key = sprintf 'CONSTRAINT "ind_%s" PRIMARY KEY', $1;
+    } else {
+	$key = 'PRIMARY KEY';
+    }
+
     my $fields = join ',',@{$param->{'fields'}};
-    &Log::do_log('debug','Setting primary key for table %s (%s)',$param->{'table'},$fields);
-    unless ($sth = $self->do_query("ALTER TABLE %s ADD PRIMARY KEY (%s)",$param->{'table'}, $fields)) {
+    &Log::do_log('debug3','Setting primary key for table %s (%s)',$param->{'table'},$fields);
+    unless ($sth = $self->do_query(
+	q{ALTER TABLE %s ADD %s (%s)},
+	$param->{'table'}, $key, $fields
+    )) {
 	&Log::do_log('err', 'Could not set fields %s as primary key for table %s in database %s', $fields, $param->{'table'}, $self->{'db_name'});
 	return undef;
     }
+
     my $report = "Table $param->{'table'}, PRIMARY KEY set on $fields";
-    &Log::do_log('info', 'Table %s, PRIMARY KEY set on %s', $param->{'table'},$fields);
+    &Log::do_log('info', 'Table %s, PRIMARY KEY set on %s', $param->{'table'}, $fields);
     return $report;
 }
 
@@ -384,7 +484,7 @@ sub get_indexes {
     my $self = shift;
     my $param = shift;
 
-    &Log::do_log('debug','Getting the indexes defined on table %s',$param->{'table'});
+    &Log::do_log('debug3','Getting the indexes defined on table %s',$param->{'table'});
     my %found_indexes;
     my $sth;
     unless ($sth = $self->do_query("SELECT c.oid FROM pg_catalog.pg_class c LEFT JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace WHERE c.relname ~ \'^(%s)$\' AND pg_catalog.pg_table_is_visible(c.oid)",$param->{'table'})) {
@@ -399,14 +499,13 @@ sub get_indexes {
     }
 
     while (my $ref = $sth->fetchrow_hashref('NAME_lc')) {
-	$ref->{'description'} =~ s/CREATE INDEX .* ON .* USING .* \((.*)\)$/\1/i;
+	$ref->{'description'} =~ s/CREATE INDEX .* ON .* USING .* \((.*)\)$/$1/i;
 	$ref->{'description'} =~ s/\s//i;
 	my @index_members = split ',',$ref->{'description'};
 	foreach my $member (@index_members) {
 	    $found_indexes{$ref->{'relname'}}{$member} = 1;
 	}
     }
-    open TMP, ">>/tmp/found_indexes"; print TMP &Dumper(\%found_indexes); close TMP;
     return \%found_indexes;
 }
 
@@ -420,7 +519,7 @@ sub get_indexes {
 sub unset_index {
     my $self = shift;
     my $param = shift;
-    &Log::do_log('debug','Removing index %s from table %s',$param->{'index'},$param->{'table'});
+    &Log::do_log('debug3','Removing index %s from table %s',$param->{'index'},$param->{'table'});
 
     my $sth;
     unless ($sth = $self->do_query("DROP INDEX %s",$param->{'index'})) {
@@ -447,7 +546,7 @@ sub set_index {
 
     my $sth;
     my $fields = join ',',@{$param->{'fields'}};
-    &Log::do_log('debug', 'Setting index %s for table %s using fields %s', $param->{'index_name'},$param->{'table'}, $fields);
+    &Log::do_log('debug3', 'Setting index %s for table %s using fields %s', $param->{'index_name'},$param->{'table'}, $fields);
     unless ($sth = $self->do_query("CREATE INDEX %s ON %s (%s)", $param->{'index_name'},$param->{'table'}, $fields)) {
 	&Log::do_log('err', 'Could not add index %s using field %s for table %s in database %s', $fields, $param->{'table'}, $self->{'db_name'});
 	return undef;
@@ -457,4 +556,18 @@ sub set_index {
     return $report;
 }
 
-return 1;
+## For DOUBLE types.
+sub AS_DOUBLE {
+    return ( { 'pg_type' => DBD::Pg::PG_FLOAT8() } => $_[1] )
+	if scalar @_ > 1;
+    return ();
+}
+
+## For BLOB types.
+sub AS_BLOB {
+    return ( { 'pg_type' => DBD::Pg::PG_BYTEA() } => $_[1] )
+	if scalar @_ > 1;
+    return ();
+}
+
+1;

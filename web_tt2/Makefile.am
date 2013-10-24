@@ -16,8 +16,7 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 webtemplate_DATA = active_lists.tt2 \
 		   add_request.tt2 \
@@ -43,6 +42,7 @@ webtemplate_DATA = active_lists.tt2 \
 		   close_list.tt2 \
 		   compose_mail.tt2 \
 		   copy_template.tt2 \
+		   crash.tt2 \
 		   create_list_request.tt2 \
 		   create_list.tt2 \
 		   css.tt2 \
@@ -137,6 +137,7 @@ webtemplate_DATA = active_lists.tt2 \
 		   show_cert.tt2 \
 		   show_exclude.tt2 \
 		   show_sessions.tt2 \
+		   sigindex.tt2 \
 		   sigrequest.tt2 \
 		   skinsedit.tt2 \
 		   sso_login.tt2 \
@@ -152,13 +153,26 @@ webtemplate_DATA = active_lists.tt2 \
 		   tt2_error.tt2 \
 		   viewbounce.tt2 \
 		   viewlogs.tt2 \
+		   viewspools.tt2 \
+		   viewspool_message.tt2 \
+		   viewspool_message_dump.tt2 \
+		   viewspool_message_remove.tt2 \
+		   viewspool_message_mv.tt2 \
 		   viewmod.tt2 \
 		   view_template.tt2 \
 		   your_lists.tt2
 
-EXTRA_DIST = $(webtemplate_DATA)
+localetemplates = ja_JP/css.tt2 ko_KR/css.tt2 zh_CN/css.tt2 zh_TW/css.tt2
+
+EXTRA_DIST = $(webtemplate_DATA) $(localetemplates)
 
 install-data-hook:
+	for t in $(localetemplates); do \
+	    dir=`dirname $$t`; \
+	    [ -n "$$dir" ] && \
+	    install -d -m 755 $(DESTDIR)$(webtemplatedir)/$$dir; \
+	    $(INSTALL_DATA) $$t $(DESTDIR)$(webtemplatedir)/$$dir; \
+	done
 	cd $(DESTDIR)$(webtemplatedir); \
 	$(LN_S) -f review.tt2 search.tt2; \
 	$(LN_S) -f lists.tt2 which.tt2; \

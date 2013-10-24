@@ -19,19 +19,17 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+use strict;
 use lib '--modulesdir--';
-use wwslib;
-use Sympa::Constants;
-
-$wwsympa_conf_file = Sympa::Constants::WWSCONFIG;
-$sympa_conf_file = Sympa::Constants::CONFIG;
-
-use List;
-use Log;
 use Getopt::Long;
+
+#use wwslib; # no longer used
+#use Sympa::Constants; # used by Conf
+use List;
+#use Log; # used in List - Robot - Site - Conf
+#use SDM; # used by Conf
 
 my %month_idx = qw(jan 1 
 		   fev 2
@@ -58,9 +56,6 @@ my $msg_count = 0;
 #$main::options{'debug'} = 1;
 #$main::options{'debug2'} = 1 if ($main::options{'debug'});
 
-# this line is necessary - without it the new List fails.
-my $pinfo = &List::_apply_defaults();
-
 $| = 1;
 
 my %opt;
@@ -70,7 +65,7 @@ unless (&GetOptions(\%opt, 'input-directory=s')) {
 
 die "Usage : $ARGV[-1] [-input-directory=<directory containing individual messages>] <listname> [robot]" unless ($#ARGV >= 0);
 my $listname = $ARGV[0];
-my $robot = $ARGV[1];
+my $robot_id = $ARGV[1];
 
 ## Check UID
 unless ([getpwuid $<]->[0] eq Sympa::Constants::USER) {
@@ -81,32 +76,24 @@ unless ([getpwuid $<]->[0] eq Sympa::Constants::USER) {
     die unless ($s =~ /^y$/i);
 }
 
-my $wwsconf = {};
-
-## Load config 
-unless ($wwsconf = &wwslib::load_config($wwsympa_conf_file)) {
-    die 'unable to load config file';
-}
-
 ## Load sympa config
-unless (&Conf::load($sympa_conf_file)) {
+unless (Site->load) {
     die 'config_error';
 }
 
-&Upgrade::probe_db();
+SDM::probe_db();
 
-chdir $Conf::Conf{'home'};
+chdir Site->home;
 
-my $list = new List($listname, $robot) 
-    or die 'Cannot create List object';
-
-my $home_sympa;
-if ($robot) {
-    $home_sympa = $Conf::Conf{'home'}.'/'.$robot;
-}else {
-    $home_sympa = $Conf::Conf{'home'};
+my $robot;
+my $list;
+unless ($robot = Robot->new($robot_id || Site->domain) and
+    $list = List->new($listname, $robot)) {
+    die 'Cannot create List object';
 }
-my $dest_dir = $wwsconf->{'arc_path'}.'/'.$list->get_list_id();
+
+my $home_sympa = $robot->home;
+my $dest_dir = $robot->arc_path . '/' . $list->get_id;
 
 unless (-d "$home_sympa/$listname") {
     die "No directory for list $listname";
@@ -119,22 +106,21 @@ unless (-d "$home_sympa/$listname/archives") {
 if (-d $dest_dir) {
     print "Web archives already exist for list $listname\nGo on (<CR>|n) ?";
     my $s = <STDIN>;
-    die if ($s eq 'n');
+    die if $s eq 'n';
 }else {
     mkdir $dest_dir, 0755 or die;
 }
-
 
 if ($opt{'input-directory'}) {
     unless (-d $opt{'input-directory'}) {
 	die "Parameter input-directory (%s) is not a directory", $opt{'input-directory'};
     }
 
-    opendir DIR, $opt{'input-directory'} || die;
+    opendir DIR, $opt{'input-directory'} or die;
     foreach my $file ( sort grep (!/^\.\.?$/,readdir(DIR))) {
 	open ARCFILE, $opt{'input-directory'}.'/'.$file;
 	my @msg = <ARCFILE>;
-	push @msgs, \@msg;
+	#push @msgs, \@msg;
 	$msg_count++;
 	close ARCFILE;
     }
@@ -189,7 +175,7 @@ print STDERR "\nFound $msg_count messages\n";
 
 ## Rebuild web archives
 print STDERR "Rebuilding HTML\n";
-my $list_id = $list->get_list_id();
+my $list_id = $list->get_id;
 `touch $Conf::Conf{'queueoutgoing'}/.rebuild.$list_id`;
 
 print STDERR "\nHave a look in $dest_dir/-/ directory for messages dateless
@@ -216,7 +202,7 @@ sub store_messages {
 		$date = $1;
 		
 		# Date type : Mon, 8 Dec 97 13:33:47 +0100
-		if ($date =~ /^\w{2,3},\s+\d{1,2}\s+([\wéû]{2,3})\s+(\d{2,4})/) {
+		if ($date =~ /^\w{2,3},\s+\d{1,2}\s+([\w\x80-\xFF]{2,3})\s+(\d{2,4})/) { #FIXME
 		    $month = $1;
 		    $year =$2;
 		    #print STDERR "$month/$year\n";
@@ -244,7 +230,8 @@ sub store_messages {
 		
 		# Month format
 		if ($month !~ /^\d+$/) {
-		    $month =~ y/éûA-Z/eua-z/;
+		    $month =~ s/\xe9\xfb/eu/; #FIXME
+		    $month =~ y/A-Z/a-z/;
 		    if (!$month_idx{$month}) {
 			$incorrect = 1;
 		    }else {
@@ -270,7 +257,7 @@ sub store_messages {
 		last;
 	    }
 	}
-	close MSG;
+##	close MSG;
 	# Unknown date format/No date
 	if ($incorrect || ! $month || ! $year) {
 	    $year = 'UN';

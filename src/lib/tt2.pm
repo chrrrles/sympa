@@ -15,8 +15,7 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # TT2 adapter for sympa's template system - Chia-liang Kao <clkao@clkao.org>
 # usage: replace require 'parser.pl' in wwwsympa and other .pl
@@ -24,11 +23,11 @@
 package tt2;
 
 use strict;
-
+use warnings;
 use CGI::Util;
 use MIME::EncWords; 
-
 use Template;
+
 use Log;
 use Language;
 use Sympa::Constants;
@@ -177,6 +176,26 @@ sub wrap {
     };
 }
 
+# IN:
+#    $context: Context.
+#    $type: type of list parameter value: 'reception', 'visibility', 'status'
+#        or others (default).
+#    $withval: if parameter value is added to the description. False by
+#        default.
+# OUT:
+#    Subref to generate i18n'ed description of list parameter value.
+sub optdesc {
+    my ($context, $type, $withval) = @_;
+    return sub {
+	my $x = shift;
+	return undef unless defined $x;
+	return undef unless $x =~ /\S/;
+	$x =~ s/^\s+//;
+	$x =~ s/\s+$//;
+	return List->get_option_title($x, $type, $withval);
+    };
+}
+
 ## To add a directory to the TT2 include_path
 sub add_include_path {
     my $path = shift;
@@ -237,6 +256,7 @@ sub parse_tt2 {
 	    helploc => [\&tt2::maketext, 1],
 	    locdt => [\&tt2::locdatetime, 1],
 	    wrap => [\&tt2::wrap, 1],
+	    optdesc => [\&tt2::optdesc, 1],
 	    qencode => [\&qencode, 0],
  	    escape_xml => [\&escape_xml, 0],
 	    escape_url => [\&escape_url, 0],
@@ -265,10 +285,8 @@ sub parse_tt2 {
 
     unless ($tt2->process($template, $data, $output)) {
 	$last_error = $tt2->error();
-	&Log::do_log('err', 'Failed to parse %s : %s', $template, $tt2->error());
-	&Log::do_log('err', 'Looking for TT2 files in %s', join(',',@{$include_path}));
-
-
+	Log::do_log('err', 'Failed to parse %s : %s', $template, "$last_error");
+	Log::do_log('err', 'Looking for TT2 files in %s', join(',',@{$include_path}));
 	return undef;
     } 
 
