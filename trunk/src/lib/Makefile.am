@@ -12,7 +12,8 @@ nobase_modules_DATA = admin.pm Archive.pm Bulk.pm Commands.pm confdef.pm \
 		      DBManipulatorPostgres.pm DBManipulatorDefault.pm \
 		      listdef.pm moddef.pm Site.pm User.pm BounceMessage.pm \
 		      wwslib.pm cookielib.pm Marc.pm Auth.pm \
-		      Marc/Search.pm SharedDocument.pm SympaSession.pm
+		      Marc/Search.pm SharedDocument.pm SympaSession.pm \
+		      sympasoap.pm SympaTransport.pm
 
 EXTRA_DIST = Sympa/Constants.pm.in $(nobase_modules_DATA)
 CLEANFILES = Sympa/Constants.pm
