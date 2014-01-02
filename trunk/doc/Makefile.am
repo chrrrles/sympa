@@ -23,4 +23,4 @@ SUBDIRS = sample
 ## pdf_DATA requires autoconf 2.60; not available yet
 #pdf_DATA = sympa.pdf
 
-EXTRA_DIST = $(pdf_DATA)
+EXTRA_DIST = $(pdf_DATA) README.charset README.config README.postfix
