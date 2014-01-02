@@ -18,9 +18,15 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-SUBDIRS = sample
+nobase_doc_DATA = sympa.pdf \
+		  sample/README \
+		  sample/trusted_applications.conf \
+		  sample/robot.conf \
+		  sample/employees.ldap \
+		  sample/test/config \
+		  sample/test/info \
+		  sample/test/message.footer \
+		  sample/test/web_tt2/welcome.tt2 \
+		  sample/sampleClient.php
 
-## pdf_DATA requires autoconf 2.60; not available yet
-#pdf_DATA = sympa.pdf
-
-EXTRA_DIST = $(pdf_DATA) README.charset README.config README.postfix
+EXTRA_DIST = $(nobase_doc_DATA) README.charset README.config README.postfix
