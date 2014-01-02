@@ -18,7 +18,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-SUBDIRS = src wwsympa soap web_tt2 mail_tt2 doc po po-wwsympa
+SUBDIRS = src wwsympa soap web_tt2 mail_tt2 doc po po-wwsympa www
 
 EXTRA_DIST = important_changes.pl \
 	     sympa.spec.in \
