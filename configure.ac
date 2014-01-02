@@ -513,7 +513,8 @@ AC_CONFIG_FILES([
     web_tt2/Makefile
     www/Makefile
     mail_tt2/Makefile
-    po/Makefile.in
+    po/Makefile
+    po/sympa/Makefile.in
     po-wwsympa/Makefile.in
     sympa.spec
 ])

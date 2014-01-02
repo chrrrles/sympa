@@ -7,19 +7,20 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2002-07-16 17:27+0800\n"
-"PO-Revision-Date: 2011-07-29 16:30+0200\n"
+"PO-Revision-Date: 2011-03-03 12:22+0200\n"
 "Last-Translator: Anonymous Pootle User\n"
-"Language-Team: Brezhoneg <LL@li.org>\n"
+"Language-Team: العربية\n"
+"Language: ar\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: br\n"
-"Plural-Forms: nplurals=2; plural=n > 1;\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
+"&& n%100<=10 ? 3 : n%100>=11 ? 4 : 5;\n"
 "X-Generator: Pootle 2.1.2\n"
 
 #: ../web_tt2/home.tt2:2
 msgid "Mailing lists server"
-msgstr ""
+msgstr "خادم القوائم البريدية"
 
 #: ../web_tt2/home.tt2:4
 msgid ""
@@ -30,57 +31,65 @@ msgstr ""
 
 #: ../web_tt2/home.tt2:13
 msgid "Mailing lists categories"
-msgstr ""
+msgstr "تصنيفات القوائم البريدية"
 
+# spelling, but also usage
 #: ../web_tt2/home.tt2:23
 msgid "Others"
-msgstr ""
+msgstr "أخرى"
 
+# "feed" as more abstract than a specific technology term
 #: ../web_tt2/home.tt2:48
 msgid "RSS news"
-msgstr ""
+msgstr "تلقيمة"
 
 #. (user.email)
 #: ../web_tt2/login.tt2:3
 msgid "You have logged in with email address %1"
-msgstr ""
+msgstr "لقد ولجت بعنوان البريد %1"
 
+# invalid translation (inverted)
 #: ../web_tt2/main.tt2:27
 msgid "RSS Latest messages"
-msgstr ""
+msgstr "تلقيمة أحدث الرسائل"
 
+# invalid translation (inverted)
 #: ../web_tt2/main.tt2:28
 msgid "RSS Latest documents"
-msgstr ""
+msgstr "تلقيمة أحدث الوثائق"
 
+# invalid translation (inverted)
 #: ../web_tt2/main.tt2:31 ../web_tt2/main.tt2:34
 msgid "RSS Latest lists"
-msgstr ""
+msgstr "تلقيمة أحدث القوائم"
 
+# invalid translation (inverted)
 #: ../web_tt2/main.tt2:32 ../web_tt2/main.tt2:35
 msgid "RSS Active lists"
-msgstr ""
+msgstr "تلقيمة القوائم النشطة"
 
+# spelling, style
 #: ../web_tt2/main.tt2:63
 msgid "Please activate JavaScript in your web browser"
-msgstr ""
+msgstr "فعِّل جافاسكربت في متصفح الإنترنت"
 
 #: ../web_tt2/menu.tt2:7
 msgid "Create list"
-msgstr ""
+msgstr "أنشئ قائمة"
 
 #: ../web_tt2/menu.tt2:12
 msgid "Sympa admin"
-msgstr ""
+msgstr "مدير سيمبا"
 
 #: ../web_tt2/menu.tt2:16
 msgid "List of lists"
-msgstr ""
+msgstr "قائمة القوائم"
 
 #: ../web_tt2/menu.tt2:19
 msgid "Home"
-msgstr ""
+msgstr "الصفحة الأولى"
 
+# spelling
 #: ../web_tt2/arc.tt2:4 ../web_tt2/arc_manage.tt2:4
 #: ../web_tt2/arcsearch_form.tt2:4 ../web_tt2/compose_mail.tt2:12
 #: ../web_tt2/compose_mail.tt2:5 ../web_tt2/create_list_request.tt2:26
@@ -98,60 +107,66 @@ msgstr ""
 #: ../web_tt2/reviewbouncing.tt2:3 ../web_tt2/suboptions.tt2:21
 #: ../web_tt2/suspend_request.tt2:5
 msgid "Help"
-msgstr ""
+msgstr "مساعدة"
 
 #: ../web_tt2/login_menu.tt2:9
 msgid "Restore identity"
-msgstr ""
+msgstr "استرجع المُعرِّف"
 
 #: ../mail_tt2/listmaster_groupednotifications.tt2:2
 #: ../mail_tt2/listmaster_notification.tt2:2 ../web_tt2/login_menu.tt2:13
 msgid "Listmaster"
-msgstr ""
+msgstr "صاحب القائمة"
 
 #: ../web_tt2/login_menu.tt2:14
+#, fuzzy
 msgid "Privileged owner"
-msgstr ""
+msgstr "مالك ذو صلاحيات"
 
 #: ../src/lib/List.pm:349 ../web_tt2/login_menu.tt2:15
 msgid "Owner"
-msgstr ""
+msgstr "مالك"
 
+# should be indefinite
 #: ../web_tt2/login_menu.tt2:16
+#, fuzzy
 msgid "Editor"
-msgstr ""
+msgstr "محرر"
 
 #: ../web_tt2/login_menu.tt2:17
 #, fuzzy
 msgid "Subscriber"
-msgstr "kannadoù nevez"
+msgstr "المشتركون"
 
 #. (last_login_host)
 #: ../web_tt2/login_menu.tt2:21
 msgid "last login from %1"
 msgstr ""
 
+# vague
 #: ../web_tt2/login_menu.tt2:36
 msgid "Logout"
-msgstr ""
+msgstr "اخرج"
 
+# lame
 #: ../web_tt2/login_menu.tt2:43
 msgid "Your preferences"
-msgstr ""
+msgstr "تفضيلاتك"
 
 #: ../web_tt2/suspend_request.tt2:5 ../web_tt2/your_lists.tt2:9
 #, fuzzy
 msgid "Manage your subscriptions"
-msgstr "kannadoù nevez"
+msgstr "إدارة المشتركين"
 
 #: ../web_tt2/lists.tt2:29 ../web_tt2/your_lists.tt2:14
 msgid "admin"
-msgstr ""
+msgstr "المدير"
 
+# style, spelling
 #: ../web_tt2/lists.tt2:73 ../web_tt2/search_user.tt2:77
 #: ../web_tt2/your_lists.tt2:23
 msgid "No mailing list available."
-msgstr ""
+msgstr "لا توجد قوائم بريدية متاحة"
 
 #: ../web_tt2/list_menu.tt2:10
 msgid ""
@@ -160,17 +175,19 @@ msgstr ""
 
 #: ../web_tt2/list_menu.tt2:13
 msgid "Subscriber Options"
-msgstr ""
+msgstr "خيارات المشترك"
 
+# style, spelling
 #. (list)
 #: ../web_tt2/list_menu.tt2:17
 msgid "Do you really want to unsubscribe from list %1?"
-msgstr ""
+msgstr "أتريد حقا إلغاء الاشتراك في قائمة %1?"
 
+# spelling, style
 #: ../web_tt2/list_menu.tt2:17 ../web_tt2/list_menu.tt2:30
 #: ../web_tt2/suspend_request.tt2:57
 msgid "Unsubscribe"
-msgstr ""
+msgstr "ألغِ الاشتراك"
 
 #: ../web_tt2/list_menu.tt2:21
 msgid ""
@@ -181,33 +198,35 @@ msgstr ""
 #. (list)
 #: ../web_tt2/list_menu.tt2:25
 msgid "Do you really want to subscribe to list %1?"
-msgstr ""
+msgstr "أتريد حقا الاشتراك في القائمة %1؟"
 
+# spelling
 #: ../web_tt2/list_menu.tt2:25 ../web_tt2/subrequest.tt2:68
 msgid "Subscribe"
-msgstr ""
+msgstr "اشترك"
 
+# should be indefinite
 #: ../web_tt2/list_menu.tt2:43
 msgid "Info"
-msgstr ""
+msgstr "معلومات"
 
 #: ../web_tt2/list_menu.tt2:47
 msgid "Admin"
-msgstr ""
+msgstr "الادارة"
 
 #: ../web_tt2/admin_menu.tt2:35 ../web_tt2/admin_menu.tt2:41
 #: ../web_tt2/admin_menu.tt2:45 ../web_tt2/list_menu.tt2:49
 msgid "Moderate"
-msgstr ""
+msgstr "إدارة"
 
 #: ../web_tt2/list_menu.tt2:55 ../web_tt2/viewlogs.tt2:91
 msgid "Message"
-msgstr ""
+msgstr "رسالة"
 
 #: ../web_tt2/d_read.tt2:54 ../web_tt2/d_read.tt2:56
 #: ../web_tt2/list_menu.tt2:57
 msgid "Document"
-msgstr ""
+msgstr "الوثيقة"
 
 #: ../web_tt2/list_menu.tt2:62
 msgid "Subscriptions"
@@ -221,87 +240,101 @@ msgstr ""
 msgid "OpenSocial"
 msgstr ""
 
+# should be definite
 #: ../web_tt2/list_menu.tt2:77 ../web_tt2/list_menu.tt2:79
 msgid "Archive"
-msgstr ""
+msgstr "الأرشيف"
 
 #: ../web_tt2/list_menu.tt2:85 ../web_tt2/list_menu.tt2:87
 msgid "Post"
-msgstr ""
+msgstr "أرسل"
 
+# lame
 #: ../web_tt2/list_menu.tt2:91
 msgid "RSS"
-msgstr ""
+msgstr "تلقيمات"
 
 #: ../src/lib/List.pm:876 ../web_tt2/list_menu.tt2:96
 #: ../web_tt2/list_menu.tt2:98
 msgid "Shared documents"
-msgstr ""
+msgstr "وثائق مشتركة"
 
 #: ../web_tt2/list_menu.tt2:104
 msgid "Review members"
-msgstr ""
+msgstr "مطالعة المشتركين"
 
 #: ../web_tt2/list_panel.tt2:7
 msgid "Closed list"
-msgstr ""
+msgstr "قائمة مغلقة"
 
+# spelling
 #: ../web_tt2/list_panel.tt2:9
 msgid "List not yet activated"
-msgstr ""
+msgstr "قائمة لم تُفعَّل بعد"
 
+# should be definite; grammatical case
 #: ../web_tt2/list_panel.tt2:13 ../web_tt2/list_panel.tt2:15
 msgid "Subscribers:"
-msgstr ""
+msgstr "المشتركون:"
 
 #: ../web_tt2/list_panel.tt2:25
+#, fuzzy
 msgid "Error rate:"
-msgstr ""
+msgstr "نسبة الأخطاء : "
 
+# invalid translation
 #: ../web_tt2/get_inactive_lists.tt2:14 ../web_tt2/list_panel.tt2:31
 #: ../web_tt2/list_panel.tt2:33
 msgid "Owners"
-msgstr ""
+msgstr "المالكون"
 
+# translation; spelling; grammatical case
 #: ../src/lib/List.pm:432 ../web_tt2/list_panel.tt2:42
 #: ../web_tt2/list_panel.tt2:45
 msgid "Moderators"
-msgstr ""
+msgstr "المراقبون"
 
 #: ../web_tt2/list_panel.tt2:59
 msgid "Load certificate"
-msgstr ""
+msgstr "حمِّل شهادة"
 
+# spelling; translation
 #: ../web_tt2/list_panel.tt2:61 ../web_tt2/list_panel.tt2:63
 msgid "Contact owners"
-msgstr ""
+msgstr "اتصل بمالك القائمة"
 
 #: ../web_tt2/admin.tt2:4
 msgid "Casual administration"
-msgstr ""
+msgstr "تحكمات عابرة"
 
 #: ../web_tt2/admin.tt2:7
+#, fuzzy
 msgid "Edit list config:"
-msgstr ""
+msgstr "حرر إعدادات القائمة"
 
 #: ../web_tt2/admin.tt2:7
+#, fuzzy
 msgid ""
 "Use it with care: it allows you to modify some of the list parameters. The "
 "list of the parameters you can modify depends on your privileges."
 msgstr ""
+"استخدمه بحرص: يتيح هذا تغيير بعض معاملات القائمة. المعاملات المتاح تغييرها "
+"تعتمد على صلاحياتك."
 
 #: ../web_tt2/admin.tt2:9
+#, fuzzy
 msgid "Customizing: "
-msgstr ""
+msgstr "تطويع"
 
 #: ../web_tt2/admin.tt2:9
+#, fuzzy
 msgid "Editing of various files and messages attached to your list."
-msgstr ""
+msgstr "تحرير ملفات و رسائل مرفقة بالقائمة"
 
 #: ../web_tt2/admin.tt2:10
 #, fuzzy
 msgid "Manage subscribers:"
-msgstr "kannadoù nevez"
+msgstr "إدارة المشتركين"
 
 #: ../web_tt2/admin.tt2:10
 msgid ""
@@ -310,8 +343,9 @@ msgid ""
 msgstr ""
 
 #: ../web_tt2/admin.tt2:12
+#, fuzzy
 msgid "Blacklist:"
-msgstr ""
+msgstr "- القائمة السوداء"
 
 #: ../web_tt2/admin.tt2:12
 msgid "Handles the set of black-listed mail addresses for this list."
@@ -320,41 +354,46 @@ msgstr ""
 #: ../web_tt2/admin.tt2:15
 #, fuzzy
 msgid "Manage archives:"
-msgstr "kannadoù nevez"
+msgstr "القوائم الجديده"
 
 #: ../web_tt2/admin.tt2:15
+#, fuzzy
 msgid "Allows you to download and delete list archives."
-msgstr ""
+msgstr "هل تريد تحميل الملفات المختارة من الأرشيف؟"
 
 #: ../web_tt2/admin.tt2:18
+#, fuzzy
 msgid "Bounces:"
-msgstr ""
+msgstr "الرسائل العائده"
 
 #: ../web_tt2/admin.tt2:18
 msgid "Manages non-delivery reports (also called bounces)."
 msgstr ""
 
 #: ../web_tt2/admin.tt2:21
+#, fuzzy
 msgid "Logs:"
-msgstr ""
+msgstr "سجلات"
 
 #: ../web_tt2/admin.tt2:21
 msgid "A tool for exploring the list logs."
 msgstr ""
 
 #: ../web_tt2/admin.tt2:26
+#, fuzzy
 msgid "Drastic operations"
-msgstr ""
+msgstr "معلومات خاصة "
 
 #: ../web_tt2/admin.tt2:33 ../web_tt2/admin_menu.tt2:117
 #: ../web_tt2/admin_menu.tt2:119
 msgid "Restore List"
-msgstr ""
+msgstr "استعادة قائمة"
 
 #. (list)
 #: ../web_tt2/admin.tt2:33
+#, fuzzy
 msgid "Are you sure you wish to restore list %1?"
-msgstr ""
+msgstr "هل انت متأكد من انك ترغب في اغلاق قائمة 1 ٪؟"
 
 #: ../web_tt2/admin.tt2:33
 msgid ""
@@ -365,12 +404,13 @@ msgstr ""
 #: ../web_tt2/admin.tt2:36 ../web_tt2/admin_menu.tt2:122
 #: ../web_tt2/admin_menu.tt2:124
 msgid "Remove List"
-msgstr ""
+msgstr "ازالة قائمة"
 
 #. (list)
 #: ../web_tt2/admin.tt2:36
+#, fuzzy
 msgid "Are you sure you wish to close list %1?"
-msgstr ""
+msgstr "هل انت متأكد من انك ترغب في اغلاق قائمة 1 ٪؟"
 
 #: ../web_tt2/admin.tt2:36
 msgid ""
@@ -381,7 +421,7 @@ msgstr ""
 #: ../web_tt2/admin.tt2:46 ../web_tt2/admin_menu.tt2:129
 #: ../web_tt2/admin_menu.tt2:131
 msgid "Rename List"
-msgstr ""
+msgstr "اعادة تسمية قائمة"
 
 #: ../web_tt2/admin.tt2:46
 msgid ""
@@ -393,7 +433,7 @@ msgstr ""
 #: ../web_tt2/admin.tt2:59 ../web_tt2/admin_menu.tt2:96
 #: ../web_tt2/admin_menu.tt2:98
 msgid "Create Shared"
-msgstr ""
+msgstr "إنشاء مشترك"
 
 #: ../web_tt2/admin.tt2:59
 msgid "Initializes the shared document web space."
@@ -401,13 +441,13 @@ msgstr ""
 
 #: ../web_tt2/admin.tt2:63 ../web_tt2/admin_menu.tt2:105
 msgid "Delete Shared"
-msgstr ""
+msgstr "حذف المشتركة"
 
 #. (listname)
 #: ../web_tt2/admin.tt2:63
 #, fuzzy
 msgid "Are you sure you wish to delete the shared documents for list %1?"
-msgstr "dielloù diwezhañ rannet"
+msgstr "هل انت متأكد من انك تريد حذف الوثائق المشتركة؟"
 
 #: ../web_tt2/admin.tt2:63
 msgid ""
@@ -416,8 +456,9 @@ msgid ""
 msgstr ""
 
 #: ../web_tt2/admin.tt2:67
+#, fuzzy
 msgid "Restore Shared"
-msgstr ""
+msgstr "استعادة المشتركة"
 
 #: ../web_tt2/admin.tt2:67
 msgid "Restores the previously closed shared document web space."
@@ -426,37 +467,38 @@ msgstr ""
 #. (count)
 #: ../web_tt2/active_lists.tt2:17 ../web_tt2/active_lists.tt2:5
 msgid " The %1 most active lists "
-msgstr "kont"
+msgstr "%1 من القوائم الفعاله"
 
 #: ../web_tt2/active_lists.tt2:7
 msgid " Active lists "
-msgstr "listennoù gustum"
+msgstr "القوائم الفعاله"
 
 #. (for)
 #: ../web_tt2/active_lists.tt2:11 ../web_tt2/active_lists.tt2:17
 #: ../web_tt2/latest_arc.tt2:12 ../web_tt2/latest_d_read.tt2:11
 #: ../web_tt2/latest_lists.tt2:11
 msgid " for %1 days "
-msgstr ""
+msgstr "%1 أيام"
 
 #: ../web_tt2/active_lists.tt2:19
 msgid "List name"
-msgstr ""
+msgstr "إسم القائمة"
 
 #: ../web_tt2/active_lists.tt2:20 ../web_tt2/get_inactive_lists.tt2:11
 #, fuzzy
 msgid "Number of messages"
-msgstr "kannadoù nevez"
+msgstr "# رساله"
 
 #: ../web_tt2/active_lists.tt2:21
+#, fuzzy
 msgid "Average per day"
-msgstr ""
+msgstr "المعدل اليومي"
 
 #: ../web_tt2/active_lists.tt2:22 ../web_tt2/get_biggest_lists.tt2:6
 #: ../web_tt2/get_inactive_lists.tt2:6 ../web_tt2/get_latest_lists.tt2:6
 #: ../web_tt2/latest_lists.tt2:21
 msgid "Creation date"
-msgstr ""
+msgstr "تاريخ الأنشاء"
 
 #: ../web_tt2/active_lists.tt2:23 ../web_tt2/arcsearch_form.tt2:48
 #: ../web_tt2/get_biggest_lists.tt2:8 ../web_tt2/get_inactive_lists.tt2:9
@@ -464,7 +506,7 @@ msgstr ""
 #: ../web_tt2/latest_lists.tt2:22 ../web_tt2/modindex.tt2:38
 #: ../web_tt2/review_family.tt2:9
 msgid "Subject"
-msgstr ""
+msgstr "الموضوع"
 
 #: ../web_tt2/add_request.tt2:7
 msgid "email1@dom1 Name1"
@@ -476,32 +518,32 @@ msgstr ""
 
 #: ../web_tt2/add_request.tt2:12
 msgid "Add subscribers"
-msgstr ""
+msgstr "إضافة مشتركين"
 
 #: ../web_tt2/add_request.tt2:13 ../web_tt2/editsubscriber.tt2:62
 #: ../web_tt2/review.tt2:111 ../web_tt2/review.tt2:145
 #: ../web_tt2/reviewbouncing.tt2:127
 msgid "quiet"
-msgstr ""
+msgstr "بهدوء"
 
 #: ../web_tt2/admin_menu.tt2:4
 msgid "List Administration Panel"
-msgstr ""
+msgstr "لوحة تحكم القائمة الرئيسية"
 
 #: ../web_tt2/admin_menu.tt2:10 ../web_tt2/admin_menu.tt2:16
 #: ../web_tt2/get_biggest_lists.tt2:9
 msgid "Subscribers"
-msgstr ""
+msgstr "المشتركون"
 
 #: ../web_tt2/admin_menu.tt2:24 ../web_tt2/admin_menu.tt2:29
 #: ../web_tt2/lists.tt2:37 ../web_tt2/nav.tt2:64
 msgid "Edit List Config"
-msgstr ""
+msgstr "تعديل مواصفات القائمة"
 
 #: ../web_tt2/admin_menu.tt2:52 ../web_tt2/admin_menu.tt2:58
 #: ../web_tt2/lists.tt2:38 ../web_tt2/nav.tt2:67
 msgid "Customizing"
-msgstr ""
+msgstr "تطويع"
 
 #: ../web_tt2/admin_menu.tt2:67 ../web_tt2/admin_menu.tt2:73
 #: ../web_tt2/nav.tt2:77
@@ -512,55 +554,57 @@ msgstr ""
 #: ../web_tt2/lists.tt2:43 ../web_tt2/nav.tt2:101 ../web_tt2/nav.tt2:81
 #: ../web_tt2/review.tt2:44
 msgid "Bounces"
-msgstr ""
+msgstr "الرسائل العائده"
 
 #: ../web_tt2/admin_menu.tt2:102
 msgid "Restore shared"
-msgstr ""
+msgstr "استعادة المشتركة"
 
 #. (list)
 #: ../web_tt2/admin_menu.tt2:122 ../web_tt2/admin_menu.tt2:124
+#, fuzzy
 msgid "Are you sure you wish to close %1 list?"
-msgstr ""
+msgstr "هل انت متأكد من انك ترغب في اغلاق قائمة 1 ٪؟"
 
 #: ../web_tt2/admin_menu.tt2:139
 msgid "List Definition"
-msgstr ""
+msgstr "تعريفات القائمة"
 
 #: ../web_tt2/admin_menu.tt2:143
 msgid "Sending/Receiving"
-msgstr ""
+msgstr "ارسال / أستقبال"
 
 #: ../web_tt2/admin_menu.tt2:147 ../web_tt2/edit_list_request.tt2:13
 #: ../web_tt2/nav.tt2:97
 msgid "Privileges"
-msgstr ""
+msgstr "امتيازات"
 
 #: ../web_tt2/admin_menu.tt2:151 ../web_tt2/edit_list_request.tt2:14
 #: ../web_tt2/nav.tt2:19 ../web_tt2/nav.tt2:99 ../web_tt2/serveradmin.tt2:110
 msgid "Archives"
-msgstr ""
+msgstr "الأرشيف"
 
 #: ../web_tt2/admin_menu.tt2:155
 msgid "Bounce Settings"
-msgstr ""
+msgstr "تهيئة البريد العائد"
 
 #: ../web_tt2/admin_menu.tt2:160 ../web_tt2/edit_list_request.tt2:17
 #: ../web_tt2/nav.tt2:107
 msgid "Miscellaneous"
-msgstr ""
+msgstr "متنوعة"
 
 #: ../web_tt2/admin_menu.tt2:164
 msgid "Data Source"
-msgstr ""
+msgstr "مصدر البيانات"
 
+# optional
 #: ../web_tt2/admin_menu.tt2:172
 msgid "Attribute optionnal/required"
-msgstr ""
+msgstr "السمة الاختياري / المطلوبة"
 
 #: ../web_tt2/arc_manage.tt2:4
 msgid "Archive Management"
-msgstr ""
+msgstr "إدارة الأرشيف"
 
 #: ../web_tt2/arc.tt2:4 ../web_tt2/arc_manage.tt2:4
 #: ../web_tt2/arcsearch_form.tt2:4 ../web_tt2/compose_mail.tt2:12
@@ -584,140 +628,152 @@ msgstr ""
 #: ../web_tt2/arc_manage.tt2:6
 msgid ""
 "Select below Archives months you want to delete or download (ZiP format):"
-msgstr ""
+msgstr "اختر ادناه المحفوظات و الأشهر التي  تريد حذف او تنزيلها (بشكل مضغوط) :"
 
 #: ../web_tt2/arc_manage.tt2:12
 msgid "Archive Selection:"
-msgstr ""
+msgstr "إختيار الأرشيف"
 
 #: ../web_tt2/arc_manage.tt2:23
 msgid "DownLoad ZipFile"
-msgstr ""
+msgstr "تحميل ملف مضغوط"
 
 #: ../web_tt2/arc_manage.tt2:24
 msgid "Delete Selected Month(s)"
-msgstr ""
+msgstr "احذف الأشهر المختاره"
 
 #: ../web_tt2/arc_manage.tt2:24
 msgid "Do you really want to delete Selected Archives?"
-msgstr ""
+msgstr "هل تريد فعلا حذف المحفوظات؟"
 
 #: ../web_tt2/arc_manage.tt2:24
 msgid "Do you want to DownLoad a Zip of the selected Archives?"
-msgstr ""
+msgstr "هل تريد تحميل الملفات المختارة من الأرشيف؟"
 
 #: ../web_tt2/arc_protect.tt2:7
 msgid "I am not a spammer"
-msgstr ""
+msgstr "أنا لست بمرسل بريد عشوائي"
 
 #: ../web_tt2/arc_protect.tt2:11
 msgid ""
 "This button aims at protecting mailing lists archives against Spam Harvester."
 msgstr ""
+"هذا الزر يهدف الى حمايه أرشيف الرسائل  ضد القوائم البريديه  الاقتحاميه "
+"الحاصده"
 
 #: ../web_tt2/arc.tt2:4 ../web_tt2/arcsearch_form.tt2:3
+#, fuzzy
 msgid "List archive"
-msgstr ""
+msgstr "إسم القائمة"
 
 #: ../web_tt2/arcsearch_form.tt2:4
+#, fuzzy
 msgid "Advanced archive search"
-msgstr ""
+msgstr "بحث متقدم"
 
 #: ../web_tt2/arcsearch.tt2:7 ../web_tt2/arcsearch_form.tt2:12
+#, fuzzy
 msgid "Search field:"
-msgstr ""
+msgstr "حقل البحث:"
 
 #: ../src/etc/mhonarc-ressources.tt2:52 ../web_tt2/arcsearch_form.tt2:16
 #: ../web_tt2/review.tt2:92 ../web_tt2/reviewbouncing.tt2:13
 msgid "Search"
-msgstr ""
+msgstr "بحث"
 
 #: ../web_tt2/arcsearch_form.tt2:19
+#, fuzzy
 msgid "Search:"
-msgstr ""
+msgstr "بحث"
 
 #: ../web_tt2/arcsearch_form.tt2:20
 msgid "this sentence"
-msgstr ""
+msgstr "هذه الجمله"
 
 #: ../web_tt2/arcsearch_form.tt2:21
 msgid "all of these words"
-msgstr ""
+msgstr "جميع هذه الكلمات"
 
 #: ../web_tt2/arcsearch_form.tt2:22
 msgid "one of these words"
-msgstr ""
+msgstr "واحدة من هذه الكلمات"
 
 #: ../web_tt2/arcsearch_form.tt2:25
+#, fuzzy
 msgid "Prefer:"
-msgstr ""
+msgstr "تفضل"
 
 #: ../web_tt2/arcsearch_form.tt2:26
 msgid "newest messages"
-msgstr ""
+msgstr "أحدث رسالة"
 
 #: ../web_tt2/arcsearch_form.tt2:27
 msgid "oldest messages"
-msgstr ""
+msgstr "أقدم رسالة"
 
 #: ../web_tt2/arcsearch_form.tt2:30
+#, fuzzy
 msgid "Case:"
-msgstr ""
+msgstr "حالة"
 
 #: ../web_tt2/arcsearch_form.tt2:31
 msgid "insensitive"
-msgstr ""
+msgstr "غير حساسة"
 
 #: ../web_tt2/arcsearch_form.tt2:32
 msgid "sensitive"
-msgstr ""
+msgstr "حساسة"
 
 #: ../web_tt2/arcsearch_form.tt2:35
+#, fuzzy
 msgid "Check:"
-msgstr ""
+msgstr "فحص"
 
 #: ../web_tt2/arcsearch_form.tt2:36
 msgid "part of word"
-msgstr ""
+msgstr "جزء من كلمة"
 
 #: ../web_tt2/arcsearch_form.tt2:37
 msgid "entire word"
-msgstr ""
+msgstr "كلمة كاملة"
 
 #: ../web_tt2/arcsearch_form.tt2:40
+#, fuzzy
 msgid "Layout:"
-msgstr ""
+msgstr "التخطيط"
 
 #: ../web_tt2/arcsearch_form.tt2:41 ../web_tt2/arcsearch_form.tt2:42
 #: ../web_tt2/arcsearch_form.tt2:43
 msgid "results by page"
-msgstr ""
+msgstr "النتائج حسب الصفحة"
 
 #: ../web_tt2/arcsearch_form.tt2:46
+#, fuzzy
 msgid "Search area:"
-msgstr ""
+msgstr "منطقة البحث"
 
 #: ../web_tt2/arcsearch_form.tt2:47
 msgid "Sender"
-msgstr ""
+msgstr "المرسل"
 
 #: ../web_tt2/arcsearch_form.tt2:49 ../web_tt2/latest_arc.tt2:19
 #: ../web_tt2/modindex.tt2:105 ../web_tt2/modindex.tt2:39
 #: ../web_tt2/subindex.tt2:13 ../web_tt2/viewlogs.tt2:126
 msgid "Date"
-msgstr ""
+msgstr "تاريخ"
 
 #: ../web_tt2/arcsearch_form.tt2:50
 msgid "Body"
-msgstr ""
+msgstr "النص"
 
 #: ../web_tt2/arcsearch_form.tt2:54
+#, fuzzy
 msgid "Extend search field:"
-msgstr ""
+msgstr "تمديد حقل البحث"
 
 #: ../web_tt2/arcsearch.tt2:4
 msgid "Result of your search in the archive"
-msgstr ""
+msgstr "نتيجة البحث في الأرشيف"
 
 #. (key_word)
 #: ../web_tt2/arcsearch.tt2:13
@@ -730,11 +786,11 @@ msgstr ""
 
 #: ../web_tt2/arcsearch.tt2:19
 msgid "(All of these words,"
-msgstr ""
+msgstr "جميع هذه الكلمات"
 
 #: ../web_tt2/arcsearch.tt2:21
 msgid "(Each of these words,"
-msgstr ""
+msgstr "كل واحده من الكلمات"
 
 #: ../web_tt2/arcsearch.tt2:25
 msgid "case insensitive"
@@ -754,11 +810,11 @@ msgstr ""
 
 #: ../web_tt2/arcsearch.tt2:41
 msgid "Newest messages first"
-msgstr ""
+msgstr "أحدث رسائل الاولى"
 
 #: ../web_tt2/arcsearch.tt2:43
 msgid "Oldest messages first"
-msgstr ""
+msgstr "اقدم رسائل الاولى"
 
 #. (body_count)
 #: ../web_tt2/arcsearch.tt2:77
@@ -773,7 +829,7 @@ msgstr ""
 #. (from_count)
 #: ../web_tt2/arcsearch.tt2:85
 msgid " %1 hits on message From field"
-msgstr ""
+msgstr "%1 زيارة على الرساله من حقل الإرسال"
 
 #. (date_count)
 #: ../web_tt2/arcsearch.tt2:89
@@ -782,11 +838,11 @@ msgstr ""
 
 #: ../web_tt2/arcsearch.tt2:131
 msgid "Continue search"
-msgstr ""
+msgstr "تابع البحث"
 
 #: ../web_tt2/arcsearch.tt2:134
 msgid "New search"
-msgstr ""
+msgstr "بحث جديد"
 
 #: ../web_tt2/arcsearch.tt2:139
 msgid ""
@@ -802,7 +858,7 @@ msgstr ""
 #: ../web_tt2/automatic_lists_management_request.tt2:3
 #, fuzzy
 msgid "Automatic lists management"
-msgstr "kannadoù nevez"
+msgstr "إدارة القائمة السوداء"
 
 #. (automatic_lists_description.family_name)
 #: ../web_tt2/automatic_lists_management_request.tt2:4
@@ -816,23 +872,27 @@ msgid ""
 msgstr ""
 
 #: ../web_tt2/automatic_lists_request.tt2:13
+#, fuzzy
 msgid "Go to list"
-msgstr ""
+msgstr "إلى القائمة"
 
 #: ../web_tt2/automatic_lists.tt2:3
 #, fuzzy
 msgid "Automatic lists result"
-msgstr "kannadoù nevez"
+msgstr "أقدم رسالة"
 
+# spelling, style
 #: ../web_tt2/auto_signoff.tt2:1
 #, fuzzy
 msgid "Unsubscription request"
-msgstr "kannadoù nevez"
+msgstr "ألغِ الاشتراك"
 
+# style, spelling
 #. (signing_off_email,list)
 #: ../web_tt2/auto_signoff.tt2:2
+#, fuzzy
 msgid "You clicked a link to unsubscribe the address %1 from list %2."
-msgstr ""
+msgstr "أتريد حقا إلغاء الاشتراك في قائمة %1?"
 
 #. (list)
 #: ../web_tt2/auto_signoff.tt2:3
@@ -843,7 +903,7 @@ msgstr ""
 
 #: ../web_tt2/blacklist.tt2:4
 msgid "Blacklist management"
-msgstr ""
+msgstr "إدارة القائمة السوداء"
 
 #: ../web_tt2/blacklist.tt2:8
 msgid ""
@@ -853,30 +913,32 @@ msgid ""
 msgstr ""
 
 #: ../web_tt2/blacklist.tt2:10
+#, fuzzy
 msgid "Syntax:"
-msgstr ""
+msgstr "التركيب :"
 
 #: ../web_tt2/blacklist.tt2:12
 msgid "only one email or expression by line"
-msgstr ""
+msgstr "بريد او تعبير واحد لكل سطر"
 
 #: ../web_tt2/blacklist.tt2:13
 msgid "char # introduce a comment"
-msgstr ""
+msgstr "# تعني ملاحظة"
 
 #: ../web_tt2/blacklist.tt2:14
+#, fuzzy
 msgid ""
 "char * match any string. Example: \"*@spammer-domain.com\" match any sender "
 "from that exact domain"
-msgstr ""
+msgstr "ممكن استخدام شعار * للتعبير عن مجموعة من الأحرف"
 
 #: ../web_tt2/blacklist.tt2:15
 msgid "only one char * is autorized in a line"
-msgstr ""
+msgstr "مسموح بشعار * واحد فقط لكل سطر"
 
 #: ../web_tt2/blacklist.tt2:20
 msgid "The current blacklist is empty"
-msgstr ""
+msgstr "القائمة السوداء الحالية  فارغه"
 
 #. (rows)
 #: ../web_tt2/blacklist.tt2:22
@@ -886,11 +948,11 @@ msgstr ""
 #: ../web_tt2/blacklist.tt2:38 ../web_tt2/dump_scenario.tt2:37
 #: ../web_tt2/edit_template.tt2:36
 msgid "save"
-msgstr ""
+msgstr "إحفظ"
 
 #: ../web_tt2/blacklist.tt2:40 ../web_tt2/edit_template.tt2:39
 msgid "Template saved"
-msgstr ""
+msgstr "تم حفظ القالب"
 
 #: ../web_tt2/change_email_request.tt2:3
 msgid ""
@@ -910,14 +972,16 @@ msgid "You shoukd check your mailbox now."
 msgstr ""
 
 #: ../web_tt2/change_email.tt2:3
+#, fuzzy
 msgid "You will receive a n email, with a confirmation link."
-msgstr ""
+msgstr "ستستلم بريد ليذكرك بكلمة السر "
 
 #: ../web_tt2/change_email.tt2:4
+#, fuzzy
 msgid ""
 "To confirm your email address change, go to your email account and click on "
 "the provided link"
-msgstr ""
+msgstr "لتأكيد تغيير بريدك يرجى ادخال كلمة السر التي استلمتها"
 
 #: ../web_tt2/choosepasswd.tt2:4
 msgid ""
@@ -926,17 +990,19 @@ msgid ""
 msgstr ""
 
 #: ../web_tt2/choosepasswd.tt2:11 ../web_tt2/pref.tt2:42
+#, fuzzy
 msgid "New password:"
-msgstr ""
+msgstr "كلمة السر الجديدة"
 
 #: ../web_tt2/choosepasswd.tt2:12
+#, fuzzy
 msgid "New password again:"
-msgstr ""
+msgstr "تأكيد كلمة السر الجديدة"
 
 #: ../web_tt2/choosepasswd.tt2:13 ../web_tt2/picture_upload.tt2:13
 #: ../web_tt2/pref.tt2:20 ../web_tt2/pref.tt2:44
 msgid "Submit"
-msgstr ""
+msgstr "إرسال"
 
 #: ../web_tt2/close_list.tt2:4
 msgid ""
@@ -946,20 +1012,27 @@ msgstr ""
 
 #: ../web_tt2/close_list.tt2:7
 msgid "List aliases have been removed."
-msgstr ""
+msgstr "تم إلغاء الأسماء البديلة للقائمة"
 
 #: ../web_tt2/close_list.tt2:9
 msgid "You should remove list aliases manually"
-msgstr ""
+msgstr "يجب ازالة معرفات القائمة يدويا"
 
 #: ../web_tt2/compose_mail.tt2:5
 #, fuzzy
 msgid "Sending a message to the list"
-msgstr "kannadoù nevez"
+msgstr ""
+"\n"
+"أو ارسل بريد  إلى 1%  بالعنوان التالي \n"
+"AUTH %2 DEL %3 %4\n"
 
 #: ../web_tt2/compose_mail.tt2:12
+#, fuzzy
 msgid "Sending an html page to the list "
 msgstr ""
+"\n"
+"أو ارسل بريد  إلى 1%  بالعنوان التالي \n"
+"AUTH %2 DEL %3 %4\n"
 
 #. (user.email)
 #. (from)
@@ -976,25 +1049,27 @@ msgstr ""
 #: ../web_tt2/install_pending_list.tt2:14
 #: ../web_tt2/set_pending_list_request.tt2:8
 msgid "Subject:"
-msgstr ""
+msgstr "الموضوع"
 
 #: ../web_tt2/compose_mail.tt2:26
+#, fuzzy
 msgid "Send to selected receipient"
-msgstr ""
+msgstr "إنشاء القائمة"
 
 #: ../web_tt2/compose_mail.tt2:27
 #, fuzzy
 msgid "Send to me"
-msgstr "kannadoù nevez"
+msgstr "رسالة تذكيرية"
 
 #: ../web_tt2/compose_mail.tt2:47 ../web_tt2/modform.tt2:10
 #: ../web_tt2/viewmod.tt2:31
 msgid "This list is configured to require topic(s)."
-msgstr ""
+msgstr "هذه القائمة تتطلب تعيين موضوع "
 
 #: ../web_tt2/compose_mail.tt2:49
+#, fuzzy
 msgid "Please select one or more topic(s) that corresponds to your message:"
-msgstr ""
+msgstr "الرجاء اختيار الموضوع المتناسب مع رسالتك"
 
 #: ../web_tt2/compose_mail.tt2:64
 msgid "Messages customization: use the template syntax:"
@@ -1004,17 +1079,21 @@ msgstr ""
 msgid "Below are some examples of TT2 parameters usable in messages."
 msgstr ""
 
+# style, spelling
 #: ../web_tt2/compose_mail.tt2:67
+#, fuzzy
 msgid ": the listname; always available."
-msgstr ""
+msgstr "لا توجد قوائم بريدية متاحة"
 
 #: ../web_tt2/compose_mail.tt2:68
 msgid ": the name of the host the list is intalled on; always available."
 msgstr ""
 
+# style, spelling
 #: ../web_tt2/compose_mail.tt2:69
+#, fuzzy
 msgid ": the user email; always available."
-msgstr ""
+msgstr "لا توجد قوائم بريدية متاحة"
 
 #: ../web_tt2/compose_mail.tt2:70
 msgid ": the user name associated to her email; always available."
@@ -1060,15 +1139,16 @@ msgstr ""
 
 #: ../web_tt2/copy_template.tt2:3
 msgid "Copying template"
-msgstr ""
+msgstr "يتم نسخ القالب"
 
 #: ../web_tt2/copy_template.tt2:7
 msgid "Input template"
-msgstr ""
+msgstr "قالب الإدخال"
 
 #: ../web_tt2/copy_template.tt2:8
+#, fuzzy
 msgid "Name: "
-msgstr ""
+msgstr "الأسم"
 
 #: ../web_tt2/copy_template.tt2:10 ../web_tt2/copy_template.tt2:17
 #: ../web_tt2/copy_template.tt2:9 ../web_tt2/view_template.tt2:10
@@ -1076,8 +1156,9 @@ msgid "Scope: "
 msgstr ""
 
 #: ../web_tt2/copy_template.tt2:11 ../web_tt2/copy_template.tt2:23
+#, fuzzy
 msgid "Language: "
-msgstr ""
+msgstr "اللغة:_"
 
 #: ../web_tt2/copy_template.tt2:15
 msgid "Output template"
@@ -1086,7 +1167,7 @@ msgstr ""
 #: ../web_tt2/copy_template.tt2:16
 #, fuzzy
 msgid "New template name: "
-msgstr "kannadoù nevez"
+msgstr "اسم القالب"
 
 #: ../web_tt2/copy_template.tt2:19 ../web_tt2/ls_templates.tt2:41
 msgid "site"
@@ -1098,7 +1179,7 @@ msgstr ""
 
 #: ../web_tt2/copy_template.tt2:21 ../web_tt2/search_user.tt2:9
 msgid "list"
-msgstr ""
+msgstr "القائمة"
 
 #: ../web_tt2/copy_template.tt2:25 ../web_tt2/edit_config.tt2:17
 #: ../web_tt2/edit_list_request.tt2:410
@@ -1106,12 +1187,13 @@ msgid "default"
 msgstr ""
 
 #: ../web_tt2/copy_template.tt2:31
+#, fuzzy
 msgid "Enter list name: "
-msgstr ""
+msgstr "أدخل إسم القائمة"
 
 #: ../web_tt2/copy_template.tt2:43 ../web_tt2/d_properties.tt2:36
 msgid "Apply"
-msgstr ""
+msgstr "تطبيق"
 
 #: ../web_tt2/create_list_request.tt2:6 ../web_tt2/nav.tt2:5
 msgid "Copy an existing list."
@@ -1139,8 +1221,9 @@ msgid "copy list configuration"
 msgstr ""
 
 #: ../web_tt2/create_list_request.tt2:26 ../web_tt2/nav.tt2:6
+#, fuzzy
 msgid "Create a list using a template"
-msgstr ""
+msgstr "تحديد قوالب الموقع"
 
 #: ../web_tt2/create_list_request.tt2:28
 msgid ""
@@ -1155,7 +1238,7 @@ msgstr ""
 
 #: ../web_tt2/create_list_request.tt2:34
 msgid "List name:"
-msgstr ""
+msgstr "إسم القائمة:"
 
 #: ../web_tt2/create_list_request.tt2:38
 msgid "You are the privileged owner of this list"
@@ -1172,8 +1255,9 @@ msgid ""
 msgstr ""
 
 #: ../web_tt2/create_list_request.tt2:43
+#, fuzzy
 msgid "List type:"
-msgstr ""
+msgstr "نوع القائمة:"
 
 #: ../web_tt2/create_list_request.tt2:68
 msgid "The list's subject"
@@ -1181,7 +1265,7 @@ msgstr ""
 
 #: ../web_tt2/create_list_request.tt2:73
 msgid "List classification in the directory"
-msgstr ""
+msgstr "تصنيف القائمة في الدليل"
 
 #: ../web_tt2/create_list_request.tt2:74
 msgid "Topics:"
@@ -1189,7 +1273,7 @@ msgstr ""
 
 #: ../web_tt2/create_list_request.tt2:76
 msgid "--Select a topic--"
-msgstr ""
+msgstr "-- اختر موضوع --"
 
 #: ../web_tt2/create_list_request.tt2:93
 msgid "Other"
@@ -1240,21 +1324,24 @@ msgstr ""
 #. (doc_owner)
 #: ../web_tt2/d_control.tt2:9 ../web_tt2/d_editfile.tt2:17
 #: ../web_tt2/d_properties.tt2:15 ../web_tt2/d_read.tt2:38
+#, fuzzy
 msgid "Owner: %1"
-msgstr ""
+msgstr "مالك"
 
 #. (doc_date)
 #: ../web_tt2/d_control.tt2:10 ../web_tt2/d_editfile.tt2:18
 #: ../web_tt2/d_properties.tt2:16 ../web_tt2/d_read.tt2:39
+#, fuzzy
 msgid "Last update: %1"
-msgstr ""
+msgstr "أخر تحديث:"
 
 #. (doc_title)
 #. (desc)
 #: ../web_tt2/d_control.tt2:11 ../web_tt2/d_editfile.tt2:19
 #: ../web_tt2/d_properties.tt2:17 ../web_tt2/d_read.tt2:41
+#, fuzzy
 msgid "Description: %1"
-msgstr ""
+msgstr "وصف القائمة"
 
 #: ../web_tt2/d_control.tt2:17
 msgid "Read access"
@@ -1262,7 +1349,7 @@ msgstr ""
 
 #: ../web_tt2/d_control.tt2:26
 msgid "Edit access"
-msgstr ""
+msgstr "تعديل الصلاحيات"
 
 #: ../web_tt2/d_control.tt2:37
 msgid "change access"
@@ -1289,7 +1376,7 @@ msgstr ""
 
 #: ../web_tt2/d_editfile.tt2:30
 msgid "Bookmark URL"
-msgstr ""
+msgstr "علامة رابط"
 
 #. (visible_path)
 #: ../web_tt2/d_editfile.tt2:33
@@ -1313,18 +1400,18 @@ msgstr ""
 
 #: ../web_tt2/d_install_shared.tt2:10
 msgid ""
-"already exist(s), do you want to confirm the install and erase the old file"
-"(s) or cancel the install?"
+"already exist(s), do you want to confirm the install and erase the old "
+"file(s) or cancel the install?"
 msgstr ""
 
 #: ../web_tt2/d_install_shared.tt2:12
 msgid "Confirm"
-msgstr ""
+msgstr "تأكيد"
 
 #: ../web_tt2/d_install_shared.tt2:13 ../web_tt2/d_upload.tt2:16
 #: ../web_tt2/manage_template.tt2:67
 msgid "Cancel"
-msgstr ""
+msgstr "إلغاء"
 
 #. (visible_path)
 #: ../web_tt2/d_properties.tt2:6
@@ -1375,12 +1462,13 @@ msgstr ""
 
 #: ../web_tt2/d_read.tt2:22 ../web_tt2/d_read.tt2:50
 msgid "Listing of folder"
-msgstr ""
+msgstr "سرد الأدلة"
 
 #. (visible_path)
 #: ../web_tt2/d_read.tt2:27
+#, fuzzy
 msgid "Do you really want to delete %1?"
-msgstr ""
+msgstr "هل فعلا تريد إلغاء هذه الرسالة ؟"
 
 #: ../web_tt2/d_read.tt2:116 ../web_tt2/d_read.tt2:118
 #: ../web_tt2/d_read.tt2:253 ../web_tt2/d_read.tt2:255
@@ -1392,7 +1480,7 @@ msgstr ""
 #: ../web_tt2/d_read.tt2:277 ../web_tt2/d_read.tt2:279
 #: ../web_tt2/d_read.tt2:28
 msgid "properties"
-msgstr ""
+msgstr "خصائص"
 
 #: ../web_tt2/d_read.tt2:129 ../web_tt2/d_read.tt2:131
 #: ../web_tt2/d_read.tt2:265 ../web_tt2/d_read.tt2:267
@@ -1402,13 +1490,13 @@ msgstr ""
 
 #: ../web_tt2/d_read.tt2:47
 msgid "Listing of root folder"
-msgstr ""
+msgstr "سرد الدليل الرئيسي"
 
 #: ../web_tt2/d_read.tt2:59 ../web_tt2/d_read.tt2:61
 #: ../web_tt2/latest_d_read.tt2:20 ../web_tt2/modindex.tt2:106
 #: ../web_tt2/modindex.tt2:37
 msgid "Author"
-msgstr ""
+msgstr "المؤلف"
 
 #: ../web_tt2/d_read.tt2:64 ../web_tt2/d_read.tt2:66
 msgid "Size (Kb)"
@@ -1417,7 +1505,7 @@ msgstr ""
 #: ../web_tt2/d_read.tt2:69 ../web_tt2/d_read.tt2:71
 #: ../web_tt2/latest_d_read.tt2:18 ../web_tt2/subscriber_table.tt2:66
 msgid "Last update"
-msgstr ""
+msgstr "أخر تحديث"
 
 #: ../web_tt2/d_read.tt2:75 ../web_tt2/editfile.tt2:29
 #: ../web_tt2/editfile.tt2:30 ../web_tt2/editfile.tt2:34
@@ -1428,7 +1516,7 @@ msgstr ""
 #: ../web_tt2/manage_template.tt2:56 ../web_tt2/serveradmin.tt2:150
 #: ../web_tt2/serveradmin.tt2:163
 msgid "Edit"
-msgstr ""
+msgstr "تعديل"
 
 #: ../web_tt2/d_read.tt2:76 ../web_tt2/d_upload.tt2:7
 #: ../web_tt2/manage_template.tt2:38 ../web_tt2/picture_upload.tt2:14
@@ -1449,7 +1537,7 @@ msgstr ""
 
 #: ../web_tt2/d_read.tt2:87
 msgid "Empty folder"
-msgstr ""
+msgstr "دليل فارغ"
 
 #: ../web_tt2/d_read.tt2:103 ../web_tt2/d_read.tt2:218
 #: ../web_tt2/latest_d_read.tt2:42
@@ -1458,12 +1546,13 @@ msgstr ""
 
 #. (visible_path,s.doc)
 #: ../web_tt2/d_read.tt2:116 ../web_tt2/d_read.tt2:118
+#, fuzzy
 msgid "Do you really want to delete %1%2?"
-msgstr ""
+msgstr "هل فعلا تريد إلغاء هذه الرسالة ؟"
 
 #: ../web_tt2/d_read.tt2:211
 msgid "to moderate"
-msgstr ""
+msgstr "إلى التحرير"
 
 #: ../web_tt2/d_read.tt2:246 ../web_tt2/d_read.tt2:248
 #: ../web_tt2/ls_templates.tt2:103 ../web_tt2/ls_templates.tt2:125
@@ -1473,8 +1562,9 @@ msgstr ""
 
 #. (visible_path,f.doc,f.size)
 #: ../web_tt2/d_read.tt2:253 ../web_tt2/d_read.tt2:255
+#, fuzzy
 msgid "Do you really want to delete %1%2 (%3 Kb)?"
-msgstr ""
+msgstr "هل فعلا تريد إلغاء هذه الرسالة ؟"
 
 #: ../web_tt2/d_read.tt2:290
 msgid "moderate"
@@ -1487,31 +1577,31 @@ msgstr ""
 
 #: ../web_tt2/d_read.tt2:316
 msgid "Create a new folder inside root folder"
-msgstr ""
+msgstr "إنشاء دليل جديد داخل دليل رئيسي"
 
 #: ../web_tt2/d_read.tt2:319
 msgid "Folder name"
-msgstr ""
+msgstr "إسم الدليل"
 
 #: ../web_tt2/d_read.tt2:320 ../web_tt2/d_read.tt2:336
 msgid "Create"
-msgstr ""
+msgstr "إنشاء"
 
 #: ../web_tt2/d_read.tt2:334
 msgid "Create a new file"
-msgstr ""
+msgstr "إنشاء ملف جديد"
 
 #: ../web_tt2/d_read.tt2:335
 msgid "File name"
-msgstr ""
+msgstr "إسم الملف"
 
 #: ../web_tt2/d_read.tt2:349
 msgid "Add a bookmark"
-msgstr ""
+msgstr "إضافة علامه"
 
 #: ../web_tt2/d_read.tt2:350
 msgid "title"
-msgstr ""
+msgstr "العنوان"
 
 #: ../web_tt2/d_read.tt2:351
 msgid "URL"
@@ -1519,7 +1609,7 @@ msgstr ""
 
 #: ../web_tt2/d_read.tt2:352 ../web_tt2/review.tt2:75
 msgid "Add"
-msgstr ""
+msgstr "أضافه"
 
 #. (visible_path)
 #: ../web_tt2/d_read.tt2:366
@@ -1572,8 +1662,9 @@ msgid "list %1"
 msgstr ""
 
 #: ../web_tt2/dump_scenario.tt2:36
+#, fuzzy
 msgid "scenario name:"
-msgstr ""
+msgstr "اسم السيناريو"
 
 #. (shortname)
 #: ../web_tt2/d_upload.tt2:2
@@ -1582,21 +1673,25 @@ msgstr ""
 
 #. (shortname)
 #: ../web_tt2/d_upload.tt2:6
+#, fuzzy
 msgid "Do you want to delete the old file %1?"
-msgstr ""
+msgstr "هل تريد إلغاء التحميل؟"
 
 #. (shortname)
 #: ../web_tt2/d_upload.tt2:9
+#, fuzzy
 msgid "Do you want to rename your file %1?"
-msgstr ""
+msgstr "هل أنت متأكد من تغيير إسم القائمة؟"
 
 #: ../web_tt2/d_upload.tt2:15
+#, fuzzy
 msgid "Do you want to cancel the upload?"
-msgstr ""
+msgstr "هل تريد إلغاء التحميل؟"
 
 #: ../web_tt2/edit_attributes.tt2:4 ../web_tt2/subindex.tt2:14
+#, fuzzy
 msgid "Additional information"
-msgstr ""
+msgstr "معلومات خاصة "
 
 #. (k.name)
 #: ../web_tt2/edit_attributes.tt2:7
@@ -1608,33 +1703,37 @@ msgid "*: Required element"
 msgstr ""
 
 #: ../web_tt2/edit_config.tt2:2
+#, fuzzy
 msgid "Edit robot config"
-msgstr ""
+msgstr "حرر إعدادات القائمة"
 
 #: ../web_tt2/edit_config.tt2:17
 #, fuzzy
 msgid "parameter name"
-msgstr "kannadoù nevez"
+msgstr "خطأ من السيرفير"
 
 #: ../src/lib/List.pm:710 ../web_tt2/edit_config.tt2:17
 msgid "value"
-msgstr ""
+msgstr "قيمة"
 
 #: ../web_tt2/edit_config.tt2:17
+#, fuzzy
 msgid "apply to"
-msgstr ""
+msgstr "تطبيق"
 
 #: ../web_tt2/edit_config.tt2:35 ../web_tt2/serveradmin.tt2:214
 msgid "Set"
 msgstr ""
 
 #: ../web_tt2/edit_config.tt2:51
+#, fuzzy
 msgid "main conf"
-msgstr ""
+msgstr "حرر إعدادات القائمة"
 
 #: ../web_tt2/editfile.tt2:4
+#, fuzzy
 msgid "Edit list templates"
-msgstr ""
+msgstr "تحديد قوالب الموقع"
 
 #: ../web_tt2/editfile.tt2:14
 msgid "Save"
@@ -1655,15 +1754,19 @@ msgid ""
 msgstr ""
 
 #: ../web_tt2/editfile.tt2:30
+#, fuzzy
 msgid ""
 "List description: This text is sent as an answer to the mail command INFO. "
 "It can also be included in the <em>Welcome message</em>."
 msgstr ""
+"صفة القائمة : هذا النص ارسل كإجابة على الأمر البريدي \n"
+"INFO \n"
+"من الممكن شمله مع"
 
 #: ../web_tt2/editfile.tt2:32
 #, fuzzy
 msgid "Automatic messages"
-msgstr "kannadoù nevez"
+msgstr "أقدم رسالة"
 
 #: ../web_tt2/editfile.tt2:34
 msgid ""
@@ -1709,8 +1812,9 @@ msgid ""
 msgstr ""
 
 #: ../web_tt2/editfile.tt2:46
+#, fuzzy
 msgid "More"
-msgstr ""
+msgstr "إدارة"
 
 #: ../web_tt2/editfile.tt2:48
 msgid "Unsubscribe message: This message is sent when users leave the list."
@@ -1724,8 +1828,9 @@ msgid ""
 msgstr ""
 
 #: ../web_tt2/edit_list_request.tt2:4
+#, fuzzy
 msgid "Configuring the list"
-msgstr ""
+msgstr "إنشاء القائمة"
 
 #: ../web_tt2/edit_list_request.tt2:8
 msgid "You can choose below a subset of parameters to edit:"
@@ -1733,7 +1838,7 @@ msgstr ""
 
 #: ../web_tt2/edit_list_request.tt2:11 ../web_tt2/nav.tt2:95
 msgid "List definition"
-msgstr ""
+msgstr "تعريفات القائمة"
 
 #: ../web_tt2/edit_list_request.tt2:12 ../web_tt2/nav.tt2:96
 msgid "Sending/receiving setup"
@@ -1741,11 +1846,11 @@ msgstr ""
 
 #: ../web_tt2/edit_list_request.tt2:15 ../web_tt2/viewlogs.tt2:89
 msgid "Bounce management"
-msgstr ""
+msgstr "إدارة البريد العائد"
 
 #: ../web_tt2/edit_list_request.tt2:16 ../web_tt2/nav.tt2:103
 msgid "Data sources setup"
-msgstr ""
+msgstr "تجهيز مصادر البيانات"
 
 #: ../web_tt2/edit_list_request.tt2:36
 msgid "scenario source"
@@ -1768,33 +1873,40 @@ msgid "Subscriber information"
 msgstr ""
 
 #: ../web_tt2/editsubscriber.tt2:10 ../web_tt2/pref.tt2:9
+#, fuzzy
 msgid "Email:"
-msgstr ""
+msgstr "البريد الألكتروني :"
 
 #: ../web_tt2/editsubscriber.tt2:12 ../web_tt2/pref.tt2:10
 #: ../web_tt2/suboptions.tt2:8
+#, fuzzy
 msgid "Name:"
-msgstr ""
+msgstr "الأسم"
 
+# should be definite; grammatical case
 #: ../web_tt2/editsubscriber.tt2:18
+#, fuzzy
 msgid "Subscribed since:"
-msgstr ""
+msgstr "المشتركون:"
 
 #: ../web_tt2/editsubscriber.tt2:19 ../web_tt2/suboptions.tt2:11
 msgid "Last update:"
-msgstr ""
+msgstr "أخر تحديث:"
 
 #: ../web_tt2/editsubscriber.tt2:20
+#, fuzzy
 msgid "Receiving:"
-msgstr ""
+msgstr "ارسال / أستقبال"
 
 #: ../web_tt2/editsubscriber.tt2:27 ../web_tt2/suboptions.tt2:56
+#, fuzzy
 msgid "Visibility:"
-msgstr ""
+msgstr "الرؤيه"
 
 #: ../web_tt2/editsubscriber.tt2:34 ../web_tt2/pref.tt2:11
+#, fuzzy
 msgid "Language:"
-msgstr ""
+msgstr "اللغة:"
 
 #: ../web_tt2/editsubscriber.tt2:36
 msgid "Picture:"
@@ -1802,7 +1914,7 @@ msgstr ""
 
 #: ../web_tt2/editsubscriber.tt2:41
 msgid "Changing your picture for this list"
-msgstr ""
+msgstr "تغيير صورتك لهذه القائمة"
 
 #: ../web_tt2/editsubscriber.tt2:61
 msgid "Unsubscribe the User"
@@ -1810,19 +1922,20 @@ msgstr ""
 
 #: ../web_tt2/editsubscriber.tt2:67
 msgid "Bouncing address"
-msgstr ""
+msgstr "العناوين العائده"
 
 #: ../web_tt2/editsubscriber.tt2:71
 msgid "Address detected via VERP technology"
-msgstr ""
+msgstr "العنوان تم فحصه بواسطة تقنية VERP"
 
 #: ../web_tt2/editsubscriber.tt2:73
 msgid "Status:"
 msgstr ""
 
 #: ../web_tt2/editsubscriber.tt2:74
+#, fuzzy
 msgid "Bounce count:"
-msgstr ""
+msgstr "عدد البريد العائد : "
 
 #: ../web_tt2/editsubscriber.tt2:75
 msgid "Period:"
@@ -1849,7 +1962,7 @@ msgstr ""
 #: ../web_tt2/edit_template.tt2:6
 #, fuzzy
 msgid "Template name:"
-msgstr "kannadoù nevez"
+msgstr "اسم القالب"
 
 #: ../web_tt2/edit_template.tt2:7
 msgid "Type:"
@@ -1882,8 +1995,9 @@ msgid ""
 msgstr ""
 
 #: ../web_tt2/edit_template.tt2:19
+#, fuzzy
 msgid "language: "
-msgstr ""
+msgstr "اللغة:"
 
 #: ../web_tt2/edit_template.tt2:19
 msgid ""
@@ -1908,23 +2022,24 @@ msgstr ""
 
 #: ../mail_tt2/listmaster_notification.tt2:342 ../web_tt2/error.tt2:12
 msgid "Unable to load list topics."
-msgstr ""
+msgstr "لا يمكن تحميل مواضيع القائمة"
 
 #: ../mail_tt2/listmaster_notification.tt2:343 ../web_tt2/error.tt2:13
 msgid "Unable to load create_list templates."
-msgstr ""
+msgstr "لا يمكن تحميل قوالب انشاء القائمة"
 
 #: ../web_tt2/error.tt2:14
+#, fuzzy
 msgid "Failed to include members"
-msgstr ""
+msgstr "فشل شمل المشتركين"
 
 #: ../web_tt2/error.tt2:15
 msgid "Failed to include list admins"
-msgstr ""
+msgstr "فشل شمل مديري القائمة"
 
 #: ../web_tt2/error.tt2:16
 msgid "No owner is defined for the list"
-msgstr ""
+msgstr "لايوجد تعريف لمدير القائمة"
 
 #. (i_err.listname)
 #: ../web_tt2/error.tt2:17
@@ -1949,21 +2064,21 @@ msgstr ""
 #. (zipfile)
 #: ../mail_tt2/listmaster_notification.tt2:364 ../web_tt2/error.tt2:21
 msgid "File not found."
-msgstr ""
+msgstr "ملف غير موجود"
 
 #: ../web_tt2/error.tt2:22
 msgid "Database error."
-msgstr ""
+msgstr "خطأ من قاعدة البيانات"
 
 #. (i_err.key)
 #: ../web_tt2/error.tt2:23
 msgid "Failed to update database."
-msgstr ""
+msgstr "فشل تحديث قاعدة البيانات"
 
 #. (i_err.key)
 #: ../web_tt2/error.tt2:24
 msgid "Failed to update a file."
-msgstr ""
+msgstr "فشل تحديث ملف"
 
 #. (i_err.listname)
 #: ../web_tt2/error.tt2:25
@@ -1984,11 +2099,11 @@ msgstr ""
 
 #: ../web_tt2/error.tt2:45
 msgid "Wrong parameters"
-msgstr ""
+msgstr "مدخل خطأ"
 
 #: ../web_tt2/error.tt2:46
 msgid "Unknown action"
-msgstr ""
+msgstr "طلب غير معرف"
 
 #. (u_err.params)
 #: ../web_tt2/error.tt2:47
@@ -2059,27 +2174,28 @@ msgstr ""
 
 #: ../web_tt2/error.tt2:61
 msgid "Provided password is incorrect"
-msgstr ""
+msgstr "كلمة السر غير صحيحة"
 
 #: ../web_tt2/error.tt2:62
 msgid ""
 "You did not choose a password, request a reminder of the initial password"
-msgstr ""
+msgstr "لم يتم تحديد كلمة السرالرجاء طلب تذكير لكلمة سر"
 
 #: ../web_tt2/error.tt2:63
 msgid ""
 "Your password is stored in an LDAP directory, therefore Sympa cannot post "
 "you a reminder"
 msgstr ""
+"كلمة السر الخاصة بك موجودة في دليل LDAPسيمبا لا يمكنها ارسال تذكير بكلمة السر"
 
 #. (u_err.nb_days)
 #: ../web_tt2/error.tt2:64
 msgid "The period is too long (%1 days)"
-msgstr ""
+msgstr "الفترة طويله(%1 أيام)"
 
 #: ../web_tt2/error.tt2:65 ../web_tt2/subscriber_table.tt2:170
 msgid "List has no subscribers"
-msgstr ""
+msgstr "لا يوجد مشتركين بالقائمة"
 
 #. (u_err.page)
 #: ../web_tt2/error.tt2:66
@@ -2088,7 +2204,7 @@ msgstr ""
 
 #: ../web_tt2/error.tt2:67
 msgid "Missing filter"
-msgstr ""
+msgstr "فلتر مفقود"
 
 #. (u_err.email)
 #: ../web_tt2/error.tt2:69
@@ -2102,7 +2218,7 @@ msgstr ""
 
 #: ../web_tt2/error.tt2:72
 msgid "Check the additional information"
-msgstr ""
+msgstr "راجع المعلومات الأضافية"
 
 #. (u_err.reception_mode)
 #: ../web_tt2/error.tt2:73
@@ -2126,11 +2242,11 @@ msgstr ""
 
 #: ../web_tt2/error.tt2:77
 msgid "Please provide your password"
-msgstr ""
+msgstr "الرجاء تزويد كلمة السر الخاصة بك"
 
 #: ../web_tt2/error.tt2:78
 msgid "The passwords you typed do not match"
-msgstr ""
+msgstr "كلمات السر المدخلة غير متطابقه"
 
 #. (u_err.tpl)
 #: ../web_tt2/error.tt2:79
@@ -2144,24 +2260,25 @@ msgstr ""
 
 #: ../web_tt2/error.tt2:81
 msgid "You need to provide list name"
-msgstr ""
+msgstr "يجب ادخال اسم للقائمة"
 
 #: ../web_tt2/error.tt2:82
+#, fuzzy
 msgid ""
 "Failed to moderate a message; it was probably moderated by another moderator"
-msgstr ""
+msgstr "فشل التحكم في الرسالة , غالبا تم التحكم بها من قبل مسؤول أخر"
 
 #: ../web_tt2/error.tt2:83
 msgid "Tagging message is required for this list"
-msgstr ""
+msgstr "تعليم الرساله مطلوب لهذه القائمة"
 
 #: ../web_tt2/error.tt2:84
 msgid "Archives are empty for this list"
-msgstr ""
+msgstr "الأرشيف فارغ لهذه القائمة"
 
 #: ../web_tt2/error.tt2:85
 msgid "You did not select an action to perform"
-msgstr ""
+msgstr "لم تحدد اي طلب للتنفيذ"
 
 #. (u_err.email)
 #: ../web_tt2/error.tt2:86
@@ -2170,11 +2287,12 @@ msgstr ""
 
 #: ../web_tt2/error.tt2:87
 msgid "List has no bouncing subscribers"
-msgstr ""
+msgstr "لايوجد مشتركين ببريد عائد في هذه القائمة"
 
 #: ../web_tt2/error.tt2:88
+#, fuzzy
 msgid "No parameter was edited"
-msgstr ""
+msgstr "مدخل خطأ"
 
 #. (u_err.email)
 #: ../web_tt2/error.tt2:89
@@ -2183,7 +2301,7 @@ msgstr ""
 
 #: ../web_tt2/error.tt2:90
 msgid "Topic \"other\" is a reserved word"
-msgstr ""
+msgstr "الموضوع other كلمة محجوزه"
 
 #. (u_err.p_name)
 #: ../web_tt2/error.tt2:91
@@ -2210,10 +2328,12 @@ msgstr ""
 msgid "The list '%1' is not closed"
 msgstr ""
 
+# spelling
 #. (u_err.bad_listname)
 #: ../web_tt2/error.tt2:96
+#, fuzzy
 msgid "'%1': bad listname"
-msgstr ""
+msgstr "أدخل اسم قائمة"
 
 #. (u_err.new_listname)
 #: ../web_tt2/error.tt2:97
@@ -2227,8 +2347,9 @@ msgstr ""
 
 #. (u_err.listname)
 #: ../web_tt2/error.tt2:99
+#, fuzzy
 msgid "Failed to remove list aliases for list %1"
-msgstr ""
+msgstr "فشل حذف الأسماء المستعاره"
 
 #. (u_err.path)
 #: ../web_tt2/error.tt2:100
@@ -2237,8 +2358,9 @@ msgstr ""
 
 #. (u_err.path)
 #: ../web_tt2/error.tt2:101
+#, fuzzy
 msgid "Unable to read %1: empty document"
-msgstr ""
+msgstr "لا يمكن تحميل قوالب انشاء القائمة"
 
 #: ../web_tt2/error.tt2:102
 msgid "There is no shared documents"
@@ -2263,7 +2385,7 @@ msgstr ""
 
 #: ../web_tt2/error.tt2:107
 msgid "Data has changed on disk. Cannot apply your changes"
-msgstr ""
+msgstr "تغيرت البيانات على القرص. لايمكن تطبيق التغييرات"
 
 #. (u_err.name)
 #: ../web_tt2/error.tt2:108
@@ -2271,8 +2393,9 @@ msgid "%1: incorrect name"
 msgstr ""
 
 #: ../web_tt2/error.tt2:109
+#, fuzzy
 msgid "Failed: your content is empty"
-msgstr ""
+msgstr "فشل: لا يوجد محتويات"
 
 #. (u_err.path)
 #: ../web_tt2/error.tt2:110
@@ -2323,16 +2446,17 @@ msgstr ""
 
 #. (u_err.directory)
 #: ../web_tt2/error.tt2:120
+#, fuzzy
 msgid "Failed: %1 not empty"
-msgstr ""
+msgstr "فشل: لا يوجد محتويات"
 
 #: ../web_tt2/error.tt2:121
 msgid "No certificate for this list"
-msgstr ""
+msgstr "لايوجد شهادة لهذه القائمة"
 
 #: ../web_tt2/error.tt2:122
 msgid "This list has no message topic"
-msgstr ""
+msgstr "لايوجد موضوع رساله لهذه القائمة"
 
 #: ../web_tt2/error.tt2:123
 msgid "Tag message with topic is required for this list"
@@ -2353,7 +2477,7 @@ msgstr ""
 
 #: ../web_tt2/error.tt2:127
 msgid "Authentication failed"
-msgstr ""
+msgstr "فشل توثيق الدخول"
 
 #. (u_err.status)
 #: ../web_tt2/error.tt2:128
@@ -2409,22 +2533,27 @@ msgstr ""
 #: ../web_tt2/family_signoff.tt2:1 ../web_tt2/family_signoff_request2.tt2:1
 #, fuzzy
 msgid "Global unsubscription"
-msgstr "kannadoù nevez"
+msgstr "وصف القائمة"
 
+# style, spelling
 #. (signing_off_email,family)
 #: ../web_tt2/family_signoff.tt2:2 ../web_tt2/family_signoff_request2.tt2:2
+#, fuzzy
 msgid "You successfully unsubscribed the address %1 from family %2."
-msgstr ""
+msgstr "أتريد حقا إلغاء الاشتراك في قائمة %1?"
 
+# spelling, style
 #: ../web_tt2/family_signoff_request.tt2:1
 #, fuzzy
 msgid "Global unsubscription request"
-msgstr "kannadoù nevez"
+msgstr "ألغِ الاشتراك"
 
+# style, spelling
 #. (signing_off_email,family)
 #: ../web_tt2/family_signoff_request.tt2:2
+#, fuzzy
 msgid "You clicked a link to unsubscribe the address %1 from family %2."
-msgstr ""
+msgstr "أتريد حقا إلغاء الاشتراك في قائمة %1?"
 
 #. (family)
 #: ../web_tt2/family_signoff_request.tt2:3
@@ -2435,19 +2564,20 @@ msgid ""
 msgstr ""
 
 #: ../web_tt2/get_biggest_lists.tt2:4
+#, fuzzy
 msgid "Biggests Lists"
-msgstr ""
+msgstr "أحدث القوائم"
 
 #: ../web_tt2/get_biggest_lists.tt2:7 ../web_tt2/get_inactive_lists.tt2:8
 #: ../web_tt2/get_latest_lists.tt2:7 ../web_tt2/latest_lists.tt2:20
 #: ../web_tt2/review_family.tt2:7
 msgid "Listname"
-msgstr ""
+msgstr "اسم القائمة"
 
 #: ../web_tt2/get_closed_lists.tt2:6 ../web_tt2/get_closed_lists.tt2:7
 #: ../web_tt2/serveradmin.tt2:10
 msgid "Closed lists"
-msgstr ""
+msgstr "قوائم مغلقة"
 
 #: ../src/etc/mhonarc-ressources.tt2:212 ../src/etc/mhonarc-ressources.tt2:328
 #: ../web_tt2/get_closed_lists.tt2:29 ../web_tt2/get_closed_lists.tt2:9
@@ -2460,76 +2590,82 @@ msgstr ""
 
 #: ../web_tt2/get_closed_lists.tt2:10 ../web_tt2/get_pending_lists.tt2:9
 msgid "list name"
-msgstr ""
+msgstr "إسم القائمة"
 
 #: ../web_tt2/get_closed_lists.tt2:11 ../web_tt2/get_pending_lists.tt2:10
 msgid "list subject"
-msgstr ""
+msgstr "موضوع القائمة"
 
 #: ../web_tt2/get_closed_lists.tt2:12 ../web_tt2/get_pending_lists.tt2:11
 msgid "Requested by"
-msgstr ""
+msgstr "تم الطلب من"
 
 #: ../web_tt2/get_closed_lists.tt2:30
 msgid "Purge selected lists"
-msgstr ""
+msgstr "الغي القوائم المعلمه"
 
 #: ../web_tt2/get_inactive_lists.tt2:4
 msgid "Inactive Lists"
-msgstr ""
+msgstr "قوائم غير فعاله"
 
 #: ../web_tt2/get_inactive_lists.tt2:7
 msgid "Most recent message"
-msgstr ""
+msgstr "أحدث الرسائل"
 
 #: ../web_tt2/get_inactive_lists.tt2:10
 #, fuzzy
 msgid "Number of subscribers"
-msgstr "kannadoù nevez"
+msgstr "# رساله"
 
 #: ../web_tt2/get_inactive_lists.tt2:12
+#, fuzzy
 msgid "Send scenario"
-msgstr ""
+msgstr "المرسل"
 
 #: ../web_tt2/get_inactive_lists.tt2:13
+#, fuzzy
 msgid "Creator"
-msgstr ""
+msgstr "إنشاء"
 
+# should be indefinite
 #: ../web_tt2/get_inactive_lists.tt2:15
+#, fuzzy
 msgid "Editors"
-msgstr ""
+msgstr "محرر"
 
 #: ../web_tt2/get_inactive_lists.tt2:29
+#, fuzzy
 msgid "none so far"
-msgstr ""
+msgstr "الرسائل العائده"
 
 #: ../web_tt2/get_latest_lists.tt2:4
 msgid "Latests Lists"
-msgstr ""
+msgstr "أحدث القوائم"
 
 #: ../web_tt2/get_pending_lists.tt2:6 ../web_tt2/get_pending_lists.tt2:7
 #: ../web_tt2/serveradmin.tt2:9
 msgid "Pending lists"
-msgstr ""
+msgstr "القوائم التي في طور الأنتظار"
 
 #: ../web_tt2/get_pending_lists.tt2:12
 msgid "Requested date"
-msgstr ""
+msgstr "بيانات مطلوبه"
 
 #: ../web_tt2/install_pending_list.tt2:11 ../web_tt2/scenario_test.tt2:13
 #: ../web_tt2/set_pending_list_request.tt2:7
+#, fuzzy
 msgid "Listname:"
-msgstr ""
+msgstr "إسم القائمة:"
 
 #: ../web_tt2/install_pending_list.tt2:17
 #: ../web_tt2/set_pending_list_request.tt2:10
 msgid "List requested by"
-msgstr ""
+msgstr "تم طلب القائمة بواسطة "
 
 #. (list_request_date)
 #: ../web_tt2/install_pending_list.tt2:17
 msgid "on %1"
-msgstr ""
+msgstr "على%1"
 
 #: ../web_tt2/javascript.tt2:26
 msgid "January"
@@ -2540,12 +2676,14 @@ msgid "February"
 msgstr ""
 
 #: ../web_tt2/javascript.tt2:26
+#, fuzzy
 msgid "March"
-msgstr ""
+msgstr "بحث"
 
 #: ../web_tt2/javascript.tt2:26
+#, fuzzy
 msgid "April"
-msgstr ""
+msgstr "نبذة"
 
 #: ../web_tt2/javascript.tt2:26
 msgid "May"
@@ -2564,28 +2702,34 @@ msgid "August"
 msgstr ""
 
 #: ../web_tt2/javascript.tt2:26
+#, fuzzy
 msgid "September"
-msgstr ""
+msgstr "مشتركي القائمة"
 
+# spelling, but also usage
 #: ../web_tt2/javascript.tt2:26
+#, fuzzy
 msgid "October"
-msgstr ""
+msgstr "أخرى"
 
 #: ../web_tt2/javascript.tt2:26
+#, fuzzy
 msgid "November"
-msgstr ""
+msgstr "مشتركي القائمة"
 
 #: ../web_tt2/javascript.tt2:26
+#, fuzzy
 msgid "December"
-msgstr ""
+msgstr "مشتركي القائمة"
 
 #: ../web_tt2/javascript.tt2:27
 msgid "Su"
 msgstr ""
 
 #: ../web_tt2/javascript.tt2:27
+#, fuzzy
 msgid "Mo"
-msgstr ""
+msgstr "إدارة"
 
 #: ../web_tt2/javascript.tt2:27
 msgid "Tu"
@@ -2612,8 +2756,9 @@ msgid "Sunday"
 msgstr ""
 
 #: ../web_tt2/javascript.tt2:28
+#, fuzzy
 msgid "Monday"
-msgstr ""
+msgstr "النص"
 
 #: ../web_tt2/javascript.tt2:28
 msgid "Tuesday"
@@ -2632,20 +2777,23 @@ msgid "Friday"
 msgstr ""
 
 #: ../web_tt2/javascript.tt2:28
+#, fuzzy
 msgid "Saturday"
-msgstr ""
+msgstr "النص"
 
 #: ../web_tt2/javascript.tt2:29
 msgid "Calendar"
 msgstr ""
 
 #: ../web_tt2/javascript.tt2:30
+#, fuzzy
 msgid "today"
-msgstr ""
+msgstr "النص"
 
 #: ../web_tt2/javascript.tt2:42
+#, fuzzy
 msgid "Start date"
-msgstr ""
+msgstr "أخر تحديث"
 
 #: ../web_tt2/javascript.tt2:43
 msgid "End date"
@@ -2654,15 +2802,15 @@ msgstr ""
 #. (count)
 #: ../web_tt2/latest_arc.tt2:6
 msgid " The %1 most recent messages "
-msgstr ""
+msgstr "%1 من الرسائل الحديثه"
 
 #: ../web_tt2/latest_arc.tt2:8
 msgid " Recent messages "
-msgstr "kannadoù nevez"
+msgstr "الرسائل الحديثه"
 
 #: ../web_tt2/latest_arc.tt2:17
 msgid " The most recent messages for this list "
-msgstr ""
+msgstr "أحدث الرسائل الموجوده في هذه القائمة"
 
 #: ../web_tt2/latest_arc.tt2:21
 msgid "From"
@@ -2671,11 +2819,11 @@ msgstr ""
 #. (count)
 #: ../web_tt2/latest_d_read.tt2:5
 msgid " The %1 most recent shared documents "
-msgstr ""
+msgstr "%1 من الوثائق المشتركه الحديثه"
 
 #: ../web_tt2/latest_d_read.tt2:7
 msgid " Most recent shared documents "
-msgstr "dielloù diwezhañ rannet"
+msgstr "الوثائق المشتركه الحديثه"
 
 #: ../web_tt2/latest_d_read.tt2:16
 msgid "Most recent documents for this list "
@@ -2684,11 +2832,11 @@ msgstr ""
 #: ../web_tt2/latest_d_read.tt2:19 ../web_tt2/subindex.tt2:12
 #: ../web_tt2/subscriber_table.tt2:39 ../web_tt2/subscriber_table.tt2:42
 msgid "Name"
-msgstr ""
+msgstr "الأسم"
 
 #: ../web_tt2/latest_d_read.tt2:21
 msgid "Directory"
-msgstr ""
+msgstr "الفهرس"
 
 #. (count)
 #: ../web_tt2/latest_lists.tt2:5
@@ -2697,11 +2845,11 @@ msgstr ""
 
 #: ../web_tt2/latest_lists.tt2:7 ../web_tt2/rss.tt2:20
 msgid "New lists"
-msgstr ""
+msgstr "قوائم جديده"
 
 #: ../web_tt2/latest_lists.tt2:18
 msgid " The latest lists of this robot"
-msgstr ""
+msgstr "أحدث القوائم الموجوده في النظام"
 
 #. (occurrence)
 #: ../web_tt2/lists.tt2:7 ../web_tt2/review.tt2:114
@@ -2715,7 +2863,7 @@ msgstr ""
 
 #: ../web_tt2/lists.tt2:39 ../web_tt2/nav.tt2:69
 msgid "Manage Subscribers"
-msgstr ""
+msgstr "إدارة المشتركين"
 
 #: ../web_tt2/lists.tt2:41 ../web_tt2/nav.tt2:73 ../web_tt2/review.tt2:42
 msgid "Blacklist"
@@ -2724,7 +2872,7 @@ msgstr ""
 #: ../web_tt2/lists.tt2:45 ../web_tt2/nav.tt2:21 ../web_tt2/nav.tt2:85
 #: ../web_tt2/serveradmin.tt2:124
 msgid "Logs"
-msgstr ""
+msgstr "سجلات"
 
 #. (user.email)
 #: ../web_tt2/lists.tt2:67
@@ -2732,36 +2880,42 @@ msgid "No subscriptions with address <strong>%1</strong>!"
 msgstr ""
 
 #: ../web_tt2/loginbanner.tt2:18
+#, fuzzy
 msgid "To login, select your organization authentication server below:"
-msgstr ""
+msgstr "إختر الخادم المسؤول عن توثيق الدخول"
 
 #: ../web_tt2/loginbanner.tt2:24
 msgid "Go"
-msgstr ""
+msgstr "إذهب"
 
 #: ../web_tt2/loginbanner.tt2:39
+#, fuzzy
 msgid "email address:"
-msgstr ""
+msgstr "البريد الألكتروني"
 
 #: ../web_tt2/loginbanner.tt2:41
+#, fuzzy
 msgid "password:"
-msgstr ""
+msgstr "كلمة السر"
 
 #: ../web_tt2/loginbanner.tt2:43
 msgid "Login"
-msgstr ""
+msgstr "تسجيل الدخول"
 
 #: ../web_tt2/loginbanner.tt2:51
+#, fuzzy
 msgid "Authentication help"
-msgstr ""
+msgstr "فشل توثيق الدخول"
 
 #: ../web_tt2/loginbanner.tt2:55
+#, fuzzy
 msgid "First login?"
-msgstr ""
+msgstr "دخول لأول مرة؟"
 
 #: ../web_tt2/loginbanner.tt2:56
+#, fuzzy
 msgid "Lost password?"
-msgstr ""
+msgstr "نسيت كلمة السر؟"
 
 #: ../web_tt2/loginrequest.tt2:4
 msgid ""
@@ -2795,63 +2949,67 @@ msgid ""
 msgstr ""
 
 #: ../web_tt2/ls_templates.tt2:22
+#, fuzzy
 msgid "Select templates type:"
-msgstr ""
+msgstr "أختر نوع القوالب:"
 
 #: ../web_tt2/ls_templates.tt2:26
+#, fuzzy
 msgid "Select a list:"
-msgstr ""
+msgstr "أختر القائمة:"
 
 #: ../web_tt2/ls_templates.tt2:27
 msgid "Reload"
-msgstr ""
+msgstr "اعادة التحميل"
 
 #: ../web_tt2/ls_templates.tt2:37
 msgid "This table contain all templates you can copy or see"
-msgstr ""
+msgstr "هذا الجدول يحتوي على جميع القوالب الممكن نسخها و مشاهدتها"
 
 #: ../web_tt2/ls_templates.tt2:39
 msgid "template name"
-msgstr ""
+msgstr "اسم القالب"
 
 #: ../web_tt2/ls_templates.tt2:40
 msgid "distrib"
-msgstr ""
+msgstr "توزيع"
 
 #: ../web_tt2/ls_templates.tt2:84
 msgid "view"
-msgstr ""
+msgstr "مشاهدة"
 
 #: ../web_tt2/ls_templates.tt2:104 ../web_tt2/ls_templates.tt2:126
 #: ../web_tt2/ls_templates.tt2:148 ../web_tt2/ls_templates.tt2:85
 msgid "cp"
-msgstr ""
+msgstr "cp"
 
 #: ../web_tt2/ls_templates.tt2:105 ../web_tt2/ls_templates.tt2:127
 #: ../web_tt2/ls_templates.tt2:149
 msgid "rm"
-msgstr ""
+msgstr "rm"
 
 #. (lang.value)
 #: ../web_tt2/ls_templates.tt2:105 ../web_tt2/ls_templates.tt2:127
 #: ../web_tt2/ls_templates.tt2:149
+#, fuzzy
 msgid "Do you really want to remove %1?"
-msgstr ""
+msgstr "هل فعلا تريد إلغاء هذه الرسالة ؟"
 
 #: ../web_tt2/maintenance.tt2:2
 msgid ""
 "The mailing list server is in maintenance mode, no operation can be "
 "performed during this period."
-msgstr ""
+msgstr "السيرفير يخضع للصيانة لا يمكن تنفيذ اي عمليه خلال هذه الفترة"
 
 #: ../web_tt2/manage_template.tt2:3
+#, fuzzy
 msgid "Modify or delete existing rejection messages"
-msgstr ""
+msgstr "هل فعلا تريد إلغاء هذه الرسالة ؟"
 
 #: ../web_tt2/manage_template.tt2:10 ../web_tt2/manage_template.tt2:9
 #, fuzzy
 msgid "Listing rejection messages"
-msgstr "kannadoù nevez"
+msgstr "رسالة الإصابة بفيروس"
 
 #: ../web_tt2/manage_template.tt2:11
 msgid "Use as default"
@@ -2860,7 +3018,7 @@ msgstr ""
 #: ../web_tt2/manage_template.tt2:11
 #, fuzzy
 msgid "Message name"
-msgstr "kannadoù nevez"
+msgstr "رسالة"
 
 #: ../web_tt2/manage_template.tt2:11
 msgid "Operation"
@@ -2868,8 +3026,9 @@ msgstr ""
 
 #. (file)
 #: ../web_tt2/manage_template.tt2:38
+#, fuzzy
 msgid "Do you really want to delete message %1?"
-msgstr ""
+msgstr "هل فعلا تريد إلغاء هذه الرسالة ؟"
 
 #: ../web_tt2/manage_template.tt2:46
 msgid "There are currently no Rejection Messages available"
@@ -2878,85 +3037,94 @@ msgstr ""
 #: ../web_tt2/manage_template.tt2:59
 #, fuzzy
 msgid "Message Name:"
-msgstr "kannadoù nevez"
+msgstr "رسالة"
 
 #: ../web_tt2/manage_template.tt2:60
+#, fuzzy
 msgid "Default Message"
-msgstr ""
+msgstr "قالب الإدخال"
 
 #: ../web_tt2/manage_template.tt2:66
 #, fuzzy
 msgid "Save Message"
-msgstr "kannadoù nevez"
+msgstr "رسالة"
 
 #: ../web_tt2/manage_template.tt2:77
 #, fuzzy
 msgid "Create new rejection messages"
-msgstr "kannadoù nevez"
+msgstr "الرسائل الحديثه"
 
 #: ../web_tt2/manage_template.tt2:84
 #, fuzzy
 msgid "New message name:"
-msgstr "kannadoù nevez"
+msgstr "رسالة"
 
 #: ../web_tt2/manage_template.tt2:84
+#, fuzzy
 msgid "create"
-msgstr ""
+msgstr "إنشاء"
 
+# spelling
 #: ../web_tt2/menu_search.tt2:5
 msgid "Enter a list name"
-msgstr ""
+msgstr "أدخل اسم قائمة"
 
+# spelling
 #: ../web_tt2/menu_search.tt2:7
 msgid "Search lists"
-msgstr ""
+msgstr "ابحث في القوائم"
 
 #: ../web_tt2/modform.tt2:17 ../web_tt2/modform.tt2:23
 #: ../web_tt2/modform.tt2:6 ../web_tt2/viewmod.tt2:10
 #: ../web_tt2/viewmod.tt2:12
 msgid "Distribute"
-msgstr ""
+msgstr "توزيع"
 
 #: ../web_tt2/modform.tt2:11
+#, fuzzy
 msgid ""
 "Please select one or more topic(s) that correspond to the messages you wish "
 "to distribute:"
-msgstr ""
+msgstr "الرجاء اختيار الموضوع المتناسب مع رسالتك"
 
 #: ../web_tt2/modform.tt2:19
+#, fuzzy
 msgid "You must select a topic"
-msgstr ""
+msgstr "-- اختر موضوع --"
 
 #: ../web_tt2/modform.tt2:26 ../web_tt2/modform.tt2:54
 #: ../web_tt2/modform.tt2:56 ../web_tt2/modindex.tt2:138
 #: ../web_tt2/modindex.tt2:99 ../web_tt2/viewmod.tt2:14
 msgid "Reject"
-msgstr ""
+msgstr "رفض"
 
 #: ../web_tt2/modform.tt2:30
 #, fuzzy
 msgid "Rejecting message"
-msgstr "kannadoù nevez"
+msgstr "رسالة الإصابة بفيروس"
 
 #: ../web_tt2/modform.tt2:32
+#, fuzzy
 msgid "Choose notification "
-msgstr ""
+msgstr "إختر الخادم المسؤول عن توثيق الدخول"
 
 #: ../web_tt2/modform.tt2:34
 msgid "No notification"
 msgstr ""
 
 #: ../web_tt2/modform.tt2:38
+#, fuzzy
 msgid "Server default rejection message"
-msgstr ""
+msgstr "رسالة الإصابة بفيروس"
 
 #: ../web_tt2/modform.tt2:43
 msgid "Report message as undetected spam "
 msgstr ""
 
 #: ../web_tt2/modform.tt2:46
+#, fuzzy
 msgid "Add sender to blacklist"
-msgstr ""
+msgstr "تعديل القائمة السوداء"
 
 #: ../web_tt2/modform.tt2:49
 msgid ""
@@ -2966,12 +3134,12 @@ msgstr ""
 
 #: ../web_tt2/modindex.tt2:31 ../web_tt2/modindex.tt2:6
 msgid "Listing messages to moderate"
-msgstr ""
+msgstr "سرد الرسائل للتعامل معها"
 
 #: ../web_tt2/modindex.tt2:21
 #, fuzzy
 msgid "loading message..."
-msgstr "kannadoù nevez"
+msgstr "رساله تذكيريه عامه"
 
 #: ../web_tt2/modindex.tt2:108 ../web_tt2/modindex.tt2:40
 msgid "Size"
@@ -2983,19 +3151,19 @@ msgstr ""
 
 #: ../web_tt2/modindex.tt2:96
 msgid "Listing of shared documents to moderate"
-msgstr ""
+msgstr "سرد الوثائق المشتركة للتعامل معها"
 
 #: ../web_tt2/modindex.tt2:137 ../web_tt2/modindex.tt2:98
 msgid "Install"
-msgstr ""
+msgstr "تجهيز"
 
 #: ../web_tt2/modindex.tt2:100 ../web_tt2/modindex.tt2:139
 msgid "Notified reject"
-msgstr ""
+msgstr "تنبيه رفض الرسائل"
 
 #: ../web_tt2/modindex.tt2:102
 msgid "Listing of documents shared to moderate"
-msgstr ""
+msgstr "سرد الوثائق المشتركة للتعامل معها"
 
 #: ../web_tt2/modindex.tt2:107
 msgid "Path"
@@ -3003,45 +3171,47 @@ msgstr ""
 
 #: ../web_tt2/modindex.tt2:133 ../web_tt2/modindex.tt2:152
 msgid "edit blacklist"
-msgstr ""
+msgstr "تعديل القائمة السوداء"
 
 #: ../web_tt2/modindex.tt2:145
+#, fuzzy
 msgid "Moderation management"
-msgstr ""
+msgstr "إدارة البريد العائد"
 
 #: ../web_tt2/modindex.tt2:154
 #, fuzzy
 msgid "Manage rejection messages"
-msgstr "kannadoù nevez"
+msgstr "رسالة الإصابة بفيروس"
 
 #: ../web_tt2/nav.tt2:15 ../web_tt2/serveradmin.tt2:5
 #: ../web_tt2/suspend_request.tt2:11 ../web_tt2/suspend_request.tt2:9
 msgid "Lists"
-msgstr ""
+msgstr "قوائم"
 
 #: ../web_tt2/nav.tt2:17 ../web_tt2/serveradmin.tt2:55
 msgid "Users"
-msgstr ""
+msgstr "المستخدمين"
 
 #: ../web_tt2/nav.tt2:23 ../web_tt2/serveradmin.tt2:142
 msgid "Templates"
-msgstr ""
+msgstr "القوالب"
 
 #: ../web_tt2/nav.tt2:25 ../web_tt2/serveradmin.tt2:187
 msgid "Skins, CSS and colors"
-msgstr ""
+msgstr "تغيير الستايل و الألوان"
 
 #: ../web_tt2/nav.tt2:28 ../web_tt2/serveradmin.tt2:23
 msgid "Virtual Robots"
-msgstr ""
+msgstr "الروبوتات الأفتراضيه"
 
 #: ../web_tt2/nav.tt2:30
+#, fuzzy
 msgid "Edit Robot Config"
-msgstr ""
+msgstr "تعديل مواصفات القائمة"
 
 #: ../web_tt2/nav.tt2:34 ../web_tt2/serveradmin.tt2:39
 msgid "Families"
-msgstr ""
+msgstr "عائلات"
 
 #: ../web_tt2/nav.tt2:37 ../web_tt2/serveradmin.tt2:230
 msgid "Translating Sympa"
@@ -3049,7 +3219,7 @@ msgstr ""
 
 #: ../web_tt2/nav.tt2:39 ../web_tt2/serveradmin.tt2:240
 msgid "Submitting a bug, a feature request"
-msgstr ""
+msgstr "ارسال مشكلة او طلب إضافه"
 
 #: ../src/lib/confdef.pm:1173 ../web_tt2/nav.tt2:105
 msgid "DKIM"
@@ -3058,15 +3228,16 @@ msgstr ""
 #: ../web_tt2/nav.tt2:117
 #, fuzzy
 msgid "Send a message"
-msgstr "kannadoù nevez"
+msgstr "رسالة تذكيرية"
 
 #: ../web_tt2/nav.tt2:119
 msgid "Send an html page"
 msgstr ""
 
 #: ../web_tt2/news.tt2:9
+#, fuzzy
 msgid "Administration Tasks"
-msgstr ""
+msgstr "لوحة تحكم القائمة الرئيسية"
 
 #: ../web_tt2/news.tt2:10
 msgid "The following items are waiting for your validation"
@@ -3074,8 +3245,9 @@ msgstr ""
 
 #. (list_to_admin.key)
 #: ../web_tt2/news.tt2:15
+#, fuzzy
 msgid "List %1:"
-msgstr ""
+msgstr "إسم القائمة:"
 
 #. (list_to_admin.value.mod_message)
 #. (year.value.item(month))
@@ -3086,18 +3258,21 @@ msgstr ""
 
 #. (list_to_admin.value.mod_shared_total)
 #: ../web_tt2/news.tt2:17
+#, fuzzy
 msgid "%1 document(s)"
-msgstr ""
+msgstr "وثائق مشتركة"
 
+# spelling, style
 #. (list_to_admin.value.mod_subscription)
 #: ../web_tt2/news.tt2:18
 #, fuzzy
 msgid "%1 subscription request(s)"
-msgstr "kannadoù nevez"
+msgstr "ألغِ الاشتراك"
 
 #: ../web_tt2/news.tt2:29
+#, fuzzy
 msgid "User Errors"
-msgstr ""
+msgstr "أخطاء :"
 
 #: ../web_tt2/news.tt2:30
 msgid ""
@@ -3130,8 +3305,9 @@ msgid "%1 subscribers added"
 msgstr ""
 
 #: ../web_tt2/notice.tt2:16
+#, fuzzy
 msgid "You're not allowed to make sync, time limit in action"
-msgstr ""
+msgstr "ليس من المسموح لك تنفيذ هذا الأمر"
 
 #. (notice.total)
 #: ../web_tt2/notice.tt2:19
@@ -3150,19 +3326,19 @@ msgstr ""
 
 #: ../web_tt2/notice.tt2:28
 msgid "Configuration file has been updated"
-msgstr ""
+msgstr "تم تحديث ملف المواصفات"
 
 #: ../web_tt2/notice.tt2:31
 msgid "List has been purged"
-msgstr ""
+msgstr "تم الغاء القائمة"
 
 #: ../web_tt2/notice.tt2:34
 msgid "List has been closed"
-msgstr ""
+msgstr "تم إغلاق القائمة"
 
 #: ../web_tt2/notice.tt2:37
 msgid "List has been restored"
-msgstr ""
+msgstr "تم إستعادة القائمة"
 
 #. (notice.path)
 #: ../web_tt2/notice.tt2:40
@@ -3233,13 +3409,15 @@ msgid "List has been set to the pending status; listmaster need to validate it"
 msgstr ""
 
 #: ../web_tt2/notice.tt2:85
+#, fuzzy
 msgid "List name has been lowercased"
-msgstr ""
+msgstr "تم إغلاق القائمة"
 
 #. (notice.notified_user)
 #: ../web_tt2/notice.tt2:88
+#, fuzzy
 msgid "User %1 has been notified"
-msgstr ""
+msgstr "تم إغلاق القائمة"
 
 #: ../web_tt2/oauth_authorize.tt2:4
 msgid "OAuth authorize"
@@ -3247,12 +3425,14 @@ msgstr ""
 
 #. (consumer_key)
 #: ../web_tt2/oauth_authorize.tt2:7
+#, fuzzy
 msgid "Authorize %1 ?"
-msgstr ""
+msgstr "المؤلف"
 
 #: ../web_tt2/oauth_authorize.tt2:12
+#, fuzzy
 msgid "Authorize"
-msgstr ""
+msgstr "المؤلف"
 
 #: ../web_tt2/oauth_authorize.tt2:13
 msgid "Don't authorize"
@@ -3267,8 +3447,9 @@ msgid "Got new access token, everything is alright."
 msgstr ""
 
 #: ../web_tt2/oauth_check.tt2:12
+#, fuzzy
 msgid "Everything is alright."
-msgstr ""
+msgstr "كل شيء حول هذه القائمة :"
 
 #: ../web_tt2/oauth_check.tt2:15
 msgid ""
@@ -3300,20 +3481,22 @@ msgid "Your picture"
 msgstr ""
 
 #: ../web_tt2/picture_upload.tt2:25
+#, fuzzy
 msgid "Your picture in the subscribers list"
-msgstr ""
+msgstr "مسموح للمشتركين فقط"
 
 #: ../web_tt2/picture_upload.tt2:26
 msgid "In the members page"
-msgstr ""
+msgstr "في صفحة المشتركين"
 
 #: ../web_tt2/pref.tt2:4 ../web_tt2/viewlogs.tt2:92
 msgid "User preferences"
 msgstr ""
 
 #: ../web_tt2/pref.tt2:16
+#, fuzzy
 msgid "Connection expiration period:"
-msgstr ""
+msgstr "تاريخ انتهاء صلاحية الشهاده"
 
 #: ../web_tt2/pref.tt2:26
 msgid "Changing your email address"
@@ -3327,20 +3510,23 @@ msgid ""
 msgstr ""
 
 #: ../web_tt2/pref.tt2:31
+#, fuzzy
 msgid "New email address:"
-msgstr ""
+msgstr "البريد الألكتروني"
 
 #: ../web_tt2/pref.tt2:32
+#, fuzzy
 msgid "Change Email"
-msgstr ""
+msgstr "تغيير عنوان البريد"
 
 #: ../web_tt2/pref.tt2:38
 msgid "Changing your password"
-msgstr ""
+msgstr "تغيير كلمة السر"
 
 #: ../web_tt2/pref.tt2:43
+#, fuzzy
 msgid "Re-enter your new password:"
-msgstr ""
+msgstr "كلمة السر الجديدة"
 
 #: ../web_tt2/remove_arc.tt2:5
 msgid ""
@@ -3364,10 +3550,13 @@ msgid ""
 "Error while deleting this message, please refer to listmaster with\n"
 "complete URL of the message concerned."
 msgstr ""
+"حصل خطأ عند إلغاء هذه الرسالة الرجاء الأتصال بمدير القائمة الرئيسي و تحويل \n"
+" العنوان الكامل للرساله المعنية"
 
 #: ../web_tt2/rename_list_request.tt2:3
+#, fuzzy
 msgid "Renaming the list"
-msgstr ""
+msgstr "اعادة تسمية قائمة"
 
 #: ../web_tt2/rename_list_request.tt2:20
 msgid "Rename this list"
@@ -3375,7 +3564,7 @@ msgstr ""
 
 #: ../web_tt2/rename_list_request.tt2:20
 msgid "Do you really want to rename this list?"
-msgstr ""
+msgstr "هل أنت متأكد من تغيير إسم القائمة؟"
 
 #: ../web_tt2/renewpasswd.tt2:5
 msgid "You requested an account creation on this list server."
@@ -3397,8 +3586,9 @@ msgid "You missed the password, please submit again. Maybe you forgot it?"
 msgstr ""
 
 #: ../web_tt2/renewpasswd.tt2:13
+#, fuzzy
 msgid "You will receive an email that will allow you to choose your password."
-msgstr ""
+msgstr "ستستلم بريد ليذكرك بكلمة السر "
 
 #: ../web_tt2/renewpasswd.tt2:16
 msgid "In order to use Sympa, you will need to define a password."
@@ -3420,16 +3610,19 @@ msgid "Your e-mail address:"
 msgstr ""
 
 #: ../web_tt2/renewpasswd.tt2:31
+#, fuzzy
 msgid "Request first password"
-msgstr ""
+msgstr "كلمة السر الحالية:"
 
 #: ../web_tt2/renewpasswd.tt2:33
+#, fuzzy
 msgid "Request new password"
-msgstr ""
+msgstr "كلمة السر الجديدة"
 
 #: ../web_tt2/requestpasswd.tt2:4
+#, fuzzy
 msgid "Message sent"
-msgstr ""
+msgstr "رسالة"
 
 #: ../web_tt2/requestpasswd.tt2:6
 msgid ""
@@ -3456,9 +3649,10 @@ msgid "This list is configured to require topic(s) foreach message."
 msgstr ""
 
 #: ../web_tt2/request_topic.tt2:7 ../web_tt2/viewmod.tt2:33
+#, fuzzy
 msgid ""
 "Please select one or more topic(s) that corresponds to your message below:"
-msgstr ""
+msgstr "الرجاء اختيار الموضوع المتناسب مع رسالتك"
 
 #: ../web_tt2/request_topic.tt2:15 ../web_tt2/request_topic.tt2:17
 msgid "Tag this mail"
@@ -3466,22 +3660,25 @@ msgstr ""
 
 #. (date)
 #: ../web_tt2/request_topic.tt2:29
+#, fuzzy
 msgid "Date: %1"
-msgstr ""
+msgstr "تاريخ"
 
 #. (subject)
 #: ../web_tt2/request_topic.tt2:31
+#, fuzzy
 msgid "Subject: %1"
-msgstr ""
+msgstr "الموضوع"
 
 #: ../web_tt2/reviewbouncing.tt2:3
+#, fuzzy
 msgid "Manage bouncing list members"
-msgstr ""
+msgstr "إدارة المشتركين"
 
 #: ../web_tt2/review.tt2:46 ../web_tt2/review.tt2:48
 #: ../web_tt2/reviewbouncing.tt2:6
 msgid "Dump"
-msgstr ""
+msgstr "رمي"
 
 #: ../web_tt2/reviewbouncing.tt2:19
 msgid "Remind all subscribers"
@@ -3520,27 +3717,32 @@ msgstr ""
 #: ../web_tt2/subscriber_table.tt2:15 ../web_tt2/subscriber_table.tt2:18
 #: ../web_tt2/viewlogs.tt2:54 ../web_tt2/viewlogs.tt2:63
 msgid "Email"
-msgstr ""
+msgstr "البريد الألكتروني"
 
 #: ../web_tt2/reviewbouncing.tt2:62
+#, fuzzy
 msgid "Bounce score"
-msgstr ""
+msgstr "الرسائل العائده"
 
 #: ../web_tt2/reviewbouncing.tt2:63
+#, fuzzy
 msgid "Details"
-msgstr ""
+msgstr "بريد"
 
 #: ../web_tt2/reviewbouncing.tt2:66
+#, fuzzy
 msgid "# of bounces"
-msgstr ""
+msgstr "بريد عائد"
 
 #: ../web_tt2/reviewbouncing.tt2:67
+#, fuzzy
 msgid "First bounce"
-msgstr ""
+msgstr "بريد عائد"
 
 #: ../web_tt2/reviewbouncing.tt2:68
+#, fuzzy
 msgid "Last bounce"
-msgstr ""
+msgstr "بريد عائد"
 
 #: ../web_tt2/reviewbouncing.tt2:95
 msgid "no score"
@@ -3568,8 +3770,9 @@ msgid "Instantiation date"
 msgstr ""
 
 #: ../web_tt2/review.tt2:5
+#, fuzzy
 msgid "Manage list members"
-msgstr ""
+msgstr "القوائم الجديده"
 
 #: ../web_tt2/review.tt2:12 ../web_tt2/viewlogs.tt2:8
 msgid "Page size"
@@ -3593,8 +3796,9 @@ msgid "Synchronize members with data sources"
 msgstr ""
 
 #: ../web_tt2/review.tt2:60
+#, fuzzy
 msgid "<strong>Last update:"
-msgstr ""
+msgstr "أخر تحديث:"
 
 #: ../web_tt2/review.tt2:64
 msgid "Remind all"
@@ -3605,8 +3809,9 @@ msgid "Add an user: "
 msgstr ""
 
 #: ../web_tt2/review.tt2:77
+#, fuzzy
 msgid "Add quietly"
-msgstr ""
+msgstr "بهدوء"
 
 #: ../web_tt2/review.tt2:78
 msgid "Multiple add"
@@ -3635,15 +3840,16 @@ msgstr ""
 
 #: ../web_tt2/review.tt2:142
 msgid "Do you really want to unsubscribe ALL selected subscribers?"
-msgstr ""
+msgstr "هل أنت متأكد من إلغاء اشتراك جميع المشتركين المختارين؟"
 
 #: ../web_tt2/review.tt2:150
 msgid "Excluded users"
 msgstr ""
 
 #: ../web_tt2/review.tt2:151 ../web_tt2/show_exclude.tt2:13
+#, fuzzy
 msgid "List of exclude"
-msgstr ""
+msgstr "سرد الأدلة"
 
 #: ../web_tt2/review.tt2:154 ../web_tt2/show_exclude.tt2:16
 msgid "Since"
@@ -3660,53 +3866,58 @@ msgid ""
 msgstr ""
 
 #: ../web_tt2/rss_request.tt2:12
+#, fuzzy
 msgid "Limit the number of responses:"
-msgstr ""
+msgstr "تحديد عدد الإجابات"
 
 #: ../web_tt2/rss_request.tt2:19
+#, fuzzy
 msgid "Limit the number of days used for the selection:"
-msgstr ""
+msgstr "تحديد عدد الأيام التي استخدمت للأختيار"
 
 #: ../web_tt2/rss_request.tt2:31
 msgid "Update RSS URL"
 msgstr ""
 
 #: ../web_tt2/rss_request.tt2:43
+#, fuzzy
 msgid "latest arc:"
-msgstr ""
+msgstr "أحدث الوثائق"
 
 #: ../web_tt2/rss_request.tt2:48
+#, fuzzy
 msgid "latest document:"
-msgstr ""
+msgstr "أحدث الوثائق"
 
 #: ../web_tt2/rss_request.tt2:53
 #, fuzzy
 msgid "active lists:"
-msgstr "listennoù gustum"
+msgstr "القوائم الفعاله"
 
 #: ../web_tt2/rss_request.tt2:58
+#, fuzzy
 msgid "latest lists:"
-msgstr ""
+msgstr "أحدث القوائم"
 
 #: ../web_tt2/rss.tt2:15 ../web_tt2/rss.tt2:5
 msgid "Server error"
-msgstr ""
+msgstr "خطأ من السيرفير"
 
 #: ../web_tt2/rss.tt2:6
 msgid " new lists "
-msgstr ""
+msgstr "القوائم الجديده"
 
 #: ../web_tt2/rss.tt2:7
 msgid " active lists "
-msgstr ""
+msgstr "القوائم الفعاله"
 
 #: ../web_tt2/rss.tt2:8
 msgid " most recent messages "
-msgstr ""
+msgstr "الرسائل الحديثه"
 
 #: ../web_tt2/rss.tt2:9
 msgid " most recent documents "
-msgstr ""
+msgstr "الوثائق الحديثه"
 
 #. (count)
 #: ../web_tt2/rss.tt2:18
@@ -3767,35 +3978,41 @@ msgstr ""
 
 #: ../web_tt2/scenario_test.tt2:3
 msgid "Scenario test module"
-msgstr ""
+msgstr "سيناريو تجريبي"
 
 #: ../web_tt2/scenario_test.tt2:7
+#, fuzzy
 msgid "Scenario name:"
-msgstr ""
+msgstr "اسم السيناريو"
 
 #: ../web_tt2/scenario_test.tt2:19
+#, fuzzy
 msgid "sender email:"
-msgstr ""
+msgstr "بريد المرسل"
 
 #: ../web_tt2/scenario_test.tt2:22
+#, fuzzy
 msgid "Related email:"
-msgstr ""
+msgstr "بريد ذو علاقة"
 
 #: ../web_tt2/scenario_test.tt2:25
+#, fuzzy
 msgid "Remote IP address:"
-msgstr ""
+msgstr "رقم الشبكة المتصل"
 
 #: ../web_tt2/scenario_test.tt2:28
+#, fuzzy
 msgid "Remote host:"
-msgstr ""
+msgstr "عنوان المضيف المتصل"
 
 #: ../web_tt2/scenario_test.tt2:31
+#, fuzzy
 msgid "Auth method:"
-msgstr ""
+msgstr "طريقة التوثيق"
 
 #: ../web_tt2/scenario_test.tt2:38
 msgid "get matched rule"
-msgstr ""
+msgstr "اجلب القواعد المتناظرة"
 
 #: ../web_tt2/search_user.tt2:3
 msgid "User search result:"
@@ -3813,35 +4030,37 @@ msgstr ""
 
 #: ../web_tt2/search_user.tt2:11
 msgid "role"
-msgstr ""
+msgstr "دور"
 
 #: ../web_tt2/search_user.tt2:13
 msgid "reception"
-msgstr ""
+msgstr "استقبال"
 
 #: ../web_tt2/search_user.tt2:15
 msgid "topics"
-msgstr ""
+msgstr "مواضيع"
 
 #: ../web_tt2/search_user.tt2:17
 msgid "bounce"
-msgstr ""
+msgstr "بريد عائد"
 
 #: ../web_tt2/search_user.tt2:35
+#, fuzzy
 msgid "member"
-msgstr ""
+msgstr "مشتركي القائمة"
 
 #: ../web_tt2/search_user.tt2:36
 msgid "owner"
-msgstr ""
+msgstr "مدير القائمة"
 
 #: ../web_tt2/search_user.tt2:37
 msgid "editor"
-msgstr ""
+msgstr "محرر"
 
 #: ../web_tt2/select_voot_groups_request.tt2:4
+#, fuzzy
 msgid "Select group"
-msgstr ""
+msgstr "-- اختر موضوع --"
 
 #: ../web_tt2/select_voot_groups_request.tt2:6
 msgid ""
@@ -3850,8 +4069,9 @@ msgid ""
 msgstr ""
 
 #: ../web_tt2/select_voot_groups_request.tt2:20
+#, fuzzy
 msgid "Set as source"
-msgstr ""
+msgstr "- مصادر البيانات "
 
 #: ../web_tt2/select_voot_provider_request.tt2:4
 msgid "Select VOOT provider"
@@ -3864,24 +4084,28 @@ msgid ""
 msgstr ""
 
 #: ../web_tt2/serveradmin.tt2:7
+#, fuzzy
 msgid "Manage lists"
-msgstr ""
+msgstr "القوائم الجديده"
 
 #: ../web_tt2/serveradmin.tt2:12
+#, fuzzy
 msgid "Consult lists"
-msgstr ""
+msgstr "قوائم مغلقة"
 
 #: ../web_tt2/serveradmin.tt2:14
+#, fuzzy
 msgid "Lists sorted by creation date"
-msgstr ""
+msgstr "قائمة لم تفعٌل بعد"
 
 #: ../web_tt2/serveradmin.tt2:15
 msgid "Lists sorted by last message date"
 msgstr ""
 
 #: ../web_tt2/serveradmin.tt2:16
+#, fuzzy
 msgid "Lists sorted by subscriber count"
-msgstr ""
+msgstr "قائمة لم تفعٌل بعد"
 
 #: ../web_tt2/serveradmin.tt2:26
 msgid "The following virtual robots are running on this server:"
@@ -3896,8 +4120,9 @@ msgid "Mail domain:"
 msgstr ""
 
 #: ../web_tt2/serveradmin.tt2:28
+#, fuzzy
 msgid "Listmaster(s):"
-msgstr ""
+msgstr "صاحب القائمة"
 
 #: ../web_tt2/serveradmin.tt2:31
 msgid "No Virtual Robot defined on this server"
@@ -3905,27 +4130,28 @@ msgstr ""
 
 #: ../web_tt2/serveradmin.tt2:47
 msgid "Review lists from this family"
-msgstr ""
+msgstr "مشاهدة قوائم من هذه العائله"
 
 #: ../web_tt2/serveradmin.tt2:61
 msgid "Search User"
-msgstr ""
+msgstr "بحث عن مستخدم"
 
 #: ../web_tt2/serveradmin.tt2:70
 msgid "Delay for active sessions (minutes)"
-msgstr ""
+msgstr "تأخير للأتصالات الفعالة (دقائق)"
 
 #: ../web_tt2/serveradmin.tt2:72
 msgid "Show only connected users"
-msgstr ""
+msgstr "اظهار المستخدمين المتصلين فقط"
 
 #: ../web_tt2/serveradmin.tt2:74
 msgid "Show sessions"
-msgstr ""
+msgstr "اظهار الأتصالات الفعاله"
 
 #: ../web_tt2/serveradmin.tt2:80
+#, fuzzy
 msgid "You can change your users email address here:"
-msgstr ""
+msgstr "البريد الألكتروني"
 
 #: ../web_tt2/serveradmin.tt2:82
 msgid ""
@@ -3934,12 +4160,14 @@ msgid ""
 msgstr ""
 
 #: ../web_tt2/serveradmin.tt2:87
+#, fuzzy
 msgid "Current user email address: "
-msgstr ""
+msgstr "البريد الألكتروني"
 
 #: ../web_tt2/serveradmin.tt2:89
+#, fuzzy
 msgid "New user email address: "
-msgstr ""
+msgstr "البريد الألكتروني"
 
 #: ../web_tt2/serveradmin.tt2:91
 msgid "Update user memberships"
@@ -3947,7 +4175,7 @@ msgstr ""
 
 #: ../web_tt2/serveradmin.tt2:96
 msgid "Change identity"
-msgstr ""
+msgstr "تغيير التعريف"
 
 #: ../web_tt2/serveradmin.tt2:98
 msgid ""
@@ -3957,28 +4185,31 @@ msgid ""
 msgstr ""
 
 #: ../web_tt2/serveradmin.tt2:102
+#, fuzzy
 msgid "change identity as: "
-msgstr ""
+msgstr "تغيير التعريف"
 
 #: ../web_tt2/serveradmin.tt2:112
 msgid "Rebuild HTML archives using \"arctxt\" directories as input."
-msgstr ""
+msgstr "اعادة بناء ارشيف النص الشبكي باستخدام arctxt"
 
 #: ../web_tt2/serveradmin.tt2:115
+#, fuzzy
 msgid "listname: "
-msgstr ""
+msgstr "إسم القائمة:"
 
 #: ../web_tt2/serveradmin.tt2:115
 msgid "Rebuild archive"
-msgstr ""
+msgstr "اعادة بناء الأرشيف"
 
 #: ../web_tt2/serveradmin.tt2:116
 msgid "Rebuild all"
-msgstr ""
+msgstr "اعادة بناء كلي"
 
 #: ../web_tt2/serveradmin.tt2:116
+#, fuzzy
 msgid "  May take a lot of CPU time,  be careful!"
-msgstr ""
+msgstr "من الممكن ان تأخذ كثيرا من وقت المعالج - كن حذرا"
 
 #: ../web_tt2/serveradmin.tt2:126
 msgid ""
@@ -3988,28 +4219,29 @@ msgid ""
 msgstr ""
 
 #: ../web_tt2/serveradmin.tt2:130
+#, fuzzy
 msgid "Log level:"
-msgstr ""
+msgstr "تغيير مراحل السجلات"
 
 #: ../web_tt2/serveradmin.tt2:136
 msgid "Set log level"
-msgstr ""
+msgstr "تغيير مراحل السجلات"
 
 #: ../web_tt2/serveradmin.tt2:146
 msgid "Setting defaults list templates"
-msgstr ""
+msgstr "تحديد قوالب القوائم الأفتراضيه"
 
 #: ../web_tt2/serveradmin.tt2:159
 msgid "Setting site templates"
-msgstr ""
+msgstr "تحديد قوالب الموقع"
 
 #: ../web_tt2/serveradmin.tt2:167
 msgid "view translations"
-msgstr ""
+msgstr "مشاهدة الترجمة"
 
 #: ../web_tt2/serveradmin.tt2:168
 msgid "Customize templates"
-msgstr ""
+msgstr "تخصيص القوالب"
 
 #: ../web_tt2/serveradmin.tt2:173
 msgid ""
@@ -4031,8 +4263,9 @@ msgid "Skins administration page"
 msgstr ""
 
 #: ../web_tt2/serveradmin.tt2:193
+#, fuzzy
 msgid "View main config"
-msgstr ""
+msgstr "حرر إعدادات القائمة"
 
 #: ../web_tt2/serveradmin.tt2:232
 msgid ""
@@ -4049,8 +4282,9 @@ msgid ""
 msgstr ""
 
 #: ../web_tt2/serveradmin.tt2:242
+#, fuzzy
 msgid "You can submit a problem or request a new feature: "
-msgstr ""
+msgstr "من الممكن ارسال طلب حل لمشكله او اضافة ميزه جديدة"
 
 #. (process_id,loop_count,start_time)
 #: ../web_tt2/serveradmin.tt2:250
@@ -4058,45 +4292,49 @@ msgid "This FastCGI process (%1) has served %2 pages since %3."
 msgstr ""
 
 #: ../web_tt2/setlang.tt2:9
+#, fuzzy
 msgid "Language selection"
-msgstr ""
+msgstr "اللغة:"
 
 #: ../web_tt2/setlang.tt2:17
+#, fuzzy
 msgid "Validate your language selection"
-msgstr ""
+msgstr "اللغة:"
 
 #: ../web_tt2/setlang.tt2:17
+#, fuzzy
 msgid "Set language"
-msgstr ""
+msgstr "اللغة"
 
 #. (list_request_date)
 #: ../web_tt2/set_pending_list_request.tt2:10
 msgid " on %1"
-msgstr ""
+msgstr "على 1%"
 
 #: ../web_tt2/set_pending_list_request.tt2:23
 msgid "Close it"
-msgstr ""
+msgstr "أغلق"
 
 #: ../web_tt2/set_pending_list_request.tt2:24
 msgid "Install it"
-msgstr ""
+msgstr "تجهيز"
 
 #: ../web_tt2/set_pending_list_request.tt2:26 ../web_tt2/subrequest.tt2:43
 msgid "submit"
-msgstr ""
+msgstr "إرسال"
 
 #: ../web_tt2/set_pending_list_request.tt2:27
 msgid "notify owner"
-msgstr ""
+msgstr "إعلام مدير القائمة"
 
 #: ../web_tt2/set_pending_list_request.tt2:36
+#, fuzzy
 msgid "Information file:"
-msgstr ""
+msgstr "ملف المعلومات"
 
 #: ../web_tt2/set_pending_list_request.tt2:52
 msgid "Configuration file"
-msgstr ""
+msgstr "ملف المواصفات"
 
 #: ../web_tt2/show_cert.tt2:6
 msgid "HTTPS authentication information"
@@ -4108,11 +4346,11 @@ msgstr ""
 
 #: ../web_tt2/show_cert.tt2:8
 msgid "Certificate expiration date"
-msgstr ""
+msgstr "تاريخ انتهاء صلاحية الشهاده"
 
 #: ../web_tt2/show_cert.tt2:9
 msgid "Certificate issuer"
-msgstr ""
+msgstr "مصدر الشهاده"
 
 #: ../web_tt2/show_cert.tt2:10
 msgid "Cipher key size used"
@@ -4134,12 +4372,13 @@ msgid ""
 msgstr ""
 
 #: ../web_tt2/show_exclude.tt2:28
+#, fuzzy
 msgid "No user excluded."
-msgstr ""
+msgstr "سرد الأدلة"
 
 #: ../web_tt2/show_sessions.tt2:2
 msgid "Sessions list"
-msgstr ""
+msgstr "سرد الأتصالات الحاليه"
 
 #. (list)
 #: ../web_tt2/sigrequest.tt2:4
@@ -4147,10 +4386,11 @@ msgid "You asked to be unsubscribed  from list %1"
 msgstr ""
 
 #: ../web_tt2/sigrequest.tt2:5
+#, fuzzy
 msgid ""
 "To confirm\n"
 "      your request, please click the button below:"
-msgstr ""
+msgstr "لتأكيد تغيير بريدك يرجى ادخال كلمة السر التي استلمتها"
 
 #. (list)
 #: ../web_tt2/sigrequest.tt2:12
@@ -4237,7 +4477,7 @@ msgstr ""
 
 #: ../web_tt2/skinsedit.tt2:35
 msgid "Colors"
-msgstr ""
+msgstr "ألوان"
 
 #: ../web_tt2/skinsedit.tt2:38
 msgid ""
@@ -4361,8 +4601,9 @@ msgid "font color of:"
 msgstr ""
 
 #: ../web_tt2/skinsedit.tt2:113
+#, fuzzy
 msgid "titles;"
-msgstr ""
+msgstr "العنوان"
 
 #: ../web_tt2/skinsedit.tt2:113
 msgid "hovered links."
@@ -4387,7 +4628,7 @@ msgstr ""
 #: ../web_tt2/skinsedit.tt2:131
 #, fuzzy
 msgid "error messages."
-msgstr "kannadoù nevez"
+msgstr "# رساله"
 
 #: ../web_tt2/skinsedit.tt2:137
 msgid "hovered links;"
@@ -4402,8 +4643,9 @@ msgid "main page;"
 msgstr ""
 
 #: ../web_tt2/skinsedit.tt2:143
+#, fuzzy
 msgid "table headers;"
-msgstr ""
+msgstr "ترويسة الرسالة"
 
 #: ../web_tt2/skinsedit.tt2:143
 msgid "buttons."
@@ -4451,7 +4693,7 @@ msgstr ""
 
 #: ../web_tt2/skinsedit.tt2:179
 msgid "unused"
-msgstr ""
+msgstr "غير مستخدم"
 
 #: ../web_tt2/skinsedit.tt2:185 ../web_tt2/skinsedit.tt2:191
 #: ../web_tt2/skinsedit.tt2:197 ../web_tt2/skinsedit.tt2:203
@@ -4495,8 +4737,9 @@ msgstr ""
 
 #. (listname)
 #: ../web_tt2/stats.tt2:4
+#, fuzzy
 msgid "List %1 statistics"
-msgstr ""
+msgstr "قائمة القوائم"
 
 #: ../web_tt2/stats.tt2:6
 msgid "This page displays overall informations regarding the list activity"
@@ -4504,14 +4747,15 @@ msgstr ""
 
 #. (shared_size)
 #: ../web_tt2/stats.tt2:7
+#, fuzzy
 msgid "Shared document directory size: %1 kB"
-msgstr ""
+msgstr "وثائق مشتركة"
 
 #. (arc_size)
 #: ../web_tt2/stats.tt2:9
 #, fuzzy
 msgid "Web archives size: %1 kB"
-msgstr "kannadoù nevez"
+msgstr "حجم الأرشيف"
 
 #: ../web_tt2/stats.tt2:16 ../web_tt2/stats.tt2:22
 msgid "[% o.title %]"
@@ -4523,7 +4767,7 @@ msgstr ""
 
 #: ../web_tt2/subindex.tt2:4 ../web_tt2/subindex.tt2:8
 msgid "Listing subscription to moderate"
-msgstr ""
+msgstr "سرد الأشتراكات للتعامل معها"
 
 #: ../web_tt2/subindex.tt2:52
 msgid "No subscription requests"
@@ -4531,27 +4775,30 @@ msgstr ""
 
 #: ../web_tt2/subindex.tt2:58
 msgid "Add selected addresses"
-msgstr ""
+msgstr "إضافة العناوين المختاره"
 
 #: ../web_tt2/subindex.tt2:59
 msgid "Reject selected addresses"
-msgstr ""
+msgstr "رفض العناوين المختاره"
 
 #: ../web_tt2/suboptions.tt2:4
+#, fuzzy
 msgid "Your list options"
-msgstr ""
+msgstr "قوائمك"
 
 #: ../web_tt2/suboptions.tt2:10
 msgid "You are subscribed since"
-msgstr ""
+msgstr "انت مشترك من تاريخ"
 
 #: ../web_tt2/suboptions.tt2:13
+#, fuzzy
 msgid "Receiving mode:"
-msgstr ""
+msgstr "طور الإستقبال"
 
 #: ../web_tt2/suboptions.tt2:25
+#, fuzzy
 msgid "Topic subscription:"
-msgstr ""
+msgstr "وصف القائمة"
 
 #: ../web_tt2/suboptions.tt2:37 ../web_tt2/suboptions.tt2:39
 msgid "Other (messages not tagged) "
@@ -4571,13 +4818,15 @@ msgid "You requested a subscription to list %1"
 msgstr ""
 
 #: ../web_tt2/subrequest.tt2:8
+#, fuzzy
 msgid "To confirm your request, please click the button below:"
-msgstr ""
+msgstr "لتأكيد تغيير بريدك يرجى ادخال كلمة السر التي استلمتها"
 
 #. (list)
 #: ../web_tt2/subrequest.tt2:9
+#, fuzzy
 msgid "You want to subscribe to list %1"
-msgstr ""
+msgstr "هل فعلا تريد الغاء الأشتراك من قائمة %1?"
 
 #: ../web_tt2/subrequest.tt2:10
 msgid "Please fill in the form below and then click the validation button"
@@ -4608,10 +4857,11 @@ msgstr ""
 
 #. (list)
 #: ../web_tt2/subrequest.tt2:51
+#, fuzzy
 msgid ""
 "To confirm your subscription to list %1, please enter\n"
 "        your password below"
-msgstr ""
+msgstr "لتأكيد تغيير بريدك يرجى ادخال كلمة السر التي استلمتها"
 
 #: ../web_tt2/subrequest.tt2:53
 msgid ", in addition to the personnal informations requested."
@@ -4619,28 +4869,30 @@ msgstr ""
 
 #: ../web_tt2/subrequest.tt2:58
 msgid "e-mail address"
-msgstr ""
+msgstr "العنوان البريدي"
 
 #: ../web_tt2/subrequest.tt2:59
 msgid "password"
-msgstr ""
+msgstr "كلمة السر"
 
 #: ../web_tt2/subrequest.tt2:69
+#, fuzzy
 msgid "My password?"
-msgstr ""
+msgstr "كلمة السر"
 
 #. (list)
 #: ../web_tt2/subrequest.tt2:75
+#, fuzzy
 msgid "You are already subscribed to list %1"
-msgstr ""
+msgstr "هل فعلا تريد الغاء الأشتراك من قائمة %1?"
 
 #: ../web_tt2/subscriber_table.tt2:4
 msgid "List members"
-msgstr ""
+msgstr "مشتركي القائمة"
 
 #: ../web_tt2/subscriber_table.tt2:23 ../web_tt2/subscriber_table.tt2:26
 msgid "Domain"
-msgstr ""
+msgstr "النطاق"
 
 #: ../web_tt2/subscriber_table.tt2:32
 msgid "Picture"
@@ -4669,16 +4921,18 @@ msgid "%1's picture"
 msgstr ""
 
 #: ../web_tt2/suspend_request.tt2:13
+#, fuzzy
 msgid "Suspended"
-msgstr ""
+msgstr "المرسل"
 
 #: ../web_tt2/suspend_request.tt2:23
+#, fuzzy
 msgid "Suspended from"
-msgstr ""
+msgstr "المرسل"
 
 #: ../web_tt2/suspend_request.tt2:23 ../web_tt2/viewlogs.tt2:113
 msgid "to"
-msgstr ""
+msgstr "إلى"
 
 #: ../web_tt2/suspend_request.tt2:23
 msgid "indefinite end date"
@@ -4687,41 +4941,47 @@ msgstr ""
 #: ../web_tt2/suspend_request.tt2:33
 #, fuzzy
 msgid "No subscription."
-msgstr "kannadoù nevez"
+msgstr "وصف القائمة"
 
 #: ../web_tt2/suspend_request.tt2:37
+#, fuzzy
 msgid "Toogle selection"
-msgstr ""
+msgstr "اللغة:"
 
 #: ../web_tt2/suspend_request.tt2:41
+#, fuzzy
 msgid "Suspend / Resume the selected lists"
-msgstr ""
+msgstr "الغي القوائم المعلمه"
 
 #: ../web_tt2/suspend_request.tt2:43
 msgid "From:"
 msgstr ""
 
 #: ../web_tt2/suspend_request.tt2:44
+#, fuzzy
 msgid "To:"
-msgstr ""
+msgstr "إلى"
 
 #: ../web_tt2/suspend_request.tt2:46
 msgid "Check this box if you want to suspend your subscription indefinitely."
 msgstr ""
 
+# spelling, style
 #: ../web_tt2/suspend_request.tt2:49
 #, fuzzy
 msgid "Suspend my subscriptions"
-msgstr "kannadoù nevez"
+msgstr "ألغِ الاشتراك"
 
+# spelling, style
 #: ../web_tt2/suspend_request.tt2:51
 #, fuzzy
 msgid "Resume my subscriptions"
-msgstr "kannadoù nevez"
+msgstr "ألغِ الاشتراك"
 
 #: ../web_tt2/suspend_request.tt2:55
+#, fuzzy
 msgid "Unsubscribe selected lists"
-msgstr ""
+msgstr "الغي القوائم المعلمه"
 
 #: ../web_tt2/ticket.tt2:4
 msgid "The link you used is unvalid"
@@ -4765,8 +5025,9 @@ msgid "The validation link has expired"
 msgstr ""
 
 #: ../web_tt2/ticket.tt2:29 ../web_tt2/ticket.tt2:38
+#, fuzzy
 msgid "Please login or request a new validation link"
-msgstr ""
+msgstr "مسموح لمديري القائمة مع التوثيق فقط"
 
 #. (ticket_context.printable_date)
 #: ../web_tt2/ticket.tt2:34
@@ -4776,7 +5037,7 @@ msgstr ""
 #: ../web_tt2/tracking.tt2:13 ../web_tt2/tracking.tt2:4
 #, fuzzy
 msgid "Message tracking"
-msgstr "kannadoù nevez"
+msgstr "رسالة"
 
 #. (fromname,fromaddr,listname)
 #: ../web_tt2/tracking.tt2:6
@@ -4784,24 +5045,27 @@ msgid "Message from %1 %2 for list %3 "
 msgstr ""
 
 #: ../web_tt2/tracking.tt2:10
+#, fuzzy
 msgid "Distribution ended at"
-msgstr ""
+msgstr "توزيع"
 
 #: ../web_tt2/tracking.tt2:14
 msgid "Recipient Email"
 msgstr ""
 
 #: ../web_tt2/tracking.tt2:14
+#, fuzzy
 msgid "Reception Option"
-msgstr ""
+msgstr "طور الإستقبال"
 
 #: ../web_tt2/tracking.tt2:15
 msgid "Delivery status"
 msgstr ""
 
 #: ../web_tt2/tracking.tt2:16
+#, fuzzy
 msgid "Notification Date"
-msgstr ""
+msgstr "تاريخ انتهاء صلاحية الشهاده"
 
 #: ../web_tt2/tracking.tt2:17
 msgid "Notification"
@@ -4824,12 +5088,14 @@ msgid "Powered by"
 msgstr ""
 
 #: ../web_tt2/viewlogs.tt2:4
+#, fuzzy
 msgid "Logs view"
-msgstr ""
+msgstr "سجلات"
 
 #: ../web_tt2/viewlogs.tt2:50
+#, fuzzy
 msgid "Search by:"
-msgstr ""
+msgstr "بحث"
 
 #: ../web_tt2/viewlogs.tt2:58 ../web_tt2/viewlogs.tt2:64
 msgid "Message Id"
@@ -4840,16 +5106,18 @@ msgid "Search by date from:"
 msgstr ""
 
 #: ../web_tt2/viewlogs.tt2:72
+#, fuzzy
 msgid "to:"
-msgstr ""
+msgstr "إلى"
 
 #: ../web_tt2/viewlogs.tt2:73
 msgid "ex: 24-05-2006"
 msgstr ""
 
 #: ../web_tt2/viewlogs.tt2:75
+#, fuzzy
 msgid "Search by type:"
-msgstr ""
+msgstr "حقل البحث:"
 
 #: ../web_tt2/viewlogs.tt2:79 ../web_tt2/viewlogs.tt2:86
 msgid "All"
@@ -4861,7 +5129,7 @@ msgstr ""
 
 #: ../web_tt2/viewlogs.tt2:90
 msgid "List Management"
-msgstr ""
+msgstr "إدارة القائمة"
 
 #: ../web_tt2/viewlogs.tt2:93
 msgid "User management"
@@ -4872,8 +5140,9 @@ msgid "Web documents management"
 msgstr ""
 
 #: ../web_tt2/viewlogs.tt2:100
+#, fuzzy
 msgid "Search by IP:"
-msgstr ""
+msgstr "حقل البحث:"
 
 #: ../web_tt2/viewlogs.tt2:105
 msgid "View"
@@ -4907,11 +5176,11 @@ msgstr ""
 
 #: ../web_tt2/viewlogs.tt2:131
 msgid "List"
-msgstr ""
+msgstr "قائمة"
 
 #: ../web_tt2/viewlogs.tt2:136 ../web_tt2/viewlogs.tt2:139
 msgid "Action"
-msgstr ""
+msgstr "فعل "
 
 #: ../web_tt2/viewlogs.tt2:144
 msgid "Parameters"
@@ -4927,7 +5196,7 @@ msgstr ""
 
 #: ../web_tt2/viewlogs.tt2:160
 msgid "Error type"
-msgstr ""
+msgstr "نوع الخطأ"
 
 #: ../web_tt2/viewlogs.tt2:165 ../web_tt2/viewlogs.tt2:168
 msgid "User Email"
@@ -4943,7 +5212,7 @@ msgstr ""
 
 #: ../web_tt2/viewlogs.tt2:213
 msgid "view other events related to this message id."
-msgstr ""
+msgstr "مشاهدة الأحداث المتعلقة برقم هذه الرسالة"
 
 #: ../web_tt2/viewlogs.tt2:213
 msgid "Other events"
@@ -4952,7 +5221,7 @@ msgstr ""
 #: ../web_tt2/viewmod.tt2:17
 #, fuzzy
 msgid "Default rejection message"
-msgstr "kannadoù nevez"
+msgstr "رسالة الإصابة بفيروس"
 
 #: ../web_tt2/viewmod.tt2:18
 msgid "Do Not Notify"
@@ -4961,7 +5230,7 @@ msgstr ""
 #: ../web_tt2/view_template.tt2:7
 #, fuzzy
 msgid "Template name: "
-msgstr "kannadoù nevez"
+msgstr "اسم القالب"
 
 #: ../web_tt2/view_template.tt2:8
 msgid "Type: "
@@ -5029,19 +5298,19 @@ msgstr ""
 
 #: ../mail_tt2/authorization_reject.tt2:22
 msgid "Adding a user to the list is restricted to list owners."
-msgstr ""
+msgstr "لا يسمح بإضافة مشترك للقائمة إلا من قبل مدير القائمة"
 
 #: ../mail_tt2/authorization_reject.tt2:25
 msgid "Adding a user to the list is not allowed."
-msgstr ""
+msgstr "لا يسمح بإضافة مشترك للقائمة"
 
 #: ../mail_tt2/authorization_reject.tt2:28
 msgid "List creation is restricted to local domain users."
-msgstr ""
+msgstr "إنشاء القوائم محصور لمشتركي النطاق المحلي"
 
 #: ../mail_tt2/authorization_reject.tt2:31
 msgid "List creation is restricted to listmaster."
-msgstr ""
+msgstr "إنشاء القوئم محصور بمدير القائمة الرئيسي"
 
 #: ../mail_tt2/authorization_reject.tt2:34
 msgid "Shared document edition is restricted to list subscribers."
@@ -5063,7 +5332,7 @@ msgstr ""
 
 #: ../mail_tt2/authorization_reject.tt2:48
 msgid "It is not possible to delete a user from the list."
-msgstr ""
+msgstr "من غير الممكن إلغاء مشترك من القائمة"
 
 #: ../mail_tt2/authorization_reject.tt2:51
 msgid "Shared document reading is restricted to list owners."
@@ -5081,11 +5350,11 @@ msgstr ""
 
 #: ../mail_tt2/authorization_reject.tt2:61
 msgid "you are not allowed to edit list parameters."
-msgstr ""
+msgstr "ليس من المسموح لك تعديل مدخلات القائمة"
 
 #: ../mail_tt2/authorization_reject.tt2:64
 msgid "List parameter editing is restricted to list owners."
-msgstr ""
+msgstr "تغيير خيارات القائمة مقيد و محدد بمدراء القائمة."
 
 #: ../mail_tt2/authorization_reject.tt2:67
 msgid "The 'global remind' feature is restricted to listmaster."
@@ -5267,7 +5536,7 @@ msgstr ""
 
 #: ../mail_tt2/authorization_reject.tt2:197
 msgid "you are not allowed to perform this action."
-msgstr ""
+msgstr "ليس من المسموح لك تنفيذ هذا الأمر"
 
 #. (list.name)
 #: ../mail_tt2/bye.tt2:2
@@ -5285,7 +5554,7 @@ msgstr ""
 
 #: ../mail_tt2/certif_warning.tt2:2
 msgid "near expiration of your certificate"
-msgstr ""
+msgstr "قرب انتهاء صلاحية الشهادة"
 
 #. (expiration_date)
 #: ../mail_tt2/certif_warning.tt2:4
@@ -5293,8 +5562,9 @@ msgid "Your authentification certificate will expire on %1."
 msgstr ""
 
 #: ../mail_tt2/certif_warning.tt2:5
+#, fuzzy
 msgid "The certificate subject is:"
-msgstr ""
+msgstr "مصدر الشهاده"
 
 #: ../mail_tt2/certif_warning.tt2:8
 msgid "You won't receive the signed messages from your lists."
@@ -5315,12 +5585,14 @@ msgid "Results of your commands"
 msgstr ""
 
 #: ../mail_tt2/command_report.tt2:10
+#, fuzzy
 msgid "Command has been performed:"
-msgstr ""
+msgstr "تم تنفيذ الأمر"
 
 #: ../mail_tt2/command_report.tt2:12
+#, fuzzy
 msgid "These commands have been performed:"
-msgstr ""
+msgstr "تم تنفيذ الأمر"
 
 #: ../mail_tt2/command_report.tt2:20
 msgid "Your message signature was successfully verified using S/MIME."
@@ -5374,8 +5646,9 @@ msgstr ""
 
 #. (notice.cmd)
 #: ../mail_tt2/command_report.tt2:52
+#, fuzzy
 msgid "Command '%1' found: ignoring end of message."
-msgstr ""
+msgstr "أمر غير مفهوم : سيتم تجاهل أخر الرسالة"
 
 #. (notice.listname)
 #: ../mail_tt2/command_report.tt2:55
@@ -5383,24 +5656,28 @@ msgid "There is no message to moderate for list '%1'."
 msgstr ""
 
 #: ../mail_tt2/command_report.tt2:67
+#, fuzzy
 msgid "Command has been rejected:"
-msgstr ""
+msgstr "تم رفض الأمر"
 
 #: ../mail_tt2/command_report.tt2:69
+#, fuzzy
 msgid "These commands have been rejected:"
-msgstr ""
+msgstr "تم رفض الأمر"
 
 #: ../mail_tt2/command_report.tt2:85
+#, fuzzy
 msgid "Command has failed:"
-msgstr ""
+msgstr "فشل تنفيذ الأمر"
 
 #: ../mail_tt2/command_report.tt2:87
+#, fuzzy
 msgid "These commands have failed:"
-msgstr ""
+msgstr "فشل تنفيذ الأمر"
 
 #: ../mail_tt2/command_report.tt2:94
 msgid "Command not understood: ignoring end of message."
-msgstr ""
+msgstr "أمر غير مفهوم : سيتم تجاهل أخر الرسالة"
 
 #: ../mail_tt2/command_report.tt2:98
 msgid ""
@@ -5478,12 +5755,14 @@ msgid ""
 msgstr ""
 
 #: ../mail_tt2/command_report.tt2:152
+#, fuzzy
 msgid "Command has failed because of an internal server error:"
-msgstr ""
+msgstr "فشل تنفيذ الأمر بسبب خلل في السيرفر :"
 
 #: ../mail_tt2/command_report.tt2:154
+#, fuzzy
 msgid "These commands have failed because of an internal server error:"
-msgstr ""
+msgstr "فشل تنفيذ الأمر بسبب خلل في السيرفر :"
 
 #: ../mail_tt2/command_report.tt2:171
 msgid ""
@@ -5569,8 +5848,9 @@ msgid ""
 msgstr ""
 
 #: ../mail_tt2/expire_deletion.tt2:8 ../mail_tt2/removed.tt2:8
+#, fuzzy
 msgid "You can subscribe again:"
-msgstr ""
+msgstr "انت مشترك من تاريخ"
 
 #. (list.name)
 #: ../mail_tt2/expire_warning1.tt2:2 ../mail_tt2/expire_warning2.tt2:2
@@ -5585,13 +5865,16 @@ msgstr ""
 
 #: ../mail_tt2/expire_warning1.tt2:7 ../mail_tt2/expire_warning2.tt2:7
 #: ../mail_tt2/remind.tt2:6
+#, fuzzy
 msgid "Everything about this list: "
-msgstr ""
+msgstr "كل شيء حول هذه القائمة :"
 
+# spelling, style
 #: ../mail_tt2/expire_warning1.tt2:8 ../mail_tt2/expire_warning2.tt2:8
 #: ../mail_tt2/remind.tt2:8
+#, fuzzy
 msgid "Unsubscription:"
-msgstr ""
+msgstr "ألغِ الاشتراك"
 
 #. (list.name)
 #: ../mail_tt2/get_archive.tt2:3
@@ -5621,12 +5904,14 @@ msgid "User guide"
 msgstr ""
 
 #: ../mail_tt2/helpfile.tt2:5
+#, fuzzy
 msgid "                       (Automatic Mailing System)"
-msgstr ""
+msgstr "مساعده_ملف المساعده الحالي"
 
 #: ../mail_tt2/helpfile.tt2:7
+#, fuzzy
 msgid "                                User's Guide"
-msgstr ""
+msgstr "مساعده_ملف المساعده الحالي"
 
 #: ../mail_tt2/helpfile.tt2:10
 msgid ""
@@ -5647,11 +5932,11 @@ msgstr ""
 
 #: ../mail_tt2/helpfile.tt2:16
 msgid "Available commands are:"
-msgstr ""
+msgstr "الأوامر المتوفره هي:"
 
 #: ../mail_tt2/helpfile.tt2:18
 msgid "HELp                        * This help file"
-msgstr ""
+msgstr "مساعده_ملف المساعده الحالي"
 
 #: ../mail_tt2/helpfile.tt2:19
 msgid "INFO <list>                 * Information about a list"
@@ -5804,8 +6089,9 @@ msgstr ""
 
 #. (list.name,list.host)
 #: ../mail_tt2/info_report.tt2:4
+#, fuzzy
 msgid "Information regarding list %1@%2:"
-msgstr ""
+msgstr "معلومات حول هذه القائمة"
 
 #. (list.subject)
 #: ../mail_tt2/info_report.tt2:6
@@ -5829,19 +6115,24 @@ msgstr ""
 
 #. (unsubscribe)
 #: ../mail_tt2/info_report.tt2:18
+#, fuzzy
 msgid "Unsubscription    : %1"
-msgstr ""
+msgstr "%1 / سيزيل اشتراكه من 2%"
 
 #. (send)
 #: ../mail_tt2/info_report.tt2:19
 #, fuzzy
 msgid "Sending messages  : %1"
-msgstr "kannadoù nevez"
+msgstr ""
+"\n"
+"أو ارسل بريد  إلى 1%  بالعنوان التالي \n"
+"AUTH %2 DEL %3 %4\n"
 
 #. (review)
 #: ../mail_tt2/info_report.tt2:20
+#, fuzzy
 msgid "Review subscribers: %1"
-msgstr ""
+msgstr "إدارة المشتركين"
 
 #. (reply_to_header.value)
 #: ../mail_tt2/info_report.tt2:21
@@ -5884,8 +6175,12 @@ msgstr ""
 
 #. (conf.sympa,list.name)
 #: ../mail_tt2/invite.tt2:10
+#, fuzzy
 msgid "Or send a message to %1 with subject: \"sub %2\""
 msgstr ""
+"\n"
+"أو ارسل بريد  إلى 1%  بالعنوان التالي \n"
+"AUTH %2 DEL %3 %4\n"
 
 #: ../mail_tt2/invite.tt2:12
 msgid "If you don't want to subscribe just ignore this message."
@@ -5904,7 +6199,7 @@ msgstr ""
 
 #: ../mail_tt2/list_created.tt2:6
 msgid "homepage"
-msgstr ""
+msgstr "الصفحه الرئيسية"
 
 #. (list.name)
 #: ../mail_tt2/list_created.tt2:9
@@ -5957,8 +6252,9 @@ msgstr ""
 
 #. (list.name,list.host,email)
 #: ../mail_tt2/listmaster_notification.tt2:4
+#, fuzzy
 msgid "List \"%1@%2\" creation request from %3"
-msgstr ""
+msgstr "رسالة طلب إنشاء قائمة"
 
 #. (email,list.name)
 #: ../mail_tt2/listmaster_notification.tt2:6
@@ -6023,7 +6319,7 @@ msgstr ""
 
 #: ../mail_tt2/listmaster_notification.tt2:46
 msgid "Errors:"
-msgstr ""
+msgstr "أخطاء :"
 
 #: ../mail_tt2/listmaster_notification.tt2:52
 #: ../mail_tt2/listmaster_notification.tt2:60
@@ -6041,7 +6337,7 @@ msgstr ""
 
 #: ../mail_tt2/listmaster_notification.tt2:63
 msgid "Database structure updated"
-msgstr ""
+msgstr "تم تحديث هيكل قاعدة البيانات"
 
 #. (db_name)
 #: ../mail_tt2/listmaster_notification.tt2:65
@@ -6051,7 +6347,7 @@ msgstr ""
 
 #: ../mail_tt2/listmaster_notification.tt2:71
 msgid "DataBase connection restored"
-msgstr ""
+msgstr "تم استعادة الأتصال بقاعدة البيانات"
 
 #. (db_name)
 #: ../mail_tt2/listmaster_notification.tt2:73
@@ -6071,7 +6367,7 @@ msgstr ""
 
 #: ../mail_tt2/listmaster_notification.tt2:83
 msgid "Loop detected"
-msgstr ""
+msgstr "تم فحص حلقة معالجة لانهائية"
 
 #: ../mail_tt2/listmaster_notification.tt2:90
 msgid "A loop has been detected with the following message"
@@ -6079,7 +6375,7 @@ msgstr ""
 
 #: ../mail_tt2/listmaster_notification.tt2:104
 msgid "Antivirus scan failed"
-msgstr ""
+msgstr "فشل فحص الفيروسات"
 
 #: ../mail_tt2/listmaster_notification.tt2:106
 msgid "The antivirus scan has failed while processing the following file:"
@@ -6090,8 +6386,9 @@ msgid "The returned error message:"
 msgstr ""
 
 #: ../mail_tt2/listmaster_notification.tt2:114
+#, fuzzy
 msgid "Parameter error"
-msgstr ""
+msgstr "خطأ من السيرفير"
 
 #. (par_name,par_value)
 #: ../mail_tt2/listmaster_notification.tt2:116
@@ -6100,8 +6397,9 @@ msgstr ""
 
 #. (action)
 #: ../mail_tt2/listmaster_notification.tt2:117
+#, fuzzy
 msgid "%1 impossible."
-msgstr ""
+msgstr "مستحيل"
 
 #: ../mail_tt2/listmaster_notification.tt2:118
 #: ../mail_tt2/listmaster_notification.tt2:124
@@ -6115,8 +6413,9 @@ msgid "See logs for more details."
 msgstr ""
 
 #: ../mail_tt2/listmaster_notification.tt2:121
+#, fuzzy
 msgid "Unable to create directory"
-msgstr ""
+msgstr "لا يمكن تحميل قوالب انشاء القائمة"
 
 #. (dir)
 #: ../mail_tt2/listmaster_notification.tt2:123
@@ -6133,8 +6432,9 @@ msgid "Sympa could not archive message '%1'. Moving it into directory '%2'."
 msgstr ""
 
 #: ../mail_tt2/listmaster_notification.tt2:133
+#, fuzzy
 msgid "A bounce management failed"
-msgstr ""
+msgstr "إدارة البريد العائد"
 
 #. (file,bad)
 #: ../mail_tt2/listmaster_notification.tt2:135
@@ -6144,12 +6444,13 @@ msgstr ""
 
 #. (error)
 #: ../mail_tt2/listmaster_notification.tt2:137
+#, fuzzy
 msgid "Error: %1"
-msgstr ""
+msgstr "أخطاء :"
 
 #: ../mail_tt2/listmaster_notification.tt2:141
 msgid "incorrect format of edit_list.conf"
-msgstr ""
+msgstr "صيغة خاطئه في ملف edit_list.conf"
 
 #: ../mail_tt2/listmaster_notification.tt2:144
 msgid ""
@@ -6264,8 +6565,9 @@ msgstr ""
 
 #. (list.name)
 #: ../mail_tt2/listmaster_notification.tt2:190
+#, fuzzy
 msgid "List %1: Failed to change admin email address"
-msgstr ""
+msgstr "تغيير عنوان البريد"
 
 #. (current_email,new_email,datasource)
 #: ../mail_tt2/listmaster_notification.tt2:194
@@ -6307,7 +6609,7 @@ msgstr ""
 
 #: ../mail_tt2/listmaster_notification.tt2:234
 msgid "File removed"
-msgstr ""
+msgstr "تم حذف الملف"
 
 #. (param0)
 #: ../mail_tt2/listmaster_notification.tt2:236
@@ -6373,14 +6675,15 @@ msgstr ""
 #: ../mail_tt2/listmaster_notification.tt2:284
 #: ../mail_tt2/listmaster_notification.tt2:295
 #: ../mail_tt2/listmaster_notification.tt2:303
+#, fuzzy
 msgid "Listmaster: internal server error "
-msgstr ""
+msgstr "مدير القائمة الرئيسي: خطأ داخلي للسيرفير"
 
 #. (who)
 #: ../mail_tt2/listmaster_notification.tt2:286
 #: ../mail_tt2/listmaster_notification.tt2:305
 msgid " User %1 has encountered an internal server error"
-msgstr ""
+msgstr "المستخدم 1% واجه رسالة خطأ من السيرفر"
 
 #. (error)
 #: ../mail_tt2/listmaster_notification.tt2:297
@@ -6424,8 +6727,9 @@ msgstr ""
 #. (old_email)
 #: ../mail_tt2/listmaster_notification.tt2:313
 #: ../mail_tt2/listmaster_notification.tt2:315
+#, fuzzy
 msgid " (old email: %1)"
-msgstr ""
+msgstr "( بريد قديم: 1% )"
 
 #. (sub)
 #: ../mail_tt2/listmaster_notification.tt2:314
@@ -6454,13 +6758,15 @@ msgstr ""
 
 #. (filepath)
 #: ../mail_tt2/listmaster_notification.tt2:319
+#, fuzzy
 msgid "Unable to read file: '%1'."
-msgstr ""
+msgstr "لا استطيع قراءة   '1%'"
 
 #. (filepath)
 #: ../mail_tt2/listmaster_notification.tt2:320
+#, fuzzy
 msgid "Unable to write file: '%1'."
-msgstr ""
+msgstr "لا استطيع قراءة   '1%'"
 
 #. (file)
 #: ../mail_tt2/listmaster_notification.tt2:321
@@ -6527,8 +6833,9 @@ msgstr ""
 #: ../mail_tt2/listmaster_notification.tt2:332
 #: ../mail_tt2/listmaster_notification.tt2:333
 #: ../mail_tt2/listmaster_notification.tt2:334
+#, fuzzy
 msgid ": unable to read '%1'."
-msgstr ""
+msgstr "لا استطيع قراءة   '1%'"
 
 #. (arc_file,list.name,path)
 #: ../mail_tt2/listmaster_notification.tt2:333
@@ -6556,15 +6863,15 @@ msgstr ""
 
 #: ../mail_tt2/listmaster_notification.tt2:338
 msgid "Failed to install aliases."
-msgstr ""
+msgstr "فشل تجهيز الأسماء المستعاره"
 
 #: ../mail_tt2/listmaster_notification.tt2:339
 msgid "Failed to remove aliases."
-msgstr ""
+msgstr "فشل حذف الأسماء المستعاره"
 
 #: ../mail_tt2/listmaster_notification.tt2:340
 msgid "Internal scenario error for 'create_list'."
-msgstr ""
+msgstr "خطأ داخلي لأمر إنشاء القائمة"
 
 #: ../mail_tt2/listmaster_notification.tt2:341
 msgid "Unable to create list."
@@ -6683,13 +6990,14 @@ msgstr ""
 
 #. (list.name)
 #: ../mail_tt2/listmaster_notification.tt2:374
+#, fuzzy
 msgid "Listmaster: system error "
-msgstr ""
+msgstr "مدير القائمة الرئيسي: خطأ في النظام"
 
 #. (who)
 #: ../mail_tt2/listmaster_notification.tt2:376
 msgid " User %1 has encountered a system error"
-msgstr ""
+msgstr "المستخدم 1% صادف رسالة خطأ من النظام"
 
 #. (list.name)
 #: ../mail_tt2/listowner_notification.tt2:4
@@ -6807,10 +7115,14 @@ msgstr ""
 
 #. (replyto)
 #: ../mail_tt2/listowner_notification.tt2:72
+#, fuzzy
 msgid ""
 "If prefered, you can accept this subscription request sending an email to %1 "
 "with the following subject:"
 msgstr ""
+"\n"
+"أو ارسل بريد إلى 2% بالعنوان التالي  \n"
+"AUTH %2 ADD %3 %4 %5\n"
 
 #: ../mail_tt2/listowner_notification.tt2:76
 msgid "That can be done using this mailto link:"
@@ -6836,10 +7148,14 @@ msgstr ""
 
 #. (sympa)-)
 #: ../mail_tt2/listowner_notification.tt2:97
+#, fuzzy
 msgid ""
 "\n"
 "or send an email to %1 with the following subject:\n"
 msgstr ""
+"\n"
+"أو ارسل بريد  إلى 1%  بالعنوان التالي \n"
+"AUTH %2 DEL %3 %4\n"
 
 #. (list.name)
 #: ../mail_tt2/listowner_notification.tt2:102
@@ -6867,7 +7183,7 @@ msgstr ""
 #. (by)
 #: ../mail_tt2/listowner_notification.tt2:114
 msgid " validated by %1 "
-msgstr ""
+msgstr "مصدق ل 1%"
 
 #: ../mail_tt2/listowner_notification.tt2:115
 msgid "No action is needed on your side."
@@ -6887,8 +7203,9 @@ msgstr ""
 
 #. (list.name)
 #: ../mail_tt2/listowner_notification.tt2:142
+#, fuzzy
 msgid "List %1: Failed to change member email address"
-msgstr ""
+msgstr "تغيير عنوان البريد"
 
 #. (current_email,new_email,datasource)
 #: ../mail_tt2/listowner_notification.tt2:146
@@ -6921,7 +7238,7 @@ msgstr ""
 
 #: ../mail_tt2/list_unknown.tt2:3
 msgid "List unknown"
-msgstr ""
+msgstr "قائمة غير معروفه"
 
 #: ../mail_tt2/list_unknown.tt2:10
 msgid "This is an automatic response sent by Sympa Mailing Lists Manager."
@@ -6942,8 +7259,9 @@ msgid "For further information, please contact %1@%2"
 msgstr ""
 
 #: ../mail_tt2/message_report.tt2:4
+#, fuzzy
 msgid "Message distribution: Internal server error"
-msgstr ""
+msgstr "مدير القائمة الرئيسي: خطأ داخلي للسيرفير"
 
 #. (list.name,function)
 #: ../mail_tt2/message_report.tt2:12
@@ -7144,8 +7462,12 @@ msgstr ""
 
 #. (conf.email,conf.host)
 #: ../mail_tt2/moderate.tt2:28 ../mail_tt2/moderate.tt2:33
+#, fuzzy
 msgid "Or send a message to %1@%2 with the following subject:"
 msgstr ""
+"\n"
+"أو ارسل بريد  إلى 1%  بالعنوان التالي \n"
+"AUTH %2 DEL %3 %4\n"
 
 #: ../mail_tt2/moderate.tt2:31
 msgid "To reject it (it will be removed):"
@@ -7228,8 +7550,8 @@ msgstr ""
 #. (list.name)-)
 #: ../mail_tt2/request_auth.tt2:19
 msgid ""
-"You requested a subscription reminder to be sent to each subscriber of list %"
-"1"
+"You requested a subscription reminder to be sent to each subscriber of list "
+"%1"
 msgstr ""
 
 #. (-)
@@ -7264,10 +7586,12 @@ msgstr ""
 msgid "Here are the subscribers of %1@%2 mailing list:"
 msgstr ""
 
+# should be definite; grammatical case
 #. (total)
 #: ../mail_tt2/review.tt2:10
+#, fuzzy
 msgid "Total subscribers: %1"
-msgstr ""
+msgstr "المشتركون:"
 
 #. (list.name)
 #: ../mail_tt2/send_auth.tt2:3
@@ -7290,17 +7614,20 @@ msgstr ""
 #: ../mail_tt2/send_auth.tt2:19
 #, fuzzy
 msgid "Or send a message to %1 with the following subject:\n"
-msgstr "kannadoù nevez"
+msgstr ""
+"\n"
+"أو ارسل بريد  إلى 1%  بالعنوان التالي \n"
+"AUTH %2 DEL %3 %4\n"
 
 #. (conf.title,list)
 #: ../mail_tt2/sendpasswd.tt2:4
 msgid "%1 / subscribing to %2"
-msgstr ""
+msgstr "%1 / سيشترك الى 2%"
 
 #. (conf.title,list)
 #: ../mail_tt2/sendpasswd.tt2:6
 msgid "%1 / unsubscribing from %2"
-msgstr ""
+msgstr "%1 / سيزيل اشتراكه من 2%"
 
 #. (conf.title)
 #: ../mail_tt2/sendpasswd.tt2:8 ../mail_tt2/sendssopasswd.tt2:3
@@ -7343,10 +7670,11 @@ msgid ""
 msgstr ""
 
 #: ../mail_tt2/sendpasswd.tt2:26
+#, fuzzy
 msgid ""
 "You may ignore this request or click on the following link in order to "
 "choose your password. "
-msgstr ""
+msgstr "ستستلم بريد ليذكرك بكلمة السر "
 
 #. (base_url,path_cgi)
 #: ../mail_tt2/sendpasswd.tt2:30 ../mail_tt2/sendssopasswd.tt2:13
@@ -7437,8 +7765,9 @@ msgstr ""
 
 #. (list.name)
 #: ../mail_tt2/user_notification.tt2:27
+#, fuzzy
 msgid "Management of list %1"
-msgstr ""
+msgstr "القوائم الجديده"
 
 #. (delegator,list.name,list.host)
 #: ../mail_tt2/user_notification.tt2:30
@@ -7449,21 +7778,23 @@ msgstr ""
 #. (delegator,list.name,list.host)
 #: ../mail_tt2/user_notification.tt2:32
 msgid ""
-"You have been delegate the responsability of list moderator by %1 for list %"
-"2@%3."
+"You have been delegate the responsability of list moderator by %1 for list "
+"%2@%3."
 msgstr ""
 
 #: ../mail_tt2/user_notification.tt2:35 ../mail_tt2/welcome.tt2:12
+#, fuzzy
 msgid "The list homepage:"
-msgstr ""
+msgstr "الصفحة الرثيسية للقائمة"
 
 #: ../mail_tt2/user_notification.tt2:36
 msgid "Owner and moderator guide:"
 msgstr ""
 
 #: ../mail_tt2/user_notification.tt2:40
+#, fuzzy
 msgid "Changing your subscriber email address"
-msgstr ""
+msgstr "تغيير عنوان البريد"
 
 #: ../mail_tt2/user_notification.tt2:42
 msgid ""
@@ -7473,8 +7804,9 @@ msgstr ""
 
 #. (list.name)
 #: ../mail_tt2/user_notification.tt2:47
+#, fuzzy
 msgid "Unsubscribing from list %1"
-msgstr ""
+msgstr "%1 / سيزيل اشتراكه من 2%"
 
 #. (list.name,ip)
 #: ../mail_tt2/user_notification.tt2:51
@@ -7495,7 +7827,7 @@ msgstr ""
 #: ../mail_tt2/user_notification.tt2:58
 #, fuzzy
 msgid "Unsubscribing from family %1"
-msgstr "kannadoù nevez"
+msgstr "%1 / سيزيل اشتراكه من 2%"
 
 #. (family,ip)
 #: ../mail_tt2/user_notification.tt2:62
@@ -7529,8 +7861,9 @@ msgid "Your subscription email is %1"
 msgstr ""
 
 #: ../mail_tt2/welcome.tt2:13
+#, fuzzy
 msgid "General informations about mailing lists:"
-msgstr ""
+msgstr "معلومات حول هذه القائمة"
 
 #: ../mail_tt2/which.tt2:2
 msgid "Result of your command"
@@ -7576,8 +7909,9 @@ msgid ""
 msgstr ""
 
 #: ../mail_tt2/x509-user-cert-missing.tt2:12
+#, fuzzy
 msgid "Information about this list:"
-msgstr ""
+msgstr "معلومات حول هذه القائمة"
 
 #: ../mail_tt2/your_infected_msg.tt2:2
 msgid "A virus in your email"
@@ -7616,11 +7950,11 @@ msgstr ""
 #: ../src/etc/scenari/access_web_archive.intranet:1
 #: ../src/etc/scenari/subscribe.intranet:1
 msgid "restricted to local domain users"
-msgstr ""
+msgstr "مسموح لمشتركي النطاق الداخلي فقط"
 
 #: ../src/etc/scenari/access_web_archive.listmaster:1
 msgid "listmaster"
-msgstr ""
+msgstr "مدير القائمة الرئيسي"
 
 #: ../src/etc/scenari/access_web_archive.owner:1
 msgid "by owner"
@@ -7633,15 +7967,16 @@ msgstr ""
 #: ../src/etc/scenari/access_web_archive.public:1
 #: ../src/etc/scenari/invite.public:1
 msgid "public"
-msgstr ""
+msgstr "عام"
 
 #: ../src/etc/scenari/add.auth:1
 msgid "restricted to owner with authentication"
-msgstr ""
+msgstr "مسموح لمديري القائمة مع التوثيق فقط"
 
 #: ../src/etc/scenari/add.authdkim:1
+#, fuzzy
 msgid "restricted to owner without authentication if DKIM signature is OK."
-msgstr ""
+msgstr "مسموح لمديري القائمة مع التوثيق فقط"
 
 #: ../src/etc/scenari/add.closed:1
 msgid "add impossible"
@@ -7652,9 +7987,10 @@ msgid "add performed by list owner does not need authentication"
 msgstr ""
 
 #: ../src/etc/scenari/add.ownerdkim:1
+#, fuzzy
 msgid ""
 "add performed by list owner does not need authentication if DKIM signature OK"
-msgstr ""
+msgstr "الدعوة من مدير القائمة لا تحتاج لتوثيق"
 
 #: ../src/etc/scenari/add.owner_notify:1
 msgid "add performed by owner does not need authentication (notification)"
@@ -7667,7 +8003,7 @@ msgstr ""
 #: ../src/etc/scenari/automatic_list_creation.listmaster:1
 #: ../src/etc/scenari/create_list.listmaster:1
 msgid "restricted to listmaster"
-msgstr ""
+msgstr "مسموح لمديري القائمة الرئيسيين فقط"
 
 #: ../src/etc/scenari/automatic_list_creation.public:1
 msgid "anybody. Be sure you know what you are doing"
@@ -7688,14 +8024,14 @@ msgstr ""
 #: ../src/etc/scenari/d_edit.owner:1 ../src/etc/scenari/d_read.owner:1
 #: ../src/etc/scenari/remind.owner:1
 msgid "restricted to list owners"
-msgstr ""
+msgstr "مسموح لمديري القائمة فقط"
 
 #: ../src/etc/scenari/d_edit.private:1 ../src/etc/scenari/d_read.private:1
 #: ../src/etc/scenari/info.private:1 ../src/etc/scenari/invite.private:1
 #: ../src/etc/scenari/review.private:1 ../src/etc/scenari/send.private:1
 #: ../src/etc/scenari/tracking.private:1
 msgid "restricted to subscribers"
-msgstr ""
+msgstr "مسموح للمشتركين فقط"
 
 #: ../src/etc/scenari/d_edit.private-https:1
 #: ../src/etc/scenari/d_read.private-https:1
@@ -7704,17 +8040,18 @@ msgstr ""
 
 #: ../src/etc/scenari/d_edit.public:1 ../src/etc/scenari/d_read.public:1
 msgid "public documents"
-msgstr ""
+msgstr "وثائق عامة"
 
 #: ../src/etc/scenari/del.auth:1
 msgid "deletion performed only by list owners, need authentication"
 msgstr ""
 
 #: ../src/etc/scenari/del.authdkim:1
+#, fuzzy
 msgid ""
 "deletion performed only by list owners, need authentication unless DKIM "
 "signature is OK"
-msgstr ""
+msgstr "الدعوة من مدير القائمة لا تحتاج لتوثيق"
 
 #: ../src/etc/scenari/del.closed:1
 msgid "remove subscriber impossible"
@@ -7730,7 +8067,7 @@ msgstr ""
 
 #: ../src/etc/scenari/global_remind.listmaster:1
 msgid "just for listmaster"
-msgstr ""
+msgstr "فقط لمدير القائمة الرئيسي"
 
 #: ../src/etc/scenari/info.open:1
 msgid "for anyone"
@@ -7738,23 +8075,25 @@ msgstr ""
 
 #: ../src/etc/scenari/invite.owner:1
 msgid "invite perform by list owner do not need authentication"
-msgstr ""
+msgstr "الدعوة من مدير القائمة لا تحتاج لتوثيق"
 
 #: ../src/etc/scenari/remind.listmaster:1
 #: ../src/etc/scenari/review.listmaster:1
 msgid "listmaster only"
-msgstr ""
+msgstr "مدير القائمة الرئيسي فقط"
 
 #: ../src/etc/scenari/remind.listmasterdkim:1
+#, fuzzy
 msgid ""
 "listmaster only (do not require authentication if DKIM siganture is OK) "
-msgstr ""
+msgstr "مسموح لمديري القائمة مع التوثيق فقط"
 
 #: ../src/etc/scenari/remind.ownerdkim:1
+#, fuzzy
 msgid ""
 "restricted to list owners (authentication is not required if a DKIM "
 "signature is OK)"
-msgstr ""
+msgstr "مسموح لمديري القائمة مع التوثيق فقط"
 
 #: ../src/etc/scenari/review.closed:1
 msgid "no one can review"
@@ -7773,8 +8112,9 @@ msgid "anyone can do it !"
 msgstr ""
 
 #: ../src/etc/scenari/send.editordkim:1
+#, fuzzy
 msgid "Moderated, no authentication needed if DKIM signature from editor is OK"
-msgstr ""
+msgstr "بحاجة لتوثيق"
 
 #: ../src/etc/scenari/send.editorkey:1
 msgid "Moderated"
@@ -7785,16 +8125,17 @@ msgid "Moderated, even for moderators"
 msgstr ""
 
 #: ../src/etc/scenari/send.editorkeyonlyauth:1
+#, fuzzy
 msgid "Moderated, need  authentication  from editor"
-msgstr ""
+msgstr "بحاجة لتوثيق"
 
 #: ../src/etc/scenari/send.intranet:1
 msgid "restricted to local domain"
-msgstr ""
+msgstr "مسموح لمشتركي النطاق الداخلي فقط"
 
 #: ../src/etc/scenari/send.intranetorprivate:1
 msgid "restricted to local domain and subscribers"
-msgstr ""
+msgstr "مسموح لمشتركي النطاق الداخلي فقط"
 
 #: ../src/etc/scenari/send.newsletter:1
 msgid "Newsletter, restricted to moderators"
@@ -7817,8 +8158,9 @@ msgid "restricted to subscribers with previous md5 authentication"
 msgstr ""
 
 #: ../src/etc/scenari/send.privatekeyandeditorkeyonly:1
+#, fuzzy
 msgid "Moderated, for subscribers and even moderators themself"
-msgstr ""
+msgstr "مسموح للمشتركين فقط"
 
 #: ../src/etc/scenari/send.privateoreditorkey:1
 msgid "Private, moderated for non subscribers"
@@ -7829,16 +8171,18 @@ msgid "Private, confirmation for non subscribers"
 msgstr ""
 
 #: ../src/etc/scenari/send.private_smime:1
+#, fuzzy
 msgid "restricted to subscribers and checked smime signature"
-msgstr ""
+msgstr "مسموح للمشتركين فقط"
 
 #: ../src/etc/scenari/send.public:1
 msgid "public list"
-msgstr ""
+msgstr "قائمة عامة"
 
 #: ../src/etc/scenari/send.publickey:1
+#, fuzzy
 msgid "anyone no authentication if DKIM signature is OK"
-msgstr ""
+msgstr "مسموح لمديري القائمة مع التوثيق فقط"
 
 #: ../src/etc/scenari/send.publicnoattachment:1
 msgid "public list multipart/mixed messages are forwarded to moderator"
@@ -7862,22 +8206,24 @@ msgstr ""
 
 #: ../src/etc/scenari/subscribe.auth_notify:1
 msgid "need authentication (notification is sent to owners)"
-msgstr ""
+msgstr "بحاجة لتوثيق (تم ارسال ملاحظة لمدير القائمة)"
 
 #: ../src/etc/scenari/subscribe.auth_notifydkim:1
+#, fuzzy
 msgid ""
 "need authentication unless DKIM signature is OK. (notification is sent to "
 "owners)"
-msgstr ""
+msgstr "بحاجة لتوثيق (تم ارسال ملاحظة لمدير القائمة)"
 
 #: ../src/etc/scenari/subscribe.auth_owner:1
 msgid "requires authentication then owner approval"
 msgstr ""
 
 #: ../src/etc/scenari/subscribe.auth_ownerdkim:1
+#, fuzzy
 msgid ""
 "requires authentication unless DKIM signature is OK, then owner approval"
-msgstr ""
+msgstr "بحاجة لتوثيق (تم ارسال ملاحظة لمدير القائمة)"
 
 #: ../src/etc/scenari/subscribe.closed:1
 msgid "subscribe is impossible"
@@ -7885,7 +8231,7 @@ msgstr ""
 
 #: ../src/etc/scenari/subscribe.intranetorowner:1
 msgid "local domain users or owner approval"
-msgstr ""
+msgstr "مشتركي النطاق المحلي أو تصديق مدير القائمة"
 
 #: ../src/etc/scenari/subscribe.open:1
 msgid "for anyone without authentication"
@@ -7926,25 +8272,27 @@ msgstr ""
 
 #: ../src/etc/scenari/unsubscribe.auth:1
 msgid "need authentication"
-msgstr ""
+msgstr "بحاجة لتوثيق"
 
 #: ../src/etc/scenari/unsubscribe.authdkim:1
+#, fuzzy
 msgid "need authentication unless DKIM signature is OK"
-msgstr ""
+msgstr "بحاجة لتوثيق (تم ارسال ملاحظة لمدير القائمة)"
 
 #: ../src/etc/scenari/unsubscribe.auth_notify:1
 msgid "authentication requested, notification sent to owner"
 msgstr ""
 
 #: ../src/etc/scenari/unsubscribe.auth_notifydkim:1
+#, fuzzy
 msgid ""
 "authentication requested unless DKIM signature is OK, notification sent to "
 "owner"
-msgstr ""
+msgstr "بحاجة لتوثيق (تم ارسال ملاحظة لمدير القائمة)"
 
 #: ../src/etc/scenari/unsubscribe.closed:1
 msgid "impossible"
-msgstr ""
+msgstr "مستحيل"
 
 #: ../src/etc/scenari/unsubscribe.open:1
 msgid "open"
@@ -7960,7 +8308,7 @@ msgstr ""
 
 #: ../src/etc/scenari/visibility.intranet:1
 msgid "intranet access"
-msgstr ""
+msgstr "صلاحيات الدخول للشبكة الداخليه"
 
 #: ../src/etc/scenari/visibility.secret:1
 msgid "conceal even for subscribers"
@@ -7968,12 +8316,12 @@ msgstr ""
 
 #: ../src/etc/mhonarc-ressources.tt2:53
 msgid "Advanced search"
-msgstr ""
+msgstr "بحث متقدم"
 
 #: ../src/etc/mhonarc-ressources.tt2:178 ../src/etc/mhonarc-ressources.tt2:290
 #: ../src/etc/mhonarc-ressources.tt2:63
 msgid "mails"
-msgstr ""
+msgstr "بريد"
 
 #: ../src/etc/mhonarc-ressources.tt2:179 ../src/etc/mhonarc-ressources.tt2:291
 #: ../src/etc/mhonarc-ressources.tt2:64
@@ -7989,7 +8337,7 @@ msgstr ""
 
 #: ../src/etc/mhonarc-ressources.tt2:86
 msgid "Archive powered by"
-msgstr ""
+msgstr "الأرشيف مطور بواسطة"
 
 #: ../src/etc/mhonarc-ressources.tt2:182 ../src/etc/mhonarc-ressources.tt2:294
 #: ../src/etc/mhonarc-ressources.tt2:407 ../src/etc/mhonarc-ressources.tt2:411
@@ -8012,7 +8360,7 @@ msgstr ""
 
 #: ../src/etc/mhonarc-ressources.tt2:213 ../src/etc/mhonarc-ressources.tt2:329
 msgid "Do you really want to delete these messages ?"
-msgstr ""
+msgstr "هل فعلا تريد إلغاء هذه الرسائل؟"
 
 #. ("$YYYYMMDD$")
 #. This entry is a date/time format
@@ -8033,7 +8381,7 @@ msgstr ""
 
 #: ../src/etc/mhonarc-ressources.tt2:349
 msgid "<em>Message not available</em>"
-msgstr ""
+msgstr "<em> الرساله غير متوفره </em>"
 
 #: ../src/etc/mhonarc-ressources.tt2:447
 msgid "picture"
@@ -8045,7 +8393,7 @@ msgstr ""
 
 #: ../src/etc/mhonarc-ressources.tt2:474
 msgid "to list"
-msgstr ""
+msgstr "إلى القائمة"
 
 #: ../src/etc/mhonarc-ressources.tt2:476
 msgid "to both"
@@ -8066,7 +8414,7 @@ msgstr ""
 
 #: ../src/etc/mhonarc-ressources.tt2:486
 msgid "Do you really want to delete this message ?"
-msgstr ""
+msgstr "هل فعلا تريد إلغاء هذه الرسالة ؟"
 
 #: ../src/etc/mhonarc-ressources.tt2:489
 msgid "view source"
@@ -8137,15 +8485,15 @@ msgstr ""
 
 #: ../src/etc/list_task_models/remind.2month.task:1
 msgid "remind message sent to subscribers every 2 month"
-msgstr ""
+msgstr "رسالة تذكيرية ترسل للمشتركين كل شهرين"
 
 #: ../src/etc/list_task_models/remind.monthly.task:1
 msgid "remind message sent to subscribers every month"
-msgstr ""
+msgstr "رسالة تذكيرية ترسل للمشتركين كل شهر"
 
 #: ../src/etc/list_task_models/remind.yearly.task:1
 msgid "remind message sent to subscribers every year"
-msgstr ""
+msgstr "رسالة تذكيرية ترسل للمشتركين كل سنة"
 
 #: ../src/etc/list_task_models/sync_include.ttl.task:1
 msgid "Update of list members based on the TTL"
@@ -8157,7 +8505,7 @@ msgstr ""
 
 #: ../src/etc/create_list_templates/discussion_list/comment.tt2:2
 msgid "public archives"
-msgstr ""
+msgstr "أرشيف عام"
 
 #: ../src/etc/create_list_templates/discussion_list/comment.tt2:3
 #: ../src/etc/create_list_templates/private_working_group/comment.tt2:3
@@ -8170,7 +8518,7 @@ msgstr ""
 
 #: ../src/etc/create_list_templates/hotline/comment.tt2:3
 msgid "everyone can post"
-msgstr ""
+msgstr "قابلية الإرسال متاحه للجميع"
 
 #: ../src/etc/create_list_templates/hotline/comment.tt2:4
 #: ../src/etc/create_list_templates/private_working_group/comment.tt2:4
@@ -8187,11 +8535,13 @@ msgid ""
 "Mailing list configuration to be used for a news letter providing both text "
 "plain and HTML formats"
 msgstr ""
+"مواصفات القائمة البريدية التي سوف تستخدم من أجل الرسائل الإخبارية مزودة "
+"بنصوص صرفة و نصوص شبكية (ه ت م ل)"
 
 #: ../src/etc/create_list_templates/html-news-letter/comment.tt2:3
 #: ../src/etc/create_list_templates/news-letter/comment.tt2:3
 msgid "public and moderated list"
-msgstr ""
+msgstr "قائمة عامة و مدارة"
 
 #: ../src/etc/create_list_templates/html-news-letter/comment.tt2:4
 #: ../src/etc/create_list_templates/news-letter/comment.tt2:4
@@ -8208,7 +8558,7 @@ msgstr ""
 
 #: ../src/etc/create_list_templates/news-letter/comment.tt2:1
 msgid "Mailing list configuration to be used for a news letter"
-msgstr ""
+msgstr "مواصفات القائمة البريدية التي سوف تستخدم من أجل الرسائل الإخبارية"
 
 #: ../src/etc/create_list_templates/private_working_group/comment.tt2:1
 msgid "Private working group setup"
@@ -8239,12 +8589,14 @@ msgid "%d.%b.%Y-%H.%M.%S"
 msgstr ""
 
 #: ../src/sympa_wizard.pl.in:307 ../src/sympa_wizard.pl.in:312
+#, fuzzy
 msgid "Unable to rename %s : %s"
-msgstr ""
+msgstr "لا استطيع قراءة   '1%'"
 
 #: ../src/sympa_wizard.pl.in:318 ../src/sympa_wizard.pl.in:325
+#, fuzzy
 msgid "Unable to open %s : %s"
-msgstr ""
+msgstr "لا يمكن تحميل مواضيع القائمة"
 
 #: ../src/sympa_wizard.pl.in:337
 msgid ""
@@ -8265,16 +8617,18 @@ msgid "%A"
 msgstr ""
 
 #: ../src/lib/confdef.pm:43
+#, fuzzy
 msgid "Site customization"
-msgstr ""
+msgstr "تطويع"
 
 #: ../src/lib/confdef.pm:47
 msgid "Main robot hostname"
 msgstr ""
 
 #: ../src/lib/confdef.pm:56
+#, fuzzy
 msgid "Local part of sympa email address"
-msgstr ""
+msgstr "البريد الألكتروني"
 
 #: ../src/lib/confdef.pm:60
 msgid "Effective address will be [EMAIL]@[HOST]"
@@ -8299,8 +8653,9 @@ msgid ""
 msgstr ""
 
 #: ../src/lib/confdef.pm:84
+#, fuzzy
 msgid "Local part of listmaster email address"
-msgstr ""
+msgstr "البريد الألكتروني"
 
 #: ../src/lib/confdef.pm:90
 msgid "URL of main Web page"
@@ -8325,8 +8680,9 @@ msgid "Should not be changed ! May invalid all user password"
 msgstr ""
 
 #: ../src/lib/confdef.pm:361
+#, fuzzy
 msgid "Who is able to create lists"
-msgstr ""
+msgstr "لا يمكن تحميل قوالب انشاء القائمة"
 
 #: ../src/lib/confdef.pm:365
 msgid ""
@@ -8341,8 +8697,9 @@ msgid ""
 msgstr ""
 
 #: ../src/lib/confdef.pm:385
+#, fuzzy
 msgid "Directories"
-msgstr ""
+msgstr "الفهرس"
 
 #: ../src/lib/confdef.pm:390
 msgid "Directory containing mailing lists subdirectories"
@@ -8355,16 +8712,18 @@ msgid ""
 msgstr ""
 
 #: ../src/lib/confdef.pm:401
+#, fuzzy
 msgid "System related"
-msgstr ""
+msgstr "القوالب"
 
 #: ../src/lib/confdef.pm:406
 msgid "Syslog facility for sympa"
 msgstr ""
 
 #: ../src/lib/confdef.pm:409
+#, fuzzy
 msgid "Do not forget to edit syslog.conf"
-msgstr ""
+msgstr "صيغة خاطئه في ملف edit_list.conf"
 
 #: ../src/lib/confdef.pm:414
 msgid "Log verbosity"
@@ -8393,8 +8752,9 @@ msgid "Umask used for file creation by Sympa"
 msgstr ""
 
 #: ../src/lib/confdef.pm:444
+#, fuzzy
 msgid "Sending related"
-msgstr ""
+msgstr "القوائم التي في طور الأنتظار"
 
 #: ../src/lib/confdef.pm:453
 msgid ""
@@ -8457,8 +8817,9 @@ msgid "Specify which rfc2369 mailing list headers to add"
 msgstr ""
 
 #: ../src/lib/confdef.pm:573
+#, fuzzy
 msgid "Specify header fields to be removed before message distribution"
-msgstr ""
+msgstr "الإدراج تخطى الوقت المسموح به لتوزيع الرساله"
 
 #: ../src/lib/confdef.pm:583
 msgid "Reject mail from automates (crontab, etc) sent to a list?"
@@ -8529,16 +8890,18 @@ msgid ""
 msgstr ""
 
 #: ../src/lib/confdef.pm:668
+#, fuzzy
 msgid "Quotas"
-msgstr ""
+msgstr "حصة"
 
 #: ../src/lib/confdef.pm:673
 msgid "Default disk quota for shared repository"
 msgstr ""
 
 #: ../src/lib/confdef.pm:682
+#, fuzzy
 msgid "Spool related"
-msgstr ""
+msgstr "القوالب"
 
 #: ../src/lib/confdef.pm:687
 msgid "Directory containing various specialized spools"
@@ -8561,8 +8924,9 @@ msgid "Directory for digest spool"
 msgstr ""
 
 #: ../src/lib/confdef.pm:725
+#, fuzzy
 msgid "Directory for authentication spool"
-msgstr ""
+msgstr "مسموح لمديري القائمة مع التوثيق فقط"
 
 #: ../src/lib/confdef.pm:731
 msgid "Directory for outgoing spool"
@@ -8593,8 +8957,9 @@ msgid "Must not be 0."
 msgstr ""
 
 #: ../src/lib/confdef.pm:805
+#, fuzzy
 msgid "Internationalization related"
-msgstr ""
+msgstr "نطاق انترنت"
 
 #: ../src/lib/confdef.pm:810
 msgid ""
@@ -8602,8 +8967,9 @@ msgid ""
 msgstr ""
 
 #: ../src/lib/confdef.pm:816
+#, fuzzy
 msgid "Supported languages"
-msgstr ""
+msgstr "اللغة"
 
 #: ../src/lib/confdef.pm:820
 msgid ""
@@ -8621,8 +8987,9 @@ msgid "This is the default language used by Sympa"
 msgstr ""
 
 #: ../src/lib/confdef.pm:836
+#, fuzzy
 msgid "Bounce related"
-msgstr ""
+msgstr "الرسائل العائده"
 
 #: ../src/lib/confdef.pm:846
 msgid "Welcome message return-path ( unique | owner )"
@@ -8685,11 +9052,12 @@ msgstr ""
 #: ../src/lib/confdef.pm:965
 #, fuzzy
 msgid "Default priority for list messages"
-msgstr "kannadoù nevez"
+msgstr "رسالة الإصابة بفيروس"
 
 #: ../src/lib/confdef.pm:970
+#, fuzzy
 msgid "Database related"
-msgstr ""
+msgstr "تم تحديث هيكل قاعدة البيانات"
 
 #: ../src/lib/confdef.pm:979
 msgid "Type of the database (mysql|Pg|Oracle|Sybase|SQLite)"
@@ -8700,8 +9068,9 @@ msgid "Be careful to the case"
 msgstr ""
 
 #: ../src/lib/confdef.pm:987
+#, fuzzy
 msgid "Name of the database"
-msgstr ""
+msgstr "فشل تحديث قاعدة البيانات"
 
 #: ../src/lib/confdef.pm:990
 msgid "With SQLite, the name of the DB corresponds to the DB file"
@@ -8774,8 +9143,9 @@ msgid "Loop prevention"
 msgstr ""
 
 #: ../src/lib/confdef.pm:1136
+#, fuzzy
 msgid "S/MIME configuration"
-msgstr ""
+msgstr "ملف المواصفات"
 
 #: ../src/lib/confdef.pm:1141
 msgid "Path to OpenSSL"
@@ -8801,7 +9171,10 @@ msgstr ""
 #, fuzzy
 msgid ""
 "Insert a DKIM signature to message from the robot, from the list or both"
-msgstr "kannadoù nevez"
+msgstr ""
+"\n"
+"أو ارسل بريد  إلى 1%  بالعنوان التالي \n"
+"AUTH %2 DEL %3 %4\n"
 
 #: ../src/lib/confdef.pm:1191
 msgid ""
@@ -8822,8 +9195,9 @@ msgid ""
 msgstr ""
 
 #: ../src/lib/confdef.pm:1212
+#, fuzzy
 msgid "The selector"
-msgstr ""
+msgstr "اللغة:"
 
 #: ../src/lib/confdef.pm:1219
 msgid "The \"i=\" tag as defined in rfc 4871, default is null"
@@ -8867,8 +9241,9 @@ msgid ""
 msgstr ""
 
 #: ../src/lib/confdef.pm:1279
+#, fuzzy
 msgid "wwsympa.conf parameters"
-msgstr ""
+msgstr "مدخل خطأ"
 
 #: ../src/lib/confdef.pm:1284
 msgid "Directory for storing HTML archives"
@@ -8994,7 +9369,7 @@ msgstr ""
 #: ../src/lib/confdef.pm:1529
 #, fuzzy
 msgid "Directory for subscription spool"
-msgstr "kannadoù nevez"
+msgstr "إدارة المشتركين"
 
 #: ../src/lib/confdef.pm:1534
 msgid ""
@@ -9029,8 +9404,9 @@ msgid "Conf::load_nrcpt_by_domain(): Error at line %d: %s"
 msgstr ""
 
 #: ../src/lib/Conf.pm:1383
+#, fuzzy
 msgid "Error at line %d: %s\n"
-msgstr ""
+msgstr "نسبة الأخطاء : "
 
 #. This entry is a date/time format
 #. Check the strftime manpage for format details : http://docs.freebsd.org/info/gawk/gawk.info.Time_Functions.html
@@ -9052,29 +9428,29 @@ msgstr ""
 
 #: ../src/lib/List.pm:353 ../src/lib/List.pm:436
 msgid "email address"
-msgstr ""
+msgstr "البريد الألكتروني"
 
 #: ../src/lib/List.pm:360 ../src/lib/List.pm:455
 msgid "name"
-msgstr ""
+msgstr "الإسم"
 
 #: ../src/lib/List.pm:366 ../src/lib/List.pm:461
 msgid "private information"
-msgstr ""
+msgstr "معلومات خاصة "
 
 #: ../src/lib/List.pm:372 ../src/lib/List.pm:422
 msgid "profile"
-msgstr ""
+msgstr "نبذة"
 
 #: ../src/lib/List.pm:378 ../src/lib/List.pm:410 ../src/lib/List.pm:443
 #: ../src/lib/List.pm:487 ../src/lib/List.pm:617 ../src/lib/List.pm:632
 msgid "reception mode"
-msgstr ""
+msgstr "طور الإستقبال"
 
 #: ../src/lib/List.pm:384 ../src/lib/List.pm:416 ../src/lib/List.pm:449
 #: ../src/lib/List.pm:493 ../src/lib/List.pm:638
 msgid "visibility"
-msgstr ""
+msgstr "الرؤيه"
 
 #: ../src/lib/List.pm:503
 msgid "Topics for the list"
@@ -9082,15 +9458,16 @@ msgstr ""
 
 #: ../src/lib/List.pm:511
 msgid "Internet domain"
-msgstr ""
+msgstr "نطاق انترنت"
 
 #: ../src/lib/List.pm:521
 msgid "Language of the list"
-msgstr ""
+msgstr "لغة القائمة"
 
 #: ../src/lib/List.pm:539
+#, fuzzy
 msgid "Maximum number of list members"
-msgstr ""
+msgstr "القوائم الجديده"
 
 #: ../src/lib/List.pm:550
 msgid "Priority"
@@ -9114,11 +9491,11 @@ msgstr ""
 
 #: ../src/lib/List.pm:588
 msgid "hour"
-msgstr ""
+msgstr "ساعه"
 
 #: ../src/lib/List.pm:595
 msgid "minute"
-msgstr ""
+msgstr "دقيقة"
 
 #: ../src/lib/List.pm:605
 msgid "Digest maximum number of messages"
@@ -9126,7 +9503,7 @@ msgstr ""
 
 #: ../src/lib/List.pm:614
 msgid "Available subscription options"
-msgstr ""
+msgstr "خيارات الأشتراك المتوفره"
 
 #: ../src/lib/List.pm:628
 msgid "Subscription profile"
@@ -9190,7 +9567,7 @@ msgstr ""
 
 #: ../src/lib/List.pm:759
 msgid "Maximum message size"
-msgstr ""
+msgstr "الحد الأقصى لحجم الرسالة"
 
 #: ../src/lib/List.pm:770
 msgid "Allow message personnalization"
@@ -9246,7 +9623,7 @@ msgstr ""
 
 #: ../src/lib/List.pm:890 ../src/lib/List.pm:914
 msgid "quota"
-msgstr ""
+msgstr "حصة"
 
 #: ../src/lib/List.pm:905
 msgid "Web archives"
@@ -9258,7 +9635,7 @@ msgstr ""
 
 #: ../src/lib/List.pm:924
 msgid "Maximum number of month archived"
-msgstr ""
+msgstr "الحد الأقصى لعدد الأشهر المؤرشفة"
 
 #: ../src/lib/List.pm:933
 msgid "Text archives"
@@ -9266,11 +9643,11 @@ msgstr ""
 
 #: ../src/lib/List.pm:937
 msgid "frequency"
-msgstr ""
+msgstr "التردد"
 
 #: ../src/lib/List.pm:956
 msgid "Archive encrypted mails as cleartext"
-msgstr ""
+msgstr "أرشفة الرسائل المشفرة كنصوص"
 
 #: ../src/lib/List.pm:2161 ../src/lib/List.pm:963
 msgid "email address protection method"
@@ -9278,15 +9655,15 @@ msgstr ""
 
 #: ../src/lib/List.pm:974
 msgid "Bounces management"
-msgstr ""
+msgstr "إدارة الرسائل العائده"
 
 #: ../src/lib/List.pm:978
 msgid "warn rate"
-msgstr ""
+msgstr "نسبة التحذير"
 
 #: ../src/lib/List.pm:988
 msgid "halt rate"
-msgstr ""
+msgstr "نسبة التوقف"
 
 #: ../src/lib/List.pm:1001
 msgid "Management of bouncers, 1st level"
@@ -9315,7 +9692,7 @@ msgstr ""
 #: ../src/lib/List.pm:1068
 #, fuzzy
 msgid "Message tracking feature"
-msgstr "kannadoù nevez"
+msgstr "رسالة"
 
 #: ../src/lib/List.pm:1072
 msgid "tracking message by delivery status notification"
@@ -9328,7 +9705,7 @@ msgstr ""
 #: ../src/lib/List.pm:1088
 #, fuzzy
 msgid "who can view message tracking"
-msgstr "kannadoù nevez"
+msgstr "رسالة"
 
 #: ../src/lib/List.pm:1093
 msgid "Tracking datas are removed after this number of days"
@@ -9441,8 +9818,9 @@ msgstr ""
 
 #: ../src/lib/List.pm:1334 ../src/lib/List.pm:1486 ../src/lib/List.pm:1563
 #: ../src/lib/List.pm:1719 ../src/lib/List.pm:1877 ../src/lib/List.pm:1960
+#, fuzzy
 msgid "Time ranges when inclusion is not allowed"
-msgstr ""
+msgstr "لا يسمح بإضافة مشترك للقائمة"
 
 #: ../src/lib/List.pm:1344
 msgid "LDAP 2-level query inclusion"
@@ -9541,12 +9919,14 @@ msgid "VOOT group inclusion"
 msgstr ""
 
 #: ../src/lib/List.pm:1583
+#, fuzzy
 msgid "user"
-msgstr ""
+msgstr "المستخدمين"
 
 #: ../src/lib/List.pm:1589
+#, fuzzy
 msgid "provider"
-msgstr ""
+msgstr "نبذة"
 
 #: ../src/lib/List.pm:1595
 msgid "group"
@@ -9554,11 +9934,11 @@ msgstr ""
 
 #: ../src/lib/List.pm:1605
 msgid "Inclusions timeout"
-msgstr ""
+msgstr "الإدراج تخطى الوقت المسموح به"
 
 #: ../src/lib/List.pm:1614
 msgid "Inclusions timeout for message distribution"
-msgstr ""
+msgstr "الإدراج تخطى الوقت المسموح به لتوزيع الرساله"
 
 #: ../src/lib/List.pm:1622
 msgid "LDAP query custom attribute"
@@ -9579,11 +9959,15 @@ msgstr ""
 #: ../src/lib/List.pm:1972
 #, fuzzy
 msgid "Insert DKIM signature to messages sent to the list"
-msgstr "kannadoù nevez"
+msgstr ""
+"\n"
+"أو ارسل بريد  إلى 1%  بالعنوان التالي \n"
+"AUTH %2 DEL %3 %4\n"
 
 #: ../src/lib/List.pm:1983
+#, fuzzy
 msgid "DKIM configuration"
-msgstr ""
+msgstr "ملف المواصفات"
 
 #: ../src/lib/List.pm:1988
 msgid "File path for list DKIM private key"
@@ -9600,19 +9984,20 @@ msgstr ""
 
 #: ../src/lib/List.pm:2053
 msgid "Account"
-msgstr ""
+msgstr "اشتراك"
 
 #: ../src/lib/List.pm:2060
 msgid "Expiration of unmoderated messages"
-msgstr ""
+msgstr "إنتهاء صلاحية الرسائل الغير مداره"
 
 #: ../src/lib/List.pm:2071
 msgid "Secret string for generating unique keys"
 msgstr ""
 
 #: ../src/lib/List.pm:2081
+#, fuzzy
 msgid "custom parameters"
-msgstr ""
+msgstr "تخصيص القوالب"
 
 #: ../src/lib/List.pm:2101
 msgid "Periodical subscription expiration task"
@@ -9628,7 +10013,7 @@ msgstr ""
 
 #: ../src/lib/List.pm:2168
 msgid "Creation of the list"
-msgstr ""
+msgstr "إنشاء القائمة"
 
 #: ../src/lib/List.pm:2122 ../src/lib/List.pm:2172 ../src/lib/List.pm:2211
 msgid "epoch date"
@@ -9639,12 +10024,13 @@ msgid "human readable"
 msgstr ""
 
 #: ../src/lib/List.pm:2183
+#, fuzzy
 msgid "who created the list"
-msgstr ""
+msgstr "من عدل المواصفات"
 
 #: ../src/lib/List.pm:2194
 msgid "Last update of config"
-msgstr ""
+msgstr "أخر تحديث للمواصفات"
 
 #: ../src/lib/List.pm:2222
 msgid "Status of the list"
@@ -9678,9 +10064,11 @@ msgstr ""
 msgid "possible attribute values (if enum is used)"
 msgstr ""
 
+# optional
 #: ../src/lib/List.pm:2276
+#, fuzzy
 msgid "is the attribute optional?"
-msgstr ""
+msgstr "السمة الاختياري / المطلوبة"
 
 #: ../src/lib/List.pm:394
 msgid "Owners defined in an external data source"
@@ -9699,25 +10087,28 @@ msgid "Moderators defined in an external data source"
 msgstr ""
 
 #: ../src/lib/List.pm:475
+#, fuzzy
 msgid "the data source"
-msgstr ""
+msgstr "- مصادر البيانات "
 
 #: ../src/lib/List.pm:481
+#, fuzzy
 msgid "data source parameters"
-msgstr ""
+msgstr "تخصيص القوالب"
 
 #: ../src/lib/List.pm:531
 msgid "Family name"
-msgstr ""
+msgstr "إسم العائله"
 
 #: ../src/lib/List.pm:540
+#, fuzzy
 msgid "list members"
-msgstr ""
+msgstr "مشتركي القائمة"
 
 #: ../src/lib/List.pm:606
 #, fuzzy
 msgid "messages"
-msgstr "kannadoù nevez"
+msgstr "# رساله"
 
 #: ../src/lib/List.pm:760
 msgid "bytes"
@@ -9777,12 +10168,14 @@ msgid "DKIM \"i=\" tag, you should probably leave this parameter empty"
 msgstr ""
 
 #: ../src/lib/List.pm:2085
+#, fuzzy
 msgid "var name"
-msgstr ""
+msgstr "الإسم"
 
 #: ../src/lib/List.pm:2091
+#, fuzzy
 msgid "var value"
-msgstr ""
+msgstr "قيمة"
 
 #: ../src/lib/List.pm:2107
 msgid "Latest family instantiation"
@@ -9802,7 +10195,7 @@ msgstr ""
 
 #: ../src/lib/List.pm:2198
 msgid "who updated the config"
-msgstr ""
+msgstr "من عدل المواصفات"
 
 #. This entry is a date/time format
 #. Check the strftime manpage for format details : http://docs.freebsd.org/info/gawk/gawk.info.Time_Functions.html
@@ -9856,8 +10249,9 @@ msgid ""
 msgstr ""
 
 #: ../src/lib/mail.pm:941
+#, fuzzy
 msgid "Unable to create a channel in smtpto: %s"
-msgstr ""
+msgstr "لا استطيع قراءة   '1%'"
 
 #: ../src/lib/PlainDigest.pm:180
 msgid ""
@@ -9866,8 +10260,9 @@ msgid ""
 msgstr ""
 
 #: ../src/lib/PlainDigest.pm:184
+#, fuzzy
 msgid "[Unknown]"
-msgstr ""
+msgstr "طلب غير معرف"
 
 #: ../src/lib/PlainDigest.pm:206
 msgid ""
@@ -9877,8 +10272,9 @@ msgid ""
 msgstr ""
 
 #: ../src/lib/PlainDigest.pm:208
+#, fuzzy
 msgid "Date: %s\n"
-msgstr ""
+msgstr "تاريخ"
 
 #: ../src/lib/PlainDigest.pm:209
 msgid "From: %s\n"
@@ -9893,8 +10289,9 @@ msgid "Cc: %s\n"
 msgstr ""
 
 #: ../src/lib/PlainDigest.pm:212
+#, fuzzy
 msgid "Subject: %s\n"
-msgstr ""
+msgstr "الموضوع"
 
 #: ../src/lib/PlainDigest.pm:218
 msgid ""
@@ -9960,8 +10357,9 @@ msgid "Unable to add user %s in list %s : %s"
 msgstr ""
 
 #: ../wwsympa/wwsympa.fcgi.in:6417
+#, fuzzy
 msgid "Unable to add users in list %s : %s"
-msgstr ""
+msgstr "لا يمكن تحميل مواضيع القائمة"
 
 #. This entry is a date/time format
 #. Check the strftime manpage for format details : http://docs.freebsd.org/info/gawk/gawk.info.Time_Functions.html
@@ -9976,8 +10374,9 @@ msgid "Your unsubscription request to list %s was sent to the list owner."
 msgstr ""
 
 #: ../wwsympa/wwsympa.fcgi.in:15999
+#, fuzzy
 msgid "You were successfully unsubscribed from list %s."
-msgstr ""
+msgstr "هل فعلا تريد الغاء الأشتراك من قائمة %1?"
 
 #: ../wwsympa/wwsympa.fcgi.in:16003
 msgid ""
@@ -9987,20 +10386,22 @@ msgstr ""
 #: ../wwsympa/wwsympa.fcgi.in:16005
 #, fuzzy
 msgid "Unsubscription from list %s failed."
-msgstr "kannadoù nevez"
+msgstr "%1 / سيزيل اشتراكه من 2%"
 
 #: ../wwsympa/wwsympa.fcgi.in:16597
 msgid "Mail sending"
 msgstr ""
 
 #: ../wwsympa/wwsympa.fcgi.in:16598
+#, fuzzy
 msgid "Subscription additions"
-msgstr ""
+msgstr "خيارات الأشتراك المتوفره"
 
+# spelling, style
 #: ../wwsympa/wwsympa.fcgi.in:16599
 #, fuzzy
 msgid "Unsubscription"
-msgstr "kannadoù nevez"
+msgstr "ألغِ الاشتراك"
 
 #: ../wwsympa/wwsympa.fcgi.in:16600
 msgid "Users deleted by admin"
@@ -10018,35 +10419,36 @@ msgstr ""
 
 #: ../wwsympa/wwslib.pm:42
 msgid "10 minutes"
-msgstr ""
+msgstr "10 دقائق"
 
 #: ../wwsympa/wwslib.pm:43
 msgid "30 minutes"
-msgstr ""
+msgstr "30 دقيقه "
 
 #: ../wwsympa/wwslib.pm:44
 msgid "1 hour"
-msgstr ""
+msgstr "ساعه 1 "
 
 #: ../wwsympa/wwslib.pm:45
 msgid "6 hours"
-msgstr ""
+msgstr "6 ساعات "
 
 #: ../wwsympa/wwslib.pm:46
 msgid "1 day"
-msgstr ""
+msgstr "يوم 1"
 
 #: ../wwsympa/wwslib.pm:47
 msgid "1 week"
-msgstr ""
+msgstr "اسبوع 1"
 
 #: ../wwsympa/wwslib.pm:48
+#, fuzzy
 msgid "30 days"
-msgstr ""
+msgstr "يوم 1"
 
 #: ../wwsympa/wwslib.pm:50
 msgid "listed in the list review page"
-msgstr ""
+msgstr "تم السرد في صفحة مراجعة القوائم"
 
 #: ../wwsympa/wwslib.pm:51
 msgid "concealed"
@@ -10054,11 +10456,11 @@ msgstr ""
 
 #: ../wwsympa/wwslib.pm:55
 msgid "welcome message"
-msgstr ""
+msgstr "الرساله الترحيبيه"
 
 #: ../wwsympa/wwslib.pm:56
 msgid "unsubscribe message"
-msgstr ""
+msgstr "رسالة إزالة الأشتراك"
 
 #: ../wwsympa/wwslib.pm:57
 msgid "deletion message"
@@ -10066,15 +10468,15 @@ msgstr ""
 
 #: ../wwsympa/wwslib.pm:58
 msgid "message footer"
-msgstr ""
+msgstr "ذيل الرسالة"
 
 #: ../wwsympa/wwslib.pm:59
 msgid "message header"
-msgstr ""
+msgstr "ترويسة الرسالة"
 
 #: ../wwsympa/wwslib.pm:60
 msgid "remind message"
-msgstr ""
+msgstr "رسالة تذكيرية"
 
 #: ../wwsympa/wwslib.pm:61
 msgid "editor rejection message"
@@ -10086,7 +10488,7 @@ msgstr ""
 
 #: ../wwsympa/wwslib.pm:63
 msgid "help file"
-msgstr ""
+msgstr "ملف المساعدة"
 
 #: ../wwsympa/wwslib.pm:64
 msgid "directory of lists"
@@ -10094,7 +10496,7 @@ msgstr ""
 
 #: ../wwsympa/wwslib.pm:65
 msgid "global remind message"
-msgstr ""
+msgstr "رساله تذكيريه عامه"
 
 #: ../wwsympa/wwslib.pm:66
 msgid "summary message"
@@ -10102,15 +10504,15 @@ msgstr ""
 
 #: ../wwsympa/wwslib.pm:67
 msgid "list description"
-msgstr ""
+msgstr "وصف القائمة"
 
 #: ../wwsympa/wwslib.pm:68
 msgid "list homepage"
-msgstr ""
+msgstr "الصفحة الرثيسية للقائمة"
 
 #: ../wwsympa/wwslib.pm:69
 msgid "list creation request message"
-msgstr ""
+msgstr "رسالة طلب إنشاء قائمة"
 
 #: ../wwsympa/wwslib.pm:70
 msgid "list creation notification message"
@@ -10118,7 +10520,7 @@ msgstr ""
 
 #: ../wwsympa/wwslib.pm:71
 msgid "virus infection message"
-msgstr ""
+msgstr "رسالة الإصابة بفيروس"
 
 #: ../wwsympa/wwslib.pm:72
 msgid "list aliases template"
@@ -10145,12 +10547,14 @@ msgid "notice mode"
 msgstr ""
 
 #: ../wwsympa/wwslib.pm:33
+#, fuzzy
 msgid "text-only mode"
-msgstr ""
+msgstr "طور لغة تأشير النص الفائق فقط "
 
 #: ../wwsympa/wwslib.pm:34
+#, fuzzy
 msgid "html-only mode"
-msgstr ""
+msgstr "طور لغة تأشير النص الفائق فقط "
 
 #: ../wwsympa/wwslib.pm:35
 msgid "urlize mode"
@@ -10162,16 +10566,351 @@ msgstr ""
 
 #: ../wwsympa/wwslib.pm:37
 msgid "you do not receive your own posts"
-msgstr ""
+msgstr "لا تستلم الرسائل التي قمت بإرسالها"
+
+#~ msgid "Failed to inlude members"
+#~ msgstr "فشل شمل المشتركين"
+
+#, fuzzy
+#~ msgid "List informations"
+#~ msgstr "معلومات خاصة "
+
+#, fuzzy
+#~ msgid "Reject without notification "
+#~ msgstr "إختر الخادم المسؤول عن توثيق الدخول"
+
+#, fuzzy
+#~ msgid "Add to blacklist"
+#~ msgstr "تعديل القائمة السوداء"
+
+#~ msgid "Reject and blacklist sender"
+#~ msgstr "ارفض و اسرد المرسل في القائمة السوداء"
+
+#, fuzzy
+#~ msgid "Shared document directory size:"
+#~ msgstr "وثائق مشتركة"
 
 #, fuzzy
 #~ msgid "Web archives size:"
-#~ msgstr "kannadoù nevez"
+#~ msgstr "حجم الأرشيف"
+
+#, fuzzy
+#~ msgid "Error at line %d: %s"
+#~ msgstr "نسبة الأخطاء : "
+
+#, fuzzy
+#~ msgid ""
+#~ "List description: This text is sent as an answer to the mail command\n"
+#~ "INFO. It can also be included in the <em>Welcome message</em>."
+#~ msgstr ""
+#~ "صفة القائمة : هذا النص ارسل كإجابة على الأمر البريدي \n"
+#~ "INFO \n"
+#~ "من الممكن شمله مع"
+
+#, fuzzy
+#~ msgid "Internationalization"
+#~ msgstr "نطاق انترنت"
+
+#, fuzzy
+#~ msgid "MTA related"
+#~ msgstr "القوالب"
+
+#, fuzzy
+#~ msgid "General definition"
+#~ msgstr "تعريفات القائمة"
+
+#, fuzzy
+#~ msgid "Errors management"
+#~ msgstr "إدارة الرسائل العائده"
+
+#, fuzzy
+#~ msgid "Plugin"
+#~ msgstr "تسجيل الدخول"
+
+#, fuzzy
+#~ msgid "Database"
+#~ msgstr "خطأ من قاعدة البيانات"
+
+#, fuzzy
+#~ msgid "your email address   : %1"
+#~ msgstr "البريد الألكتروني"
+
+#, fuzzy
+#~ msgid "your password: %1"
+#~ msgstr "نسيت كلمة السر؟"
+
+#~ msgid "Your Lists"
+#~ msgstr "قوائمك"
 
 #, fuzzy
 #~ msgid "Sendind a message to the list"
-#~ msgstr "kannadoù nevez"
+#~ msgstr ""
+#~ "\n"
+#~ "أو ارسل بريد  إلى 1%  بالعنوان التالي \n"
+#~ "AUTH %2 DEL %3 %4\n"
+
+#, fuzzy
+#~ msgid "Moderated, for subscribers and moderators"
+#~ msgstr "مسموح للمشتركين فقط"
+
+#, fuzzy
+#~ msgid "restricted to subscribers check smime signature"
+#~ msgstr "مسموح للمشتركين فقط"
+
+#, fuzzy
+#~ msgid "anyone with previous md5 authentication"
+#~ msgstr "بحاجة لتوثيق"
+
+#, fuzzy
+#~ msgid " to "
+#~ msgstr "إلى"
+
+#, fuzzy
+#~ msgid "[Listmaster]"
+#~ msgstr "صاحب القائمة"
+
+#, fuzzy
+#~ msgid "[Owner]"
+#~ msgstr "مالك"
+
+#, fuzzy
+#~ msgid "[Subscriber]"
+#~ msgstr "مشترك"
+
+#, fuzzy
+#~ msgid "last login from %1 &nbsp;&nbsp; (%2)</span>"
+#~ msgstr "آخر ولوج من %1 <br />(%2)</span>"
+
+#, fuzzy
+#~ msgid ""
+#~ "Or send a message to %1 with the following subject:\n"
+#~ "CONFIRM %2\n"
+#~ msgstr ""
+#~ "\n"
+#~ "أو ارسل بريد  إلى 1%  بالعنوان التالي \n"
+#~ "AUTH %2 DEL %3 %4\n"
+
+#~ msgid "-List definition"
+#~ msgstr "- تعريفات القائمة "
+
+#~ msgid "-Sending/reception"
+#~ msgstr "- إرسال \\ إستقبال "
+
+#~ msgid "-Privileges"
+#~ msgstr "- الصلاحيات "
+
+#~ msgid "-Archives"
+#~ msgstr "- الأرشيفات"
+
+#~ msgid "-Bounces"
+#~ msgstr "- المرتجعات "
+
+#~ msgid "-Miscellaneous"
+#~ msgstr "- متفرقات "
+
+#~ msgid "# message"
+#~ msgstr "# رساله"
+
+#~ msgid "Send this mail"
+#~ msgstr "ارسل البريد"
+
+#~ msgid "Last update :"
+#~ msgstr "أخر تحديث:"
+
+#~ msgid "Listname :"
+#~ msgstr "اسم القائمة"
+
+#~ msgid "Subject :"
+#~ msgstr "الموضوع:"
+
+#~ msgid "Language"
+#~ msgstr "اللغة"
+
+#~ msgid "inactive buttons color. Rarely used."
+#~ msgstr "ألوان أزرار فير فعاله. نادرا ما تستعمل"
+
+#, fuzzy
+#~ msgid "The list homepage: %1/info/%2"
+#~ msgstr "الصفحة الرثيسية للقائمة"
+
+#~ msgid "You will receive an email, reminding you your password."
+#~ msgstr "ستستلم بريد ليذكرك بكلمة السر "
+
+#~ msgid ""
+#~ "To confirm your email address change, please enter the password\n"
+#~ "you received below :"
+#~ msgstr "لتأكيد تغيير بريدك يرجى ادخال كلمة السر التي استلمتها"
+
+#~ msgid "Password for %1"
+#~ msgstr "كلمة السر ل%1"
+
+#~ msgid "Change my email address"
+#~ msgstr "تغيير عنوان البريد"
+
+#~ msgid "Current password :"
+#~ msgstr "كلمة السر الحالية:"
+
+#~ msgid "Aliases you should install in your mailer"
+#~ msgstr "aliasesيجب تركيبها على برنامج البريد للسيرفير"
+
+#~ msgid ""
+#~ "Login with you email address and password. You can request a password "
+#~ "reminder."
+#~ msgstr ""
+#~ "سجل الدخول باستخدام البريد و كلمة السر.من الممكن أن تطلب تذكير بكلمة السر."
+
+#~ msgid "it will be sent to you by email :"
+#~ msgstr "سترسل لك بالبريد:"
+
+#~ msgid "del"
+#~ msgstr "الغاء"
+
+#~ msgid "Inactive lists"
+#~ msgstr "قوائم غير فعاله"
+
+#~ msgid ""
+#~ "\n"
+#~ "or send an email to %1 with the following subject :\n"
+#~ "AUTH %2 ADD %3 %4 %5\n"
+#~ msgstr ""
+#~ "\n"
+#~ "أو ارسل بريد إلى 2% بالعنوان التالي  \n"
+#~ "AUTH %2 ADD %3 %4 %5\n"
+
+#~ msgid ""
+#~ "<strong>Customizing</strong> : editing of various files and messages "
+#~ "attached to your list."
+#~ msgstr "<strong>تخصيص</strong> : تعديل الملفات و الرسائل المرفقة"
+
+#, fuzzy
+#~ msgid "You will receive an email, with a confirmation link."
+#~ msgstr "ستستلم بريد ليذكرك بكلمة السر "
+
+#, fuzzy
+#~ msgid ""
+#~ "To confirm your email address change, go to your email account and click "
+#~ "on the ticket"
+#~ msgstr "لتأكيد تغيير بريدك يرجى ادخال كلمة السر التي استلمتها"
+
+#, fuzzy
+#~ msgid "You will receive an email, with a confirmation ticket."
+#~ msgstr "ستستلم بريد ليذكرك بكلمة السر "
+
+#, fuzzy
+#~ msgid ""
+#~ "You will receive an email in order to be able to choose your password."
+#~ msgstr "ستستلم بريد ليذكرك بكلمة السر "
+
+#, fuzzy
+#~ msgid "Listing rejection message"
+#~ msgstr "رسالة الإصابة بفيروس"
+
+#, fuzzy
+#~ msgid "Do you really want to delete this reject message?"
+#~ msgstr "هل فعلا تريد إلغاء هذه الرسالة ؟"
 
 #, fuzzy
 #~ msgid "Create New Reject Messages"
-#~ msgstr "kannadoù nevez"
+#~ msgstr "الرسائل الحديثه"
+
+#, fuzzy
+#~ msgid "Default Template"
+#~ msgstr "قالب الإدخال"
+
+#, fuzzy
+#~ msgid "Other email address :"
+#~ msgstr "البريد الألكتروني"
+
+#, fuzzy
+#~ msgid "Delete Template"
+#~ msgstr "القوالب"
+
+#, fuzzy
+#~ msgid "Modify Template"
+#~ msgstr "القوالب"
+
+#, fuzzy
+#~ msgid "Save Template"
+#~ msgstr "القوالب"
+
+#, fuzzy
+#~ msgid "Password :"
+#~ msgstr "كلمة السر"
+
+#, fuzzy
+#~ msgid ""
+#~ "\n"
+#~ "If prefered, you can accept this subscription request sending an email to "
+#~ "%1 with the following subject :\n"
+#~ "AUTH %2 ADD %3 %4 %5\n"
+#~ msgstr ""
+#~ "\n"
+#~ "أو ارسل بريد إلى 2% بالعنوان التالي  \n"
+#~ "AUTH %2 ADD %3 %4 %5\n"
+
+#~ msgid "Mail reception mode."
+#~ msgstr "طور استقبال الرسائل"
+
+#~ msgid ""
+#~ "Editors are responsible for moderating messages. If the mailing list is "
+#~ "moderated, messages posted to the list will first be passed to the "
+#~ "editors, who will decide whether to distribute or reject it."
+#~ msgstr ""
+#~ "المحررين مسؤليين عن إدارة الرسائل. اذا كانت القائمة البريدية مدارة فإن "
+#~ "الرسائل المرسله إليها يتم تحويلها للمحررين الذين سيقررون ان ينشروها أو "
+#~ "يرفضوها."
+
+#~ msgid ""
+#~ "FYI: If the list is moderated, any editor can distribute or reject a "
+#~ "message without the knowledge or consent of the other editors. Messages "
+#~ "that have not been distributed or rejected will remain in the moderation "
+#~ "spool until they are acted on."
+#~ msgstr ""
+#~ "للمعلوميه: اذا كانت القائمة مدارة فإن اي محرر يستطيع قبول أو رفض الرساله "
+#~ "بدون الرجوع لبقية المحررين.الرسائل التي لم ترسل أو ترفض ستبقى في الإنتظار "
+#~ "حتى يتم التعامل معها"
+
+#~ msgid ""
+#~ "List owners may decide to add message headers or footers to messages sent "
+#~ "via the list. This parameter defines the way a footer/header is added to "
+#~ "a message."
+#~ msgstr ""
+#~ "مدراء القائمة ممكن ان يختاروا إضافة ترويسة أو تذييل للرسائل المرسلة من "
+#~ "خلال القائمة.هذا الأختيار يعرف الطريقة التي يتم بها ذلك."
+
+#~ msgid ""
+#~ "If set to unique, the welcome message is sent using a unique return path "
+#~ "in order to remove the subscriber immediately in the case of a bounce."
+#~ msgstr ""
+#~ "إذا تم اختيار مميز فإن الرسالة الترحيبيه سترسل بطريقة مميزة لحذف الإشتراك "
+#~ "حالا في حالة عودة البريد"
+
+#~ msgid ""
+#~ "Instead of receiving individual mail messages from the list, the "
+#~ "subscriber will periodically \n"
+#~ "receive a list of messages. This mode is very close to the Digest "
+#~ "reception mode but the \n"
+#~ "subscriber receives only the list of messages."
+#~ msgstr ""
+#~ "بدل استلام رسائل مفرده من القائمة فإن المشترك سيستلم قائمة بالرسائل بشكل "
+#~ "دوري \n"
+#~ "هذا الطور شبيه بطور الأستقبال الملخص ولكن المشترك سيستلم فقط قائمة "
+#~ "بالرسائل"
+
+#~ msgid "Listing subscriptions to validate"
+#~ msgstr "سرد الإشتراكات للتأكد من صحتها "
+
+#, fuzzy
+#~ msgid "You may request a new authentication url."
+#~ msgstr "مسموح لمديري القائمة مع التوثيق فقط"
+
+#, fuzzy
+#~ msgid "Your other email addresses"
+#~ msgstr "البريد الألكتروني"
+
+#, fuzzy
+#~ msgid "login"
+#~ msgstr "تسجيل الدخول"
+
+#~ msgid "Everything about this list:"
+#~ msgstr "كل شيء حول هذه القائمة :"
