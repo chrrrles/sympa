@@ -20,11 +20,9 @@
 
 script_SCRIPTS = sympa_soap_client.pl
 
-modules_DATA = sympasoap.pm SympaTransport.pm
-
 default_DATA = sympa.wsdl
 
-EXTRA_DIST = $(default_DATA) $(modules_DATA) \
+EXTRA_DIST = $(default_DATA) \
 	     sympa_soap_client.pl.in
 
 CLEANFILES = $(script_SCRIPTS)
