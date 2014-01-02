@@ -296,4 +296,4 @@ src/lib/Marc.pm
 src/lib/SharedDocument.pm
 src/lib/SympaSession.pm
 src/lib/wwslib.pm
-wwsympa/wwsympa.fcgi.in
+src/cgi/wwsympa.fcgi.in
