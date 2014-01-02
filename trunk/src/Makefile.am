@@ -18,29 +18,4 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-SUBDIRS = etc lib cgi sbin libexec
-
-sbin_SCRIPTS = sympa_wizard.pl
-
-EXTRA_DIST = sympa_wizard.pl.in
-
-CLEANFILES = $(sbin_SCRIPTS)
-
-sympa_wizard.pl: Makefile
-	rm -f $@
-	$(AM_V_GEN)$(SED) \
-		-e 's|--PERL--|$(PERL)|' \
-		-e 's|--defaultdir--|$(defaultdir)|' \
-		-e 's|--docdir--|$(docdir)|' \
-		-e 's|--libexecdir--|$(libexecdir)|' \
-		-e 's|--localedir--|$(localedir)|' \
-		-e 's|--modulesdir--|$(modulesdir)|' \
-		-e 's|--piddir--|$(piddir)|' \
-		-e 's|--spooldir--|$(spooldir)|' \
-		-e 's|--sysconfdir--|$(sysconfdir)|' \
-		-e 's|--CONFIG--|$(CONFIG)|' \
-		-e 's|--SENDMAIL_ALIASES--|$(SENDMAIL_ALIASES)|' \
-		< $(srcdir)/$@.in > $@
-	chmod +x $@
-
-sympa_wizard.pl: $(srcdir)/sympa_wizard.pl.in
+SUBDIRS = etc lib cgi sbin libexec bin
