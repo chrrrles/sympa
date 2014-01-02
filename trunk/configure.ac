@@ -50,8 +50,6 @@ if test "$fhs" = "yes"; then
     modulesdir=$datadir/sympa/lib
     scriptdir=$datadir/sympa/bin
     defaultdir=$datadir/sympa/default
-    mailtemplatedir=$defaultdir/mail_tt2
-    webtemplatedir=$defaultdir/web_tt2
     execcgidir=$libdir/sympa/cgi
     expldir=$localstatedir/lib/sympa/list_data
     staticdir=$localstatedir/lib/sympa/static_content
@@ -82,8 +80,6 @@ else
     modulesdir=$prefix/bin
     scriptdir=$prefix/bin
     defaultdir=$prefix/default
-    mailtemplatedir=$defaultdir/mail_tt2
-    webtemplatedir=$defaultdir/web_tt2
     execcgidir=$prefix/bin
     expldir=$prefix/list_data
     spooldir=$prefix/spool
@@ -100,8 +96,6 @@ AC_SUBST(lockdir)
 AC_SUBST(modulesdir)
 AC_SUBST(scriptdir)
 AC_SUBST(defaultdir)
-AC_SUBST(mailtemplatedir)
-AC_SUBST(webtemplatedir)
 AC_SUBST(execcgidir)
 AC_SUBST(expldir)
 AC_SUBST(spooldir)
