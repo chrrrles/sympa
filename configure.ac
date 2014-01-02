@@ -510,9 +510,10 @@ AC_CONFIG_FILES([
     doc/Makefile
     doc/sample/Makefile
     default/Makefile
-    web_tt2/Makefile
+    default/templates/Makefile
+    default/templates/mail/Makefile
+    default/templates/web/Makefile
     www/Makefile
-    mail_tt2/Makefile
     po/Makefile
     po/sympa/Makefile.in
     po/web_help/Makefile.in
