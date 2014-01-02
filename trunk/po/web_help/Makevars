@@ -4,8 +4,8 @@
 DOMAIN = web_help
 
 # These two variables depend on the location of this directory.
-subdir = po-wwsympa
-top_builddir = ..
+subdir = po/web_help
+top_builddir = ../..
 
 # These options get passed to xgettext.
 XGETTEXT_OPTIONS = --lang=perl --from-code=iso-8859-1
