@@ -45,7 +45,7 @@ mail_tt2/x509-user-cert-missing.tt2
 mail_tt2/your_infected_msg.tt2
 soap/sympa_soap_client.pl.in
 soap/sympasoap.pm
-soap/sympa_soap_server.fcgi.in
+src/cgi/sympa_soap_server.fcgi.in
 soap/SympaTransport.pm
 src/alias_manager.pl.in
 src/bulk.pl.in
