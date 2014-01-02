@@ -1,19 +1,65 @@
-nobase_modules_DATA = admin.pm Archive.pm Bulk.pm Commands.pm confdef.pm \
-		      Conf.pm Config_XML.pm Family.pm Language.pm \
-		      List.pm Log.pm mail.pm Ldap.pm Upgrade.pm Lock.pm \
-		      Fetch.pm Message.pm Task.pm TaskSpool.pm TaskInstruction.pm Datasource.pm SQLSource.pm \
-		      LDAPSource.pm Scenario.pm PlainDigest.pm report.pm \
-		      Sympaspool.pm SympaspoolClassic.pm Messagespool.pm KeySpool.pm SubscribeSpool.pm tools.pm tt2.pm time_utils.pm Sympa/Constants.pm \
-		      Sympa/Template/Compat.pm Robot.pm WebAgent.pm \
-		      HTML/myFormatText.pm tracking.pm \
-		      Sympa/DatabaseDescription.pm SDM.pm \
-		      DBManipulatorMySQL.pm DBManipulatorSQLite.pm\
-		      DBManipulatorSybase.pm DBManipulatorOracle.pm \
-		      DBManipulatorPostgres.pm DBManipulatorDefault.pm \
-		      listdef.pm moddef.pm Site.pm User.pm BounceMessage.pm \
-		      wwslib.pm cookielib.pm Marc.pm Auth.pm \
-		      Marc/Search.pm SharedDocument.pm SympaSession.pm \
-		      sympasoap.pm SympaTransport.pm
+nobase_modules_DATA = admin.pm \
+		      Archive.pm \
+		      Auth.pm \
+		      BounceMessage.pm \
+		      Bulk.pm \
+		      Commands.pm \
+		      Conf.pm \
+		      confdef.pm \
+		      Config_XML.pm \
+		      cookielib.pm \
+		      Datasource.pm \
+		      DBManipulatorDefault.pm \
+		      DBManipulatorMySQL.pm \
+		      DBManipulatorOracle.pm \
+		      DBManipulatorPostgres.pm \
+		      DBManipulatorSQLite.pm\
+		      DBManipulatorSybase.pm \
+		      Family.pm \
+		      Fetch.pm \
+		      HTML/myFormatText.pm \
+		      KeySpool.pm \
+		      Language.pm \
+		      Ldap.pm \
+		      LDAPSource.pm \
+		      List.pm \
+		      listdef.pm \
+		      Lock.pm \
+		      Log.pm \
+		      mail.pm \
+		      Marc.pm \
+		      Marc/Search.pm \
+		      Message.pm \
+		      Messagespool.pm \
+		      moddef.pm \
+		      PlainDigest.pm \
+		      report.pm \
+		      Robot.pm \
+		      Scenario.pm \
+		      SDM.pm \
+		      SharedDocument.pm \
+		      Site.pm \
+		      SQLSource.pm \
+		      SubscribeSpool.pm \
+		      Sympa/Constants.pm \
+		      Sympa/DatabaseDescription.pm \
+		      Sympa/Template/Compat.pm \
+		      SympaSession.pm \
+		      sympasoap.pm \
+		      Sympaspool.pm \
+		      SympaspoolClassic.pm \
+		      SympaTransport.pm \
+		      Task.pm \
+		      TaskInstruction.pm \
+		      TaskSpool.pm \
+		      time_utils.pm \
+		      tools.pm \
+		      tracking.pm \
+		      tt2.pm \
+		      Upgrade.pm \
+		      User.pm \
+		      WebAgent.pm \
+		      wwslib.pm
 
 EXTRA_DIST = Sympa/Constants.pm.in $(nobase_modules_DATA)
 CLEANFILES = Sympa/Constants.pm
