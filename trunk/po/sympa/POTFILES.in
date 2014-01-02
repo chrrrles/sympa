@@ -1,5 +1,4 @@
-## List of source files which contain translatable strings.
-## Initialized with: ls src/*.pl src/*.pm soap/*.pl soap/*.pm soap/*.fcgi wwsympa/wwsympa.fcgi wwsympa/*.pl wwsympa/*.pm default/templates/web/*.tt2 default/templates/mail/*.tt2 default/mhonarc-ressources.tt2 src/etc/scenari/* src/etc/global_task_models/* src/etc/list_task_models/* src/etc/create_list_templates/*/* > po/POTFILES.in
+# List of source files which contain translatable strings.
 default/templates/mail/authorization_reject.tt2
 default/templates/mail/bye.tt2
 default/templates/mail/certif_warning.tt2
