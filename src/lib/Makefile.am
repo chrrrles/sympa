@@ -10,8 +10,6 @@ nobase_modules_DATA = admin.pm Archive.pm Bulk.pm Commands.pm confdef.pm \
 		      DBManipulatorMySQL.pm DBManipulatorSQLite.pm\
 		      DBManipulatorSybase.pm DBManipulatorOracle.pm \
 		      DBManipulatorPostgres.pm DBManipulatorDefault.pm \
-		      OAuthConsumer.pm VOOTConsumer.pm OAuthProvider.pm \
-		      VOOTProvider.pm \
 		      listdef.pm moddef.pm Site.pm User.pm BounceMessage.pm
 
 EXTRA_DIST = Sympa/Constants.pm.in $(nobase_modules_DATA)
