@@ -18,12 +18,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-execcgi_SCRIPTS	 = sympa_soap_server.fcgi
-execcgi_PROGRAMS = sympa_soap_server-wrapper.fcgi
-sympa_soap_server_wrapper_fcgi_SOURCES = sympa_soap_server-wrapper.fcgi.c
-sympa_soap_server_wrapper_fcgi_CPPFLAGS = \
-			  -DSYMPASOAP=\"$(execcgidir)/sympa_soap_server.fcgi\"
-
 script_SCRIPTS = sympa_soap_client.pl
 
 modules_DATA = sympasoap.pm SympaTransport.pm
@@ -31,17 +25,11 @@ modules_DATA = sympasoap.pm SympaTransport.pm
 default_DATA = sympa.wsdl
 
 EXTRA_DIST = $(default_DATA) $(modules_DATA) \
-	     sympa_soap_client.pl.in \
-	     sympa_soap_server.fcgi.in
+	     sympa_soap_client.pl.in
 
-CLEANFILES = $(script_SCRIPTS) $(execcgi_SCRIPTS)
+CLEANFILES = $(script_SCRIPTS)
 
-install-exec-hook:
-	-chown $(USER) $(DESTDIR)$(execcgidir)/sympa_soap_server-wrapper.fcgi
-	-chgrp $(GROUP) $(DESTDIR)$(execcgidir)/sympa_soap_server-wrapper.fcgi
-	chmod 6755 $(DESTDIR)$(execcgidir)/sympa_soap_server-wrapper.fcgi
-
-sympa_soap_client.pl sympa_soap_server.fcgi: Makefile
+sympa_soap_client.pl: Makefile
 	rm -f $@
 	$(AM_V_GEN)$(SED) \
 		-e 's|--PERL--|$(PERL)|' \
@@ -50,4 +38,3 @@ sympa_soap_client.pl sympa_soap_server.fcgi: Makefile
 	chmod +x $@
 
 sympa_soap_client.pl: $(srcdir)/sympa_soap_client.pl.in
-sympa_soap_server.fcgi: $(srcdir)/sympa_soap_server.fcgi.in
