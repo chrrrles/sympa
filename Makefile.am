@@ -22,8 +22,7 @@ SUBDIRS = src web_tt2 mail_tt2 doc po www
 
 EXTRA_DIST = important_changes.pl \
 	     sympa.spec.in \
-	     sympa.spec \
-	     README.charset
+	     sympa.spec
 
 install-data-hook: installdir installconfig nextstep importantchanges
 
