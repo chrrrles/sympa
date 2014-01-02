@@ -1,4 +1,5 @@
 iconsdir = $(staticdir)/icons
+
 icons_DATA = back.png \
 	     begin.png \
 	     binary.png \
