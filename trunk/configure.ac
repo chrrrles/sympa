@@ -502,7 +502,6 @@ AC_CONFIG_FILES([
     src/sbin/Makefile
     src/bin/Makefile
     doc/Makefile
-    doc/sample/Makefile
     default/Makefile
     www/Makefile
     po/Makefile
