@@ -41,8 +41,7 @@ bouncequeue_CPPFLAGS = $(AM_CPPFLAGS) -DSPOOLDIR=\"${spooldir}\"
 familyqueue_SOURCES = familyqueue.c
 familyqueue_CPPFLAGS = $(AM_CPPFLAGS) -DSPOOLDIR=\"${spooldir}\"
 
-EXTRA_DIST = $(modules_DATA) \
-	     alias_manager.pl.in \
+EXTRA_DIST = alias_manager.pl.in \
 	     sympa_wizard.pl.in
 
 CLEANFILES = $(sbin_SCRIPTS)
