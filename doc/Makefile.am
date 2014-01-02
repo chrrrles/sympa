@@ -27,6 +27,8 @@ nobase_doc_DATA = sympa.pdf \
 		  sample/test/info \
 		  sample/test/message.footer \
 		  sample/test/web_tt2/welcome.tt2 \
-		  sample/sampleClient.php
+		  sample/sampleClient.php \
+		  sample/families/sample-auto/config.tt2 \
+		  sample/families/sample-auto/param_constraint.conf
 
 EXTRA_DIST = $(nobase_doc_DATA) README.charset README.config README.postfix
