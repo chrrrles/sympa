@@ -502,7 +502,6 @@ AC_CONFIG_FILES([
     src/Makefile
     src/etc/Makefile
     src/etc/script/Makefile
-    src/etc/script/js/Makefile
     src/lib/Makefile
     src/libexec/Makefile
     src/cgi/Makefile
@@ -512,8 +511,10 @@ AC_CONFIG_FILES([
     doc/Makefile
     doc/sample/Makefile
     web_tt2/Makefile
+    www/Makefile
+    www/js/Makefile
+    www/icons/Makefile
     wwsympa/Makefile
-    wwsympa/icons/Makefile
     mail_tt2/Makefile
     po/Makefile.in
     po-wwsympa/Makefile.in
