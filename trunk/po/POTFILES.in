@@ -48,7 +48,7 @@ src/lib/sympasoap.pm
 src/cgi/sympa_soap_server.fcgi.in
 src/lib/SympaTransport.pm
 src/alias_manager.pl.in
-src/bulk.pl.in
+src/sbin/bulk.pl.in
 src/etc/create_list_templates/discussion_list/comment.tt2
 src/etc/create_list_templates/discussion_list/config.tt2
 src/etc/create_list_templates/hotline/comment.tt2
@@ -169,9 +169,9 @@ src/etc/scenari/visibility.conceal
 src/etc/scenari/visibility.intranet
 src/etc/scenari/visibility.noconceal
 src/etc/scenari/visibility.secret
-src/sympa.pl.in
+src/sbin/sympa.pl.in
 src/sympa_wizard.pl.in
-src/task_manager.pl.in
+src/sbin/task_manager.pl.in
 web_tt2/active_lists.tt2
 web_tt2/add_request.tt2
 web_tt2/admin_menu.tt2
@@ -287,9 +287,9 @@ web_tt2/viewlogs.tt2
 web_tt2/viewmod.tt2
 web_tt2/view_template.tt2
 web_tt2/your_lists.tt2
-wwsympa/archived.pl.in
+src/sbin/archived.pl.in
 src/lib/Auth.pm
-wwsympa/bounced.pl.in
+src/sbin/bounced.pl.in
 #wwsympa/Challenge.pm
 src/lib/cookielib.pm
 src/lib/Marc.pm
