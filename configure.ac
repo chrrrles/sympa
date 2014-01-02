@@ -512,8 +512,6 @@ AC_CONFIG_FILES([
     doc/sample/Makefile
     web_tt2/Makefile
     www/Makefile
-    www/js/Makefile
-    www/icons/Makefile
     wwsympa/Makefile
     mail_tt2/Makefile
     po/Makefile.in
