@@ -19,16 +19,16 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 nobase_doc_DATA = sympa.pdf \
-		  sample/README \
-		  sample/trusted_applications.conf \
-		  sample/robot.conf \
-		  sample/employees.ldap \
-		  sample/test/config \
-		  sample/test/info \
-		  sample/test/message.footer \
-		  sample/test/web_tt2/welcome.tt2 \
-		  sample/sampleClient.php \
-		  sample/families/sample-auto/config.tt2 \
-		  sample/families/sample-auto/param_constraint.conf
+		  samples/README \
+		  samples/trusted_applications.conf \
+		  samples/robot.conf \
+		  samples/employees.ldap \
+		  samples/test/config \
+		  samples/test/info \
+		  samples/test/message.footer \
+		  samples/test/web_tt2/welcome.tt2 \
+		  samples/sampleClient.php \
+		  samples/families/sample-auto/config.tt2 \
+		  samples/families/sample-auto/param_constraint.conf
 
 EXTRA_DIST = $(nobase_doc_DATA) README.charset README.config README.postfix
