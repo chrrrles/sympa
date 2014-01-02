@@ -26,9 +26,6 @@ execcgi_PROGRAMS = wwsympa-wrapper.fcgi
 wwsympa_wrapper_fcgi_SOURCES = wwsympa-wrapper.fcgi.c
 wwsympa_wrapper_fcgi_CPPFLAGS = -DWWSYMPA=\"$(execcgidir)/wwsympa.fcgi\"
 
-nobase_modules_DATA = wwslib.pm cookielib.pm Marc.pm Auth.pm \
-		      Marc/Search.pm SharedDocument.pm SympaSession.pm
-
 default_DATA = mime.types 
 
 EXTRA_DIST = $(default_DATA) $(nobase_modules_DATA) \
