@@ -21,26 +21,16 @@
 SUBDIRS = icons
 
 sbin_SCRIPTS = bounced.pl archived.pl
-execcgi_SCRIPTS = wwsympa.fcgi
-execcgi_PROGRAMS = wwsympa-wrapper.fcgi
-wwsympa_wrapper_fcgi_SOURCES = wwsympa-wrapper.fcgi.c
-wwsympa_wrapper_fcgi_CPPFLAGS = -DWWSYMPA=\"$(execcgidir)/wwsympa.fcgi\"
 
 default_DATA = mime.types 
 
 EXTRA_DIST = $(default_DATA) $(nobase_modules_DATA) \
 	     archived.pl.in \
-	     bounced.pl.in \
-	     wwsympa.fcgi.in
+	     bounced.pl.in
 
-CLEANFILES = $(sbin_SCRIPTS) $(execcgi_SCRIPTS)
+CLEANFILES = $(sbin_SCRIPTS)
 
-install-exec-hook:
-	-chown $(USER) $(DESTDIR)$(execcgidir)/wwsympa-wrapper.fcgi
-	-chgrp $(GROUP) $(DESTDIR)$(execcgidir)/wwsympa-wrapper.fcgi
-	chmod 6755 $(DESTDIR)$(execcgidir)/wwsympa-wrapper.fcgi
-
-archived.pl bounced.pl wwsympa.fcgi: Makefile
+archived.pl bounced.pl: Makefile
 	rm -f $@
 	$(AM_V_GEN)$(SED) \
 		-e 's|--PERL--|$(PERL)|' \
@@ -56,4 +46,3 @@ archived.pl bounced.pl wwsympa.fcgi: Makefile
 
 archived.pl: $(srcdir)/archived.pl.in
 bounced.pl: $(srcdir)/bounced.pl.in
-wwsympa.fcgi: $(srcdir)/wwsympa.fcgi.in
