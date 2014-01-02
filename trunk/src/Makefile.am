@@ -18,56 +18,15 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-SUBDIRS = etc lib cgi sbin
+SUBDIRS = etc lib cgi sbin libexec
 
-AM_CPPFLAGS = -DCONFIG=\"$(CONFIG)\"
+sbin_SCRIPTS = sympa_wizard.pl
 
-sbin_SCRIPTS = alias_manager.pl sympa_wizard.pl
-sbin_PROGRAMS = aliaswrapper virtualwrapper
-aliaswrapper_SOURCES = aliaswrapper.c
-aliaswrapper_CPPFLAGS = $(AM_CPPFLAGS) \
-			-DNEWALIASES=\"${NEWALIASES}\" \
-			-DNEWALIASES_ARG=\"${NEWALIASES_ARG}\"
-virtualwrapper_SOURCES = virtualwrapper.c
-virtualwrapper_CPPFLAGS = $(AM_CPPFLAGS) \
-			  -DPOSTMAP=\"${POSTMAP}\" \
-			  -DPOSTMAP_ARG=\"${POSTMAP_ARG}\"
-
-libexec_PROGRAMS = queue bouncequeue familyqueue
-queue_SOURCES = queue.c
-queue_CPPFLAGS = $(AM_CPPFLAGS) -DSPOOLDIR=\"${spooldir}\"
-bouncequeue_SOURCES = bouncequeue.c
-bouncequeue_CPPFLAGS = $(AM_CPPFLAGS) -DSPOOLDIR=\"${spooldir}\"
-familyqueue_SOURCES = familyqueue.c
-familyqueue_CPPFLAGS = $(AM_CPPFLAGS) -DSPOOLDIR=\"${spooldir}\"
-
-EXTRA_DIST = alias_manager.pl.in \
-	     sympa_wizard.pl.in
+EXTRA_DIST = sympa_wizard.pl.in
 
 CLEANFILES = $(sbin_SCRIPTS)
 
-install-exec-hook:
-	-chown $(USER) $(DESTDIR)$(libexecdir)/queue
-	-chgrp $(GROUP) $(DESTDIR)$(libexecdir)/queue
-	chmod 4755 $(DESTDIR)$(libexecdir)/queue
-
-	-chown $(USER) $(DESTDIR)$(libexecdir)/bouncequeue
-	-chgrp $(GROUP) $(DESTDIR)$(libexecdir)/bouncequeue
-	chmod 4755 $(DESTDIR)$(libexecdir)/bouncequeue
-
-	-chown $(USER) $(DESTDIR)$(libexecdir)/familyqueue
-	-chgrp $(GROUP) $(DESTDIR)$(libexecdir)/familyqueue
-	chmod 4755 $(DESTDIR)$(libexecdir)/familyqueue
-
-	-chown root $(DESTDIR)$(sbindir)/aliaswrapper
-	-chgrp $(GROUP) $(DESTDIR)$(sbindir)/aliaswrapper
-	chmod 4750 aliaswrapper $(DESTDIR)$(sbindir)/aliaswrapper
-
-	-chown root $(DESTDIR)$(sbindir)/virtualwrapper
-	-chgrp $(GROUP) $(DESTDIR)$(sbindir)/virtualwrapper
-	chmod 4750 $(DESTDIR)$(sbindir)/virtualwrapper
-
-alias_manager.pl sympa_wizard.pl: Makefile
+sympa_wizard.pl: Makefile
 	rm -f $@
 	$(AM_V_GEN)$(SED) \
 		-e 's|--PERL--|$(PERL)|' \
@@ -84,5 +43,4 @@ alias_manager.pl sympa_wizard.pl: Makefile
 		< $(srcdir)/$@.in > $@
 	chmod +x $@
 
-alias_manager.pl: $(srcdir)/alias_manager.pl.in
 sympa_wizard.pl: $(srcdir)/sympa_wizard.pl.in
