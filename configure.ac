@@ -507,6 +507,7 @@ AC_CONFIG_FILES([
     src/libexec/Makefile
     src/cgi/Makefile
     src/sbin/Makefile
+    src/bin/Makefile
     soap/Makefile
     doc/Makefile
     doc/sample/Makefile

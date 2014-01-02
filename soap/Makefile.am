@@ -18,21 +18,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-script_SCRIPTS = sympa_soap_client.pl
-
 default_DATA = sympa.wsdl
 
-EXTRA_DIST = $(default_DATA) \
-	     sympa_soap_client.pl.in
-
-CLEANFILES = $(script_SCRIPTS)
-
-sympa_soap_client.pl: Makefile
-	rm -f $@
-	$(AM_V_GEN)$(SED) \
-		-e 's|--PERL--|$(PERL)|' \
-		-e 's|--modulesdir--|$(modulesdir)|' \
-		< $(srcdir)/$@.in > $@
-	chmod +x $@
-
-sympa_soap_client.pl: $(srcdir)/sympa_soap_client.pl.in
+EXTRA_DIST = $(default_DATA)
