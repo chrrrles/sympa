@@ -7,14 +7,15 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2002-07-16 17:27+0800\n"
-"PO-Revision-Date: 2009-01-03 15:36+0100\n"
-"Last-Translator: jayasurian makkoth <jayasurian123@yahoo.com>\n"
-"Language-Team: മലയാളം\n"
+"PO-Revision-Date: 2011-07-29 16:30+0200\n"
+"Last-Translator: Anonymous Pootle User\n"
+"Language-Team: Brezhoneg <LL@li.org>\n"
+"Language: br\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Pootle 1.0.2\n"
+"Plural-Forms: nplurals=2; plural=n > 1;\n"
+"X-Generator: Pootle 2.1.2\n"
 
 #: ../web_tt2/home.tt2:2
 msgid "Mailing lists server"
@@ -33,11 +34,11 @@ msgstr ""
 
 #: ../web_tt2/home.tt2:23
 msgid "Others"
-msgstr "മറ്റുള്ളവ"
+msgstr ""
 
 #: ../web_tt2/home.tt2:48
 msgid "RSS news"
-msgstr "RSS വാര്‍ത്ത"
+msgstr ""
 
 #. (user.email)
 #: ../web_tt2/login.tt2:3
@@ -46,7 +47,7 @@ msgstr ""
 
 #: ../web_tt2/main.tt2:27
 msgid "RSS Latest messages"
-msgstr "RSS പുതിയ കത്തുകള്‍ "
+msgstr ""
 
 #: ../web_tt2/main.tt2:28
 msgid "RSS Latest documents"
@@ -54,23 +55,23 @@ msgstr ""
 
 #: ../web_tt2/main.tt2:31 ../web_tt2/main.tt2:34
 msgid "RSS Latest lists"
-msgstr "RSS പുതിയ ലിസ്റ്റുകള്‍"
+msgstr ""
 
 #: ../web_tt2/main.tt2:32 ../web_tt2/main.tt2:35
 msgid "RSS Active lists"
-msgstr "RSS സജീവമായ ലിസ്റ്റുകള്‍"
+msgstr ""
 
 #: ../web_tt2/main.tt2:63
 msgid "Please activate JavaScript in your web browser"
-msgstr "ദയവായി താങ്ങള്‍ Browser javascript ഓണ്‍ ചെയ്യുക"
+msgstr ""
 
 #: ../web_tt2/menu.tt2:7
 msgid "Create list"
-msgstr "ലിസ്റ്റ് ഉണ്ടാകുക"
+msgstr ""
 
 #: ../web_tt2/menu.tt2:12
 msgid "Sympa admin"
-msgstr "സിംബ admin"
+msgstr ""
 
 #: ../web_tt2/menu.tt2:16
 msgid "List of lists"
@@ -78,7 +79,7 @@ msgstr ""
 
 #: ../web_tt2/menu.tt2:19
 msgid "Home"
-msgstr "വീട് "
+msgstr ""
 
 #: ../web_tt2/arc.tt2:4 ../web_tt2/arc_manage.tt2:4
 #: ../web_tt2/arcsearch_form.tt2:4 ../web_tt2/compose_mail.tt2:12
@@ -97,7 +98,7 @@ msgstr "വീട് "
 #: ../web_tt2/reviewbouncing.tt2:3 ../web_tt2/suboptions.tt2:21
 #: ../web_tt2/suspend_request.tt2:5
 msgid "Help"
-msgstr "രക്ഷ "
+msgstr ""
 
 #: ../web_tt2/login_menu.tt2:9
 msgid "Restore identity"
@@ -121,8 +122,9 @@ msgid "Editor"
 msgstr ""
 
 #: ../web_tt2/login_menu.tt2:17
+#, fuzzy
 msgid "Subscriber"
-msgstr ""
+msgstr "kannadoù nevez"
 
 #. (last_login_host)
 #: ../web_tt2/login_menu.tt2:21
@@ -138,8 +140,9 @@ msgid "Your preferences"
 msgstr ""
 
 #: ../web_tt2/suspend_request.tt2:5 ../web_tt2/your_lists.tt2:9
+#, fuzzy
 msgid "Manage your subscriptions"
-msgstr ""
+msgstr "kannadoù nevez"
 
 #: ../web_tt2/lists.tt2:29 ../web_tt2/your_lists.tt2:14
 msgid "admin"
@@ -296,8 +299,9 @@ msgid "Editing of various files and messages attached to your list."
 msgstr ""
 
 #: ../web_tt2/admin.tt2:10
+#, fuzzy
 msgid "Manage subscribers:"
-msgstr ""
+msgstr "kannadoù nevez"
 
 #: ../web_tt2/admin.tt2:10
 msgid ""
@@ -314,8 +318,9 @@ msgid "Handles the set of black-listed mail addresses for this list."
 msgstr ""
 
 #: ../web_tt2/admin.tt2:15
+#, fuzzy
 msgid "Manage archives:"
-msgstr ""
+msgstr "kannadoù nevez"
 
 #: ../web_tt2/admin.tt2:15
 msgid "Allows you to download and delete list archives."
@@ -400,8 +405,9 @@ msgstr ""
 
 #. (listname)
 #: ../web_tt2/admin.tt2:63
+#, fuzzy
 msgid "Are you sure you wish to delete the shared documents for list %1?"
-msgstr ""
+msgstr "dielloù diwezhañ rannet"
 
 #: ../web_tt2/admin.tt2:63
 msgid ""
@@ -420,11 +426,11 @@ msgstr ""
 #. (count)
 #: ../web_tt2/active_lists.tt2:17 ../web_tt2/active_lists.tt2:5
 msgid " The %1 most active lists "
-msgstr ""
+msgstr "kont"
 
 #: ../web_tt2/active_lists.tt2:7
 msgid " Active lists "
-msgstr ""
+msgstr "listennoù gustum"
 
 #. (for)
 #: ../web_tt2/active_lists.tt2:11 ../web_tt2/active_lists.tt2:17
@@ -438,8 +444,9 @@ msgid "List name"
 msgstr ""
 
 #: ../web_tt2/active_lists.tt2:20 ../web_tt2/get_inactive_lists.tt2:11
+#, fuzzy
 msgid "Number of messages"
-msgstr ""
+msgstr "kannadoù nevez"
 
 #: ../web_tt2/active_lists.tt2:21
 msgid "Average per day"
@@ -617,9 +624,8 @@ msgid "Advanced archive search"
 msgstr ""
 
 #: ../web_tt2/arcsearch.tt2:7 ../web_tt2/arcsearch_form.tt2:12
-#, fuzzy
 msgid "Search field:"
-msgstr "ലിസ്റ്റുകള്‍ തിരയുക "
+msgstr ""
 
 #: ../src/etc/mhonarc-ressources.tt2:52 ../web_tt2/arcsearch_form.tt2:16
 #: ../web_tt2/review.tt2:92 ../web_tt2/reviewbouncing.tt2:13
@@ -627,9 +633,8 @@ msgid "Search"
 msgstr ""
 
 #: ../web_tt2/arcsearch_form.tt2:19
-#, fuzzy
 msgid "Search:"
-msgstr "ലിസ്റ്റുകള്‍ തിരയുക "
+msgstr ""
 
 #: ../web_tt2/arcsearch_form.tt2:20
 msgid "this sentence"
@@ -795,8 +800,9 @@ msgid "Return to archive %1"
 msgstr ""
 
 #: ../web_tt2/automatic_lists_management_request.tt2:3
+#, fuzzy
 msgid "Automatic lists management"
-msgstr ""
+msgstr "kannadoù nevez"
 
 #. (automatic_lists_description.family_name)
 #: ../web_tt2/automatic_lists_management_request.tt2:4
@@ -814,12 +820,14 @@ msgid "Go to list"
 msgstr ""
 
 #: ../web_tt2/automatic_lists.tt2:3
+#, fuzzy
 msgid "Automatic lists result"
-msgstr ""
+msgstr "kannadoù nevez"
 
 #: ../web_tt2/auto_signoff.tt2:1
+#, fuzzy
 msgid "Unsubscription request"
-msgstr ""
+msgstr "kannadoù nevez"
 
 #. (signing_off_email,list)
 #: ../web_tt2/auto_signoff.tt2:2
@@ -947,7 +955,7 @@ msgstr ""
 #: ../web_tt2/compose_mail.tt2:5
 #, fuzzy
 msgid "Sending a message to the list"
-msgstr "RSS പുതിയ കത്തുകള്‍ "
+msgstr "kannadoù nevez"
 
 #: ../web_tt2/compose_mail.tt2:12
 msgid "Sending an html page to the list "
@@ -977,7 +985,7 @@ msgstr ""
 #: ../web_tt2/compose_mail.tt2:27
 #, fuzzy
 msgid "Send to me"
-msgstr "RSS പുതിയ കത്തുകള്‍ "
+msgstr "kannadoù nevez"
 
 #: ../web_tt2/compose_mail.tt2:47 ../web_tt2/modform.tt2:10
 #: ../web_tt2/viewmod.tt2:31
@@ -1076,8 +1084,9 @@ msgid "Output template"
 msgstr ""
 
 #: ../web_tt2/copy_template.tt2:16
+#, fuzzy
 msgid "New template name: "
-msgstr ""
+msgstr "kannadoù nevez"
 
 #: ../web_tt2/copy_template.tt2:19 ../web_tt2/ls_templates.tt2:41
 msgid "site"
@@ -1097,9 +1106,8 @@ msgid "default"
 msgstr ""
 
 #: ../web_tt2/copy_template.tt2:31
-#, fuzzy
 msgid "Enter list name: "
-msgstr "ഒരു ലിസ്റ്റിന്റെ പേര് "
+msgstr ""
 
 #: ../web_tt2/copy_template.tt2:43 ../web_tt2/d_properties.tt2:36
 msgid "Apply"
@@ -1305,8 +1313,8 @@ msgstr ""
 
 #: ../web_tt2/d_install_shared.tt2:10
 msgid ""
-"already exist(s), do you want to confirm the install and erase the old file"
-"(s) or cancel the install?"
+"already exist(s), do you want to confirm the install and erase the old "
+"file(s) or cancel the install?"
 msgstr ""
 
 #: ../web_tt2/d_install_shared.tt2:12
@@ -1604,8 +1612,9 @@ msgid "Edit robot config"
 msgstr ""
 
 #: ../web_tt2/edit_config.tt2:17
+#, fuzzy
 msgid "parameter name"
-msgstr ""
+msgstr "kannadoù nevez"
 
 #: ../src/lib/List.pm:710 ../web_tt2/edit_config.tt2:17
 msgid "value"
@@ -1652,8 +1661,9 @@ msgid ""
 msgstr ""
 
 #: ../web_tt2/editfile.tt2:32
+#, fuzzy
 msgid "Automatic messages"
-msgstr ""
+msgstr "kannadoù nevez"
 
 #: ../web_tt2/editfile.tt2:34
 msgid ""
@@ -1837,8 +1847,9 @@ msgid "Template edition system"
 msgstr ""
 
 #: ../web_tt2/edit_template.tt2:6
+#, fuzzy
 msgid "Template name:"
-msgstr ""
+msgstr "kannadoù nevez"
 
 #: ../web_tt2/edit_template.tt2:7
 msgid "Type:"
@@ -2201,9 +2212,8 @@ msgstr ""
 
 #. (u_err.bad_listname)
 #: ../web_tt2/error.tt2:96
-#, fuzzy
 msgid "'%1': bad listname"
-msgstr "ഒരു ലിസ്റ്റിന്റെ പേര് "
+msgstr ""
 
 #. (u_err.new_listname)
 #: ../web_tt2/error.tt2:97
@@ -2397,8 +2407,9 @@ msgid ""
 msgstr ""
 
 #: ../web_tt2/family_signoff.tt2:1 ../web_tt2/family_signoff_request2.tt2:1
+#, fuzzy
 msgid "Global unsubscription"
-msgstr ""
+msgstr "kannadoù nevez"
 
 #. (signing_off_email,family)
 #: ../web_tt2/family_signoff.tt2:2 ../web_tt2/family_signoff_request2.tt2:2
@@ -2406,8 +2417,9 @@ msgid "You successfully unsubscribed the address %1 from family %2."
 msgstr ""
 
 #: ../web_tt2/family_signoff_request.tt2:1
+#, fuzzy
 msgid "Global unsubscription request"
-msgstr ""
+msgstr "kannadoù nevez"
 
 #. (signing_off_email,family)
 #: ../web_tt2/family_signoff_request.tt2:2
@@ -2471,8 +2483,9 @@ msgid "Most recent message"
 msgstr ""
 
 #: ../web_tt2/get_inactive_lists.tt2:10
+#, fuzzy
 msgid "Number of subscribers"
-msgstr ""
+msgstr "kannadoù nevez"
 
 #: ../web_tt2/get_inactive_lists.tt2:12
 msgid "Send scenario"
@@ -2527,9 +2540,8 @@ msgid "February"
 msgstr ""
 
 #: ../web_tt2/javascript.tt2:26
-#, fuzzy
 msgid "March"
-msgstr "ലിസ്റ്റുകള്‍ തിരയുക "
+msgstr ""
 
 #: ../web_tt2/javascript.tt2:26
 msgid "April"
@@ -2556,9 +2568,8 @@ msgid "September"
 msgstr ""
 
 #: ../web_tt2/javascript.tt2:26
-#, fuzzy
 msgid "October"
-msgstr "മറ്റുള്ളവ"
+msgstr ""
 
 #: ../web_tt2/javascript.tt2:26
 msgid "November"
@@ -2647,7 +2658,7 @@ msgstr ""
 
 #: ../web_tt2/latest_arc.tt2:8
 msgid " Recent messages "
-msgstr ""
+msgstr "kannadoù nevez"
 
 #: ../web_tt2/latest_arc.tt2:17
 msgid " The most recent messages for this list "
@@ -2664,7 +2675,7 @@ msgstr ""
 
 #: ../web_tt2/latest_d_read.tt2:7
 msgid " Most recent shared documents "
-msgstr ""
+msgstr "dielloù diwezhañ rannet"
 
 #: ../web_tt2/latest_d_read.tt2:16
 msgid "Most recent documents for this list "
@@ -2788,9 +2799,8 @@ msgid "Select templates type:"
 msgstr ""
 
 #: ../web_tt2/ls_templates.tt2:26
-#, fuzzy
 msgid "Select a list:"
-msgstr "ലിസ്റ്റുകള്‍ തിരയുക "
+msgstr ""
 
 #: ../web_tt2/ls_templates.tt2:27
 msgid "Reload"
@@ -2839,16 +2849,18 @@ msgid "Modify or delete existing rejection messages"
 msgstr ""
 
 #: ../web_tt2/manage_template.tt2:10 ../web_tt2/manage_template.tt2:9
+#, fuzzy
 msgid "Listing rejection messages"
-msgstr ""
+msgstr "kannadoù nevez"
 
 #: ../web_tt2/manage_template.tt2:11
 msgid "Use as default"
 msgstr ""
 
 #: ../web_tt2/manage_template.tt2:11
+#, fuzzy
 msgid "Message name"
-msgstr ""
+msgstr "kannadoù nevez"
 
 #: ../web_tt2/manage_template.tt2:11
 msgid "Operation"
@@ -2864,37 +2876,40 @@ msgid "There are currently no Rejection Messages available"
 msgstr ""
 
 #: ../web_tt2/manage_template.tt2:59
+#, fuzzy
 msgid "Message Name:"
-msgstr ""
+msgstr "kannadoù nevez"
 
 #: ../web_tt2/manage_template.tt2:60
 msgid "Default Message"
 msgstr ""
 
 #: ../web_tt2/manage_template.tt2:66
+#, fuzzy
 msgid "Save Message"
-msgstr ""
+msgstr "kannadoù nevez"
 
 #: ../web_tt2/manage_template.tt2:77
+#, fuzzy
 msgid "Create new rejection messages"
-msgstr ""
+msgstr "kannadoù nevez"
 
 #: ../web_tt2/manage_template.tt2:84
+#, fuzzy
 msgid "New message name:"
-msgstr ""
+msgstr "kannadoù nevez"
 
 #: ../web_tt2/manage_template.tt2:84
 msgid "create"
 msgstr ""
 
 #: ../web_tt2/menu_search.tt2:5
-#, fuzzy
 msgid "Enter a list name"
-msgstr "ഒരു ലിസ്റ്റിന്റെ പേര് "
+msgstr ""
 
 #: ../web_tt2/menu_search.tt2:7
 msgid "Search lists"
-msgstr "ലിസ്റ്റുകള്‍ തിരയുക "
+msgstr ""
 
 #: ../web_tt2/modform.tt2:17 ../web_tt2/modform.tt2:23
 #: ../web_tt2/modform.tt2:6 ../web_tt2/viewmod.tt2:10
@@ -2921,7 +2936,7 @@ msgstr ""
 #: ../web_tt2/modform.tt2:30
 #, fuzzy
 msgid "Rejecting message"
-msgstr "RSS പുതിയ കത്തുകള്‍ "
+msgstr "kannadoù nevez"
 
 #: ../web_tt2/modform.tt2:32
 msgid "Choose notification "
@@ -2954,8 +2969,9 @@ msgid "Listing messages to moderate"
 msgstr ""
 
 #: ../web_tt2/modindex.tt2:21
+#, fuzzy
 msgid "loading message..."
-msgstr ""
+msgstr "kannadoù nevez"
 
 #: ../web_tt2/modindex.tt2:108 ../web_tt2/modindex.tt2:40
 msgid "Size"
@@ -2994,8 +3010,9 @@ msgid "Moderation management"
 msgstr ""
 
 #: ../web_tt2/modindex.tt2:154
+#, fuzzy
 msgid "Manage rejection messages"
-msgstr ""
+msgstr "kannadoù nevez"
 
 #: ../web_tt2/nav.tt2:15 ../web_tt2/serveradmin.tt2:5
 #: ../web_tt2/suspend_request.tt2:11 ../web_tt2/suspend_request.tt2:9
@@ -3041,7 +3058,7 @@ msgstr ""
 #: ../web_tt2/nav.tt2:117
 #, fuzzy
 msgid "Send a message"
-msgstr "RSS പുതിയ കത്തുകള്‍ "
+msgstr "kannadoù nevez"
 
 #: ../web_tt2/nav.tt2:119
 msgid "Send an html page"
@@ -3074,8 +3091,9 @@ msgstr ""
 
 #. (list_to_admin.value.mod_subscription)
 #: ../web_tt2/news.tt2:18
+#, fuzzy
 msgid "%1 subscription request(s)"
-msgstr ""
+msgstr "kannadoù nevez"
 
 #: ../web_tt2/news.tt2:29
 msgid "User Errors"
@@ -3664,12 +3682,11 @@ msgstr ""
 #: ../web_tt2/rss_request.tt2:53
 #, fuzzy
 msgid "active lists:"
-msgstr "RSS സജീവമായ ലിസ്റ്റുകള്‍"
+msgstr "listennoù gustum"
 
 #: ../web_tt2/rss_request.tt2:58
-#, fuzzy
 msgid "latest lists:"
-msgstr "RSS പുതിയ ലിസ്റ്റുകള്‍"
+msgstr ""
 
 #: ../web_tt2/rss.tt2:15 ../web_tt2/rss.tt2:5
 msgid "Server error"
@@ -4368,8 +4385,9 @@ msgid "active option, if you have several buttons representing an alternative."
 msgstr ""
 
 #: ../web_tt2/skinsedit.tt2:131
+#, fuzzy
 msgid "error messages."
-msgstr ""
+msgstr "kannadoù nevez"
 
 #: ../web_tt2/skinsedit.tt2:137
 msgid "hovered links;"
@@ -4491,8 +4509,9 @@ msgstr ""
 
 #. (arc_size)
 #: ../web_tt2/stats.tt2:9
+#, fuzzy
 msgid "Web archives size: %1 kB"
-msgstr ""
+msgstr "kannadoù nevez"
 
 #: ../web_tt2/stats.tt2:16 ../web_tt2/stats.tt2:22
 msgid "[% o.title %]"
@@ -4666,8 +4685,9 @@ msgid "indefinite end date"
 msgstr ""
 
 #: ../web_tt2/suspend_request.tt2:33
+#, fuzzy
 msgid "No subscription."
-msgstr ""
+msgstr "kannadoù nevez"
 
 #: ../web_tt2/suspend_request.tt2:37
 msgid "Toogle selection"
@@ -4690,12 +4710,14 @@ msgid "Check this box if you want to suspend your subscription indefinitely."
 msgstr ""
 
 #: ../web_tt2/suspend_request.tt2:49
+#, fuzzy
 msgid "Suspend my subscriptions"
-msgstr ""
+msgstr "kannadoù nevez"
 
 #: ../web_tt2/suspend_request.tt2:51
+#, fuzzy
 msgid "Resume my subscriptions"
-msgstr ""
+msgstr "kannadoù nevez"
 
 #: ../web_tt2/suspend_request.tt2:55
 msgid "Unsubscribe selected lists"
@@ -4752,8 +4774,9 @@ msgid "The validation link has an unknow format or has expired"
 msgstr ""
 
 #: ../web_tt2/tracking.tt2:13 ../web_tt2/tracking.tt2:4
+#, fuzzy
 msgid "Message tracking"
-msgstr ""
+msgstr "kannadoù nevez"
 
 #. (fromname,fromaddr,listname)
 #: ../web_tt2/tracking.tt2:6
@@ -4805,9 +4828,8 @@ msgid "Logs view"
 msgstr ""
 
 #: ../web_tt2/viewlogs.tt2:50
-#, fuzzy
 msgid "Search by:"
-msgstr "ലിസ്റ്റുകള്‍ തിരയുക "
+msgstr ""
 
 #: ../web_tt2/viewlogs.tt2:58 ../web_tt2/viewlogs.tt2:64
 msgid "Message Id"
@@ -4930,15 +4952,16 @@ msgstr ""
 #: ../web_tt2/viewmod.tt2:17
 #, fuzzy
 msgid "Default rejection message"
-msgstr "RSS പുതിയ കത്തുകള്‍ "
+msgstr "kannadoù nevez"
 
 #: ../web_tt2/viewmod.tt2:18
 msgid "Do Not Notify"
 msgstr ""
 
 #: ../web_tt2/view_template.tt2:7
+#, fuzzy
 msgid "Template name: "
-msgstr ""
+msgstr "kannadoù nevez"
 
 #: ../web_tt2/view_template.tt2:8
 msgid "Type: "
@@ -5811,8 +5834,9 @@ msgstr ""
 
 #. (send)
 #: ../mail_tt2/info_report.tt2:19
+#, fuzzy
 msgid "Sending messages  : %1"
-msgstr ""
+msgstr "kannadoù nevez"
 
 #. (review)
 #: ../mail_tt2/info_report.tt2:20
@@ -7204,8 +7228,8 @@ msgstr ""
 #. (list.name)-)
 #: ../mail_tt2/request_auth.tt2:19
 msgid ""
-"You requested a subscription reminder to be sent to each subscriber of list %"
-"1"
+"You requested a subscription reminder to be sent to each subscriber of list "
+"%1"
 msgstr ""
 
 #. (-)
@@ -7266,7 +7290,7 @@ msgstr ""
 #: ../mail_tt2/send_auth.tt2:19
 #, fuzzy
 msgid "Or send a message to %1 with the following subject:\n"
-msgstr "RSS പുതിയ കത്തുകള്‍ "
+msgstr "kannadoù nevez"
 
 #. (conf.title,list)
 #: ../mail_tt2/sendpasswd.tt2:4
@@ -7425,8 +7449,8 @@ msgstr ""
 #. (delegator,list.name,list.host)
 #: ../mail_tt2/user_notification.tt2:32
 msgid ""
-"You have been delegate the responsability of list moderator by %1 for list %"
-"2@%3."
+"You have been delegate the responsability of list moderator by %1 for list "
+"%2@%3."
 msgstr ""
 
 #: ../mail_tt2/user_notification.tt2:35 ../mail_tt2/welcome.tt2:12
@@ -7469,8 +7493,9 @@ msgstr ""
 
 #. (family)
 #: ../mail_tt2/user_notification.tt2:58
+#, fuzzy
 msgid "Unsubscribing from family %1"
-msgstr ""
+msgstr "kannadoù nevez"
 
 #. (family,ip)
 #: ../mail_tt2/user_notification.tt2:62
@@ -8660,7 +8685,7 @@ msgstr ""
 #: ../src/lib/confdef.pm:965
 #, fuzzy
 msgid "Default priority for list messages"
-msgstr "RSS പുതിയ കത്തുകള്‍ "
+msgstr "kannadoù nevez"
 
 #: ../src/lib/confdef.pm:970
 msgid "Database related"
@@ -8776,7 +8801,7 @@ msgstr ""
 #, fuzzy
 msgid ""
 "Insert a DKIM signature to message from the robot, from the list or both"
-msgstr "RSS പുതിയ കത്തുകള്‍ "
+msgstr "kannadoù nevez"
 
 #: ../src/lib/confdef.pm:1191
 msgid ""
@@ -8967,8 +8992,9 @@ msgid ""
 msgstr ""
 
 #: ../src/lib/confdef.pm:1529
+#, fuzzy
 msgid "Directory for subscription spool"
-msgstr ""
+msgstr "kannadoù nevez"
 
 #: ../src/lib/confdef.pm:1534
 msgid ""
@@ -9287,8 +9313,9 @@ msgid "percentage of list members in VERP mode"
 msgstr ""
 
 #: ../src/lib/List.pm:1068
+#, fuzzy
 msgid "Message tracking feature"
-msgstr ""
+msgstr "kannadoù nevez"
 
 #: ../src/lib/List.pm:1072
 msgid "tracking message by delivery status notification"
@@ -9299,8 +9326,9 @@ msgid "tracking message by message delivery notification"
 msgstr ""
 
 #: ../src/lib/List.pm:1088
+#, fuzzy
 msgid "who can view message tracking"
-msgstr ""
+msgstr "kannadoù nevez"
 
 #: ../src/lib/List.pm:1093
 msgid "Tracking datas are removed after this number of days"
@@ -9551,7 +9579,7 @@ msgstr ""
 #: ../src/lib/List.pm:1972
 #, fuzzy
 msgid "Insert DKIM signature to messages sent to the list"
-msgstr "RSS പുതിയ കത്തുകള്‍ "
+msgstr "kannadoù nevez"
 
 #: ../src/lib/List.pm:1983
 msgid "DKIM configuration"
@@ -9611,9 +9639,8 @@ msgid "human readable"
 msgstr ""
 
 #: ../src/lib/List.pm:2183
-#, fuzzy
 msgid "who created the list"
-msgstr "ലിസ്റ്റ് ഉണ്ടാകുക"
+msgstr ""
 
 #: ../src/lib/List.pm:2194
 msgid "Last update of config"
@@ -9688,8 +9715,9 @@ msgid "list members"
 msgstr ""
 
 #: ../src/lib/List.pm:606
+#, fuzzy
 msgid "messages"
-msgstr ""
+msgstr "kannadoù nevez"
 
 #: ../src/lib/List.pm:760
 msgid "bytes"
@@ -9957,8 +9985,9 @@ msgid ""
 msgstr ""
 
 #: ../wwsympa/wwsympa.fcgi.in:16005
+#, fuzzy
 msgid "Unsubscription from list %s failed."
-msgstr ""
+msgstr "kannadoù nevez"
 
 #: ../wwsympa/wwsympa.fcgi.in:16597
 msgid "Mail sending"
@@ -9969,8 +9998,9 @@ msgid "Subscription additions"
 msgstr ""
 
 #: ../wwsympa/wwsympa.fcgi.in:16599
+#, fuzzy
 msgid "Unsubscription"
-msgstr ""
+msgstr "kannadoù nevez"
 
 #: ../wwsympa/wwsympa.fcgi.in:16600
 msgid "Users deleted by admin"
@@ -10135,8 +10165,13 @@ msgid "you do not receive your own posts"
 msgstr ""
 
 #, fuzzy
-#~ msgid "Sendind a message to the list"
-#~ msgstr "RSS പുതിയ കത്തുകള്‍ "
+#~ msgid "Web archives size:"
+#~ msgstr "kannadoù nevez"
 
-#~ msgid "The requested ticket is expired"
-#~ msgstr "അപേക്ഷിച്ച ടിക്കറ്റിന്റെ കാലാവധി കഴിഞ്ഞു "
+#, fuzzy
+#~ msgid "Sendind a message to the list"
+#~ msgstr "kannadoù nevez"
+
+#, fuzzy
+#~ msgid "Create New Reject Messages"
+#~ msgstr "kannadoù nevez"
