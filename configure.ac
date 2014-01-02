@@ -504,6 +504,7 @@ AC_CONFIG_FILES([
     src/etc/script/Makefile
     src/etc/script/js/Makefile
     src/lib/Makefile
+    src/libexec/Makefile
     src/cgi/Makefile
     src/sbin/Makefile
     soap/Makefile

@@ -47,7 +47,7 @@ soap/sympa_soap_client.pl.in
 src/lib/sympasoap.pm
 src/cgi/sympa_soap_server.fcgi.in
 src/lib/SympaTransport.pm
-src/alias_manager.pl.in
+src/libexec/alias_manager.pl.in
 src/sbin/bulk.pl.in
 src/etc/create_list_templates/discussion_list/comment.tt2
 src/etc/create_list_templates/discussion_list/config.tt2
