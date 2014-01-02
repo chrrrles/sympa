@@ -20,29 +20,6 @@
 
 SUBDIRS = icons
 
-sbin_SCRIPTS = bounced.pl archived.pl
-
 default_DATA = mime.types 
 
-EXTRA_DIST = $(default_DATA) $(nobase_modules_DATA) \
-	     archived.pl.in \
-	     bounced.pl.in
-
-CLEANFILES = $(sbin_SCRIPTS)
-
-archived.pl bounced.pl: Makefile
-	rm -f $@
-	$(AM_V_GEN)$(SED) \
-		-e 's|--PERL--|$(PERL)|' \
-		-e 's|--defaultdir--|$(defaultdir)|' \
-		-e 's|--docdir--|$(docdir)|' \
-		-e 's|--libexecdir--|$(libexecdir)|' \
-		-e 's|--modulesdir--|$(modulesdir)|' \
-		-e 's|--piddir--|$(piddir)|' \
-		-e 's|--spooldir--|$(spooldir)|' \
-		-e 's|--CONFIG--|$(CONFIG)|' \
-		< $(srcdir)/$@.in > $@
-	chmod +x $@
-
-archived.pl: $(srcdir)/archived.pl.in
-bounced.pl: $(srcdir)/bounced.pl.in
+EXTRA_DIST = $(default_DATA)

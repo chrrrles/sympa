@@ -18,11 +18,11 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-SUBDIRS = etc lib cgi
+SUBDIRS = etc lib cgi sbin
 
 AM_CPPFLAGS = -DCONFIG=\"$(CONFIG)\"
 
-sbin_SCRIPTS = sympa.pl bulk.pl alias_manager.pl task_manager.pl sympa_wizard.pl
+sbin_SCRIPTS = alias_manager.pl sympa_wizard.pl
 sbin_PROGRAMS = aliaswrapper virtualwrapper
 aliaswrapper_SOURCES = aliaswrapper.c
 aliaswrapper_CPPFLAGS = $(AM_CPPFLAGS) \
@@ -42,11 +42,8 @@ familyqueue_SOURCES = familyqueue.c
 familyqueue_CPPFLAGS = $(AM_CPPFLAGS) -DSPOOLDIR=\"${spooldir}\"
 
 EXTRA_DIST = $(modules_DATA) \
-	     bulk.pl.in \
 	     alias_manager.pl.in \
-	     sympa.pl.in \
-	     sympa_wizard.pl.in \
-	     task_manager.pl.in
+	     sympa_wizard.pl.in
 
 CLEANFILES = $(sbin_SCRIPTS)
 
@@ -71,7 +68,7 @@ install-exec-hook:
 	-chgrp $(GROUP) $(DESTDIR)$(sbindir)/virtualwrapper
 	chmod 4750 $(DESTDIR)$(sbindir)/virtualwrapper
 
-alias_manager.pl bulk.pl task_manager.pl sympa.pl sympa_wizard.pl: Makefile
+alias_manager.pl sympa_wizard.pl: Makefile
 	rm -f $@
 	$(AM_V_GEN)$(SED) \
 		-e 's|--PERL--|$(PERL)|' \
@@ -89,7 +86,4 @@ alias_manager.pl bulk.pl task_manager.pl sympa.pl sympa_wizard.pl: Makefile
 	chmod +x $@
 
 alias_manager.pl: $(srcdir)/alias_manager.pl.in
-bulk.pl: $(srcdir)/bulk.pl.in
-sympa.pl: $(srcdir)/sympa.pl.in
 sympa_wizard.pl: $(srcdir)/sympa_wizard.pl.in
-task_manager.pl: $(srcdir)/task_manager.pl.in
