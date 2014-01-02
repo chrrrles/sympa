@@ -507,12 +507,11 @@ AC_CONFIG_FILES([
     src/cgi/Makefile
     src/sbin/Makefile
     src/bin/Makefile
-    soap/Makefile
     doc/Makefile
     doc/sample/Makefile
+    default/Makefile
     web_tt2/Makefile
     www/Makefile
-    wwsympa/Makefile
     mail_tt2/Makefile
     po/Makefile.in
     po-wwsympa/Makefile.in
