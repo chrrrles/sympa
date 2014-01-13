@@ -1,5 +1,5 @@
 # SQLSource.pm - This module includes SQL DB related functions
-#<!-- RCS Identication ; $Revision$ --> 
+#<!-- RCS Identication ; $Revision: 9945 $ --> 
 
 #
 # Sympa - SYsteme de Multi-Postage Automatique

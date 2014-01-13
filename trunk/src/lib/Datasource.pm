@@ -1,5 +1,5 @@
 # Datasource.pm - This module includes external datasources related functions
-#<!-- RCS Identication ; $Revision$ --> 
+#<!-- RCS Identication ; $Revision: 9945 $ --> 
 
 #
 # Sympa - SYsteme de Multi-Postage Automatique

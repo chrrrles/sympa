@@ -1,5 +1,5 @@
 # Upgrade.pm - This module gathers all subroutines used to upgrade Sympa data structures
-#<!-- RCS Identication ; $Revision$ --> 
+#<!-- RCS Identication ; $Revision: 9945 $ --> 
 
 #
 # Sympa - SYsteme de Multi-Postage Automatique

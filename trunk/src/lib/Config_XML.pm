@@ -1,6 +1,6 @@
 # Config_XML.pm - Parse XML file and extract a hash structure
 # used to create a list.
-# RCS Identication ; $Revision$ ; $Date$ 
+# RCS Identication ; $Revision: 9945 $ ; $Date: 2013-10-24 16:52:36 +0200 (jeu. 24 oct. 2013) $ 
 #
 # Sympa - SYsteme de Multi-Postage Automatique
 # Copyright (c) 1997, 1998, 1999, 2000, 2001 Comite Reseau des Universites
