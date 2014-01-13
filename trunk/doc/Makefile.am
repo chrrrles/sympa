@@ -31,4 +31,4 @@ nobase_doc_DATA = sympa.pdf \
 		  samples/families/sample-auto/config.tt2 \
 		  samples/families/sample-auto/param_constraint.conf
 
-EXTRA_DIST = $(nobase_doc_DATA) README.charset README.config README.postfix
+EXTRA_DIST = $(nobase_doc_DATA) README.charset README.postfix
