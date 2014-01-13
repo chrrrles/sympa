@@ -3,8 +3,10 @@
 # $Id$
 
 # Sympa - SYsteme de Multi-Postage Automatique
-# Copyright (c) 1997, 1998, 1999, 2000, 2001 Comite Reseau des Universites
-# Copyright (c) 1997,1998, 1999 Institut Pasteur & Christophe Wolfhugel
+#
+# Copyright (c) 1997-1999 Institut Pasteur & Christophe Wolfhugel
+# Copyright (c) 1997-2011 Comite Reseau des Universites
+# Copyright (c) 2011-2014 GIP RENATER
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,9 +20,6 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-# TT2 adapter for sympa's template system - Chia-liang Kao <clkao@clkao.org>
-# usage: replace require 'parser.pl' in wwwsympa and other .pl
 
 package Sympa::Template::Compat;
 
