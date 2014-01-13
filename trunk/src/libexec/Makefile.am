@@ -82,6 +82,6 @@ mysql_alias_manager.pl: $(srcdir)/mysql_alias_manager.pl.in
 alias_manager.8: Makefile
 	rm -f $@
 	$(AM_V_GEN)$(POD2MAN) --section=8 --center="sympa $(VERSION)" \
-		--lax --release="$(VERSION)" $(srcdir)/$*.pl $@
+		--lax --release="$(VERSION)" $*.pl $@
 
-alias_manager.8: $(srcdir)/alias_manager.pl
+alias_manager.8: alias_manager.pl

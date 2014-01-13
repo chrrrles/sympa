@@ -41,12 +41,12 @@ task_manager.pl: $(srcdir)/task_manager.pl.in
 archived.8 bounced.8 bulk.8 sympa.8 task_manager.8: Makefile
 	rm -f $@
 	$(AM_V_GEN)$(POD2MAN) --section=8 --center="sympa $(VERSION)" \
-		--lax --release="$(VERSION)" $(srcdir)/$*.pl $@
+		--lax --release="$(VERSION)" $*.pl $@
 
 .pl.8:
 
-archived.8: $(srcdir)/archived.pl
-bounced.8: $(srcdir)/bounced.pl
-bulk.8: $(srcdir)/bulk.pl
-sympa.8: $(srcdir)/sympa.pl
-task_manager.8: $(srcdir)/task_manager.pl
+archived.8: archived.pl
+bounced.8: bounced.pl
+bulk.8: bulk.pl
+sympa.8: sympa.pl
+task_manager.8: task_manager.pl
