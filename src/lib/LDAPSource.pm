@@ -1,7 +1,7 @@
-# LDAPSource.pm - This module includes common LDAP related functions
-#<!-- RCS Identication ; $Revision: 1.3 $ --> 
+# -*- indent-tabs-mode: nil; -*-
+# vim:ft=perl:et:sw=4:textwidth=78
+# $Id$
 
-#
 # Sympa - SYsteme de Multi-Postage Automatique
 # Copyright (c) 1997, 1998, 1999, 2000, 2001 Comite Reseau des Universites
 # Copyright (c) 1997,1998, 1999 Institut Pasteur & Christophe Wolfhugel

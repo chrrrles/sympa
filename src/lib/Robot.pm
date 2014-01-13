@@ -1,3 +1,7 @@
+# -*- indent-tabs-mode: nil; -*-
+# vim:ft=perl:et:sw=4:textwidth=78
+# $Id$
+
 ## This package handles Sympa virtual robots
 ## It should :
 ##   * provide access to robot conf parameters,

@@ -1,11 +1,7 @@
-##---------------------------------------------------------------------------##
-##  File:
-##	$Id: time_utils.pl,
-##  Author:
-##      Earl Hood     (package MHonarc)
-##  Description:
-##      Time related routines for mhonarc
-##---------------------------------------------------------------------------##
+# -*- indent-tabs-mode: nil; -*-
+# vim:ft=perl:et:sw=4:textwidth=78
+# $Id$
+
 ##    Copyright (C) 1996-1999	Earl Hood, mhonarc@mhonarc.org
 ##
 ##    This program is free software; you can redistribute it and/or modify

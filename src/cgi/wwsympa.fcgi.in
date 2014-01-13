@@ -1,7 +1,8 @@
 #!--PERL--
-# wwsympa.fcgi - This script provides the web interface to Sympa 
-# RCS Identication ; $Revision: 10086 $ ; $Date: 2014-01-02 12:14:12 +0100 (jeu. 02 janv. 2014) $ 
-#
+# -*- indent-tabs-mode: nil; -*-
+# vim:ft=perl:et:sw=4:textwidth=78
+# $Id$
+
 # Sympa - SYsteme de Multi-Postage Automatique
 # Copyright (c) 1997-2003 Comite Reseau des Universites
 #
