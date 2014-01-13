@@ -1,8 +1,7 @@
-# TaskInstruction.pm - This module includes the TaskInstruction object.
-# This object is used to handle a single line contained by a task.
-#<!-- RCS Identication ; $Revision: 7792 $ ; $Date: 2012-10-23 15:36:05 +0200 (mar 23 oct 2012) $ --> 
+# -*- indent-tabs-mode: nil; -*-
+# vim:ft=perl:et:sw=4:textwidth=78
+# $Id$
 
-#
 # Sympa - SYsteme de Multi-Postage Automatique
 # Copyright (c) 1997, 1998, 1999, 2000, 2001 Comite Reseau des Universites
 # Copyright (c) 1997,1998, 1999 Institut Pasteur & Christophe Wolfhugel

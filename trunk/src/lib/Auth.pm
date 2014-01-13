@@ -1,5 +1,6 @@
-# Auth.pm - This module provides web authentication functions
-# RCS Identication ; $Revision: 10085 $ ; $Date: 2014-01-02 10:16:17 +0100 (jeu. 02 janv. 2014) $
+# -*- indent-tabs-mode: nil; -*-
+# vim:ft=perl:et:sw=4:textwidth=78
+# $Id$
 #
 # Sympa - SYsteme de Multi-Postage Automatique
 # Copyright (c) 1997, 1998, 1999, 2000, 2001 Comite Reseau des Universites

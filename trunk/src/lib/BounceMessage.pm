@@ -1,4 +1,6 @@
-# BounceMessage.pm - This module includes specialized sub to handle bounce messages.
+# -*- indent-tabs-mode: nil; -*-
+# vim:ft=perl:et:sw=4:textwidth=78
+# $Id$
 
 package BounceMessage;
 

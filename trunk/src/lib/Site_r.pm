@@ -1,3 +1,7 @@
+# -*- indent-tabs-mode: nil; -*-
+# vim:ft=perl:et:sw=4:textwidth=78
+# $Id$
+
 ## This package handles Sympa global site
 ## It should :
 ##   * provide access to global conf parameters,
