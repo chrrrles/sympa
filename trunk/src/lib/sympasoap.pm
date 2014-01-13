@@ -14,15 +14,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package SOAP::XMLSchema1999::Serializer;
-
-#sub as_listType {
-#    my $self = shift;
-#    my($value, $name, $type, $attr) = @_;
-#    return [$name, $attr, $value];
-##    return [$name, {'xsi:type' => 'sympaType:listType', %$attr}, $value];
-#}
-
 package sympasoap;
 
 use strict;
