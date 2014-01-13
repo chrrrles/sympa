@@ -63,6 +63,6 @@ sympa_soap_client.pl: $(srcdir)/sympa_soap_client.pl.in
 sympa_wizard.1: Makefile
 	rm -f $@
 	$(AM_V_GEN)$(POD2MAN) --section=1 --center="sympa $(VERSION)" \
-		--lax --release="$(VERSION)" $(srcdir)/$*.pl $@
+		--lax --release="$(VERSION)" $*.pl $@
 
-sympa_wizard.1: $(srcdir)/sympa_wizard.pl
+sympa_wizard.1: sympa_wizard.pl
