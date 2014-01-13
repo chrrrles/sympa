@@ -1,6 +1,6 @@
 bin_SCRIPTS = sympa_wizard.pl sympa_soap_client.pl
 
-man1_MANS = sympa_wizard.1
+man1_MANS = sympa_wizard.pl.1
 
 dbscripts = create_db.Pg create_db.mysql create_db.Oracle \
 	    create_db.Sybase create_db.SQLite
@@ -60,9 +60,9 @@ sympa_soap_client.pl: $(srcdir)/sympa_soap_client.pl.in
 
 .pl.1:
 
-sympa_wizard.1: Makefile
+sympa_wizard.pl.1: Makefile
 	rm -f $@
 	$(AM_V_GEN)$(POD2MAN) --section=1 --center="sympa $(VERSION)" \
-		--lax --release="$(VERSION)" $*.pl $@
+		--lax --release="$(VERSION)" $* $@
 
-sympa_wizard.1: sympa_wizard.pl
+sympa_wizard.pl.1: sympa_wizard.pl
