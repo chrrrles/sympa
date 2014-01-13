@@ -2,7 +2,7 @@ libexec_SCRIPTS = alias_manager.pl \
 		  ldap_alias_manager.pl \
 		  mysql_alias_manager.pl
 
-man8_MANS = alias_manager.8
+man8_MANS = alias_manager.pl.8
 
 EXTRA_DIST = alias_manager.pl.in \
 	     ldap_alias_manager.pl.in \
@@ -79,9 +79,9 @@ mysql_alias_manager.pl: $(srcdir)/mysql_alias_manager.pl.in
 
 .pl.8:
 
-alias_manager.8: Makefile
+alias_manager.pl.8: Makefile
 	rm -f $@
 	$(AM_V_GEN)$(POD2MAN) --section=8 --center="sympa $(VERSION)" \
-		--lax --release="$(VERSION)" $*.pl $@
+		--lax --release="$(VERSION)" $* $@
 
-alias_manager.8: alias_manager.pl
+alias_manager.pl.8: alias_manager.pl
