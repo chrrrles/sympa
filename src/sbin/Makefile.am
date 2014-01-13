@@ -11,7 +11,7 @@ man8_MANS = archived.8 \
 	    task_manager.8
 
 EXTRA_DIST = archived.pl.in \
-	     bounced.pl.in
+	     bounced.pl.in \
 	     bulk.pl.in \
 	     sympa.pl.in \
 	     task_manager.pl.in
