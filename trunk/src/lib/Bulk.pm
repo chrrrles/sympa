@@ -495,5 +495,4 @@ sub there_is_too_much_remaining_packets {
     }
 }
 
-## Packages must return true.
 1;

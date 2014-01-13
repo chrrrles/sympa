@@ -219,5 +219,4 @@ sub disconnect {
 sub set_fetch_timeout {
 }
 
-## Packages must return true.
 1;

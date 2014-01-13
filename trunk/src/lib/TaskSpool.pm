@@ -293,5 +293,4 @@ sub creation_error {
     Site->send_notify_to_listmaster('task_creation_error', $message);
 }
 
-## Packages must return true.
 1;

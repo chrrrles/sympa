@@ -1083,12 +1083,5 @@ sub agregate_daily_data {
     }
     return $result;
 }
+
 1;
-
-
-
-
-
-
-
-

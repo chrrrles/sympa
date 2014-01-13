@@ -55,4 +55,5 @@ sub AUTOLOAD
 		return $self->{$name};
 	}
 }
+
 1;

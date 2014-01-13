@@ -590,5 +590,4 @@ sub get_canonical_read_date {
     return $self->get_formatted_date({'mode'=>'read','target'=>$value});
 }
 
-## Packages must return true.
 1;

@@ -110,5 +110,4 @@ sub is_allowed_to_sync {
 	return 1;
 }
 
-## Packages must return true.
 1;

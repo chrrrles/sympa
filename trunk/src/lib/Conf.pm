@@ -2093,5 +2093,4 @@ sub _load_wwsconf {
     $wwsconf = $conf;
 }
 
-## Packages must return true.
 1;

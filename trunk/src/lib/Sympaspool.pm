@@ -726,7 +726,4 @@ sub get_id {
     return sprintf '%s/%s', $self->{'spoolname'}, $self->{'selection_status'};
 }
 
-###### END of the Sympapool package ######
-
-## Packages must return true.
 1;

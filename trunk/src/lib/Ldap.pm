@@ -113,11 +113,4 @@ sub load {
  return %Ldap;
 }
 
-## Packages must return true.
 1;
-
-
-
-
-
-

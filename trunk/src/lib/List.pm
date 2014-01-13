@@ -12281,7 +12281,4 @@ sub is_scenario_purely_closed {
     return $self->$action->is_purely_closed;
 }
 
-
-###### END of the ListCache package ######
-
 1;

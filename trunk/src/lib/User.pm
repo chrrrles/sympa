@@ -634,7 +634,4 @@ sub clean_users {
     return $users;
 }
 
-###### END of the User package ######
-
-## Packages must return true.
 1;
