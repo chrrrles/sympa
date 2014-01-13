@@ -1,5 +1,5 @@
 # Archive.pm - This module does the archiving job for a mailing lists.
-# RCS Identication ; $Revision$ ; $Date$ 
+# RCS Identication ; $Revision: 9945 $ ; $Date: 2013-10-24 16:52:36 +0200 (jeu. 24 oct. 2013) $ 
 #
 # Sympa - SYsteme de Multi-Postage Automatique
 # Copyright (c) 1997, 1998, 1999, 2000, 2001 Comite Reseau des Universites

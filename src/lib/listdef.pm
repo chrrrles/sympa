@@ -1,5 +1,5 @@
 # listdef.pm - Definition of list parameters
-# RCS Identication ; $Revision$ ; $Date$
+# RCS Identication ; $Revision: 9945 $ ; $Date: 2013-10-24 16:52:36 +0200 (jeu. 24 oct. 2013) $
 
 package listdef;
 

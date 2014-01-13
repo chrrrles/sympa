@@ -1,5 +1,5 @@
 # sympasoap - SOAP implementation for Sympa
-# RCS Identication ; $Revision$ ; $Date$
+# RCS Identication ; $Revision: 10088 $ ; $Date: 2014-01-02 12:26:38 +0100 (jeu. 02 janv. 2014) $
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by

@@ -1,5 +1,5 @@
 # SympaTransport - SOAP HTTP transport for Sympa
-# RCS Identication ; $Revision$ ; $Date$
+# RCS Identication ; $Revision: 10088 $ ; $Date: 2014-01-02 12:26:38 +0100 (jeu. 02 janv. 2014) $
 
 package SOAP::Transport::HTTP::FCGI::Sympa;
 
