@@ -39,6 +39,7 @@ nobase_modules_DATA = admin.pm \
 		      SDM.pm \
 		      SharedDocument.pm \
 		      Site.pm \
+		      Site_r.pm \
 		      SQLSource.pm \
 		      SubscribeSpool.pm \
 		      Sympa/Constants.pm \
