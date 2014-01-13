@@ -429,5 +429,4 @@ sub get_id {
     return shift->{'lock_filename'} || '';
 }
 
-## Packages must return true.
 1;

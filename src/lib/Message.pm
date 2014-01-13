@@ -2498,7 +2498,6 @@ sub get_id {
 	tools::clean_msg_id($self->get_msg_id || '');
 }
 
-## Packages must return true.
 1;
 __END__
 

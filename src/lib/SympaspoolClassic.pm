@@ -802,7 +802,4 @@ sub get_id {
 	$self->{'spoolname'}, ($self->{'selection_status'} || 'ok');
 }
 
-###### END of the Sympapool package ######
-
-## Packages must return true.
 1;

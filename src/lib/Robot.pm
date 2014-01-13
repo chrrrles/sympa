@@ -910,7 +910,4 @@ sub get_robots {
     return \@robots;
 }
 
-###### END of the Robot package ######
-
-## Packages must return true.
 1;

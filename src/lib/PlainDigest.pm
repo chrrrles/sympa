@@ -359,3 +359,4 @@
   $self->out(  Encode::decode_utf8(defined($alt) ? sprintf(gettext("[ Image%s ]"), ":" . $alt) : sprintf(gettext("[Image%s]"),"")));
  }
 
+1;

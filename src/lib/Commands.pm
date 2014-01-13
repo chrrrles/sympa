@@ -3328,6 +3328,4 @@ sub get_auth_method {
     return $auth_method;
 }
 
-# end of package
 1;
-

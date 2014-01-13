@@ -184,9 +184,4 @@ sub get_https2{
 	return (@result);	
 }
 
-
-
-#################################################################
-
-## Packages must return true.
 1;

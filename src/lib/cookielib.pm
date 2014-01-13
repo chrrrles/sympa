@@ -201,6 +201,3 @@ sub check_cookie_extern {
 }
 
 1;
-
-
-

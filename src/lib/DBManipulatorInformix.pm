@@ -34,4 +34,4 @@ sub build_connect_string{
     $self->{'connect_string'} = "DBI:Informix:".$self->{'db_name'}."@".$self->{'db_host'};
 }
 
-return 1;
+1;

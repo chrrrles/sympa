@@ -992,7 +992,6 @@ extracted during build process and are added to translation catalog.
 
 =cut
 
-# end of Language package
 1;
 __END__
 

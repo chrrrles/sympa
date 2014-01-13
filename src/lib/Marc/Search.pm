@@ -501,7 +501,3 @@ sub match_this
 }
 
 1;
-__END__
-
-vim:ts=4
-

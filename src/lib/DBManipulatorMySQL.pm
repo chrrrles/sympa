@@ -436,4 +436,4 @@ sub AS_DOUBLE {
     return ();
 }
 
-return 1;
+1;
