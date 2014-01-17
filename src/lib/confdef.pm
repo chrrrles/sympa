@@ -768,6 +768,7 @@ our @params = (
         'file'     => 'sympa.conf',
         'version_validity' => '6.3', # valid before version 6.3
         'upgrade'          => 1,      # used by upgrade process after validy
+    },
     {   'name'       => 'queuesignoff',
 	'default'    => Sympa::Constants::SPOOLDIR . '/signoff',
 	'gettext_id' => 'Directory for unsubscription spool',
