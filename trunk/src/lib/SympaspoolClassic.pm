@@ -36,6 +36,7 @@ use warnings;
 use Carp qw(croak);
 use Exporter;
 use File::Path qw(make_path remove_tree);
+
 # tentative
 use Data::Dumper;
 
@@ -44,10 +45,10 @@ use List;
 our $filename_regexp = '^(\S+)\.(\d+)\.\w+$';
 
 our %classes = (
-		'msg' => 'Messagespool',
-		'task' => 'TaskSpool',
-		'mod' => 'KeySpool',
-		);
+    'msg'  => 'Messagespool',
+    'task' => 'TaskSpool',
+    'mod'  => 'KeySpool',
+);
 
 =head1 CLASS METHODS
 
@@ -71,26 +72,27 @@ sub new {
 
     my $self;
 
-    my $queue = 'queue'.$spoolname;
+    my $queue = 'queue' . $spoolname;
     $queue = 'queue' if ($spoolname eq 'msg');
     my $dir;
-    eval { $dir = Site->$queue; }; # check if parameter is defined.
+    eval { $dir = Site->$queue; };    # check if parameter is defined.
     if ($@) {
-	Sympa::Log::Syslog::do_log('err', 'internal error unknown spool %s', $spoolname);
-	return undef;
+        Sympa::Log::Syslog::do_log('err', 'internal error unknown spool %s',
+            $spoolname);
+        return undef;
     }
     if ($selection_status and $selection_status eq 'bad') {
-	$dir .= '/bad';
+        $dir .= '/bad';
     }
 
     $self = bless {
-	'spoolname' => $spoolname,
-	'selection_status' => $selection_status,
-	'dir' => $dir,
+        'spoolname'        => $spoolname,
+        'selection_status' => $selection_status,
+        'dir'              => $dir,
     } => $pkg;
     $self->{'selector'} = $opts{'selector'} if $opts{'selector'};
-    $self->{'sortby'} = $opts{'sortby'} if $opts{'sortby'};
-    $self->{'way'} = $opts{'way'} if $opts{'way'};
+    $self->{'sortby'}   = $opts{'sortby'}   if $opts{'sortby'};
+    $self->{'way'}      = $opts{'way'}      if $opts{'way'};
 
     Sympa::Log::Syslog::do_log('debug3', 'Spool to scan "%s"', $dir);
 
@@ -99,19 +101,19 @@ sub new {
     return $self;
 }
 
-# total spool_table count : not object oriented, just a subroutine 
+# total spool_table count : not object oriented, just a subroutine
 sub global_count {
-    
+
     my $message_status = shift;
-    my @files = <Sympa::Constants::SPOOLDIR/*>;
-    my $count = @files;
+    my @files          = <Sympa::Constants::SPOOLDIR/*>;
+    my $count          = @files;
 
     return $count;
 }
 
 sub count {
     my $self = shift;
-    return ($self->get_content({'selection'=>'count'}));
+    return ($self->get_content({'selection' => 'count'}));
 }
 
 =over 4
@@ -128,18 +130,17 @@ XXX @todo doc
 #######################
 #
 #  get_content return the content an array of hash describing the spool content
-# 
+#
 sub get_content {
     Sympa::Log::Syslog::do_log('debug2', '(%s, %s)', @_);
     my $self = shift;
     my $param = shift || {};
     my $perlselector =
-	_perlselector($param->{'selector'}) ||
-	_perlselector($self->{'selector'}) ||
-	'1';
-    my $perlcomparator =
-	_perlcomparator($param->{'sortby'}, $param->{'way'}) ||
-	_perlcomparator($self->{'sortby'}, $self->{'way'});
+           _perlselector($param->{'selector'})
+        || _perlselector($self->{'selector'})
+        || '1';
+    my $perlcomparator = _perlcomparator($param->{'sortby'}, $param->{'way'})
+        || _perlcomparator($self->{'sortby'}, $self->{'way'});
     my $offset = $param->{'offset'} || 0;
     my $page_size = $param->{'page_size'};
 
@@ -154,84 +155,88 @@ sub get_content {
 
     my @messages;
     foreach my $key ($self->get_files_in_spool) {
-	next unless $self->is_readable($key);
-	my $item = $self->parse_filename($key);
-	# We don't decide moving erroneous file to bad spool here, since it
-	# may be a temporary file "T.xxx" and so on.
-	next unless $item;
-	# Get additional details from spool file, likely to be used in queries.
-	unless ($self->get_additional_details($item->{'messagekey'}, $item)) {
-	    $self->move_to_bad($item->{'messagekey'});
-	    next;
-	}
-	my $cmp = eval $perlselector;
-	if ($@) {
-	    Sympa::Log::Syslog::do_log('err', 'Failed to evaluate selector: %s', $@);
-	    return undef;
-	}
-	next unless $cmp;
-	push @messages, $item;
+        next unless $self->is_readable($key);
+        my $item = $self->parse_filename($key);
+
+        # We don't decide moving erroneous file to bad spool here, since it
+        # may be a temporary file "T.xxx" and so on.
+        next unless $item;
+
+        # Get additional details from spool file, likely to be used in queries.
+        unless ($self->get_additional_details($item->{'messagekey'}, $item)) {
+            $self->move_to_bad($item->{'messagekey'});
+            next;
+        }
+        my $cmp = eval $perlselector;
+        if ($@) {
+            Sympa::Log::Syslog::do_log('err',
+                'Failed to evaluate selector: %s', $@);
+            return undef;
+        }
+        next unless $cmp;
+        push @messages, $item;
     }
 
     # Sorting
     if ($perlcomparator) {
-	my @sorted = eval sprintf 'sort { %s } @messages', $perlcomparator;
-	if ($@) {
-	    Sympa::Log::Syslog::do_log('err', 'Could not sort messages: %s', $@);
-	} else {
-	    @messages = @sorted;
-	}
+        my @sorted = eval sprintf 'sort { %s } @messages', $perlcomparator;
+        if ($@) {
+            Sympa::Log::Syslog::do_log('err', 'Could not sort messages: %s',
+                $@);
+        } else {
+            @messages = @sorted;
+        }
     }
 
     # Paging
     my $end;
     if ($page_size) {
-	$end = $offset + $page_size;
-	$end = scalar @messages if $end > scalar @messages
+        $end = $offset + $page_size;
+        $end = scalar @messages if $end > scalar @messages;
     } else {
-	$end = scalar @messages;
+        $end = scalar @messages;
     }
 
     # Field selection
     if ($selection eq '*_but_message') {
-	return () if $offset >= scalar @messages;
-	return (splice @messages, $offset, $end - $offset);
+        return () if $offset >= scalar @messages;
+        return (splice @messages, $offset, $end - $offset);
     } elsif ($selection eq 'count') {
-	return 0 if $offset >= scalar @messages;
-	my @retained_messages = splice @messages, $offset, $end - $offset;
-	return scalar (scalar @retained_messages);
+        return 0 if $offset >= scalar @messages;
+        my @retained_messages = splice @messages, $offset, $end - $offset;
+        return scalar(scalar @retained_messages);
     }
 
     # Extract subset
     my @ret = ();
-    my $i = 0;
+    my $i   = 0;
     foreach my $item (@messages) {
-	last if $end <= $i;
-	unless ($self->parse_file_content($item->{'messagekey'}, $item)) {
-	    $self->move_to_bad($item->{'messagekey'});
-	    next;
-	}
-	push @ret, $item
-	    if $offset <= $i;
-	$i++;
+        last if $end <= $i;
+        unless ($self->parse_file_content($item->{'messagekey'}, $item)) {
+            $self->move_to_bad($item->{'messagekey'});
+            next;
+        }
+        push @ret, $item
+            if $offset <= $i;
+        $i++;
     }
     return @ret;
 }
 
 sub get_count {
-    my $self = shift;
-    my $param = shift;
+    my $self     = shift;
+    my $param    = shift;
     my @messages = $self->get_content($param);
-    return $#messages+1;
+    return $#messages + 1;
 }
 
 # Returns the single file corresponding to the selector.
 sub get_file_key {
-    my $self = shift;
+    my $self     = shift;
     my $selector = shift;
     my $message;
     unless ($message = $self->get_message($selector)) {
-	return undef;
+        return undef;
     }
     return $message->{'messagekey'};
 }
@@ -258,15 +263,16 @@ sub next {
 
     my $data;
 
-    unless($self->refresh_spool_files_list) {
-	Sympa::Log::Syslog::do_log('err', 'Unable to refresh spool %s files list', $self);
-	return undef;
+    unless ($self->refresh_spool_files_list) {
+        Sympa::Log::Syslog::do_log('err',
+            'Unable to refresh spool %s files list', $self);
+        return undef;
     }
-    return 0 unless($#{$self->{'spool_files_list'}} > -1);
+    return 0 unless ($#{$self->{'spool_files_list'}} > -1);
     return 0 unless $data = $self->get_next_file_to_process;
     unless ($self->parse_file_content($data->{'messagekey'}, $data)) {
-	$self->move_to_bad($data->{'messagekey'});
-	return undef;
+        $self->move_to_bad($data->{'messagekey'});
+        return undef;
     }
     return $data;
 }
@@ -277,21 +283,21 @@ sub parse_filename {
     my $key  = shift;
 
     unless ($key) {
-	Sympa::Log::Syslog::do_log('err',
-	    'Unable to find out which file to process');
-	return undef;
+        Sympa::Log::Syslog::do_log('err',
+            'Unable to find out which file to process');
+        return undef;
     }
 
     my $data = {
-	'file' => $self->{'dir'} . '/' . $key,
-	'messagekey' => $key,
+        'file'       => $self->{'dir'} . '/' . $key,
+        'messagekey' => $key,
     };
 
     unless ($self->is_relevant($key)) {
-	return undef;
+        return undef;
     }
     unless ($self->analyze_file_name($key, $data)) {
-	return undef;
+        return undef;
     }
     return $data;
 }
@@ -303,15 +309,16 @@ sub parse_file_content {
     my $data = shift;
 
     unless ($key) {
-	Sympa::Log::Syslog::do_log('err',
-	    'Unable to find out which file to process');
-	return undef;
+        Sympa::Log::Syslog::do_log('err',
+            'Unable to find out which file to process');
+        return undef;
     }
 
     $data->{'messageasstring'} = $self->get_file_content($key);
     unless (defined $data->{'messageasstring'}) {
-	Sympa::Log::Syslog::do_log('err', 'Unable to gather content from file %s', $key);
-	return undef;
+        Sympa::Log::Syslog::do_log('err',
+            'Unable to gather content from file %s', $key);
+        return undef;
     }
     return $data;
 }
@@ -319,7 +326,7 @@ sub parse_file_content {
 # Placeholder: overriden in inheriting classes to get additionnal details from the file content.
 sub get_additional_details {
     my $self = shift;
-    my $key = shift;
+    my $key  = shift;
     my $data = shift;
     return 1;
 }
@@ -334,30 +341,32 @@ sub get_next_file_to_process {
     my $data = undef;
     my $cmp;
     foreach my $key (@{$self->{'spool_files_list'}}) {
-	next unless $self->is_readable($key);
-	my $item = $self->parse_filename($key);
-	next unless $item;
+        next unless $self->is_readable($key);
+        my $item = $self->parse_filename($key);
+        next unless $item;
 
-	$cmp = eval $perlselector;
-	if ($@) {
-	    Sympa::Log::Syslog::do_log('err', 'Failed to evaluate selector: %s', $@);
-	    return undef;
-	}
-	next unless $cmp;
+        $cmp = eval $perlselector;
+        if ($@) {
+            Sympa::Log::Syslog::do_log('err',
+                'Failed to evaluate selector: %s', $@);
+            return undef;
+        }
+        next unless $cmp;
 
-	unless ($data) {
-	    $data = $item;
-	    next;
-	}
-	my ($a, $b) = ($data, $item);
-	$cmp = eval $perlcomparator;
-	if ($@) {
-	    Sympa::Log::Syslog::do_log('err', 'Could not compare messages: %s', $@);
-	    return $data;
-	}
-	if ($cmp > 0) {
-	    $data = $item;
-	}
+        unless ($data) {
+            $data = $item;
+            next;
+        }
+        my ($a, $b) = ($data, $item);
+        $cmp = eval $perlcomparator;
+        if ($@) {
+            Sympa::Log::Syslog::do_log('err',
+                'Could not compare messages: %s', $@);
+            return $data;
+        }
+        if ($cmp > 0) {
+            $data = $item;
+        }
     }
     return $data;
 }
@@ -371,9 +380,9 @@ sub is_readable {
     my $key  = shift;
 
     if (-f "$self->{'dir'}/$key" && -r _) {
-	return 1;
+        return 1;
     } else {
-	return 0;
+        return 0;
     }
 }
 
@@ -384,56 +393,56 @@ sub analyze_file_name {
     my $key  = shift;
     my $data = shift;
 
-    unless($key =~ /$filename_regexp/){
-	Sympa::Log::Syslog::do_log('err',
-	    'File %s name does not have the proper format', $key);
-	return undef;
+    unless ($key =~ /$filename_regexp/) {
+        Sympa::Log::Syslog::do_log('err',
+            'File %s name does not have the proper format', $key);
+        return undef;
     }
     ($data->{'list'}, $data->{'robot'}) = split /\@/, $1;
-    
-    $data->{'list'} = lc($data->{'list'});
+
+    $data->{'list'}  = lc($data->{'list'});
     $data->{'robot'} = lc($data->{'robot'});
     return undef
-	unless $data->{'robot_object'} = Robot->new($data->{'robot'});
+        unless $data->{'robot_object'} = Robot->new($data->{'robot'});
 
     my $listname;
+
     #FIXME: is this always needed?
     ($listname, $data->{'type'}) =
-	$data->{'robot_object'}->split_listname($data->{'list'});
+        $data->{'robot_object'}->split_listname($data->{'list'});
     if (defined $listname) {
-	$data->{'list_object'} =
-	    List->new($listname, $data->{'robot_object'}, {'just_try' => 1});
+        $data->{'list_object'} =
+            List->new($listname, $data->{'robot_object'}, {'just_try' => 1});
     }
 
     ## Get priority
     #FIXME: is this always needed?
     if ($data->{'type'} and $data->{'type'} eq 'listmaster') {
-	## highest priority
-	$data->{'priority'} = 0;
-    } elsif ($data->{'type'} and $data->{'type'} eq 'owner') { # -request
-	$data->{'priority'} = $data->{'robot_object'}->request_priority;
-    } elsif ($data->{'type'} and $data->{'type'} eq 'return_path') { # -owner
-	$data->{'priority'} = $data->{'robot_object'}->owner_priority;
-    } elsif ($data->{'type'} and $data->{'type'} eq 'sympa') {	
-	$data->{'priority'} = $data->{'robot_object'}->sympa_priority;
-    } elsif (ref $data->{'list_object'} and
-	$data->{'list_object'}->isa('List')) {
-	$data->{'priority'} = $data->{'list_object'}->priority;
+        ## highest priority
+        $data->{'priority'} = 0;
+    } elsif ($data->{'type'} and $data->{'type'} eq 'owner') {    # -request
+        $data->{'priority'} = $data->{'robot_object'}->request_priority;
+    } elsif ($data->{'type'} and $data->{'type'} eq 'return_path') {  # -owner
+        $data->{'priority'} = $data->{'robot_object'}->owner_priority;
+    } elsif ($data->{'type'} and $data->{'type'} eq 'sympa') {
+        $data->{'priority'} = $data->{'robot_object'}->sympa_priority;
+    } elsif (ref $data->{'list_object'}
+        and $data->{'list_object'}->isa('List')) {
+        $data->{'priority'} = $data->{'list_object'}->priority;
     } else {
-	$data->{'priority'} = $data->{'robot_object'}->default_list_priority;
+        $data->{'priority'} = $data->{'robot_object'}->default_list_priority;
     }
 
     Sympa::Log::Syslog::do_log('debug3',
-	'messagekey=%s, list=%s, robot=%s, priority=%s',
-	$key, $data->{'list'}, $data->{'robot'}, $data->{'priority'}
-    );
+        'messagekey=%s, list=%s, robot=%s, priority=%s',
+        $key, $data->{'list'}, $data->{'robot'}, $data->{'priority'});
 
     ## Get file date
 
     unless ($key =~ /$filename_regexp/) {
-	$data->{'date'} = (stat $data->{'file'})[9];
+        $data->{'date'} = (stat $data->{'file'})[9];
     } else {
-	$data->{'date'} = $2;
+        $data->{'date'} = $2;
     }
 
     return $data;
@@ -445,10 +454,13 @@ sub get_file_content {
     my $key  = shift;
 
     my $fh;
-    unless (open $fh, $self->{'dir'}.'/'.$key) {
-	Sympa::Log::Syslog::do_log('err', 'Unable to open file %s: %s',
-	    $self->{'dir'}.'/'.$key, $!);
-	return undef;
+    unless (open $fh, $self->{'dir'} . '/' . $key) {
+        Sympa::Log::Syslog::do_log(
+            'err',
+            'Unable to open file %s: %s',
+            $self->{'dir'} . '/' . $key, $!
+        );
+        return undef;
     }
     local $/;
     my $messageasstring = <$fh>;
@@ -464,9 +476,10 @@ sub lock_message {
     $self->{'lock'} = new Lock($key);
     $self->{'lock'}->set_timeout(-1);
     unless ($self->{'lock'}->lock('write')) {
-	Sympa::Log::Syslog::do_log('err', 'Unable to put a lock on file %s', $key);
-	delete $self->{'lock'};
-	return undef;
+        Sympa::Log::Syslog::do_log('err', 'Unable to put a lock on file %s',
+            $key);
+        delete $self->{'lock'};
+        return undef;
     }
     return 1;
 }
@@ -476,41 +489,48 @@ sub unlock_message {
     my $self = shift;
     my $key  = shift;
 
-    unless(ref($self->{'lock'}) and $self->{'lock'}->isa('Lock')) {
-	delete $self->{'lock'};
-	return undef;
+    unless (ref($self->{'lock'}) and $self->{'lock'}->isa('Lock')) {
+        delete $self->{'lock'};
+        return undef;
     }
     unless ($self->{'lock'}->unlock()) {
-	Sympa::Log::Syslog::do_log('err','Unable to remove lock from file %s', $key);
-	delete $self->{'lock'};
-	return undef;
+        Sympa::Log::Syslog::do_log('err',
+            'Unable to remove lock from file %s', $key);
+        delete $self->{'lock'};
+        return undef;
     }
     return 1;
 }
 
 sub get_files_in_spool {
     my $self = shift;
-    return undef unless($self->refresh_spool_files_list);
+    return undef unless ($self->refresh_spool_files_list);
     return @{$self->{'spool_files_list'}};
 }
 
 sub get_dirs_in_spool {
     my $self = shift;
-    return undef unless($self->refresh_spool_dirs_list);
+    return undef unless ($self->refresh_spool_dirs_list);
     return @{$self->{'spool_dirs_list'}};
 }
 
 sub refresh_spool_files_list {
     my $self = shift;
-    Sympa::Log::Syslog::do_log('debug2','%s',$self->get_id);
+    Sympa::Log::Syslog::do_log('debug2', '%s', $self->get_id);
     unless (-d $self->{'dir'}) {
-	$self->create_spool_dir;
+        $self->create_spool_dir;
     }
     unless (opendir SPOOLDIR, $self->{'dir'}) {
-	Sympa::Log::Syslog::do_log('err','Unable to access %s spool. Please check proper rights are set;',$self->{'dir'});
-	return undef;
+        Sympa::Log::Syslog::do_log(
+            'err',
+            'Unable to access %s spool. Please check proper rights are set;',
+            $self->{'dir'}
+        );
+        return undef;
     }
-    my @qfile = sort tools::by_date grep {!/^\./ && -f "$self->{'dir'}/$_"} readdir(SPOOLDIR);
+    my @qfile =
+        sort tools::by_date grep { !/^\./ && -f "$self->{'dir'}/$_" }
+        readdir(SPOOLDIR);
     closedir(SPOOLDIR);
     $self->{'spool_files_list'} = \@qfile;
     return 1;
@@ -518,15 +538,21 @@ sub refresh_spool_files_list {
 
 sub refresh_spool_dirs_list {
     my $self = shift;
-    Sympa::Log::Syslog::do_log('debug2','%s',$self->get_id);
+    Sympa::Log::Syslog::do_log('debug2', '%s', $self->get_id);
     unless (-d $self->{'dir'}) {
-	$self->create_spool_dir;
+        $self->create_spool_dir;
     }
     unless (opendir SPOOLDIR, $self->{'dir'}) {
-	Sympa::Log::Syslog::do_log('err','Unable to access %s spool. Please check proper rights are set;',$self->{'dir'});
-	return undef;
+        Sympa::Log::Syslog::do_log(
+            'err',
+            'Unable to access %s spool. Please check proper rights are set;',
+            $self->{'dir'}
+        );
+        return undef;
     }
-    my @qdir = sort tools::by_date grep {!/^(\.\.|\.)$/ && -d "$self->{'dir'}/$_"} readdir(SPOOLDIR);
+    my @qdir =
+        sort tools::by_date grep { !/^(\.\.|\.)$/ && -d "$self->{'dir'}/$_" }
+        readdir(SPOOLDIR);
     closedir(SPOOLDIR);
     $self->{'spool_dirs_list'} = \@qdir;
     return 1;
@@ -534,9 +560,9 @@ sub refresh_spool_dirs_list {
 
 sub create_spool_dir {
     my $self = shift;
-    Sympa::Log::Syslog::do_log('debug','%s',$self->get_id);
+    Sympa::Log::Syslog::do_log('debug', '%s', $self->get_id);
     unless (-d $self->{'dir'}) {
-	make_path($self->{'dir'});
+        make_path($self->{'dir'});
     }
 }
 
@@ -554,17 +580,29 @@ XXX @todo doc
 sub move_to_bad {
     Sympa::Log::Syslog::do_log('debug3', '(%s, %s)', @_);
     my $self = shift;
-    my $key = shift;
+    my $key  = shift;
 
-    unless (-d $self->{'dir'}.'/bad') {
-	make_path($self->{'dir'}.'/bad');
+    unless (-d $self->{'dir'} . '/bad') {
+        make_path($self->{'dir'} . '/bad');
     }
-    unless(File::Copy::copy($self->{'dir'}.'/'.$key, $self->{'dir'}.'/bad/'.$key)) {
-	Sympa::Log::Syslog::do_log('err','Could not move file %s to spool bad %s: %s',$self->{'dir'}.'/'.$key,$self->{'dir'}.'/bad',$!);
-	return undef;
+    unless (
+        File::Copy::copy(
+            $self->{'dir'} . '/' . $key,
+            $self->{'dir'} . '/bad/' . $key
+        )
+        ) {
+        Sympa::Log::Syslog::do_log(
+            'err',
+            'Could not move file %s to spool bad %s: %s',
+            $self->{'dir'} . '/' . $key,
+            $self->{'dir'} . '/bad', $!
+        );
+        return undef;
     }
-    unless (unlink ($self->{'dir'}.'/'.$key)) {
-	Sympa::Log::Syslog::do_log('err',"Could not unlink message %s/%s . Exiting",$self->{'dir'}, $key);
+    unless (unlink($self->{'dir'} . '/' . $key)) {
+        Sympa::Log::Syslog::do_log('err',
+            "Could not unlink message %s/%s . Exiting",
+            $self->{'dir'}, $key);
     }
     $self->unlock_message($key);
     return 1;
@@ -584,18 +622,19 @@ XXX @todo doc
 #################"
 # return one message from related spool using a specified selector
 # returns undef if message was not found.
-#  
+#
 sub get_message {
-    my $self = shift;
+    my $self     = shift;
     my $selector = shift;
     my @messages;
-    return undef unless @messages = $self->get_content({'selector' => $selector});
+    return undef
+        unless @messages = $self->get_content({'selector' => $selector});
     return $messages[0];
 }
 
 #################"
 # lock one message from related spool using a specified selector
-#  
+#
 #sub unlock_message {
 #
 #    my $self = shift;
@@ -607,13 +646,13 @@ sub get_message {
 #}
 
 sub move_to {
-    my $self = shift;
-    my $param = shift;
-    my $target = shift;
+    my $self         = shift;
+    my $param        = shift;
+    my $target       = shift;
     my $file_to_move = $self->get_message($param);
-    my $new_spool = new SympaspoolClassic($target);
+    my $new_spool    = new SympaspoolClassic($target);
     if ($classes{$target}) {
-	bless $new_spool, $target;
+        bless $new_spool, $target;
     }
     $new_spool->store($file_to_move);
     $self->remove_message("$file_to_move->{'messagekey'}");
@@ -636,18 +675,19 @@ XXX @todo doc
 =cut
 
 ################"
-# store a message in spool 
+# store a message in spool
 #
-sub store {  
-    my $self = shift;
+sub store {
+    my $self            = shift;
     my $messageasstring = shift;
-    my $param = shift;
-    my $target_file = $param->{'filename'};
+    my $param           = shift;
+    my $target_file     = $param->{'filename'};
     $target_file ||= $self->get_storage_name($param);
     my $fh;
-    unless(open $fh, ">", "$self->{'dir'}/$target_file") {
-	Sympa::Log::Syslog::do_log('err','Unable to write file to spool %s',$self->{'dir'});
-	return undef;
+    unless (open $fh, ">", "$self->{'dir'}/$target_file") {
+        Sympa::Log::Syslog::do_log('err', 'Unable to write file to spool %s',
+            $self->{'dir'});
+        return undef;
     }
     print $fh $messageasstring;
     close $fh;
@@ -660,10 +700,15 @@ sub get_storage_name {
     my $filename;
     my $param = shift;
     if ($param->{'list'} && $param->{'robot'}) {
-	$filename = $param->{'list'}.'@'.$param->{'robot'}.'.'.time.'.'.int(rand(10000));
-    }else{
-	Sympa::Log::Syslog::do_log('err','Unsufficient parameters provided to create file name');
-	return undef;
+        $filename =
+              $param->{'list'} . '@'
+            . $param->{'robot'} . '.'
+            . time . '.'
+            . int(rand(10000));
+    } else {
+        Sympa::Log::Syslog::do_log('err',
+            'Unsufficient parameters provided to create file name');
+        return undef;
     }
     return $filename;
 }
@@ -682,14 +727,17 @@ XXX @todo doc
 ################"
 # remove a message in database spool using (messagekey,list,robot) which are a unique id in the spool
 #
-sub remove_message {  
+sub remove_message {
     my $self = shift;
     my $key  = shift;
 
-    unless (unlink $self->{'dir'}.'/'.$key) {
-	Sympa::Log::Syslog::do_log('err',
-	    'Unable to remove file %s: %s', $self->{'dir'}.'/'.$key, $!);
-	return undef;
+    unless (unlink $self->{'dir'} . '/' . $key) {
+        Sympa::Log::Syslog::do_log(
+            'err',
+            'Unable to remove file %s: %s',
+            $self->{'dir'} . '/' . $key, $!
+        );
+        return undef;
     }
     return 1;
 }
@@ -710,47 +758,58 @@ XXX @todo doc
 #
 
 sub clean {
-    my $self = shift;
+    my $self   = shift;
     my $filter = shift;
-    Sympa::Log::Syslog::do_log('debug','Cleaning spool %s (%s), delay: %s',$self->{'spoolname'},$self->{'selection_status'},$filter->{'delay'});
+    Sympa::Log::Syslog::do_log(
+        'debug', 'Cleaning spool %s (%s), delay: %s',
+        $self->{'spoolname'}, $self->{'selection_status'},
+        $filter->{'delay'}
+    );
 
     return undef unless $self->{'spoolname'};
     return undef unless $filter->{'delay'};
-    
+
     my $freshness_date = time - ($filter->{'delay'} * 60 * 60 * 24);
     my $deleted = 0;
 
     my @to_kill = $self->get_files_in_spool;
     foreach my $f (@to_kill) {
-	if ((stat "$self->{'dir'}/$f")[9] < $freshness_date) {
-	    if (unlink ("$self->{'dir'}/$f") ) {
-		$deleted++;
-		Sympa::Log::Syslog::do_log('notice', 'Deleting old file %s', "$self->{'dir'}/$f");
-	    }else{
-		Sympa::Log::Syslog::do_log('notice', 'unable to delete old file %s: %s', "$self->{'dir'}/$f",$!);
-	    }
-	}else{
-	    last;
-	}
+        if ((stat "$self->{'dir'}/$f")[9] < $freshness_date) {
+            if (unlink("$self->{'dir'}/$f")) {
+                $deleted++;
+                Sympa::Log::Syslog::do_log('notice', 'Deleting old file %s',
+                    "$self->{'dir'}/$f");
+            } else {
+                Sympa::Log::Syslog::do_log('notice',
+                    'unable to delete old file %s: %s',
+                    "$self->{'dir'}/$f", $!);
+            }
+        } else {
+            last;
+        }
     }
     @to_kill = $self->get_dirs_in_spool;
     foreach my $d (@to_kill) {
-	if ((stat "$self->{'dir'}/$d")[9] < $freshness_date) {
-	    if (tools::remove_dir("$self->{'dir'}/$d") ) {
-		$deleted++;
-		Sympa::Log::Syslog::do_log('notice', 'Deleting old file %s', "$self->{'dir'}/$d");
-	    }else{
-		Sympa::Log::Syslog::do_log('notice', 'unable to delete old file %s: %s', "$self->{'dir'}/$d",$!);
-	    }
-	}else{
-	    last;
-	}
+        if ((stat "$self->{'dir'}/$d")[9] < $freshness_date) {
+            if (tools::remove_dir("$self->{'dir'}/$d")) {
+                $deleted++;
+                Sympa::Log::Syslog::do_log('notice', 'Deleting old file %s',
+                    "$self->{'dir'}/$d");
+            } else {
+                Sympa::Log::Syslog::do_log('notice',
+                    'unable to delete old file %s: %s',
+                    "$self->{'dir'}/$d", $!);
+            }
+        } else {
+            last;
+        }
     }
 
-    Sympa::Log::Syslog::do_log('debug',"%s entries older than %s days removed from spool %s" ,$deleted,$filter->{'delay'},$self->{'spoolname'});
+    Sympa::Log::Syslog::do_log('debug',
+        "%s entries older than %s days removed from spool %s",
+        $deleted, $filter->{'delay'}, $self->{'spoolname'});
     return 1;
 }
-
 
 sub _perlselector {
     my $selector = shift || {};
@@ -759,17 +818,17 @@ sub _perlselector {
 
     my @perl_clause = ();
     foreach my $criterium (keys %{$selector}) {
-	if (ref($selector->{$criterium}) eq 'ARRAY') {
-	    ($value, $comparator) = @{$selector->{$criterium}};
-	    $comparator = 'eq' unless $comparator and $comparator eq 'ne';
-	} else {
-	    ($value, $comparator) = ($selector->{$criterium}, 'eq');
-	}
+        if (ref($selector->{$criterium}) eq 'ARRAY') {
+            ($value, $comparator) = @{$selector->{$criterium}};
+            $comparator = 'eq' unless $comparator and $comparator eq 'ne';
+        } else {
+            ($value, $comparator) = ($selector->{$criterium}, 'eq');
+        }
 
-	$perl_key = sprintf '$item->{"%s"}', $criterium;
+        $perl_key = sprintf '$item->{"%s"}', $criterium;
 
-	push @perl_clause,
-	sprintf '%s %s "%s"', $perl_key, $comparator, quotemeta $value;
+        push @perl_clause,
+            sprintf '%s %s "%s"', $perl_key, $comparator, quotemeta $value;
     }
 
     return join ' and ', @perl_clause;
@@ -777,22 +836,22 @@ sub _perlselector {
 
 sub _perlcomparator {
     my $orderby = shift;
-    my $way = shift;
+    my $way     = shift;
 
     return undef unless $orderby;
 
     if ($orderby eq 'date' or $orderby eq 'size') {
-	if ($way and $way eq 'desc') {
-	    return sprintf '$b->{"%s"} <=> $a->{"%s"}', $orderby, $orderby;
-	} else {
-	    return sprintf '$a->{"%s"} <=> $b->{"%s"}', $orderby, $orderby;
-	}
+        if ($way and $way eq 'desc') {
+            return sprintf '$b->{"%s"} <=> $a->{"%s"}', $orderby, $orderby;
+        } else {
+            return sprintf '$a->{"%s"} <=> $b->{"%s"}', $orderby, $orderby;
+        }
     } else {
-	if ($way and $way eq 'desc') {
-	    return sprintf '$b->{"%s"} cmp $a->{"%s"}', $orderby, $orderby;
-	} else {
-	    return sprintf '$a->{"%s"} cmp $b->{"%s"}', $orderby, $orderby;
-	}
+        if ($way and $way eq 'desc') {
+            return sprintf '$b->{"%s"} cmp $a->{"%s"}', $orderby, $orderby;
+        } else {
+            return sprintf '$a->{"%s"} cmp $b->{"%s"}', $orderby, $orderby;
+        }
     }
 }
 
@@ -800,7 +859,7 @@ sub _perlcomparator {
 sub get_id {
     my $self = shift;
     return sprintf '%s/%s',
-	$self->{'spoolname'}, ($self->{'selection_status'} || 'ok');
+        $self->{'spoolname'}, ($self->{'selection_status'} || 'ok');
 }
 
 1;

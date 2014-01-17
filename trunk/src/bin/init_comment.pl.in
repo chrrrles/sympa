@@ -28,6 +28,7 @@ use lib '--modulesdir--';
 #use wwslib; # not used
 #use Sympa::Constants; # used in List - Robot - Site - Conf - confdef
 use List;
+
 #use SDM; # used by Conf
 #use Log; # used by Conf
 
@@ -49,26 +50,26 @@ while ($user = $sth->fetchrow_hashref('NAME_lc')) {
     printf "\nUser: %s", $user->{'user_subscriber'};
 
     unless ($user->{'comment_subscriber'}) {
-	my $sth2 = SDM::do_prepared_query(
-	    q{SELECT gecos_user
+        my $sth2 = SDM::do_prepared_query(
+            q{SELECT gecos_user
 	      FROM user_table
 	      WHERE email_user = ?},
-	    $user->{'user_subscriber'}
-	) or die "Unable to execute SQL statement";
+            $user->{'user_subscriber'}
+        ) or die "Unable to execute SQL statement";
 
-	my $gecos = $sth2->fetchrow;
-	$sth2->finish();
-	
-	if ($gecos) {
-	    printf " =>%s", $gecos;
-	    my $sth2 = SDM::do_prepared_query(
-		q{UPDATE subscriber_table
+        my $gecos = $sth2->fetchrow;
+        $sth2->finish();
+
+        if ($gecos) {
+            printf " =>%s", $gecos;
+            my $sth2 = SDM::do_prepared_query(
+                q{UPDATE subscriber_table
 		  SET comment_subscriber = ?
 		  WHERE user_subscriber = ?},
-		$gecos, $user->{'user_subscriber'}
-	    ) or die "Unable to execute SQL statement";
-	    $sth2->finish();
-	}
+                $gecos, $user->{'user_subscriber'}
+            ) or die "Unable to execute SQL statement";
+            $sth2->finish();
+        }
     }
 }
 

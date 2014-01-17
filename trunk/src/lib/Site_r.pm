@@ -89,17 +89,18 @@ sub load {
     my %opts = @_;
 
     if (ref $self and ref $self eq 'Robot') {
-	unless ($self->{'name'} and $self->{'etc'}) {
-	    Sympa::Log::Syslog::do_log('err', 'object %s has not been initialized', $self);
-	    return undef;
-	}
-	$opts{'config_file'} = $self->{'etc'} . '/robot.conf';
-	$opts{'robot'}       = $self->{'name'};
+        unless ($self->{'name'} and $self->{'etc'}) {
+            Sympa::Log::Syslog::do_log('err',
+                'object %s has not been initialized', $self);
+            return undef;
+        }
+        $opts{'config_file'} = $self->{'etc'} . '/robot.conf';
+        $opts{'robot'}       = $self->{'name'};
     } elsif ($self eq 'Site') {
-	$opts{'config_file'} ||= Conf::get_sympa_conf();
-	$opts{'robot'} = '*';
+        $opts{'config_file'} ||= Conf::get_sympa_conf();
+        $opts{'robot'} = '*';
     } else {
-	croak 'bug in logic.  Ask developer';
+        croak 'bug in logic.  Ask developer';
     }
 
     my $result = Conf::load_robot_conf(\%opts);
@@ -154,38 +155,43 @@ sub get_address {
     my $type = shift || '';
 
     if (ref $self and ref $self eq 'List') {
-	unless ($type) {
-	    return $self->name . '@' . $self->host;
-	} elsif ($type eq 'owner') {
-	    return $self->name . '-request' . '@' . $self->host;
-	} elsif ($type eq 'editor') {
-	    return $self->name . '-editor' . '@' . $self->host;
-	} elsif ($type eq 'return_path') {
-	    return $self->name . $self->robot->return_path_suffix . '@' .
-		$self->host;
-	} elsif ($type eq 'subscribe') {
-	    return $self->name . '-subscribe' . '@' . $self->host;
-	} elsif ($type eq 'unsubscribe') {
-	    return $self->name . '-unsubscribe' . '@' . $self->host;
-	}
+        unless ($type) {
+            return $self->name . '@' . $self->host;
+        } elsif ($type eq 'owner') {
+            return $self->name . '-request' . '@' . $self->host;
+        } elsif ($type eq 'editor') {
+            return $self->name . '-editor' . '@' . $self->host;
+        } elsif ($type eq 'return_path') {
+            return
+                  $self->name
+                . $self->robot->return_path_suffix . '@'
+                . $self->host;
+        } elsif ($type eq 'subscribe') {
+            return $self->name . '-subscribe' . '@' . $self->host;
+        } elsif ($type eq 'unsubscribe') {
+            return $self->name . '-unsubscribe' . '@' . $self->host;
+        }
     } elsif (ref $self and ref $self eq 'Robot' or $self eq 'Site') {
-	unless ($type) {
-	    return $self->email . '@' . $self->host;
-	} elsif ($type eq 'sympa') {    # same as above, for convenience
-	    return $self->email . '@' . $self->host;
-	} elsif ($type eq 'owner' or $type eq 'request') {
-	    return $self->email . '-request' . '@' . $self->host;
-	} elsif ($type eq 'listmaster') {
-	    return $self->listmaster_email . '@' . $self->host;
-	} elsif ($type eq 'return_path') {
-	    return $self->email . $self->return_path_suffix . '@' .
-		$self->host;
-	}
+        unless ($type) {
+            return $self->email . '@' . $self->host;
+        } elsif ($type eq 'sympa') {    # same as above, for convenience
+            return $self->email . '@' . $self->host;
+        } elsif ($type eq 'owner' or $type eq 'request') {
+            return $self->email . '-request' . '@' . $self->host;
+        } elsif ($type eq 'listmaster') {
+            return $self->listmaster_email . '@' . $self->host;
+        } elsif ($type eq 'return_path') {
+            return
+                  $self->email
+                . $self->return_path_suffix . '@'
+                . $self->host;
+        }
     } else {
-	croak 'bug in logic.  Ask developer';
+        croak 'bug in logic.  Ask developer';
     }
-    Sympa::Log::Syslog::do_log('err', 'Unknown type of address "%s" for %s.  Ask developer',
-	$type, $self);
+    Sympa::Log::Syslog::do_log('err',
+        'Unknown type of address "%s" for %s.  Ask developer',
+        $type, $self);
     return undef;
 }
 
@@ -210,17 +216,17 @@ sub is_listmaster {
     return 0 unless $who;
 
     if (ref $self and ref $self eq 'Robot') {
-	foreach my $listmaster (($self->listmasters,)) {
-	    return 1 if $listmaster eq $who;
-	}
+        foreach my $listmaster (($self->listmasters,)) {
+            return 1 if $listmaster eq $who;
+        }
     } elsif ($self eq 'Site') {
-	;
+        ;
     } else {
-	croak 'bug is logic.  Ask developer';
+        croak 'bug is logic.  Ask developer';
     }
 
     foreach my $listmaster ((Site->listmasters,)) {
-	return 1 if $listmaster eq $who;
+        return 1 if $listmaster eq $who;
     }
 
     return 0;
@@ -261,30 +267,30 @@ sub best_language {
     my $lang;
 
     if (ref $self eq 'List') {
-	@supported_languages = $self->robot->supported_languages;
+        @supported_languages = $self->robot->supported_languages;
     } elsif (ref $self eq 'Robot' or !ref $self and $self eq 'Site') {
-	@supported_languages = $self->supported_languages;
+        @supported_languages = $self->supported_languages;
     } else {
-	croak 'bug in logic.  Ask developer';
+        croak 'bug in logic.  Ask developer';
     }
     %supported_languages = map { $_ => 1 } @supported_languages;
 
     $lang = $self->lang;
     push @langs, $lang
-	if $supported_languages{$lang};
+        if $supported_languages{$lang};
     if (ref $self eq 'List') {
-	$lang = $self->robot->lang;
-	push @langs, $lang
-	    if $supported_languages{$lang} and !grep { $_ eq $lang } @langs;
+        $lang = $self->robot->lang;
+        push @langs, $lang
+            if $supported_languages{$lang} and !grep { $_ eq $lang } @langs;
     }
     if (ref $self eq 'List' or ref $self eq 'Robot') {
-	$lang = Site->lang;
-	push @langs, $lang
-	    if $supported_languages{$lang} and !grep { $_ eq $lang } @langs;
+        $lang = Site->lang;
+        push @langs, $lang
+            if $supported_languages{$lang} and !grep { $_ eq $lang } @langs;
     }
     foreach $lang (@supported_languages) {
-	push @langs, $lang
-	    if !grep { $_ eq $lang } @langs;
+        push @langs, $lang
+            if !grep { $_ eq $lang } @langs;
     }
 
     return Language::NegotiateLang($accept_string, @langs) || $self->lang;
@@ -316,21 +322,21 @@ sub compute_auth {
     my ($cookie, $key, $listname);
 
     if (ref $self and ref $self eq 'List') {
-	$listname = $self->name;
+        $listname = $self->name;
     } elsif (ref $self and ref $self eq 'Robot') {
-	## Method excluded from inheritance chain
-	croak sprintf 'Can\'t locate object method "%s" via package "%s"',
-	    'compute_auth', ref $self;
+        ## Method excluded from inheritance chain
+        croak sprintf 'Can\'t locate object method "%s" via package "%s"',
+            'compute_auth', ref $self;
     } elsif ($self eq 'Site') {
-	$listname = '';
+        $listname = '';
     } else {
-	croak 'bug in logic.  Ask developer';
+        croak 'bug in logic.  Ask developer';
     }
     $cookie = $self->cookie;
 
     $key = substr(
-	Digest::MD5::md5_hex(join('/', $cookie, $listname, $email, $cmd)),
-	-8);
+        Digest::MD5::md5_hex(join('/', $cookie, $listname, $email, $cmd)),
+        -8);
 
     return $key;
 }
@@ -372,60 +378,60 @@ sub request_auth {
     my $data = {'to' => $email};
 
     if (ref $self and ref $self eq 'List') {
-	my $listname = $self->name;
-	$data->{'list_context'} = 1;
+        my $listname = $self->name;
+        $data->{'list_context'} = 1;
 
-	if ($cmd =~ /signoff$/) {
-	    $keyauth = $self->compute_auth($email, 'signoff');
-	    $data->{'command'} = "auth $keyauth $cmd $listname $email";
-	    $data->{'type'}    = 'signoff';
+        if ($cmd =~ /signoff$/) {
+            $keyauth = $self->compute_auth($email, 'signoff');
+            $data->{'command'} = "auth $keyauth $cmd $listname $email";
+            $data->{'type'}    = 'signoff';
 
-	} elsif ($cmd =~ /subscribe$/) {
-	    $keyauth = $self->compute_auth($email, 'subscribe');
-	    $data->{'command'} = "auth $keyauth $cmd $listname $param[0]";
-	    $data->{'type'}    = 'subscribe';
+        } elsif ($cmd =~ /subscribe$/) {
+            $keyauth = $self->compute_auth($email, 'subscribe');
+            $data->{'command'} = "auth $keyauth $cmd $listname $param[0]";
+            $data->{'type'}    = 'subscribe';
 
-	} elsif ($cmd =~ /add$/) {
-	    $keyauth = $self->compute_auth($param[0], 'add');
-	    $data->{'command'} =
-		"auth $keyauth $cmd $listname $param[0] $param[1]";
-	    $data->{'type'} = 'add';
+        } elsif ($cmd =~ /add$/) {
+            $keyauth = $self->compute_auth($param[0], 'add');
+            $data->{'command'} =
+                "auth $keyauth $cmd $listname $param[0] $param[1]";
+            $data->{'type'} = 'add';
 
-	} elsif ($cmd =~ /del$/) {
-	    my $keyauth = $self->compute_auth($param[0], 'del');
-	    $data->{'command'} = "auth $keyauth $cmd $listname $param[0]";
-	    $data->{'type'}    = 'del';
+        } elsif ($cmd =~ /del$/) {
+            my $keyauth = $self->compute_auth($param[0], 'del');
+            $data->{'command'} = "auth $keyauth $cmd $listname $param[0]";
+            $data->{'type'}    = 'del';
 
-	} elsif ($cmd eq 'remind') {
-	    my $keyauth = $self->compute_auth('', 'remind');
-	    $data->{'command'} = "auth $keyauth $cmd $listname";
-	    $data->{'type'}    = 'remind';
+        } elsif ($cmd eq 'remind') {
+            my $keyauth = $self->compute_auth('', 'remind');
+            $data->{'command'} = "auth $keyauth $cmd $listname";
+            $data->{'type'}    = 'remind';
 
-	} elsif ($cmd eq 'invite') {
-	    my $keyauth = $self->compute_auth($param[0], 'invite');
-	    $data->{'command'} = "auth $keyauth $cmd $listname $param[0]";
-	    $data->{'type'}    = 'invite';
-	}
+        } elsif ($cmd eq 'invite') {
+            my $keyauth = $self->compute_auth($param[0], 'invite');
+            $data->{'command'} = "auth $keyauth $cmd $listname $param[0]";
+            $data->{'type'}    = 'invite';
+        }
     } elsif (ref $self and ref $self eq 'Robot') {
-	## Method excluded from inheritance chain
-	croak sprintf 'Can\'t locate object method "%s" via package "%s"',
-	    'request_auth', ref $self;
+        ## Method excluded from inheritance chain
+        croak sprintf 'Can\'t locate object method "%s" via package "%s"',
+            'request_auth', ref $self;
     } elsif ($self eq 'Site') {
-	if ($cmd eq 'remind') {
-	    my $keyauth = $self->compute_auth('', $cmd);
-	    $data->{'command'} = "auth $keyauth $cmd *";
-	    $data->{'type'}    = 'remind';
-	}
+        if ($cmd eq 'remind') {
+            my $keyauth = $self->compute_auth('', $cmd);
+            $data->{'command'} = "auth $keyauth $cmd *";
+            $data->{'type'}    = 'remind';
+        }
     } else {
-	croak 'bug in logic.  Ask developer';
+        croak 'bug in logic.  Ask developer';
     }
 
     $data->{'command_escaped'} = &tt2::escape_url($data->{'command'});
     $data->{'auto_submitted'}  = 'auto-replied';
     unless ($self->send_file('request_auth', $email, $data)) {
-	Sympa::Log::Syslog::do_log('notice', 'Unable to send template "request_auth" to %s',
-	    $email);
-	return undef;
+        Sympa::Log::Syslog::do_log('notice',
+            'Unable to send template "request_auth" to %s', $email);
+        return undef;
     }
 
     return 1;
@@ -460,11 +466,11 @@ sub get_etc_filename {
     my $name    = shift;
     my $options = shift || {};
 
-    unless (ref $self eq 'List' or
-	ref $self eq 'Family' or
-	ref $self eq 'Robot'  or
-	$self     eq 'Site') {
-	croak 'bug in logic.  Ask developer';
+    unless (ref $self eq 'List'
+        or ref $self eq 'Family'
+        or ref $self eq 'Robot'
+        or $self     eq 'Site') {
+        croak 'bug in logic.  Ask developer';
     }
 
     my (@try, $default_name);
@@ -474,32 +480,32 @@ sub get_etc_filename {
     ## FIXME: family path precedes to list path.  Is it appropriate?
     ## FIXME: Should language subdirectories be searched?
     if ($name =~ /^(\S+)\.([^\s\/]+)\.tt2$/) {
-	$default_name = $1 . '.tt2';
-	@try =
-	    map { ($_ . '/' . $name, $_ . '/' . $default_name) }
-	    @{$self->get_etc_include_path};
+        $default_name = $1 . '.tt2';
+        @try =
+            map { ($_ . '/' . $name, $_ . '/' . $default_name) }
+            @{$self->get_etc_include_path};
     } else {
-	@try = map { $_ . '/' . $name } @{$self->get_etc_include_path};
+        @try = map { $_ . '/' . $name } @{$self->get_etc_include_path};
     }
 
     my @result;
     foreach my $f (@try) {
-	if (-l $f) {
-	    my $realpath = Cwd::abs_path($f);    # follow symlink
-	    next unless $realpath and -r $realpath;
-	} elsif (!-r $f) {
-	    next;
-	}
-	Sympa::Log::Syslog::do_log('debug3', 'name: %s ; file %s', $name, $f);
+        if (-l $f) {
+            my $realpath = Cwd::abs_path($f);    # follow symlink
+            next unless $realpath and -r $realpath;
+        } elsif (!-r $f) {
+            next;
+        }
+        Sympa::Log::Syslog::do_log('debug3', 'name: %s ; file %s', $name, $f);
 
-	if ($options->{'order'} and $options->{'order'} eq 'all') {
-	    push @result, $f;
-	} else {
-	    return $f;
-	}
+        if ($options->{'order'} and $options->{'order'} eq 'all') {
+            push @result, $f;
+        } else {
+            return $f;
+        }
     }
     if ($options->{'order'} and $options->{'order'} eq 'all') {
-	return @result;
+        return @result;
     }
 
     return undef;
@@ -544,15 +550,15 @@ sub get_etc_include_path {
     ## Get language subdirectories.
     my $lang_dirs = undef;
     if ($lang) {
-	## For compatibility: add old-style "locale" directory at first.
-	my $old_lang = Language::Lang2Locale_old($lang);
-	if ($old_lang) {
-	    $lang_dirs = [$old_lang];
-	} else {
-	    $lang_dirs = [];
-	}
-	## Add lang itself and fallback directories.
-	push @$lang_dirs, Language::ImplicatedLangs($lang);
+        ## For compatibility: add old-style "locale" directory at first.
+        my $old_lang = Language::Lang2Locale_old($lang);
+        if ($old_lang) {
+            $lang_dirs = [$old_lang];
+        } else {
+            $lang_dirs = [];
+        }
+        ## Add lang itself and fallback directories.
+        push @$lang_dirs, Language::ImplicatedLangs($lang);
     }
 
     return [$self->_get_etc_include_path($dir, $lang_dirs)];
@@ -565,95 +571,95 @@ sub _get_etc_include_path {
     my @include_path;
 
     if (ref $self and ref $self eq 'List') {
-	my $path_list;
-	my $path_family;
-	@include_path = $self->robot->_get_etc_include_path(@_);
+        my $path_list;
+        my $path_family;
+        @include_path = $self->robot->_get_etc_include_path(@_);
 
-	if ($dir) {
-	    $path_list = $self->dir . '/' . $dir;
-	} else {
-	    $path_list = $self->dir;
-	}
-	if ($lang_dirs) {
-	    unshift @include_path,
-		(map { $path_list . '/' . $_ } @$lang_dirs),
-		$path_list;
-	} else {
-	    unshift @include_path, $path_list;
-	}
+        if ($dir) {
+            $path_list = $self->dir . '/' . $dir;
+        } else {
+            $path_list = $self->dir;
+        }
+        if ($lang_dirs) {
+            unshift @include_path,
+                (map { $path_list . '/' . $_ } @$lang_dirs),
+                $path_list;
+        } else {
+            unshift @include_path, $path_list;
+        }
 
-	if (defined $self->family) {
-	    my $family = $self->family;
-	    if ($dir) {
-		$path_family = $family->dir . '/' . $dir;
-	    } else {
-		$path_family = $family->dir;
-	    }
-	    if ($lang_dirs) {
-		unshift @include_path,
-		    (map { $path_family . '/' . $_ } @$lang_dirs),
-		    $path_family;
-	    } else {
-		unshift @include_path, $path_family;
-	    }
-	}
+        if (defined $self->family) {
+            my $family = $self->family;
+            if ($dir) {
+                $path_family = $family->dir . '/' . $dir;
+            } else {
+                $path_family = $family->dir;
+            }
+            if ($lang_dirs) {
+                unshift @include_path,
+                    (map { $path_family . '/' . $_ } @$lang_dirs),
+                    $path_family;
+            } else {
+                unshift @include_path, $path_family;
+            }
+        }
     } elsif (ref $self and ref $self eq 'Family') {
-	my $path_family;
-	@include_path = $self->robot->_get_etc_include_path(@_);
+        my $path_family;
+        @include_path = $self->robot->_get_etc_include_path(@_);
 
-	if ($dir) {
-	    $path_family = $self->dir . '/' . $dir;
-	} else {
-	    $path_family = $self->dir;
-	}
-	if ($lang_dirs) {
-	    unshift @include_path,
-		(map { $path_family . '/' . $_ } @$lang_dirs),
-		$path_family;
-	} else {
-	    unshift @include_path, $path_family;
-	}
+        if ($dir) {
+            $path_family = $self->dir . '/' . $dir;
+        } else {
+            $path_family = $self->dir;
+        }
+        if ($lang_dirs) {
+            unshift @include_path,
+                (map { $path_family . '/' . $_ } @$lang_dirs),
+                $path_family;
+        } else {
+            unshift @include_path, $path_family;
+        }
     } elsif (ref $self and ref $self eq 'Robot') {
-	my $path_robot;
-	@include_path = Site->_get_etc_include_path(@_);
+        my $path_robot;
+        @include_path = Site->_get_etc_include_path(@_);
 
-	if ($self->etc ne Site->etc) {
-	    if ($dir) {
-		$path_robot = $self->etc . '/' . $dir;
-	    } else {
-		$path_robot = $self->etc;
-	    }
-	    if ($lang_dirs) {
-		unshift @include_path,
-		    (map { $path_robot . '/' . $_ } @$lang_dirs),
-		    $path_robot;
-	    } else {
-		unshift @include_path, $path_robot;
-	    }
-	}
+        if ($self->etc ne Site->etc) {
+            if ($dir) {
+                $path_robot = $self->etc . '/' . $dir;
+            } else {
+                $path_robot = $self->etc;
+            }
+            if ($lang_dirs) {
+                unshift @include_path,
+                    (map { $path_robot . '/' . $_ } @$lang_dirs),
+                    $path_robot;
+            } else {
+                unshift @include_path, $path_robot;
+            }
+        }
     } elsif ($self eq 'Site') {
-	my $path_etcbindir;
-	my $path_etcdir;
+        my $path_etcbindir;
+        my $path_etcdir;
 
-	if ($dir) {
-	    $path_etcbindir = Sympa::Constants::DEFAULTDIR . '/' . $dir;
-	    $path_etcdir    = Site->etc . '/' . $dir;
-	} else {
-	    $path_etcbindir = Sympa::Constants::DEFAULTDIR;
-	    $path_etcdir    = Site->etc;
-	}
-	if ($lang_dirs) {
-	    @include_path = (
-		(map { $path_etcdir . '/' . $_ } @$lang_dirs),
-		$path_etcdir,
-		(map { $path_etcbindir . '/' . $_ } @$lang_dirs),
-		$path_etcbindir
-	    );
-	} else {
-	    @include_path = ($path_etcdir, $path_etcbindir);
-	}
+        if ($dir) {
+            $path_etcbindir = Sympa::Constants::DEFAULTDIR . '/' . $dir;
+            $path_etcdir    = Site->etc . '/' . $dir;
+        } else {
+            $path_etcbindir = Sympa::Constants::DEFAULTDIR;
+            $path_etcdir    = Site->etc;
+        }
+        if ($lang_dirs) {
+            @include_path = (
+                (map { $path_etcdir . '/' . $_ } @$lang_dirs),
+                $path_etcdir,
+                (map { $path_etcbindir . '/' . $_ } @$lang_dirs),
+                $path_etcbindir
+            );
+        } else {
+            @include_path = ($path_etcdir, $path_etcbindir);
+        }
     } else {
-	croak 'bug in logic.  Ask developer';
+        croak 'bug in logic.  Ask developer';
     }
 
     return @include_path;
@@ -689,40 +695,41 @@ sub send_dsn {
     my $diag    = shift || '';
 
     unless (ref $message and ref $message eq 'Message') {
-	Sympa::Log::Syslog::do_log('err', 'object %s is not Message', $message);
-	return undef;
+        Sympa::Log::Syslog::do_log('err', 'object %s is not Message',
+            $message);
+        return undef;
     }
 
     my $sender;
     if (defined($sender = $message->{'envelope_sender'})) {
-	## Won't reply to message with null envelope sender.
-	return 0 if $sender eq '<>';
+        ## Won't reply to message with null envelope sender.
+        return 0 if $sender eq '<>';
     } elsif (!defined($sender = $message->{'sender'})) {
-	Sympa::Log::Syslog::do_log('err', 'no sender found');
-	return undef;
+        Sympa::Log::Syslog::do_log('err', 'no sender found');
+        return undef;
     }
 
     my $recipient = '';
     if (ref $self and ref $self eq 'List') {
-	$recipient = $self->get_address;
-	$status ||= '5.1.1';
+        $recipient = $self->get_address;
+        $status ||= '5.1.1';
     } elsif (ref $self and ref $self eq 'Robot') {
-	if ($param->{'listname'}) {
-	    if ($param->{'function'}) {
-		$recipient = sprintf '%s-%s@%s', $param->{'listname'},
-		    $param->{'function'}, $self->host;
-	    } else {
-		$recipient = sprintf '%s@%s', $param->{'listname'},
-		    $self->host;
-	    }
-	}
-	$recipient ||= $param->{'recipient'};
-	$status ||= '5.1.1';
+        if ($param->{'listname'}) {
+            if ($param->{'function'}) {
+                $recipient = sprintf '%s-%s@%s', $param->{'listname'},
+                    $param->{'function'}, $self->host;
+            } else {
+                $recipient = sprintf '%s@%s', $param->{'listname'},
+                    $self->host;
+            }
+        }
+        $recipient ||= $param->{'recipient'};
+        $status ||= '5.1.1';
     } elsif ($self eq 'Site') {
-	$recipient = $param->{'recipient'};
-	$status ||= '5.1.2';
+        $recipient = $param->{'recipient'};
+        $status ||= '5.1.2';
     } else {
-	croak 'bug in logic.  Ask developer';
+        croak 'bug in logic.  Ask developer';
     }
 
     ## Default diagnostic messages taken from IANA registry:
@@ -730,37 +737,37 @@ sub send_dsn {
     ## They should be modified to fit in Sympa.
     $diag ||= {
 
-	# success
-	'2.1.5' => 'Destination address valid',
+        # success
+        '2.1.5' => 'Destination address valid',
 
-	# no available family, dynamic list creation failed, etc.
-	'4.2.1' => 'Mailbox disabled, not accepting messages',
+        # no available family, dynamic list creation failed, etc.
+        '4.2.1' => 'Mailbox disabled, not accepting messages',
 
-	# no subscribers in dynamic list
-	'4.2.4' => 'Mailing list expansion problem',
+        # no subscribers in dynamic list
+        '4.2.4' => 'Mailing list expansion problem',
 
-	# unknown list address
-	'5.1.1' => 'Bad destination mailbox address',
+        # unknown list address
+        '5.1.1' => 'Bad destination mailbox address',
 
-	# unknown robot
-	'5.1.2' => 'Bad destination system address',
+        # unknown robot
+        '5.1.2' => 'Bad destination system address',
 
-	# too large
-	'5.2.3' => 'Message length exceeds administrative limit',
+        # too large
+        '5.2.3' => 'Message length exceeds administrative limit',
 
-	# misconfigured family list
-	'5.3.5' => 'System incorrectly configured',
+        # misconfigured family list
+        '5.3.5' => 'System incorrectly configured',
 
-	# loop detected
-	'5.4.6' => 'Routing loop detected',
+        # loop detected
+        '5.4.6' => 'Routing loop detected',
 
-	# failed to personalize (merge_feature)
-	'5.6.5' => 'Conversion Failed',
+        # failed to personalize (merge_feature)
+        '5.6.5' => 'Conversion Failed',
 
-	# virus found
-	'5.7.0' => 'Other or undefined security status',
-	}->{$status} ||
-	'Other undefined Status';
+        # virus found
+        '5.7.0' => 'Other or undefined security status',
+        }->{$status}
+        || 'Other undefined Status';
     ## Delivery result, "failed" or "delivered".
     my $action = (index($status, '2') == 0) ? 'delivered' : 'failed';
 
@@ -771,23 +778,24 @@ sub send_dsn {
     Language::PopLang();
 
     unless (
-	$self->send_file(
-	    'dsn', $sender,
-	    {   %$param,
-		'recipient'       => $recipient,
-		'to'              => $sender,
-		'date'            => $date,
-		'header'          => $header,
-		'auto_submitted'  => 'auto-replied',
-		'action'          => $action,
-		'status'          => $status,
-		'diagnostic_code' => $diag,
-		'return_path'     => '<>'
-	    }
-	)
-	) {
-	Sympa::Log::Syslog::do_log('err', 'Unable to send DSN to %s', $sender);
-	return undef;
+        $self->send_file(
+            'dsn', $sender,
+            {   %$param,
+                'recipient'       => $recipient,
+                'to'              => $sender,
+                'date'            => $date,
+                'header'          => $header,
+                'auto_submitted'  => 'auto-replied',
+                'action'          => $action,
+                'status'          => $status,
+                'diagnostic_code' => $diag,
+                'return_path'     => '<>'
+            }
+        )
+        ) {
+        Sympa::Log::Syslog::do_log('err', 'Unable to send DSN to %s',
+            $sender);
+        return undef;
     }
 
     return 1;
@@ -849,84 +857,83 @@ sub send_file {
 
     my ($robot, $list, $robot_id, $listname);
     if (ref $self and ref $self eq 'List') {
-	$robot    = $self->robot;
-	$list     = $self;
-	$robot_id = $self->robot->name;
-	$listname = $self->name;
+        $robot    = $self->robot;
+        $list     = $self;
+        $robot_id = $self->robot->name;
+        $listname = $self->name;
     } elsif (ref $self and ref $self eq 'Robot') {
-	$robot    = $self;
-	$list     = '';
-	$robot_id = $self->name;
-	$listname = '';
+        $robot    = $self;
+        $list     = '';
+        $robot_id = $self->name;
+        $listname = '';
     } elsif ($self eq 'Site') {
-	$robot    = $self;
-	$list     = '';
-	$robot_id = '*';
-	$listname = '';
+        $robot    = $self;
+        $list     = '';
+        $robot_id = '*';
+        $listname = '';
     } else {
-	croak 'bug in logic.  Ask developer';
+        croak 'bug in logic.  Ask developer';
     }
 
     my $data = &tools::dup_var($context);
 
     ## Any recipients
-    if (!defined $who or
-	ref $who and
-	!scalar @$who or
-	!ref $who and
-	!length $who) {
-	Sympa::Log::Syslog::do_log('err', 'No recipient for sending %s', $tpl);
-	return undef;
+    if (  !defined $who
+        or ref $who  and !scalar @$who
+        or !ref $who and !length $who) {
+        Sympa::Log::Syslog::do_log('err', 'No recipient for sending %s',
+            $tpl);
+        return undef;
     }
 
     ## Unless multiple recipients
     unless (ref $who) {
-	$who = tools::clean_email($who);
-	my $lang = $self->lang || 'en';
-	unless (ref $data->{'user'} and $data->{'user'}{'email'}) {
-	    if ($options->{'skip_db'}) {
-		$data->{'user'} =
-		    bless {'email' => $who, 'lang' => $lang} => 'User';
-	    } else {
-		$data->{'user'} = User->new($who, 'lang' => $lang);
-	    }
-	} else {
-	    $data->{'user'} = User::clean_user($data->{'user'});
-	}
+        $who = tools::clean_email($who);
+        my $lang = $self->lang || 'en';
+        unless (ref $data->{'user'} and $data->{'user'}{'email'}) {
+            if ($options->{'skip_db'}) {
+                $data->{'user'} =
+                    bless {'email' => $who, 'lang' => $lang} => 'User';
+            } else {
+                $data->{'user'} = User->new($who, 'lang' => $lang);
+            }
+        } else {
+            $data->{'user'} = User::clean_user($data->{'user'});
+        }
 
-	if (ref $self eq 'List') {
-	    $data->{'subscriber'} = $self->get_list_member($who);
+        if (ref $self eq 'List') {
+            $data->{'subscriber'} = $self->get_list_member($who);
 
-	    if ($data->{'subscriber'}) {
-		$data->{'subscriber'}{'date'} = gettext_strftime "%d %b %Y",
-		    localtime($data->{'subscriber'}{'date'});
-		$data->{'subscriber'}{'update_date'} =
-		    gettext_strftime "%d %b %Y",
-		    localtime($data->{'subscriber'}{'update_date'});
-		if ($data->{'subscriber'}{'bounce'}) {
-		    $data->{'subscriber'}{'bounce'} =~
-			/^(\d+)\s+(\d+)\s+(\d+)(\s+(.*))?$/;
+            if ($data->{'subscriber'}) {
+                $data->{'subscriber'}{'date'} = gettext_strftime "%d %b %Y",
+                    localtime($data->{'subscriber'}{'date'});
+                $data->{'subscriber'}{'update_date'} =
+                    gettext_strftime "%d %b %Y",
+                    localtime($data->{'subscriber'}{'update_date'});
+                if ($data->{'subscriber'}{'bounce'}) {
+                    $data->{'subscriber'}{'bounce'} =~
+                        /^(\d+)\s+(\d+)\s+(\d+)(\s+(.*))?$/;
 
-		    $data->{'subscriber'}{'first_bounce'} =
-			gettext_strftime "%d %b %Y", localtime($1);
-		}
-	    }
-	}
+                    $data->{'subscriber'}{'first_bounce'} =
+                        gettext_strftime "%d %b %Y", localtime($1);
+                }
+            }
+        }
 
-	unless ($data->{'user'}->password) {
-	    $data->{'user'}->password(&tools::tmp_passwd($who));
-	}
+        unless ($data->{'user'}->password) {
+            $data->{'user'}->password(&tools::tmp_passwd($who));
+        }
 
-	if (ref $self eq 'List') {
-	    ## Unique return-path VERP
-	    if ($self->welcome_return_path eq 'unique' and
-		$tpl eq 'welcome') {
-		$data->{'return_path'} = $self->get_bounce_address($who, 'w');
-	    } elsif ($self->remind_return_path eq 'unique' and
-		$tpl eq 'remind') {
-		$data->{'return_path'} = $self->get_bounce_address($who, 'r');
-	    }
-	}
+        if (ref $self eq 'List') {
+            ## Unique return-path VERP
+            if (    $self->welcome_return_path eq 'unique'
+                and $tpl eq 'welcome') {
+                $data->{'return_path'} = $self->get_bounce_address($who, 'w');
+            } elsif ($self->remind_return_path eq 'unique'
+                and $tpl eq 'remind') {
+                $data->{'return_path'} = $self->get_bounce_address($who, 'r');
+            }
+        }
     }
 
     ## Lang
@@ -936,13 +943,13 @@ sub send_file {
     $data->{'lang'} ||= $robot->lang;
 
     if (ref $self eq 'List') {
-	## Trying to use custom_vars
-	if (defined $self->custom_vars) {
-	    $data->{'custom_vars'} = {};
-	    foreach my $var (@{$self->custom_vars}) {
-		$data->{'custom_vars'}{$var->{'name'}} = $var->{'value'};
-	    }
-	}
+        ## Trying to use custom_vars
+        if (defined $self->custom_vars) {
+            $data->{'custom_vars'} = {};
+            foreach my $var (@{$self->custom_vars}) {
+                $data->{'custom_vars'}{$var->{'name'}} = $var->{'value'};
+            }
+        }
     }
 
     ## What file
@@ -952,33 +959,34 @@ sub send_file {
         if $::plugins;
 
     if (ref $self eq 'List') {
-	## list directory to get the 'info' file
-	push @{$tt2_include_path}, $self->dir;
-	## list archives to include the last message
-	push @{$tt2_include_path}, $self->dir . '/archives';
+        ## list directory to get the 'info' file
+        push @{$tt2_include_path}, $self->dir;
+        ## list archives to include the last message
+        push @{$tt2_include_path}, $self->dir . '/archives';
     }
 
     foreach my $d (@{$tt2_include_path}) {
-	&tt2::add_include_path($d);
+        &tt2::add_include_path($d);
     }
 
     my @path = &tt2::get_include_path();
     my $filename = &tools::find_file($tpl . '.tt2', @path);
 
     unless (defined $filename) {
-	Sympa::Log::Syslog::do_log('err', 'Could not find template %s.tt2 in %s',
-	    $tpl, join(':', @path));
-	return undef;
+        Sympa::Log::Syslog::do_log('err',
+            'Could not find template %s.tt2 in %s',
+            $tpl, join(':', @path));
+        return undef;
     }
 
     $data->{'conf'} ||= {};
     foreach my $p (
-	'email',       'email_gecos',
-	'host',        'listmaster',
-	'wwsympa_url', 'title',
-	'listmaster_email'
-	) {
-	$data->{'conf'}{$p} = $robot->$p;
+        'email',       'email_gecos',
+        'host',        'listmaster',
+        'wwsympa_url', 'title',
+        'listmaster_email'
+        ) {
+        $data->{'conf'}{$p} = $robot->$p;
     }
     ## compatibility concern
     $data->{'conf'}{'sympa'}   = $robot->get_address();
@@ -989,87 +997,97 @@ sub send_file {
     $data->{'conf'}{'version'} = $main::Version if defined $main::Version;
     $data->{'robot_domain'} = $robot_id;
     if (ref $self eq 'List') {
-	$data->{'list'} = $self;
-	$data->{'list'}{'owner'} = $self->get_owners();
+        $data->{'list'} = $self;
+        $data->{'list'}{'owner'} = $self->get_owners();
 
-	## Sign mode
-	my $sign_mode;
-	if (Site->openssl and
-	    -r $self->dir . '/cert.pem' and
-	    -r $self->dir . '/private_key') {
-	    $sign_mode = 'smime';
-	}
-	$data->{'sign_mode'} = $sign_mode;
+        ## Sign mode
+        my $sign_mode;
+        if (    Site->openssl
+            and -r $self->dir . '/cert.pem'
+            and -r $self->dir . '/private_key') {
+            $sign_mode = 'smime';
+        }
+        $data->{'sign_mode'} = $sign_mode;
 
-	# if the list have it's private_key and cert sign the message
-	# . used only for the welcome message, could be usefull in other case?
-	# . a list should have several certificats and use if possible a
-	#   certificat issued by the same CA as the recipient CA if it exists
-	if ($sign_mode and $sign_mode eq 'smime') {
-	    $data->{'fromlist'} = $self->get_address();
-	    $data->{'replyto'}  = $self->get_address('owner');
-	} else {
-	    $data->{'fromlist'} = $self->get_address('owner');
-	}
-	$data->{'from'} = $data->{'fromlist'} unless $data->{'from'};
-	$data->{'return_path'} ||= $self->get_address('return_path');
+        # if the list have it's private_key and cert sign the message
+        # . used only for the welcome message, could be usefull in other case?
+        # . a list should have several certificats and use if possible a
+        #   certificat issued by the same CA as the recipient CA if it exists
+        if ($sign_mode and $sign_mode eq 'smime') {
+            $data->{'fromlist'} = $self->get_address();
+            $data->{'replyto'}  = $self->get_address('owner');
+        } else {
+            $data->{'fromlist'} = $self->get_address('owner');
+        }
+        $data->{'from'} = $data->{'fromlist'} unless $data->{'from'};
+        $data->{'return_path'} ||= $self->get_address('return_path');
     } else {
-	$data->{'from'} ||= $self->get_address();
-	unless ($data->{'return_path'} and $data->{'return_path'} eq '<>') {
-	    $data->{'return_path'} = $self->get_address('owner');
-	}
+        $data->{'from'} ||= $self->get_address();
+        unless ($data->{'return_path'} and $data->{'return_path'} eq '<>') {
+            $data->{'return_path'} = $self->get_address('owner');
+        }
     }
 
     $data->{'boundary'} = '----------=_' . &tools::get_message_id($robot)
-	unless $data->{'boundary'};
+        unless $data->{'boundary'};
 
     my $dkim_feature          = $robot->dkim_feature;
     my $dkim_add_signature_to = $robot->dkim_add_signature_to;
     if ($dkim_feature eq 'on' and $dkim_add_signature_to =~ /robot/) {
-	$data->{'dkim'} = &tools::get_dkim_parameters($robot);
+        $data->{'dkim'} = &tools::get_dkim_parameters($robot);
     }
 
     # use verp excepted for alarms. We should make this configurable in
     # order to support Sympa server on a machine without any MTA service
     $data->{'use_bulk'} = 1
-	unless ($data->{'alarm'});
+        unless ($data->{'alarm'});
 
     my $messageasstring =
-	mail::parse_tt2_messageasstring($robot, $filename, $who, $data);
+        mail::parse_tt2_messageasstring($robot, $filename, $who, $data);
     return $messageasstring if $options->{'parse_and_return'};
 
     my $message;
     if ($list) {
-	$message = Message->new({
-	    'messageasstring' => $messageasstring, 'noxsympato' => 1,
-	    'list_object' => $list,
-	});
+        $message = Message->new(
+            {   'messageasstring' => $messageasstring,
+                'noxsympato'      => 1,
+                'list_object'     => $list,
+            }
+        );
     } elsif (ref $robot) {
-	$message = Message->new({
-	    'messageasstring' => $messageasstring, 'noxsympato' => 1,
-	    'robot_object' => $robot,
-	});
+        $message = Message->new(
+            {   'messageasstring' => $messageasstring,
+                'noxsympato'      => 1,
+                'robot_object'    => $robot,
+            }
+        );
     } else {
-	$message = Message->new({
-	    'messageasstring' => $messageasstring, 'noxsympato' => 1,
-	});
+        $message = Message->new(
+            {   'messageasstring' => $messageasstring,
+                'noxsympato'      => 1,
+            }
+        );
     }
 
     ## SENDING
-    unless (defined mail::sending(
-	'message' => $message,
-	'rcpt' => $who,
-	'from' => ($data->{'return_path'} || $robot->get_address('owner')),
-	'robot' => $robot,
-	'listname' => $listname,
-	'priority' => $robot->sympa_priority,
-	'sign_mode' => $data->{'sign_mode'},
-	'use_bulk' => $data->{'use_bulk'},
-	'dkim' => $data->{'dkim'},
-    )) {
-	Sympa::Log::Syslog::do_log('err', 'Could not send template "%s" to %s',
-	    $filename, $who);
-	return undef;
+    unless (
+        defined mail::sending(
+            'message' => $message,
+            'rcpt'    => $who,
+            'from' =>
+                ($data->{'return_path'} || $robot->get_address('owner')),
+            'robot'     => $robot,
+            'listname'  => $listname,
+            'priority'  => $robot->sympa_priority,
+            'sign_mode' => $data->{'sign_mode'},
+            'use_bulk'  => $data->{'use_bulk'},
+            'dkim'      => $data->{'dkim'},
+        )
+        ) {
+        Sympa::Log::Syslog::do_log('err',
+            'Could not send template "%s" to %s',
+            $filename, $who);
+        return undef;
     }
 
     return 1;
@@ -1114,111 +1132,117 @@ sub send_notify_to_listmaster {
 
     my $robot_id;
     if (ref $self and ref $self eq 'List') {
-	## Method excluded from inheritance chain
-	croak sprintf 'Can\'t locate object method "%s" via package "%s"',
-	    'send_notify_to_listmaster', ref $self;
+        ## Method excluded from inheritance chain
+        croak sprintf 'Can\'t locate object method "%s" via package "%s"',
+            'send_notify_to_listmaster', ref $self;
     } elsif (ref $self and ref $self eq 'Robot') {
-	$robot_id = $self->name;
+        $robot_id = $self->name;
     } elsif ($self eq 'Site') {
-	$robot_id = '*';
+        $robot_id = '*';
     } else {
-	croak 'bug in logic.  Ask developer';
+        croak 'bug in logic.  Ask developer';
     }
 
     if ($checkstack or $purge) {
-	foreach my $robot_id (keys %listmaster_messages_stack) {
-	    my $robot;
-	    if (!$robot_id or $robot_id eq '*') {
-		$robot = 'Site';
-	    } else {
-		$robot = Robot->new($robot_id);
-	    }
+        foreach my $robot_id (keys %listmaster_messages_stack) {
+            my $robot;
+            if (!$robot_id or $robot_id eq '*') {
+                $robot = 'Site';
+            } else {
+                $robot = Robot->new($robot_id);
+            }
 
-	    foreach
-		my $operation (keys %{$listmaster_messages_stack{$robot_id}})
-	    {
-		my $first_age =
-		    time -
-		    $listmaster_messages_stack{$robot_id}{$operation}
-		    {'first'};
-		my $last_age = time -
-		    $listmaster_messages_stack{$robot_id}{$operation}{'last'};
+            foreach
+                my $operation (keys %{$listmaster_messages_stack{$robot_id}})
+            {
+                my $first_age =
+                    time -
+                    $listmaster_messages_stack{$robot_id}{$operation}
+                    {'first'};
+                my $last_age = time -
+                    $listmaster_messages_stack{$robot_id}{$operation}{'last'};
 
-		# not old enough to send and first not too old
-		next
-		    unless ($purge or ($last_age > 30) or ($first_age > 60));
-		next
-		    unless ($listmaster_messages_stack{$robot_id}{$operation}
-		    {'messages'});
+                # not old enough to send and first not too old
+                next
+                    unless ($purge or ($last_age > 30) or ($first_age > 60));
+                next
+                    unless ($listmaster_messages_stack{$robot_id}{$operation}
+                    {'messages'});
 
-		my %messages =
-		    %{$listmaster_messages_stack{$robot_id}{$operation}
-			{'messages'}};
-		Sympa::Log::Syslog::do_log(
-		    'info', 'got messages about "%s" (%s)',
-		    $operation, join(', ', keys %messages)
-		);
+                my %messages =
+                    %{$listmaster_messages_stack{$robot_id}{$operation}
+                        {'messages'}};
+                Sympa::Log::Syslog::do_log(
+                    'info', 'got messages about "%s" (%s)',
+                    $operation, join(', ', keys %messages)
+                );
 
-		##### bulk send
-		foreach my $email (keys %messages) {
-		    my $param = {
-			to                    => $email,
-			auto_submitted        => 'auto-generated',
-			alarm                 => 1,
-			operation             => $operation,
-			notification_messages => $messages{$email},
-			boundary              => '----------=_' .
-			    &tools::get_message_id($robot)
-		    };
+                ##### bulk send
+                foreach my $email (keys %messages) {
+                    my $param = {
+                        to                    => $email,
+                        auto_submitted        => 'auto-generated',
+                        alarm                 => 1,
+                        operation             => $operation,
+                        notification_messages => $messages{$email},
+                        boundary              => '----------=_'
+                            . &tools::get_message_id($robot)
+                    };
 
-		    my $options = {};
-		    $options->{'skip_db'} = 1
-			if (($operation eq 'no_db') ||
-			($operation eq 'db_restored'));
+                    my $options = {};
+                    $options->{'skip_db'} = 1
+                        if (($operation eq 'no_db')
+                        || ($operation eq 'db_restored'));
 
-		    Sympa::Log::Syslog::do_log('info', 'send messages to %s', $email);
-		    unless (
-			$robot->send_file(
-			    'listmaster_groupednotifications',
-			    $email, $param, $options
-			)
-			) {
-			Sympa::Log::Syslog::do_log('notice',
-			    'Unable to send notify "%s" to listmaster: Unable to send template "listmaster_groupnotifications" to %s',
-			    $operation, $email)
-			    unless $operation eq 'logs_failed';
-			return undef;
-		    }
-		}
+                    Sympa::Log::Syslog::do_log('info', 'send messages to %s',
+                        $email);
+                    unless (
+                        $robot->send_file(
+                            'listmaster_groupednotifications',
+                            $email, $param, $options
+                        )
+                        ) {
+                        Sympa::Log::Syslog::do_log(
+                            'notice',
+                            'Unable to send notify "%s" to listmaster: Unable to send template "listmaster_groupnotifications" to %s',
+                            $operation,
+                            $email
+                        ) unless $operation eq 'logs_failed';
+                        return undef;
+                    }
+                }
 
-		Sympa::Log::Syslog::do_log('info', 'cleaning stacked notifications');
-		delete $listmaster_messages_stack{$robot_id}{$operation};
-	    }
-	}
-	return 1;
+                Sympa::Log::Syslog::do_log('info',
+                    'cleaning stacked notifications');
+                delete $listmaster_messages_stack{$robot_id}{$operation};
+            }
+        }
+        return 1;
     }
 
     my $stack = 0;
     $listmaster_messages_stack{$robot_id}{$operation}{'first'} = time
-	unless ($listmaster_messages_stack{$robot_id}{$operation}{'first'});
+        unless ($listmaster_messages_stack{$robot_id}{$operation}{'first'});
     $listmaster_messages_stack{$robot_id}{$operation}{'counter'}++;
     $listmaster_messages_stack{$robot_id}{$operation}{'last'} = time;
     if ($listmaster_messages_stack{$robot_id}{$operation}{'counter'} > 3) {
 
-	# stack if too much messages w/ same code
-	$stack = 1;
+        # stack if too much messages w/ same code
+        $stack = 1;
     }
 
     unless (defined $operation) {
-	Sympa::Log::Syslog::do_log('err', 'Missing incoming parameter "$operation"');
-	return undef;
+        Sympa::Log::Syslog::do_log('err',
+            'Missing incoming parameter "$operation"');
+        return undef;
     }
 
     unless ($operation eq 'logs_failed') {
-	unless (defined $robot_id) {
-	    Sympa::Log::Syslog::do_log('err', 'Missing incoming parameter "$robot_id"');
-	    return undef;
-	}
+        unless (defined $robot_id) {
+            Sympa::Log::Syslog::do_log('err',
+                'Missing incoming parameter "$robot_id"');
+            return undef;
+        }
     }
 
     my $host       = $self->host;
@@ -1227,23 +1251,23 @@ sub send_notify_to_listmaster {
     my $options = {};    ## options for send_file()
 
     if (!ref $data and length $data) {
-	$data = [$data];
+        $data = [$data];
     }
     unless (ref $data eq 'HASH' or ref $data eq 'ARRAY') {
-	Sympa::Log::Syslog::do_log(
-	    'err',
-	    'Error on incoming parameter "%s", it must be a ref on HASH or a ref on ARRAY',
-	    $data)
-	    unless $operation eq 'logs_failed';
-	return undef;
+        Sympa::Log::Syslog::do_log(
+            'err',
+            'Error on incoming parameter "%s", it must be a ref on HASH or a ref on ARRAY',
+            $data
+        ) unless $operation eq 'logs_failed';
+        return undef;
     }
 
     if (ref($data) ne 'HASH') {
-	my $d = {};
-	for my $i (0 .. $#{$data}) {
-	    $d->{"param$i"} = $data->[$i];
-	}
-	$data = $d;
+        my $d = {};
+        for my $i (0 .. $#{$data}) {
+            $d->{"param$i"} = $data->[$i];
+        }
+        $data = $d;
     }
 
     $data->{'to'}             = $to;
@@ -1253,92 +1277,99 @@ sub send_notify_to_listmaster {
 
     my $list = undef;
     if ($data->{'list'} and ref($data->{'list'}) eq 'List') {
-	$list = $data->{'list'};
-	$data->{'list'} = {
-	    'name'    => $list->name,
-	    'host'    => $list->domain,   #FIXME: robot name or mail hostname?
-	    'subject' => $list->subject,
-	};
+        $list = $data->{'list'};
+        $data->{'list'} = {
+            'name'    => $list->name,
+            'host'    => $list->domain,   #FIXME: robot name or mail hostname?
+            'subject' => $list->subject,
+        };
     }
 
     my @tosend;
 
     if ($operation eq 'automatic_bounce_management') {
-	## Automatic action done on bouncing adresses
-	delete $data->{'alarm'};
-	unless (defined $list and ref $list eq 'List') {
-	    Sympa::Log::Syslog::do_log('err', 'Parameter %s is not a valid list', $list);
-	    return undef;
-	}
-	unless (
-	    $list->send_file(
-		'listmaster_notification',
-		$listmaster, $data, $options
-	    )
-	    ) {
-	    Sympa::Log::Syslog::do_log('notice',
-		'Unable to send notify "%s" to listmaster: Unable to send template "listmaster_notification" to %s',
-		$operation, $listmaster);
-	    return undef;
-	}
-	return 1;
+        ## Automatic action done on bouncing adresses
+        delete $data->{'alarm'};
+        unless (defined $list and ref $list eq 'List') {
+            Sympa::Log::Syslog::do_log('err',
+                'Parameter %s is not a valid list', $list);
+            return undef;
+        }
+        unless (
+            $list->send_file(
+                'listmaster_notification',
+                $listmaster, $data, $options
+            )
+            ) {
+            Sympa::Log::Syslog::do_log(
+                'notice',
+                'Unable to send notify "%s" to listmaster: Unable to send template "listmaster_notification" to %s',
+                $operation,
+                $listmaster
+            );
+            return undef;
+        }
+        return 1;
     }
 
     if ($operation eq 'no_db' or $operation eq 'db_restored') {
-	## No DataBase |  DataBase restored
-	$data->{'db_name'} = $self->db_name;
-	## Skip DB access because DB is not accessible
-	$options->{'skip_db'} = 1;
+        ## No DataBase |  DataBase restored
+        $data->{'db_name'} = $self->db_name;
+        ## Skip DB access because DB is not accessible
+        $options->{'skip_db'} = 1;
     }
 
     if ($operation eq 'loop_command') {
-	## Loop detected in Sympa
-	$data->{'boundary'} = '----------=_' . &tools::get_message_id($self);
-	&tt2::allow_absolute_path();
+        ## Loop detected in Sympa
+        $data->{'boundary'} = '----------=_' . &tools::get_message_id($self);
+        &tt2::allow_absolute_path();
     }
 
-    if (($operation eq 'request_list_creation') or
-	($operation eq 'request_list_renaming')) {
-	foreach my $email (split(/\,/, $listmaster)) {
-	    my $cdata = &tools::dup_var($data);
-	    $cdata->{'one_time_ticket'} =
-		&Auth::create_one_time_ticket($email, $robot_id,
-		'get_pending_lists', $cdata->{'ip'});
-	    push @tosend,
-		{
-		email => $email,
-		data  => $cdata
-		};
-	}
+    if (   ($operation eq 'request_list_creation')
+        or ($operation eq 'request_list_renaming')) {
+        foreach my $email (split(/\,/, $listmaster)) {
+            my $cdata = &tools::dup_var($data);
+            $cdata->{'one_time_ticket'} =
+                &Auth::create_one_time_ticket($email, $robot_id,
+                'get_pending_lists', $cdata->{'ip'});
+            push @tosend,
+                {
+                email => $email,
+                data  => $cdata
+                };
+        }
     } else {
-	push @tosend,
-	    {
-	    email => $listmaster,
-	    data  => $data
-	    };
+        push @tosend,
+            {
+            email => $listmaster,
+            data  => $data
+            };
     }
 
     foreach my $ts (@tosend) {
-	$options->{'parse_and_return'} = 1 if ($stack);
-	my $r =
-	    $self->send_file('listmaster_notification', $ts->{'email'},
-	    $ts->{'data'}, $options);
-	if ($stack) {
-	    Sympa::Log::Syslog::do_log('info', 'stacking message about "%s" for %s (%s)',
-		$operation, $ts->{'email'}, $robot_id);
-	    ## stack robot object and parsed message.
-	    push @{$listmaster_messages_stack{$robot_id}{$operation}
-		    {'messages'}{$ts->{'email'}}}, $r;
-	    return 1;
-	}
+        $options->{'parse_and_return'} = 1 if ($stack);
+        my $r =
+            $self->send_file('listmaster_notification', $ts->{'email'},
+            $ts->{'data'}, $options);
+        if ($stack) {
+            Sympa::Log::Syslog::do_log('info',
+                'stacking message about "%s" for %s (%s)',
+                $operation, $ts->{'email'}, $robot_id);
+            ## stack robot object and parsed message.
+            push @{$listmaster_messages_stack{$robot_id}{$operation}
+                    {'messages'}{$ts->{'email'}}}, $r;
+            return 1;
+        }
 
-	unless ($r) {
-	    Sympa::Log::Syslog::do_log('notice',
-		'Unable to send notify "%s" to listmaster: Unable to send template "listmaster_notification" to %s',
-		$operation, $listmaster)
-		unless $operation eq 'logs_failed';
-	    return undef;
-	}
+        unless ($r) {
+            Sympa::Log::Syslog::do_log(
+                'notice',
+                'Unable to send notify "%s" to listmaster: Unable to send template "listmaster_notification" to %s',
+                $operation,
+                $listmaster
+            ) unless $operation eq 'logs_failed';
+            return undef;
+        }
     }
 
     return 1;
@@ -1382,18 +1413,18 @@ If C<undef> was given as ROBOT, cache entry on the memory will be removed.
 sub robots {
     my $self = shift;
     unless (scalar @_) {
-	return map { $robots{$_} } sort keys %robots;
+        return map { $robots{$_} } sort keys %robots;
     }
 
     my $name = shift;
     if (scalar @_) {
-	my $v = shift;
-	unless (defined $v) {
-	    delete $robots{$name};
-	    delete Site->robots_config->{$name};
-	} else {
-	    $robots{$name} = $v;
-	}
+        my $v = shift;
+        unless (defined $v) {
+            delete $robots{$name};
+            delete Site->robots_config->{$name};
+        } else {
+            $robots{$name} = $v;
+        }
     }
     $robots{$name};
 }

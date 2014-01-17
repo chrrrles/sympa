@@ -88,12 +88,12 @@ $0 --soap_url=<SOAP Sympa server URL> --cookie=sympauser=someone\@cru.fr
 my %options;
 unless (
     &GetOptions(
-	\%main::options,                  'soap_url=s',
-	'service=s',                      'trusted_application=s',
-	'trusted_application_password=s', 'user_email=s',
-	'user_password=s',                'cookie=s',
-	'proxy_vars=s',                   'service_parameters=s',
-	'session_id=s'
+        \%main::options,                  'soap_url=s',
+        'service=s',                      'trusted_application=s',
+        'trusted_application_password=s', 'user_email=s',
+        'user_password=s',                'cookie=s',
+        'proxy_vars=s',                   'service_parameters=s',
+        'session_id=s'
     )
     ) {
     print "";
@@ -119,29 +119,29 @@ my $cookie             = $main::options{'cookie'};
 
 if (defined $trusted_application) {
     unless (defined $trusted_application_password) {
-	print "error : missing trusted_application_password parameter\n";
-	print $usage;
-	exit;
+        print "error : missing trusted_application_password parameter\n";
+        print $usage;
+        exit;
     }
     unless (defined $service) {
-	print "error : missing service parameter\n";
-	print $usage;
-	exit;
+        print "error : missing service parameter\n";
+        print $usage;
+        exit;
     }
     unless (defined $proxy_vars) {
-	print "error : missing proxy_vars parameter\n";
-	print $usage;
-	exit;
+        print "error : missing proxy_vars parameter\n";
+        print $usage;
+        exit;
     }
 
     &play_soap_as_trusted($soap_url, $trusted_application,
-	$trusted_application_password, $service, $proxy_vars,
-	$service_parameters);
+        $trusted_application_password, $service, $proxy_vars,
+        $service_parameters);
 } elsif ($service eq 'getUserEmailByCookie') {
     &play_soap(
-	soap_url   => $soap_url,
-	session_id => $session_id,
-	service    => $service
+        soap_url   => $soap_url,
+        session_id => $session_id,
+        service    => $service
     );
 
 } elsif (defined $cookie) {
@@ -149,21 +149,21 @@ if (defined $trusted_application) {
     &get_email($soap_url, $cookie);
     exit;
 } else {
-    unless (defined $session_id ||
-	(defined $user_email && defined $user_password)) {
-	print
-	    "error : missing session_id OR user_email+user_passwors  parameters\n";
-	print $usage;
-	exit;
+    unless (defined $session_id
+        || (defined $user_email && defined $user_password)) {
+        print
+            "error : missing session_id OR user_email+user_passwors  parameters\n";
+        print $usage;
+        exit;
     }
 
     &play_soap(
-	soap_url           => $soap_url,
-	user_email         => $user_email,
-	user_password      => $user_password,
-	session_id         => $session_id,
-	service            => $service,
-	service_parameters => $service_parameters
+        soap_url           => $soap_url,
+        user_email         => $user_email,
+        user_password      => $user_password,
+        session_id         => $session_id,
+        service            => $service,
+        service_parameters => $service_parameters
     );
 }
 
@@ -181,14 +181,14 @@ sub play_soap_as_trusted {
 
     my @parameters;
     @parameters = split(/,/, $service_parameters)
-	if (defined $service_parameters);
+        if (defined $service_parameters);
     my $p = join(',', @parameters);
     print
-	"calling authenticateRemoteAppAndRun( $trusted_application, $trusted_application_password, $proxy_vars,$service,$p)\n";
+        "calling authenticateRemoteAppAndRun( $trusted_application, $trusted_application_password, $proxy_vars,$service,$p)\n";
 
     my $reponse =
-	$soap->authenticateRemoteAppAndRun($trusted_application,
-	$trusted_application_password, $proxy_vars, $service, \@parameters);
+        $soap->authenticateRemoteAppAndRun($trusted_application,
+        $trusted_application_password, $proxy_vars, $service, \@parameters);
     &print_result($reponse);
 }
 
@@ -237,18 +237,18 @@ sub play_soap {
     # my $uri = new URI($soap_url);
 
     my $cookies = HTTP::Cookies->new(
-	ignore_discard => 1,
-	file           => '/tmp/my_cookies'
+        ignore_discard => 1,
+        file           => '/tmp/my_cookies'
     );
     $cookies->load();
     printf "cookie : %s\n", $cookies->as_string();
 
     my @parameters;
     @parameters = split(/,/, $service_parameters)
-	if (defined $service_parameters);
+        if (defined $service_parameters);
     my $p = join(',', @parameters);
     foreach my $tmpParam (@parameters) {
-	printf "param: %s\n", $tmpParam;
+        printf "param: %s\n", $tmpParam;
     }
 
     # Change to the path of Sympa.wsdl
@@ -264,16 +264,16 @@ sub play_soap {
 
     ## Do the login unless a session_id is provided
     if ($session_id) {
-	print "Using Session_id $session_id\n";
+        print "Using Session_id $session_id\n";
 
     } else {
-	print "LOGIN....\n";
+        print "LOGIN....\n";
 
-	#$reponse = $soap->casLogin($soap_url);
-	$reponse = $soap->login($user_email, $user_password);
-	$cookies->save;
-	&print_result($reponse);
-	$session_id = $reponse->result;
+        #$reponse = $soap->casLogin($soap_url);
+        $reponse = $soap->login($user_email, $user_password);
+        $cookies->save;
+        &print_result($reponse);
+        $session_id = $reponse->result;
     }
 
     ## Don't use authenticateAndRun for lists command
@@ -282,35 +282,35 @@ sub play_soap {
     @parameters = split /,/, $service_parameters;
 
     if ($service eq 'lists') {
-	print "\n\nlists....\n";
-	$reponse = $soap->lists();
+        print "\n\nlists....\n";
+        $reponse = $soap->lists();
 
     } elsif ($service eq 'subscribe') {
-	print "\n\n$service....\n";
-	$reponse = $soap->subscribe(@parameters);
+        print "\n\n$service....\n";
+        $reponse = $soap->subscribe(@parameters);
 
     } elsif ($service eq 'signoff') {
-	print "\n\n$service....\n";
-	$reponse = $soap->signoff(@parameters);
+        print "\n\n$service....\n";
+        $reponse = $soap->signoff(@parameters);
 
     } elsif ($service eq 'add') {
-	print "\n\n$service....\n";
-	$reponse = $soap->add(@parameters);
+        print "\n\n$service....\n";
+        $reponse = $soap->add(@parameters);
 
     } elsif ($service eq 'del') {
-	print "\n\n$service....\n";
-	$reponse = $soap->del(@parameters);
+        print "\n\n$service....\n";
+        $reponse = $soap->del(@parameters);
 
     } elsif ($service eq 'getUserEmailByCookie') {
-	print "\n\n$service....\n";
-	$reponse = $soap->getUserEmailByCookie($session_id);
+        print "\n\n$service....\n";
+        $reponse = $soap->getUserEmailByCookie($session_id);
 
     } else {
-	printf "\n\nAuthenticateAndRun service=%s;(session_id=%s)....\n",
-	    $service, $session_id;
-	$reponse =
-	    $soap->authenticateAndRun($user_email, $session_id, $service,
-	    \@parameters);
+        printf "\n\nAuthenticateAndRun service=%s;(session_id=%s)....\n",
+            $service, $session_id;
+        $reponse =
+            $soap->authenticateAndRun($user_email, $session_id, $service,
+            \@parameters);
     }
 
     &print_result($reponse);
@@ -322,23 +322,23 @@ sub print_result {
 
     # If we get a fault
     if (defined $r && $r->fault) {
-	print "Soap error :\n";
-	my %fault = %{$r->fault};
-	foreach $val (keys %fault) {
-	    print "$val = $fault{$val}\n";
-	}
+        print "Soap error :\n";
+        my %fault = %{$r->fault};
+        foreach $val (keys %fault) {
+            print "$val = $fault{$val}\n";
+        }
     } else {
-	if (ref($r->result) =~ /^ARRAY/) {
+        if (ref($r->result) =~ /^ARRAY/) {
 
-	    #printf "R: %s\n", $r->result;
-	    @ret = @{$r->result};
-	} elsif (ref $r->result) {
-	    print "Pb " . ($r->result) . "\n";
-	    return undef;
-	} else {
-	    @ret = $r->result;
-	}
-	&tools::dump_var(\@ret, 0, \*STDOUT);
+            #printf "R: %s\n", $r->result;
+            @ret = @{$r->result};
+        } elsif (ref $r->result) {
+            print "Pb " . ($r->result) . "\n";
+            return undef;
+        } else {
+            @ret = $r->result;
+        }
+        &tools::dump_var(\@ret, 0, \*STDOUT);
     }
 
     return 1;

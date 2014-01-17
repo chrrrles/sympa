@@ -32,9 +32,10 @@ use DBManipulatorDefault;
 
 our @ISA = qw(DBManipulatorDefault);
 
-sub build_connect_string{
+sub build_connect_string {
     my $self = shift;
-    $self->{'connect_string'} = "DBI:Informix:".$self->{'db_name'}."@".$self->{'db_host'};
+    $self->{'connect_string'} =
+        "DBI:Informix:" . $self->{'db_name'} . "@" . $self->{'db_host'};
 }
 
 1;

@@ -151,8 +151,12 @@ use BounceMessage;
 
 ## Check options
 my %options;
-unless (GetOptions(\%main::options,
-    'debug|d', 'help|h', 'log_level=s','foreground|F')) {
+unless (
+    GetOptions(
+        \%main::options, 'debug|d', 'help|h', 'log_level=s',
+        'foreground|F'
+    )
+    ) {
     pod2usage(-exitval => 1, -output => \*STDERR);
 }
 
@@ -165,41 +169,45 @@ if ($main::options{'debug'}) {
 }
 
 $main::options{'foreground'} = 1 if ($main::options{'debug'});
-$main::options{'log_to_stderr'} = 1 if ($main::options{'debug'} || $main::options{'foreground'});
+$main::options{'log_to_stderr'} = 1
+    if ($main::options{'debug'} || $main::options{'foreground'});
 
 my $daemon_name = Sympa::Log::Syslog::set_daemon($0);
-my $ip = $ENV{'REMOTE_HOST'};
+my $ip          = $ENV{'REMOTE_HOST'};
 
 # Load sympa.conf
 unless (defined Robot::get_robots()) {
     Sympa::Log::Syslog::fatal_err(
-	'Unable to load sympa configuration, file %s has errors.',
-	Conf::get_sympa_conf()
-    );
+        'Unable to load sympa configuration, file %s has errors.',
+        Conf::get_sympa_conf());
 }
 
 ##unshift @INC, Site->wws_path;
 
 ## Check databse connectivity
 unless (SDM::check_db_connect()) {
-    Sympa::Log::Syslog::fatal_err('Database %s defined in sympa.conf has not the right structure or is unreachable.', Site->db_name);
+    Sympa::Log::Syslog::fatal_err(
+        'Database %s defined in sympa.conf has not the right structure or is unreachable.',
+        Site->db_name
+    );
 }
 
-## Put ourselves in background if not in debug mode. 
+## Put ourselves in background if not in debug mode.
 unless ($main::options{'debug'} || $main::options{'foreground'}) {
 
     open(STDERR, ">> /dev/null");
     open(STDOUT, ">> /dev/null");
     if (open(TTY, "/dev/tty")) {
-       ioctl(TTY, 0x20007471, 0);         # XXX s/b &TIOCNOTTY
-#	ioctl(TTY, &TIOCNOTTY, 0);
-	close(TTY);
+        ioctl(TTY, 0x20007471, 0);    # XXX s/b &TIOCNOTTY
+
+        #	ioctl(TTY, &TIOCNOTTY, 0);
+        close(TTY);
     }
     setpgrp(0, 0);
     if ((my $child_pid = fork) != 0) {
-	print STDOUT "Starting bounce daemon, PID $_\n";
+        print STDOUT "Starting bounce daemon, PID $_\n";
 
-	exit(0);
+        exit(0);
     }
 }
 
@@ -216,18 +224,19 @@ unless ($options->{'stderr_to_tty'}) {
 if ($main::options{'log_level'}) {
     Sympa::Log::Syslog::set_log_level($main::options{'log_level'});
     Sympa::Log::Syslog::do_log(
-	'info', 'Configuration file read, log level set using options : %s',
-	$main::options{'log_level'}
-    ); 
+        'info',
+        'Configuration file read, log level set using options : %s',
+        $main::options{'log_level'}
+    );
 } else {
     Sympa::Log::Syslog::set_log_level(Site->log_level);
-    Sympa::Log::Syslog::do_log(
-	'info', 'Configuration file read, default log level %s',
-	Site->log_level
-    ); 
+    Sympa::Log::Syslog::do_log('info',
+        'Configuration file read, default log level %s',
+        Site->log_level);
 }
 
-Sympa::Log::Syslog::do_openlog(Site->log_facility, Site->log_socket_type, 'bounced');
+Sympa::Log::Syslog::do_openlog(Site->log_facility, Site->log_socket_type,
+    'bounced');
 
 ## Set the User ID & Group ID for the process
 $( = $) = (getgrnam(Sympa::Constants::GROUP))[2];
@@ -238,8 +247,11 @@ $< = $> = (getpwnam(Sympa::Constants::USER))[2];
 &POSIX::setgid((getgrnam(Sympa::Constants::GROUP))[2]);
 
 ## Check if the UID has correctly been set (useful on OS X)
-unless (($( == (getgrnam(Sympa::Constants::GROUP))[2]) && ($< == (getpwnam(Sympa::Constants::USER))[2])) {
-    Sympa::Log::Syslog::fatal_err("Failed to change process user ID and group ID. Note that on some OS Perl scripts can't change their real UID. In such circumstances Sympa should be run via SUDO.");
+unless (($( == (getgrnam(Sympa::Constants::GROUP))[2])
+    && ($< == (getpwnam(Sympa::Constants::USER))[2])) {
+    Sympa::Log::Syslog::fatal_err(
+        "Failed to change process user ID and group ID. Note that on some OS Perl scripts can't change their real UID. In such circumstances Sympa should be run via SUDO."
+    );
 }
 
 ## Sets the UMASK
@@ -248,7 +260,7 @@ umask(oct(Site->umask));
 ## Change to list root
 unless (chdir(Site->home)) {
     Sympa::Log::Syslog::do_log('info', 'Unable to change directory');
-    exit (-1);
+    exit(-1);
 }
 
 Sympa::Log::Syslog::do_log('notice', "bounced Started");
@@ -259,43 +271,42 @@ my $end = 0;
 
 my $spool = new SympaspoolClassic('bounce');
 
-
-Sympa::Log::Syslog::do_log('debug','starting infinite loop');
+Sympa::Log::Syslog::do_log('debug', 'starting infinite loop');
 ## infinite loop scanning the queue (unless a sig TERM is received
 while (!$end) {
     sleep Site->sleep;
 
     List::init_list_cache();
+
     # Process grouped notifications
     Site->send_notify_to_listmaster(undef, undef, 1, undef);
 
     my $spooled_bounce;
-    while ($spooled_bounce = $spool->next){
-	my $bounce = undef;
-	$bounce = BounceMessage->new($spooled_bounce)
-	    if $spooled_bounce;
-	unless ($bounce) {
-	    Sympa::Log::Syslog::do_log('err',
-		'Message %s: badly formatted bounce message. Ignoring.',
-		$spooled_bounce->{'messagekey'}
-	    );
-	    $spool->move_to_bad($spooled_bounce->{'messagekey'});
-	    next;
-	}
-	if ($bounce->process) {
-	    unless ($spool->remove_message($bounce->{'messagekey'})) {
-		Sympa::Log::Syslog::do_log ('err',
-		    'Could not remove message %s from bounce spool',
-		    $bounce
-		);
-		$spool->move_to_bad($bounce->{'messagekey'});
-		last;
-	    }
-	} else {
-	    $spool->move_to_bad($bounce->{'messagekey'});
-	}
-	## Free zombie sendmail processes
-	mail::reaper;
+    while ($spooled_bounce = $spool->next) {
+        my $bounce = undef;
+        $bounce = BounceMessage->new($spooled_bounce)
+            if $spooled_bounce;
+        unless ($bounce) {
+            Sympa::Log::Syslog::do_log(
+                'err',
+                'Message %s: badly formatted bounce message. Ignoring.',
+                $spooled_bounce->{'messagekey'}
+            );
+            $spool->move_to_bad($spooled_bounce->{'messagekey'});
+            next;
+        }
+        if ($bounce->process) {
+            unless ($spool->remove_message($bounce->{'messagekey'})) {
+                Sympa::Log::Syslog::do_log('err',
+                    'Could not remove message %s from bounce spool', $bounce);
+                $spool->move_to_bad($bounce->{'messagekey'});
+                last;
+            }
+        } else {
+            $spool->move_to_bad($bounce->{'messagekey'});
+        }
+        ## Free zombie sendmail processes
+        mail::reaper;
     }
 }
 
@@ -306,7 +317,6 @@ Sympa::Log::Syslog::do_log('notice', 'bounced exited normally due to signal');
 tools::remove_pid('bounced', $$);
 
 exit(0);
-
 
 ## When we catch SIGTERM, just change the value of the loop
 ## variable.

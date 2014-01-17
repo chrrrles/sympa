@@ -76,25 +76,25 @@ sub new {
 
     ## load global config if needed
     Site->load(%options)
-	if !$Site::is_initialized or
-	    $options{'force_reload'};
+        if !$Site::is_initialized
+            or $options{'force_reload'};
     return undef unless $Site::is_initialized;
 
     my $robot;
     ## If robot already in memory
     if (Site->robots($name)) {
 
-	# use the current robot in memory and update it
-	$robot = Site->robots($name);
+        # use the current robot in memory and update it
+        $robot = Site->robots($name);
     } else {
 
-	# create a new object robot
-	$robot = bless {} => $pkg;
-	my $status = $robot->load($name, %options);
-	unless (defined $status) {
-	    Site->robots($name, undef);
-	    return undef;
-	}
+        # create a new object robot
+        $robot = bless {} => $pkg;
+        my $status = $robot->load($name, %options);
+        unless (defined $status) {
+            Site->robots($name, undef);
+            return undef;
+        }
     }
 
 ##    ## Initialize internal list cache
@@ -132,86 +132,88 @@ sub load {
     my %options = @_;
 
     $name = Site->domain
-	unless defined $name and
-	    length $name and
-	    $name ne '*';
+        unless defined $name
+            and length $name
+            and $name ne '*';
 
     ## load global config if needed
     Site->load(%options)
-	if !$Site::is_initialized or
-	    $options{'force_reload'};
+        if !$Site::is_initialized
+            or $options{'force_reload'};
     return undef unless $Site::is_initialized;
 
     unless ($self->{'name'} and $self->{'etc'}) {
-	my $vhost_etc = Site->etc . '/' . $name;
+        my $vhost_etc = Site->etc . '/' . $name;
 
-	if (-f $vhost_etc . '/robot.conf') {
-	    ## virtual robot, even if its domain is same as that of main conf
-	    $self->{'etc'} = $vhost_etc;
-	} elsif ($name eq Site->domain) {
-	    ## robot of main conf
-	    $self->{'etc'} = Site->etc;
-	} else {
-	    Sympa::Log::Syslog::do_log('err',
-		'Unknown robot "%s": config directory was not found', $name)
-		unless ($options{'just_try'});
-	    return undef;
-	}
+        if (-f $vhost_etc . '/robot.conf') {
+            ## virtual robot, even if its domain is same as that of main conf
+            $self->{'etc'} = $vhost_etc;
+        } elsif ($name eq Site->domain) {
+            ## robot of main conf
+            $self->{'etc'} = Site->etc;
+        } else {
+            Sympa::Log::Syslog::do_log('err',
+                'Unknown robot "%s": config directory was not found', $name)
+                unless ($options{'just_try'});
+            return undef;
+        }
 
-	$self->{'name'} = $name;
+        $self->{'name'} = $name;
     }
 
     unless ($self->{'name'} eq $name) {
-	Sympa::Log::Syslog::do_log('err', 'Bug in logic.  Ask developer');
-	return undef;
+        Sympa::Log::Syslog::do_log('err', 'Bug in logic.  Ask developer');
+        return undef;
     }
 
     unless ($self->{'etc'} eq Site->etc) {
-	## the robot uses per-robot config
-	my $config_file = $self->{'etc'} . '/robot.conf';
+        ## the robot uses per-robot config
+        my $config_file = $self->{'etc'} . '/robot.conf';
 
-	unless (-r $config_file) {
-	    Sympa::Log::Syslog::do_log('err', 'No read access on %s', $config_file);
-	    Site->send_notify_to_listmaster(
-		'cannot_access_robot_conf',
-		[   "No read access on $config_file. you should change privileges on this file to activate this virtual host. "
-		]
-	    );
-	    return undef;
-	}
+        unless (-r $config_file) {
+            Sympa::Log::Syslog::do_log('err', 'No read access on %s',
+                $config_file);
+            Site->send_notify_to_listmaster(
+                'cannot_access_robot_conf',
+                [   "No read access on $config_file. you should change privileges on this file to activate this virtual host. "
+                ]
+            );
+            return undef;
+        }
 
-	unless (defined $self->SUPER::load(%options)) {
-	    return undef;
-	}
+        unless (defined $self->SUPER::load(%options)) {
+            return undef;
+        }
 
-	##
-	## From now on, accessors such as "$self->domain" can be used.
-	##
+        ##
+        ## From now on, accessors such as "$self->domain" can be used.
+        ##
 
-	## FIXME: Check if robot name is same as domain parameter.
-	## Sympa might be wanted to allow arbitrary robot names  used
-	## for config & home directories, though.
-	unless ($self->domain eq $name) {
-	    Sympa::Log::Syslog::do_log('err', 'Robot name "%s" is not same as domain "%s"',
-		$name, $self->domain);
-	    Site->robots($name, undef);
-	    ##delete Site->robots_config->{$self->domain};
-	    return undef;
-	}
+        ## FIXME: Check if robot name is same as domain parameter.
+        ## Sympa might be wanted to allow arbitrary robot names  used
+        ## for config & home directories, though.
+        unless ($self->domain eq $name) {
+            Sympa::Log::Syslog::do_log('err',
+                'Robot name "%s" is not same as domain "%s"',
+                $name, $self->domain);
+            Site->robots($name, undef);
+            ##delete Site->robots_config->{$self->domain};
+            return undef;
+        }
     }
 
     unless ($self->{'home'}) {
-	my $vhost_home = Site->home . '/' . $name;
+        my $vhost_home = Site->home . '/' . $name;
 
-	if (-d $vhost_home) {
-	    $self->{'home'} = $vhost_home;
-	} elsif ($self->domain eq Site->domain) {
-	    $self->{'home'} = Site->home;
-	} else {
-	    Sympa::Log::Syslog::do_log('err',
-		'Unknown robot "%s": home directory was not found', $name);
-	    return undef;
-	}
+        if (-d $vhost_home) {
+            $self->{'home'} = $vhost_home;
+        } elsif ($self->domain eq Site->domain) {
+            $self->{'home'} = Site->home;
+        } else {
+            Sympa::Log::Syslog::do_log('err',
+                'Unknown robot "%s": home directory was not found', $name);
+            return undef;
+        }
     }
 
     Site->robots($name, $self);
@@ -311,15 +313,15 @@ sub is_available_topic {
 
     my %topics;
     unless (%topics = %{$self->topics || {}}) {
-	Sympa::Log::Syslog::do_log('err', 'unable to load list of topics');
+        Sympa::Log::Syslog::do_log('err', 'unable to load list of topics');
     }
 
     if ($subtop) {
-	return 1
-	    if defined $topics{$top} and
-		defined $topics{$top}{'sub'}{$subtop};
+        return 1
+            if defined $topics{$top}
+                and defined $topics{$top}{'sub'}{$subtop};
     } else {
-	return 1 if defined $topics{$top};
+        return 1 if defined $topics{$top};
     }
 
     return undef;
@@ -345,42 +347,43 @@ sub split_listname {
     return () unless defined $mailbox and length $mailbox;
 
     my $return_path_suffix = $self->return_path_suffix;
-    my $regexp = join('|',
-	map { s/(\W)/\\$1/g; $_ }
-	    grep { $_ and length $_ }
-	    split(/[\s,]+/, $self->list_check_suffixes));
+    my $regexp             = join('|',
+        map { s/(\W)/\\$1/g; $_ }
+            grep { $_ and length $_ }
+            split(/[\s,]+/, $self->list_check_suffixes));
 
-    if ($mailbox eq 'sympa' and $self->domain eq Site->domain) { # compat.
-	return (undef, 'sympa');
-    } elsif ($mailbox eq $self->email or
-	$self->domain eq Site->domain and $mailbox eq Site->email) {
-	return (undef, 'sympa');
-    } elsif ($mailbox eq $self->listmaster_email or
-	$self->domain eq Site->domain and $mailbox eq Site->listmaster_email) {
-	return (undef, 'listmaster');
-    } elsif ($mailbox =~ /^(\S+)$return_path_suffix$/) { # -owner
-	return ($1, 'return_path');
+    if ($mailbox eq 'sympa' and $self->domain eq Site->domain) {    # compat.
+        return (undef, 'sympa');
+    } elsif ($mailbox eq $self->email
+        or $self->domain eq Site->domain and $mailbox eq Site->email) {
+        return (undef, 'sympa');
+    } elsif ($mailbox eq $self->listmaster_email
+        or $self->domain eq Site->domain
+        and $mailbox eq Site->listmaster_email) {
+        return (undef, 'listmaster');
+    } elsif ($mailbox =~ /^(\S+)$return_path_suffix$/) {            # -owner
+        return ($1, 'return_path');
     } elsif (!$regexp) {
-	return ($mailbox);
+        return ($mailbox);
     } elsif ($mailbox =~ /^(\S+)-($regexp)$/) {
-	my ($name, $suffix) = ($1, $2);
-	my $type;
+        my ($name, $suffix) = ($1, $2);
+        my $type;
 
-	if ($suffix eq 'request') {
-	    $type = 'owner';
-	} elsif ($suffix eq 'editor') {
-	    $type = 'editor';
-	} elsif ($suffix eq 'subscribe') {
-	    $type = 'subscribe';
-	} elsif ($suffix eq 'unsubscribe') {
-	    $type = 'unsubscribe';
-	} else {
-	    $name = $mailbox;
-	    $type = 'UNKNOWN';
-	}
-	return ($name, $type);
+        if ($suffix eq 'request') {
+            $type = 'owner';
+        } elsif ($suffix eq 'editor') {
+            $type = 'editor';
+        } elsif ($suffix eq 'subscribe') {
+            $type = 'subscribe';
+        } elsif ($suffix eq 'unsubscribe') {
+            $type = 'unsubscribe';
+        } else {
+            $name = $mailbox;
+            $type = 'UNKNOWN';
+        }
+        return ($name, $type);
     } else {
-	return ($mailbox);
+        return ($mailbox);
     }
 }
 
@@ -443,13 +446,13 @@ sub families {
     my $name = shift;
 
     if (scalar @_) {
-	my $v = shift;
-	unless (defined $v) {
-	    delete $self->{'families'}{$name};
-	} else {
-	    $self->{'families'} ||= {};
-	    $self->{'families'}{$name} = $v;
-	}
+        my $v = shift;
+        unless (defined $v) {
+            delete $self->{'families'}{$name};
+        } else {
+            $self->{'families'} ||= {};
+            $self->{'families'}{$name} = $v;
+        }
     }
     $self->{'families'}{$name};
 }
@@ -496,19 +499,19 @@ If C<undef> was given as LIST, cache entry on the memory will be removed.
 sub lists {
     my $self = shift;
     unless (scalar @_) {
-	return map { $self->{'lists'}->{$_} }
-	    sort keys %{$self->{'lists'} || {}};
+        return map { $self->{'lists'}->{$_} }
+            sort keys %{$self->{'lists'} || {}};
     }
 
     my $name = shift;
     if (scalar @_) {
-	my $v = shift;
-	unless (defined $v) {
-	    delete $self->{'lists'}{$name};
-	} else {
-	    $self->{'lists'} ||= {};
-	    $self->{'lists'}{$name} = $v;
-	}
+        my $v = shift;
+        unless (defined $v) {
+            delete $self->{'lists'}{$name};
+        } else {
+            $self->{'lists'} ||= {};
+            $self->{'lists'}{$name} = $v;
+        }
     }
     $self->{'lists'}{$name};
 }
@@ -597,117 +600,120 @@ sub topics {
 
     my $conf_file = $self->get_etc_filename('topics.conf');
     unless ($conf_file) {
-	Sympa::Log::Syslog::do_log('err', 'No topics.conf defined');
-	return undef;
+        Sympa::Log::Syslog::do_log('err', 'No topics.conf defined');
+        return undef;
     }
 
     my $list_of_topics;
 
     ## Load if not loaded or changed on disk
-    if (!$self->{'topics'} or
-	!$self->{'mtime'}{'topics.conf'} or
-	(stat($conf_file))[9] > $self->{'mtime'}{'topics.conf'}) {
+    if (   !$self->{'topics'}
+        or !$self->{'mtime'}{'topics.conf'}
+        or (stat($conf_file))[9] > $self->{'mtime'}{'topics.conf'}) {
 
-	## delete previous list of topics
-	$list_of_topics = {};
+        ## delete previous list of topics
+        $list_of_topics = {};
 
-	unless (-r $conf_file) {
-	    Sympa::Log::Syslog::do_log('err', 'Unable to read %s', $conf_file);
-	    return undef;
-	}
+        unless (-r $conf_file) {
+            Sympa::Log::Syslog::do_log('err', 'Unable to read %s',
+                $conf_file);
+            return undef;
+        }
 
-	unless (open(FILE, '<', $conf_file)) {
-	    Sympa::Log::Syslog::do_log('err', 'Unable to open config file %s', $conf_file);
-	    return undef;
-	}
+        unless (open(FILE, '<', $conf_file)) {
+            Sympa::Log::Syslog::do_log('err', 'Unable to open config file %s',
+                $conf_file);
+            return undef;
+        }
 
-	## Rough parsing
-	my $index = 0;
-	my (@rough_data, $topic);
-	while (<FILE>) {
-	    Encode::from_to($_, Site->filesystem_encoding, 'utf8');
-	    if (/^([\-\w\/]+)\s*$/) {
-		$index++;
-		$topic = {
-		    'name'  => $1,
-		    'order' => $index
-		};
-	    } elsif (/^([\w\.]+)\s+(.+)\s*$/) {
-		next unless defined $topic->{'name'};
+        ## Rough parsing
+        my $index = 0;
+        my (@rough_data, $topic);
+        while (<FILE>) {
+            Encode::from_to($_, Site->filesystem_encoding, 'utf8');
+            if (/^([\-\w\/]+)\s*$/) {
+                $index++;
+                $topic = {
+                    'name'  => $1,
+                    'order' => $index
+                };
+            } elsif (/^([\w\.]+)\s+(.+)\s*$/) {
+                next unless defined $topic->{'name'};
 
-		$topic->{$1} = $2;
-	    } elsif (/^\s*$/) {
-		if (defined $topic->{'name'}) {
-		    push @rough_data, $topic;
-		    $topic = {};
-		}
-	    }
-	}
-	close FILE;
+                $topic->{$1} = $2;
+            } elsif (/^\s*$/) {
+                if (defined $topic->{'name'}) {
+                    push @rough_data, $topic;
+                    $topic = {};
+                }
+            }
+        }
+        close FILE;
 
-	## Last topic
-	if (defined $topic->{'name'}) {
-	    push @rough_data, $topic;
-	    $topic = {};
-	}
+        ## Last topic
+        if (defined $topic->{'name'}) {
+            push @rough_data, $topic;
+            $topic = {};
+        }
 
-	$self->{'mtime'}{'topics.conf'} = (stat($conf_file))[9];
+        $self->{'mtime'}{'topics.conf'} = (stat($conf_file))[9];
 
-	unless ($#rough_data > -1) {
-	    Sympa::Log::Syslog::do_log('notice', 'No topic defined in %s', $conf_file);
-	    return undef;
-	}
+        unless ($#rough_data > -1) {
+            Sympa::Log::Syslog::do_log('notice', 'No topic defined in %s',
+                $conf_file);
+            return undef;
+        }
 
-	## Analysis
-	foreach my $topic (@rough_data) {
-	    my @tree = split '/', $topic->{'name'};
+        ## Analysis
+        foreach my $topic (@rough_data) {
+            my @tree = split '/', $topic->{'name'};
 
-	    if ($#tree == 0) {
-		my $title = _get_topic_titles($topic);
-		$list_of_topics->{$tree[0]}{'title'} = $title;
-		$list_of_topics->{$tree[0]}{'visibility'} =
-		    $topic->{'visibility'} || 'default';
+            if ($#tree == 0) {
+                my $title = _get_topic_titles($topic);
+                $list_of_topics->{$tree[0]}{'title'} = $title;
+                $list_of_topics->{$tree[0]}{'visibility'} =
+                    $topic->{'visibility'} || 'default';
 
-		#$list_of_topics->{$tree[0]}{'visibility'} =
-		#    _load_scenario_file('topics_visibility', $self,
-		#    $topic->{'visibility'} || 'default');
-		$list_of_topics->{$tree[0]}{'order'} = $topic->{'order'};
-	    } else {
-		my $subtopic = join('/', @tree[1 .. $#tree]);
-		my $title = _get_topic_titles($topic);
-		$list_of_topics->{$tree[0]}{'sub'}{$subtopic} =
-		    _add_topic($subtopic, $title);
-	    }
-	}
+                #$list_of_topics->{$tree[0]}{'visibility'} =
+                #    _load_scenario_file('topics_visibility', $self,
+                #    $topic->{'visibility'} || 'default');
+                $list_of_topics->{$tree[0]}{'order'} = $topic->{'order'};
+            } else {
+                my $subtopic = join('/', @tree[1 .. $#tree]);
+                my $title = _get_topic_titles($topic);
+                $list_of_topics->{$tree[0]}{'sub'}{$subtopic} =
+                    _add_topic($subtopic, $title);
+            }
+        }
 
-	## Set undefined Topic (defined via subtopic)
-	foreach my $t (keys %{$list_of_topics}) {
-	    unless (defined $list_of_topics->{$t}{'visibility'}) {
+        ## Set undefined Topic (defined via subtopic)
+        foreach my $t (keys %{$list_of_topics}) {
+            unless (defined $list_of_topics->{$t}{'visibility'}) {
 
-		#$list_of_topics->{$t}{'visibility'} =
-		#    _load_scenario_file('topics_visibility', $self,
-		#    'default');
-	    }
+                #$list_of_topics->{$t}{'visibility'} =
+                #    _load_scenario_file('topics_visibility', $self,
+                #    'default');
+            }
 
-	    unless (defined $list_of_topics->{$t}{'title'}) {
-		$list_of_topics->{$t}{'title'} = {'default' => $t};
-	    }
-	}
+            unless (defined $list_of_topics->{$t}{'title'}) {
+                $list_of_topics->{$t}{'title'} = {'default' => $t};
+            }
+        }
 
-	$self->{'topics'} = $list_of_topics;
+        $self->{'topics'} = $list_of_topics;
     }
 
     $list_of_topics = tools::dup_var($self->{'topics'});
 
     ## Set the title in the current language
     foreach my $top (keys %{$list_of_topics}) {
-	my $topic = $list_of_topics->{$top};
-	$topic->{'current_title'} = _get_topic_current_title($topic) || $top;
+        my $topic = $list_of_topics->{$top};
+        $topic->{'current_title'} = _get_topic_current_title($topic) || $top;
 
-	foreach my $subtop (keys %{$topic->{'sub'}}) {
-	    $topic->{'sub'}{$subtop}{'current_title'} =
-		_get_topic_current_title($topic->{'sub'}{$subtop}) || $subtop;
-	}
+        foreach my $subtop (keys %{$topic->{'sub'}}) {
+            $topic->{'sub'}{$subtop}{'current_title'} =
+                _get_topic_current_title($topic->{'sub'}{$subtop}) || $subtop;
+        }
     }
 
     return $list_of_topics;
@@ -718,17 +724,17 @@ sub _get_topic_titles {
 
     my $title;
     foreach my $key (%{$topic}) {
-	if ($key =~ /^title(.(\w+))?$/) {
-	    my $lang = $2 || 'default';
-	    if ($lang eq 'gettext') {    # new in 6.2a.34
-		;
-	    } elsif ($lang eq 'default') {
-		;
-	    } else {
-		$lang = Language::CanonicLang($lang) || $lang;
-	    }
-	    $title->{$lang} = $topic->{$key};
-	}
+        if ($key =~ /^title(.(\w+))?$/) {
+            my $lang = $2 || 'default';
+            if ($lang eq 'gettext') {    # new in 6.2a.34
+                ;
+            } elsif ($lang eq 'default') {
+                ;
+            } else {
+                $lang = Language::CanonicLang($lang) || $lang;
+            }
+            $title->{$lang} = $topic->{$key};
+        }
     }
 
     return $title;
@@ -737,16 +743,16 @@ sub _get_topic_titles {
 sub _get_topic_current_title {
     my $topic = shift;
     foreach my $lang (Language::ImplicatedLangs()) {
-	if ($topic->{'title'}{$lang}) {
-	    return $topic->{'title'}{$lang};
-	}
+        if ($topic->{'title'}{$lang}) {
+            return $topic->{'title'}{$lang};
+        }
     }
     if ($topic->{'title'}{'gettext'}) {
-	return Language::gettext($topic->{'title'}{'gettext'});
+        return Language::gettext($topic->{'title'}{'gettext'});
     } elsif ($topic->{'title'}{'default'}) {
-	return Language::gettext($topic->{'title'}{'default'});
+        return Language::gettext($topic->{'title'}{'default'});
     } else {
-	return undef;
+        return undef;
     }
 }
 
@@ -757,11 +763,11 @@ sub _add_topic {
 
     my @tree = split '/', $name;
     if ($#tree == 0) {
-	return {'title' => $title};
+        return {'title' => $title};
     } else {
-	$topic->{'sub'}{$name} =
-	    _add_topic(join('/', @tree[1 .. $#tree]), $title);
-	return $topic;
+        $topic->{'sub'}{$name} =
+            _add_topic(join('/', @tree[1 .. $#tree]), $title);
+        return $topic;
     }
 }
 
@@ -838,22 +844,22 @@ sub clean_robot {
     my $robot      = shift;
     my $maybe_site = shift;
 
-   #Sympa::Log::Syslog::do_log('debug3', 'robot "%s", maybe_site "%s"', $robot, $maybe_site);
-    unless (ref $robot or
-	($maybe_site and !ref $robot and $robot eq 'Site')) {
-	my $level = $Carp::CarpLevel;
-	$Carp::CarpLevel = 1;
-	carp "Deprecated usage: \"$robot\" should be a Robot object" .
-	    ($maybe_site ? ' or Site class' : '');
-	$Carp::CarpLevel = $level;
+    #Sympa::Log::Syslog::do_log('debug3', 'robot "%s", maybe_site "%s"', $robot, $maybe_site);
+    unless (ref $robot
+        or ($maybe_site and !ref $robot and $robot eq 'Site')) {
+        my $level = $Carp::CarpLevel;
+        $Carp::CarpLevel = 1;
+        carp "Deprecated usage: \"$robot\" should be a Robot object"
+            . ($maybe_site ? ' or Site class' : '');
+        $Carp::CarpLevel = $level;
 
-	if ($robot and $robot eq '*' and $maybe_site) {
-	    $robot = 'Site';
-	} elsif ($robot and $robot ne '*') {
-	    $robot = Robot->new($robot);
-	} else {
-	    croak "Illegal robot argument: " . ($robot || '');
-	}
+        if ($robot and $robot eq '*' and $maybe_site) {
+            $robot = 'Site';
+        } elsif ($robot and $robot ne '*') {
+            $robot = Robot->new($robot);
+        } else {
+            croak "Illegal robot argument: " . ($robot || '');
+        }
     }
     $robot;
 }
@@ -882,50 +888,51 @@ sub get_robots {
 
     ## load global config if needed
     Site->load(%options)
-	if !$Site::is_initialized or
-	    $options{'force_reload'};
+        if !$Site::is_initialized
+            or $options{'force_reload'};
     return undef unless $Site::is_initialized;
 
     ## Check memory cache first.
     if (Site->robots_ok) {
-	@robots = Site->robots;
-	return \@robots;
+        @robots = Site->robots;
+        return \@robots;
     }
 
     ## get all cached robots
     %orphan = map { $_->domain => 1 } Site->robots;
 
     unless (opendir $dir, Site->etc) {
-	Sympa::Log::Syslog::do_log('err',
-	    'Unable to open directory %s for virtual robots config',
-	    Site->etc);
-	return undef;
+        Sympa::Log::Syslog::do_log('err',
+            'Unable to open directory %s for virtual robots config',
+            Site->etc);
+        return undef;
     }
     foreach my $name (readdir $dir) {
-	next if $name =~ /^\./;
-	my $vhost_etc = Site->etc . '/' . $name;
-	next unless -d $vhost_etc;
-	next unless -f $vhost_etc . '/robot.conf';
+        next if $name =~ /^\./;
+        my $vhost_etc = Site->etc . '/' . $name;
+        next unless -d $vhost_etc;
+        next unless -f $vhost_etc . '/robot.conf';
 
-	if ($robot = Robot->new($name, %options)) {
-	    $got_default = 1 if $robot->domain eq Site->domain;
-	    push @robots, $robot;
-	    delete $orphan{$robot->domain};
-	}
+        if ($robot = Robot->new($name, %options)) {
+            $got_default = 1 if $robot->domain eq Site->domain;
+            push @robots, $robot;
+            delete $orphan{$robot->domain};
+        }
     }
     closedir $dir;
 
     unless ($got_default) {
-	if ($robot = Robot->new(Site->domain, %options)) {
-	    push @robots, $robot;
-	    delete $orphan{$robot->domain};
-	}
+        if ($robot = Robot->new(Site->domain, %options)) {
+            push @robots, $robot;
+            delete $orphan{$robot->domain};
+        }
     }
 
     ## purge orphan robots
     foreach my $domain (keys %orphan) {
-	Sympa::Log::Syslog::do_log('debug3', 'removing orphan robot %s', $domain);
-	Site->robots($domain, undef);
+        Sympa::Log::Syslog::do_log('debug3', 'removing orphan robot %s',
+            $domain);
+        Site->robots($domain, undef);
     }
 
     Site->robots_ok(1);

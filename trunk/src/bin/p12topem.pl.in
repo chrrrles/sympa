@@ -63,6 +63,7 @@ use Pod::Usage;
 #use Sympa::Constants; # used by Conf
 #use Conf; # used in List - Robot - Site
 use List;
+
 #use SDM; # used by Conf
 
 ## Load sympa config
@@ -71,92 +72,97 @@ Site->load or die 'config_error';
 ## Probe Db if defined
 if (Site->db_name and Site->db_type) {
     unless (SDM::check_db_connect('just_try') and SDM::probe_db()) {
-	die sprintf 'Database %s defined in sympa.conf has not the right structure or is unreachable. If you don\'t use any database, comment db_xxx parameters in sympa.conf', Site->db_name;
+        die sprintf
+            'Database %s defined in sympa.conf has not the right structure or is unreachable. If you don\'t use any database, comment db_xxx parameters in sympa.conf',
+            Site->db_name;
     }
 }
 
-my $openssl = Site->openssl;
-my $etc_sympa = Site->etc;
+my $openssl    = Site->openssl;
+my $etc_sympa  = Site->etc;
 my $home_sympa = Site->home;
-my $outpass = Site->key_passwd;
-my $etc_dir = Site->etc;
+my $outpass    = Site->key_passwd;
+my $etc_dir    = Site->etc;
 
 ## Check option
 my %options;
-&GetOptions(\%main::options, 'pkcs12=s','listname=s', 'robot=s', 'help|h');
+&GetOptions(\%main::options, 'pkcs12=s', 'listname=s', 'robot=s', 'help|h');
 
 $main::options{'foreground'} = 1;
 my $listname = $main::options{'listname'};
 my $robot_id = $main::options{'robot'};
 my $p12input = $main::options{'pkcs12'};
 
+my ($cert, $privatekey, $inpass, $key);
 
-my ($cert,$privatekey,$inpass,$key);
-
-if ($main::options{'help'} or ! -r $p12input or ($listname and $robot_id)) {
+if ($main::options{'help'} or !-r $p12input or ($listname and $robot_id)) {
     pod2usage(0);
-}else{
+} else {
     if ($listname) {
-	my $list = List->new($listname);
-	unless ($list) {
-	    printf "unknown list %s\n", $listname;
-	    die;
-	}
-	$cert = $list->dir . '/cert.pem';
-	$privatekey = $list->dir . '/private_key';
+        my $list = List->new($listname);
+        unless ($list) {
+            printf "unknown list %s\n", $listname;
+            die;
+        }
+        $cert       = $list->dir . '/cert.pem';
+        $privatekey = $list->dir . '/private_key';
     } elsif ($robot_id) {
-	my $robot = Robot->new($robot_id);
-	unless ($robot) {
-	    printf "unknown robot %s\n", $robot_id;
-	    die;
-	}
-	$cert = $robot->etc . '/cert.pem';
-	$privatekey = $robot->etc . '/private_key';
+        my $robot = Robot->new($robot_id);
+        unless ($robot) {
+            printf "unknown robot %s\n", $robot_id;
+            die;
+        }
+        $cert       = $robot->etc . '/cert.pem';
+        $privatekey = $robot->etc . '/private_key';
     }
 
     if (-r "$cert") {
-	printf "certificate %s already exists\n", $cert;
-	die;
+        printf "certificate %s already exists\n", $cert;
+        die;
     }
     if (-r "$privatekey") {
-	printf "private key %s already exists\n", $privatekey;
-	die;
+        printf "private key %s already exists\n", $privatekey;
+        die;
     }
-    
+
     unless ($openssl) {
-	print "You must first configure Sympa to use openssl. Check the parameter openssl in sympa.conf\n";
-	die;
+        print
+            "You must first configure Sympa to use openssl. Check the parameter openssl in sympa.conf\n";
+        die;
     }
-    
+
     system 'stty', '-echo';
     printf "password to access to %s :", $p12input;
     chop($inpass = <STDIN>);
     print "\n";
     system 'stty', 'echo';
-    open  PASS, "| $openssl pkcs12 -in $p12input -out $cert -nokeys -clcerts -passin stdin";
+    open PASS,
+        "| $openssl pkcs12 -in $p12input -out $cert -nokeys -clcerts -passin stdin";
     print PASS "$inpass\n";
     close PASS;
-    
+
     unless ($outpass) {
-	system 'stty', '-echo';
-	printf "Sympa password to protect list private key %s:", $key;
-	chop($outpass = <STDIN>);
-	print "\n";
-	system 'stty', 'echo';
+        system 'stty', '-echo';
+        printf "Sympa password to protect list private key %s:", $key;
+        chop($outpass = <STDIN>);
+        print "\n";
+        system 'stty', 'echo';
     }
-    open  PASS, "| $openssl pkcs12 -in $p12input -out $privatekey -nocerts -passin stdin -des3 -passout stdin";
+    open PASS,
+        "| $openssl pkcs12 -in $p12input -out $privatekey -nocerts -passin stdin -des3 -passout stdin";
     print PASS "$inpass\n$outpass\n";
     close PASS;
-    
-    printf "private key %s and certificate %s were created.\n", $privatekey, $cert;
+
+    printf "private key %s and certificate %s were created.\n", $privatekey,
+        $cert;
     exit;
 }
 
-    unless ($outpass) {
-	print <<"EOF";
+unless ($outpass) {
+    print <<"EOF";
 Because you did not configure Sympa's password \"key_passwd\" in
 sympa.conf you will also be prompted for the password used by sympa to access
 to the list private key)
 EOF
-    } 
+}
 }

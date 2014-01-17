@@ -43,7 +43,10 @@ sub get_storage_name {
     my $filename;
     my $param = shift;
     if ($param->{'list'} && $param->{'robot'}) {
-	$filename = $param->{'list'}.'@'.$param->{'robot'}.'_'.$param->{'authkey'};
+        $filename =
+              $param->{'list'} . '@'
+            . $param->{'robot'} . '_'
+            . $param->{'authkey'};
     }
     return $filename;
 }
@@ -54,28 +57,29 @@ sub analyze_file_name {
     my $key  = shift;
     my $data = shift;
 
-    unless($key =~ /$filename_regexp/){
-	Sympa::Log::Syslog::do_log('err',
-	    'File %s name does not have the proper format', $key);
-	return undef;
+    unless ($key =~ /$filename_regexp/) {
+        Sympa::Log::Syslog::do_log('err',
+            'File %s name does not have the proper format', $key);
+        return undef;
     }
     my $list_id;
     ($list_id, $data->{'authkey'}, $data->{'validated'}) = ($1, $2, $3);
     ($data->{'list'}, $data->{'robot'}) = split /\@/, $list_id;
 
-    $data->{'list'} = lc($data->{'list'});
+    $data->{'list'}  = lc($data->{'list'});
     $data->{'robot'} = lc($data->{'robot'});
     return undef
-	unless $data->{'robot_object'} = Robot->new($data->{'robot'});
+        unless $data->{'robot_object'} = Robot->new($data->{'robot'});
 
     my $listname;
+
     #FIXME: is this needed?
     ($listname, $data->{'type'}) =
-	$data->{'robot_object'}->split_listname($data->{'list'}); #FIXME
+        $data->{'robot_object'}->split_listname($data->{'list'});    #FIXME
     return undef
-	unless defined $listname and
-	$data->{'list_object'} =
-	List->new($listname, $data->{'robot_object'});
+        unless defined $listname
+            and $data->{'list_object'} =
+            List->new($listname, $data->{'robot_object'});
 
     ## Get priority
 
@@ -90,9 +94,9 @@ sub analyze_file_name {
 
 ## Return messages not validated yet.
 sub get_awaiting_messages {
-    my $self = shift;
+    my $self  = shift;
     my $param = shift;
-    $param->{'selector'}{'validated'} = ['.distribute','ne'];
+    $param->{'selector'}{'validated'} = ['.distribute', 'ne'];
     return $self->get_content($param);
 }
 
@@ -100,16 +104,20 @@ sub validate_message {
     my $self = shift;
     my $key  = shift;
 
-    unless(File::Copy::copy($self->{'dir'} . '/' . $key,
-	$self->{'dir'} . '/' . $key . '.distribute'
-    )) {
-	Sympa::Log::Syslog::do_log('err', 'Could not rename file %s/%s: %s',
-	    $self->{'dir'}, $key, $!);
-	return undef;
+    unless (
+        File::Copy::copy(
+            $self->{'dir'} . '/' . $key,
+            $self->{'dir'} . '/' . $key . '.distribute'
+        )
+        ) {
+        Sympa::Log::Syslog::do_log('err', 'Could not rename file %s/%s: %s',
+            $self->{'dir'}, $key, $!);
+        return undef;
     }
     unless (unlink($self->{'dir'} . '/' . $key)) {
-	Sympa::Log::Syslog::do_log('err', 'Could not unlink message %s/%s: %s',
-	    $self->{'dir'}, $key, $!);
+        Sympa::Log::Syslog::do_log('err',
+            'Could not unlink message %s/%s: %s',
+            $self->{'dir'}, $key, $!);
     }
     return 1;
 }

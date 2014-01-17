@@ -89,11 +89,13 @@ use strict "vars";
 use warnings;
 use Getopt::Long;
 use Pod::Usage;
+
 # tentative
 use Data::Dumper;
 
 #use Conf; # used in List - Robot- Site
 use List;
+
 #use Log; # used by Conf
 #use SDM; # used by Conf
 #use Sympa::Constants; # used by Conf
@@ -103,8 +105,12 @@ use List;
 
 my %options;
 
-unless (GetOptions(\%main::options,
-    'debug|d', 'help|h', 'log_level=s', 'foreground|F')) {
+unless (
+    GetOptions(
+        \%main::options, 'debug|d', 'help|h', 'log_level=s',
+        'foreground|F'
+    )
+    ) {
     pod2usage(-exitval => 1, -output => \*STDERR);
 }
 
@@ -115,9 +121,11 @@ if ($main::options{'help'}) {
 if ($main::options{'debug'}) {
     $main::options{'log_level'} = 2 unless ($main::options{'log_level'});
 }
+
 # Some option force foreground mode
 $main::options{'foreground'} = 1 if ($main::options{'debug'});
-$main::options{'log_to_stderr'} = 1 if ($main::options{'debug'} || $main::options{'foreground'});
+$main::options{'log_to_stderr'} = 1
+    if ($main::options{'debug'} || $main::options{'foreground'});
 
 my $Version = '0.1';
 
@@ -126,45 +134,47 @@ my $adrlist = {};
 # Load sympa.conf
 unless (Robot::get_robots()) {
     printf STDERR
-	"Unable to load Sympa configuration, file %s or any of the virtual host robot.conf files contain errors. Exiting.\n",
-	Conf::get_sympa_conf();
+        "Unable to load Sympa configuration, file %s or any of the virtual host robot.conf files contain errors. Exiting.\n",
+        Conf::get_sympa_conf();
     exit 1;
 }
 
-Sympa::Log::Syslog::do_openlog(Site->log_facility, Site->log_socket_type, 'task_manager');
+Sympa::Log::Syslog::do_openlog(Site->log_facility, Site->log_socket_type,
+    'task_manager');
 
 # setting log_level using conf unless it is set by calling option
 if ($main::options{'log_level'}) {
     Sympa::Log::Syslog::set_log_level($main::options{'log_level'});
     Sympa::Log::Syslog::do_log(
-	'info', 'Configuration file read, log level set using options : %s',
-	$main::options{'log_level'}
+        'info',
+        'Configuration file read, log level set using options : %s',
+        $main::options{'log_level'}
     );
 } else {
     Sympa::Log::Syslog::set_log_level(Site->log_level);
-    Sympa::Log::Syslog::do_log(
-	'info', 'Configuration file read, default log level %s',
-	Site->log_level
-    );
+    Sympa::Log::Syslog::do_log('info',
+        'Configuration file read, default log level %s',
+        Site->log_level);
 }
 
-## Put ourselves in background if not in debug mode. 
-                                             
+## Put ourselves in background if not in debug mode.
+
 unless ($main::options{'debug'} || $main::options{'foreground'}) {
-     open(STDERR, ">> /dev/null");
-     open(STDOUT, ">> /dev/null");
-     if (open(TTY, "/dev/tty")) {
-         ioctl(TTY, 0x20007471, 0);         #  s/b &TIOCNOTTY
-#       ioctl(TTY, &TIOCNOTTY, 0);                                             
-         close(TTY);
-     }
-                                       
-     setpgrp(0, 0);
-     if ((my $child_pid = fork) != 0) {                                        
-         print STDOUT "Starting task_manager daemon, PID $_\n";	 
-         exit(0);
-     }     
- }
+    open(STDERR, ">> /dev/null");
+    open(STDOUT, ">> /dev/null");
+    if (open(TTY, "/dev/tty")) {
+        ioctl(TTY, 0x20007471, 0);    #  s/b &TIOCNOTTY
+
+        #       ioctl(TTY, &TIOCNOTTY, 0);
+        close(TTY);
+    }
+
+    setpgrp(0, 0);
+    if ((my $child_pid = fork) != 0) {
+        print STDOUT "Starting task_manager daemon, PID $_\n";
+        exit(0);
+    }
+}
 
 ## If process is running in foreground, don't write STDERR to a dedicated file
 my $options;
@@ -183,8 +193,11 @@ $< = $> = (getpwnam(Sympa::Constants::USER))[2];
 &POSIX::setgid((getgrnam(Sympa::Constants::GROUP))[2]);
 
 ## Check if the UID has correctly been set (usefull on OS X)
-unless (($( == (getgrnam(Sympa::Constants::GROUP))[2]) && ($< == (getpwnam(Sympa::Constants::USER))[2])) {
-    Sympa::Log::Syslog::fatal_err("Failed to change process user ID and group ID. Note that on some OS Perl scripts can't change their real UID. In such circumstances Sympa should be run via sudo.");
+unless (($( == (getgrnam(Sympa::Constants::GROUP))[2])
+    && ($< == (getpwnam(Sympa::Constants::USER))[2])) {
+    Sympa::Log::Syslog::fatal_err(
+        "Failed to change process user ID and group ID. Note that on some OS Perl scripts can't change their real UID. In such circumstances Sympa should be run via sudo."
+    );
 }
 
 ## Sets the UMASK
@@ -192,9 +205,9 @@ umask(oct(Site->umask));
 
 ## Change to list root
 unless (chdir(Site->home)) {
-    Sympa::Log::Syslog::do_log('err', 'error : unable to change to directory %s',
-	Site->home);
-    exit (-1);
+    Sympa::Log::Syslog::do_log('err',
+        'error : unable to change to directory %s', Site->home);
+    exit(-1);
 }
 
 my $taskspool = TaskSpool->new();
@@ -204,14 +217,15 @@ $SIG{'TERM'} = 'sigterm';
 my $end = 0;
 
 ###### VARIABLES DECLARATION ######
-undef my $log; # won't execute send_msg and delete_subs commands if true, only log
-#$log = 1;
+undef my $log
+    ;    # won't execute send_msg and delete_subs commands if true, only log
 
+#$log = 1;
 
 ###### INFINITE LOOP SCANING THE SPOOL (unless a sig TERM is received) ######
 while (!$end) {
-    my $current_date = time; # current epoch date
-    my $rep = &tools::adate ($current_date);
+    my $current_date = time;                           # current epoch date
+    my $rep          = &tools::adate($current_date);
 
     ## Empty cache of the List.pm module
     &List::init_list_cache();
@@ -223,18 +237,19 @@ while (!$end) {
 
     ## Execute existing tasks
     ## processing of tasks anterior to the current date
-    Sympa::Log::Syslog::do_log ('debug2', 'Processing tasks anterior to the current date');
+    Sympa::Log::Syslog::do_log('debug2',
+        'Processing tasks anterior to the current date');
     foreach my $task_in_spool ($taskspool->get_content) {
-	my $task = undef;
-	$task = Task->new($task_in_spool)
-	   if $task_in_spool;
-	next unless $task;
+        my $task = undef;
+        $task = Task->new($task_in_spool)
+            if $task_in_spool;
+        next unless $task;
 
-	last if $end;
-	next unless $task->{'date'} <= $current_date;
+        last if $end;
+        next unless $task->{'date'} <= $current_date;
 
-	Sympa::Log::Syslog::do_log ('debug2', 'Processing task %s', $task);
-        if ($task->{'object'} ne '_global') { # list task
+        Sympa::Log::Syslog::do_log('debug2', 'Processing task %s', $task);
+        if ($task->{'object'} ne '_global') {    # list task
             $task->check_list_task_is_valid();
         }
         $task->execute;
@@ -252,8 +267,8 @@ sub sigterm {
 # Purge grouped notifications
 Site->send_notify_to_listmaster(undef, undef, undef, 1);
 
-Sympa::Log::Syslog::do_log ('notice', 'task_manager exited normally due to signal'); 
+Sympa::Log::Syslog::do_log('notice',
+    'task_manager exited normally due to signal');
 tools::remove_pid('task_manager', $$);
 
 exit(0);
-
