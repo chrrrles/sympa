@@ -44,7 +44,8 @@ our @ISA = qw(SQLSource);
 #
 # OUT: - Returns a ref to a two level-hash:
 #	* The keys of the first level are the database's tables name.
-#	* The keys of the second level are the name of the primary keys for the table whose name is
+#	* The keys of the second level are the name of the primary keys for
+#	the table whose name is
 # 	  given by the first level key.
 #      - Returns undef if something went wrong.
 sub get_all_primary_keys {
@@ -71,7 +72,8 @@ sub get_all_primary_keys {
 #
 # OUT: - Returns a ref to a two level-hash:
 #	* The keys of the first level are the database's tables name.
-#	* The keys of the second level are the name of the indexes for the table whose name is
+#	* The keys of the second level are the name of the indexes for the
+#	table whose name is
 # 	  given by the first level key.
 #      - Returns undef if something went wrong.
 sub get_all_indexes {
@@ -91,7 +93,8 @@ sub get_all_indexes {
     return \%found_indexes;
 }
 
-# Checks the compliance of a key of a table compared to what it is supposed to reference.
+# Checks the compliance of a key of a table compared to what it is supposed to
+# reference.
 #
 # IN: A ref to hash containing the following keys:
 #	* 'table' : the name of the table for which we want to check the primary key
@@ -104,14 +107,19 @@ sub get_all_indexes {
 # OUT: - Returns a ref likely to contain the following values:
 #	* 'empty': if this key is defined, then no key was found for the table
 #	* 'existing_key_correct': if this key's value is 1, then a key
-#	   exists and is fair to the structure defined in the 'expected_keys' parameter hash.
+#	   exists and is fair to the structure defined in the 'expected_keys'
+#	   parameter hash.
 #	   Otherwise, the key is not correct.
 #	* 'missing_key': if this key is defined, then a part of the key was missing.
-#	   The value associated to this key is a hash whose keys are the names of the fields
+#	   The value associated to this key is a hash whose keys are the names
+#	   of the fields
 #	   missing in the key.
-#	* 'unexpected_key': if this key is defined, then we found fields in the actual
-#	   key that don't belong to the list provided in the 'expected_keys' parameter hash.
-#	   The value associated to this key is a hash whose keys are the names of the fields
+#	* 'unexpected_key': if this key is defined, then we found fields in
+#	the actual
+#	   key that don't belong to the list provided in the 'expected_keys'
+#	   parameter hash.
+#	   The value associated to this key is a hash whose keys are the names
+#	   of the fields
 #	   unexpectedely found.
 sub check_key {
     my $self  = shift;

@@ -129,7 +129,8 @@ XXX @todo doc
 
 #######################
 #
-#  get_content return the content an array of hash describing the spool content
+#  get_content return the content an array of hash describing the spool
+#  content
 #
 sub get_content {
     Sympa::Log::Syslog::do_log('debug2', '(%s, %s)', @_);
@@ -162,7 +163,8 @@ sub get_content {
         # may be a temporary file "T.xxx" and so on.
         next unless $item;
 
-        # Get additional details from spool file, likely to be used in queries.
+        # Get additional details from spool file, likely to be used in
+        # queries.
         unless ($self->get_additional_details($item->{'messagekey'}, $item)) {
             $self->move_to_bad($item->{'messagekey'});
             next;
@@ -254,7 +256,8 @@ XXX @todo doc
 
 #######################
 #
-#  next : return next spool entry ordered by priority next lock the message_in_spool that is returned
+#  next : return next spool entry ordered by priority next lock the
+#  message_in_spool that is returned
 #  returns 0 if no file found
 #  returns undef if problem scanning spool
 sub next {
@@ -323,7 +326,8 @@ sub parse_file_content {
     return $data;
 }
 
-# Placeholder: overriden in inheriting classes to get additionnal details from the file content.
+# Placeholder: overriden in inheriting classes to get additionnal details from
+# the file content.
 sub get_additional_details {
     my $self = shift;
     my $key  = shift;
@@ -725,7 +729,8 @@ XXX @todo doc
 =cut
 
 ################"
-# remove a message in database spool using (messagekey,list,robot) which are a unique id in the spool
+# remove a message in database spool using (messagekey,list,robot) which are a
+# unique id in the spool
 #
 sub remove_message {
     my $self = shift;

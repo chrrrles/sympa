@@ -552,7 +552,8 @@ sub purge_old_sessions {
     return $total + $anonymous_total;
 }
 
-## remove old one_time_ticket from a particular robot or from all robots. delay is a parameter in seconds
+## remove old one_time_ticket from a particular robot or from all robots.
+## delay is a parameter in seconds
 ##
 sub purge_old_tickets {
     Sympa::Log::Syslog::do_log('debug2', '(%s)', @_);
@@ -602,7 +603,8 @@ sub purge_old_tickets {
     return $total;
 }
 
-# list sessions for $robot where last access is newer then $delay. List is limited to connected users if $connected_only
+# list sessions for $robot where last access is newer then $delay. List is
+# limited to connected users if $connected_only
 sub list_sessions {
     Sympa::Log::Syslog::do_log('debug2', '(%s, %s, %s)', @_);
     my $delay          = shift;
@@ -675,7 +677,8 @@ sub get_session_cookie {
 }
 
 ## Generic subroutine to set a cookie
-## Set user $email cookie, ckecksum use $secret, expire=(now|session|#sec) domain=(localhost|<a domain>)
+## Set user $email cookie, ckecksum use $secret, expire=(now|session|#sec)
+## domain=(localhost|<a domain>)
 sub set_cookie {
     Sympa::Log::Syslog::do_log('debug2', '(%s, %s, %s, %s)', @_);
     my ($self, $http_domain, $expires, $use_ssl) = @_;

@@ -64,7 +64,7 @@ my %pid = ();
 
 my $send_spool;    ## for calling context
 
-#################################### PUBLIC FUNCTIONS ##############################################
+### PUBLIC FUNCTIONS ###
 
 ####################################################
 # public set_send_spool
@@ -347,7 +347,8 @@ sub parse_tt2_messageasstring {
 # IN : -$message(+) : ref(Message)
 #      -$from(+) : message from
 #      -$robot(+) : robot
-#      -{verp=>[on|off]} : a hash to introduce verp parameters, starting just on or off, later will probably introduce optionnal parameters
+#      -{verp=>[on|off]} : a hash to introduce verp parameters, starting just
+#      on or off, later will probably introduce optionnal parameters
 #      -@rcpt(+) : recipients
 #
 ####################################################
@@ -482,8 +483,9 @@ sub mail_message {
     if ($#sendto >= 0) {
         $numsmtp++;
         my @tab = @sendto;
-        push @sendtobypacket, \@tab
-            ; # do not replace this line by push @sendtobypacket, \@sendto !!!
+
+        # do not replace this line by push @sendtobypacket, \@sendto !!!
+        push @sendtobypacket, \@tab;
     }
 
     unless (
@@ -592,7 +594,7 @@ sub reaper {
     return $i;
 }
 
-#################################### PRIVATE FUNCTIONS ##############################################
+### PRIVATE FUNCTIONS ###
 
 ####################################################
 # sendto
@@ -642,16 +644,19 @@ sub sendto {
     );
 
     my $delivery_date = $params{'delivery_date'};
+
+    # if not specified, delivery tile is right now (used for sympa messages
+    # etc)
     $delivery_date = time()
-        unless $delivery_date
-    ; # if not specified, delivery tile is right now (used for sympa messages etc)
+        unless $delivery_date;
 
     my $msg;
 
     if ($message->is_crypted) {
 
         # encrypt message for each rcpt and send the message
-        # this MUST be moved to the bulk mailer. This way, merge will be applied after the SMIME encryption is applied ! This is a bug !
+        # this MUST be moved to the bulk mailer. This way, merge will be
+        # applied after the SMIME encryption is applied ! This is a bug !
         foreach my $bulk_of_rcpt (@{$rcpt}) {
 
             # trace foreach my $unique_rcpt (@{$bulk_of_rcpt}) {
@@ -835,9 +840,9 @@ sub sending {
     return 1;
 }
 
-##################################################################################
+##############################################################################
 # smtpto
-##################################################################################
+##############################################################################
 # Makes a sendmail ready for the recipients given as argument, uses a file
 # descriptor in the smtp table which can be imported by other parties.
 # Before, waits for number of children process < number allowed by sympa.conf
@@ -846,10 +851,11 @@ sub sending {
 #      $rcpt :(+) ref(SCALAR)|ref(ARRAY)- for SMTP "RCPT To:" field
 #      $robot :(+) ref(Robot) | "Site"
 #      $msgkey : a id of this message submission in notification table
-# OUT : mail::$fh - file handle on opened file for ouput, for SMTP "DATA" field
+# OUT : mail::$fh - file handle on opened file for ouput, for SMTP "DATA"
+# field
 #       | undef
 #
-##################################################################################
+##############################################################################
 sub smtpto {
     Sympa::Log::Syslog::do_log('debug2', '(%s, %s, %s, %s, %s)', @_);
     my $from      = shift;
@@ -978,7 +984,8 @@ sub smtpto {
 ####################################################
 ## Comments from Soji Ikeda below
 ##  Some paths of message processing in Sympa can't recognize Unicode strings.
-##  At least MIME::Parser::parse_data() and Template::proccess(): these methods
+##  At least MIME::Parser::parse_data() and Template::proccess(): these
+##  methods
 ## occationalily break strings containing Unicode characters.
 ##
 ##  My mail_utf8 patch expects the behavior as following ---

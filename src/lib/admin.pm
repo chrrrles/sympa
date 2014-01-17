@@ -321,7 +321,8 @@ sub create_list_old {
     $lock->unlock();
 
     ## Creation of the info file
-    # remove DOS linefeeds (^M) that cause problems with Outlook 98, AOL, and EIMS:
+    # remove DOS linefeeds (^M) that cause problems with Outlook 98, AOL, and
+    # EIMS:
     $param->{'description'} =~ s/\r\n|\r/\n/g;
 
     ## info file creation.
@@ -547,7 +548,8 @@ sub create_list {
     $lock->unlock();
 
     ## Creation of the info file
-    # remove DOS linefeeds (^M) that cause problems with Outlook 98, AOL, and EIMS:
+    # remove DOS linefeeds (^M) that cause problems with Outlook 98, AOL, and
+    # EIMS:
     $param->{'description'} =~ s/\r\n|\r/\n/g;
 
     unless (open INFO, '>', "$list_dir/info") {
@@ -1009,8 +1011,9 @@ sub rename_list {
     }
 
     ## Check custom_subject
-    if (my $c = $list->custom_subject)
-    {    # FIXME MO: this is unsave: check/replace full listname
+    if (my $c = $list->custom_subject) {
+
+        # FIXME MO: this is unsave: check/replace full listname
         if ($c =~ /$old_listname/) {
             $c =~ s/$old_listname/$param{new_listname}/g;
             $list->custom_subject($c);
@@ -1136,7 +1139,8 @@ sub rename_list {
 #       - $source_robot : robot of the list to clone
 #       - $new_listname : the target listname
 #       - $new_robot_id : the target list's robot
-#       - $email : the email of the requestor : used in config as admin->last_update->email
+#       - $email : the email of the requestor : used in config as
+#       admin->last_update->email
 #
 # OUT : - $list : the updated list or undef
 ##
@@ -1598,7 +1602,8 @@ sub check_topics {
 #       - robot         : virtual robot
 #
 # OUT : - status(scalar)          : status of the subroutine
-#       - failed_for(arrayref)    : list of lists for which the change could not be done (because user was
+#       - failed_for(arrayref)    : list of lists for which the change could
+#       not be done (because user was
 #                                   included or for authorization reasons)
 sub change_user_email {
     my %in = @_;
@@ -1740,7 +1745,8 @@ sub change_user_email {
         );
     }
 
-    ## Update User_table and remove existing entry first (to avoid duplicate entries)
+    ## Update User_table and remove existing entry first (to avoid duplicate
+    ## entries)
     my $oldu = User->new($in{'new_email'});
     $oldu->expire if $oldu;
     my $u = User->new($in{'current_email'});

@@ -347,10 +347,14 @@ our %comm = (
     'suspend_request'          => 'do_suspend_request',
     'suspend_request_action'   => 'do_suspend_request_action',
     'show_exclude'             => 'do_show_exclude',
-    'ca'                       => 'do_ca'
-    , # 'ca' stands for 'custom_action'. I used a short name to make it discrete in a URL.
-    'lca' => 'do_lca'
-    , # 'lca' stands for 'list_custom_action'. I used a short name to make it discrete in a URL.
+
+    # 'ca' stands for 'custom_action'. I used a short name to make it discrete
+    # in a URL.
+    'ca' => 'do_ca',
+
+    # 'lca' stands for 'list_custom_action'. I used a short name to make it
+    # discrete in a URL.
+    'lca' => 'do_lca',
     'automatic_lists_management_request' =>
         'do_automatic_lists_management_request',
     'automatic_lists_management' => 'do_automatic_lists_management',
@@ -509,13 +513,15 @@ our %action_args = (
 );
 
 ## Define the required parameters for each action
-## Parameter names refer to the %in structure of to $param if mentionned as 'param.x'
+## Parameter names refer to the %in structure of to $param if mentionned as
+## 'param.x'
 ## This structure is used to determine if any parameter is missing
 ## The list of parameters is not ordered
 ## Some keywords are reserved: param.list and param.user.email
 ## Alternate parameters can be defined with the '|' character
 ## Limits of this structure: it does not define optional parameters (a or b)
-## Limit: it does not allow to have a specific error message and redirect to a given page if the parameter is missing
+## Limit: it does not allow to have a specific error message and redirect to a
+## given page if the parameter is missing
 our %required_args = (
     'active_lists'            => ['for|count'],
     'admin'                   => ['param.list', 'param.user.email'],
@@ -539,8 +545,8 @@ our %required_args = (
     'close_list_request'      => ['param.user.email', 'param.list'],
     'compose_mail'            => ['param.user.email', 'param.list'],
     'copy_template'           => ['webormail'],
-    'create_list'             => ['param.user.email']
-    ,    ## other required parameters are checked in the subroutine
+    ## other required parameters are checked in the subroutine
+    'create_list'         => ['param.user.email'],
     'create_list_request' => ['param.user.email'],
     'css'                 => [],
     'd_admin'             => ['param.list', 'param.user.email'],
@@ -720,7 +726,9 @@ our %required_privileges = (
     'automatic_lists_management'         => ['listmaster'],
 );
 
-# this definition is used to choose the left side menu type (admin -> listowner admin menu | serveradmin -> server_admin menu | none list or your_list menu)
+# this definition is used to choose the left side menu type (admin ->
+# listowner admin menu | serveradmin -> server_admin menu | none list or
+# your_list menu)
 my %action_type = (
     'editfile'    => 'admin',
     'review'      => 'admin',
@@ -869,8 +877,8 @@ our %in_regexp = (
     'new_default'       => &tools::get_regexp('template_name'),
 
     ## Archives
-    'month' => '\d{2}|\d{4}\-\d{2}'
-    ,    ## format is yyyy-mm for 'arc' and mm for 'send_me'
+    ## format is yyyy-mm for 'arc' and mm for 'send_me'
+    'month' => '\d{2}|\d{4}\-\d{2}',
 
     ## URL
     'referer'         => '[^\\\$\*\"\'\`\^\|\<\>\n]+',
@@ -965,11 +973,14 @@ our %in_regexp = (
 );
 
 ## Regexp applied on incoming parameters (%in)
-## This regular expression defines forbidden expressions applied on all incoming parameters
-## Note that you can use the ^ and $ expressions to match beginning and ending of expressions
+## This regular expression defines forbidden expressions applied on all
+## incoming parameters
+## Note that you can use the ^ and $ expressions to match beginning and ending
+## of expressions
 our %in_negative_regexp = ('arc_file' => '^(arctxt|\.)');
 
-## List some required filtering of incoming parameters, depending on current action
+## List some required filtering of incoming parameters, depending on current
+## action
 ## Paramater can be '*' or 'param*'
 ## Like Q-encoding
 my %filtering = (
@@ -992,16 +1003,18 @@ my %filtering = (
     'requestpasswd'    => {'email'    => 'fix_escape_uri'},
     'viewbounce'       => {'email'    => 'fix_escape_uri'},
     'editsubscriber'   => {'email'    => 'fix_escape_uri'},
-    'edit_list'        => {'*param*'  => 'unescape_html'}
-    , ## Required because outgoing parameters have been html-escaped in edit_list_request
-    'change_email' => {'*email' => 'normalize'}
-    ,    ## Remove leading/trailing white spaces and lowercase
+    ## Required because outgoing parameters have been html-escaped in
+    ## edit_list_request
+    'edit_list' => {'*param*' => 'unescape_html'},
+    ## Remove leading/trailing white spaces and lowercase
+    'change_email' => {'*email' => 'normalize'},
 );
 
 ## Set locale configuration
 Language::SetLang(Site->lang);
 
-## Important to leave this there because it defined defaults for user_data_source
+## Important to leave this there because it defined defaults for
+## user_data_source
 &SDM::check_db_connect();
 
 # Now, load all components which are implemented as plugins.  Those will
@@ -1190,14 +1203,15 @@ while ($query = &new_loop()) {
     $param->{'wwsconf'} = &Conf::_load_wwsconf;    #FIXME: no longer used?
 
     $param->{'path_cgi'} = $ENV{'SCRIPT_NAME'};
-    $param->{'path_cgi'} =~ s/\/\//\//g
-        ;    ## Replace '//' with '/' because it would break navigation
+    ## Replace '//' with '/' because it would break navigation
+    $param->{'path_cgi'} =~ s/\/\//\//g;
     $param->{'version'} = Sympa::Constants::VERSION;
     $param->{'date'}    = gettext_strftime "%d %b %Y at %H:%M:%S",
         localtime(time);
     $param->{'time'} = gettext_strftime "%H:%M:%S", localtime(time);
 
-    ## Hash defining the parameters where no control is performed (because they are supposed to contain html and/or javascript).
+    ## Hash defining the parameters where no control is performed (because
+    ## they are supposed to contain html and/or javascript).
     $param->{'htmlAllowedParam'} = {
         'title'                => 1,
         'hidden_head'          => 1,
@@ -1379,7 +1393,8 @@ while ($query = &new_loop()) {
         {  # the request contain a CAS named ticket that use CAS ticket format
             delete $session->{'do_not_use_cas'
                 };  #reset do_not_use_cas because this client probably use CAS
-             # select the cas server that redirect the user to sympa and check the ticket
+             # select the cas server that redirect the user to sympa and check
+             # the ticket
             Sympa::Log::Syslog::do_log('notice',
                 "CAS ticket is detected. in{'ticket'}=$in{'ticket'} checked_cas=$session->{'checked_cas'}"
             );
@@ -1432,15 +1447,20 @@ while ($query = &new_loop()) {
                 # user not taggued as not using cas
                 foreach my $auth_service (@{Site->auth_services->{$robot_id}})
                 {
+
+                    # skip auth services not related to cas
                     next
-                        unless ($auth_service->{'auth_type'} eq 'cas')
-                        ;    # skip auth services not related to cas
+                        unless ($auth_service->{'auth_type'} eq 'cas');
                     next
                         unless (
                         $auth_service->{'non_blocking_redirection'} eq 'on');
 
-                    ## skip cas server where client as been already redirect to the list of cas servers already checked is stored in the session
-                    ## the check below works fine as long as we don't have more then 10 CAS servers (because we don't properly split the list of values)
+                    ## skip cas server where client as been already redirect
+                    ## to the list of cas servers already checked is stored in
+                    ## the session
+                    ## the check below works fine as long as we
+                    ## don't have more then 10 CAS servers (because we don't
+                    ## properly split the list of values)
                     my $cas_id =
                         Site->cas_id->{$robot_id}
                         {$auth_service->{'auth_service_name'}}{'id'};
@@ -1451,11 +1471,13 @@ while ($query = &new_loop()) {
                     );
                     next if $session->{'checked_cas'} =~ /$cas_id/;
 
-                    # before redirect update the list of already checked cas server to prevent loop
+                    # before redirect update the list of already checked cas
+                    # server to prevent loop
                     my $cas_server = $auth_service->{'cas_server'};
                     my $return_url = &wwslib::get_my_url();
 
-                    ## Append the current CAS server ID to the list of checked CAS servers
+                    ## Append the current CAS server ID to the list of checked
+                    ## CAS servers
                     $session->{'checked_cas'} .= $cas_id;
 
                     my $redirect_url =
@@ -1476,9 +1498,11 @@ while ($query = &new_loop()) {
                         );
                     }
                 }
+
+                # set do_not_use_cas because all cas servers have been checked
+                # without success
                 $session->{'do_not_use_cas'} = 1
-                    unless ($param->{'redirect_to'} =~ /http(s)+\:\//i)
-                    ; #set do_not_use_cas because all cas servers have been checked without success
+                    unless ($param->{'redirect_to'} =~ /http(s)+\:\//i);
             }
         }
 
@@ -1533,10 +1557,12 @@ while ($query = &new_loop()) {
     ## Action
     my $action = $in{'action'};
 
-    ## Store current action in the session in order to redirect after a logi or other temporary actions.
+    ## Store current action in the session in order to redirect after a logi
+    ## or other temporary actions.
     ## We should not memorize ULRs that are transitory actions
     ## POST is not handled
-    ## A lot of other methods where used in the past (before session was introduced in Sympa). We must clean all.
+    ## A lot of other methods where used in the past (before session was
+    ## introduced in Sympa). We must clean all.
     unless ($temporary_actions{$action} || $ENV{'REQUEST_METHOD'} ne 'GET') {
         $session->{'redirect_url'} =
             $param->{'base_url'} . $param->{'path_cgi'} . $ENV{'PATH_INFO'};
@@ -1657,7 +1683,8 @@ while ($query = &new_loop()) {
                 last;
 
             } elsif ($check_output != 1) {
-                ## The output of the check may indicate another action to run first
+                ## The output of the check may indicate another action to run
+                ## first
                 ## Example : running loginrequest if user is not authenticated
                 $action = $param->{'action'} = $check_output;
             }
@@ -1678,9 +1705,9 @@ while ($query = &new_loop()) {
                 }
             }
 
+            # after redirect do not send anything, it will crash fcgi lib
             last
-                if ($action =~ /redirect/)
-                ; # after redirect do not send anything, it will crash fcgi lib
+                if ($action =~ /redirect/);
 
             if ($action eq $old_action) {
 
@@ -1889,7 +1916,8 @@ while ($query = &new_loop()) {
     # if bypass is defined select the content-type from various vars
     if ($param->{'bypass'}) {
 
-        ## if bypass = 'extreme' leave the action send the content-type and the content itself
+        ## if bypass = 'extreme' leave the action send the content-type and
+        ## the content itself
         unless ($param->{'bypass'} eq 'extreme') {
 
             ## if bypass = 'asis', file content-type is in the file itself as is define by the action in $param->{'content_type'};
@@ -2188,8 +2216,10 @@ sub get_header_field {
     }
 }
 
-# _split_params is used by get_parameters to split path info in the appropriate parameters list.
-# It is used also by action ticket to prepare the context stored in the one_time_ticket table in string like path_info
+# _split_params is used by get_parameters to split path info in the
+# appropriate parameters list.
+# It is used also by action ticket to prepare the context stored in the
+# one_time_ticket table in string like path_info
 # input ENV{'PATH_INFO'} like string, output in the global $param hash
 sub _split_params {
     my $args_string = shift;
@@ -2329,7 +2359,8 @@ sub get_parameters {
         ## Skip empty parameters
         next if ($in{$p} =~ /^$/);
 
-        ## Remove DOS linefeeds (^M) that cause problems with Outlook 98, AOL, and EIMS:
+        ## Remove DOS linefeeds (^M) that cause problems with Outlook 98, AOL,
+        ## and EIMS:
         $in{$p} =~ s/\r\n|\r/\n/g;
 
         #XXX## Convert from the web encoding to unicode string
@@ -2370,7 +2401,8 @@ sub get_parameters {
             $negative_regexp = $in_negative_regexp{$pname};
         }
 
-        # If we are editing an HTML file in the shared, allow HTML but prevent XSS.
+        # If we are editing an HTML file in the shared, allow HTML but prevent
+        # XSS.
         if (   $pname eq 'content'
             && $in{'action'} eq 'd_savefile'
             && $in{'path'} =~ $list->dir . '/shared'
@@ -2447,7 +2479,8 @@ sub get_parameters {
                     $tokens[$i] = &tools::qencode_filename($tokens[$i]);
                 }
                 $in{$p} = join '/', @tokens;
-                ## Sympa's URI escaping subroutine (tools::escape_chars()) replaces '/' with %A5 ('¥' character)
+                ## Sympa's URI escaping subroutine (tools::escape_chars())
+                ## replaces '/' with %A5 ('¥' character)
                 ## This should be transformed into a '/' again
 
             } elsif ($filtering_action eq 'unescape_html') {
@@ -2599,7 +2632,8 @@ sub get_parameters_old {
         ## Skip empty parameters
         next if ($in{$p} =~ /^$/);
 
-        ## Remove DOS linefeeds (^M) that cause problems with Outlook 98, AOL, and EIMS:
+        ## Remove DOS linefeeds (^M) that cause problems with Outlook 98, AOL,
+        ## and EIMS:
         $in{$p} =~ s/\r\n|\r/\n/g;
 
         #XXX## Convert from the web encoding to unicode string
@@ -2635,7 +2669,8 @@ sub get_parameters_old {
             $negative_regexp = $in_negative_regexp{$pname};
         }
 
-        # If we are editing an HTML file in the shared, allow HTML but prevent XSS.
+        # If we are editing an HTML file in the shared, allow HTML but prevent
+        # XSS.
         if (   $pname eq 'content'
             && $in{'action'} eq 'd_savefile'
             && $in{'path'} =~ $list->dir . '/shared'
@@ -2696,7 +2731,8 @@ sub get_parameters_old {
                     $tokens[$i] = &tools::qencode_filename($tokens[$i]);
                 }
                 $in{$p} = join '/', @tokens;
-                ## Sympa's URI escaping subroutine (tools::escape_chars()) replaces '/' with %A5 ('¥' character)
+                ## Sympa's URI escaping subroutine (tools::escape_chars())
+                ## replaces '/' with %A5 ('¥' character)
                 ## This should be transformed into a '/' again
 
             } elsif ($filtering{$in{'action'}}{$p} eq 'fix_escape_uri') {
@@ -2709,7 +2745,8 @@ sub get_parameters_old {
 }
 
 ## Check required parameters for an action
-## It compares incoming parameter to those declared as required in %required_args
+## It compares incoming parameter to those declared as required in
+## %required_args
 ## Also check required privileges to perform each action
 sub check_action_parameters {
     my $action = shift;
@@ -2829,7 +2866,8 @@ sub send_html {
             POSIX::strftime("%a, %d %b %Y %H:%M:%S GMT", gmtime(time));
         Language::PopLang();
     }
-    ## If we set the header indicating the last time the file to send was modified, add an HTTP header (limitate web harvesting).
+    ## If we set the header indicating the last time the file to send was
+    ## modified, add an HTTP header (limitate web harvesting).
     if ($param->{'header_date'}) {
         Language::PushLang('en');
         printf "Last-Modified: %s\n",
@@ -3105,7 +3143,8 @@ sub check_param_in {
         $param->{'subscribe'} = $list->subscribe->{'name'};
         $param->{'send'} = $list->send->get_current_title() if $list->send;
 
-        # Pictures are not available unless it is configured for the list and the robot
+        # Pictures are not available unless it is configured for the list and
+        # the robot
         if ($list->pictures_feature eq 'off') {
             $param->{'pictures_display'} = undef;
         } else {
@@ -3166,7 +3205,8 @@ sub check_param_in {
         ## Check if this list's messages must be moderated.
         $param->{'is_moderated'} = $list->is_moderated();
 
-        ## If the user logged in is a privileged user, gather informations relative to administration tasks
+        ## If the user logged in is a privileged user, gather informations
+        ## relative to administration tasks
         if ($param->{'is_priv'}) {
             $param->{'mod_message'} = $list->get_mod_spool_size();
 
@@ -3235,7 +3275,8 @@ sub check_param_in {
         my %access = &d_access_control(\%mode, "");
         $param->{'may_d_read'} = $access{'may'}{'read'};
 
-        ## Check the status (exists, deleted, doesn't exist) of the shared directory
+        ## Check the status (exists, deleted, doesn't exist) of the shared
+        ## directory
         $param->{'shared'} = $list->get_shared_status();
     }
 
@@ -3470,7 +3511,8 @@ sub check_param_out {
                 $param->{'may_sync'} = 1;
             }
         } else {
-            ## If user not logged in && GET method && not an authN-related action
+            ## If user not logged in && GET method && not an authN-related
+            ## action
             ## Keep track of the 'referer' parameter
             if ($ENV{'REQUEST_METHOD'} eq 'GET'
                 && !$auth_action{$in{'action'}}) {
@@ -3564,7 +3606,8 @@ sub check_param_out {
                 undef($param->{'arc_access'});
             }
 
-            ## Check if web archive is publically accessible (useful information for RSS)
+            ## Check if web archive is publically accessible (useful
+            ## information for RSS)
             $result = Scenario::request_action(
                 $list, 'web_archive.access',
                 $param->{'auth_method'},
@@ -3579,7 +3622,8 @@ sub check_param_out {
 
         ## Shared documents access control
         if ($list->get_shared_status() eq 'exist') {
-            ## Check if shared is publically accessible (useful information for RSS)
+            ## Check if shared is publically accessible (useful information
+            ## for RSS)
             my $result = Scenario::request_action(
                 $list, 'shared_doc.d_read',
                 $param->{'auth_method'},
@@ -3619,7 +3663,8 @@ sub do_ticket {
         unless ($param->{'ticket_context'}{'result'} eq 'success'
         or $param->{'ticket_context'}{'result'} eq 'closed');
 
-    # if the ticket is related to someone which is not logged in, the system performs the same operation as for a login
+    # if the ticket is related to someone which is not logged in, the system
+    # performs the same operation as for a login
     my $email_regexp = &tools::get_regexp('email');
     if (($param->{'ticket_context'}{'result'} eq 'success')
         || # a valid ticket or a closed or expired ticket but with a valid pre-existing session
@@ -3847,8 +3892,10 @@ sub do_login {
     ## Current authentication mode
     #$param->{'auth'} = $param->{'alt_emails'}{$param->{'user'}{'email'}} || 'classic';
 
-    if ($session->{'lang'})
-    { #  user did choose a specific language before being logged. Apply it as a user pref.
+    if ($session->{'lang'}) {
+
+        # user did choose a specific language before being logged. Apply it as
+        # a user pref.
         User::update_global_user($param->{'user'}{'email'},
             {lang => $session->{'lang'}});
         $param->{'lang'} = $session->{'lang'};
@@ -3866,14 +3913,16 @@ sub do_login {
         $session->{'lang'} = $param->{'lang'};
     }
 
-    if ($session->{'review_page_size'})
-    {    #  user did choose a specific page size upgrade prefs
+    if ($session->{'review_page_size'}) {
+
+        # user did choose a specific page size upgrade prefs
         User::update_global_user($param->{'user'}{'email'},
             {data => &tools::hash_2_string($param->{'user'}{'prefs'})});
     }
 
-    if ($session->{'shared_mode'})
-    {    #  user did choose a shared expert/standard mode
+    if ($session->{'shared_mode'}) {
+
+        # user did choose a shared expert/standard mode
         User::update_global_user($param->{'user'}{'email'},
             {data => &tools::hash_2_string($param->{'user'}{'prefs'})});
     }
@@ -3912,12 +3961,15 @@ sub do_login {
 
 ## Login WWSympa
 ## The sso_login action is made of 4 subactions that make a complete workflow.
-## Note that this comlexe workflow is only used if the SSO server does not provide
-## the user email address or if this email address is not trusted and therefore
+## Note that this comlexe workflow is only used if the SSO server does not
+## provide
+## the user email address or if this email address is not trusted and
+## therefore
 ## needs to be checked.
 ## The workflow:
 ##  1) init: determine if email address needs to be collected/checked
-##  2) requestemail: collect the user email address in a web form. Note that form may be initialized with
+##  2) requestemail: collect the user email address in a web form. Note that
+##  form may be initialized with
 ##     one email address provided by the SSO server
 ##  3) validateemail: a challenge is sent to the email address to validate it
 ##  4) confirmemail: user confirms his email address with the challenge
@@ -3984,7 +4036,8 @@ sub do_sso_login {
         ) {
         ## Generic SSO
 
-        ## If contacted via POST, then redirect the user to the URL for the access control to apply
+        ## If contacted via POST, then redirect the user to the URL for the
+        ## access control to apply
         if ($ENV{'REQUEST_METHOD'} eq 'POST') {
             my $path = '';
             my $service;
@@ -4025,7 +4078,8 @@ sub do_sso_login {
             {'force_email_verify'}) {
             my $email_is_trusted = 0;
 
-            ## the subactions order is : init, requestemail, validateemail, sendssopasswd, confirmemail
+            ## the subactions order is : init, requestemail, validateemail,
+            ## sendssopasswd, confirmemail
 
             ## get email from NetiD table
             if (defined Site->auth_services->{$robot_id}[$sso_id]
@@ -4051,8 +4105,8 @@ sub do_sso_login {
                             }
                     )
                 );
-                $email = $email_list[0]
-                    ;    ## Only get the first occurrence if multi-valued
+                ## Only get the first occurrence if multi-valued
+                $email = $email_list[0];
             }
 
             ## Start the email validation process
@@ -4104,7 +4158,8 @@ sub do_sso_login {
                 $in{'email'}              = $email;
 
                 #
-                # Check input parameters and verify ticket for email, stolen from & do_login
+                # Check input parameters and verify ticket for email, stolen
+                # from & do_login
                 #
                 unless ($in{'email'}) {
                     &report::reject_report_web('user', 'no_email', {},
@@ -4169,9 +4224,11 @@ sub do_sso_login {
                 # need to create netid to email map entry
                 $email = $in{'email'};
 
-                # everything is ok to proceed to with possible sympa account created and traddional sso login
+                # everything is ok to proceed to with possible sympa account
+                # created and traddional sso login
 
-                ## TODO : netidmap_table should also be used when no confirmation is performed
+                ## TODO : netidmap_table should also be used when no
+                ## confirmation is performed
                 if (defined Site->auth_services->{$robot_id}[$sso_id]
                     {'internal_email_by_netid'}) {
 
@@ -4222,8 +4279,8 @@ sub do_sso_login {
                             }
                     )
                 );
-                $email = $email_list[0]
-                    ;    ## Only get the first occurrence if multi-valued
+                ## Only get the first occurrence if multi-valued
+                $email = $email_list[0];
 
             } else {
                 unless (
@@ -4276,7 +4333,8 @@ sub do_sso_login {
 
         &wwslog('notice', 'User identified as %s', $email);
 
-        ## There are two ways to list the attributes that Sympa will cache for the user
+        ## There are two ways to list the attributes that Sympa will cache for
+        ## the user
         ## Either with a defined header prefix (http_header_prefix)
         ## Or with an explicit list of header fields (http_header_list)
         my @sso_attr;
@@ -4446,7 +4504,8 @@ sub is_ldap_user {
 
     foreach my $ldap (@ldap_servers) {
 
-        # skip ldap auth service if the user id or email do not match regexp auth service parameter
+        # skip ldap auth service if the user id or email do not match regexp
+        # auth service parameter
         next unless ($auth =~ /$ldap->{'regexp'}/i);
 
         my $param = &tools::dup_var($ldap);
@@ -4556,7 +4615,8 @@ sub do_help {
     return 1;
 }
 
-# update session cookie and redirect the client to redirect_to parameter or glob var;
+# update session cookie and redirect the client to redirect_to parameter or
+# glob var;
 sub do_redirect {
 
     my $redirect_to = shift;
@@ -4564,7 +4624,8 @@ sub do_redirect {
 
     $redirect_to ||= $param->{'redirect_to'};
 
-    # because of some bug Sympa did redirection to un empty URL. Next line should prevent it.
+    # because of some bug Sympa did redirection to un empty URL. Next line
+    # should prevent it.
     $redirect_to ||= $param->{'base_url'} . $param->{'path_cgi'};
 
     #$session->set_cookie('localhost','session');
@@ -5426,7 +5487,8 @@ sub do_show_exclude {
 
     &wwslog('info', 'do_exclude()');
 
-    # Get the emails of the exclude about a list and the date of their insertion
+    # Get the emails of the exclude about a list and the date of their
+    # insertion
     my $data_exclu = $list->get_exclusion();
 
     my $excluded;
@@ -6034,7 +6096,8 @@ sub do_subscribe {
         if (scalar @{$list->custom_attribute}) {
 
             ## This variable is set in the subrequest form
-            ## If not set, it means that the user has not been prompted to provide custom_attributes
+            ## If not set, it means that the user has not been prompted to
+            ## provide custom_attributes
             unless ($in{'via_subrequest'}) {
                 &wwslog('notice', 'Returning subrequest form');
                 return "subrequest";
@@ -6458,7 +6521,9 @@ sub do_subrequest {
 
 sub do_auto_signoff {
     &wwslog('info', 'do_auto_signoff');
-    ## If the URL isn't valid, then go to home page. No need to guide the user: this function is supposed to be used by clicking on autocreated URL only.
+    ## If the URL isn't valid, then go to home page. No need to guide the
+    ## user: this function is supposed to be used by clicking on autocreated
+    ## URL only.
     return $robot->default_home unless $in{'email'};
 
     ## If unsubscribe is forbidden, reject the request. Other
@@ -6527,7 +6592,9 @@ sub do_auto_signoff {
 
 sub do_family_signoff_request {
     &wwslog('info', 'do_family_signoff_request');
-    ## If the URL isn't valid, then go to home page. No need to guide the user: this function is supposed to be used by clicking on autocreated URL only.
+    ## If the URL isn't valid, then go to home page. No need to guide the
+    ## user: this function is supposed to be used by clicking on autocreated
+    ## URL only.
     return $robot->default_home unless $in{'email'};
 
     my $ticket =
@@ -6792,7 +6859,8 @@ sub do_sigrequest {
         return 1;
     }
 
-    ## Not auth & no email => return the sigrequest web form to get the user email
+    ## Not auth & no email => return the sigrequest web form to get the user
+    ## email
     unless ($in{'email'}) {
         return 1;
     }
@@ -7644,7 +7712,8 @@ sub do_manage_template {
 
     } elsif ($in{'subaction'} eq 'setdefault') {
 
-        # replace existing reject.tt2 file by a symlink to reject_default.tt2 for compatibility with version older than 6.0
+        # replace existing reject.tt2 file by a symlink to reject_default.tt2
+        # for compatibility with version older than 6.0
         my $base = $list->dir . '/mail_tt2/';
         $in{'new_default'} =~ s/\s/_/g;
         my $absolute_file = $base . 'reject_' . $in{'new_default'} . '.tt2';
@@ -7719,7 +7788,9 @@ sub do_manage_template {
                 }
             } elsif (-f $absolute_file) {
 
-                # replace existing reject.tt2 file by a symlink to reject_default.tt2 for compatibility with version older than 6.0
+                # replace existing reject.tt2 file by a symlink to
+                # reject_default.tt2 for compatibility with version older than
+                # 6.0
                 unless (rename($absolute_file, $base . 'reject_default.tt2'))
                 {
                     &wwslog(
@@ -7905,7 +7976,8 @@ sub do_skinsedit {
             $param->{'css'} = $css;
             my $css_file;
 
-            # if user use editcolor form we must generate a static CSS that used custom colors.
+            # if user use editcolor form we must generate a static CSS that
+            # used custom colors.
             if ($in{'subaction_test'}) {
                 $css_file = "$dir/$param->{'user'}{'email'}.$css";
             } else {
@@ -7929,7 +8001,8 @@ sub do_skinsedit {
                     $dir);
             }
 
-            ## Keep a copy of the previous CSS (only if this is not a custom css).
+            ## Keep a copy of the previous CSS (only if this is not a custom
+            ## css).
             if ((-f "$css_file") && !($in{'editcolors'})) {
                 unless (rename "$css_file", "$css_file.$date") {
                     &report::reject_report_web(
@@ -8015,7 +8088,8 @@ sub do_add {
 
     my %user;
 
-    ## If a list is not 'open' and allow_subscribe_if_pending has been set to 'off' returns undef.
+    ## If a list is not 'open' and allow_subscribe_if_pending has been set to
+    ## 'off' returns undef.
     unless (($list->status eq 'open')
         || ($robot->allow_subscribe_if_pending eq 'on')) {
         &report::reject_report_web('user', 'list_not_open',
@@ -8160,9 +8234,10 @@ sub do_add {
         }
 
         ##
-        push @new_users,   $u;
-        push @added_users, $email
-            ; ## List only email addresses ; used later to remove pending subrequests
+        push @new_users, $u;
+        ## List only email addresses ; used later to remove pending
+        ## subrequests
+        push @added_users, $email;
 
         unless ($in{'quiet'} || $add_is =~ /quiet/i) {
             unless ($list->send_file('welcome', $email)) {
@@ -8457,7 +8532,9 @@ sub do_modindex {
                 }
             } elsif (-f $absolute_file) {
 
-                # replace existing reject.tt2 file by a symlink to reject_default.tt2 for compatibility with version older than 6.0
+                # replace existing reject.tt2 file by a symlink to
+                # reject_default.tt2 for compatibility with version older than
+                # 6.0
                 unless (rename($absolute_file, $base . 'reject_default.tt2'))
                 {
                     &wwslog(
@@ -8827,7 +8904,9 @@ sub do_d_reject_shared {
 ####################################################
 sub do_reject {
 
-    # toggle selection javascript have a distinction of spam and ham base on the checkbox name . It is not useful here so join id list and idspam list.
+    # toggle selection javascript have a distinction of spam and ham base on
+    # the checkbox name . It is not useful here so join id list and idspam
+    # list.
     $in{'id'} .= ',' . $in{'idspam'} if ($in{'idspam'});
     $in{'id'} =~ s/^,//;
     $in{'id'} =~ s/\0/,/g;
@@ -8875,7 +8954,8 @@ sub do_reject {
             next;
         }
 
-        #  extract sender address is needed to report reject to sender and in case the sender is to be added to the blacklist
+        #  extract sender address is needed to report reject to sender and in
+        #  case the sender is to be added to the blacklist
         if ($in{'quiet'} ne '1' or $in{'blacklist'}) {
             my $rejected_sender = $message->get_sender_email;
             if ($rejected_sender) {
@@ -9012,7 +9092,8 @@ sub do_reject {
 #  Moderation of messages : distributes moderated
 #  messages and tag it in message moderation context
 #
-# IN : - id of message to distribute. This value can also be in idspam parameter
+# IN : - id of message to distribute. This value can also be in idspam
+# parameter
 #
 # OUT : 'loginrequest' | 'modindex' | undef
 #
@@ -9392,7 +9473,8 @@ sub do_editfile {
         $param->{'filepath'} =
             ($list || $robot)->get_etc_filename($subdir . $file);
 
-        ## There might be no matching file if default template not provided with Sympa
+        ## There might be no matching file if default template not provided
+        ## with Sympa
         if (defined $param->{'filepath'}) {
             ## open file and provide filecontent to the parser
             ## It allows to us the correct file encoding
@@ -9480,7 +9562,7 @@ sub do_editfile {
     return 1;
 }
 
-#####################################################################################
+##############################################################################
 
 ## Saving of list files
 sub do_savefile {
@@ -9581,7 +9663,8 @@ sub do_savefile {
     ## Not empty
     if ($in{'content'} && ($in{'content'} !~ /^\s*$/)) {
 
-        ## Remove DOS linefeeds (^M) that cause problems with Outlook 98, AOL, and EIMS:
+        ## Remove DOS linefeeds (^M) that cause problems with Outlook 98, AOL,
+        ## and EIMS:
         $in{'content'} =~ s/\r\n|\r/\n/g;
 
         ## Create directory if required
@@ -9779,7 +9862,8 @@ sub do_arc {
             if ($param->{'user'}{'prefs'}{'arc_mode'} ne
                 $session->{'arc_mode'}) {
 
-                # update user pref  as soon as connected user change the way he consult archives
+                # update user pref  as soon as connected user change the way
+                # he consult archives
                 $param->{'user'}{'prefs'}{'arc_mode'} =
                     $session->{'arc_mode'};
                 User::update_global_user(
@@ -9792,7 +9876,8 @@ sub do_arc {
         }
 
         if ($in{'arc_file'} =~ /^(msg\d+)\.html$/) {
-            ## If the file is a message, load the metadata to find out who is the author of the message
+            ## If the file is a message, load the metadata to find out who is
+            ## the author of the message
             my $metadata =
                 &Archive::load_html_message('file_path' => $arc_file_path);
             $param->{'include_picture'} =
@@ -9800,7 +9885,8 @@ sub do_arc {
             $param->{'subtitle'} = $metadata->{'X-Subject'};
         }
 
-        ## Provide a filehandle to the TT2 parser (instead of a filename previously)
+        ## Provide a filehandle to the TT2 parser (instead of a filename
+        ## previously)
         ## It allows to set the appropriate utf8 binmode on the FH
         open $param->{'file_handle'}, "<", $arc_file_path;
 
@@ -9819,7 +9905,8 @@ sub do_arc {
     my @stat = stat($arc_file_path);
     $param->{'date'} = $stat[9];
 
-    # send page as static if client is a bot. That's prevent crawling all archices every weeks by google, yahoo and others bots
+    # send page as static if client is a bot. That's prevent crawling all
+    # archices every weeks by google, yahoo and others bots
     if ($session->{'is_a_crawler'}) {
         $param->{'header_date'} = $stat[9];
     }
@@ -10056,7 +10143,8 @@ sub get_timelocal_from_date {
 ####################################################
 #
 #  request by list owner or message sender to remove message from archive
-#  Create in the outgoing spool a file containing the message-id of mesage to be removed
+#  Create in the outgoing spool a file containing the message-id of mesage to
+#  be removed
 #
 # IN : list@host yyyy month and a tab of msgid
 #
@@ -11015,7 +11103,8 @@ sub do_create_list {
         $in{'subject'}, $in{'template'});
 
     ## Check that all the needed arguments are present.
-    ## This is checked here because it requires to return the incomplete form to the user
+    ## This is checked here because it requires to return the incomplete form
+    ## to the user
     foreach my $arg ('listname', 'subject', 'template', 'info', 'topics') {
         unless ($in{$arg}) {
             &report::reject_report_web('user', 'missing_arg',
@@ -11059,7 +11148,8 @@ sub do_create_list {
         );
         return 'home';
 
-        ## If the action is reserved to listmaster, note that it will have to be moderated
+        ## If the action is reserved to listmaster, note that it will have to
+        ## be moderated
     } elsif ($param->{'create_action'} =~ /listmaster/i) {
         $param->{'status'} = 'pending';
 
@@ -11378,12 +11468,12 @@ sub do_home {
 
             next if $param->{'errors_summary'}{$the_list->name};
 
-            my $errors = $the_list->get_total_bouncing()
-                ;    #get the bounces of the subscriber
+            # get the bounces of the subscriber
+            my $errors = $the_list->get_total_bouncing();
 
+            # if there is bounces put it in errors_summary
             $param->{'errors_summary'}{$the_list->name} = $errors
-                if ($errors > 0)
-                ;    #if there is bounces put it in errors_summary
+                if ($errors > 0);
         }
     }
 
@@ -11949,11 +12039,13 @@ sub do_edit_list {
 
     ## This hash will contain all the data gathered from the edit list form.
     ## The keys are the parameter names.
-    ## The values are either the parameter value or an array containing this value if this is a multiple values parameter.
+    ## The values are either the parameter value or an array containing this
+    ## value if this is a multiple values parameter.
     ## The value can be a scalar or a hash.
     my $new_admin = {};
 
-    ## This hash contains the names of all the parameters sent by the form to the FCGI.
+    ## This hash contains the names of all the parameters sent by the form to
+    ## the FCGI.
     ## The keys are the parameters name, the value is always 1.
     ## Used only to parse the data.
     my $edited_param = {};
@@ -11976,7 +12068,8 @@ sub do_edit_list {
         my $value = $in{$key};
         next if ($value =~ /^\s*$/);
 
-        ## If the parameter is a multiple values parameter, store the values into an array.
+        ## If the parameter is a multiple values parameter, store the values
+        ## into an array.
         if ($type eq 'multiple_param') {
             my @values = split /\0/, $value;
             $value = \@values;
@@ -11989,7 +12082,8 @@ sub do_edit_list {
         $$var = $value;
     }
 
-    ## Check that the serial number sent by the form is the same as the one we expect.
+    ## Check that the serial number sent by the form is the same as the one we
+    ## expect.
     ## Avoid modifying a list previously modified by another way.
     unless ($list->serial == $in{'serial'}) {
         &report::reject_report_web('user', 'config_changed',
@@ -12011,19 +12105,25 @@ sub do_edit_list {
     }
 
     ## Check changes & check syntax
-    ## %changed stores the names of the parameters whose values differs from the value in the config file.
-    ## %stores the name of parameter for which values have been deleted. The keys are the parameter name, the values are the index of the deleted value.
-    ## @syntax_error stores the list of parameters for which syntax errors wre founs while evaluating the data sent by the form.
+    ## %changed stores the names of the parameters whose values differs from
+    ## the value in the config file.
+    ## %stores the name of parameter for which values have been deleted. The
+    ## keys are the parameter name, the values are the index of the deleted
+    ## value.
+    ## @syntax_error stores the list of parameters for which syntax errors wre
+    ## founs while evaluating the data sent by the form.
     my (%changed, %delete);
     my @syntax_error;
 
     ## Check family constraints.
-    ## %check_family is a hash whose keys are a parameter name and whose values are the constraints
+    ## %check_family is a hash whose keys are a parameter name and whose
+    ## values are the constraints
     ## defined for this parameter.
     my %check_family;
 
     ## Getting changes about owners or editors
-    ## If changes occurred in the owner or editor definition, these scalars are set to 1.
+    ## If changes occurred in the owner or editor definition, these scalars
+    ## are set to 1.
     my $owner_update  = 0;
     my $editor_update = 0;
 
@@ -12033,8 +12133,10 @@ sub do_edit_list {
 
     foreach my $pname (sort List::by_order keys %{$edited_param}) {
 
-        ## $p will contain the values of the current parameter in the previous list config
-        ## $new_p  will contain the values sent by the form for the current parameter.
+        ## $p will contain the values of the current parameter in the previous
+        ## list config
+        ## $new_p  will contain the values sent by the form for the current
+        ## parameter.
         my ($p, $new_p);
 
         ## Check privileges first
@@ -12042,7 +12144,8 @@ sub do_edit_list {
             unless (
             $list->may_edit($pname, $param->{'user'}{'email'}) eq 'write');
 
-        ## If the list belongs to a family, gather all the constraints for each edited parameter.
+        ## If the list belongs to a family, gather all the constraints for
+        ## each edited parameter.
         if (ref($family) eq 'Family') {
 
             if (!ref $pname and ref($pinfo->{$pname}{'format'}) ne 'HASH') {
@@ -12066,7 +12169,8 @@ sub do_edit_list {
         ## Skip the obsolete parameters.
         next if $pinfo->{$pname}{'obsolete'};
 
-        ## $to_index value will correspond to the number of not empty parameters sent by the form.
+        ## $to_index value will correspond to the number of not empty
+        ## parameters sent by the form.
         my $to_index;
 
         ####### Validation, step 1: remove empty entries ###########
@@ -12074,7 +12178,8 @@ sub do_edit_list {
         ## If the parameter can have multiple values...
         if ($pinfo->{$pname}{'occurrence'} =~ /n$/) {
 
-            ## They were either entries removed by the user or empty entries added by wwsympa
+            ## They were either entries removed by the user or empty entries
+            ## added by wwsympa
             ## The loop is going backward so we can remove empty entries
             my @all = 0 .. $#{$new_admin->{$pname}};
             foreach my $i (reverse @all) {
@@ -12104,12 +12209,15 @@ sub do_edit_list {
                 }
             }
 
-            ## Now, %new_admin contains only entries for which all the mandatory values are accounted for.
+            ## Now, %new_admin contains only entries for which all the
+            ## mandatory values are accounted for.
 
-            ## $last_index corresponds to the number of remaining instances of this param sent by the form.
+            ## $last_index corresponds to the number of remaining instances of
+            ## this param sent by the form.
             my $last_index = $#{$new_admin->{$pname}};
 
-            ## If a mandatory parameter is missing, issue an error and stop here.
+            ## If a mandatory parameter is missing, issue an error and stop
+            ## here.
             if ($pinfo->{$pname}{'occurrence'} =~ /^1/ && !($last_index >= 0))
             {
                 delete $new_admin->{$pname};
@@ -12125,11 +12233,13 @@ sub do_edit_list {
                 next;
             }
 
-            ## If there are less entries in the config file than were sent by the form,
+            ## If there are less entries in the config file than were sent by
+            ## the form,
             ## $to_index must correspond to the number of entries sent.
             if ($#{$list->$pname} < $last_index) {
                 $to_index = $last_index;
-                ## Otherwise, $to_index must correspond to the number of entries in the config file.
+                ## Otherwise, $to_index must correspond to the number of
+                ## entries in the config file.
             } else {
                 $to_index = $#{$list->$pname};
             }
@@ -12169,9 +12279,12 @@ sub do_edit_list {
             $new_p = [$new_admin->{$pname}];
         }
 
-        ####### Validation, step 2: - check if the parameter was modified.             ###########
-        #######                     - check that the new values have the right syntax. ###########
-        ####### Note: this step is performed for each occurrence of the parameter.     ###########
+        ### Validation, step 2: - check if the parameter was modified.
+        ### ###
+        ###                     - check that the new values have the right
+        ###                     syntax. ###
+        ### Note: this step is performed for each occurrence of the parameter.
+        ### ###
 
         foreach my $i (0 .. $to_index) {
             unless (defined $new_p->[$i]) {
@@ -12179,7 +12292,8 @@ sub do_edit_list {
                 $changed{$pname} = 1;
                 next;
             }
-            ## If the parameter corresponds to a scenario or a task, mark it as changed if its name was changed.
+            ## If the parameter corresponds to a scenario or a task, mark it
+            ## as changed if its name was changed.
             ## Example: 'subscribe'
             if (   $pinfo->{$pname}{'scenario'}
                 || $pinfo->{$pname}{'task'}) {
@@ -12187,7 +12301,8 @@ sub do_edit_list {
                     $changed{$pname} = 1;
                     next;
                 }
-                ## If the parameter has a complex structure, we need to check all its components.
+                ## If the parameter has a complex structure, we need to check
+                ## all its components.
                 ## Example: 'owner'
             } elsif (ref($pinfo->{$pname}{'format'}) eq 'HASH') {
                 ## Check each parameter component.
@@ -12204,14 +12319,17 @@ sub do_edit_list {
                             $param->{'user'}{'email'}) eq 'write'
                         );
 
-                    ## If the list belongs to a family, check the possible constraints on this parameter component.
+                    ## If the list belongs to a family, check the possible
+                    ## constraints on this parameter component.
                     if (ref($family) eq 'Family') {
-                        ## Test constraints only if the parameter component is not a complex structure.
+                        ## Test constraints only if the parameter component is
+                        ## not a complex structure.
                         if (!ref($key)) {
                             my $constraint =
                                 $family->get_param_constraint("$pname.$key");
-                            if (ref($constraint) eq 'HASH')
-                            {    # controlled parameter
+                            if (ref($constraint) eq 'HASH') {
+
+                                # controlled parameter
                                 $check_family{$pname}{$key} = $constraint;
                             } elsif ($constraint ne '0') {   # fixed parameter
                                 next;    # Go to the next parameter component.
@@ -12219,41 +12337,52 @@ sub do_edit_list {
                         }
                     }
 
-                    ## If the parameter component corresponds to a task or a scenario, mark it as changed if its name was changed.
+                    ## If the parameter component corresponds to a task or a
+                    ## scenario, mark it as changed if its name was changed.
                     if (   $pinfo->{$pname}{'format'}{$key}{'scenario'}
                         || $pinfo->{$pname}{'format'}{$key}{'task'}) {
                         if ($p->[$i]{$key}{'name'} ne
                             $new_p->[$i]{$key}{'name'}) {
                             $changed{$pname} = 1;
-                            next
-                                ; # Mark as changed and go to the next parameter component.
+
+                            # Mark as changed and go to the next parameter
+                            # component.
+                            next;
                         }
-                        ## If the parameter component doesn't correspond to a task or a scenario, we must check its content.
+                        ## If the parameter component doesn't correspond to a
+                        ## task or a scenario, we must check its content.
                     } else {
-                        ## Parameter component check, case 1: this parameter component can have multiple occurrence.
+                        ## Parameter component check, case 1: this parameter
+                        ## component can have multiple occurrence.
                         ## Example: 'digest->days'
                         if ($pinfo->{$pname}{'format'}{$key}{'occurrence'} =~
                             /n$/) {
-                            ## If the new value differs from the previous value, mark as changed and go to the next parameter component.
+                            ## If the new value differs from the previous
+                            ## value, mark as changed and go to the next
+                            ## parameter component.
                             if ($#{$p->[$i]{$key}} != $#{$new_p->[$i]{$key}})
                             {
                                 $changed{$pname} = 1;
                                 next;
                             }
 
-                            ## For each occurrence of this parameter component, check value
+                            ## For each occurrence of this parameter
+                            ## component, check value
                             foreach my $index (0 .. $#{$p->[$i]{$key}}) {
                                 my $format =
                                     $pinfo->{$pname}{'format'}{$key}
                                     {'format'};
 
-                                ## If the format has a complex structure, it is the description of a file format.
+                                ## If the format has a complex structure, it
+                                ## is the description of a file format.
                                 if (ref($format)) {
                                     $format =
                                         $pinfo->{$pname}{'format'}{$key}
                                         {'file_format'};
                                 }
-                                ## If this occurrence of the parameter component differs from the corresponding one in the config
+                                ## If this occurrence of the parameter
+                                ## component differs from the corresponding
+                                ## one in the config
                                 ## check the syntax and mark as changed.
                                 if ($p->[$i]{$key}[$index] ne
                                     $new_p->[$i]{$key}[$index]) {
@@ -12267,28 +12396,34 @@ sub do_edit_list {
                                         push @syntax_error, $pname;
                                     }
                                     $changed{$pname} = 1;
-                                    next
-                                        ; # Mark as changed and go to the next parameter component.
+
+                                    # Mark as changed and go to the next
+                                    # parameter component.
+                                    next;
                                 }
                             }
 
-                            ## Parameter component check, case 2: this component is limited to one occurrence.
+                            ## Parameter component check, case 2: this
+                            ## component is limited to one occurrence.
                             ## Example: 'owner->email'
                         } else {
-                            ## If the parameter component value differs from the corresponding one in the config, go on.
+                            ## If the parameter component value differs from
+                            ## the corresponding one in the config, go on.
                             if ($p->[$i]{$key} ne $new_p->[$i]{$key}) {
                                 my $format =
                                     $pinfo->{$pname}{'format'}{$key}
                                     {'format'};
 
-                                ## If the format has a complex structure, it is the description of a file format.
+                                ## If the format has a complex structure, it
+                                ## is the description of a file format.
                                 if (ref($format)) {
                                     $format =
                                         $pinfo->{$pname}{'format'}{$key}
                                         {'file_format'};
                                 }
 
-                                ## Check the syntax and mark as changed if the syntax is correct.
+                                ## Check the syntax and mark as changed if the
+                                ## syntax is correct.
                                 if (defined($new_p->[$i]{$key})
                                     && $new_p->[$i]{$key} !~ /^$format$/i) {
                                     &wwslog('err',
@@ -12298,16 +12433,20 @@ sub do_edit_list {
                                 }
 
                                 $changed{$pname} = 1;
-                                next
-                                    ; # Mark as changed and go to the next parameter component.
+
+                                # Mark as changed and go to the next parameter
+                                # component.
+                                next;
                             }
                         }
                     }
                 }
-                ## If the parameter has just a scalar value, just check its value.
+                ## If the parameter has just a scalar value, just check its
+                ## value.
                 ## Example: 'max_size'
             } else {
-                ## If the value differs from the one in the config file, mark parameter as changed if the syntax is correct.
+                ## If the value differs from the one in the config file, mark
+                ## parameter as changed if the syntax is correct.
                 if ($p->[$i] ne $new_p->[$i]) {
                     unless (
                         $new_p->[$i] =~ /^$pinfo->{$pname}{'file_format'}$/) {
@@ -12556,7 +12695,8 @@ sub do_edit_list {
         return undef;
     }
 
-    ## If list has included data sources, update them and delete sync_include task.
+    ## If list has included data sources, update them and delete sync_include
+    ## task.
     if ($data_source_updated) {
         if ($list->on_the_fly_sync_include('use_ttl' => 0)) {
             &report::notice_report_web('subscribers_updated', {},
@@ -12568,7 +12708,8 @@ sub do_edit_list {
         }
     }
 
-    ## call sync_include_admin if there are changes about owners or editors and we're in mode include2
+    ## call sync_include_admin if there are changes about owners or editors
+    ## and we're in mode include2
     unless ($list->sync_include_admin()) {
         &report::reject_report_web('intern', 'sync_include_admin_failed', {},
             $param->{'action'}, $list, $param->{'user'}{'email'}, $robot_id);
@@ -12875,7 +13016,8 @@ sub _prepare_edit_form {
     my $family;
     my $is_form_editable = '0';
 
-    ## If the list belongs to a family, check if the said family can be retrieved.
+    ## If the list belongs to a family, check if the said family can be
+    ## retrieved.
     if (defined $list->family_name) {
         unless ($family = $list->family) {
             &report::reject_report_web('intern', 'unable_get_family', {},
@@ -12903,12 +13045,14 @@ sub _prepare_edit_form {
         ## Check whether the parameter can be edited by the logged user.
         my $may_edit = $list->may_edit($pname, $param->{'user'}{'email'});
 
-        ## Valid form global edit status as soon as at least one editable parameter is found.
+        ## Valid form global edit status as soon as at least one editable
+        ## parameter is found.
         if ($may_edit eq 'write') {
             $is_form_editable = '1';
         }
 
-        ## Store in $p a reference to the hash containing the informations relative to the parameter editing.
+        ## Store in $p a reference to the hash containing the informations
+        ## relative to the parameter editing.
         my $p =
             &_prepare_data($pname, $pinfo->{$pname}, $list->$pname, $may_edit,
             $family);
@@ -12918,7 +13062,8 @@ sub _prepare_edit_form {
 ##	 $p->{'default'} = 1 if $list->defaults($pname);
         $p->{'default'} = $list->defaults($pname);
 
-        ## Store the change state of this parameter, taken from the global variable %changed_params.
+        ## Store the change state of this parameter, taken from the global
+        ## variable %changed_params.
         $p->{'changed'} = $::changed_params{$pname};
 
         ## Exceptions...too many
@@ -13018,7 +13163,8 @@ sub _prepare_edit_form {
         push @{$param->{'param'}}, $p;
     }
 
-    ## If at least one param was editable, make the update button appear in the form.
+    ## If at least one param was editable, make the update button appear in
+    ## the form.
     $param->{'is_form_editable'} = $is_form_editable;
     return 1;
 }
@@ -13096,15 +13242,17 @@ sub _prepare_data {
     if ((ref($family) eq 'Family') && ($may_edit eq 'write')) {
 
         if ($main_p and defined $pinfo->{$main_p}) {
-            if (ref($pinfo->{$main_p}{'format'}) eq 'HASH')
-            {    # composed parameter
+            if (ref($pinfo->{$main_p}{'format'}) eq 'HASH') {
+
+                # composed parameter
 
                 $constraint = $family->get_param_constraint(
                     "$main_p.$p_glob->{'name'}");
             }
         } else {    # simple parameter
-            if (ref($pinfo->{$p_glob->{'name'}}{'format'}) ne 'HASH')
-            {       # simple parameter
+            if (ref($pinfo->{$p_glob->{'name'}}{'format'}) ne 'HASH') {
+
+                # simple parameter
                 $constraint =
                     $family->get_param_constraint($p_glob->{'name'});
             }
@@ -13367,7 +13515,8 @@ sub do_close_list_request {
     return 1;
 }
 
-# in order to rename a list you must be list owner and you must be allowed to create new list
+# in order to rename a list you must be list owner and you must be allowed to
+# create new list
 sub do_rename_list_request {
     &wwslog('info', 'do_rename_list_request()');
 
@@ -13428,7 +13577,8 @@ sub do_copy_list {
     return undef;
 }
 
-# in order to rename a list you must be list owner and you must be allowed to create new list
+# in order to rename a list you must be list owner and you must be allowed to
+# create new list
 sub do_rename_list {
     my $mode = shift;
 
@@ -14239,7 +14389,8 @@ sub by_order {
     my $order = shift;
     my $hash  = shift;
 
-    # $order = 'order_by_size'/'order_by_doc'/'order_by_author'/'order_by_date'
+    # $order =
+    # 'order_by_size'/'order_by_doc'/'order_by_author'/'order_by_date'
 
     if ($order eq 'order_by_doc') {
         $hash->{$a}{'doc'} cmp $hash->{$b}{'doc'}
@@ -14534,7 +14685,8 @@ sub do_d_read {
                             $subdirs{$d}{'author_known'} = 1;
                         }
 
-                        # if the file can be read, check for edit access & edit description files access
+                        # if the file can be read, check for edit access &
+                        # edit description files access
                         ## only authenticated users can edit a file
 
                         if ($param->{'user'}{'email'}) {
@@ -14563,14 +14715,16 @@ sub do_d_read {
 
                                 $subdirs{$d}{'edit'} =
                                     1;    # or = $may_action_edit ?
-                                 # if index.html, must know if something can be edit in the dir
+                                   # if index.html, must know if something can
+                                   # be edit in the dir
                                 $normal_mode = 1;
                             } elsif ($may_action_edit != 0) {
 
                                 # $may_action_edit = 0.5 or 1
                                 $subdirs{$d}{'edit'} = $may_action_edit;
 
-                                # if index.html, must know if something can be edit in the dir
+                                # if index.html, must know if something can be
+                                # edit in the dir
                                 $normal_mode = 1;
                             }
                         }
@@ -15075,7 +15229,8 @@ sub do_latest_d_read {
     return 1;
 }
 
-##  browse a directory recursively and return documents younger than $oldest_day
+##  browse a directory recursively and return documents younger than
+##  $oldest_day
 sub directory_browsing {
     my ($dir, $oldest_day, $may_control) = @_;
     &wwslog('debug2', "directory_browsing($dir,$oldest_day)");
@@ -15641,7 +15796,8 @@ sub do_d_describe {
         return undef;
     }
 
-    ## the path must not be empty (the description file of the shared directory
+    ## the path must not be empty (the description file of the shared
+    ## directory
     #  doesn't exist)
     unless ($path) {
         &report::reject_report_web(
@@ -16539,7 +16695,8 @@ sub do_d_upload {
         }
     }
 
-    # The name of the file must be correct and musn't not be a description file
+    # The name of the file must be correct and musn't not be a description
+    # file
     if (   $fname =~ /^\./
         || $fname =~ /\.desc/
         || $fname =~ /[~\#\[\]]$/) {
@@ -16639,7 +16796,8 @@ sub do_d_upload {
     my $longtmpdesc = "$shareddir/$path/$tmpdesc";
     $longtmpdesc =~ s/\/+/\//g;
 
-    # if we aren't in mode_delete nor in mode_rename nor in mode_cancel and the file already exists
+    # if we aren't in mode_delete nor in mode_rename nor in mode_cancel and
+    # the file already exists
     # then we create of a temporary file
     if (   (-e "$longname")
         && ($in{'mode_delete'} eq undef)
@@ -16659,7 +16817,8 @@ sub do_d_upload {
 
         if (-e "$longtmpname") {
 
-            # if exists a temp file younger than 5 minutes that belongs to another user : upload refused
+            # if exists a temp file younger than 5 minutes that belongs to
+            # another user : upload refused
             my @info    = stat $longtmpname;
             my $timeold = time - $info[10];
 
@@ -16790,7 +16949,8 @@ sub do_d_upload {
         }
     }
 
-    # if we're in mode_delete or mode_rename or mode_cancel, the temp file and his desc file must exist
+    # if we're in mode_delete or mode_rename or mode_cancel, the temp file and
+    # his desc file must exist
     if (   $in{'mode_delete'}
         || $in{'mode_rename'}
         || $in{'mode_cancel'}) {
@@ -18159,13 +18319,15 @@ sub d_unzip_shared_file {
     }
 
     ## Qencode 8bit filenames afterward
-    ## The suspected charset is the one that is associated to the user's language
+    ## The suspected charset is the one that is associated to the user's
+    ## language
     &tools::qencode_hierarchy($zip_abs_dir . '/zip', &Language::GetCharset());
 
     return $status;
 }
 
-## Install file hierarchy from $tmp_dir directory to $shareddir/$path directory
+## Install file hierarchy from $tmp_dir directory to $shareddir/$path
+## directory
 sub d_install_file_hierarchy {
     my ($tmp_dir, $shareddir, $path, $access_dir) = @_;
     &wwslog('debug2', 'd_install_file_hierarchy(%s,%s)', $tmp_dir, $path);
@@ -18403,7 +18565,8 @@ sub d_copy_rec_dir {
 
     unless ($may->{'exists'}) {
 
-        # The name of the directory must be correct and musn't not be a description file
+        # The name of the directory must be correct and musn't not be a
+        # description file
         if (   $dname =~ /^\./
             || $dname =~ /\.desc/
             || $dname =~ /[~\#\[\]]$/) {
@@ -18743,7 +18906,8 @@ sub d_copy_file {
 
     if ($may->{'rights'} || !($may->{'exists'})) {
 
-        # The name of the file must be correct and musn't not be a description file
+        # The name of the file must be correct and musn't not be a description
+        # file
         if (   $fname =~ /^\./
             || $fname =~ /\.desc/
             || $fname =~ /[~\#\[\]]$/) {
@@ -18832,7 +18996,8 @@ sub d_copy_file {
         unlink("$dest_dir/.desc.$fname")
             if (-e "$dest_dir/.desc.$fname");
 
-        ##  # if exists a temp file younger than 5 minutes that belongs to another user : file copy refused
+        ##  # if exists a temp file younger than 5 minutes that belongs to
+        ##  # another user : file copy refused
         if (-e "$dest_dir/.$fname.duplicate") {
             my @info    = stat "$dest_dir/.$fname.duplicate";
             my $timeold = time - $info[10];
@@ -19086,7 +19251,8 @@ sub d_copy_file {
     return 1;
 }
 
-## return information on file or dir : existing and edit rights for the user in $param
+## return information on file or dir : existing and edit rights for the user
+## in $param
 sub d_test_existing_and_rights {
     my ($path, $name, $dest_dir) = @_;
 
@@ -20424,7 +20590,8 @@ sub do_d_change_access {
 
     ####  Controls
 
-    ## the path must not be empty (the description file of the shared directory
+    ## the path must not be empty (the description file of the shared
+    ## directory
     #  doesn't exist)
     unless ($path) {
         &report::reject_report_web(
@@ -20652,7 +20819,8 @@ sub do_d_set_owner {
 
     ####  Controls
 
-    ## the path must not be empty (the description file of the shared directory
+    ## the path must not be empty (the description file of the shared
+    ## directory
     #  doesn't exist)
     unless ($path) {
         &report::reject_report_web(
@@ -20896,7 +21064,8 @@ sub do_d_set_owner {
             'daemon'       => $daemon_name
         }
     );
-    ## ONLY IF SET_OWNER can be performed even if not control of the father directory
+    ## ONLY IF SET_OWNER can be performed even if not control of the father
+    ## directory
     $mode{'control'} = 1;
     %access = &d_access_control(\%mode, $path);
     unless ($access{'may'}{'control'}) {
@@ -21206,7 +21375,8 @@ sub do_delete_pictures {
 # OUT : '1' | 'change_email'
 #
 ####################################################
-## Checks a users new email address by sending a ticket to the new email address
+## Checks a users new email address by sending a ticket to the new email
+## address
 ## and demanding that they click it to verify. Leads to 'change_email'
 sub do_change_email_request {
     &wwslog('info', 'do_change_email_request(%s)', $in{'new_email'});
@@ -21275,11 +21445,15 @@ sub do_change_email {
         );
     }
 
-    ##  There are two ways to access this function 'change_email'. One from the preferences page and one from the serveradmin page
-    ## If the process comes from server admin it needs the variables 'old_email' and 'new_email'.
+    ##  There are two ways to access this function 'change_email'. One from
+    ##  the preferences page and one from the serveradmin page
+    ## If the process comes from server admin it needs the variables
+    ## 'old_email' and 'new_email'.
     if ($in{'old_email'} && $in{'new_email'}) {
-        ## if variables old_email and new_email are present $edited_by_listmaster is set to one
-        ## so that at the end of the function we can return to the SympaAdmin page
+        ## if variables old_email and new_email are present
+        ## $edited_by_listmaster is set to one
+        ## so that at the end of the function we can return to the SympaAdmin
+        ## page
         ## instead of the preferences page
         $edited_by_listmaster = 1;
         unless ($robot->is_listmaster($param->{'user'}{'email'})) {
@@ -21348,7 +21522,8 @@ sub do_change_email {
 
     &report::notice_report_web('performed', {}, $param->{'action'});
 
-    ## Update the data structure that tells which lists the current user is member/owner/editor of
+    ## Update the data structure that tells which lists the current user is
+    ## member/owner/editor of
     unless ($edited_by_listmaster == 1) {
         $param->{'get_which'} =
             [&List::get_which($param->{'user'}{'email'}, $robot, 'member')];
@@ -21388,8 +21563,8 @@ sub do_change_email {
 ####################################################
 sub do_suspend_request {
 
-    &wwslog('info', 'do_suspend_request', $in{'action'})
-        ;    #Action = suspend_request
+    # Action = suspend_request
+    &wwslog('info', 'do_suspend_request', $in{'action'});
     my $email = $param->{'user'}{'email'};
     my $data;
 
@@ -21398,7 +21573,8 @@ sub do_suspend_request {
     $param->{'d_day'} = POSIX::strftime('%d-%m-%Y', localtime time);
     my $display_resume = 0;
 
-    ## We display in the table the lists of the subscriber and the state in which they are.
+    ## We display in the table the lists of the subscriber and the state in
+    ## which they are.
     ## reception : - nomail/digest/mail ||
     ##             - . suspended  From XX-XX-XXXX To XX-XX-XXXX
     my @lists = &List::get_which($email, $robot, 'member');
@@ -21407,7 +21583,8 @@ sub do_suspend_request {
         my $member_info = $list->get_list_member($param->{'user'}{'email'});
         if (($member_info->{'enddate'} < time) && ($member_info->{'enddate'}))
         {
-            ## If end date is < time, update the BDD by deleting the suspending's data
+            ## If end date is < time, update the BDD by deleting the
+            ## suspending's data
             $list->restore_suspended_subscription($param->{'user'}{'email'});
         }
         my $final_start_date = gettext_strftime "%d %b %Y",
@@ -21733,7 +21910,8 @@ sub do_compose_mail {
     $param->{'subaction'} = $in{'subaction'};
     if ($in{'to'}) {
 
-        # In archive we hide email replacing @ by ' '. Here we must do the reverse transformation
+        # In archive we hide email replacing @ by ' '. Here we must do the
+        # reverse transformation
         $in{'to'} =~ s/ /\@/g;
         $param->{'to'} = $in{'to'};
     } else {
@@ -21789,11 +21967,13 @@ sub do_send_mail {
     my $to;
     my $message = $param->{'message'};
 
-    # Send the message to the list or to the sender as clicking the send to the list or to me.
+    # Send the message to the list or to the sender as clicking the send to
+    # the list or to me.
     # First if : send to the list
     if ($in{'sub_action'} eq 'sendmailtolist') {
 
-        # In archive we hide email replacing @ by ' '. Here we must do the reverse transformation
+        # In archive we hide email replacing @ by ' '. Here we must do the
+        # reverse transformation
         $in{'to'} =~ s/ /\@/g;
         $to = $in{'to'};
 
@@ -21914,7 +22094,8 @@ sub do_send_mail {
             return 'compose_mail';
         }
 
-        # url and uploaded_file should not be both filled: we could not chooe which one to use.
+        # url and uploaded_file should not be both filled: we could not chooe
+        # which one to use.
         if ($in{'url'} =~ /\S/ && $in{'uploaded_file'} =~ /\S/) {
             &report::reject_report_web('user', 'two_post_sources_defined', {},
                 $param->{'action'});
@@ -22452,7 +22633,8 @@ sub do_set_lang {
     }
 
     if ($in{'previous_action'}) {
-        ## Some actions don't make sense with GET method, redirecting to other functions
+        ## Some actions don't make sense with GET method, redirecting to other
+        ## functions
         if ($in{'previous_action'} eq 'arcsearch') {
             $in{'previous_action'} = 'arc';
         }
@@ -23255,8 +23437,10 @@ sub get_protected_email_address {
 }
 
 ## view logs stored in RDBMS
-## this function as been writen in order to allow list owner and listmater to views logs
-## of there robot or there is real problems with privacy policy and law in such services.
+## this function as been writen in order to allow list owner and listmater to
+## views logs
+## of there robot or there is real problems with privacy policy and law in
+## such services.
 ##
 sub do_viewlogs {
     &wwslog('info', 'do_viewlogs(%s)', $in{'page'});
@@ -23372,8 +23556,10 @@ sub do_viewlogs {
 }
 
 ## view logs stored in RDBMS
-## this function as been writen in order to allow list owner and listmater to views logs
-## of there robot or there is real problems with privacy policy and law in such services.
+## this function as been writen in order to allow list owner and listmater to
+## views logs
+## of there robot or there is real problems with privacy policy and law in
+## such services.
 ##
 sub do_viewspools {
     my $spoolname = 'msg';
@@ -23553,10 +23739,12 @@ sub do_viewspool_message {
         return;
     }
 
-    # take care that wwsympa must fetch the message first, then check which list it is for in order to perform authz
+    # take care that wwsympa must fetch the message first, then check which
+    # list it is for in order to perform authz
     my $list;
 
-    # if user is not lismaster then the message must be related to a list owned by the user.
+    # if user is not lismaster then the message must be related to a list
+    # owned by the user.
     unless ($param->{'is_listmaster'}) {
         my $message_listname = $messages[0]->{'list'};
         if ($message_listname) {
@@ -24358,30 +24546,41 @@ sub _ca_process {
 ## do_ca : executes a custom action
 ##
 ## IN:
-##    - 'custom_action': ther name of the custom action (and subsequent tt2 file to use, see below)
+##    - 'custom_action': ther name of the custom action (and subsequent tt2
+##    file to use, see below)
 ##    - '@cap': an array of parameters.
 ##
-## Custom actions are used to run specific code and/or display user defined templates.
-## You can create a <your_action>.pm module under etc/custom_actions or etc/<robot>/custom_actions (<your_action>_plugin package) with a "process" sub to add custom processing.
-## You can also create a <your_action>.tt2 file at the same place to display your template. You don't need the <head/> section or the <body/> tag.
-## The HTML code in '<your_action>.tt2' can make use of the parameters this way: [% cap.1 %] for param1, [% cap.2 %] for param, and so on.
+## Custom actions are used to run specific code and/or display user defined
+## templates.
+## You can create a <your_action>.pm module under etc/custom_actions or etc/
+## <robot>/custom_actions (<your_action>_plugin package) with a "process" sub
+## to add custom processing.
+## You can also create a <your_action>.tt2 file at the same place to display
+## your template. You don't need the <head/> section or the <body/> tag.
+## The HTML code in '<your_action>.tt2' can make use of the parameters this
+## way: [% cap.1 %] for param1, [% cap.2 %] for param, and so on.
 ## If the module is not defined the template is displayed.
 ##
-## You can even have a robot-common <your_action>.pm module with a specific <your_action>.tt2 for each robot as the file (.pm or .tt2) is conducted in this order :
+## You can even have a robot-common <your_action>.pm module with a specific
+## <your_action>.tt2 for each robot as the file (.pm or .tt2) is conducted in
+## this order :
 ##   - expl/<robot>/<list>/custom_actions (if list context and robot support)
 ##   - expl/<list>/custom_actions (if list context and no robot support)
 ##   - etc/<robot>/custom_actions (if robot support)
 ##   - etc/custom_actions
 ##
-## Your custom action is reachable using URL: http://your-sympa-server-root-url/ca/your_action/param2/param2/param3/...
+## Your custom action is reachable using URL:
+## http://your-sympa-server-root-url/ca/your_action/param2/param2/param3/...
 ##
 ## The module process sub receive @cap entries as arguments
 ##
 ## The module process sub return value can be either :
 ## 	1 to parse and display the custom action related tt2
 ## 	<a global action name> to display its template
-## 	ca:<other_custom_action> to parse and display another custom action related tt2
-## 	a hash which entries will override $param ones, in case "custom_action" or "next_action" are present they act as described above.
+## 	ca:<other_custom_action> to parse and display another custom action
+## 	related tt2
+## 	a hash which entries will override $param ones, in case
+## 	"custom_action" or "next_action" are present they act as described above.
 ##
 ###############################################################
 sub do_ca {
@@ -24432,31 +24631,45 @@ sub do_ca {
 ## do_ca : executes a custom action in list context
 ##
 ## IN:
-##    - 'custom_action': ther name of the custom action (and subsequent tt2 file to use, see below)
-##    - 'list': the nalme of the list (without the '@robot' part) in the context of which the action is executed.
+##    - 'custom_action': ther name of the custom action (and subsequent tt2
+##    file to use, see below)
+##    - 'list': the nalme of the list (without the '@robot' part) in the
+##    context of which the action is executed.
 ##    - '@lcap': an array of parameters.
 ##
-## Custom actions are used to run specific code and/or display user defined templates.
-## You can create a <your_action>.pm module under etc/custom_actions or etc/<robot>/custom_actions or expl(/<robot>)?/<list>/custom_actions (<your_action>_plugin package) with a "process" sub to add custom processing.
-## You can also create a <your_action>.tt2 file at the same place to display your template. You don't need the <head/> section or the <body/> tag.
-## The HTML code in '<your_action>.tt2' can make use of the parameters this way: [% cap.1 %] for param1, [% cap.2 %] for param, and so on.
+## Custom actions are used to run specific code and/or display user defined
+## templates.
+## You can create a <your_action>.pm module under etc/custom_actions or etc/
+## <robot>/custom_actions or expl(/<robot>)?/<list>/custom_actions
+## (<your_action>_plugin package) with a "process" sub to add custom
+## processing.
+## You can also create a <your_action>.tt2 file at the same place to display
+## your template. You don't need the <head/> section or the <body/> tag.
+## The HTML code in '<your_action>.tt2' can make use of the parameters this
+## way: [% cap.1 %] for param1, [% cap.2 %] for param, and so on.
 ## If the module is not defined the template is displayed.
 ##
-## You can even have a robot-common <your_action>.pm module with a specific <your_action>.tt2 for each robot as the file (.pm or .tt2) is conducted in this order :
+## You can even have a robot-common <your_action>.pm module with a specific
+## <your_action>.tt2 for each robot as the file (.pm or .tt2) is conducted in
+## this order :
 ##   - expl/<robot>/<list>/custom_actions (if list context and robot support)
 ##   - expl/<list>/custom_actions (if list context and no robot support)
 ##   - etc/<robot>/custom_actions (if robot support)
 ##   - etc/custom_actions
 ##
-## Your custom action is reachable using URL: http://your-sympa-server-root-url/lca/your_action/listname/param2/param2/param3/...
+## Your custom action is reachable using URL:
+## http://your-sympa-server-root-url/lca/your_action/listname/param2/param2/param3/...
 ##
-## The module process sub receive the List object and @cap entries as arguments
+## The module process sub receive the List object and @cap entries as
+## arguments
 ##
 ## The module process sub return value can be either :
 ## 	1 to parse and display the custom action related tt2
 ## 	<a global action name> to display its template
-## 	ca:<other_custom_action> to parse and display another custom action related tt2
-## 	a hash which entries will override $param ones, in case "custom_action" or "next_action" are present they act as described above.
+## 	ca:<other_custom_action> to parse and display another custom action
+## 	related tt2
+## 	a hash which entries will override $param ones, in case
+## 	"custom_action" or "next_action" are present they act as described above.
 ##
 ###############################################################
 sub do_lca {
@@ -24688,7 +24901,8 @@ sub new_d_read {
 
                             $subdirs{$d}{'edit'} =
                                 1;    # or = $may_action_edit ?
-                             # if index.html, must know if something can be edit in the dir
+                                # if index.html, must know if something can be
+                                # edit in the dir
                             $normal_mode = 1;
                         } elsif ($subdocument->{'access'}{'may'}{'edit'} != 0)
                         {
@@ -24697,7 +24911,8 @@ sub new_d_read {
                             $subdirs{$d}{'edit'} =
                                 $subdocument->{'access'}{'may'}{'edit'};
 
-                            # if index.html, must know if something can be edit in the dir
+                            # if index.html, must know if something can be
+                            # edit in the dir
                             $normal_mode = 1;
                         }
 

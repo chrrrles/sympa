@@ -164,7 +164,8 @@ sub _do_multipart {
             _do_dsn($subent);
         } else {
 
-            # something else - just scrub it and add a message to say what was there
+            # something else - just scrub it and add a message to say what was
+            # there
             _do_other($subent);
         }
     }

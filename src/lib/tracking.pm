@@ -169,7 +169,8 @@ sub db_init_notification_table {
 #     -$type (+): the notification entry type (DSN|MDN)
 #     -$recipient (+): the list subscriber who correspond to this entry
 #     -$msg_id (+): the report message-id
-#     -$status (+): the new state of the recipient entry depending of the report data
+#     -$status (+): the new state of the recipient entry depending of the
+#     report data
 #     -$arrival_date (+): the mail arrival date.
 #     -$notification_as_string : the DSN or the MDM as string
 #
@@ -227,7 +228,8 @@ sub find_notification_id_by_message {
 
     my $sth;
 
-    # the message->head method return message-id including <blabla@dom> where mhonarc return blabla@dom that's why we test both of them
+    # the message->head method return message-id including <blabla@dom> where
+    # mhonarc return blabla@dom that's why we test both of them
     unless (
         $sth = &SDM::do_query(
             "SELECT pk_notification FROM notification_table WHERE ( recipient_notification = %s AND list_notification = %s AND robot_notification = %s AND (message_id_notification = %s OR CONCAT('<',message_id_notification,'>') = %s OR message_id_notification = %s ))",

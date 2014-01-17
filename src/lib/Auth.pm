@@ -34,7 +34,8 @@ use report;
 
 #use SDM;
 
-## return the password finger print (this proc allow futur replacement of md5 by sha1 or ....)
+## return the password finger print (this proc allow futur replacement of md5
+## by sha1 or ....)
 sub password_fingerprint {
 
     Sympa::Log::Syslog::do_log('debug', 'Auth::password_fingerprint');
@@ -90,7 +91,8 @@ sub check_auth {
 }
 
 ## This subroutine if Sympa may use its native authentication for a given user
-## It might not if no user_table paragraph is found in auth.conf or if the regexp or
+## It might not if no user_table paragraph is found in auth.conf or if the
+## regexp or
 ## negative_regexp exclude this user
 ## IN : robot, user email
 ## OUT : boolean
@@ -150,7 +152,8 @@ sub authentication {
             if (($email =~ /$auth_service->{'negative_regexp'}/i)
             && ($auth_service->{'negative_regexp'}));
 
-        ## Only 'user_table' and 'ldap' backends will need that Sympa collects the user passwords
+        ## Only 'user_table' and 'ldap' backends will need that Sympa collects
+        ## the user passwords
         ## Other backends are Single Sign-On solutions
         if ($auth_service->{'auth_type'} eq 'user_table') {
             my $fingerprint = &password_fingerprint($pwd);
@@ -325,7 +328,8 @@ sub ldap_authentication {
     $ds->disconnect()
         or Sympa::Log::Syslog::do_log('notice', "unable to unbind");
     Sympa::Log::Syslog::do_log('debug3', "canonic: $canonic_email[0]");
-    ## If the identifier provided was a valid email, return the provided email.
+    ## If the identifier provided was a valid email, return the provided
+    ## email.
     ## Otherwise, return the canonical email guessed after the login.
     if (&tools::valid_email($auth) && !$robot->ldap_force_canonical_email) {
         return ($auth);
@@ -401,7 +405,8 @@ sub get_email_by_net_id {
 
 }
 
-# check trusted_application_name et trusted_application_password : return 1 or undef;
+# check trusted_application_name et trusted_application_password : return 1 or
+# undef;
 sub remote_app_check_password {
     my $trusted_application_name = shift;
     my $password                 = shift;

@@ -41,10 +41,12 @@ our @EXPORT = qw($log_level %levels);
 my ($log_facility, $log_socket_type, $log_service, $sth, @sth_stack,
     $rows_nb);
 
-# When logs are not available, period of time to wait before sending another warning to listmaster.
+# When logs are not available, period of time to wait before sending another
+# warning to listmaster.
 my $warning_timeout = 600;
 
-# Date of the last time a message was sent to warn the listmaster that the logs are unavailable.
+# Date of the last time a message was sent to warn the listmaster that the
+# logs are unavailable.
 my $warning_date = 0;
 
 our $log_level = undef;
@@ -229,7 +231,8 @@ sub do_connect {
         Sys::Syslog::setlogsock(lc($log_socket_type));
     }
 
-    # close log may be usefull : if parent processus did open log child process inherit the openlog with parameters from parent process
+    # close log may be usefull : if parent processus did open log child
+    # process inherit the openlog with parameters from parent process
     closelog;
     eval { openlog("$log_service\[$$\]", 'ndelay,nofatal', $log_facility) };
     if ($@ && ($warning_date < time - $warning_timeout)) {
@@ -632,7 +635,8 @@ sub get_first_db_log {
         return {};
     }
 
-    ## We can't use the "AS date" directive in the SELECT statement because "date" is a reserved keywork with Oracle
+    ## We can't use the "AS date" directive in the SELECT statement because
+    ## "date" is a reserved keywork with Oracle
     $log->{'date'} = $log->{'date_logs'} if defined $log->{'date_logs'};
     return $log;
 }
@@ -650,7 +654,8 @@ sub get_next_db_log {
         $sth = pop @sth_stack;
     }
 
-    ## We can't use the "AS date" directive in the SELECT statement because "date" is a reserved keywork with Oracle
+    ## We can't use the "AS date" directive in the SELECT statement because
+    ## "date" is a reserved keywork with Oracle
     $log->{date} = $log->{date_logs} if defined($log->{date_logs});
 
     return $log;
@@ -669,8 +674,8 @@ sub get_log_level {
 sub aggregate_data {
     my ($begin_date, $end_date) = @_;
 
-    my $aggregated_data
-        ; # the hash containing aggregated data that the sub deal_data will return.
+    # the hash containing aggregated data that the sub deal_data will return.
+    my $aggregated_data;
 
     unless (
         $sth = SDM::do_query(
@@ -1027,7 +1032,7 @@ sub deal_data {
     #each $id correspond to an hash
     foreach my $id (keys(%$result_request)) {
 
-        #----------------------------test about send_mail----------------------------------
+        # ---test about send_mail---
         if ($result_request->{$id}->{'operation_stat'} eq 'send_mail') {
 
             #test if send_mail value exists already or not, if not, create it
@@ -1043,7 +1048,8 @@ sub deal_data {
             my $email =
                 $result_request->{$id}->{'email_stat'};    #get the sender
 
-            #if the listname and robot  dont exist in $data, create it, with size & count to zero
+            # if the listname and robot  dont exist in $data, create it, with
+            # size & count to zero
             unless (exists($data{'send_mail'}{$r_name}{$l_name})) {
                 $data{'send_mail'}{$r_name}{$l_name}{'size'}  = 0;
                 $data{'send_mail'}{$r_name}{$l_name}{'count'} = 0;
@@ -1062,7 +1068,7 @@ sub deal_data {
             $data{'send_mail'}{$r_name}{$l_name}{$email}++;
         }
 
-        #------------------------------test about add_susbcriber-----------------------
+        # ---test about add_susbcriber---
         if ($result_request->{$id}->{'operation_stat'} eq 'add subscriber') {
 
             unless (exists($data{'add_subscriber'})) {
@@ -1074,7 +1080,8 @@ sub deal_data {
             my $l_name =
                 $result_request->{$id}->{'list_stat'};     #get name of list
 
-            #if the listname and robot  dont exist in $data, create it, with  count to zero
+            # if the listname and robot  dont exist in $data, create it, with
+            # count to zero
             unless (exists($data{'add_subscriber'}{$r_name}{$l_name})) {
                 $data{'add_subscriber'}{$r_name}{$l_name}{'count'} = 0;
             }
@@ -1084,7 +1091,7 @@ sub deal_data {
 
         }
 
-        #-------------------------------test about del_subscriber-----------------------
+        # ---test about del_subscriber---
         if ($result_request->{$id}->{'operation_stat'} eq 'del subscriber') {
 
             unless (exists($data{'del_subscriber'})) {
@@ -1107,7 +1114,7 @@ sub deal_data {
             $data{'del_subscriber'}{$r_name}{$l_name}{$param}++;
         }
 
-        #------------------------------test about list creation-------------------
+        # ---test about list creation---
         if ($result_request->{$id}->{'operation_stat'} eq 'create_list') {
 
             unless (exists($data{'create_list'})) {
@@ -1126,7 +1133,7 @@ sub deal_data {
             $data{'create_list'}{$r_name}++;
         }
 
-        #-------------------------------test about copy list-------------------------
+        # ---test about copy list---
         if ($result_request->{$id}->{'operation_stat'} eq 'copy list') {
 
             unless (exists($data{'copy_list'})) {
@@ -1145,7 +1152,7 @@ sub deal_data {
             $data{'copy_list'}{$r_name}++;
         }
 
-        #-------------------------------test about closing list----------------------
+        # ---test about closing list---
         if ($result_request->{$id}->{'operation_stat'} eq 'close_list') {
 
             unless (exists($data{'close_list'})) {
@@ -1164,7 +1171,7 @@ sub deal_data {
             $data{'close_list'}{$r_name}++;
         }
 
-        #--------------------------------test abount purge list-------------------
+        # ---test abount purge list---
         if ($result_request->{$id}->{'operation_stat'} eq 'purge list') {
 
             unless (exists($data{'purge_list'})) {
@@ -1183,7 +1190,7 @@ sub deal_data {
             $data{'purge_list'}{$r_name}++;
         }
 
-        #-----------------------------test about rejected messages-----------------
+        # ---test about rejected messages---
         if ($result_request->{$id}->{'operation_stat'} eq 'reject') {
 
             unless (exists($data{'reject'})) {
@@ -1203,7 +1210,7 @@ sub deal_data {
             $data{'reject'}{$r_name}{$l_name}++;
         }
 
-        #-----------------------------test about rejected creation lists-----------
+        # ---test about rejected creation lists---
         if ($result_request->{$id}->{'operation_stat'} eq 'list_rejected') {
 
             unless (exists($data{'list_rejected'})) {
@@ -1221,7 +1228,7 @@ sub deal_data {
             $data{'list_rejected'}{$r_name}++;
         }
 
-        #------------------------------test about upload sharing------------------
+        # ---test about upload sharing---
         if ($result_request->{$id}->{'operation_stat'} eq 'd_upload') {
 
             unless (exists($data{'d_upload'})) {
@@ -1241,7 +1248,7 @@ sub deal_data {
             $data{'d_upload'}{$r_name}{$l_name}++;
         }
 
-        #------------------------------test about folder creation in shared----------------
+        # ---test about folder creation in shared---
         if ($result_request->{$id}->{'operation_stat'} eq
             'd_create_dir(directory)') {
 
@@ -1262,7 +1269,7 @@ sub deal_data {
             $data{'d_create_directory'}{$r_name}{$l_name}++;
         }
 
-        #------------------------------test about file creation in shared------------------
+        # ---test about file creation in shared---
         if ($result_request->{$id}->{'operation_stat'} eq
             'd_create_dir(file)') {
 
@@ -1283,7 +1290,7 @@ sub deal_data {
             $data{'d_create_file'}{$r_name}{$l_name}++;
         }
 
-        #---------------------------------test about archive-----------------------------
+        # ---test about archive---
         if ($result_request->{$id}->{'operation_stat'} eq 'arc') {
 
             unless (exists($data{'archive visited'})) {
@@ -1307,7 +1314,8 @@ sub deal_data {
     return \%data;
 }
 
-#subroutine to Update subscriber_table about message send, upgrade field number_messages_subscriber
+# subroutine to Update subscriber_table about message send, upgrade field
+# number_messages_subscriber
 sub update_subscriber_msg_send {
 
     my ($mail, $list, $robot, $counter) = @_;

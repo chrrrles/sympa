@@ -146,7 +146,8 @@ sub create {
     ## Task as string generation
     return undef unless ($self->generate_from_template);
 
-    ## In case a label is specified, ensure we won't use anything in the task prior to this label.
+    ## In case a label is specified, ensure we won't use anything in the task
+    ## prior to this label.
     if ($self->{'label'}) {
         return undef unless ($self->crop_after_label($self->{'label'}));
     }
@@ -157,7 +158,8 @@ sub create {
     return $self;
 }
 
-## Sets and returns the path to the file that must be used to generate the task as string.
+## Sets and returns the path to the file that must be used to generate the
+## task as string.
 sub get_template {
     my $self = shift;
     Sympa::Log::Syslog::do_log('debug2',
@@ -265,7 +267,8 @@ sub generate_from_template {
     return 1;
 }
 
-# Chop whetever content the task as string could contain (except titles) before the label of the task.
+# Chop whetever content the task as string could contain (except titles)
+# before the label of the task.
 sub crop_after_label {
     my $self  = shift;
     my $label = shift;
@@ -276,8 +279,11 @@ sub crop_after_label {
         $label
     );
 
-    my $label_found_in_task = 0
-        ; # If this variable still contains 0 at the end of the sub, that means that the label after which we want to crop does not exist in the task. We will therefore not crop anything and return the task with the same content.
+    # If this variable still contains 0 at the end of the sub, that means that
+    # the label after which we want to crop does not exist in the task. We
+    # will therefore not crop anything and return the task with the same
+    # content.
+    my $label_found_in_task = 0;
     my @new_parsed_instructions;
     $self->parse
         unless (defined $self->{'parsed_instructions'}
@@ -359,7 +365,8 @@ sub remove {
     return 1;
 }
 
-## Builds a string giving the name of the model of the task, along with its flavour and, if the task is in list context, the name of the list.
+## Builds a string giving the name of the model of the task, along with its
+## flavour and, if the task is in list context, the name of the list.
 sub get_description {
     my $self = shift;
     Sympa::Log::Syslog::do_log('debug3',
@@ -375,7 +382,8 @@ sub get_description {
     return $self->{'description'};
 }
 
-## Uses the parsed instructions to build a new task as string. If no parsed instructions are found, returns the original task as string.
+## Uses the parsed instructions to build a new task as string. If no parsed
+## instructions are found, returns the original task as string.
 sub stringify_parsed_instructions {
     my $self = shift;
     Sympa::Log::Syslog::do_log(
@@ -406,11 +414,16 @@ sub stringify_parsed_instructions {
     return 1;
 }
 
-## Returns a string built from parsed isntructions or undef if no parsed instructions exist.
-## This sub reprensents what we obtain when concatenating the lines found in the parsed
-## instructions only. we don't try to save anything. If there are no parsed instructions,
-## You end up with an undef value and that's it. If you want to obtain the task as a string
-## and don't know whether the instructions were parsed before or not, use stringify_parsed_instructions().
+## Returns a string built from parsed isntructions or undef if no parsed
+## instructions exist.
+## This sub reprensents what we obtain when concatenating the lines found in
+## the parsed
+## instructions only. we don't try to save anything. If there are no parsed
+## instructions,
+## You end up with an undef value and that's it. If you want to obtain the
+## task as a string
+## and don't know whether the instructions were parsed before or not, use
+## stringify_parsed_instructions().
 sub as_string {
     my $self = shift;
     Sympa::Log::Syslog::do_log('debug2',
@@ -432,7 +445,8 @@ sub as_string {
     return $task_as_string;
 }
 
-## Returns the local part of the list name of the task if the task is in list context, undef otherwise.
+## Returns the local part of the list name of the task if the task is in list
+## context, undef otherwise.
 sub get_short_listname {
     my $self = shift;
     if (defined $self->{'list_object'}) {
@@ -441,7 +455,8 @@ sub get_short_listname {
     return undef;
 }
 
-## Returns the full list name of the task if the task is in list context, undef otherwise.
+## Returns the full list name of the task if the task is in list context,
+## undef otherwise.
 sub get_full_listname {
     my $self = shift;
     if (defined $self->{'list_object'}) {
@@ -602,7 +617,9 @@ sub change_label {
     }
 }
 
-## Check that a task in list context is still legitimate. for example, a list whose all datasource inclusions parameters would have been removed should not keep a sync_include task.
+## Check that a task in list context is still legitimate. for example, a list
+## whose all datasource inclusions parameters would have been removed should
+## not keep a sync_include task.
 sub check_list_task_is_valid {
     Sympa::Log::Syslog::do_log('debug3', '(%s)', @_);
     my $self  = shift;

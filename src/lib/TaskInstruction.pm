@@ -128,7 +128,8 @@ our %commands = (
     },
 );
 
-# commands which use a variable. If you add such a command, the first parameter must be the variable
+# commands which use a variable. If you add such a command, the first
+# parameter must be the variable
 our %var_commands = (
     'delete_subs' => {
         'args' => ['var'],
@@ -175,9 +176,10 @@ foreach (keys %asgn_commands) {
 }
 
 sub new {
-    my $pkg  = shift;
-    my $data = shift
-        ;   #Instructions are built by parsing a single line of a task string.
+    my $pkg = shift;
+
+    # Instructions are built by parsing a single line of a task string.
+    my $data = shift;
     my $task = shift;
     my $self = &tools::dup_var($data);
     bless $self, $pkg;
@@ -461,9 +463,9 @@ sub next_cmd {
     my ($self, $task) = @_;
 
     my @tab = @{$self->{'Rarguments'}};
-    my $date =
-        &tools::epoch_conv($tab[0], $task->{'date'})
-        ;    # conversion of the date argument into epoch format
+
+    # conversion of the date argument into epoch format
+    my $date = &tools::epoch_conv($tab[0], $task->{'date'});
     my $label = $tab[1];
 
     Sympa::Log::Syslog::do_log('debug2',
@@ -825,7 +827,8 @@ sub purge_session_table {
     return 1;
 }
 
-## remove messages from bulkspool table when no more packet have any pointer to this message
+## remove messages from bulkspool table when no more packet have any pointer
+## to this message
 sub purge_tables {
     my ($self, $task) = @_;
     Sympa::Log::Syslog::do_log('info', 'task_manager::purge_tables()');
@@ -1046,8 +1049,10 @@ sub expire_bounce {
     foreach my $list (@$all_lists) {
         my $listname = $list->name;
 
-        # the reference date is the date until which we expire bounces in second
-        # the latest_distribution_date is the date of last distribution #days from 01 01 1970
+        # the reference date is the date until which we expire bounces in
+        # second
+        # the latest_distribution_date is the date of last distribution #days
+        # from 01 01 1970
         unless ($list->get_latest_distribution_date()) {
             Sympa::Log::Syslog::do_log(
                 'debug2',
@@ -1160,9 +1165,10 @@ sub chk_cert_expiration {
     closedir(DIR);
 
     foreach (@certificates) {
-        my $soon_expired_file = $_
-            . '.soon_expired'
-            ; # an empty .soon_expired file is created when a user is warned that his certificate is soon expired
+
+        # an empty .soon_expired file is created when a user is warned that
+        # his certificate is soon expired
+        my $soon_expired_file = $_ . '.soon_expired';
 
         # recovery of the certificate expiration date
         open(ENDDATE, "openssl x509 -enddate -in $cert_dir/$_ -noout |");
@@ -1282,7 +1288,8 @@ sub chk_cert_expiration {
     return 1;
 }
 
-## attention, j'ai n'ai pas pu comprendre les retours d'erreurs des commandes wget donc pas de verif sur le bon fonctionnement de cette commande
+## attention, j'ai n'ai pas pu comprendre les retours d'erreurs des commandes
+## wget donc pas de verif sur le bon fonctionnement de cette commande
 sub update_crl {
 
     my ($self, $task) = @_;
@@ -1473,7 +1480,8 @@ sub process_bouncers {
     # The relation between possible actions and correponding subroutines
     # is indicated by the following hash (%actions).
     # It's possible to add actions by completing this hash and the one in list
-    # config (file List.pm, in sections "bouncers_levelX"). Then you must write
+    # config (file List.pm, in sections "bouncers_levelX"). Then you must
+    # write
     # the code for your action:
     # The action subroutines have two parameter :
     # - the name of the current list
@@ -1494,8 +1502,10 @@ sub process_bouncers {
 
         my @bouncers;
 
-        # @bouncers = ( ['email1', 'email2', 'email3',....,],    There is one line
-        #               ['email1', 'email2', 'email3',....,],    foreach bounce
+        # @bouncers = ( ['email1', 'email2', 'email3',....,],    There is one
+        # line
+        #               ['email1', 'email2', 'email3',....,],    foreach
+        #               bounce
         #               ['email1', 'email2', 'email3',....,],)   level.
 
         next unless ($list);
@@ -1530,7 +1540,8 @@ sub process_bouncers {
                 $list->$bouncers_level_parameter->{'notification'};
 
             if (defined $bouncers[$level] && @{$bouncers[$level]}) {
-                ## calling action subroutine with (list,email list) in parameter
+                ## calling action subroutine with (list,email list) in
+                ## parameter
                 unless ($actions{$action}->($list, $bouncers[$level])) {
                     $self->error(
                         {   'task' => $task,
@@ -1542,7 +1553,8 @@ sub process_bouncers {
                     return undef;
                 }
 
-                ## calling notification subroutine with (list,action, email list) in parameter
+                ## calling notification subroutine with (list,action, email
+                ## list) in parameter
                 my $param = {
                     'listname'  => $listname,
                     'action'    => $action,
@@ -1633,14 +1645,16 @@ sub get_score {
         }
     }
 
-    #Adjust bounce_count when msg_count file is too recent, compared to the bouncing period
+    # Adjust bounce_count when msg_count file is too recent, compared to the
+    # bouncing period
     my $tmp_bounce_count = $bounce_count;
     unless ($EO_period == $BO_period) {
         my $ratio = (($EO_period - $min_day) / ($EO_period - $BO_period));
         $tmp_bounce_count *= $ratio;
     }
 
-    ## Regularity rate tells how much user has bounced compared to list traffic
+    ## Regularity rate tells how much user has bounced compared to list
+    ## traffic
     $msg_count ||= 1;    ## Prevents "Illegal division by zero" error
     my $regularity_rate = $tmp_bounce_count / $msg_count;
 
@@ -1656,7 +1670,8 @@ sub get_score {
     ## Note should be an integer
     $note = int($note + 0.5);
 
-    #    $note = 100 if ($note > 100); # shift between message ditrib & bounces => note > 100
+    #    $note = 100 if ($note > 100); # shift between message ditrib &
+    #    bounces => note > 100
 
     return $note;
 }

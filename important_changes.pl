@@ -1,4 +1,5 @@
-# important_changes.pl - This script prints important changes in Sympa since last install
+# important_changes.pl - This script prints important changes in Sympa since
+# last install
 # It is based on the NEWS ***** entries
 # RCS Identication ; $Revision$ ; $Date$
 #

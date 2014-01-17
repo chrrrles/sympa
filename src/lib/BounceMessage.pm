@@ -128,8 +128,9 @@ sub process {
         }    # close VERP + remind or welcome block
     }    # close VERP in use block
 
-    #----------------------------------------------------------------------------------------------------------------------
-    # If the DSN notification is correct and the tracking mode is enable, it will be inserted in the database
+    # ---
+    # If the DSN notification is correct and the tracking mode is enable, it
+    # will be inserted in the database
     if ($self->is_dsn and $self->tracking_is_used) {
         if ($self->process_dsn) {
             Sympa::Log::Syslog::do_log('notice',
@@ -144,14 +145,16 @@ sub process {
             );
             return undef;
         }
-        unless ($self->{'dsn'}{'status'} =~ /failed/)
-        {    # DSN for failure to deliver need to be processed as bounces.
+        unless ($self->{'dsn'}{'status'} =~ /failed/) {
+
+            # DSN for failure to deliver need to be processed as bounces.
             return 1;
         }
     }
 
-    #-----------------------------------------------------------------------------------------------------------------------------------
-    # If the MDN notification is correct and the tracking mode is enabled, it will be inserted in the database
+    # ---
+    # If the MDN notification is correct and the tracking mode is enabled, it
+    # will be inserted in the database
     if ($self->is_mdn and $self->tracking_is_used) {
         if ($self->process_mdn) {
             Sympa::Log::Syslog::do_log('notice', 'MDN %s Correctly treated.',
@@ -166,7 +169,8 @@ sub process {
 
     if ($self->is_email_feedback_report) {
 
-        # this case a report Email Feedback Reports http://tools.ietf.org/html/rfc6650 mainly used by AOL
+        # this case a report Email Feedback Reports
+        # http://tools.ietf.org/html/rfc6650 mainly used by AOL
         if ($self->process_email_feedback_report) {
             Sympa::Log::Syslog::do_log(
                 'notice',
@@ -534,7 +538,9 @@ sub process_dsn {
             foreach my $line (@report) {
                 $line = lc($line);
 
-                # Action Field MUST be present in a DSN report, possible values : failed, delayed, delivered, relayed, expanded(rfc3464)
+                # Action Field MUST be present in a DSN report, possible
+                # values : failed, delayed, delivered, relayed,
+                # expanded(rfc3464)
                 if ($line =~ /action\:\s*(.+)/i) {
                     $self->{'dsn'}{'status'} = $1;
                     chomp $self->{'dsn'}{'status'};
@@ -590,8 +596,11 @@ sub process_dsn {
         'FINAL DSN Arrival Date Detected, value : %s',
         $arrival_date);
 
-    unless ($self->{'dsn'}{'status'} =~ /failed/)
-    { # DSN with status 'failed' should not be removed because they must be processed for classical bounce managment (not only for tracking feature)
+    unless ($self->{'dsn'}{'status'} =~ /failed/) {
+
+        # DSN with status 'failed' should not be removed because they must be
+        # processed for classical bounce managment (not only for tracking
+        # feature)
         Sympa::Log::Syslog::do_log(
             'debug2',
             'Non failed DSN status "%s"',
@@ -662,7 +671,8 @@ sub process_mdn {
             foreach my $line (@report) {
                 $line = lc($line);
 
-                # Disposition Field MUST be present in a MDN report, possible values : displayed, deleted(rfc3798)
+                # Disposition Field MUST be present in a MDN report, possible
+                # values : displayed, deleted(rfc3798)
                 if ($line =~ /disposition\:\s*(.+)\s*\;\s*(.+)/i) {
                     $self->{'mdn'}{'status'} = $2;
                     if ($self->{'mdn'}{'status'} =~ /.*\/.*/) {
@@ -816,9 +826,12 @@ sub process_email_feedback_report {
         }
     }
     my $forward;
-    ## RFC compliance remark: We do something if there is an abuse or an unsubscribe request.
-    ## We don't throw an error if we find another kind of feedback (fraud, miscategorized, not-spam, virus or other)
-    ## but we don't take action if we meet them yet. This is to be done, if relevant.
+    ## RFC compliance remark: We do something if there is an abuse or an
+    ## unsubscribe request.
+    ## We don't throw an error if we find another kind of feedback (fraud,
+    ## miscategorized, not-spam, virus or other)
+    ## but we don't take action if we meet them yet. This is to be done, if
+    ## relevant.
     if ((   $self->{'efr'}{'feedback_type'} =~
             /(abuse|opt-out|opt-out-list|fraud|miscategorized|not-spam|virus|other)/i
         )
@@ -1006,8 +1019,11 @@ sub process_ndn {
 
         my $adr_count;
         ## Bouncing addresses
-        # Voir si pas mettre un test conditionnel sur le status code pour detecter les dsn positifs et ne pas fausser les statistiques de l'abonné.
-        # Peut être possibilité de lancer la maj des tables pour chaque recipient ici a condition d'avoir approfondi le parsing en amont.
+        # Voir si pas mettre un test conditionnel sur le status code pour
+        # detecter les dsn positifs et ne pas fausser les statistiques de
+        # l'abonné.
+        # Peut être possibilité de lancer la maj des tables pour chaque
+        # recipient ici a condition d'avoir approfondi le parsing en amont.
         while (my ($rcpt, $status) = each %hash) {
             $adr_count++;
             my $bouncefor = $self->{'who'};
@@ -1037,8 +1053,9 @@ sub process_ndn {
         ## No address found in the bounce itself
         unless ($adr_count) {
 
-            if ($self->{'who'})
-            {    # rcpt not recognized in the bounce but VERP was used
+            if ($self->{'who'}) {
+
+                # rcpt not recognized in the bounce but VERP was used
                 unless ($self->store_bounce($bounce_dir, $self->{'who'})) {
                     Sympa::Log::Syslog::do_log('err',
                         'Unable to store bounce %s. Aborting.',
@@ -1116,8 +1133,10 @@ sub canonicalize_status {
 }
 
 ## update subscriber information
-# $bouncefor : the email address the bounce is related for (may be extracted using verp)
-# $rcpt : the email address recognized in the bounce itself. In most case $rcpt eq $bouncefor
+# $bouncefor : the email address the bounce is related for (may be extracted
+# using verp)
+# $rcpt : the email address recognized in the bounce itself. In most case
+# $rcpt eq $bouncefor
 
 sub update_subscriber_bounce_history {
     my $self      = shift;

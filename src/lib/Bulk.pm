@@ -54,7 +54,8 @@ use Sympaspool;
 ## Database and SQL statement handlers
 my $sth;
 
-# last message stored in spool, this global var is used to prevent multiple stored of the same message in spool table
+# last message stored in spool, this global var is used to prevent multiple
+# stored of the same message in spool table
 my $last_stored_message_key;
 
 # create an empty Bulk
@@ -65,7 +66,8 @@ my $last_stored_message_key;
 #    return $packet
 #}
 ##
-# get next packet to process, order is controled by priority_message, then by priority_packet, then by creation date.
+# get next packet to process, order is controled by priority_message, then by
+# priority_packet, then by creation date.
 # Packets marked as being sent with VERP will be treated last.
 # Next lock the packetb to prevent multiple proccessing of a single packet
 
@@ -193,7 +195,8 @@ sub next {
     return $result;
 }
 
-# remove a packet from database by packet id. return undef if packet does not exist
+# remove a packet from database by packet id. return undef if packet does not
+# exist
 
 sub remove {
     my $messagekey = shift;
@@ -318,7 +321,9 @@ sub store {
     my $tag_as_last = $data{'tag_as_last'};
 
     #Sympa::Log::Syslog::do_log('trace',
-    #    'Bulk::store(<msg>,rcpts: %s,from = %s,robot = %s,listname= %s,priority_message = %s, delivery_date= %s,verp = %s, tracking = %s, merge = %s, dkim: d= %s i=%s, last: %s)',
+    #    'Bulk::store(<msg>,rcpts: %s,from = %s,robot = %s,listname=
+    #    %s,priority_message = %s, delivery_date= %s,verp = %s, tracking = %s,
+    #    merge = %s, dkim: d= %s i=%s, last: %s)',
     #    $rcpts, $from, $robot, $listname, $priority_message, $delivery_date,
     #    $verp,$tracking, $merge, $dkim->{'d'}, $dkim->{'i'}, $tag_as_last);
 
@@ -330,7 +335,8 @@ sub store {
 
     # first store the message in spool_table
     # because as soon as packet are created bulk.pl may distribute the
-    # $last_stored_message_key is a global var used in order to detect if a message as been already stored
+    # $last_stored_message_key is a global var used in order to detect if a
+    # message as been already stored
     my $message_already_on_spool;
     my $bulkspool = new Sympaspool('bulk');
 
@@ -406,8 +412,9 @@ sub store {
 
     my $priority_for_packet;
     my $already_tagged = 0;
-    my $packet_rank    = 0
-        ; # Initialize counter used to check whether we are copying the last packet.
+
+    # Initialize counter used to check whether we are copying the last packet.
+    my $packet_rank = 0;
     foreach my $packet (@{$rcpts}) {
         $priority_for_packet = $priority_packet;
         if ($tag_as_last && !$already_tagged) {
@@ -427,7 +434,8 @@ sub store {
             $listname = $listname->name;
         }
         if ($message_already_on_spool) {
-            ## search if this packet is already in spool database : mailfile may perform multiple submission of exactly the same message
+            ## search if this packet is already in spool database : mailfile
+            ## may perform multiple submission of exactly the same message
             unless (
                 $sth = SDM::do_prepared_query(
                     q{SELECT count(*)
@@ -566,7 +574,8 @@ sub get_remaining_packets_count {
     return $result[0];
 }
 
-## Returns 1 if the number of remaining packets in the bulkpacket table exceeds
+## Returns 1 if the number of remaining packets in the bulkpacket table
+## exceeds
 ## the value of the 'bulk_fork_threshold' config parameter.
 sub there_is_too_much_remaining_packets {
     Sympa::Log::Syslog::do_log('debug3', '()');

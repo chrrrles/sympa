@@ -1258,7 +1258,8 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
                 $list);
 
             ## Determine default lang for this list
-            ## It should tell us what character encoding was used for filenames
+            ## It should tell us what character encoding was used for
+            ## filenames
             &Language::SetLang($list->lang);
             my $list_encoding = &Language::GetCharset();
 

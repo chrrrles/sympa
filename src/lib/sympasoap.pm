@@ -234,9 +234,9 @@ sub casLogin {
     my ($user, @proxies, $email, $cas_id);
     foreach my $service_id (0 .. $#{Site->auth_services->{$robot->domain}}) {
         my $auth_service = Site->auth_services->{$robot->domain}[$service_id];
+        ## skip non CAS entries
         next
-            unless ($auth_service->{'auth_type'} eq 'cas')
-            ;    ## skip non CAS entries
+            unless ($auth_service->{'auth_type'} eq 'cas');
 
         my $cas = new AuthCAS(
             casUrl => $auth_service->{'base_url'},
@@ -367,9 +367,11 @@ sub getUserEmailByCookie {
 
 }
 ## Used to call a service from a remote proxy application
-## First parameter is the application name as defined in the trusted_applications.conf file
+## First parameter is the application name as defined in the
+## trusted_applications.conf file
 ##   2nd parameter is remote application password
-##   3nd a string with multiple cars definition comma separated (var=value,var=value,...)
+##   3nd a string with multiple cars definition comma separated
+##   (var=value,var=value,...)
 ##   4nd is service name requested
 ##   5nd service parameters
 sub authenticateRemoteAppAndRun {
@@ -401,7 +403,9 @@ sub authenticateRemoteAppAndRun {
     foreach my $var (split(/,/, $vars)) {
 
         # check if the remote application is trusted proxy for this variable
-        # Sympa::Log::Syslog::do_log('notice', "sympasoap::authenticateRemoteAppAndRun: Remote application is trusted proxy for  $var");
+        # Sympa::Log::Syslog::do_log('notice',
+        # "sympasoap::authenticateRemoteAppAndRun: Remote application is
+        # trusted proxy for  $var");
 
         my ($id, $value) = split(/=/, $var);
         if (!defined $id) {
@@ -906,7 +910,8 @@ sub add {
         $list->delete_subscription_request($email);
     }
 
-    ## Now send the welcome file to the user if it exists and notification is supposed to be sent.
+    ## Now send the welcome file to the user if it exists and notification is
+    ## supposed to be sent.
     unless ($quiet || $action =~ /quiet/i) {
         unless (
             $list->send_file(
@@ -1786,7 +1791,8 @@ sub which {
         push @result, $listInfo;
     }
 
-    #    return SOAP::Data->name('return')->type->('ArrayOfString')->value(\@result);
+    #    return SOAP::Data->name('return')->type->('ArrayOfString')
+    #    ->value(\@result);
     return SOAP::Data->name('return')->value(\@result);
 }
 

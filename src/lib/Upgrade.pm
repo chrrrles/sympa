@@ -39,7 +39,8 @@ use Site;
 #use Sympa::Constants; # used in Conf - confdef
 #use SDM; # used in Conf
 
-## Return the previous Sympa version, ie the one listed in data_structure.version
+## Return the previous Sympa version, ie the one listed in
+## data_structure.version
 sub get_previous_version {
     my $version_file = Site->etc . '/data_structure.version';
     my $previous_version;
@@ -299,9 +300,9 @@ sub upgrade {
         }
 
         foreach my $dir (sort readdir(ARCDIR)) {
+            ## Skip files and entries starting with '.'
             next
-                if (($dir =~ /^\./o) || (!-d $root_dir . '/' . $dir))
-                ;    ## Skip files and entries starting with '.'
+                if (($dir =~ /^\./o) || (!-d $root_dir . '/' . $dir));
 
             my ($listname, $listdomain) = split /\@/, $dir;
 
@@ -559,7 +560,8 @@ sub upgrade {
     }
 
     ## Changed shared documents name encoding
-    ## They are Q-encoded therefore easier to store on any filesystem with any encoding
+    ## They are Q-encoded therefore easier to store on any filesystem with any
+    ## encoding
     if (&tools::lower_version($previous_version, '5.3a.8')) {
         Sympa::Log::Syslog::do_log('notice',
             'Q-Encoding web documents filenames...');
@@ -572,7 +574,8 @@ sub upgrade {
                     '  Processing list %s...', $list);
 
                 ## Determine default lang for this list
-                ## It should tell us what character encoding was used for filenames
+                ## It should tell us what character encoding was used for
+                ## filenames
                 &Language::SetLang($list->lang);
                 my $list_encoding = &Language::GetCharset();
 
@@ -589,7 +592,8 @@ sub upgrade {
         Language::PopLang();
     }
 
-    ## We now support UTF-8 only for custom templates, config files, headers and footers, info files
+    ## We now support UTF-8 only for custom templates, config files, headers
+    ## and footers, info files
     ## + web_tt2, scenari, create_list_templates, families
     if (&tools::lower_version($previous_version, '5.3b.3')) {
         Sympa::Log::Syslog::do_log('notice',
@@ -800,7 +804,8 @@ sub upgrade {
     }
 
     if (&tools::lower_version($previous_version, '6.1b.5')) {
-        ## Encoding of shared documents was not consistent with recent versions of MIME::Encode
+        ## Encoding of shared documents was not consistent with recent
+        ## versions of MIME::Encode
         ## MIME::EncWords::encode_mimewords() used to encode characters -!*+/
         ## Now these characters are preserved, according to RFC 2047 section 5
         ## We change encoding of shared documents according to new algorithm
@@ -1025,7 +1030,8 @@ sub upgrade {
                     unless ($match) { $ignored .= ',' . $filename; next; }
                 } elsif ($spoolparameter eq 'queue'
                     or $spoolparameter eq 'queuebounce') {
-                    ## Don't process temporary files created by queue bouncequeue queueautomatic (T.xxx)
+                    ## Don't process temporary files created by queue
+                    ## bouncequeue queueautomatic (T.xxx)
                     next if ($filename =~ /^T\./);
 
                     unless ($filename =~ /^(\S+)\.(\d+)\.\w+$/) {
@@ -1468,7 +1474,8 @@ sub to_utf8 {
         my $text     = '';
         my $modified = 0;
 
-        ## If filesystem_encoding is set, files are supposed to be encoded according to it
+        ## If filesystem_encoding is set, files are supposed to be encoded
+        ## according to it
         my $charset;
         if ((defined $Conf::Conf::Ignored_Conf{'filesystem_encoding'}) &
             ($Conf::Conf::Ignored_Conf{'filesystem_encoding'} ne 'utf-8')) {
@@ -1561,8 +1568,10 @@ sub to_utf8 {
     return $total;
 }
 
-# md5_encode_password : Version later than 5.4 uses MD5 fingerprint instead of symetric crypto to store password.
-#  This require to rewrite paassword in database. This upgrade IS NOT REVERSIBLE
+# md5_encode_password : Version later than 5.4 uses MD5 fingerprint instead of
+# symetric crypto to store password.
+#  This require to rewrite paassword in database. This upgrade IS NOT
+#  REVERSIBLE
 sub md5_encode_password {
 
     my $total = 0;

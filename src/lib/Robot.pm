@@ -844,7 +844,8 @@ sub clean_robot {
     my $robot      = shift;
     my $maybe_site = shift;
 
-    #Sympa::Log::Syslog::do_log('debug3', 'robot "%s", maybe_site "%s"', $robot, $maybe_site);
+    # Sympa::Log::Syslog::do_log('debug3', 'robot "%s", maybe_site "%s"',
+    # $robot, $maybe_site);
     unless (ref $robot
         or ($maybe_site and !ref $robot and $robot eq 'Site')) {
         my $level = $Carp::CarpLevel;

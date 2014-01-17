@@ -372,8 +372,8 @@ sub request_action {
     }
     my (@rules, $name, $scenario);
 
-    my $log_it
-        ; # this var is defined to control if log scenario is activated or not
+    # this var is defined to control if log scenario is activated or not
+    my $log_it;
     if (${$robot->loging_for_module || {}}{'scenario'}) {
 
         #activate log if no condition is defined
@@ -821,7 +821,8 @@ sub verify {
     my $arguments     = $3;
     my @args;
 
-    ## The expression for regexp is tricky because we don't allow the '/' character (that indicates the end of the regexp
+    ## The expression for regexp is tricky because we don't allow the '/'
+    ## character (that indicates the end of the regexp
     ## but we allow any number of \/ escape sequence)
     while (
         $arguments =~ s/^\s*(
@@ -872,7 +873,8 @@ sub verify {
                         $value, $condition);
                 }
 
-                # a condition related to a undefined context variable is always false
+                # a condition related to a undefined context variable is
+                # always false
                 return -1 * $negation;
             }
 
@@ -1034,7 +1036,8 @@ sub verify {
                     );
                 }
 
-                # a condition related to a undefined context variable is always false
+                # a condition related to a undefined context variable is
+                # always false
                 return -1 * $negation;
             }
 
@@ -1765,7 +1768,8 @@ sub search {
 
     } elsif ($filter_file =~ /\.txt$/) {
 
-        # Sympa::Log::Syslog::do_log('info', 'List::search: eval %s', $filter_file);
+        # Sympa::Log::Syslog::do_log('info', 'List::search: eval %s',
+        # $filter_file);
         my @files =
             $that->get_etc_filename("search_filters/$filter_file",
             {'order' => 'all'});
@@ -1792,14 +1796,16 @@ sub search {
             }
             while (<FILE>) {
 
-                # Sympa::Log::Syslog::do_log('debug3', 'List::search: eval rule %s', $_);
+                # Sympa::Log::Syslog::do_log('debug3', 'List::search: eval
+                # rule %s', $_);
                 next if (/^\s*$/o || /^[\#\;]/o);
                 my $regexp = $_;
                 chomp $regexp;
                 $regexp =~ s/\*/.*/;
                 $regexp = '^' . $regexp . '$';
 
-                # Sympa::Log::Syslog::do_log('debug3', 'List::search: eval  %s =~ /%s/i', $sender,$regexp);
+                # Sympa::Log::Syslog::do_log('debug3', 'List::search: eval  %s
+                # =~ /%s/i', $sender,$regexp);
                 return 1 if ($sender =~ /$regexp/i);
             }
         }

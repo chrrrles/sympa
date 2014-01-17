@@ -278,7 +278,8 @@ sub delete_binaries {
     }
 }
 
-# Return a reference to an array containing the names of the robots on the server.
+# Return a reference to an array containing the names of the robots on the
+# server.
 sub get_robots_list {
     Sympa::Log::Syslog::do_log('debug2', '()');
     my @robots_list;
@@ -317,7 +318,8 @@ sub get_db_conf {
     my $robot = shift;
     my $label = shift;
 
-    # if the value is related to a robot that is not explicitly defined, apply it to the default robot.
+    # if the value is related to a robot that is not explicitly defined, apply
+    # it to the default robot.
     $robot = '*' unless (-f $Conf{'etc'} . '/' . $robot . '/robot.conf');
     unless ($robot) { $robot = '*' }
 
@@ -426,7 +428,8 @@ sub conf_2_db {
     my @conf_parameters = @confdef::params;
 
     # store in database robots parameters.
-    #load only parameters that are in a robot.conf file (do not apply defaults).
+    # load only parameters that are in a robot.conf file (do not apply
+    # defaults).
     &load_robots;
 
     unless (opendir DIR, $Conf{'etc'}) {
@@ -454,8 +457,9 @@ sub conf_2_db {
         &_remove_unvalid_robot_entry($config);
 
         for my $i (0 .. $#conf_parameters) {
-            if ($conf_parameters[$i]->{'name'})
-            {    #skip separators in conf_parameters structure
+            if ($conf_parameters[$i]->{'name'}) {
+
+                # skip separators in conf_parameters structure
                 if (($conf_parameters[$i]->{'vhost'} eq '1')
                     && #skip parameters that can't be define by robot so not to be loaded in db at that stage
                     ($config->{$conf_parameters[$i]->{'name'}})
@@ -748,7 +752,8 @@ sub checkfiles {
             $param->{'css'} = $css;
             my $css_tt2_path = $robot->get_etc_filename('web_tt2/css.tt2');
 
-            ## Update the CSS if it is missing or if a new css.tt2 was installed
+            ## Update the CSS if it is missing or if a new css.tt2 was
+            ## installed
             if (!-f $dir . '/' . $css
                 || (stat($css_tt2_path))[9] > (stat($dir . '/' . $css))[9]) {
                 Sympa::Log::Syslog::do_log(
@@ -1066,28 +1071,32 @@ sub _load_auth {
                         {$current_paragraph->{'auth_service_name'}}{'id'} =
                         $#paragraphs + 1;
 
-                    ## Default value for auth_service_friendly_name IS auth_service_name
+                    ## Default value for auth_service_friendly_name IS
+                    ## auth_service_name
                     $Conf{'cas_id'}{$robot}
                         {$current_paragraph->{'auth_service_name'}}
                         {'auth_service_friendly_name'} =
                            $current_paragraph->{'auth_service_friendly_name'}
                         || $current_paragraph->{'auth_service_name'};
 
-                    $current_paragraph->{'ldap_scope'} ||= 'sub'
-                        ; ## Force the default scope because '' is interpreted as 'base'
+                    ## Force the default scope because '' is interpreted as
+                    ## 'base'
+                    $current_paragraph->{'ldap_scope'} ||= 'sub';
                 } elsif ($current_paragraph->{'auth_type'} eq 'generic_sso') {
                     $Conf{'generic_sso_number'}{$robot}++;
                     $Conf{'generic_sso_id'}{$robot}
                         {$current_paragraph->{'service_id'}} =
                         $#paragraphs + 1;
-                    $current_paragraph->{'ldap_scope'} ||= 'sub'
-                        ; ## Force the default scope because '' is interpreted as 'base'
+                    ## Force the default scope because '' is interpreted as
+                    ## 'base'
+                    $current_paragraph->{'ldap_scope'} ||= 'sub';
+                    ## default value for http_header_value_separator is ';'
                     $current_paragraph->{'http_header_value_separator'} ||=
-                        ';'
-                        ; ## default value for http_header_value_separator is ';'
+                        ';';
 
                     ## CGI.pm changes environment variable names ('-' => '_')
-                    ## declared environment variable names needs to be transformed accordingly
+                    ## declared environment variable names needs to be
+                    ## transformed accordingly
                     foreach my $parameter ('http_header_list',
                         'email_http_header', 'netid_http_header') {
                         $current_paragraph->{$parameter} =~ s/\-/\_/g
@@ -1096,8 +1105,9 @@ sub _load_auth {
                 } elsif ($current_paragraph->{'auth_type'} eq 'ldap') {
                     $Conf{'ldap'}{$robot}++;
                     $Conf{'use_passwd'}{$robot} = 1;
-                    $current_paragraph->{'scope'} ||= 'sub'
-                        ; ## Force the default scope because '' is interpreted as 'base'
+                    ## Force the default scope because '' is interpreted as
+                    ## 'base'
+                    $current_paragraph->{'scope'} ||= 'sub';
                 } elsif ($current_paragraph->{'auth_type'} eq 'user_table') {
                     $Conf{'use_passwd'}{$robot} = 1;
                 }
@@ -1281,7 +1291,8 @@ sub load_automatic_lists_description {
     my $description =
         &load_generic_conf_file($config, \%automatic_lists_params);
 
-    ## Now doing some structuration work because Conf::load_automatic_lists_description() can't handle
+    ## Now doing some structuration work because
+    ## Conf::load_automatic_lists_description() can't handle
     ## data structured beyond one level of hash. This needs to be changed.
     my @structured_data;
     foreach my $class (@{$description->{'class'}}) {
@@ -1345,9 +1356,10 @@ sub load_crawlers_detection {
     my $hashhash;
 
     foreach my $kword (keys %{$hashtab}) {
+
+        # ignore comments and default
         next
-            unless ($crawlers_detection_conf{$kword})
-            ;    # ignore comments and default
+            unless ($crawlers_detection_conf{$kword});
         foreach my $value (@{$hashtab->{$kword}}) {
             $hashhash->{$kword}{$value} = 'true';
         }
@@ -1609,9 +1621,13 @@ sub _load_a_param {
 
 ## Simply load a config file and returns a hash.
 ## the returned hash contains two keys:
-## 1- the key 'config' points to a hash containing the data found in the config file.
-## 2- the key 'numbered_config' points to a hash containing the data found in the config file. Each entry contains both the value of a parameter and the line where it was found in the config file.
-## 3- the key 'errors' contains the number of config entries that could not be loaded, due to an error.
+## 1- the key 'config' points to a hash containing the data found in the
+## config file.
+## 2- the key 'numbered_config' points to a hash containing the data found in
+## the config file. Each entry contains both the value of a parameter and the
+## line where it was found in the config file.
+## 3- the key 'errors' contains the number of config entries that could not be
+## loaded, due to an error.
 ## Returns undef if something went wrong while attempting to read the file.
 sub _load_config_file_to_hash {
     my $param = shift;
@@ -1960,7 +1976,8 @@ sub _load_robot_secondary_config_files {
 sub _set_hardcoded_parameter_values {
     my $param = shift;
     my %ignored_values;
-    ## Some parameter values are hardcoded. In that case, ignore what was set in the config file and simply use the hardcoded value.
+    ## Some parameter values are hardcoded. In that case, ignore what was set
+    ## in the config file and simply use the hardcoded value.
     foreach my $p (keys %hardcoded_params) {
         $ignored_values{$p} = $param->{'config_hash'}{$p}
             if (defined $param->{'config_hash'}{$p});
@@ -2143,7 +2160,8 @@ sub load_robot_conf {
             $config_err += &_detect_missing_mandatory_parameters(
                 {'config_hash' => $conf, 'file_to_check' => $config_file});
 
-            # Some parameters need special treatments to get their final values.
+            # Some parameters need special treatments to get their final
+            # values.
             &_infer_server_specific_parameter_values(
                 {'config_hash' => $conf});
         }
@@ -2258,7 +2276,8 @@ sub _check_double_url_usage {
         ($host, $path) = ($param->{'config_hash'}{'http_host'}, '/');
     }
 
-    ## Warn listmaster if another virtual host is defined with the same host+path
+    ## Warn listmaster if another virtual host is defined with the same host
+    ## +path
     if (defined $Conf{'robot_by_http_host'}{$host}{$path}
         and $Conf{'robot_by_http_host'}{$host}{$path} ne
         $param->{'config_hash'}{'robot_name'}) {
