@@ -255,9 +255,12 @@ while (!$end) {
 
     unless ($main::options{'foreground'}) {
         ##
-        ## Create child bulks if too much packets are waiting to be sent in the bulk_mailer table.
-        ## Only the main bulk process (DAEMON_MASTER) can create child processes
-        ## Check if we need to run new child processes every 'bulk_wait_to_fork' (sympa.conf parameter) seconds
+        ## Create child bulks if too much packets are waiting to be sent in
+        ## the bulk_mailer table.
+        ## Only the main bulk process (DAEMON_MASTER) can create child
+        ## processes
+        ## Check if we need to run new child processes every
+        ## 'bulk_wait_to_fork' (sympa.conf parameter) seconds
         if (   ($main::daemon_usage eq 'DAEMON_MASTER')
             && (time() - $last_check_date > $timeout)) {
             ## Clean up PID file (in case some child bulks would have died)
@@ -356,7 +359,8 @@ while (!$end) {
             $last_check_date = time();
         }
     }
-    ## If a child bulk process is running for long enough, stop it (if the number of remaining packets to send is reasonnable).
+    ## If a child bulk process is running for long enough, stop it (if the
+    ## number of remaining packets to send is reasonnable).
     if (   ($main::daemon_usage eq 'DAEMON_SLAVE')
         && (time() - $date_of_last_activity > Site->bulk_lazytime)
         && !(my $r_packets = &Bulk::there_is_too_much_remaining_packets())) {
@@ -509,7 +513,8 @@ while (!$end) {
                 }
                 if ($message_from_spool->{'dkim_d'}) {
 
-                    # apply dkim signature AFTER any other message transformation.
+                    # apply dkim signature AFTER any other message
+                    # transformation.
                     $messageasstring = tools::dkim_sign(
                         $messageasstring,
                         {   'dkim_d' => $message_from_spool->{'dkim_d'},

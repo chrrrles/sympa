@@ -188,7 +188,9 @@ sub get_https2 {
     #	   my $subject_name = $ssl_socket->peer_certificate("subject");
     #	   my $issuer_name = $ssl_socket->peer_certificate("issuer");
     #	   my $cipher = $ssl_socket->get_cipher();
-    #	   Sympa::Log::Syslog::do_log ('debug','ssl peer certificat %s issued by %s. Cipher used %s',$subject_name,$issuer_name,$cipher);
+    #	   Sympa::Log::Syslog::do_log
+    #	   ('debug','ssl peer certificat %s issued by %s. Cipher used %s',
+    #	   $subject_name,$issuer_name,$cipher);
     #	}
 
     my $request = "GET $path HTTP/1.0\nHost: $host\n\n";

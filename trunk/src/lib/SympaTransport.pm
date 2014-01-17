@@ -115,7 +115,8 @@ sub handle ($$) {
             exit(0);
         }
 
-        #print "Set-Cookie: sympa_altemails=olivier.salaun%40cru.fr; path=/; expires=Tue , 19-Oct-2004 14 :08:19 GMT\n";
+        # print
+        # "Set-Cookie: sympa_altemails=olivier.salaun%40cru.fr; path=/; expires=Tue , 19-Oct-2004 14 :08:19 GMT\n";
     }
     return undef;
 }

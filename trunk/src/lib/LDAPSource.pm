@@ -47,14 +47,15 @@ sub new {
     my $param = shift;
     my $self  = $param;
     Sympa::Log::Syslog::do_log('debug', 'Creating new LDAPSource object');
-    ## Map equivalent parameters (depends on the calling context : included members, scenario, authN
+    ## Map equivalent parameters (depends on the calling context : included
+    ## members, scenario, authN
     ## Also set defaults
     foreach my $p (keys %{$self}) {
         unless ($p =~ /^ldap_/) {
             my $p_equiv = 'ldap_' . $p;
+            ## Respect existing entries
             $self->{$p_equiv} = $self->{$p}
-                unless (defined $self->{$p_equiv})
-                ;    ## Respect existing entries
+                unless (defined $self->{$p_equiv});
         }
     }
 
@@ -163,9 +164,12 @@ sub connect {
         return undef;
     }
 
-    ## Using start_tls() will convert the existing connection to using Transport Layer Security (TLS), which pro-
-    ## vides an encrypted connection. This is only possible if the connection uses LDAPv3, and requires that the
-    ## server advertizes support for LDAP_EXTENSION_START_TLS. Use "supported_extension" in Net::LDAP::RootDSE to
+    ## Using start_tls() will convert the existing connection to using
+    ## Transport Layer Security (TLS), which pro-
+    ## vides an encrypted connection. This is only possible if the connection
+    ## uses LDAPv3, and requires that the
+    ## server advertizes support for LDAP_EXTENSION_START_TLS. Use
+    ## "supported_extension" in Net::LDAP::RootDSE to
     ## check this.
     if ($self->{'use_start_tls'}) {
         my %tls_param;

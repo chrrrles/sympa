@@ -199,7 +199,8 @@ sub get_email_from_cookie {
 
     my ($email, $auth);
 
-    # Sympa::Log::Syslog::do_log('info', "get_email_from_cookie($cookie,$secret)");
+    # Sympa::Log::Syslog::do_log('info',
+    # "get_email_from_cookie($cookie,$secret)");
 
     unless (defined $secret) {
         &report::reject_report_web('intern', 'cookie_error', {}, '', '', '',

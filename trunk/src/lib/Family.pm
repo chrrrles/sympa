@@ -288,7 +288,8 @@ sub new {
     ## hash of parameters constraint
     $self->{'param_constraint_conf'} = undef;
 
-    ## state of the family for the use of check_param_constraint : 'no_check' or 'normal'
+    ## state of the family for the use of check_param_constraint : 'no_check'
+    ## or 'normal'
     ## check_param_constraint  only works in state "normal"
     $self->{'state'} = 'normal';
     $robot->families($name, $self);
@@ -979,7 +980,8 @@ Creates family lists or updates them if they exist already.
 #
 # IN : -$self
 #      -$xml_fh : file handle on the xml file
-#      -$close_unknown : true if must close old lists undefined in new instantiation
+#      -$close_unknown : true if must close old lists undefined in new
+#      instantiation
 # OUT : -1 or undef
 #########################################
 sub instantiate {
@@ -998,7 +1000,8 @@ sub instantiate {
     my $previous_family_lists =
         {(map { $_->name => $_ } @{List::get_lists($self)})};
 
-    ## Splits the family description XML file into a set of list description xml files
+    ## Splits the family description XML file into a set of list description
+    ## xml files
     ## and collects lists to be created in $self->{'list_to_generate'}.
     unless ($self->_split_xml_file($xml_file)) {
         Sympa::Log::Syslog::do_log('err',
@@ -1026,7 +1029,8 @@ sub instantiate {
 
         my $list = new List($listname, $self->{'robot'});
 
-        ## get data from list XML file. Stored into $config (class Config_XML).
+        ## get data from list XML file. Stored into $config (class
+        ## Config_XML).
         my $xml_fh;
         open $xml_fh, '<:raw', $self->dir . "/" . $listname . ".xml";
         my $config = new Config_XML($xml_fh);
@@ -1807,8 +1811,8 @@ sub get_param_constraint {
         return undef;
     }
 
-    if (defined $self->{'param_constraint_conf'}{$param})
-    {    ## fixed or controlled parameter
+    if (defined $self->{'param_constraint_conf'}{$param}) {
+        ## fixed or controlled parameter
         return $self->{'param_constraint_conf'}{$param};
 
     } else {    ## free parameter
@@ -2117,18 +2121,21 @@ sub _initialize_instantiation() {
     $self->{'errors'}{'previous_list'} = ();
 
     ## created or updated lists
-    ## array of list name : aliases are OK (installed or not, according to status)
+    ## array of list name : aliases are OK (installed or not, according to
+    ## status)
     $self->{'created_lists'}{'with_aliases'} = ();
     ## hash of (list name -> aliases) : aliases needed to be installed
     $self->{'created_lists'}{'without_aliases'} = {};
-    ## array of list name : aliases are OK (installed or not, according to status)
+    ## array of list name : aliases are OK (installed or not, according to
+    ## status)
     $self->{'updated_lists'}{'aliases_ok'} = ();
     ## hash of (list name -> aliases) : aliases needed to be installed
     $self->{'updated_lists'}{'aliases_to_install'} = {};
     ## hash of (list name -> aliases) : aliases needed to be removed
     $self->{'updated_lists'}{'aliases_to_remove'} = {};
 
-    ## generated (created or updated) lists in error : no fatal error for the list
+    ## generated (created or updated) lists in error : no fatal error for the
+    ## list
     ## array of list name : error during copying files
     $self->{'generated_lists'}{'file_error'} = ();
     ## hash of (list name -> array of param) : family constraint error
@@ -2137,7 +2144,8 @@ sub _initialize_instantiation() {
     ## lists isn't anymore in the family
     ## array of list name : lists in status family_closed
     $self->{'family_closed'}{'ok'} = ();
-    ## array of list name : lists that must be in status family_closed but they aren't
+    ## array of list name : lists that must be in status family_closed but
+    ## they aren't
     $self->{'family_closed'}{'impossible'} = ();
 
     return 1;

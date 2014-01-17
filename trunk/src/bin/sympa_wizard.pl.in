@@ -189,7 +189,9 @@ sub create_configuration {
             $conf, "$!";
     }
 
-    #print NEWF tools::wrap_text(Language::gettext("Configuration file for Sympa\nMany parameters are optional.\nPlease refer to the documentation for a detailed list of parameters."), '## ', '## ') . "\n\n";
+    # print NEWF
+    # tools::wrap_text(Language::gettext("Configuration file for Sympa\nMany parameters are optional.\nPlease refer to the documentation for a detailed list of parameters."),
+    # '## ', '## ') . "\n\n";
 
     my $title;
     foreach my $param (@confdef::params) {
@@ -457,7 +459,8 @@ sub check_cpan {
 ###--------------------------
     # reports modules status
     # $moddef::cpan_modules is the cpan_modules structure
-    # $type is the type of modules (mandatory | optional) that should be installed
+    # $type is the type of modules (mandatory | optional) that should be
+    # installed
 ###--------------------------
 }
 

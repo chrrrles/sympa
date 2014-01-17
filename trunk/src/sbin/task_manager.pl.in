@@ -217,8 +217,8 @@ $SIG{'TERM'} = 'sigterm';
 my $end = 0;
 
 ###### VARIABLES DECLARATION ######
-undef my $log
-    ;    # won't execute send_msg and delete_subs commands if true, only log
+# won't execute send_msg and delete_subs commands if true, only log
+undef my $log;
 
 #$log = 1;
 

@@ -71,7 +71,8 @@ Loads and parses the configuration file.  Reports errors if any.
 do not try to load database values if 'no_db' option is set;
 do not change global hash %Conf if 'return_result' option is set;
 
-##we known that's dirty, this proc should be rewritten without this global var %Conf
+## we known that's dirty, this proc should be rewritten without this global
+## var %Conf
 
 NOTE: To load entire robots config, use C<Robot::get_robots('force_reload' =E<gt> 1)>.
 

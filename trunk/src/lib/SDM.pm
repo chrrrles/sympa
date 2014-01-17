@@ -153,7 +153,8 @@ sub connect_sympa_database {
     my $option = shift || '';
 
     ## We keep trying to connect if this is the first attempt
-    ## Unless in a web context, because we can't afford long response time on the web interface
+    ## Unless in a web context, because we can't afford long response time on
+    ## the web interface
     my $db_conf = &Conf::get_parameters_group('*', 'Database related');
     $db_conf->{'reconnect_options'} = {
         'keep_trying' => (
@@ -538,7 +539,8 @@ sub check_indexes {
     my $t          = $param->{'table'};
     my $report_ref = $param->{'report'};
     Sympa::Log::Syslog::do_log('debug', 'Checking indexes for table %s', $t);
-    ## drop previous index if this index is not a primary key and was defined by a previous Sympa version
+    ## drop previous index if this index is not a primary key and was defined
+    ## by a previous Sympa version
     my %index_columns = %{$db_source->get_indexes({'table' => $t})};
     foreach my $idx (keys %index_columns) {
         Sympa::Log::Syslog::do_log('debug', 'Found index %s', $idx);

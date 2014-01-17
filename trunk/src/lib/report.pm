@@ -29,7 +29,7 @@ use Language;
 use Log;
 use List;
 
-######################## MESSAGE DIFFUSION REPORT #############################################
+### MESSAGE DIFFUSION REPORT ###
 
 ############################################################
 #  reject_report_msg
@@ -40,7 +40,8 @@ use List;
 # IN : -$type (+): 'intern'||'intern_quiet'||'user'||auth' - the error type
 #      -$error : scalar - the entry in message_report.tt2 if $type = 'user'
 #                       - string error for listmaster if $type = 'intern'
-#                       - the entry in authorization reject (called by message_report.tt2)
+#                       - the entry in authorization reject (called by
+#                       message_report.tt2)
 #                               if $type = 'auth'
 #      -$user (+): scalar - the user to notify
 #      -$param : ref(HASH) - var used in message_report.tt2
@@ -158,7 +159,8 @@ sub _get_msg_as_hash {
         $body_as_string = $body_handle->as_lines();
     }
 
-    ## TODO : we should also decode headers + remove trailing \n + use these variables in default mail templates
+    ## TODO : we should also decode headers + remove trailing \n + use these
+    ## variables in default mail templates
 
     my $from = $head->get('From');
     chomp $from if $from;
@@ -240,7 +242,7 @@ sub notice_report_msg {
     return 1;
 }
 
-########################### MAIL COMMAND REPORT #############################################
+### MAIL COMMAND REPORT ###
 
 # for rejected command because of internal error
 my @intern_error_cmd;
@@ -554,7 +556,7 @@ sub notice_report_cmd {
     push @notice_cmd, $data;
 }
 
-########################### WEB COMMAND REPORT #############################################
+### WEB COMMAND REPORT ###
 
 # for rejected web command because of internal error
 my @intern_error_web;
@@ -722,7 +724,8 @@ sub get_notice_web {
 # IN : -$msg : $notice.msg to select string in
 #               web/notice.tt2
 #      -$data : ref(HASH) - var used in web_tt2/notices.tt2
-#      -$action : SCALAR - the noticed action $notice.action in web_tt2/notices.tt2
+#      -$action : SCALAR - the noticed action $notice.action in
+#      web_tt2/notices.tt2
 #
 # OUT : 1
 #
@@ -746,12 +749,16 @@ sub notice_report_web {
 #  if $type = 'intern'||'system', the listmaster is notified
 #  (with 'web_intern_error' || 'web_system_error')
 #
-# IN : -$type (+): 'intern'||'intern_quiet||'system'||'system_quiet'||user'||'auth'
+# IN : -$type (+):
+# 'intern'||'intern_quiet||'system'||'system_quiet'||user'||'auth'
 #      -$error (+): scalar  - $u_err.msg in error.tt2 if $type = 'user'
 #                           - $auth.msg in error.tt2 if $type = 'auth'
-#                           - $s_err.msg in error.tt2 if $type = 'system'||'system_quiet'
-#                           - $i_err.msg in error.tt2 if $type = 'intern' || 'intern_quiet'
-#                           - $error in listmaster_notification if $type = 'system'||'intern'
+#                           - $s_err.msg in error.tt2 if $type =
+#                           'system'||'system_quiet'
+#                           - $i_err.msg in error.tt2 if $type = 'intern' ||
+#                           'intern_quiet'
+#                           - $error in listmaster_notification if $type =
+#                           'system'||'intern'
 #      -$data : ref(HASH) - var used in web_tt2/error.tt2
 #      -$action(+) : SCALAR - the rejected action :
 #            $xx.action in web_tt2/error.tt2

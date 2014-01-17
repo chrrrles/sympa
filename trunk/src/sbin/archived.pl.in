@@ -364,7 +364,8 @@ while (!$end) {
                 || $list->am_i('editor', $sender)
                 || &List::is_listmaster($sender, $list->{'domain'})) {
 
-                # if not list owner or list editor or listmaster,n check if sender of remove order is sender of the message to remove
+                # if not list owner or list editor or listmaster,n check if
+                # sender of remove order is sender of the message to remove
 
                 my $new_message;
                 unless (
@@ -388,7 +389,8 @@ while (!$end) {
                 }
             }
 
-            # this point : requested command is from a authorized personn (message sender or list admin or listmaster
+            # this point : requested command is from a authorized personn
+            # (message sender or list admin or listmaster
             &remove($arclistdir, $msgid);
 
             my $url_dir = $list->dir . '/urlized/' . $msgid;
@@ -1097,7 +1099,8 @@ sub mail2arc {
         print DUMP $message_in_spool->{'messageasstring'};
         close DUMP;
 
-        # prepare a temporary file with clean message content (htlm parts are cleaned)
+        # prepare a temporary file with clean message content (htlm parts are
+        # cleaned)
         my $safe = Archive::clean_archived_message($robot, $file, $output);
         unless ($safe) {
             Sympa::Log::Syslog::do_log('err',
@@ -1108,7 +1111,8 @@ sub mail2arc {
         my $mhonarc_ressources =
             $list->get_etc_filename('mhonarc-ressources.tt2');
 
-        # call mhonarc on cleaned message source to make clean htlm view of message
+        # call mhonarc on cleaned message source to make clean htlm view of
+        # message
         my $cmd = sprintf
             '%s -add -modifybodyaddresses -addressmodifycode \'%s\' -rcfile %s -outdir %s -definevars "listname=\'%s\' hostname=%s yyyy=%s mois=%s yyyymm=%s-%s wdir=%s base=%s/arc tag=%s" -umask %s < %s',
             Site->mhonarc, $ENV{'M2H_ADDRESSMODIFYCODE'},
@@ -1262,6 +1266,7 @@ sub save_idx {
     print INDEXF "$lst\n";
     close INDEXF;
 
+    #
     #   Sympa::Log::Syslog::do_log('debug',"last arc entry for $index is $lst");
 }
 

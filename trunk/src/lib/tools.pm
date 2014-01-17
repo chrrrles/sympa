@@ -56,7 +56,8 @@ my $separator =
     "------- CUT --- CUT --- CUT --- CUT --- CUT --- CUT --- CUT -------";
 
 ## Regexps for list params
-## Caution : if this regexp changes (more/less parenthesis), then regexp using it should
+## Caution : if this regexp changes (more/less parenthesis), then regexp using
+## it should
 ## also be changed
 my $time_regexp       = '[012]?[0-9](?:\:[0-5][0-9])?';
 my $time_range_regexp = $time_regexp . '-' . $time_regexp;
@@ -138,7 +139,8 @@ sub set_file_rights {
     return 1;
 }
 
-## Returns an HTML::StripScripts::Parser object built with  the parameters provided as arguments.
+## Returns an HTML::StripScripts::Parser object built with  the parameters
+## provided as arguments.
 sub _create_xss_parser {
     my %parameters = @_;
     my $robot      = $parameters{'robot'};
@@ -183,7 +185,8 @@ sub make_pictures_url {
     return $ret;
 }
 
-## Returns sanitized version (using StripScripts) of the string provided as argument.
+## Returns sanitized version (using StripScripts) of the string provided as
+## argument.
 sub sanitize_html {
     my %parameters = @_;
     my $robot      = $parameters{'robot'};
@@ -204,7 +207,8 @@ sub sanitize_html {
     return $string;
 }
 
-## Returns sanitized version (using StripScripts) of the content of the file whose path is provided as argument.
+## Returns sanitized version (using StripScripts) of the content of the file
+## whose path is provided as argument.
 sub sanitize_html_file {
     my %parameters = @_;
     my $robot      = $parameters{'robot'};
@@ -641,7 +645,8 @@ sub mkdir_all {
     return $status;
 }
 
-# shift file renaming it with date. If count is defined, keep $count file and unlink others
+# shift file renaming it with date. If count is defined, keep $count file and
+# unlink others
 sub shift_file {
     my $file  = shift;
     my $count = shift;
@@ -959,7 +964,8 @@ sub remove_invalid_dkim_signature {
 # input object msg and listname, output signed message object
 sub dkim_sign {
 
-    # in case of any error, this proc MUST return $msg_as_string NOT undef ; this would cause Sympa to send empty mail
+    # in case of any error, this proc MUST return $msg_as_string NOT undef ;
+    # this would cause Sympa to send empty mail
     my $msg_as_string   = shift;
     my $data            = shift;
     my $dkim_d          = $data->{'dkim_d'};
@@ -1256,13 +1262,15 @@ sub recursive_transformation {
 sub qencode_filename {
     my $filename = shift;
 
-    ## We don't use MIME::Words here because it does not encode properly Unicode
+    ## We don't use MIME::Words here because it does not encode properly
+    ## Unicode
     ## Check if string is already Q-encoded first
     ## Also check if the string contains 8bit chars
     unless ($filename =~ /\=\?UTF-8\?/
         || $filename =~ /^[\x00-\x7f]*$/) {
 
-        ## Don't encode elements such as .desc. or .url or .moderate or .extension
+        ## Don't encode elements such as .desc. or .url or .moderate
+        ## or .extension
         my $part = $filename;
         my ($leading, $trailing);
         $leading  = $1 if ($part =~ s/^(\.desc\.)//);    ## leading .desc
@@ -1286,7 +1294,8 @@ sub qencode_filename {
 sub qdecode_filename {
     my $filename = shift;
 
-    ## We don't use MIME::Words here because it does not encode properly Unicode
+    ## We don't use MIME::Words here because it does not encode properly
+    ## Unicode
     ## Check if string is already Q-encoded first
     #if ($filename =~ /\=\?UTF-8\?/) {
     $filename = Encode::encode_utf8(&Encode::decode('MIME-Q', $filename));
@@ -1382,7 +1391,8 @@ sub cookie_changed {
             #	}else{
             #	    push @cookies, $current ;
             #	    unless (open COOK, '>', Site->etc . '/cookies.history') {
-            #		Sympa::Log::Syslog::do_log('err', "Unable to create %s/cookies.history", Site->etc);
+            #		Sympa::Log::Syslog::do_log('err',
+            #		"Unable to create %s/cookies.history", Site->etc);
             #		return undef ;
             #	    }
             #	    print COOK join(" ", @cookies);
@@ -1536,7 +1546,8 @@ sub split_mail {
         close(OFILE);
         printf "\t-------\t Create file %s\n", $pathname . '.' . $fileExt;
 
-        ## Delete files created twice or more (with Content-Type.name and Content-Disposition.filename)
+        ## Delete files created twice or more (with Content-Type.name and
+        ## Content-Disposition.filename)
         $message->purge;
     }
 
@@ -1546,9 +1557,9 @@ sub split_mail {
 sub virus_infected {
     my $mail = shift;
 
-    my $file =
-        int(rand(time))
-        ; # in, version previous from db spools, $file was the filename of the message
+    # in, version previous from db spools, $file was the filename of the
+    # message
+    my $file = int(rand(time));
     Sympa::Log::Syslog::do_log('debug2', 'Scan virus in %s', $file);
 
     unless (Site->antivirus_path) {
@@ -1617,9 +1628,12 @@ sub virus_infected {
         }
 
         ## Meaning of the codes
-        ##  12 : The program tried to clean a file, and that clean failed for some reason and the file is still infected.
-        ##  13 : One or more viruses or hostile objects (such as a Trojan horse, joke program,  or  a  test file) were found.
-        ##  15 : The programs self-check failed; the program might be infected or damaged.
+        ##  12 : The program tried to clean a file, and that clean failed for
+        ##  some reason and the file is still infected.
+        ##  13 : One or more viruses or hostile objects (such as a Trojan
+        ##  horse, joke program,  or  a  test file) were found.
+        ##  15 : The programs self-check failed; the program might be infected
+        ##  or damaged.
         ##  19 : The program succeeded in cleaning all infected files.
 
         $error_msg = $result
@@ -1826,7 +1840,8 @@ sub adate {
     return $date;
 }
 
-## Return the epoch date corresponding to the last midnight before date given as argument.
+## Return the epoch date corresponding to the last midnight before date given
+## as argument.
 sub get_midnight_time {
 
     my $epoch = $_[0];
@@ -1885,8 +1900,9 @@ sub date_conv {
         return $arg;
     }
 
-    if ($arg =~ /^(\d\d\d\dy)(\d+m)?(\d+d)?(\d+h)?(\d+min)?(\d+sec)?$/)
-    {                                    # absolute date
+    if ($arg =~ /^(\d\d\d\dy)(\d+m)?(\d+d)?(\d+h)?(\d+min)?(\d+sec)?$/) {
+
+        # absolute date
 
         my @date = ("$6", "$5", "$4", "$3", "$2", "$1");
         for (my $i = 0; $i < 6; $i++) {
@@ -2028,9 +2044,9 @@ sub qencode_hierarchy {
 
     foreach my $f_struct (reverse @all_files) {
 
+        ## At least one 8bit char
         next
-            unless ($f_struct->{'filename'} =~ /[^\x00-\x7f]/)
-            ;           ## At least one 8bit char
+            unless ($f_struct->{'filename'} =~ /[^\x00-\x7f]/);
 
         my $new_filename = $f_struct->{'filename'};
         my $encoding     = $f_struct->{'encoding'};
@@ -2072,8 +2088,10 @@ sub remove_pid {
     my $piddir  = Sympa::Constants::PIDDIR;
     my $pidfile = $piddir . '/' . $name . '.pid';
 
-    ## If in multi_process mode (bulk.pl for instance can have child processes)
-    ## Then the PID file contains a list of space-separated PIDs on a single line
+    ## If in multi_process mode (bulk.pl for instance can have child
+    ## processes)
+    ## Then the PID file contains a list of space-separated PIDs on a single
+    ## line
     if ($options->{'multiple_process'}) {
         unless (open(PFILE, $pidfile)) {
 
@@ -2417,7 +2435,8 @@ sub remove_dir {
 ## 'decrypt' -> return a list of possible decryption keys/certs
 ## 'encrypt' -> return the preferred encryption key/cert
 ## returns ($certs, $keys)
-## for 'sign' and 'encrypt', these are strings containing the absolute file name
+## for 'sign' and 'encrypt', these are strings containing the absolute file
+## name
 ## for 'decrypt', these are arrayrefs containing absolute file names
 sub smime_find_keys {
     my ($dir, $oper) = @_;
@@ -2895,7 +2914,8 @@ sub is_in_array {
 #        * a_file : the full path to a file
 #        * b_file : the full path to a file
 #
-# OUT : string: 'true' if the last modification date of "a_file" is older than "b_file"'s, 'false' otherwise.
+# OUT : string: 'true' if the last modification date of "a_file" is older than
+# "b_file"'s, 'false' otherwise.
 #       return undef if the comparison could not be carried on.
 #######################################################
 sub a_is_older_than_b {
@@ -3236,8 +3256,9 @@ sub get_fingerprint {
     my $random;
     my $random_email;
 
-    unless ($random = &get_db_random())
-    {    # si un random existe : get_db_random
+    unless ($random = &get_db_random()) {
+
+        # si un random existe : get_db_random
         $random = &init_db_random();    # sinon init_db_random
     }
 
@@ -3356,7 +3377,8 @@ sub get_regexp {
 }
 
 ## convert a string formatted as var1="value1";var2="value2"; into a hash.
-## Used when extracting from session table some session properties or when extracting users preference from user table
+## Used when extracting from session table some session properties or when
+## extracting users preference from user table
 ## Current encoding is NOT compatible with encoding of values with '"'
 ##
 sub string_2_hash {
@@ -3373,7 +3395,8 @@ sub string_2_hash {
     return (%hash);
 
 }
-## convert a hash into a string formated as var1="value1";var2="value2"; into a hash
+## convert a hash into a string formated as var1="value1";var2="value2"; into
+## a hash
 sub hash_2_string {
     my $refhash = shift;
 
@@ -3555,7 +3578,9 @@ sub CleanDir {
     return 1;
 }
 
-# return a lockname that is a uniq id of a processus (hostname + pid) ; hostname (20) and pid(10) are truncated in order to store lockname in database varchar(30)
+# return a lockname that is a uniq id of a processus (hostname + pid) ;
+# hostname (20) and pid(10) are truncated in order to store lockname in
+# database varchar(30)
 sub get_lockname () {
     return substr(substr(hostname(), 0, 20) . $$, 0, 30);
 }
@@ -3747,7 +3772,8 @@ sub decode_header {
 
 #*******************************************
 ## Function : foldcase
-## Description : returns "fold-case" string suitable for case-insensitive match.
+## Description : returns "fold-case" string suitable for case-insensitive
+## match.
 ### IN : str
 ##*******************************************
 sub foldcase {

@@ -93,7 +93,8 @@ sub get_limit_clause {
 # IN: A ref to hash containing the following keys:
 #	* 'mode'
 # 	   authorized values:
-#		- 'write': the sub returns the expression to use in 'INSERT' or 'UPDATE' queries
+#		- 'write': the sub returns the expression to use in 'INSERT'
+#		or 'UPDATE' queries
 #		- 'read': the sub returns the expression to use in 'SELECT' queries
 #	* 'target': the name of the field or the value to be used in the query
 #
@@ -171,7 +172,8 @@ sub set_autoinc {
 # Returns the list of the tables in the database.
 # Returns undef if something goes wrong.
 #
-# OUT: a ref to an array containing the list of the tables names in the database, undef if something went wrong
+# OUT: a ref to an array containing the list of the tables names in the
+# database, undef if something went wrong
 sub get_tables {
     my $self = shift;
     Sympa::Log::Syslog::do_log('debug3',
@@ -195,7 +197,8 @@ sub get_tables {
 # IN: A ref to hash containing the following keys:
 #	* 'table' : the name of the table to add
 #
-# OUT: A character string report of the operation done or undef if something went wrong.
+# OUT: A character string report of the operation done or undef if something
+# went wrong.
 sub add_table {
     my $self  = shift;
     my $param = shift;
@@ -213,7 +216,8 @@ sub add_table {
         $self->{'db_name'};
 }
 
-# Returns a ref to an hash containing the description of the fields in a table from the database.
+# Returns a ref to an hash containing the description of the fields in a table
+# from the database.
 # IN: A ref to hash containing the following keys:
 #	* 'table' : the name of the table whose fields are requested.
 #
@@ -250,7 +254,8 @@ sub get_fields {
 # * 'type' : the type of the field to add
 # * 'notnull' : specifies that the field must not be null
 #
-# OUT: A character string report of the operation done or undef if something went wrong.
+# OUT: A character string report of the operation done or undef if something
+# went wrong.
 #
 sub update_field {
     my $self  = shift;
@@ -300,7 +305,8 @@ sub update_field {
 #	* 'autoinc' : specifies that the field must be autoincremental
 #	* 'primary' : specifies that the field is a key
 #
-# OUT: A character string report of the operation done or undef if something went wrong.
+# OUT: A character string report of the operation done or undef if something
+# went wrong.
 #
 sub add_field {
     my $self  = shift;
@@ -350,7 +356,8 @@ sub add_field {
 #	* 'field' : the name of the field to delete
 #	* 'table' : the name of the table where the field will be deleted.
 #
-# OUT: A character string report of the operation done or undef if something went wrong.
+# OUT: A character string report of the operation done or undef if something
+# went wrong.
 #
 sub delete_field {
     my $self  = shift;
@@ -382,7 +389,8 @@ sub delete_field {
 # IN: A ref to hash containing the following keys:
 #	* 'table' : the name of the table for which the primary keys are requested.
 #
-# OUT: A ref to a hash in which each key is the name of a primary key or undef if something went wrong.
+# OUT: A ref to a hash in which each key is the name of a primary key or undef
+# if something went wrong.
 #
 sub get_primary_key {
     my $self  = shift;
@@ -411,9 +419,11 @@ sub get_primary_key {
 
 # Drops the primary key of a table.
 # IN: A ref to hash containing the following keys:
-#	* 'table' : the name of the table for which the primary keys must be dropped.
+#	* 'table' : the name of the table for which the primary keys must be
+#	dropped.
 #
-# OUT: A character string report of the operation done or undef if something went wrong.
+# OUT: A character string report of the operation done or undef if something
+# went wrong.
 #
 sub unset_primary_key {
     my $self  = shift;
@@ -439,10 +449,13 @@ sub unset_primary_key {
 
 # Sets the primary key of a table.
 # IN: A ref to hash containing the following keys:
-#	* 'table' : the name of the table for which the primary keys must be defined.
-#	* 'fields' : a ref to an array containing the names of the fields used in the key.
+#	* 'table' : the name of the table for which the primary keys must be
+#	defined.
+#	* 'fields' : a ref to an array containing the names of the fields used
+#	in the key.
 #
-# OUT: A character string report of the operation done or undef if something went wrong.
+# OUT: A character string report of the operation done or undef if something
+# went wrong.
 #
 sub set_primary_key {
     my $self  = shift;
@@ -478,7 +491,8 @@ sub set_primary_key {
 # IN: A ref to hash containing the following keys:
 #	* 'table' : the name of the table for which the indexes are requested.
 #
-# OUT: A ref to a hash in which each key is the name of an index. These key point to
+# OUT: A ref to a hash in which each key is the name of an index. These key
+# point to
 #	a second level hash in which each key is the name of the field indexed.
 #      Returns undef if something went wrong.
 #
@@ -517,7 +531,8 @@ sub get_indexes {
 #	* 'table' : the name of the table for which the index must be dropped.
 #	* 'index' : the name of the index to be dropped.
 #
-# OUT: A character string report of the operation done or undef if something went wrong.
+# OUT: A character string report of the operation done or undef if something
+# went wrong.
 #
 sub unset_index {
     my $self  = shift;
@@ -547,10 +562,12 @@ sub unset_index {
 # Sets an index in a table.
 # IN: A ref to hash containing the following keys:
 #	* 'table' : the name of the table for which the index must be defined.
-#	* 'fields' : a ref to an array containing the names of the fields used in the index.
+#	* 'fields' : a ref to an array containing the names of the fields used
+#	in the index.
 #	* 'index_name' : the name of the index to be defined..
 #
-# OUT: A character string report of the operation done or undef if something went wrong.
+# OUT: A character string report of the operation done or undef if something
+# went wrong.
 #
 sub set_index {
     my $self  = shift;

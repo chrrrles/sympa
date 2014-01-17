@@ -887,11 +887,14 @@ sub update_stats {
 }
 
 ## Extract a set of rcpt for which verp must be use from a rcpt_tab.
-## Input  :  percent : the rate of subscribers that must be threaded using verp
+## Input  :  percent : the rate of subscribers that must be threaded using
+## verp
 ##           xseq    : the message sequence number
 ##           @rcpt   : a tab of emails
-## return :  a tab of rcpt for which rcpt must be use depending on the message sequence number, this way every subscriber is "VERPed" from time to time
-##           input table @rcpt is spliced : rcpt for which verp must be used are extracted from this table
+## return :  a tab of rcpt for which rcpt must be use depending on the message
+## sequence number, this way every subscriber is "VERPed" from time to time
+##           input table @rcpt is spliced : rcpt for which verp must be used
+##           are extracted from this table
 sub extract_verp_rcpt {
     Sympa::Log::Syslog::do_log('debug3', '(%s, %s, %s, %s)', @_);
     my $percent     = shift;
@@ -1124,7 +1127,8 @@ sub get_owners {
 
     my $owners = ();
 
-    # owners are in the admin_table ; they might come from an include data source
+    # owners are in the admin_table ; they might come from an include data
+    # source
     for (
         my $owner = $self->get_first_list_admin('owner');
         $owner;
@@ -1149,14 +1153,16 @@ sub get_nb_owners {
     return $resul;
 }
 
-## Return a hash of list's editors and their param(empty if there isn't any editor)
+## Return a hash of list's editors and their param(empty if there isn't any
+## editor)
 sub get_editors {
     Sympa::Log::Syslog::do_log('debug3', '(%s)', @_);
     my $self = shift;
 
     my $editors = ();
 
-    # editors are in the admin_table ; they might come from an include data source
+    # editors are in the admin_table ; they might come from an include data
+    # source
     for (
         my $editor = $self->get_first_list_admin('editor');
         $editor;
@@ -1630,8 +1636,10 @@ sub distribute_msg {
             and $message->get_header('Disposition-Notification-To');
 
     if ($apply_tracking ne 'off') {
-        $hdr->delete('Disposition-Notification-To')
-            ; # remove notification request because a new one will be inserted if needed
+
+        # remove notification request because a new one will be inserted if
+        # needed
+        $hdr->delete('Disposition-Notification-To');
     }
 
     ## Remove unwanted headers if present.
@@ -1799,7 +1807,8 @@ sub get_lists_of_digest_recipients {
                 next;
             } elsif (($user_data->{'enddate'} < time)
                 && ($user_data->{'enddate'})) {
-                ## If end date is < time, update the BDD by deleting the suspending user's data
+                ## If end date is < time, update the BDD by deleting the
+                ## suspending user's data
                 $self->restore_suspended_subscription($user->{'email'});
             }
         }
@@ -1877,9 +1886,8 @@ sub prepare_messages_for_digest {
         $msg->{'plain_body'} =
             $mail->as_entity()->PlainDigest::plain_body_as_string();
 
-        $msg->{'month'} =
-            &POSIX::strftime("%Y-%m", localtime(time))
-            ;    ## Should be extracted from Date:
+        ## Should be extracted from Date:
+        $msg->{'month'} = &POSIX::strftime("%Y-%m", localtime(time));
         $msg->{'message_id'} =
             tools::clean_msg_id($mail->get_header('Message-Id'));
 
@@ -2136,9 +2144,10 @@ sub send_msg {
 
     # prepare VERP parameter
     my $verp_rate = $self->verp_rate;
+
+    # force VERP if tracking is requested.
     $verp_rate = '100%'
-        if (($apply_tracking eq 'dsn') || ($apply_tracking eq 'mdn'))
-        ;    # force VERP if tracking is requested.
+        if (($apply_tracking eq 'dsn') || ($apply_tracking eq 'mdn'));
 
     my $xsequence = $self->stats->[0];
 
@@ -2149,7 +2158,8 @@ sub send_msg {
         $dkim_parameters = &tools::get_dkim_parameters($self);
     }
 
-    # separate subscribers depending on user reception option and also if VERP a dicovered some bounce for them.
+    # separate subscribers depending on user reception option and also if VERP
+    # a dicovered some bounce for them.
     return 0 unless ($self->get_list_members_per_mode($message));
     my $topics_updated_total = 0;
     foreach my $mode (sort keys %{$message->{'rcpts_by_mode'}}) {
@@ -2261,12 +2271,15 @@ sub get_list_members_per_mode {
                 next;
             } elsif (($user_data->{'enddate'} < time)
                 && ($user_data->{'enddate'})) {
-                ## If end date is < time, update the BDD by deleting the suspending user's data
+                ## If end date is < time, update the BDD by deleting the
+                ## suspending user's data
                 $self->restore_suspended_subscription($user->{'email'});
             }
         }
-        if ($user->{'reception'} eq 'digestplain')
-        { # digest digestplain, nomail and summary reception option are initialized for tracking feature only
+        if ($user->{'reception'} eq 'digestplain') {
+
+            # digest digestplain, nomail and summary reception option are
+            # initialized for tracking feature only
             push @tabrcpt_digestplain_verp, $user->{'email'};
         } elsif ($user->{'reception'} eq 'digest') {
             push @tabrcpt_digest_verp, $user->{'email'};
@@ -3248,7 +3261,7 @@ sub send_notify_to_user {
     return 1;
 }
 
-#                                                                                       #
+#
 #                                                                         #
 #                                                                         #
 ################### END functions for sending messages ####################
@@ -3679,7 +3692,8 @@ sub get_exclusion {
         push @users, $data->{'email'};
         push @date,  $data->{'date'};
     }
-    ## in order to use the data, we add the emails and dates in different array
+    ## in order to use the data, we add the emails and dates in different
+    ## array
     my $data_exclu = {
         "emails" => \@users,
         "date"   => \@date
@@ -3701,7 +3715,8 @@ sub get_exclusion {
 ###  get_list_member                                                  #
 ## Returns a subscriber of the list.
 ## Options :
-##    probe : don't log error if user does not exist                             #
+##    probe : don't log error if user does not exist
+##    #
 ######################################################################
 sub get_list_member {
     Sympa::Log::Syslog::do_log('debug2', '(%s, %s)', @_);
@@ -3805,7 +3820,8 @@ sub get_resembling_list_members_no_object {
         my $upperdomain = $1;
         if ($upperdomain =~ /\./) {
 
-            # remove first token if there is still at least 2 tokens try to find a subscriber with that domain
+            # remove first token if there is still at least 2 tokens try to
+            # find a subscriber with that domain
             foreach my $subscriber (
                 &find_list_member_by_pattern_no_object(
                     {   'email_pattern' => $local_part . '@' . $upperdomain,
@@ -4073,7 +4089,7 @@ sub get_first_list_member {
             unless ($self->is_available_reception_mode($user->{'reception'}));
         $user->{'update_date'} ||= $user->{'date'};
 
-        ############################################################################
+        ######################################################################
         if (defined $user->{custom_attribute}) {
             $user->{'custom_attribute'} =
                 &parseCustomAttribute($user->{'custom_attribute'});
@@ -4326,7 +4342,8 @@ sub get_next_list_member {
     return $user;
 }
 
-## Loop for all subsequent admin users with the role defined in get_first_list_admin.
+## Loop for all subsequent admin users with the role defined in
+## get_first_list_admin.
 sub get_next_list_admin {
     my $self = shift;
     Sympa::Log::Syslog::do_log('debug3', '');
@@ -4610,6 +4627,7 @@ sub update_list_member {
 ##    if (defined Site->custom_attribute) {
 ##	foreach my $f (sort keys %{Site->custom_attribute}) {
 ##	    Sympa::Log::Syslog::do_log('debug2',
+##
 ##		"custom_attribute id: Site->custom_attribute->{id} name: Site->custom_attribute->{name} type: Site->custom_attribute->{type} "
 ##	    );
 ##
@@ -4921,7 +4939,8 @@ sub add_list_member {
             last;
         }
 
-        # Delete from exclusion_table and force a sync_include if new_user was excluded
+        # Delete from exclusion_table and force a sync_include if new_user was
+        # excluded
         if ($self->insert_delete_exclusion($who, 'delete')) {
             $self->sync_include();
             next if ($self->is_list_member($who));
@@ -5163,7 +5182,8 @@ sub am_i {
 
     return undef unless $self and $who;
 
-    ## If 'strict' option is given, then listmaster does not inherit privileged
+    ## If 'strict' option is given, then listmaster does not inherit
+    ## privileged
     unless ($options->{'strict'}) {
         ## Listmaster has all privileges except editor
         # sa contestable.
@@ -6237,7 +6257,8 @@ sub _include_users_voot_group {
         provider => $param->{'provider'}
     );
 
-    # Here we need to check if we are in a web environment and set consumer's webEnv accordingly
+    # Here we need to check if we are in a web environment and set consumer's
+    # webEnv accordingly
 
     unless ($consumer) {
         Sympa::Log::Syslog::do_log('err',
@@ -6951,8 +6972,10 @@ sub _load_list_members_from_include {
             }    # if (my $plugin = ...)
 
             ## Get the list of users.
-            ## Verify if we can synchronize sources. If it's allowed OR there are new sources, we update the list, and can add subscribers.
-            ## Else if we can't synchronize sources. We make an array with excluded sources.
+            ## Verify if we can synchronize sources. If it's allowed OR there
+            ## are new sources, we update the list, and can add subscribers.
+            ## Else if we can't synchronize sources. We make an array with
+            ## excluded sources.
             if ($type eq 'include_sql_query') {
                 my $source = new SQLSource($incl);
                 if ($source->is_allowed_to_sync() || $source_is_new) {
@@ -7469,7 +7492,8 @@ sub _load_include_admin_user_file {
     return \%include;
 }
 
-## Returns a ref to an array containing the ids (as computed by Datasource::_get_datasource_id) of the list of members given as argument.
+## Returns a ref to an array containing the ids (as computed by
+## Datasource::_get_datasource_id) of the list of members given as argument.
 sub get_list_of_sources_id {
     my $self                = shift;
     my $list_of_subscribers = shift;
@@ -7566,7 +7590,8 @@ sub sync_include_ca {
     return 1;
 }
 
-### Purge synced custom attributes from user records, only keep user writable ones
+### Purge synced custom attributes from user records, only keep user writable
+### ones
 sub purge_ca {
     Sympa::Log::Syslog::do_log('debug2', '(%s)', @_);
     my $self = shift;
@@ -7794,7 +7819,8 @@ sub sync_include {
                 }
                 if ($user_removed) {
                     $users_removed++;
-                    ## Send notification if the list config authorizes it only.
+                    ## Send notification if the list config authorizes it
+                    ## only.
                     if ($self->inclusion_notification_feature eq 'on') {
                         unless ($self->send_file('bye', $email)) {
                             Sympa::Log::Syslog::do_log('err',
@@ -7828,7 +7854,8 @@ sub sync_include {
         }
         if (defined($old_subscribers{$email})) {
             if ($old_subscribers{$email}{'included'}) {
-                ## If one user attribute has changed, then we should update the user entry
+                ## If one user attribute has changed, then we should update
+                ## the user entry
                 my $successful_update = 0;
                 foreach my $attribute ('id', 'gecos') {
                     if ($old_subscribers{$email}{$attribute} ne
@@ -7856,7 +7883,8 @@ sub sync_include {
                     }
                 }
                 $users_updated++ if ($successful_update);
-                ## User was already subscribed, update include_sources_subscriber in DB
+                ## User was already subscribed, update
+                ## include_sources_subscriber in DB
             } else {
                 Sympa::Log::Syslog::do_log('debug', 'updating %s to list %s',
                     $email, $self);
@@ -7937,8 +7965,10 @@ sub sync_include {
 }
 
 ## The previous function (sync_include) is to be called by the task_manager.
-## This one is to be called from anywhere else. This function deletes the scheduled
-## sync_include task. If this deletion happened in sync_include(), it would disturb
+## This one is to be called from anywhere else. This function deletes the
+## scheduled
+## sync_include task. If this deletion happened in sync_include(), it would
+## disturb
 ## the normal task_manager.pl functioning.
 
 sub on_the_fly_sync_include {
@@ -7990,7 +8020,8 @@ sub sync_include_admin {
             $new_admin_users_include =
                 $self->_load_list_admin_from_include($role);
 
-            ## If include sources were not available, do not update admin users
+            ## If include sources were not available, do not update admin
+            ## users
             ## Use DB cache instead
             unless (defined $new_admin_users_include) {
                 Sympa::Log::Syslog::do_log('err',
@@ -8036,7 +8067,8 @@ sub sync_include_admin {
                 foreach my $p ('reception', 'visibility', 'gecos', 'info',
                     'profile') {
 
-                    #  config parameters have priority on include parameters in case of conflict
+                    #  config parameters have priority on include parameters
+                    #  in case of conflict
                     $param->{$p} = $new_admin_users_config->{$email}{$p}
                         if (defined $new_admin_users_config->{$email}{$p});
                     $param->{$p} ||= $new_admin_users_include->{$email}{$p};
@@ -8082,7 +8114,8 @@ sub sync_include_admin {
                         }
                     }
 
-                    #for the next foreach (sort of new_admin_users_config that are not included)
+                    # for the next foreach (sort of new_admin_users_config
+                    # that are not included)
                     delete($new_admin_users_config->{$email});
 
                     # add a new included and subscribed admin user
@@ -8099,7 +8132,8 @@ sub sync_include_admin {
                     $new_admin_users_config->{$email}{'subscribed'} = 1;
                     push(@add_tab, $new_admin_users_config->{$email});
 
-                    #for the next foreach (sort of new_admin_users_config that are not included)
+                    # for the next foreach (sort of new_admin_users_config
+                    # that are not included)
                     delete($new_admin_users_config->{$email});
                 }
 
@@ -8163,7 +8197,8 @@ sub sync_include_admin {
             }
         }
 
-        ## Go through new admin_users_config (that are not included : only subscribed)
+        ## Go through new admin_users_config (that are not included : only
+        ## subscribed)
         foreach my $email (keys %{$new_admin_users_config}) {
 
             my $param = $new_admin_users_config->{$email};
@@ -8448,7 +8483,8 @@ sub _compare_addresses {
     return ($ra cmp $rb);
 }
 
-## Store the message in spool digest  by creating a new entry for it or updating an existing one for this list
+## Store the message in spool digest  by creating a new entry for it or
+## updating an existing one for this list
 ##
 sub store_digest {
     Sympa::Log::Syslog::do_log('debug2', '(%s, %s)', @_);
@@ -8677,7 +8713,8 @@ sub get_lists {
         }
     }
 
-    # Build query: Perl expression for files and SQL expression for list_table.
+    # Build query: Perl expression for files and SQL expression for
+    # list_table.
     my $cond_perl   = undef;
     my $cond_sql    = undef;
     my $which_role  = undef;
@@ -9389,7 +9426,8 @@ sub get_shared_moderated {
     return \@mod_dir;
 }
 
-# return the list of documents awaiting for moderation in a dir and its subdirectories
+# return the list of documents awaiting for moderation in a dir and its
+# subdirectories
 sub sort_dir_to_get_mod {
     Sympa::Log::Syslog::do_log('debug3', '(%s)', @_);
 
@@ -9437,7 +9475,8 @@ sub sort_dir_to_get_mod {
 ## Get the type of a DB field
 sub get_db_field_type {
     my ($table, $field) = @_;
-## TODO: Won't work with anything apart from MySQL. should use SDM framework subs.
+## TODO: Won't work with anything apart from MySQL. should use SDM framework
+## subs.
     unless ($sth = &SDM::do_query("SHOW FIELDS FROM $table")) {
         Sympa::Log::Syslog::do_log('err',
             'get the list of fields for table %s', $table);
@@ -9561,7 +9600,8 @@ sub _save_list_param {
     } else {
         if (    $pinfo->{$key}{'occurrence'} =~ /n$/
             and $pinfo->{$key}{'split_char'}) {
-            ################" avant de debugger do_edit_list qui crée des nouvelles entrées vides
+            ### " avant de debugger do_edit_list qui crée des nouvelles
+            ### entrées vides
             my $string = join($pinfo->{$key}{'split_char'}, @{$p});
             $string =~ s/\,\s*$//;
 
@@ -9932,7 +9972,8 @@ sub _load_list_config_file {
 ####		$admin{$p} = _load_list_param($robot, $p,
 ####		    $pinfo->{$p}{'default'}, $pinfo->{$p}, $directory);
 ##
-##	    ## Sructured parameters case : the default values are defined at the next level
+##	    ## Sructured parameters case : the default values are defined at
+##	    ## the next level
 ##	    } elsif (ref($pinfo->{$p}{'format'}) eq 'HASH' and
 ##		$pinfo->{$p}{'occurrence'} =~ /1$/) {
 ##		## If the paragraph is not defined, try to apply defaults
@@ -10548,8 +10589,10 @@ sub modifying_msg_topic_for_list_members() {
 # select_list_members_for_topic
 ####################################################
 # Select users subscribed to a topic that is in
-# the topic list incoming when reception mode is 'mail', 'notice', 'not_me', 'txt', 'html' or 'urlize', and the other
-# subscribers (recpetion mode different from 'mail'), 'mail' and no topic subscription
+# the topic list incoming when reception mode is 'mail', 'notice', 'not_me',
+# 'txt', 'html' or 'urlize', and the other
+# subscribers (recpetion mode different from 'mail'), 'mail' and no topic
+# subscription
 #
 # IN : -$self(+) : ref(List)
 #      -$string_topic(+) : string splitted by ','
@@ -10603,10 +10646,10 @@ sub select_list_members_for_topic {
     return @selected_users;
 }
 
-#                                                                                         #
-#                                                                                         #
-#                                                                                         #
-########## END - functions for message topics #############################################
+#
+#
+#
+### END - functions for message topics ###
 
 sub store_subscription_request {
     Sympa::Log::Syslog::do_log('debug2', '(%s, %s, %s, %s)', @_);
@@ -10925,8 +10968,9 @@ sub get_next_delivery_date {
     if ($now_time <= $plannified_time) {
         return ($date - $now_time + $plannified_time);
     } else {
-        return ($date - $now_time + $plannified_time + (24 * 3600))
-            ;    # plannified time is past so report to tomorrow
+
+        # plannified time is past so report to tomorrow
+        return ($date - $now_time + $plannified_time + (24 * 3600));
     }
 }
 
@@ -11010,7 +11054,8 @@ sub remove_task {
     return 1;
 }
 
-## Close the list (remove from DB, remove aliases, change status to 'closed' or 'family_closed')
+## Close the list (remove from DB, remove aliases, change status to 'closed'
+## or 'family_closed')
 sub close_list {
     Sympa::Log::Syslog::do_log('debug2', '(%s, %s, %s)', @_);
     my ($self, $email, $status) = @_;
@@ -11018,7 +11063,8 @@ sub close_list {
     return undef unless $self->robot->lists($self->name);
 
     ## If list is included by another list, then it cannot be removed
-    ## TODO : we should also check owner_include and editor_include, but a bit more tricky
+    ## TODO : we should also check owner_include and editor_include, but a bit
+    ## more tricky
     my $all_lists = get_lists();
     foreach my $list (@{$all_lists}) {
         my $included_lists = $list->include_list;

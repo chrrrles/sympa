@@ -973,7 +973,8 @@ sub _fix_html_part {
 }
 
 # extract body as string from msg_as_string
-# do NOT use Mime::Entity in order to preserveB64 encoding form and so preserve S/MIME signature
+# do NOT use Mime::Entity in order to preserveB64 encoding form and so
+# preserve S/MIME signature
 sub get_body_from_msg_as_string {
     my $msg = shift;
 
@@ -1110,7 +1111,8 @@ sub smime_decrypt {
         }
     }
     ## Some headers from the initial message should not be restored
-    ## Content-Disposition and Content-Transfer-Encoding if the result is multipart
+    ## Content-Disposition and Content-Transfer-Encoding if the result is
+    ## multipart
     $self->{'decrypted_msg'}->head->delete('Content-Disposition')
         if ($self->{'decrypted_msg'}->head->get('Content-Disposition'));
     if ($self->{'decrypted_msg'}->head->get('Content-Type') =~ /multipart/) {
@@ -1161,8 +1163,10 @@ sub smime_encrypt {
             Sympa::Log::Syslog::do_log('info',
                 'Can\'t encrypt message for recipient %s', $email);
         }
-        ## don't; cf RFC2633 3.1. netscape 4.7 at least can't parse encrypted stuff
-        ## that contains a whole header again... since MIME::Tools has got no function
+        ## don't; cf RFC2633 3.1. netscape 4.7 at least can't parse encrypted
+        ## stuff
+        ## that contains a whole header again... since MIME::Tools has got no
+        ## function
         ## for this, we need to manually extract only the MIME headers...
         ##	$self->head->print(\*MSGDUMP);
         ##	printf MSGDUMP "\n%s", $self->body;
@@ -1211,7 +1215,8 @@ sub smime_encrypt {
 
         unlink($temporary_file) unless ($main::options{'debug'});
 
-        ## foreach header defined in  the incomming message but undefined in the
+        ## foreach header defined in  the incomming message but undefined in
+        ## the
         ## crypted message, add this header in the crypted form.
         my $predefined_headers;
         foreach my $header ($self->{'crypted_message'}->head->tags) {
@@ -1252,7 +1257,8 @@ sub smime_sign {
     $pass_option = "-passin file:$temporary_pwd" if (Site->key_passwd ne '');
 
     ## Keep a set of header fields ONLY
-    ## OpenSSL only needs content type & encoding to generate a multipart/signed msg
+    ## OpenSSL only needs content type & encoding to generate a
+    ## multipart/signed msg
     my $dup_msg = $self->get_mime_message->dup;
     foreach my $field ($dup_msg->head->tags) {
         next if ($field =~ /^(content-type|content-transfer-encoding)$/i);
@@ -1537,7 +1543,8 @@ sub smime_sign_check {
 
     $is_signed->{'body'} = 'smime';
 
-    # future version should check if the subject was part of the SMIME signature.
+    # future version should check if the subject was part of the SMIME
+    # signature.
     $is_signed->{'subject'} = $signer;
 
     if ($is_signed->{'body'}) {
@@ -2579,13 +2586,15 @@ sub _urlize_part {
         return undef;
     }
 
-    ## Delete files created twice or more (with Content-Type.name and Content-Disposition.filename)
+    ## Delete files created twice or more (with Content-Type.name and Content-
+    ## Disposition.filename)
     $message->purge;
 
     (my $file_name = $filename) =~ s/\./\_/g;
+
+    # do NOT escape '/' chars
     my $file_url = "$wwsympa_url/attach/$listname"
-        . &tools::escape_chars("$dir/$filename", '/')
-        ;    # do NOT escape '/' chars
+        . &tools::escape_chars("$dir/$filename", '/');
 
     my $parser = new MIME::Parser;
     $parser->output_to_core(1);

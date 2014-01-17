@@ -68,9 +68,12 @@ my %alias = (
 ## split_char:   Character used to separate multiple parameters
 ## length :      Length of a scalar variable ; used in web forms
 ## scenario :    tells that the parameter is a scenario, providing its name
-## default :     Default value for the param ; may be a configuration parameter (conf)
-## synonym :     Defines synonyms for parameter values (for compatibility reasons)
-## gettext_unit :Unit of the parameter ; this is used in web forms and refers to translated
+## default :     Default value for the param ; may be a configuration
+## parameter (conf)
+## synonym :     Defines synonyms for parameter values (for compatibility
+## reasons)
+## gettext_unit :Unit of the parameter ; this is used in web forms and refers
+## to translated
 ##               strings in PO catalogs
 ## occurrence :  Occurrence of the parameter in the config file
 ##               possible values: 0-1 | 1 | 0-n | 1-n
@@ -81,7 +84,8 @@ my %alias = (
 ## obsolete :    Obsolete parameter ; should not be displayed
 ##               nor saved
 ## obsolete_values : defined obsolete values for a parameter
-##                   these values should not get proposed on the web interface edition form
+##                   these values should not get proposed on the web interface
+##                   edition form
 ## order :       Order of parameters within paragraph
 ## internal :    Indicates that the parameter is an internal parameter
 ##               that should always be saved in the config file

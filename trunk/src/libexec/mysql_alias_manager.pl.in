@@ -23,8 +23,10 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ## This version of alias_manager.pl has been customized by Bea.
-## It has the ability to add/remove list aliases in a MySQL database for vpopmail
-## To make sympa use this script, you should install it as /home/sympa/bin/alias_manager.pl
+## It has the ability to add/remove list aliases in a MySQL database for
+## vpopmail
+## To make sympa use this script, you should install it
+## as /home/sympa/bin/alias_manager.pl
 ## You should edit all the $mysql_xxx below to use your own mysql database
 
 $ENV{'PATH'} = '';
@@ -218,7 +220,9 @@ sub already_defined {
 
 ## Connect to MySQL Database
 sub initialize_mysql {
-##    unless ($dbh = DBI->connect("DBI:mysql:dbname=$mysql_base;host=$mysql_host", $mysql_user, $mysql_pass)) {
+##    unless ($dbh =
+##    DBI->connect("DBI:mysql:dbname=$mysql_base;host=$mysql_host",
+##    $mysql_user, $mysql_pass)) {
 ##        print "Can't connect to Database :", $DBI::errstr;
 ##	return 0
 ##    }

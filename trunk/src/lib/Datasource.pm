@@ -63,10 +63,14 @@ sub _get_datasource_id {
     }
 
     if (ref($source)) {
-        ## Ordering values so that order of keys in a hash don't mess the value comparison
-        ## Warning: Only the first level of the hash is ordered. Should a datasource
-        ## be described with a hash containing more than one level (a hash of hash) we should transform
-        ## the following algorithm into something that would be recursive. Unlikely it happens.
+        ## Ordering values so that order of keys in a hash don't mess the
+        ## value comparison
+        ## Warning: Only the first level of the hash is ordered. Should a
+        ## datasource
+        ## be described with a hash containing more than one level (a hash of
+        ## hash) we should transform
+        ## the following algorithm into something that would be recursive.
+        ## Unlikely it happens.
         my @orderedValues;
         foreach my $key (sort (keys %{$source})) {
             @orderedValues = (@orderedValues, $key, $source->{$key});

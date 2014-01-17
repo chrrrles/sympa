@@ -258,8 +258,8 @@ sub load_html_message {
             $value = encode_utf8(decode_entities(decode_utf8($value)));
             if ($key eq 'X-From-R13') {
                 $metadata{'X-From'} = $value;
-                $metadata{'X-From'} =~ tr/N-Z[@A-Mn-za-m/@A-Z[a-z/
-                    ;       ## Mhonarc protection of email addresses
+                ## Mhonarc protection of email addresses
+                $metadata{'X-From'} =~ tr/N-Z[@A-Mn-za-m/@A-Z[a-z/;
                 $metadata{'X-From'} =~ s/^.*<(.*)>/$1/g;   ## Remove the gecos
             }
             $metadata{$key} = $value;

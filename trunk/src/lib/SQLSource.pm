@@ -227,11 +227,14 @@ sub establish_connection {
         ## Client encoding derived from the environment variable.
         ## Set this before parsing db_env to allow override if one knows what
         ## she is doing.
-        ## Note: on mysql and Pg, "SET NAMES" will be executed below; on SQLite,
+        ## Note: on mysql and Pg, "SET NAMES" will be executed below; on
+        ## SQLite,
         ## no need to set encoding.
         if ($self->{'db_type'} eq 'Oracle') {
-            ## NLS_LANG.  This needs to be set before connecting, otherwise it's
-            ## useless.  Underscore (_) and dot (.) are a vital part as NLS_LANG
+            ## NLS_LANG.  This needs to be set before connecting, otherwise
+            ## it's
+            ## useless.  Underscore (_) and dot (.) are a vital part as
+            ## NLS_LANG
             ## has the syntax "language_territory.charset".
             $ENV{'NLS_LANG'} = '_.UTF8';
         } elsif ($self->{'db_type'} eq 'Sybase') {
@@ -315,7 +318,8 @@ sub establish_connection {
         if ($self->{'db_type'} eq 'mysql') {
             my ($sth, $res, $cset);
 
-            ## Set client-side character set according to server-side character
+            ## Set client-side character set according to server-side
+            ## character
             ## set, "utf8" or "utf8mb4".
             if ($sth =
                 $self->{'dbh'}
@@ -331,7 +335,8 @@ sub establish_connection {
                     and $sth->execute) {
                     $sth->finish;
                 } else {
-                    ## Server-side character set is 'utf8', or server, client or
+                    ## Server-side character set is 'utf8', or server, client
+                    ## or
                     ## both is earlier than MySQL 5.5.3.
                     Sympa::Log::Syslog::do_log(
                         'notice',
@@ -376,11 +381,13 @@ sub establish_connection {
         }
 
         ## Force field names to be lowercased
-        ## This has has been added after some problems of field names upercased with Oracle
+        ## This has has been added after some problems of field names
+        ## upercased with Oracle
         $self->{'dbh'}{'FetchHashKeyName'} = 'NAME_lc';
 
-        if ($self->{'db_type'} eq 'SQLite')
-        {    # Configure to use sympa database
+        if ($self->{'db_type'} eq 'SQLite') {
+
+            # Configure to use sympa database
             $self->{'dbh'}
                 ->func('func_index', -1, sub { return index($_[0], $_[1]) },
                 'create_function');
@@ -401,12 +408,15 @@ sub establish_connection {
         ## We set Long preload length to two times global max message size
         ## (because of base64 encoding) instead of defaulting to 80 on Oracle
         ## and 32768 on Sybase.
-        ## This is to avoid error in Bulk::messageasstring when using Oracle or
+        ## This is to avoid error in Bulk::messageasstring when using Oracle
+        ## or
         ## Sybase database:
-        ##   bulk[pid]: internal error : current packet 'messagekey= 0c40f56e07d3c8ce34683b98d54b6575 contain a ref to a null message
+        ##   bulk[pid]: internal error : current packet 'messagekey=
+        ##   0c40f56e07d3c8ce34683b98d54b6575 contain a ref to a null message
         ## FIXME: would be better to use lists' setting, but
         ##  * list config is not load()-ed at this point, and
-        ##  * when invoked from Bulk::messageasstring, list settings is not even
+        ##  * when invoked from Bulk::messageasstring, list settings is not
+        ##  even
         ##    load()-ed later.
         if ($self->{'db_type'} eq 'Oracle' or $self->{'db_type'} eq 'Sybase')
         {
@@ -440,7 +450,8 @@ sub do_query {
 
     unless ($self->{'sth'} = $self->{'dbh'}->prepare($statement)) {
 
-        # Check connection to database in case it would be the cause of the problem.
+        # Check connection to database in case it would be the cause of the
+        # problem.
         unless ($self->connect()) {
             Sympa::Log::Syslog::do_log('err',
                 'Unable to get a handle to %s database',
@@ -459,7 +470,8 @@ sub do_query {
     }
     unless ($self->{'sth'}->execute) {
 
-        # Check connection to database in case it would be the cause of the problem.
+        # Check connection to database in case it would be the cause of the
+        # problem.
         unless ($self->connect()) {
             Sympa::Log::Syslog::do_log('err',
                 'Unable to get a handle to %s database',
@@ -468,7 +480,8 @@ sub do_query {
         } else {
             unless ($self->{'sth'} = $self->{'dbh'}->prepare($statement)) {
 
-                # Check connection to database in case it would be the cause of the problem.
+                # Check connection to database in case it would be the cause
+                # of the problem.
                 unless ($self->connect()) {
                     Sympa::Log::Syslog::do_log('err',
                         'Unable to get a handle to %s database',
@@ -566,7 +579,8 @@ sub do_prepared_query {
     }
     unless ($sth->execute(@params)) {
 
-        # Check database connection in case it would be the cause of the problem.
+        # Check database connection in case it would be the cause of the
+        # problem.
         unless ($self->connect()) {
             Sympa::Log::Syslog::do_log('err',
                 'Unable to get a handle to %s database',
@@ -627,13 +641,15 @@ sub fetch {
     my $self = shift;
 
     ## call to fetchrow_arrayref() uses eval to set a timeout
-    ## this prevents one data source to make the process wait forever if SELECT does not respond
+    ## this prevents one data source to make the process wait forever if
+    ## SELECT does not respond
     my $array_of_users;
     $array_of_users = eval {
         local $SIG{ALRM} = sub { die "TIMEOUT\n" };    # NB: \n required
         alarm $self->{'fetch_timeout'};
 
-        ## Inner eval just in case the fetchall_arrayref call would die, thus leaving the alarm trigered
+        ## Inner eval just in case the fetchall_arrayref call would die, thus
+        ## leaving the alarm trigered
         my $status = eval { return $self->{'sth'}->fetchall_arrayref; };
         alarm 0;
         return $status;

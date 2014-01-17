@@ -7,14 +7,18 @@ eval 'exec /usr/bin/perl  -S $0 ${1+"$@"}'
 # $Revision$ $Change: 5999 $ $DateTime: 2003/05/20 07:50:59 $
 ## [O. Salaun] 12/08/02 : Also look for gettext() in perl code
 ##                        No more escape '\' chars
-##                        Extract gettext_comment, gettext_id and gettext_unit entries from List.pm
+##                        Extract gettext_comment, gettext_id and gettext_unit
+##                        entries from List.pm
 ##                        Extract title.gettext entries from scenarios
 
 ## [D. Verdin] 05/11/2007 :
-##                        Strings ordered following the order in which files are read and
+##                        Strings ordered following the order in which files
+##                        are read and
 ##                        the order in which they appear in the files.
-##                        Switch to Getopt::Long to allow multiple value parameter.
-##                        Added 't' parameter the specifies which tags to explore in TT2.
+##                        Switch to Getopt::Long to allow multiple value
+##                        parameter.
+##                        Added 't' parameter the specifies which tags to
+##                        explore in TT2.
 
 use strict;
 use Getopt::Long;
@@ -87,7 +91,8 @@ extracted.
 
 =cut
 
-## A hash that will contain the strings to translate and their meta informations.
+## A hash that will contain the strings to translate and their meta
+## informations.
 my %file;
 ## conatins informations if a string is a date string.
 my %type_of_entries;
@@ -99,7 +104,8 @@ my $PO;
 my $out;
 ## All the strings, in the order they were found while parsing the files
 my @ordered_strings = ();
-## One occurence of each string, in the order they were found while parsing the files
+## One occurence of each string, in the order they were found while parsing
+## the files
 my @unique_keys = ();
 ## A hash used for control when filling @unique_keys
 my %unique_keys;
@@ -116,8 +122,9 @@ my $help;
 my $leave_brackets;
 my $gnu_gettext;
 my $output_file;
-my @default_tags = ('locdt', 'loc')
-    ; # Defaults stored separately because GetOptions append arguments to defaults.
+
+# Defaults stored separately because GetOptions append arguments to defaults.
+my @default_tags = ('locdt', 'loc');
 my @specified_tags;
 
 ## Retrieving options.
@@ -134,7 +141,8 @@ unless ($specified_tags[0]) {
     @specified_tags = @default_tags;
 }
 
-## Building the string to insert into the regexp that will search strings to extract.
+## Building the string to insert into the regexp that will search strings to
+## extract.
 for my $tag_index (0 .. $#specified_tags) {
     $available_tags .= $specified_tags[$tag_index];
     if ($tag_index < $#specified_tags) {
@@ -462,7 +470,8 @@ PARSER: {
     }
 }
 
-## Transfers all data from %file to %Lexicon, removing duplicates in the process.
+## Transfers all data from %file to %Lexicon, removing duplicates in the
+## process.
 my $index = 0;
 my @ordered_bis;
 my %ordered_hash;
@@ -549,7 +558,8 @@ foreach my $entry (@ordered_bis) {
         print "#. ($var)\n" unless !length($var) or $seen{$var}++;
     }
 
-    ## If the entry is a date format, add a developper comment to help translators
+    ## If the entry is a date format, add a developper comment to help
+    ## translators
     if ($type_of_entries{$entry} eq 'date') {
         print "#. This entry is a date/time format\n";
         print

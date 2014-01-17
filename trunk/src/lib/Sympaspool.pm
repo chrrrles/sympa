@@ -102,7 +102,8 @@ sub count {
 
 #######################
 #
-#  get_content return the content an array of hash describing the spool content
+#  get_content return the content an array of hash describing the spool
+#  content
 #
 sub get_content {
     my $self = shift;
@@ -193,7 +194,8 @@ sub get_content {
 
 #######################
 #
-#  next : return next spool entry ordered by priority next lock the message_in_spool that is returned
+#  next : return next spool entry ordered by priority next lock the
+#  message_in_spool that is returned
 #
 sub next {
     Sympa::Log::Syslog::do_log('debug2', '(%s)', @_);
@@ -435,7 +437,8 @@ sub update {
         $values->{'message'} = MIME::Base64::encode($values->{'message'});
     }
 
-    # update can be used in order to move a message from a spool to another one
+    # update can be used in order to move a message from a spool to another
+    # one
     $values->{'spoolname'} = $self->{'spoolname'}
         unless ($values->{'spoolname'});
 
@@ -594,7 +597,8 @@ sub store {
 }
 
 ################"
-# remove a message in database spool using (messagekey,list,robot) which are a unique id in the spool
+# remove a message in database spool using (messagekey,list,robot) which are a
+# unique id in the spool
 #
 sub remove_message {
     Sympa::Log::Syslog::do_log('debug2', '(%s, %s)', @_);
@@ -747,8 +751,10 @@ EOF
 
 #######################
 # Internal to ease SQL
-# return a SQL SELECT substring in ordder to select choosen fields from spool table
-# selction is comma separated list of field, '*' or '*_but_message'. in this case skip message_spool field
+# return a SQL SELECT substring in ordder to select choosen fields from spool
+# table
+# selction is comma separated list of field, '*' or '*_but_message'. in this
+# case skip message_spool field
 sub _selectfields {
     my $selection = shift;    # default all valid fields from spool table
 
@@ -780,9 +786,12 @@ sub _selectfields {
 
 #######################
 # Internal to ease SQL
-# return a SQL WHERE substring in order to select chosen fields from the spool table
-# selector is a hash where key is a column name and value is column value expected.****
-#   **** value can be prefixed with <,>,>=,<=, in that case the default comparator operator (=) is changed, I known this is dirty but I'm lazy :-(
+# return a SQL WHERE substring in order to select chosen fields from the spool
+# table
+# selector is a hash where key is a column name and value is column value
+# expected.****
+#   **** value can be prefixed with <,>,>=,<=, in that case the default
+#   comparator operator (=) is changed, I known this is dirty but I'm lazy :-(
 sub _sqlselector {
     my $selector = shift || {};
     my $sqlselector = '';

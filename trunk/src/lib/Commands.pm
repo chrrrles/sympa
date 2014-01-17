@@ -466,7 +466,9 @@ sub getfile {
 
     #    unless ($list->archive_exist($file)) {
     #	&report::reject_report_cmd('user','no_required_file',{},$cmd_line);
-    # 	Sympa::Log::Syslog::do_log('info', 'GET %s %s from %s refused, archive not found for list %s', $which, $file, $sender, $which);
+    # 	Sympa::Log::Syslog::do_log('info',
+    # 	'GET %s %s from %s refused, archive not found for list %s', $which,
+    # 	$file, $sender, $which);
     #	return 'no_archive';
     #    }
 
@@ -947,7 +949,8 @@ sub subscribe {
         return 'not_allowed';
     }
 
-    ## Unless rejected by scenario, don't go further if the user is subscribed already.
+    ## Unless rejected by scenario, don't go further if the user is subscribed
+    ## already.
     my $user_entry = $list->get_list_member($sender);
     if (defined($user_entry)) {
         &report::reject_report_cmd('user', 'already_subscriber',
@@ -1695,7 +1698,8 @@ sub add {
             $u->save;
         }
 
-        ## Now send the welcome file to the user if it exists and notification is supposed to be sent.
+        ## Now send the welcome file to the user if it exists and notification
+        ## is supposed to be sent.
         unless ($quiet || $action =~ /quiet/i) {
             unless ($list->send_file('welcome', $email)) {
                 Sympa::Log::Syslog::do_log('notice',

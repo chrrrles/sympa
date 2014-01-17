@@ -176,12 +176,15 @@ sub list_tasks {
 # NO LONGER USED.
 #sub get_tasks_by_list {
 #    my $list_id = shift;
-#    Sympa::Log::Syslog::do_log('debug',"Getting tasks for list '%s'",$list_id);
+#    Sympa::Log::Syslog::do_log('debug',"Getting tasks for list '%s'",
+#    $list_id);
 #    return () unless (defined $task_by_list{$list_id});
 #    return values %{$task_by_list{$list_id}};
 #}
 
-## Returns a hash containing the model used. The models returned are all the global models or, if a list name is given as argument, the models used for this list.
+## Returns a hash containing the model used. The models returned are all the
+## global models or, if a list name is given as argument, the models used for
+## this list.
 # Internal use.
 sub get_used_models {
     ## Optional list parameter
@@ -212,7 +215,8 @@ sub get_used_models {
 #    return @task_list;
 #}
 
-## Checks that all the required tasks at the server level are defined. Create them if needed.
+## Checks that all the required tasks at the server level are defined. Create
+## them if needed.
 sub create_required_tasks {
     Sympa::Log::Syslog::do_log('debug2', '(%s)', @_);
     my $current_date = shift;
@@ -231,7 +235,8 @@ sub create_required_tasks {
         {'data' => \%default_data, 'current_date' => $current_date});
 }
 
-## Checks that all the required GLOBAL tasks at the serever level are defined. Create them if needed.
+## Checks that all the required GLOBAL tasks at the serever level are defined.
+## Create them if needed.
 sub create_required_global_tasks {
     my $param = shift;
     my $data  = $param->{'data'};

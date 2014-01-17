@@ -90,8 +90,8 @@ sub createHash {
         }
         if (ref($hash) eq "HASH") {
             foreach my $k (keys %$hash) {
-                if ($k eq "type")
-                {    ## the list template creation without family context
+                if ($k eq "type") {
+                    ## the list template creation without family context
                     $self->{'type'} = $hash->{'type'};
                 } else {
                     $self->{'config'}{$k} = $hash->{$k};
@@ -122,9 +122,9 @@ sub getHash {
 
     my $hash = {};
 
+    ## the list template creation without family context
     $hash->{'type'} = $self->{'type'}
-        if (defined $self->{'type'})
-        ;    ## the list template creation without family context
+        if (defined $self->{'type'});
     $hash->{'config'} = $self->{'config'};
 
     return $hash;
@@ -253,8 +253,8 @@ sub _getRequiredSingle {
         return undef;
     }
 
-    if ($nodeName eq "type")
-    {    ## the list template creation without family context
+    if ($nodeName eq "type") {
+        ## the list template creation without family context
 
         my $value = $node->textContent;
         $value =~ s/^\s*//;
