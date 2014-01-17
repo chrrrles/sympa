@@ -82,95 +82,99 @@ sub AUTOLOAD {
     my $type = {};
     ## getters for site/robot attributes.
     $type->{'RobotAttribute'} = 1
-	if grep { $_ eq $attr } qw(etc home name);
+        if grep { $_ eq $attr } qw(etc home name);
     ## getters for site/robot parameters.
     $type->{'RobotParameter'} = 1
-	if grep { $_ eq $attr }
-	    qw(blacklist loging_condition loging_for_module
-	    trusted_applications) or
-	    grep { $_->{'name'} and $_->{'name'} eq $attr } @confdef::params;
+        if grep { $_ eq $attr }
+            qw(blacklist loging_condition loging_for_module
+            trusted_applications)
+            or grep { $_->{'name'} and $_->{'name'} eq $attr }
+            @confdef::params;
     ## getters for attributes specific to global config.
     $type->{'SiteAttribute'} = 1
-	if grep { $_ eq $attr }
-	    qw(auth_services authentication_info_url
-	    cas_id cas_number crawlers_detection
-	    generic_sso_id generic_sso_number
-	    ldap ldap_export ldap_number
-	    locale2charset nrcpt_by_domain
-	    robot_by_http_host robot_by_soap_url
-	    use_passwd queue queueautomatic);
+        if grep { $_ eq $attr }
+            qw(auth_services authentication_info_url
+            cas_id cas_number crawlers_detection
+            generic_sso_id generic_sso_number
+            ldap ldap_export ldap_number
+            locale2charset nrcpt_by_domain
+            robot_by_http_host robot_by_soap_url
+            use_passwd queue queueautomatic);
 
     unless (scalar keys %$type) {
-	## getter for unknwon list attributes.
-	## XXX This code would be removed later.
-	if (index($attr, '_') != 0 and
-	    ((ref $_[0] and exists $_[0]->{$attr}) or
-		exists $Conf::Conf{$attr})
-	    ) {
-	    Sympa::Log::Syslog::do_log(
-		'err',
-		'Unconcerned object method "%s" via package "%s".  Though it may not be fatal, you might want to report it developer',
-		$attr,
-		$pkg
-	    );
-	    no strict "refs";
-	    *{$AUTOLOAD} = sub {
-		croak "Can't modify \"$attr\" attribute" if scalar @_ > 1;
-		shift->{$attr};
-	    };
-	    goto &$AUTOLOAD;
-	}
-	## XXX Code above would be removed later.
+        ## getter for unknwon list attributes.
+        ## XXX This code would be removed later.
+        if (index($attr, '_') != 0
+            and ((ref $_[0] and exists $_[0]->{$attr})
+                or exists $Conf::Conf{$attr})
+            ) {
+            Sympa::Log::Syslog::do_log(
+                'err',
+                'Unconcerned object method "%s" via package "%s".  Though it may not be fatal, you might want to report it developer',
+                $attr,
+                $pkg
+            );
+            no strict "refs";
+            *{$AUTOLOAD} = sub {
+                croak "Can't modify \"$attr\" attribute" if scalar @_ > 1;
+                shift->{$attr};
+            };
+            goto &$AUTOLOAD;
+        }
+        ## XXX Code above would be removed later.
 
-	croak "Can't locate object method \"$2\" via package \"$1\"";
+        croak "Can't locate object method \"$2\" via package \"$1\"";
     }
 
     no strict "refs";
     *{$AUTOLOAD} = sub {
-	my $self = shift;
+        my $self = shift;
 
-	if (ref $self and ref $self eq 'Robot') {
-	    if ($type->{'RobotAttribute'}) {
-		## getter for list attributes.
-		croak "Can't modify \"$attr\" attribute" if scalar @_ > 1;
-		return $self->{$attr};
-	    } elsif ($type->{'RobotParameter'}) {
-		## getters for robot parameters.
-		unless ($self->{'etc'} eq Site->etc or
-		    defined Site->robots_config->{$self->{'name'}}) {
-		    croak "Can't call method \"$attr\" on uninitialized " .
-			(ref $self) . " object";
-		}
-		croak "Can't modify \"$attr\" attribute" if scalar @_;
+        if (ref $self and ref $self eq 'Robot') {
+            if ($type->{'RobotAttribute'}) {
+                ## getter for list attributes.
+                croak "Can't modify \"$attr\" attribute" if scalar @_ > 1;
+                return $self->{$attr};
+            } elsif ($type->{'RobotParameter'}) {
+                ## getters for robot parameters.
+                unless ($self->{'etc'} eq Site->etc
+                    or defined Site->robots_config->{$self->{'name'}}) {
+                    croak "Can't call method \"$attr\" on uninitialized "
+                        . (ref $self)
+                        . " object";
+                }
+                croak "Can't modify \"$attr\" attribute" if scalar @_;
 
-		if ($self->{'etc'} ne Site->etc and
-		    defined Site->robots_config->{$self->{'name'}}{$attr}) {
-		    ##FIXME: Might "exists" be used?
-		    Site->robots_config->{$self->{'name'}}{$attr};
-		} else {
-		    Site->$attr;
-		}
-	    } else {
-		croak "Can't call method \"$attr\" on " . (ref $self) .
-		    " object";
-	    }
-	} elsif ($self eq 'Site') {
-	    ## getter for internal config parameters.
-	    croak "Can't call method \"$attr\" on uninitialized $self class"
-		unless $Site::is_initialized;
-	    croak "Can't modify \"$attr\" attribute"
-		if scalar @_ > 1;
+                if ($self->{'etc'} ne Site->etc
+                    and defined Site->robots_config->{$self->{'name'}}{$attr})
+                {
+                    ##FIXME: Might "exists" be used?
+                    Site->robots_config->{$self->{'name'}}{$attr};
+                } else {
+                    Site->$attr;
+                }
+            } else {
+                croak "Can't call method \"$attr\" on "
+                    . (ref $self)
+                    . " object";
+            }
+        } elsif ($self eq 'Site') {
+            ## getter for internal config parameters.
+            croak "Can't call method \"$attr\" on uninitialized $self class"
+                unless $Site::is_initialized;
+            croak "Can't modify \"$attr\" attribute"
+                if scalar @_ > 1;
 
-	    my $ret = $Conf::Conf{$attr};
+            my $ret = $Conf::Conf{$attr};
 
-	    # To avoid "Can't use an undefined value as a HASH reference"
-	    if (!defined $ret and $type->{'SiteAttribute'}) {
-		return {};
-	    }
-	    $ret;
-	} else {
-	    croak 'bug in logic.  Ask developer';
-	}
+            # To avoid "Can't use an undefined value as a HASH reference"
+            if (!defined $ret and $type->{'SiteAttribute'}) {
+                return {};
+            }
+            $ret;
+        } else {
+            croak 'bug in logic.  Ask developer';
+        }
     };
     goto &$AUTOLOAD;
 }
@@ -217,13 +221,13 @@ Use C<E<lt>config parameterE<gt>> accessors to get or set each site parameter.
 
 ## TODO: expand scenario parameters.
 sub fullconfig {
-    my $self = shift;
+    my $self       = shift;
     my $fullconfig = {};
 
     foreach my $p (@confdef::params) {
-	next unless $p->{'name'};
-	my $attr = $p->{'name'};
-	$fullconfig->{$p->{'name'}} = $self->$attr;
+        next unless $p->{'name'};
+        my $attr = $p->{'name'};
+        $fullconfig->{$p->{'name'}} = $self->$attr;
     }
     return $fullconfig;
 }
@@ -245,21 +249,22 @@ sub lang {
     my $lang;
 
     croak "Can't modify \"lang\" attribute" if scalar @_ > 1;
-    if (ref $self and ref $self eq 'Robot' and
-	$self->{'etc'} ne Site->etc and
-	exists Site->robots_config->{$self->{'name'}}{'lang'}) {
-	$lang = Site->robots_config->{$self->{'name'}}{'lang'};
-    } elsif (ref $self and ref $self eq 'Robot' or
-	! ref $self and $self eq 'Site') {
-	croak "Can't call method \"lang\" on uninitialized $self class"
-	    unless $Site::is_initialized;
-	$lang = $Conf::Conf{'lang'};
+    if (    ref $self
+        and ref $self eq 'Robot'
+        and $self->{'etc'} ne Site->etc
+        and exists Site->robots_config->{$self->{'name'}}{'lang'}) {
+        $lang = Site->robots_config->{$self->{'name'}}{'lang'};
+    } elsif (ref $self and ref $self eq 'Robot'
+        or !ref $self and $self eq 'Site') {
+        croak "Can't call method \"lang\" on uninitialized $self class"
+            unless $Site::is_initialized;
+        $lang = $Conf::Conf{'lang'};
     } else {
-	croak 'bug in loginc.  Ask developer';
+        croak 'bug in loginc.  Ask developer';
     }
 
     if ($lang) {
-	$lang = Language::CanonicLang($lang) || $lang;
+        $lang = Language::CanonicLang($lang) || $lang;
     }
     return $lang;
 }
@@ -292,22 +297,22 @@ sub listmasters {
 
     croak "Can't modify \"listmasters\" attribute" if scalar @_ > 1;
     if (ref $self and ref $self eq 'Robot') {
-	if (wantarray) {
-	    @{Site->robots_config->{$self->domain}{'listmasters'} || []};
-	} else {
-	    Site->robots_config->{$self->domain}{'listmasters'};
-	}
+        if (wantarray) {
+            @{Site->robots_config->{$self->domain}{'listmasters'} || []};
+        } else {
+            Site->robots_config->{$self->domain}{'listmasters'};
+        }
     } elsif ($self eq 'Site') {
-	croak "Can't call method \"listmasters\" on uninitialized $self class"
-	    unless $Site::is_initialized;
+        croak "Can't call method \"listmasters\" on uninitialized $self class"
+            unless $Site::is_initialized;
 
-	if (wantarray) {
-	    @{$Conf::Conf{'listmasters'} || []};
-	} else {
-	    $Conf::Conf{'listmasters'};
-	}
+        if (wantarray) {
+            @{$Conf::Conf{'listmasters'} || []};
+        } else {
+            $Conf::Conf{'listmasters'};
+        }
     } else {
-	croak 'bug in logic.  Ask developer';
+        croak 'bug in logic.  Ask developer';
     }
 }
 
@@ -356,8 +361,8 @@ sub supported_languages {
 
     my $saved_lang = Language::GetLang();
     my @lang_list =
-	grep { $_ and $_ = Language::SetLang($_) }
-	split /\s*,\s*/, $supported_lang;
+        grep { $_ and $_ = Language::SetLang($_) }
+        split /\s*,\s*/, $supported_lang;
     Language::SetLang($saved_lang);
 
     @lang_list = ('en') unless @lang_list;
@@ -428,8 +433,8 @@ sub _crash_handler {
     $_[0] =~ /.+ at (.+? line \d+\.)\n$/s;
     @calls = ($1) if $1;
     for (my $i = 1; @f = caller($i); $i++) {
-	$calls[0] = "In $f[3] at $calls[0]" if @calls;
-	unshift @calls, "$f[1] line $f[2].";
+        $calls[0] = "In $f[3] at $calls[0]" if @calls;
+        unshift @calls, "$f[1] line $f[2].";
     }
     $calls[0] = "In (top-level) at $calls[0]";
 

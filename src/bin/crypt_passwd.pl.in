@@ -33,6 +33,7 @@ unless (require Crypt::CipherSaber) {
 #use Sympa::Constants; # used in List - Robot - Site - Conf - confdef
 #require tools; # used by Conf
 use List;
+
 #use SDM; # used by conf
 #use Log; # used by conf
 
@@ -65,10 +66,10 @@ while ($user = $sth->fetchrow_hashref('NAME_lc')) {
     printf " => %s", $crypted_password;
 
     my $sth2 = SDM::do_prepared_query(
-	q{UPDATE user_table
+        q{UPDATE user_table
 	  SET password_user = ?
 	  WHERE email_user = ?},
-	$crypted_password, $user->{'email_user'}
+        $crypted_password, $user->{'email_user'}
     ) or die "Unable to execute SQL statement";
     $sth2->finish();
 
