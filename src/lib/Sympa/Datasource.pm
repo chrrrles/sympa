@@ -21,7 +21,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package Datasource;
+package Sympa::Datasource;
 
 use strict;
 
@@ -58,7 +58,7 @@ sub _get_datasource_id {
     my ($source) = shift;
     Sympa::Log::Syslog::do_log('debug2',
         "Getting datasource id for source '%s'", $source);
-    if (ref($source) eq 'Datasource') {
+    if (ref($source) eq 'Sympa::Datasource') {
         $source = shift;
     }
 

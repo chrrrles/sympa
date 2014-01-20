@@ -26,7 +26,7 @@ package LDAPSource;
 use strict;
 
 use Exporter;
-use Datasource;
+use Sympa::Datasource;
 use Carp;
 
 #use tools; # not used
@@ -37,7 +37,7 @@ use Log;
 #use List; # not used
 use Data::Dumper;
 
-our @ISA    = qw(Datasource Exporter);
+our @ISA    = qw(Sympa::Datasource Exporter);
 our @EXPORT = qw(%date_format);
 our @EXPORT_OK =
     qw(connect query disconnect fetch ping quote set_fetch_timeout);
