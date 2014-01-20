@@ -695,7 +695,7 @@ sub createList {
 
     ## create liste
     my $resul =
-        &admin::create_list_old($parameters, $template, $robot, "soap");
+        &Sympa::Admin::create_list_old($parameters, $template, $robot, "soap");
     unless (defined $resul) {
         Sympa::Log::Syslog::do_log('info',
             'unable to create list %s@%s from %s ',

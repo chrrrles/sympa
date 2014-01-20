@@ -326,7 +326,7 @@ Adds a list to the family. List description can be passed either through a hash 
 
 =over 
 
-=item * admin::create_list
+=item * Sympa::Admin::create_list
 
 =item * Family::_copy_files
 
@@ -400,7 +400,7 @@ sub add_list {
     }
 
     #list creation
-    my $result = &admin::create_list($hash_list->{'config'},
+    my $result = &Sympa::Admin::create_list($hash_list->{'config'},
         $self, $self->{'robot'}, $abort_on_error);
     unless (defined $result) {
         push @{$return->{'string_error'}},
@@ -519,7 +519,7 @@ Adds a list to the family.
 
 =over 
 
-=item * admin::update_list
+=item * Sympa::Admin::update_list
 
 =item * Config_XML::new
 
@@ -641,7 +641,7 @@ sub modify_list {
     my $old_status     = $list->status;
 
     ## list config family updating
-    my $result = &admin::update_list($list, $hash_list->{'config'},
+    my $result = &Sympa::Admin::update_list($list, $hash_list->{'config'},
         $self, $self->{'robot'});
     unless (defined $result) {
         Sympa::Log::Syslog::do_log('err',
@@ -941,7 +941,7 @@ Creates family lists or updates them if they exist already.
 
 =over 
 
-=item * admin::create_list
+=item * Sympa::Admin::create_list
 
 =item * Config_XML::createHash
 
@@ -1091,7 +1091,7 @@ sub instantiate {
         } else {
 
             ## Create the list
-            my $result = &admin::create_list($hash_list->{'config'},
+            my $result = &Sympa::Admin::create_list($hash_list->{'config'},
                 $self, $self->{'robot'});
             unless (defined $result) {
                 push(
@@ -2387,7 +2387,7 @@ sub _update_existing_list {
     my $old_status     = $list->status;
 
     ## list config family updating
-    my $result = &admin::update_list($list, $hash_list->{'config'},
+    my $result = &Sympa::Admin::update_list($list, $hash_list->{'config'},
         $self, $self->{'robot'});
     unless (defined $result) {
         Sympa::Log::Syslog::do_log('err',
@@ -2695,9 +2695,9 @@ Sets changes (loads the users, installs or removes the aliases); deals with the 
 
 =over 
 
-=item * admin::install_aliases
+=item * Sympa::Admin::install_aliases
 
-=item * admin::remove_aliases
+=item * Sympa::Admin::remove_aliases
 
 =item * List::add_list_member
 
@@ -2740,7 +2740,7 @@ sub _set_status_changes {
     if ($list->status eq 'open') {
         unless ($old_status eq 'open') {
             $result->{'install_remove'} = 'install';
-            $result->{'aliases'}        = &admin::install_aliases($list);
+            $result->{'aliases'}        = &Sympa::Admin::install_aliases($list);
         }
     }
 
@@ -2748,7 +2748,7 @@ sub _set_status_changes {
         and ($old_status eq 'open' or $old_status eq 'error_config')) {
         $result->{'install_remove'} = 'remove';
         $result->{'aliases'} =
-            &admin::remove_aliases($list, $self->{'robot'});
+            &Sympa::Admin::remove_aliases($list, $self->{'robot'});
     }
 
 ##    ## subscribers

@@ -10975,7 +10975,7 @@ sub do_install_pending_list {
 
     ## create the aliases
     if ($in{'status'} eq 'open') {
-        my $aliases = &admin::install_aliases($list);
+        my $aliases = &Sympa::Admin::install_aliases($list);
         if ($aliases == 1) {
             $param->{'auto_aliases'} = 1;
         } else {
@@ -11084,7 +11084,7 @@ Creates a list using a list template
 
 =item * wwslog
 
-=item * admin::create_list_old
+=item * Sympa::Admin::create_list_old
 
 =item * check_param_in
 
@@ -11214,7 +11214,7 @@ sub do_create_list {
         return 'create_list_request';
     }
     my $resul =
-        admin::create_list_old($parameters, $in{'template'}, $robot, 'web',
+        Sympa::Admin::create_list_old($parameters, $in{'template'}, $robot, 'web',
         $param->{'user'}{'email'});
     unless (defined $resul) {
         &report::reject_report_web('intern', 'create_list', {},
@@ -13591,7 +13591,7 @@ sub do_rename_list {
     &wwslog('info', 'do_rename_list(%s,%s, mode = %s)',
         $in{'new_listname'}, $in{'new_robot'}, $mode);
 
-    my $result = &admin::rename_list(
+    my $result = &Sympa::Admin::rename_list(
         list         => $list,
         new_listname => $in{'new_listname'},
         new_robot    => $in{'new_robot'},
@@ -13836,7 +13836,7 @@ sub do_restore_list {
 
     $list->savestats();
 
-    my $aliases = &admin::install_aliases($list);
+    my $aliases = &Sympa::Admin::install_aliases($list);
     if ($aliases == 1) {
         $param->{'auto_aliases'} = 1;
     } else {
@@ -21484,7 +21484,7 @@ sub do_change_email {
     }
 
     ## Do the change_email
-    my ($status, $failed_for) = &admin::change_user_email(
+    my ($status, $failed_for) = &Sympa::Admin::change_user_email(
         current_email => $old_email,
         new_email     => $new_email,
         robot         => $robot_id

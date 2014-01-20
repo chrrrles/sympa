@@ -904,7 +904,7 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
         foreach my $robot (@{Robot::get_robots()}) {
             printf STDOUT "Doing processing for virtual robot %s...\n",
                 $robot->name;
-            my ($status, $failed_for) = admin::change_user_email(
+            my ($status, $failed_for) = Sympa::Admin::change_user_email(
                 'current_email' => $main::options{'current_email'},
                 'new_email'     => $main::options{'new_email'},
                 'robot'         => $robot
@@ -983,7 +983,7 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
         my ($new_listname, $new_robotname) =
             ($main::options{'new_listname'}, $main::options{'new_listrobot'});
 
-        my $result = &admin::rename_list(
+        my $result = &Sympa::Admin::rename_list(
             list         => $list,
             new_listname => $new_listname,
             new_robot    => $new_robotname,
@@ -1057,7 +1057,7 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
         close INFILE;
 
         my $resul =
-            &admin::create_list_old($hash->{'config'}, $hash->{'type'},
+            &Sympa::Admin::create_list_old($hash->{'config'}, $hash->{'type'},
             $robot_id, "command_line");
         unless (defined $resul) {
             print STDERR "Could not create list with these XML data\n";
