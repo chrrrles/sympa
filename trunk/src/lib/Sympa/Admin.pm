@@ -178,7 +178,7 @@ sub create_list_old {
     foreach my $arg ('listname', 'subject') {
         unless ($param->{$arg}) {
             Sympa::Log::Syslog::do_log('err',
-                'admin::create_list_old : missing list param %s', $arg);
+                'create_list_old : missing list param %s', $arg);
             return undef;
         }
     }
@@ -187,7 +187,7 @@ sub create_list_old {
     unless (
         &check_owner_defined($param->{'owner'}, $param->{'owner_include'})) {
         Sympa::Log::Syslog::do_log('err',
-            'admin::create_list_old : problem in owner definition in this list creation'
+            'create_list_old : problem in owner definition in this list creation'
         );
         return undef;
     }
@@ -210,7 +210,7 @@ sub create_list_old {
 
     unless ($param->{'listname'} =~ /^$listname_regexp$/i) {
         Sympa::Log::Syslog::do_log('err',
-            'admin::create_list_old : incorrect listname %s',
+            'create_list_old : incorrect listname %s',
             $param->{'listname'});
         return undef;
     }
@@ -234,7 +234,7 @@ sub create_list_old {
     my $res = &list_check_smtp($param->{'listname'}, $robot);
     unless (defined $res) {
         Sympa::Log::Syslog::do_log('err',
-            "admin::create_list_old : can't check list %.128s on %s",
+            "create_list_old : can't check list %.128s on %s",
             $param->{'listname'}, $robot);
         return undef;
     }
@@ -265,7 +265,7 @@ sub create_list_old {
     ## Check the privileges on the list directory
     unless (mkdir($list_dir, 0777)) {
         Sympa::Log::Syslog::do_log('err',
-            'admin::create_list_old : unable to create %s : %s',
+            'create_list_old : unable to create %s : %s',
             $list_dir, $?);
         return undef;
     }
@@ -663,7 +663,7 @@ sub update_list {
     foreach my $arg ('listname') {
         unless ($param->{$arg}) {
             Sympa::Log::Syslog::do_log('err',
-                'admin::update_list : missing list param %s', $arg);
+                'update_list : missing list param %s', $arg);
             return undef;
         }
     }
@@ -672,7 +672,7 @@ sub update_list {
     my $template_file = $family->get_etc_filename('config.tt2');
     unless (defined $template_file) {
         Sympa::Log::Syslog::do_log('err',
-            'admin::update_list : no config template from family %s',
+            'update_list : no config template from family %s',
             $family);
         return undef;
     }
@@ -714,7 +714,7 @@ sub update_list {
     ## Create list object
     unless ($list = new List($param->{'listname'}, $robot)) {
         Sympa::Log::Syslog::do_log('err',
-            'admin::create_list : unable to create list %s',
+            'create_list : unable to create list %s',
             $param->{'listname'});
         return undef;
     }
@@ -864,7 +864,7 @@ sub rename_list {
     ## If we are in 'copy' mode, create en new list
     if ($param{'mode'} eq 'copy') {
         unless (
-            $list = &admin::clone_list_as_empty(
+            $list = &clone_list_as_empty(
                 $list->name,            $list->domain,
                 $param{'new_listname'}, $param{'new_robot'},
                 $param{'user_email'}
@@ -1285,7 +1285,7 @@ sub clone_list_as_empty {
 #########################################################
 sub check_owner_defined {
     my ($owner, $owner_include) = @_;
-    Sympa::Log::Syslog::do_log('debug2', "admin::check_owner_defined()");
+    Sympa::Log::Syslog::do_log('debug2', "check_owner_defined()");
 
     if (ref($owner) eq "ARRAY") {
         if (ref($owner_include) eq "ARRAY") {
