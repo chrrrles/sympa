@@ -6,7 +6,7 @@ nobase_modules_DATA = Sympa/Admin.pm \
 		      Sympa/Commands.pm \
 		      Sympa/Conf.pm \
 		      Sympa/ConfDef.pm \
-		      Config_XML.pm \
+		      Sympa/Config_XML.pm \
 		      cookielib.pm \
 		      Datasource.pm \
 		      DBManipulatorDefault.pm \

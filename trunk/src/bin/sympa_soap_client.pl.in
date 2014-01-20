@@ -44,7 +44,7 @@ use MIME::QuotedPrint;
 use List;
 use Message;
 use Sympa::Admin;
-use Config_XML;
+use Sympa::Config_XML;
 use Family;
 use report;
 use File::Copy;

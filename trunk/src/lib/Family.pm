@@ -47,7 +47,7 @@ use Language qw(gettext_strftime);
 
 #use Log; # load in dmin - List - Robot - Site - Conf
 use Sympa::Admin;
-use Config_XML;
+use Sympa::Config_XML;
 
 #use Sympa::Constants; # load in Conf - confdef
 
@@ -388,7 +388,7 @@ sub add_list {
 
         # get list data
         open(FIC, '<:raw', $self->dir . '/_new_list.xml');
-        my $config = new Config_XML(\*FIC);
+        my $config = new Sympa::Config_XML(\*FIC);
         close FIC;
         unless (defined $config->createHash()) {
             push @{$return->{'string_error'}},
@@ -592,7 +592,7 @@ sub modify_list {
 
     # get list data
     open(FIC, '<:raw', $self->dir . '/_mod_list.xml');
-    my $config = new Config_XML(\*FIC);
+    my $config = new Sympa::Config_XML(\*FIC);
     close FIC;
     unless (defined $config->createHash()) {
         push @{$return->{'string_error'}},
@@ -1033,7 +1033,7 @@ sub instantiate {
         ## Config_XML).
         my $xml_fh;
         open $xml_fh, '<:raw', $self->dir . "/" . $listname . ".xml";
-        my $config = new Config_XML($xml_fh);
+        my $config = new Sympa::Config_XML($xml_fh);
         close $xml_fh;
         unless (defined $config->createHash()) {
             push(
@@ -1213,7 +1213,7 @@ sub instantiate {
             ## get data from list xml file
             my $xml_fh;
             open $xml_fh, '<:raw', $list->dir . '/instance.xml';
-            my $config = new Config_XML($xml_fh);
+            my $config = new Sympa::Config_XML($xml_fh);
             close $xml_fh;
             unless (defined $config->createHash()) {
                 push(
