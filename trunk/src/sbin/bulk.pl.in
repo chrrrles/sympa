@@ -145,7 +145,7 @@ if ($main::options{'help'}) {
 unless (Robot::get_robots()) {
     print STDERR
         "Unable to load Sympa configuration, file %s or any of the virtual host robot.conf files contain errors. Exiting.\n",
-        Conf::get_sympa_conf();
+        Sympa::Conf::get_sympa_conf();
     exit 1;
 }
 
@@ -240,7 +240,7 @@ my $last_check_date = 0;
 my %created_children;
 
 $options->{'multiple_process'} = 1;
-$Conf::Conf{'maxsmtp'} = int(Site->maxsmtp / Site->bulk_max_count);    #FIXME
+$Sympa::Conf::Conf{'maxsmtp'} = int(Site->maxsmtp / Site->bulk_max_count);    #FIXME
 
 my $spool = new Sympaspool('bulk');
 

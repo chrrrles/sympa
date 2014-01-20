@@ -21,7 +21,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package Conf;
+package Sympa::Conf;
 
 use strict;
 
@@ -464,7 +464,7 @@ sub conf_2_db {
                     && #skip parameters that can't be define by robot so not to be loaded in db at that stage
                     ($config->{$conf_parameters[$i]->{'name'}})
                     ) {
-                    &Conf::set_robot_conf(
+                    &Sympa::Conf::set_robot_conf(
                         $robot,
                         $conf_parameters[$i]->{'name'},
                         $config->{$conf_parameters[$i]->{'name'}}
@@ -488,7 +488,7 @@ sub conf_2_db {
     for my $i (0 .. $#conf_parameters) {
         if (($conf_parameters[$i]->{'edit'} eq '1')
             && $global_conf->{$conf_parameters[$i]->{'name'}}) {
-            &Conf::set_robot_conf(
+            &Sympa::Conf::set_robot_conf(
                 "*",
                 $conf_parameters[$i]->{'name'},
                 $global_conf->{$conf_parameters[$i]->{'name'}}[0]
@@ -1292,7 +1292,7 @@ sub load_automatic_lists_description {
         &load_generic_conf_file($config, \%automatic_lists_params);
 
     ## Now doing some structuration work because
-    ## Conf::load_automatic_lists_description() can't handle
+    ## Sympa::Conf::load_automatic_lists_description() can't handle
     ## data structured beyond one level of hash. This needs to be changed.
     my @structured_data;
     foreach my $class (@{$description->{'class'}}) {
@@ -2461,7 +2461,7 @@ sub _get_config_file_name {
 }
 
 sub _create_robot_like_config_for_main_robot {
-    return if (defined $Conf::Conf{'robots'}{$Conf::Conf{'domain'}});
+    return if (defined $Sympa::Conf::Conf{'robots'}{$Sympa::Conf::Conf{'domain'}});
     my $main_conf_no_robots = &tools::dup_var(\%Conf);
     delete $main_conf_no_robots->{'robots'};
     &_remove_unvalid_robot_entry(

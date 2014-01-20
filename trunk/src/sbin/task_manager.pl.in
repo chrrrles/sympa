@@ -135,7 +135,7 @@ my $adrlist = {};
 unless (Robot::get_robots()) {
     printf STDERR
         "Unable to load Sympa configuration, file %s or any of the virtual host robot.conf files contain errors. Exiting.\n",
-        Conf::get_sympa_conf();
+        Sympa::Conf::get_sympa_conf();
     exit 1;
 }
 

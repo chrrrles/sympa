@@ -40,7 +40,7 @@ use MIME::Lite::HTML;
 use Proc::ProcessTable;
 ##use if (5.008 < $] && $] < 5.016), qw(Unicode::CaseFold fc);
 
-use Conf;
+use Sympa::Conf;
 use Language qw(gettext_strftime);
 
 #use Log;

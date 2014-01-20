@@ -24,7 +24,7 @@
 package wwslib;
 
 use Log;
-use Conf;
+use Sympa::Conf;
 use Sympa::Constants;
 
 ## No longer used: Use List->get_option_title().
@@ -145,7 +145,7 @@ my $cipher;
 
 ## Load WWSympa configuration file
 ##sub load_config
-## MOVED: use Conf::load_wwsconf().
+## MOVED: use Sympa::Conf::load_wwsconf().
 
 ## Load HTTPD MIME Types
 sub load_mime_types {

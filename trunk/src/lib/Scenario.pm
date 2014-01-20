@@ -1563,7 +1563,7 @@ sub search {
         my ($sql_conf, $tsth);
         my $time = time;
 
-        unless ($sql_conf = &Conf::load_sql_filter($file)) {
+        unless ($sql_conf = &Sympa::Conf::load_sql_filter($file)) {
             $that->send_notify_to_owner('named_filter',
                 {'filter' => $filter_file})
                 if ref $that eq 'List';
