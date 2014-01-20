@@ -30,9 +30,9 @@ use version;
 use Carp;
 use Log;
 
-use DBManipulatorDefault;
+use Sympa::DBManipulatorDefault;
 
-our @ISA = qw(DBManipulatorDefault);
+our @ISA = qw(Sympa::DBManipulatorDefault);
 
 #######################################################
 ####### Beginning the RDBMS-specific code. ############

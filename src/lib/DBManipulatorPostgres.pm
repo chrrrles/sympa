@@ -30,9 +30,9 @@ use strict;
 use Data::Dumper;
 
 use Log;
-use DBManipulatorDefault;
+use Sympa::DBManipulatorDefault;
 
-our @ISA = qw(DBManipulatorDefault);
+our @ISA = qw(Sympa::DBManipulatorDefault);
 
 #######################################################
 ####### Beginning the RDBMS-specific code. ############

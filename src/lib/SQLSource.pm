@@ -105,9 +105,9 @@ sub new {
         ## We don't have a DB Manipulator for this RDBMS
         ## It might be an SQL source used to include list members/owners
         ## like CSV
-        require DBManipulatorDefault;
+        require Sympa::DBManipulatorDefault;
 
-        $actualclass = "DBManipulatorDefault";
+        $actualclass = "Sympa::DBManipulatorDefault";
     }
     $self = $pkg->SUPER::new($param);
 
