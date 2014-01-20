@@ -142,7 +142,7 @@ use Pod::Usage;
 
 use List;
 use Message;
-use Commands;
+use Sympa::Commands;
 
 my $daemon_name = Sympa::Log::Syslog::set_daemon($0);
 my $ip          = $ENV{'REMOTE_HOST'};
