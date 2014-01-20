@@ -66,14 +66,14 @@ sub new {
         require Sympa::DBManipulatorMySQL;
         $actualclass = "Sympa::DBManipulatorMySQL";
     } elsif ($param->{'db_type'} =~ /^sqlite$/i) {
-        unless (eval "require DBManipulatorSQLite") {
+        unless (eval "require Sympa::DBManipulatorSQLite") {
             Sympa::Log::Syslog::do_log('err',
-                "Unable to use DBManipulatorSQLite module");
+                "Unable to use Sympa::DBManipulatorSQLite module");
             return undef;
         }
-        require DBManipulatorSQLite;
+        require Sympa::DBManipulatorSQLite;
 
-        $actualclass = "DBManipulatorSQLite";
+        $actualclass = "Sympa::DBManipulatorSQLite";
     } elsif ($param->{'db_type'} =~ /^pg$/i) {
         unless (eval "require Sympa::DBManipulatorPostgres") {
             Sympa::Log::Syslog::do_log('err',

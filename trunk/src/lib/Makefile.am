@@ -13,7 +13,7 @@ nobase_modules_DATA = Sympa/Admin.pm \
 		      Sympa/DBManipulatorMySQL.pm \
 		      Sympa/DBManipulatorOracle.pm \
 		      Sympa/DBManipulatorPostgres.pm \
-		      DBManipulatorSQLite.pm\
+		      Sympa/DBManipulatorSQLite.pm\
 		      DBManipulatorSybase.pm \
 		      Family.pm \
 		      Fetch.pm \
