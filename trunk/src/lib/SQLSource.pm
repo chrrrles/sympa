@@ -58,13 +58,13 @@ sub new {
     my $actualclass;
     our @ISA = qw(Sympa::Datasource);
     if ($param->{'db_type'} =~ /^mysql$/i) {
-        unless (eval "require DBManipulatorMySQL") {
+        unless (eval "require Sympa::DBManipulatorMySQL") {
             Sympa::Log::Syslog::do_log('err',
-                "Unable to use DBManipulatorMySQL module: $@");
+                "Unable to use Sympa::DBManipulatorMySQL module: $@");
             return undef;
         }
-        require DBManipulatorMySQL;
-        $actualclass = "DBManipulatorMySQL";
+        require Sympa::DBManipulatorMySQL;
+        $actualclass = "Sympa::DBManipulatorMySQL";
     } elsif ($param->{'db_type'} =~ /^sqlite$/i) {
         unless (eval "require DBManipulatorSQLite") {
             Sympa::Log::Syslog::do_log('err',
