@@ -356,7 +356,7 @@ use SympaSession;
 #use List; #load in Auth
 use Message;
 use Sympa::Admin;
-use Config_XML;
+use Sympa::Config_XML;
 use Family;
 
 #use report; # load in Auth
@@ -1046,7 +1046,7 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
             exit 1;
         }
 
-        my $config = new Config_XML(\*INFILE);
+        my $config = new Sympa::Config_XML(\*INFILE);
         unless (defined $config->createHash()) {
             print STDERR "Error in representation data with these XML data\n";
             exit 1;
