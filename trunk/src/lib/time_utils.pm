@@ -1,5 +1,5 @@
 # -*- indent-tabs-mode: nil; -*-
-# vim:ft=perl:et:sw=4:textwidth=78
+# vim:ft=perl:et:sw=4
 # $Id$
 
 ##    Copyright (C) 1996-1999	Earl Hood, mhonarc@mhonarc.org
