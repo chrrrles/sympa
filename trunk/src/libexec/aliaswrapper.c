@@ -1,9 +1,10 @@
-/* aliaswrapper.c - This program, distributed with Sympa, is a wrapper to 'newaliases'
-  RCS Identication ; $Revision: 10094 $ ; $Date: 2014-01-02 12:53:42 +0100 (jeu. 02 janv. 2014) $ 
+/* $Id$
  
   Sympa - SYsteme de Multi-Postage Automatique
-  Copyright (c) 1997, 1998, 1999, 2000, 2001 Comite Reseau des Universites
-  Copyright (c) 1997,1998, 1999 Institut Pasteur & Christophe Wolfhugel
+
+  Copyright (c) 1997-1999 Institut Pasteur & Christophe Wolfhugel
+  Copyright (c) 1997-2011 Comite Reseau des Universites
+  Copyright (c) 2011-2014 GIP RENATER
  
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
