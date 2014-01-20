@@ -29,9 +29,9 @@ use Data::Dumper;
 use Carp;
 use Log;
 
-use DBManipulatorDefault;
+use Sympa::DBManipulatorDefault;
 
-our @ISA = qw(DBManipulatorDefault);
+our @ISA = qw(Sympa::DBManipulatorDefault);
 
 # Builds the string to be used by the DBI to connect to the database.
 #

@@ -28,9 +28,9 @@ use strict;
 use Carp;
 use Log;
 
-use DBManipulatorDefault;
+use Sympa::DBManipulatorDefault;
 
-our @ISA = qw(DBManipulatorDefault);
+our @ISA = qw(Sympa::DBManipulatorDefault);
 
 sub build_connect_string {
     my $self = shift;
