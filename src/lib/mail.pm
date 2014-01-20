@@ -793,7 +793,7 @@ sub sending {
         }
 
         ##Bulk package determine robots or site.
-        my $bulk_code = &Bulk::store(
+        my $bulk_code = &Sympa::Bulk::store(
             'message'          => $message,
             'rcpts'            => $rcpt,
             'from'             => $from,

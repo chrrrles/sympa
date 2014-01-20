@@ -408,14 +408,14 @@ sub establish_connection {
         ## We set Long preload length to two times global max message size
         ## (because of base64 encoding) instead of defaulting to 80 on Oracle
         ## and 32768 on Sybase.
-        ## This is to avoid error in Bulk::messageasstring when using Oracle
+        ## This is to avoid error in Sympa::Bulk::messageasstring when using Oracle
         ## or
         ## Sybase database:
         ##   bulk[pid]: internal error : current packet 'messagekey=
         ##   0c40f56e07d3c8ce34683b98d54b6575 contain a ref to a null message
         ## FIXME: would be better to use lists' setting, but
         ##  * list config is not load()-ed at this point, and
-        ##  * when invoked from Bulk::messageasstring, list settings is not
+        ##  * when invoked from Sympa::Bulk::messageasstring, list settings is not
         ##  even
         ##    load()-ed later.
         if ($self->{'db_type'} eq 'Oracle' or $self->{'db_type'} eq 'Sybase')

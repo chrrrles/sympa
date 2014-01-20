@@ -837,7 +837,7 @@ sub purge_tables {
 
     require tracking;
 
-    $removed = Bulk::purge_bulkspool();
+    $removed = Sympa::Bulk::purge_bulkspool();
     unless (defined $removed) {
         $self->error(
             {   'task'    => $task,
