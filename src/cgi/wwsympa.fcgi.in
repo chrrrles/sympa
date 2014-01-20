@@ -59,7 +59,7 @@ use List;
 #use mail; # used by List
 #use Conf; # used in List - Robot - Site
 #use confdef; # used by Conf
-use Commands;
+use Sympa::Commands;
 use Language qw(gettext gettext_strftime);
 
 #use Log; # used by Conf

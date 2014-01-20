@@ -33,7 +33,7 @@ use Getopt::Long;
 use lib '--modulesdir--';
 
 # use Conf;
-use Commands;
+use Sympa::Commands;
 use Conf;
 use Sympa::Auth;
 use SympaSession;

@@ -3,7 +3,7 @@ nobase_modules_DATA = Sympa/Admin.pm \
 		      Sympa/Auth.pm \
 		      Sympa/BounceMessage.pm \
 		      Sympa/Bulk.pm \
-		      Commands.pm \
+		      Sympa/Commands.pm \
 		      Conf.pm \
 		      confdef.pm \
 		      Config_XML.pm \

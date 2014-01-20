@@ -21,7 +21,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package Commands;
+package Sympa::Commands;
 
 use strict;
 use warnings;
@@ -2738,7 +2738,7 @@ sub distribute {
     );
     unless (defined $numsmtp) {
         Sympa::Log::Syslog::do_log('err',
-            'Commands::distribute(): Unable to send message to list %s',
+            'Sympa::Commands::distribute(): Unable to send message to list %s',
             $name);
         &report::reject_report_msg('intern', '', $sender,
             {'msg_id' => $msg_id},
@@ -2873,7 +2873,7 @@ sub confirm {
         unless (defined $key) {
             Sympa::Log::Syslog::do_log(
                 'err',
-                'Commands::confirm(): Calling to send_to_editor() function failed for user %s in list %s',
+                'Sympa::Commands::confirm(): Calling to send_to_editor() function failed for user %s in list %s',
                 $sender,
                 $name
             );
@@ -2902,7 +2902,7 @@ sub confirm {
                 )
                 ) {
                 Sympa::Log::Syslog::do_log('notice',
-                    "Commands::confirm(): Unable to send template 'message_report', entry 'moderating_message' to $sender"
+                    "Sympa::Commands::confirm(): Unable to send template 'message_report', entry 'moderating_message' to $sender"
                 );
             }
         }
@@ -2915,7 +2915,7 @@ sub confirm {
         unless (defined $key) {
             Sympa::Log::Syslog::do_log(
                 'err',
-                'Commands::confirm(): Calling to send_to_editor() function failed for user %s in list %s',
+                'Sympa::Commands::confirm(): Calling to send_to_editor() function failed for user %s in list %s',
                 $sender,
                 $name
             );
@@ -2944,7 +2944,7 @@ sub confirm {
                 )
                 ) {
                 Sympa::Log::Syslog::do_log('notice',
-                    "Commands::confirm(): Unable to send template 'message_report', type 'success', entry 'moderating_message' to $sender"
+                    "Sympa::Commands::confirm(): Unable to send template 'message_report', type 'success', entry 'moderating_message' to $sender"
                 );
             }
         }
@@ -2959,7 +2959,7 @@ sub confirm {
             if (defined $result->{'tt2'}) {
                 unless ($list->send_file($result->{'tt2'}, $sender)) {
                     Sympa::Log::Syslog::do_log('notice',
-                        "Commands::confirm(): Unable to send template '$result->{'tt2'}' to $sender"
+                        "Sympa::Commands::confirm(): Unable to send template '$result->{'tt2'}' to $sender"
                     );
                     &report::reject_report_msg('auth', $result->{'reason'},
                         $sender, {'message' => $message},
@@ -2975,7 +2975,7 @@ sub confirm {
                     )
                     ) {
                     Sympa::Log::Syslog::do_log('notice',
-                        "Commands::confirm(): Unable to send template 'message_report', type 'auth' to $sender"
+                        "Sympa::Commands::confirm(): Unable to send template 'message_report', type 'auth' to $sender"
                     );
                 }
             }
@@ -3002,7 +3002,7 @@ sub confirm {
 
         unless (defined $numsmtp) {
             Sympa::Log::Syslog::do_log('err',
-                'Commands::confirm(): Unable to send message to list %s',
+                'Sympa::Commands::confirm(): Unable to send message to list %s',
                 $list);
             &report::reject_report_msg('intern', '', $sender,
                 {'msg_id' => $msgid, 'message' => $message},
@@ -3019,7 +3019,7 @@ sub confirm {
                 )
                 ) {
                 Sympa::Log::Syslog::do_log('notice',
-                    "Commands::confirm(): Unable to send template 'message_report', entry 'message_distributed' to $sender"
+                    "Sympa::Commands::confirm(): Unable to send template 'message_report', entry 'message_distributed' to $sender"
                 );
             }
         }

@@ -344,7 +344,7 @@ use Pod::Usage;
 # tentative
 use Data::Dumper;
 
-use Commands;
+use Sympa::Commands;
 
 #use Conf; # load in Site - List - Commands
 use Sympa::Auth;
@@ -2959,7 +2959,7 @@ sub DoCommand {
 
         # at this point $message->{'dkim_pass'} does not verify that
         # Subject: is part of the signature. It SHOULD !
-        Commands::parse($sender, $robot,
+        Sympa::Commands::parse($sender, $robot,
             sprintf('%s %s', $command, $list->name),
             $auth_level, $message);
         Sympa::Log::Syslog::db_log(
@@ -2995,7 +2995,7 @@ sub DoCommand {
 
     if (defined $subject_field and $subject_field =~ /\S/) {
         $success ||=
-            Commands::parse($sender, $robot, $subject_field, $auth_level,
+            Sympa::Commands::parse($sender, $robot, $subject_field, $auth_level,
             $message);
         unless ($success eq 'unknown_cmd') {
             $cmd_found = 1;
@@ -3099,7 +3099,7 @@ sub DoCommand {
             $auth_level = 'dkim' if $message->{'dkim_pass'};
             $auth_level = $is_signed->{'body'} if $is_signed->{'body'};
             $status =
-                Commands::parse($sender, $robot, $i, $auth_level, $message);
+                Sympa::Commands::parse($sender, $robot, $i, $auth_level, $message);
 
             $cmd_found = 1;    # if problem no_cmd_understood is sent here
             if ($status eq 'unknown_cmd') {
