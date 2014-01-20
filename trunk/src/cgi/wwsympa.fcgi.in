@@ -77,7 +77,7 @@ use time_utils;
 
 #use Sympa::Constants;
 use wwslib;
-use cookielib;
+use Sympa::CookieLib;
 
 #use tt2;
 use tracking;
@@ -1509,7 +1509,7 @@ while ($query = &new_loop()) {
         ##Cookie extern : sympa_altemails
         ## !!
         $param->{'alt_emails'} =
-            &cookielib::check_cookie_extern($ENV{'HTTP_COOKIE'}, Site->cookie,
+            &Sympa::CookieLib::check_cookie_extern($ENV{'HTTP_COOKIE'}, Site->cookie,
             $param->{'user'}{'email'});
 
         if ($param->{'user'}{'email'}) {
@@ -1876,7 +1876,7 @@ while ($query = &new_loop()) {
 
                 unless ($number == 0) {
                     unless (
-                        &cookielib::set_cookie_extern(
+                        &Sympa::CookieLib::set_cookie_extern(
                             Site->cookie,
                             $param->{'cookie_domain'},
                             %{$param->{'alt_emails'}}
@@ -1888,7 +1888,7 @@ while ($query = &new_loop()) {
                 }
             }
         }    #elsif ($ENV{'HTTP_COOKIE'} =~ /sympauser\=/){
-         #   &cookielib::set_cookie('unknown', Site->cookie, $param->{'cookie_domain'}, 'now');
+         #   &Sympa::CookieLib::set_cookie('unknown', Site->cookie, $param->{'cookie_domain'}, 'now');
          #}
     }
 
@@ -3869,7 +3869,7 @@ sub do_login {
 
     unless ($param->{'alt_emails'}{$email}) {
         unless (
-            &cookielib::set_cookie_extern(
+            &Sympa::CookieLib::set_cookie_extern(
                 Site->cookie, $param->{'cookie_domain'},
                 %{$param->{'alt_emails'}}
             )
@@ -4643,7 +4643,7 @@ sub do_logout {
     $session->{'email'} = 'nobody';
 
     # no reason to alter the lang because user perform logout
-    # $param->{'lang'} = $param->{'cookie_lang'} = &cookielib::check_lang_cookie($ENV{'HTTP_COOKIE'}) || ($list || $robot)->lang;
+    # $param->{'lang'} = $param->{'cookie_lang'} = &Sympa::CookieLib::check_lang_cookie($ENV{'HTTP_COOKIE'}) || ($list || $robot)->lang;
 
     if (defined $session->{'cas_server'}
         && (defined Site->auth_services->{$robot_id}[$session->{'cas_server'}]

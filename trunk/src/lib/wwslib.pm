@@ -216,7 +216,7 @@ sub get_email_from_cookie {
             ' cookie undefined, authentication failure');
     }
 
-    ($email, $auth) = &cookielib::check_cookie($cookie, $secret);
+    ($email, $auth) = &Sympa::CookieLib::check_cookie($cookie, $secret);
     unless ($email) {
         &report::reject_report_web('user', 'auth_failed', {}, '');
         Sympa::Log::Syslog::do_log('info',
