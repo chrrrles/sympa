@@ -12,7 +12,7 @@ nobase_modules_DATA = Sympa/Admin.pm \
 		      Sympa/DBManipulatorDefault.pm \
 		      Sympa/DBManipulatorMySQL.pm \
 		      Sympa/DBManipulatorOracle.pm \
-		      DBManipulatorPostgres.pm \
+		      Sympa/DBManipulatorPostgres.pm \
 		      DBManipulatorSQLite.pm\
 		      DBManipulatorSybase.pm \
 		      Family.pm \
