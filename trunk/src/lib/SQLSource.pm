@@ -93,14 +93,14 @@ sub new {
 
         $actualclass = "Sympa::DBManipulatorOracle";
     } elsif ($param->{'db_type'} =~ /^sybase$/i) {
-        unless (eval "require DBManipulatorSybase") {
+        unless (eval "require Sympa::DBManipulatorSybase") {
             Sympa::Log::Syslog::do_log('err',
-                "Unable to use DBManipulatorSybase module");
+                "Unable to use Sympa::DBManipulatorSybase module");
             return undef;
         }
         require DBManipulatorSybase;
 
-        $actualclass = "DBManipulatorSybase";
+        $actualclass = "Sympa::DBManipulatorSybase";
     } else {
         ## We don't have a DB Manipulator for this RDBMS
         ## It might be an SQL source used to include list members/owners
