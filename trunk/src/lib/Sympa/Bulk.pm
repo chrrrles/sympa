@@ -21,7 +21,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package Bulk;
+package Sympa::Bulk;
 
 use strict;
 use warnings;
@@ -61,7 +61,7 @@ my $last_stored_message_key;
 # create an empty Bulk
 #sub new {
 #    my $pkg = shift;
-#    my $packet = &Bulk::next();;
+#    my $packet = &Sympa::Bulk::next();;
 #    bless \$packet, $pkg;
 #    return $packet
 #}
@@ -202,7 +202,7 @@ sub remove {
     my $messagekey = shift;
     my $packetid   = shift;
 
-    Sympa::Log::Syslog::do_log('debug', "Bulk::remove(%s,%s)", $messagekey,
+    Sympa::Log::Syslog::do_log('debug', "Sympa::Bulk::remove(%s,%s)", $messagekey,
         $packetid);
 
     unless (
@@ -223,7 +223,7 @@ sub remove {
 ## No longer used.
 sub messageasstring {
     my $messagekey = shift;
-    Sympa::Log::Syslog::do_log('debug', 'Bulk::messageasstring(%s)',
+    Sympa::Log::Syslog::do_log('debug', 'Sympa::Bulk::messageasstring(%s)',
         $messagekey);
 
     unless (
@@ -321,7 +321,7 @@ sub store {
     my $tag_as_last = $data{'tag_as_last'};
 
     #Sympa::Log::Syslog::do_log('trace',
-    #    'Bulk::store(<msg>,rcpts: %s,from = %s,robot = %s,listname=
+    #    'Sympa::Bulk::store(<msg>,rcpts: %s,from = %s,robot = %s,listname=
     #    %s,priority_message = %s, delivery_date= %s,verp = %s, tracking = %s,
     #    merge = %s, dkim: d= %s i=%s, last: %s)',
     #    $rcpts, $from, $robot, $listname, $priority_message, $delivery_date,
@@ -519,7 +519,7 @@ sub purge_bulkspool {
 
     my $count = 0;
     while (my $key = $sth->fetchrow_hashref('NAME_lc')) {
-        if (&Bulk::remove_bulkspool_message('spool', $key->{'messagekey'})) {
+        if (&remove_bulkspool_message('spool', $key->{'messagekey'})) {
             $count++;
         } else {
             Sympa::Log::Syslog::do_log('err',
