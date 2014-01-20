@@ -501,7 +501,7 @@ sub request_action {
         my @p;
         if ((   @p =
                 grep { $_->{'name'} and $_->{'name'} eq $operation }
-                @confdef::params
+                @Sympa::ConfDef::params
             )
             and $p[0]->{'scenario'}
             ) {
@@ -858,7 +858,7 @@ sub verify {
             my $conf_value;
             if (scalar(
                     grep { $_->{'name'} and $_->{'name'} eq $conf_key }
-                        @confdef::params
+                        @Sympa::ConfDef::params
                 )
                 and ($conf_value = $robot->$conf_key)
                 ) {

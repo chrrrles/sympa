@@ -89,7 +89,7 @@ sub AUTOLOAD {
             qw(blacklist loging_condition loging_for_module
             trusted_applications)
             or grep { $_->{'name'} and $_->{'name'} eq $attr }
-            @confdef::params;
+            @Sympa::ConfDef::params;
     ## getters for attributes specific to global config.
     $type->{'SiteAttribute'} = 1
         if grep { $_ eq $attr }
@@ -224,7 +224,7 @@ sub fullconfig {
     my $self       = shift;
     my $fullconfig = {};
 
-    foreach my $p (@confdef::params) {
+    foreach my $p (@Sympa::ConfDef::params) {
         next unless $p->{'name'};
         my $attr = $p->{'name'};
         $fullconfig->{$p->{'name'}} = $self->$attr;

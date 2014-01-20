@@ -5,7 +5,7 @@ nobase_modules_DATA = Sympa/Admin.pm \
 		      Sympa/Bulk.pm \
 		      Sympa/Commands.pm \
 		      Sympa/Conf.pm \
-		      confdef.pm \
+		      Sympa/ConfDef.pm \
 		      Config_XML.pm \
 		      cookielib.pm \
 		      Datasource.pm \

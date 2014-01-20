@@ -7081,7 +7081,7 @@ sub do_serveradmin {
 }
 
 sub do_edit_config {
-    my $editable_params = tools::dup_var(\@confdef::params);
+    my $editable_params = tools::dup_var(\@Sympa::ConfDef::params);
 
     get_server_details();
 
