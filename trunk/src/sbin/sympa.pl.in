@@ -355,7 +355,7 @@ use SympaSession;
 #use mail; # load in List - Auth
 #use List; #load in Auth
 use Message;
-use admin;
+use Sympa::Admin;
 use Config_XML;
 use Family;
 

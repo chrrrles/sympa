@@ -46,7 +46,7 @@ use Term::ProgressBar;
 use Language qw(gettext_strftime);
 
 #use Log; # load in dmin - List - Robot - Site - Conf
-use admin;
+use Sympa::Admin;
 use Config_XML;
 
 #use Sympa::Constants; # load in Conf - confdef
