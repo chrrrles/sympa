@@ -1005,7 +1005,3 @@ L<http://tools.ietf.org/html/rfc5646>.
 
 I<Translating Sympa>.
 L<http://www.sympa.org/translating_sympa>.
-
-=head1 AUTHORS
-
-Sympa developers and contributors.

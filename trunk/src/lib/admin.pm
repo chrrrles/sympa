@@ -1768,18 +1768,4 @@ sub change_user_email {
     return (1, \@failed_for);
 }
 
-=pod 
-
-=head1 AUTHORS 
-
-=over 
-
-=item * Serge Aumont <sa AT cru.fr> 
-
-=item * Olivier Salaun <os AT cru.fr> 
-
-=back 
-
-=cut 
-
 1;

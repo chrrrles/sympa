@@ -3318,18 +3318,4 @@ sub get_id {
         $self->{'name'}, Robot->new($self->{'robot'})->get_id;
 }
 
-=pod 
-
-=head1 AUTHORS 
-
-=over 
-
-=item * Serge Aumont <sa AT cru.fr> 
-
-=item * Olivier Salaun <os AT cru.fr> 
-
-=back 
-
-=cut
-
 1;
