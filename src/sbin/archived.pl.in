@@ -351,7 +351,7 @@ while (!$end) {
             }
 
             my $file;
-            unless ($file = &Archive::search_msgid("$arcpath/arctxt", $msgid))
+            unless ($file = &Sympa::Archive::search_msgid("$arcpath/arctxt", $msgid))
             {
                 Sympa::Log::Syslog::do_log('err',
                     'No message with message-id %s found in %s/arctxt',
@@ -622,7 +622,7 @@ Rebuilds archives for the list the name of which is given in the argument $adrli
 
 =over 
 
-=item * Archive::get_tag
+=item * Sympa::Archive::get_tag
 
 =item * set_hidden_mode
 
@@ -665,7 +665,7 @@ sub rebuild {
     my $list    = new List($listname, $hostname);
     my $robot   = $list->robot;
     my $arcpath = $robot->arc_path;
-    my $tag     = Archive::get_tag($list);
+    my $tag     = Sympa::Archive::get_tag($list);
     Sympa::Log::Syslog::do_log('debug3', "Rebuilding %s archive (%s)",
         $adrlist, $2);
 
@@ -728,7 +728,7 @@ sub rebuild {
         closedir HTML;
 
         my $arcs_dir =
-            Archive::clean_archive_directory($robot, "/$adrlist/$arc/arctxt");
+            Sympa::Archive::clean_archive_directory($robot, "/$adrlist/$arc/arctxt");
         my $dir_to_rebuild = $arcs_dir->{'dir_to_rebuild'} if ($arcs_dir);
 
         my $cmd =
@@ -803,7 +803,7 @@ sub rebuild {
             }
             closedir HTML;
             my $dir_to_rebuild = $robot->arc_path . "/$adrlist/$arc/arctxt";
-            my $arcs_dir       = Archive::clean_archive_directory($robot,
+            my $arcs_dir       = Sympa::Archive::clean_archive_directory($robot,
                 "/$adrlist/$arc/arctxt");
             if ($arcs_dir) {
                 $dir_to_rebuild = $arcs_dir->{'dir_to_rebuild'};
@@ -889,7 +889,7 @@ Archives one message into one list archives directory.
 
 =over 
 
-=item * Archive::get_tag
+=item * Sympa::Archive::get_tag
 
 =item * save_idx
 
@@ -948,7 +948,7 @@ sub mail2arc {
         return undef;
     }
 
-    my $tag = Archive::get_tag($list);
+    my $tag = Sympa::Archive::get_tag($list);
 
     if (    $list->web_archive_spam_protection ne 'none'
         and $list->web_archive_spam_protection ne 'cookie') {
@@ -1101,7 +1101,7 @@ sub mail2arc {
 
         # prepare a temporary file with clean message content (htlm parts are
         # cleaned)
-        my $safe = Archive::clean_archived_message($robot, $file, $output);
+        my $safe = Sympa::Archive::clean_archived_message($robot, $file, $output);
         unless ($safe) {
             Sympa::Log::Syslog::do_log('err',
                 "Could not clean message, ignoring it");

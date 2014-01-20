@@ -528,7 +528,7 @@ sub last {
         return 'no_archive';
     }
     my $file;
-    unless ($file = &Archive::last_path($list)) {
+    unless ($file = &Sympa::Archive::last_path($list)) {
         &report::reject_report_cmd('user', 'no_required_file', {}, $cmd_line);
         Sympa::Log::Syslog::do_log('info',
             'LAST %s from %s refused, archive file %s not found',

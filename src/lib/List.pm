@@ -63,7 +63,7 @@ use WebAgent;
 use SympaspoolClassic;
 use KeySpool;
 use SubscribeSpool;
-use Archive;
+use Sympa::Archive;
 use tt2;
 
 #use Sympa::Constants; # used in Conf - confdef
@@ -2556,7 +2556,7 @@ sub send_to_editor {
         # prepare html view of this message
         my $destination_dir =
             Site->viewmail_dir . '/mod/' . $self->get_id() . '/' . $modkey;
-        Archive::convert_single_message(
+        Sympa::Archive::convert_single_message(
             $self, $message,
             'destination_dir' => $destination_dir,
             'attachement_url' => join('/', '..', 'viewmod', $name, $modkey),
@@ -2777,7 +2777,7 @@ sub archive_send {
     return unless $self->is_archived();    #FIXME
 
     my $dir = $self->robot->arc_path . '/' . $self->get_id;
-    my $msg_list = Archive::scan_dir_archive($dir, $file);
+    my $msg_list = Sympa::Archive::scan_dir_archive($dir, $file);
 
     my $subject = sprintf 'Archive of %s, file %s', $self->name, $file;
     my $param = {
@@ -5431,7 +5431,7 @@ sub archive_exist {
 
     return undef unless ($self->is_archived());
     my $dir = $self->robot->arc_path . '/' . $self->get_id;
-    Archive::exist($dir, $file);
+    Sympa::Archive::exist($dir, $file);
 
 }
 
@@ -5442,7 +5442,7 @@ sub archive_ls {
 
     my $dir = $self->robot->arc_path . '/' . $self->get_id;
 
-    Archive::list($dir) if ($self->is_archived());
+    Sympa::Archive::list($dir) if ($self->is_archived());
 }
 
 ## Archive
