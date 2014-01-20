@@ -8,7 +8,7 @@ nobase_modules_DATA = Sympa/Admin.pm \
 		      Sympa/ConfDef.pm \
 		      Sympa/Config_XML.pm \
 		      Sympa/CookieLib.pm \
-		      Datasource.pm \
+		      Sympa/Datasource.pm \
 		      DBManipulatorDefault.pm \
 		      DBManipulatorMySQL.pm \
 		      DBManipulatorOracle.pm \

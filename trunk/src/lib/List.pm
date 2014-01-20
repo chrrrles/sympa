@@ -5846,7 +5846,7 @@ sub _include_users_remote_sympa_list {
     my $path = $param->{'path'};
     my $cert = $param->{'cert'} || 'list';
 
-    my $id = Datasource::_get_datasource_id($param);
+    my $id = Sympa::Datasource::_get_datasource_id($param);
 
     Sympa::Log::Syslog::do_log('debug2', '%s: https://%s:%s/%s using cert %s',
         $self, $host, $port, $path, $cert);
@@ -5986,7 +5986,7 @@ sub _include_users_list {
         return undef;
     }
 
-    my $id = Datasource::_get_datasource_id($includelistname);
+    my $id = Sympa::Datasource::_get_datasource_id($includelistname);
 
     for (
         my $user = $includelist->get_first_list_member();
@@ -6045,7 +6045,7 @@ sub _include_users_file {
     }
     Sympa::Log::Syslog::do_log('debug2', 'including file %s', $filename);
 
-    my $id           = Datasource::_get_datasource_id($filename);
+    my $id           = Sympa::Datasource::_get_datasource_id($filename);
     my $lines        = 0;
     my $emails_found = 0;
     my $email_regexp = &tools::get_regexp('email');
@@ -6132,7 +6132,7 @@ sub _include_users_remote_file {
         "List::_include_users_remote_file($url)");
 
     my $total = 0;
-    my $id    = Datasource::_get_datasource_id($param);
+    my $id    = Sympa::Datasource::_get_datasource_id($param);
 
     ## WebAgent package is part of Fetch.pm and inherited from LWP::UserAgent
 
@@ -6250,7 +6250,7 @@ sub _include_users_voot_group {
         "List::_include_users_voot_group(%s, %s, %s)",
         $param->{'user'}, $param->{'provider'}, $param->{'group'});
 
-    my $id = Datasource::_get_datasource_id($param);
+    my $id = Sympa::Datasource::_get_datasource_id($param);
 
     my $consumer = new VOOTConsumer(
         user     => $param->{'user'},
@@ -6946,7 +6946,7 @@ sub _load_list_members_from_include {
             # Work with a copy of admin hash branch to avoid including
             # temporary variables into the actual admin hash.[bug #3182]
             my $incl          = tools::dup_var($tmp_incl);
-            my $source_id     = Datasource::_get_datasource_id($tmp_incl);
+            my $source_id     = Sympa::Datasource::_get_datasource_id($tmp_incl);
             my $source_is_new = defined $old_subs->{$source_id};
 
             # Get the list of users.
@@ -10986,7 +10986,7 @@ sub search_datasource {
         if (defined($self->$p)) {
             ## Go through sources
             foreach my $s (@{$self->$p}) {
-                if (&Datasource::_get_datasource_id($s) eq $id) {
+                if (&Sympa::Datasource::_get_datasource_id($s) eq $id) {
                     return {'type' => $p, 'def' => $s};
                 }
             }

@@ -34,7 +34,7 @@ use Log;
 #use tt2; # not used
 use Exporter;
 use Data::Dumper;
-use Datasource;
+use Sympa::Datasource;
 
 our @ISA    = qw(Exporter);
 our @EXPORT = qw(%date_format);
@@ -56,7 +56,7 @@ sub new {
         "Creating new SQLSource object for RDBMS '%s'",
         $param->{'db_type'});
     my $actualclass;
-    our @ISA = qw(Datasource);
+    our @ISA = qw(Sympa::Datasource);
     if ($param->{'db_type'} =~ /^mysql$/i) {
         unless (eval "require DBManipulatorMySQL") {
             Sympa::Log::Syslog::do_log('err',
