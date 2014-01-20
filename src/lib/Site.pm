@@ -106,7 +106,7 @@ sub AUTOLOAD {
         ## XXX This code would be removed later.
         if (index($attr, '_') != 0
             and ((ref $_[0] and exists $_[0]->{$attr})
-                or exists $Conf::Conf{$attr})
+                or exists $Sympa::Conf::Conf{$attr})
             ) {
             Sympa::Log::Syslog::do_log(
                 'err',
@@ -165,7 +165,7 @@ sub AUTOLOAD {
             croak "Can't modify \"$attr\" attribute"
                 if scalar @_ > 1;
 
-            my $ret = $Conf::Conf{$attr};
+            my $ret = $Sympa::Conf::Conf{$attr};
 
             # To avoid "Can't use an undefined value as a HASH reference"
             if (!defined $ret and $type->{'SiteAttribute'}) {
@@ -258,7 +258,7 @@ sub lang {
         or !ref $self and $self eq 'Site') {
         croak "Can't call method \"lang\" on uninitialized $self class"
             unless $Site::is_initialized;
-        $lang = $Conf::Conf{'lang'};
+        $lang = $Sympa::Conf::Conf{'lang'};
     } else {
         croak 'bug in loginc.  Ask developer';
     }
@@ -307,9 +307,9 @@ sub listmasters {
             unless $Site::is_initialized;
 
         if (wantarray) {
-            @{$Conf::Conf{'listmasters'} || []};
+            @{$Sympa::Conf::Conf{'listmasters'} || []};
         } else {
-            $Conf::Conf{'listmasters'};
+            $Sympa::Conf::Conf{'listmasters'};
         }
     } else {
         croak 'bug in logic.  Ask developer';
@@ -458,7 +458,7 @@ L<Robot/get_robots> should be used.
 =cut
 
 sub robots_config {
-    return $Conf::Conf{'robots'} || {};
+    return $Sympa::Conf::Conf{'robots'} || {};
 }
 
 1;

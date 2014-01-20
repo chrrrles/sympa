@@ -123,7 +123,7 @@ my $ajax;
 unless (defined Robot::get_robots()) {
 
     # we cannot use log without configuration
-    my $conf = Conf::get_sympa_conf();
+    my $conf = Sympa::Conf::get_sympa_conf();
     die
         "Unable to load sympa configuration, file $conf or one of the virtual host robot.conf files contain errors. Exiting.";
 }
@@ -1200,7 +1200,7 @@ while ($query = &new_loop()) {
     $param->{'use_sso'} = 1 if ($param->{'sso_number'});
     $param->{'authentication_info_url'} =
         Site->authentication_info_url->{$robot_id};
-    $param->{'wwsconf'} = &Conf::_load_wwsconf;    #FIXME: no longer used?
+    $param->{'wwsconf'} = &Sympa::Conf::_load_wwsconf;    #FIXME: no longer used?
 
     $param->{'path_cgi'} = $ENV{'SCRIPT_NAME'};
     ## Replace '//' with '/' because it would break navigation
@@ -4670,7 +4670,7 @@ sub do_logout {
         ## Check if logout_url is known for this SSO
         my $sso;
         unless (
-            $sso = &Conf::get_sso_by_id(
+            $sso = &Sympa::Conf::get_sso_by_id(
                 robot      => $robot_id,
                 service_id => $session->{'sso_id'}
             )
@@ -7145,7 +7145,7 @@ sub do_edit_config {
                 last;
             } else {
                 $p->{'current_value'} = $in{'conf_new_value'};
-                Conf::set_robot_conf($robot_id, $in{'conf_parameter_name'},
+                Sympa::Conf::set_robot_conf($robot_id, $in{'conf_parameter_name'},
                     $in{'conf_new_value'});
                 Sympa::Log::Syslog::do_log(
                     'notice',
@@ -7961,7 +7961,7 @@ sub do_skinsedit {
 
         # update config
         foreach my $colornumber (0 .. 15) {
-            &Conf::set_robot_conf(
+            &Sympa::Conf::set_robot_conf(
                 $robot_id,
                 'color_' . $colornumber,
                 $session->{'color_' . $colornumber}
@@ -25167,7 +25167,7 @@ sub do_maintenance {
 sub do_automatic_lists_management_request {
     &wwslog('notice', 'Starting');
     $param->{'automatic_lists_description'} =
-        &Conf::load_automatic_lists_description();
+        &Sympa::Conf::load_automatic_lists_description();
     return 1;
 }
 

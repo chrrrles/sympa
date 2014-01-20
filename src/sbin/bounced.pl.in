@@ -179,7 +179,7 @@ my $ip          = $ENV{'REMOTE_HOST'};
 unless (defined Robot::get_robots()) {
     Sympa::Log::Syslog::fatal_err(
         'Unable to load sympa configuration, file %s has errors.',
-        Conf::get_sympa_conf());
+        Sympa::Conf::get_sympa_conf());
 }
 
 ##unshift @INC, Site->wws_path;

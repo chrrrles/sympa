@@ -118,7 +118,7 @@ Creates a list. Used by the create_list() sub in sympa.pl and the do_create_list
 
 =item * list_check_smtp
 
-=item * Conf::get_robot_conf
+=item * Sympa::Conf::get_robot_conf
 
 =item * Language::gettext_strftime
 
@@ -1479,7 +1479,7 @@ sub install_aliases {
     if ($status == 1) {
         Sympa::Log::Syslog::do_log('err',
             'Configuration file %s has errors : %s',
-            Conf::get_sympa_conf(), $error_output);
+            Sympa::Conf::get_sympa_conf(), $error_output);
     } elsif ($status == 2) {
         Sympa::Log::Syslog::do_log('err',
             'Internal error : Incorrect call to alias_manager : %s',

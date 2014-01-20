@@ -474,7 +474,7 @@ if ($main::options{'help'}) {
     unless (Site->load('no_db' => 1, 'force_reload' => 1)) {
         printf STDERR
             "Configuration file %s has errors.\n",
-            Conf::get_sympa_conf();
+            Sympa::Conf::get_sympa_conf();
         exit 1;
     }
 
@@ -509,7 +509,7 @@ if ($main::options{'help'}) {
     unless (Site->load() and Robot::get_robots()) {
         printf STDERR
             "Unable to load Sympa configuration, file %s or any of the virtual host robot.conf files contain errors. Exiting.\n",
-            Conf::get_sympa_conf();
+            Sympa::Conf::get_sympa_conf();
         exit 1;
     }
 
@@ -520,7 +520,7 @@ if ($main::options{'help'}) {
     }
 
     ## Check for several files.
-    unless (Conf::checkfiles_as_root()) {
+    unless (Sympa::Conf::checkfiles_as_root()) {
         printf STDERR "Missing files.\n";
         exit 1;
     }
@@ -551,7 +551,7 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
     unless (Robot::get_robots()) {
         print STDERR
             "Unable to load Sympa configuration, file %s or any of the virtual host robot.conf files contain errors. Exiting.\n",
-            Conf::get_sympa_conf();
+            Sympa::Conf::get_sympa_conf();
         exit 1;
     }
 
@@ -597,7 +597,7 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
     }
 
     ## Check for several files.
-    unless (&Conf::checkfiles_as_root()) {
+    unless (&Sympa::Conf::checkfiles_as_root()) {
         Sympa::Log::Syslog::fatal_err(
             "output checkfiles_as_root : Missing files. Aborting.");
         ## No return.
@@ -716,7 +716,7 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
         $signal = '0';
     }
 
-    unless (&Conf::checkfiles()) {
+    unless (&Sympa::Conf::checkfiles()) {
         Sympa::Log::Syslog::fatal_err("Missing files. Aborting.");
     }
 
@@ -1024,8 +1024,8 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
     } elsif ($main::options{'conf_2_db'}) {
         printf
             "Sympa is going to store %s in database conf_table. This operation do NOT remove original files\n",
-            Conf::get_sympa_conf();
-        if (Conf::conf_2_db()) {
+            Sympa::Conf::get_sympa_conf();
+        if (Sympa::Conf::conf_2_db()) {
             printf "Done";
         } else {
             printf "an error occur";

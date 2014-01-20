@@ -28,12 +28,12 @@
 ## This script will create all missing HTML files in the moderation spool
 
 use lib '--modulesdir--';
-use Conf;    # to load Sympa conf which is needed by List.pm
+use Sympa::Conf;    # to load Sympa conf which is needed by List.pm
 use List;
 use Log;     # if you want to get logs of List.pm
 use Sympa::Constants;
 
-unless (Conf::load(Sympa::Constants::CONFIG)) {
+unless (Sympa::Conf::load(Sympa::Constants::CONFIG)) {
     die "Can't load Sympa configuration file";
 }
 Sympa::Log::Syslog::do_openlog($Conf{'syslog'}, $Conf{'log_socket_type'},
@@ -98,7 +98,7 @@ foreach $msg (sort grep(!/^\./, readdir SPOOL)) {
 
         ## generate HTML
         chdir $tmp_dir;
-        my $mhonarc = &Conf::get_robot_conf($robot, 'mhonarc');
+        my $mhonarc = &Sympa::Conf::get_robot_conf($robot, 'mhonarc');
         open ARCMOD,
             "$mhonarc  -single -rcfile $mhonarc_ressources -definevars listname=$name -definevars hostname=$host $modqueue/$name\_$modkey|";
         open MSG, ">msg00000.html";

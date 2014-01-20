@@ -34,7 +34,7 @@ use lib '--modulesdir--';
 
 # use Conf;
 use Sympa::Commands;
-use Conf;
+use Sympa::Conf;
 use Sympa::Auth;
 use SympaSession;
 use Language;

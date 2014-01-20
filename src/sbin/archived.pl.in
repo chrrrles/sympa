@@ -169,7 +169,7 @@ $main::options{'log_to_stderr'} = 1
 unless (defined Robot::get_robots()) {
     Sympa::Log::Syslog::fatal_err(
         'Unable to load sympa configuration, file %s has errors.',
-        Conf::get_sympa_conf());
+        Sympa::Conf::get_sympa_conf());
 }
 
 ## Check databse connectivity
@@ -588,7 +588,7 @@ sub remove {
         Sympa::Log::Syslog::do_log('error',
             'archived::remove: unable to log event');
     }
-    my $arcpath = &Conf::get_robot_conf($robot, 'arc_path');
+    my $arcpath = &Sympa::Conf::get_robot_conf($robot, 'arc_path');
     $arc =~ /^(\d{4})-(\d{2})$/;
     my $yyyy = $1;
     my $mm   = $2;

@@ -38,7 +38,7 @@ use warnings;
 use Carp qw(croak);
 use Cwd;
 
-use Conf;
+use Sympa::Conf;
 use Language qw(gettext gettext_strftime);
 use User;
 use Data::Dumper;
@@ -98,13 +98,13 @@ sub load {
         $opts{'config_file'} = $self->{'etc'} . '/robot.conf';
         $opts{'robot'}       = $self->{'name'};
     } elsif ($self eq 'Site') {
-        $opts{'config_file'} ||= Conf::get_sympa_conf();
+        $opts{'config_file'} ||= Sympa::Conf::get_sympa_conf();
         $opts{'robot'} = '*';
     } else {
         croak 'bug in logic.  Ask developer';
     }
 
-    my $result = Conf::load_robot_conf(\%opts);
+    my $result = Sympa::Conf::load_robot_conf(\%opts);
 
     ## Robot cache must be reloaded if Site config had been reloaded.
     Site->init_robot_cache() if !ref $self and $self eq 'Site' and $result;

@@ -32,7 +32,7 @@ use CGI::Cookie;
 use Time::Local;
 
 use Log;
-use Conf;
+use Sympa::Conf;
 use SympaSession;
 use SDM;
 
