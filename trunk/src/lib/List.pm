@@ -2630,7 +2630,7 @@ sub send_to_editor {
         # create a one time ticket that will be used as an MD5 URL credential
 
         unless (
-            $param->{'one_time_ticket'} = &Auth::create_one_time_ticket(
+            $param->{'one_time_ticket'} = &Sympa::Auth::create_one_time_ticket(
                 $recipient, $robot, 'modindex/' . $name, 'mail'
             )
             ) {
@@ -2926,7 +2926,7 @@ sub send_notify_to_owner {
             $param->{'escaped_who'} =~ s/\s/\%20/g;
             foreach my $owner (@to) {
                 $param->{'one_time_ticket'} =
-                    &Auth::create_one_time_ticket($owner, $robot,
+                    &Sympa::Auth::create_one_time_ticket($owner, $robot,
                     'search/' . $self->name . '/' . $param->{'escaped_who'},
                     $param->{'ip'});
                 unless (
@@ -2949,7 +2949,7 @@ sub send_notify_to_owner {
             $param->{'escaped_who'} =~ s/\s/\%20/g;
             foreach my $owner (@to) {
                 $param->{'one_time_ticket'} =
-                    &Auth::create_one_time_ticket($owner, $robot,
+                    &Sympa::Auth::create_one_time_ticket($owner, $robot,
                     'subindex/' . $self->name,
                     $param->{'ip'});
                 unless (
@@ -2971,7 +2971,7 @@ sub send_notify_to_owner {
             $param->{'sympa'} = $self->robot->get_address();
             foreach my $owner (@to) {
                 $param->{'one_time_ticket'} =
-                    Auth::create_one_time_ticket($owner, $robot,
+                    Sympa::Auth::create_one_time_ticket($owner, $robot,
                     'sigindex/' . $self->name,
                     $param->{'ip'});
                 unless (

@@ -35,7 +35,7 @@ use List;
 
 #use Conf; # used in List - Site
 #use Log; # used in Conf
-use Auth;
+use Sympa::Auth;
 
 #use Language; # no longer used
 
@@ -179,7 +179,7 @@ sub login {
     ## Set an env var to find out if in a SOAP context
     $ENV{'SYMPA_SOAP'} = 1;
 
-    my $user = Auth::check_auth($robot, $email, $passwd);
+    my $user = Sympa::Auth::check_auth($robot, $email, $passwd);
 
     unless ($user) {
         Sympa::Log::Syslog::do_log('notice',
@@ -275,7 +275,7 @@ sub casLogin {
 
     ## Now fetch email attribute from LDAP
     unless ($email =
-        &Auth::get_email_by_net_id($robot, $cas_id, {'uid' => $user})) {
+        &Sympa::Auth::get_email_by_net_id($robot, $cas_id, {'uid' => $user})) {
         Sympa::Log::Syslog::do_log('err',
             'Could not get email address from LDAP for user %s', $user);
         die SOAP::Fault->faultcode('Server')
@@ -389,7 +389,7 @@ sub authenticateRemoteAppAndRun {
             ->faultdetail('Use : <appname> <apppassword> <vars> <service>');
     }
     my $proxy_vars =
-        &Auth::remote_app_check_password($appname, $apppassword, $robot);
+        &Sympa::Auth::remote_app_check_password($appname, $apppassword, $robot);
 
     unless (defined $proxy_vars) {
         Sympa::Log::Syslog::do_log('notice',

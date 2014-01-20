@@ -21,7 +21,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package Auth;
+package Sympa::Auth;
 
 use Digest::MD5;
 
@@ -38,7 +38,7 @@ use report;
 ## by sha1 or ....)
 sub password_fingerprint {
 
-    Sympa::Log::Syslog::do_log('debug', 'Auth::password_fingerprint');
+    Sympa::Log::Syslog::do_log('debug', 'Sympa::Auth::password_fingerprint');
 
     my $pwd = shift;
     if (Site->password_case eq 'insensitive') {
@@ -429,7 +429,7 @@ sub remote_app_check_password {
         if (lc($application->{'name'}) eq lc($trusted_application_name)) {
             if ($md5 eq $application->{'md5password'}) {
 
-                # Sympa::Log::Syslog::do_log('debug', 'Auth::remote_app_check_password : authentication succeed for %s',$application->{'name'});
+                # Sympa::Log::Syslog::do_log('debug', 'Sympa::Auth::remote_app_check_password : authentication succeed for %s',$application->{'name'});
                 my %proxy_for_vars;
                 foreach my $varname (@{$application->{'proxy_for_variables'}})
                 {
@@ -438,7 +438,7 @@ sub remote_app_check_password {
                 return (\%proxy_for_vars);
             } else {
                 Sympa::Log::Syslog::do_log('info',
-                    'Auth::remote_app_check_password: bad password from %s',
+                    'Sympa::Auth::remote_app_check_password: bad password from %s',
                     $trusted_application_name);
                 return undef;
             }
@@ -447,7 +447,7 @@ sub remote_app_check_password {
 
     # no matching application found
     Sympa::Log::Syslog::do_log('info',
-        'Auth::remote_app-check_password: unknown application name %s',
+        'Sympa::Auth::remote_app-check_password: unknown application name %s',
         $trusted_application_name);
     return undef;
 }

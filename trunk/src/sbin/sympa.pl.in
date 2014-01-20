@@ -347,7 +347,7 @@ use Data::Dumper;
 use Commands;
 
 #use Conf; # load in Site - List - Commands
-use Auth;
+use Sympa::Auth;
 use SympaSession;
 
 #use Language; # load in List
