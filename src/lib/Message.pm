@@ -2640,16 +2640,3 @@ sub get_id {
 }
 
 1;
-__END__
-
-=head1 AUTHORS 
-
-=over 4
-
-=item * Serge Aumont <sa AT cru.fr> 
-
-=item * Olivier SalaE<0xfc>n <os AT cru.fr> 
-
-=back 
-
-=cut 
