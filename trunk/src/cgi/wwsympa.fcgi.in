@@ -9879,7 +9879,7 @@ sub do_arc {
             ## If the file is a message, load the metadata to find out who is
             ## the author of the message
             my $metadata =
-                &Archive::load_html_message('file_path' => $arc_file_path);
+                &Sympa::Archive::load_html_message('file_path' => $arc_file_path);
             $param->{'include_picture'} =
                 $list->find_picture_url($metadata->{'X-From'});
             $param->{'subtitle'} = $metadata->{'X-Subject'};
@@ -23768,7 +23768,7 @@ sub do_viewspool_message {
     my $destination_dir =
         Site->viewmail_dir . '/spool/viewmail/' . $messagekey;
     unless (-d $destination_dir) {
-        Archive::convert_single_message(
+        Sympa::Archive::convert_single_message(
             ($list || $robot),
             $messages[0],
             'destination_dir' => $destination_dir,
