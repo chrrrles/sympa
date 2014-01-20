@@ -65,7 +65,7 @@ use Language qw(gettext gettext_strftime);
 #use Log; # used by Conf
 #use Message: # used by List
 use Auth;
-use admin;
+use Sympa::Admin;
 use SharedDocument;
 
 #use report;

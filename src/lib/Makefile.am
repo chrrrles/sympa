@@ -1,4 +1,4 @@
-nobase_modules_DATA = admin.pm \
+nobase_modules_DATA = Sympa/Admin.pm \
 		      Archive.pm \
 		      Auth.pm \
 		      BounceMessage.pm \

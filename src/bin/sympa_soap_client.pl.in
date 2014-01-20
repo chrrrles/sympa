@@ -43,7 +43,7 @@ use mail;
 use MIME::QuotedPrint;
 use List;
 use Message;
-use admin;
+use Sympa::Admin;
 use Config_XML;
 use Family;
 use report;

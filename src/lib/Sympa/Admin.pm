@@ -33,7 +33,7 @@ Central module for creating and editing lists.
 
 =cut 
 
-package admin;
+package Sympa::Admin;
 
 use strict;
 use File::Copy;
