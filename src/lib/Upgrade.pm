@@ -1622,7 +1622,7 @@ sub md5_encode_password {
                 q{UPDATE user_table
 	      SET password_user = %s
 	      WHERE email_user = %s},
-                SDM::quote(Auth::password_fingerprint($clear_password)),
+                SDM::quote(Sympa::Auth::password_fingerprint($clear_password)),
                 SDM::quote($user->{'email_user'})
             )
             ) {

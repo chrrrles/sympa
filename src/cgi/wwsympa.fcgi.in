@@ -64,7 +64,7 @@ use Language qw(gettext gettext_strftime);
 
 #use Log; # used by Conf
 #use Message: # used by List
-use Auth;
+use Sympa::Auth;
 use Sympa::Admin;
 use SharedDocument;
 
@@ -1420,7 +1420,7 @@ while ($query = &new_loop()) {
                     Sympa::Log::Syslog::do_log('notice',
                         "login CAS OK server netid=$net_id");
                     $param->{'user'}{'email'} = lc(
-                        &Auth::get_email_by_net_id(
+                        &Sympa::Auth::get_email_by_net_id(
                             $robot_id, $cas_id, {'uid' => $net_id}
                         )
                     );
@@ -3654,7 +3654,7 @@ sub do_ticket {
     &wwslog('info', 'do_ticket(%s)', $in{'ticket'});
 
     $param->{'ticket_context'} =
-        Auth::get_one_time_ticket($robot, $in{'ticket'}, $ip);
+        Sympa::Auth::get_one_time_ticket($robot, $in{'ticket'}, $ip);
     $param->{'ticket_context'}{'printable_date'} =
         gettext_strftime "%d %b %Y at %H:%M:%S",
         localtime($param->{'ticket_context'}{'date'});
@@ -3816,7 +3816,7 @@ sub do_login {
         return 'loginrequest';
     }
 
-    unless ($data = Auth::check_auth($robot, $in{'email'}, $in{'passwd'})) {
+    unless ($data = Sympa::Auth::check_auth($robot, $in{'email'}, $in{'passwd'})) {
         Sympa::Log::Syslog::do_log('notice', "Authentication failed\n");
         &web_db_log(
             {   'parameters'   => $in{'email'},
@@ -4087,7 +4087,7 @@ sub do_sso_login {
                 &wwslog('debug', 'do_sso_login(): lookup email internal: %s',
                     $sso_id);
                 if ($email =
-                    &Auth::get_email_by_net_id($robot_id, $sso_id, \%ENV)) {
+                    &Sympa::Auth::get_email_by_net_id($robot_id, $sso_id, \%ENV)) {
                     $email_is_trusted = 1;
                 }
             }
@@ -4131,7 +4131,7 @@ sub do_sso_login {
                 $param->{'init_email'}    = $email;
 
                 ## Replace sendpassword with one time ticket
-                $param->{'one_time_ticket'} = &Auth::create_one_time_ticket(
+                $param->{'one_time_ticket'} = &Sympa::Auth::create_one_time_ticket(
                     $in{'email'},
                     $robot_id,
                     'sso_login/confirmemail?auth_service_name='
@@ -4201,7 +4201,7 @@ sub do_sso_login {
 
                 ## Validate the ticket
                 my $ticket_output =
-                    Auth::get_one_time_ticket($robot, $in{'ticket'}, $ip);
+                    Sympa::Auth::get_one_time_ticket($robot, $in{'ticket'}, $ip);
                 unless ($ticket_output->{'result'} eq 'success') {
                     &report::reject_report_web('user', 'auth_failed', {},
                         $param->{'action'});
@@ -4305,7 +4305,7 @@ sub do_sso_login {
                 }
 
                 $email =
-                    &Auth::get_email_by_net_id($robot_id, $sso_id, \%ENV);
+                    &Sympa::Auth::get_email_by_net_id($robot_id, $sso_id, \%ENV);
             }
         }
 
@@ -4895,7 +4895,7 @@ sub do_requestpasswd {
     }
 
     ## Check auth.conf before creating/sending a password
-    unless (&Auth::may_use_sympa_native_auth($robot_id, $in{'email'})) {
+    unless (&Sympa::Auth::may_use_sympa_native_auth($robot_id, $in{'email'})) {
         ## TODO: Error handling
         &report::reject_report_web('user', 'passwd_reminder_not_allowed', {},
             $param->{'action'});
@@ -4904,7 +4904,7 @@ sub do_requestpasswd {
     &wwslog('debug', 'do_requestpasswd: sending one time ticket for %s',
         $in{'email'});
     $param->{'one_time_ticket'} =
-        &Auth::create_one_time_ticket($in{'email'}, $robot_id, 'choosepasswd',
+        &Sympa::Auth::create_one_time_ticket($in{'email'}, $robot_id, 'choosepasswd',
         $ip);
     $param->{'request_from_host'} = $ip;
     unless ($param->{'newuser'} = User::get_global_user($in{'email'})) {
@@ -6494,7 +6494,7 @@ sub do_subrequest {
 
         ## Need to send a password by email
         $param->{'one_time_ticket'} =
-            &Auth::create_one_time_ticket($in{'email'}, $robot_id,
+            &Sympa::Auth::create_one_time_ticket($in{'email'}, $robot_id,
             'subscribe/' . $list->name, $ip);
         $param->{'login_error'}       = 'ticket_sent';
         $param->{'request_from_host'} = $ip;
@@ -6562,7 +6562,7 @@ sub do_auto_signoff {
     if ($list->is_list_member($in{'email'})) {
 
         my $ticket =
-            &Auth::create_one_time_ticket($in{'email'}, $robot_id,
+            &Sympa::Auth::create_one_time_ticket($in{'email'}, $robot_id,
             'signoff/' . $list->name, $ip);
 
         my $tt2_param = {
@@ -6598,7 +6598,7 @@ sub do_family_signoff_request {
     return $robot->default_home unless $in{'email'};
 
     my $ticket =
-        &Auth::create_one_time_ticket($in{'email'}, $robot_id,
+        &Sympa::Auth::create_one_time_ticket($in{'email'}, $robot_id,
         'family_signoff/' . $in{'family'} . '/' . $in{'email'}, $ip);
 
     my $tt2_param = {
@@ -6881,7 +6881,7 @@ sub do_sigrequest {
     if ($list->is_list_member($in{'email'})) {
 
         my $ticket =
-            &Auth::create_one_time_ticket($in{'email'}, $robot_id,
+            &Sympa::Auth::create_one_time_ticket($in{'email'}, $robot_id,
             'signoff/' . $list->name, $ip);
 
         my $tt2_param = {
@@ -21382,7 +21382,7 @@ sub do_change_email_request {
     &wwslog('info', 'do_change_email_request(%s)', $in{'new_email'});
 
     unless (
-        $param->{'one_time_ticket'} = &Auth::create_one_time_ticket(
+        $param->{'one_time_ticket'} = &Sympa::Auth::create_one_time_ticket(
             $in{'new_email'},                            $robot_id,
             'change_email/' . $param->{'user'}{'email'}, $ip
         )

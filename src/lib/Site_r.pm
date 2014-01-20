@@ -1331,7 +1331,7 @@ sub send_notify_to_listmaster {
         foreach my $email (split(/\,/, $listmaster)) {
             my $cdata = &tools::dup_var($data);
             $cdata->{'one_time_ticket'} =
-                &Auth::create_one_time_ticket($email, $robot_id,
+                &Sympa::Auth::create_one_time_ticket($email, $robot_id,
                 'get_pending_lists', $cdata->{'ip'});
             push @tosend,
                 {
