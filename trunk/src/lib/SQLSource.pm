@@ -84,14 +84,14 @@ sub new {
 
         $actualclass = "DBManipulatorPostgres";
     } elsif ($param->{'db_type'} =~ /^oracle$/i) {
-        unless (eval "require DBManipulatorOracle") {
+        unless (eval "require Sympa::DBManipulatorOracle") {
             Sympa::Log::Syslog::do_log('err',
-                "Unable to use DBManipulatorOracle module");
+                "Unable to use Sympa::DBManipulatorOracle module");
             return undef;
         }
-        require DBManipulatorOracle;
+        require Sympa::DBManipulatorOracle;
 
-        $actualclass = "DBManipulatorOracle";
+        $actualclass = "Sympa::DBManipulatorOracle";
     } elsif ($param->{'db_type'} =~ /^sybase$/i) {
         unless (eval "require DBManipulatorSybase") {
             Sympa::Log::Syslog::do_log('err',
