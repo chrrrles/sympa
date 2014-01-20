@@ -9636,7 +9636,7 @@ sub _load_list_param {
     if (    ref $value
         and $value->{'conf'}
         and grep { $_->{'name'} and $_->{'name'} eq $value->{'conf'} }
-        @confdef::params) {
+        @Sympa::ConfDef::params) {
         my $param = $value->{'conf'};
         $value = $robot->$param;
     }

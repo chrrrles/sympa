@@ -1246,7 +1246,7 @@ sub upgrade {
 
             my %infile = ();
             ## load defaults
-            foreach my $p (@confdef::params) {
+            foreach my $p (@Sympa::ConfDef::params) {
                 next unless $p->{'name'};
                 next unless $p->{'file'};
                 next unless $p->{'file'} eq 'wwsympa.conf';
@@ -1264,7 +1264,7 @@ sub upgrade {
             close $fh;
 
             my $name;
-            foreach my $p (@confdef::params) {
+            foreach my $p (@Sympa::ConfDef::params) {
                 next unless $p->{'name'};
                 $name = $p->{'name'};
                 next unless exists $infile{$name};

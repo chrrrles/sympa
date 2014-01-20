@@ -166,7 +166,7 @@ if ($options{help}) {
 exit 0;
 
 sub create_configuration {
-    require confdef;
+    require Sympa::ConfDef;
 
     my $conf;
     if ($options{create} eq '' or $options{create} eq 'sympa.conf') {
@@ -194,7 +194,7 @@ sub create_configuration {
     # '## ', '## ') . "\n\n";
 
     my $title;
-    foreach my $param (@confdef::params) {
+    foreach my $param (@Sympa::ConfDef::params) {
         unless ($param->{'name'}) {
             $title = Language::gettext($param->{'gettext_id'})
                 if $param->{'gettext_id'};
@@ -243,7 +243,7 @@ sub edit_configuration {
     require Robot;
 
     # complement required fields.
-    foreach my $param (@confdef::params) {
+    foreach my $param (@Sympa::ConfDef::params) {
         next unless $param->{'name'};
         if ($param->{'name'} eq 'domain') {
             $param->{'default'} = hostname();
@@ -275,7 +275,7 @@ sub edit_configuration {
     my $http_host = "http://$domain";
 
     ## Edition mode
-    foreach my $param (@confdef::params) {
+    foreach my $param (@Sympa::ConfDef::params) {
         unless ($param->{'name'}) {
             $title = Language::gettext($param->{'gettext_id'})
                 if $param->{'gettext_id'};

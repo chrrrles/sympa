@@ -39,7 +39,7 @@ use Log;
 use Language qw(gettext);
 
 #use wwslib; # no longer used
-use confdef;
+use Sympa::ConfDef;
 use tools;
 
 #use Sympa::Constants; # already load in confdef.
@@ -64,13 +64,13 @@ my $sth;
 # parameters hash, keyed by parameter name
 our %params =
     map { $_->{name} => $_ }
-    grep { $_->{name} } @confdef::params;
+    grep { $_->{name} } @Sympa::ConfDef::params;
 
 # valid virtual host parameters, keyed by parameter name
 my %valid_robot_key_words;
 my %db_storable_parameters;
 my %optional_key_words;
-foreach my $hash (@confdef::params) {
+foreach my $hash (@Sympa::ConfDef::params) {
     $valid_robot_key_words{$hash->{'name'}} = 1 if ($hash->{'vhost'});
     $db_storable_parameters{$hash->{'name'}} = 1
         if (defined($hash->{'db'}) and $hash->{'db'} ne 'none');
@@ -425,7 +425,7 @@ sub conf_2_db {
     Sympa::Log::Syslog::do_log('debug2', '(%s)', @_);
     my $config_file = shift || get_sympa_conf();
 
-    my @conf_parameters = @confdef::params;
+    my @conf_parameters = @Sympa::ConfDef::params;
 
     # store in database robots parameters.
     # load only parameters that are in a robot.conf file (do not apply
@@ -2472,7 +2472,7 @@ sub _create_robot_like_config_for_main_robot {
 sub _get_parameters_names_by_category {
     my $param_by_categories;
     my $current_category;
-    foreach my $entry (@confdef::params) {
+    foreach my $entry (@Sympa::ConfDef::params) {
         unless ($entry->{'name'}) {
             $current_category = $entry->{'gettext_id'};
         } else {
