@@ -58,7 +58,7 @@ use Robot;
 #use Lock;
 use Task;
 use Scenario;
-use Fetch;
+use Sympa::Fetch;
 use WebAgent;
 use SympaspoolClassic;
 use KeySpool;
@@ -5886,7 +5886,7 @@ sub _include_users_remote_sympa_list {
     my $email;
 
     foreach my $line (
-        &Fetch::get_https(
+        &Sympa::Fetch::get_https(
             $host, $port, $path,
             $cert_file,
             $key_file,
