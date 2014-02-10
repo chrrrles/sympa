@@ -88,7 +88,7 @@ use MIME::Parser;
 use MIME::EncWords;
 use MIME::Charset;
 use HTML::TreeBuilder;
-use HTML::myFormatText;
+use Sympa::HTML::MyFormatText;
 use Language;
 use tools;
 
@@ -319,7 +319,7 @@ sub _do_text_html {
         my $tree = HTML::TreeBuilder->new->parse($body);
         $tree->eof();
         my $formatter =
-            HTML::myFormatText->new(leftmargin => 0, rightmargin => 72);
+            Sympa::HTML::MyFormatText->new(leftmargin => 0, rightmargin => 72);
         $text = $formatter->format($tree);
         $tree->delete();
         $text = Encode::encode_utf8($text);
