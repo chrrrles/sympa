@@ -61,7 +61,7 @@ use Scenario;
 use Sympa::Fetch;
 use WebAgent;
 use SympaspoolClassic;
-use KeySpool;
+use Sympa::KeySpool;
 use SubscribeSpool;
 use Sympa::Archive;
 use tt2;
@@ -2544,7 +2544,7 @@ sub send_to_editor {
     if ($method eq 'md5') {
 
         # move message to spool  mod
-        my $modspool = KeySpool->new();
+        my $modspool = Sympa::KeySpool->new();
         $modspool->store(
             $message->to_string,    #FIXME: maybe encrypted
             {   'list'    => $message->list->name,
@@ -9388,7 +9388,7 @@ sub get_mod_spool_size {
     my $self = shift;
     Sympa::Log::Syslog::do_log('debug3', 'List::get_mod_spool_size()');
 
-    my $modspool = KeySpool->new();
+    my $modspool = Sympa::KeySpool->new();
     my @messages = $modspool->get_awaiting_messages(
         {'selector' => {'list' => $self->name, 'robot' => $self->domain}});
 

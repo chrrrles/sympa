@@ -8457,7 +8457,7 @@ sub do_modindex {
     my $doc;
 
     my $list_name = $list->name;
-    my $modspool  = KeySpool->new();
+    my $modspool  = Sympa::KeySpool->new();
     my @messages  = $modspool->get_awaiting_messages(
         {'selector' => {'list' => $list_name, 'robot' => $robot_id}});
     foreach my $message_in_spool (@messages) {
@@ -8922,7 +8922,7 @@ sub do_reject {
     }
 
     &wwslog('info', 'do_reject(%s)', $in{'id'});
-    my $modspool = KeySpool->new();
+    my $modspool = Sympa::KeySpool->new();
     my ($msg, $file);
 
     $param->{'blacklist_added'}   = 0;
@@ -9106,7 +9106,7 @@ sub do_distribute {
 
     &wwslog('info', 'do_distribute(%s)', $in{'id'});
 
-    my $modspool = KeySpool->new();
+    my $modspool = Sympa::KeySpool->new();
     my ($msg, $file);
 
     my @mail_command = ();
@@ -9251,7 +9251,7 @@ sub do_add_frommod {
 
     ## messages
     $in{'dump'} = '';
-    my $modspool = KeySpool->new();
+    my $modspool = Sympa::KeySpool->new();
     foreach my $id (split /,/, $in{'id'}) {
         my $message_in_spool = $modspool->get_message(
             {'list' => $list->name, 'robot' => $robot_id, 'authkey' => $id});
