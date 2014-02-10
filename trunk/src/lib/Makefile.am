@@ -15,7 +15,7 @@ nobase_modules_DATA = Sympa/Admin.pm \
 		      Sympa/DBManipulatorPostgres.pm \
 		      Sympa/DBManipulatorSQLite.pm\
 		      Sympa/DBManipulatorSybase.pm \
-		      Family.pm \
+		      Sympa/Family.pm \
 		      Fetch.pm \
 		      HTML/myFormatText.pm \
 		      KeySpool.pm \

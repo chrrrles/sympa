@@ -468,7 +468,7 @@ sub get_etc_filename {
     my $options = shift || {};
 
     unless (ref $self eq 'List'
-        or ref $self eq 'Family'
+        or ref $self eq 'Sympa::Family'
         or ref $self eq 'Robot'
         or $self     eq 'Site') {
         croak 'bug in logic.  Ask developer';
@@ -528,7 +528,7 @@ sub get_etc_filename {
 make an array of include path for tt2 parsing
 
 IN :
-      -$self(+) : ref(List) | ref(Family) | ref(Robot) | "Site"
+      -$self(+) : ref(List) | ref(Sympa::Family) | ref(Robot) | "Site"
       -$dir : directory ending each path
       -$lang : lang
 
@@ -604,7 +604,7 @@ sub _get_etc_include_path {
                 unshift @include_path, $path_family;
             }
         }
-    } elsif (ref $self and ref $self eq 'Family') {
+    } elsif (ref $self and ref $self eq 'Sympa::Family') {
         my $path_family;
         @include_path = $self->robot->_get_etc_include_path(@_);
 

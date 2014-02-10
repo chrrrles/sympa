@@ -847,7 +847,7 @@ sub verify {
                 s/\[custom_vars\-\>([\w\-]+)\]/$context->{'custom_vars'}{$1}/;
         }
 
-        ## Family vars
+        ## Sympa::Family vars
         if ($value =~ /\[family\-\>([\w\-]+)\]/i) {
             $value =~ s/\[family\-\>([\w\-]+)\]/$context->{'family'}{$1}/;
         }
@@ -1404,7 +1404,7 @@ sub verify {
     if ($condition_key eq 'search') {
         my $val_search;
 
-        # we could search in the family if we got ref on Family object
+        # we could search in the family if we got ref on Sympa::Family object
         $val_search = search(($list || $robot), $args[0], $context);
         return undef unless defined $val_search;
         if ($val_search == 1) {

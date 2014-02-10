@@ -357,7 +357,7 @@ use SympaSession;
 use Message;
 use Sympa::Admin;
 use Sympa::Config_XML;
-use Family;
+use Sympa::Family;
 
 #use report; # load in Auth
 #use tools; # load in Conf
@@ -1082,7 +1082,7 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
             exit 1;
         }
         my $family;
-        unless ($family = new Family($family_name, $robot_id)) {
+        unless ($family = new Sympa::Family($family_name, $robot_id)) {
             print STDERR
                 "The family $family_name does not exist, impossible instantiation\n";
             exit 1;
@@ -1136,7 +1136,7 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
             "\n************************************************************\n";
 
         my $family;
-        unless ($family = new Family($family_name, $robot_id)) {
+        unless ($family = new Sympa::Family($family_name, $robot_id)) {
             print STDERR
                 "The family $family_name does not exist, impossible to add a list\n";
             exit 1;
@@ -1333,7 +1333,7 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
             "\n************************************************************\n";
 
         my $family;
-        unless ($family = new Family($family_name, $robot_id)) {
+        unless ($family = new Sympa::Family($family_name, $robot_id)) {
             print STDERR
                 "The family $family_name does not exist, impossible to modify the list.\n";
             exit 1;
@@ -1382,7 +1382,7 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
             pod2usage(-exitval => 1, -output => \*STDERR);
         }
         my $family;
-        unless ($family = new Family($family_name, $robot_id)) {
+        unless ($family = new Sympa::Family($family_name, $robot_id)) {
             print STDERR
                 "The family $family_name does not exist, impossible family closure\n";
             exit 1;
@@ -1744,7 +1744,7 @@ sub process_message {
 
             ## Automatic creation of a mailing list, based on a family
             my $dyn_family;
-            unless ($dyn_family = Family->new($dyn_list_family, $robot)) {
+            unless ($dyn_family = Sympa::Family->new($dyn_list_family, $robot)) {
                 Sympa::Log::Syslog::do_log(
                     'err',
                     "Failed to process message: family %s does not exist, impossible to create the dynamic list.",
