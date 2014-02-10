@@ -21,7 +21,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package HTML::myFormatText;
+package Sympa::HTML::MyFormatText;
 
 # This is a subclass of the HTML::FormatText object.
 # This subclassing is done to allow internationalisation of some strings
