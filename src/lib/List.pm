@@ -74,7 +74,7 @@ use Language qw(gettext gettext_strftime);
 use mail;
 use Ldap;
 use Message;
-use Family;    #FIXME: dependency loop between List and Family
+use Sympa::Family;    #FIXME: dependency loop between List and Family
 use PlainDigest;
 use tracking;
 
@@ -8560,7 +8560,7 @@ List of lists hosted by a family, a robot or whole site.
 
 =item CONTEXT
 
-Robot object, Family object or Site class (default).
+Robot object, Sympa::Family object or Site class (default).
 
 =item OPTIONS
 
@@ -8699,7 +8699,7 @@ sub get_lists {
 
     my (@lists, @robots, $family_name);
 
-    if (ref $that and ref $that eq 'Family') {
+    if (ref $that and ref $that eq 'Sympa::Family') {
         @robots      = ($that->robot);
         $family_name = $that->name;
     } else {
@@ -12031,8 +12031,8 @@ sub domain {
 =item family
 
 I<Getter/Setter>.
-Gets or sets Family object the list is belonging to.
-Returns Family object or undef.
+Gets or sets Sympa::Family object the list is belonging to.
+Returns Sympa::Family object or undef.
 
 =back
 
@@ -12053,11 +12053,11 @@ sub family {
         }
     }
 
-    if (ref $self->{'family'} eq 'Family') {
+    if (ref $self->{'family'} eq 'Sympa::Family') {
         return $self->{'family'};
     } elsif ($self->family_name) {
         return $self->{'family'} =
-            Family->new($self->family_name, $self->{'robot'});
+            Sympa::Family->new($self->family_name, $self->{'robot'});
     } else {
         return undef;
     }

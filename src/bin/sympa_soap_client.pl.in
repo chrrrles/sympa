@@ -45,7 +45,7 @@ use List;
 use Message;
 use Sympa::Admin;
 use Sympa::Config_XML;
-use Family;
+use Sympa::Family;
 use report;
 use File::Copy;
 use tools;

@@ -910,7 +910,7 @@ our %in_regexp = (
     'new_listname'   => '[\w\-\.\+]*',
     'selected_lists' => '[\w\-\.\+]*',
 
-    ## Family names
+    ## Sympa::Family names
     'family_name' => &tools::get_regexp('family_name'),
     'family'      => &tools::get_regexp('family_name'),
 
@@ -1309,7 +1309,7 @@ while ($query = &new_loop()) {
     if (defined $automatic_list_families) {
         foreach my $key (keys %{$automatic_list_families}) {
             my $family;
-            if ($family = new Family($key, $robot)) {
+            if ($family = new Sympa::Family($key, $robot)) {
                 if ($family->is_allowed_to_create_automatic_lists(
                         (   'auth_level' => 'md5',
                             'sender'     => $session->{'email'},
@@ -6639,7 +6639,7 @@ sub do_family_signoff {
         return undef;
     }
 
-    my $family = new Family($param->{'family'}, $robot_id);
+    my $family = new Sympa::Family($param->{'family'}, $robot_id);
     unless ($family->insert_delete_exclusion($in{'email'}, 'insert')) {
         &report::reject_report_web('user', 'cannot_do_signoff');
         &wwslog(
@@ -12146,7 +12146,7 @@ sub do_edit_list {
 
         ## If the list belongs to a family, gather all the constraints for
         ## each edited parameter.
-        if (ref($family) eq 'Family') {
+        if (ref($family) eq 'Sympa::Family') {
 
             if (!ref $pname and ref($pinfo->{$pname}{'format'}) ne 'HASH') {
 
@@ -12321,7 +12321,7 @@ sub do_edit_list {
 
                     ## If the list belongs to a family, check the possible
                     ## constraints on this parameter component.
-                    if (ref($family) eq 'Family') {
+                    if (ref($family) eq 'Sympa::Family') {
                         ## Test constraints only if the parameter component is
                         ## not a complex structure.
                         if (!ref($key)) {
@@ -12851,7 +12851,7 @@ sub _check_new_values {
     my $fake_list =
         bless {'robot' => $robot, 'config' => $new_admin} => 'List';
     $fake_list->config;    # update parameter cache
-    my $uncompellable_param = &Family::get_uncompellable_param();
+    my $uncompellable_param = &Sympa::Family::get_uncompellable_param();
 
     if (ref($pinfo->{$pname}{'format'}) eq 'HASH') {    #composed parameter
         foreach my $key (keys %{$check_family->{$pname}}) {
@@ -13211,7 +13211,7 @@ Returns a reference to a hash containing the data used to edit the parameter (of
 
 =item * load_data_sources_list
 
-=item * Family::get_param_constraint
+=item * Sympa::Family::get_param_constraint
 
 =item * List::load_scenario_list
 
@@ -13239,7 +13239,7 @@ sub _prepare_data {
     ## Check if some family constraint modify the editing rights.
     my $restrict = 0;
     my $constraint;
-    if ((ref($family) eq 'Family') && ($may_edit eq 'write')) {
+    if ((ref($family) eq 'Sympa::Family') && ($may_edit eq 'write')) {
 
         if ($main_p and defined $pinfo->{$main_p}) {
             if (ref($pinfo->{$main_p}{'format'}) eq 'HASH') {
@@ -24458,7 +24458,7 @@ sub do_sync_include {
 sub do_review_family {
     &wwslog('info', 'do_review_family');
 
-    my $family = Family->new($in{'family_name'}, $robot);
+    my $family = Sympa::Family->new($in{'family_name'}, $robot);
     unless (defined $family) {
         &report::reject_report_web('user', 'unknown_family',
             {'family' => $in{'family_name'}},
@@ -25111,7 +25111,7 @@ sub get_server_details {
     }
 
     ## Families
-    my @families = sort map { $_->name } @{Family::get_families($robot)};
+    my @families = sort map { $_->name } @{Sympa::Family::get_families($robot)};
     if (@families) {
         $param->{'families'} = \@families;
     }
@@ -25182,7 +25182,7 @@ sub do_automatic_lists_request {
 
     # check authorization
     my $family;
-    unless ($family = new Family($in{'family'}, $robot_id)) {
+    unless ($family = new Sympa::Family($in{'family'}, $robot_id)) {
         &wwslog('err',
             "Failed to instantiate family %s. This family does not exist.",
             $in{'family'});
@@ -25241,7 +25241,7 @@ sub do_automatic_lists {
     $list = new List($listname, $robot);
     unless (defined $list) {
         ## Automatic creation of a mailing list, based on a family
-        unless ($family = new Family($family_name, $robot_id)) {
+        unless ($family = new Sympa::Family($family_name, $robot_id)) {
             Sympa::Log::Syslog::do_log('err',
                 "Failed to create the dynamic list $listname: family $family_name does not exist."
             );
