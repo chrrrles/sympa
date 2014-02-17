@@ -1721,7 +1721,7 @@ sub search {
 
         my $ldap;
         my $param = &tools::dup_var(\%ldap_conf);
-        my $ds    = new LDAPSource($param);
+        my $ds    = new Sympa::LDAPSource($param);
 
         unless (defined $ds && ($ldap = $ds->connect())) {
             Sympa::Log::Syslog::do_log('err',
