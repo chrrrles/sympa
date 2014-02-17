@@ -31,7 +31,7 @@ nobase_modules_DATA = Sympa/Admin.pm \
 		      Sympa/Marc/Search.pm \
 		      Sympa/Message.pm \
 		      Sympa/MessageSpool.pm \
-		      moddef.pm \
+		      Sympa/ModDef.pm \
 		      PlainDigest.pm \
 		      report.pm \
 		      Robot.pm \

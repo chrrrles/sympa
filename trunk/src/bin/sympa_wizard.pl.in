@@ -404,7 +404,7 @@ sub edit_configuration {
 
 sub check_cpan {
     require CPAN;
-    require moddef;
+    require Sympa::ModDef;
 
     print '#' x 78 . "\n";
     print tools::wrap_text(
@@ -426,7 +426,7 @@ sub check_cpan {
     print Sympa::Language::gettext(
         "Checking for Perl version:\n-----------------------------")
         . "\n";
-    my $rpv = $moddef::cpan_modules{"perl"}{'required_version'};
+    my $rpv = $Sympa::ModDef::cpan_modules{"perl"}{'required_version'};
     if ($] >= $rpv) {
         printf Sympa::Language::gettext('Your version of Perl is OK (%s >= %s).')
             . "\n",
@@ -443,12 +443,12 @@ sub check_cpan {
     print Sympa::Language::gettext(
         "Checking for REQUIRED modules:\n----------------------------------------------------------"
     ) . "\n";
-    check_modules('y', \%moddef::cpan_modules, 'mandatory');
+    check_modules('y', \%Sympa::ModDef::cpan_modules, 'mandatory');
     print "\n";
     print Sympa::Language::gettext(
         "Checking for OPTIONAL modules:\n----------------------------------------------------------"
     ) . "\n";
-    check_modules('n', \%moddef::cpan_modules, 'optional');
+    check_modules('n', \%Sympa::ModDef::cpan_modules, 'optional');
 
     print tools::wrap_text(
         Sympa::Language::gettext(
