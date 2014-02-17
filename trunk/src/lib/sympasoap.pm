@@ -92,7 +92,7 @@ sub lists {
     Sympa::Log::Syslog::do_log('info', 'SOAP lists(%s,%s)', $topic,
         $subtopic);
 
-    my $all_lists = List::get_lists($robot);
+    my $all_lists = Sympa::List::get_lists($robot);
     foreach my $list (@$all_lists) {
 
         my $listname = $list->name;
@@ -1352,7 +1352,7 @@ sub signoff {
 
     if ($listname eq '*') {
         my $success;
-        foreach my $list (List::get_which($sender, $robot, 'member')) {
+        foreach my $list (Sympa::List::get_which($sender, $robot, 'member')) {
             my $l = $list->name;
 
             $success ||= &signoff($l, $sender);    #FIXME: take care of robot
@@ -1717,7 +1717,7 @@ sub which {
     my %listnames;
 
     foreach my $role ('member', 'owner', 'editor') {
-        foreach my $list (List::get_which($sender, $robot, $role)) {
+        foreach my $list (Sympa::List::get_which($sender, $robot, $role)) {
             my $name = $list->name;
             $listnames{$name} = $list;
         }

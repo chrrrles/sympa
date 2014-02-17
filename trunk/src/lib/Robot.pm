@@ -272,7 +272,7 @@ Send a global (not relative to a list, but relative to a robot)
 message to user(s).
 See L<Site/send_file>.
 
-Note: List::send_global_file() was deprecated.
+Note: Sympa::List::send_global_file() was deprecated.
 
 =item send_notify_to_listmaster ( OPERATION, DATA, CHECKSTACK, PURGE )
 
@@ -280,7 +280,7 @@ Sends a notice to normal listmaster by parsing
 listmaster_notification.tt2 template
 See L<Site/send_notify_to_listmaster>.
 
-Note: List::send_notify_to_listmaster() was deprecated.
+Note: Sympa::List::send_notify_to_listmaster() was deprecated.
 
 =back
 
@@ -409,17 +409,17 @@ Update netidmap table when user email address changes
 
 sub get_netidtoemail_db {
     my $self = shift;
-    return List::get_netidtoemail_db($self->domain, @_);
+    return Sympa::List::get_netidtoemail_db($self->domain, @_);
 }
 
 sub set_netidtoemail_db {
     my $self = shift;
-    return List::set_netidtoemail_db($self->domain, @_);
+    return Sympa::List::set_netidtoemail_db($self->domain, @_);
 }
 
 sub update_email_netidmap_db {
     my $self = shift;
-    return List::update_netidtoemail_db($self->domain, @_);
+    return Sympa::List::update_netidtoemail_db($self->domain, @_);
 }
 
 =head3 Handling Memory Caches

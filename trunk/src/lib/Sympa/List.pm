@@ -21,7 +21,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package List;
+package Sympa::List;
 
 use strict;
 use warnings;
@@ -2103,7 +2103,7 @@ sub send_msg {
 
     Sympa::Log::Syslog::do_log(
         'debug2',
-        'List::send_msg(filename = %s, smime_crypted = %s,apply_dkim_signature = %s )',
+        'Sympa::List::send_msg(filename = %s, smime_crypted = %s,apply_dkim_signature = %s )',
         $message->{'filename'},
         $message->{'smime_crypted'},
         $apply_dkim_signature
@@ -2187,7 +2187,7 @@ sub send_msg {
             );
             unless (defined $result) {
                 Sympa::Log::Syslog::do_log('err',
-                    "List::send_msg, could not send message to distribute from $from (verp disabled)"
+                    "Sympa::List::send_msg, could not send message to distribute from $from (verp disabled)"
                 );
                 return undef;
             }
@@ -2225,7 +2225,7 @@ sub send_msg {
             );
             unless (defined $result) {
                 Sympa::Log::Syslog::do_log('err',
-                    "List::send_msg, could not send message to distribute from $from (verp enabled)"
+                    "Sympa::List::send_msg, could not send message to distribute from $from (verp enabled)"
                 );
                 return undef;
             }
@@ -2673,7 +2673,7 @@ sub send_to_editor {
 sub send_auth {
     my ($self, $message) = @_;
     my ($sender, $file) = ($message->{'sender'}, $message->{'filename'});
-    Sympa::Log::Syslog::do_log('debug3', 'List::send_auth(%s, %s)',
+    Sympa::Log::Syslog::do_log('debug3', 'Sympa::List::send_auth(%s, %s)',
         $sender, $file);
 
     ## Ensure 1 second elapsed since last message
@@ -4509,7 +4509,7 @@ sub get_info {
 ## Total bouncing subscribers
 sub get_total_bouncing {
     my $self = shift;
-    Sympa::Log::Syslog::do_log('debug2', 'List::get_total_bouncing');
+    Sympa::Log::Syslog::do_log('debug2', 'Sympa::List::get_total_bouncing');
 
     my $name = $self->name;
 
@@ -5311,7 +5311,7 @@ sub may_create_parameter {
 
     my ($self, $parameter, $who, $robot) = @_;
     Sympa::Log::Syslog::do_log('debug3',
-        'List::may_create_parameter(%s, %s, %s)',
+        'Sympa::List::may_create_parameter(%s, %s, %s)',
         $parameter, $who, $robot);
 
     if ($self->robot->is_listmaster($who)) {
@@ -5427,7 +5427,7 @@ sub is_digest {
 ## Does the file exist?
 sub archive_exist {
     my ($self, $file) = @_;
-    Sympa::Log::Syslog::do_log('debug', 'List::archive_exist (%s)', $file);
+    Sympa::Log::Syslog::do_log('debug', 'Sympa::List::archive_exist (%s)', $file);
 
     return undef unless ($self->is_archived());
     my $dir = $self->robot->arc_path . '/' . $self->get_id;
@@ -5438,7 +5438,7 @@ sub archive_exist {
 ## List the archived files
 sub archive_ls {
     my $self = shift;
-    Sympa::Log::Syslog::do_log('debug2', 'List::archive_ls');
+    Sympa::Log::Syslog::do_log('debug2', 'Sympa::List::archive_ls');
 
     my $dir = $self->robot->arc_path . '/' . $self->get_id;
 
@@ -5502,7 +5502,7 @@ sub is_moderated {
 ## Is the list archived?
 sub is_archived {
     if (shift->web_archive->{'access'}) {
-        Sympa::Log::Syslog::do_log('debug', 'List::is_archived : 1');
+        Sympa::Log::Syslog::do_log('debug', 'Sympa::List::is_archived : 1');
         return 1;
     }
     return undef;
@@ -5520,7 +5520,7 @@ sub get_nextdigest {
     my $self = shift;
     my $date = shift;    # the date epoch as stored in the spool database
 
-    Sympa::Log::Syslog::do_log('debug3', 'List::get_nextdigest (list = %s)',
+    Sympa::Log::Syslog::do_log('debug3', 'Sympa::List::get_nextdigest (list = %s)',
         $self);
 
     my $digest = $self->digest;
@@ -5677,7 +5677,7 @@ sub load_task_list {
 
             $list_of_task{$name}{'name'} = $name;
 
-            my $titles = List::_load_task_title($file);
+            my $titles = Sympa::List::_load_task_title($file);
 
             ## Set the title in the current language
             foreach my $lang (Sympa::Language::ImplicatedLangs()) {
@@ -5967,7 +5967,7 @@ sub _include_users_remote_sympa_list {
 ## include a list as subscribers.
 sub _include_users_list {
     my ($users, $includelistname, $robot, $default_user_options, $tied) = @_;
-    Sympa::Log::Syslog::do_log('debug2', 'List::_include_users_list');
+    Sympa::Log::Syslog::do_log('debug2', 'Sympa::List::_include_users_list');
 
     my $total = 0;
 
@@ -6033,7 +6033,7 @@ sub _include_users_list {
 
 sub _include_users_file {
     my ($users, $filename, $default_user_options, $tied) = @_;
-    Sympa::Log::Syslog::do_log('debug3', 'List::_include_users_file(%s)',
+    Sympa::Log::Syslog::do_log('debug3', 'Sympa::List::_include_users_file(%s)',
         $filename);
 
     my $total = 0;
@@ -6129,7 +6129,7 @@ sub _include_users_remote_file {
     my $url = $param->{'url'};
 
     Sympa::Log::Syslog::do_log('debug2',
-        "List::_include_users_remote_file($url)");
+        "Sympa::List::_include_users_remote_file($url)");
 
     my $total = 0;
     my $id    = Sympa::Datasource::_get_datasource_id($param);
@@ -6228,7 +6228,7 @@ sub _include_users_remote_file {
     } else {
         Sympa::Log::Syslog::do_log(
             'err',
-            "List::include_users_remote_file: Unable to fetch remote file $url : %s",
+            "Sympa::List::include_users_remote_file: Unable to fetch remote file $url : %s",
             $res->message()
         );
         return undef;
@@ -6247,7 +6247,7 @@ sub _include_users_voot_group {
     my ($users, $param, $default_user_options, $tied) = @_;
 
     Sympa::Log::Syslog::do_log('debug2',
-        "List::_include_users_voot_group(%s, %s, %s)",
+        "Sympa::List::_include_users_voot_group(%s, %s, %s)",
         $param->{'user'}, $param->{'provider'}, $param->{'group'});
 
     my $id = Sympa::Datasource::_get_datasource_id($param);
@@ -6330,7 +6330,7 @@ sub _include_users_voot_group {
 ## Returns a list of subscribers extracted from a remote LDAP Directory
 sub _include_users_ldap {
     my ($users, $id, $source, $default_user_options, $tied) = @_;
-    Sympa::Log::Syslog::do_log('debug2', 'List::_include_users_ldap');
+    Sympa::Log::Syslog::do_log('debug2', 'Sympa::List::_include_users_ldap');
 
     my $user        = $source->{'user'};
     my $passwd      = $source->{'passwd'};
@@ -6478,7 +6478,7 @@ sub _include_users_ldap {
 ## Directory using a two-level query
 sub _include_users_ldap_2level {
     my ($users, $id, $source, $default_user_options, $tied) = @_;
-    Sympa::Log::Syslog::do_log('debug2', 'List::_include_users_ldap_2level');
+    Sympa::Log::Syslog::do_log('debug2', 'Sympa::List::_include_users_ldap_2level');
 
     my $user         = $source->{'user'};
     my $passwd       = $source->{'passwd'};
@@ -6837,7 +6837,7 @@ sub _include_users_sql {
     my ($users, $id, $source, $default_user_options, $tied, $fetch_timeout) =
         @_;
 
-    Sympa::Log::Syslog::do_log('debug2', 'List::_include_users_sql()');
+    Sympa::Log::Syslog::do_log('debug2', 'Sympa::List::_include_users_sql()');
 
     unless (ref($source) =~ /DBManipulator/) {
         Sympa::Log::Syslog::do_log('err',
@@ -7976,7 +7976,7 @@ sub on_the_fly_sync_include {
     my %options = @_;
 
     my $pertinent_ttl = $self->distribution_ttl || $self->ttl;
-    Sympa::Log::Syslog::do_log('debug2', 'List::on_the_fly_sync_include(%s)',
+    Sympa::Log::Syslog::do_log('debug2', 'Sympa::List::on_the_fly_sync_include(%s)',
         $pertinent_ttl);
     if (   $options{'use_ttl'} != 1
         || $self->{'last_sync'} < time - $pertinent_ttl) {
@@ -8350,7 +8350,7 @@ sub is_update_param {
     my $resul     = {};
     my $update    = 0;
 
-    Sympa::Log::Syslog::do_log('debug2', 'List::is_update_param ');
+    Sympa::Log::Syslog::do_log('debug2', 'Sympa::List::is_update_param ');
 
     foreach my $p (
         'reception', 'visibility', 'gecos',    'info',
@@ -9245,7 +9245,7 @@ sub get_netidtoemail_db {
     my $robot_id = shift;
     my $netid    = shift;
     my $idpname  = shift;
-    Sympa::Log::Syslog::do_log('debug', 'List::get_netidtoemail_db(%s, %s)',
+    Sympa::Log::Syslog::do_log('debug', 'Sympa::List::get_netidtoemail_db(%s, %s)',
         $netid, $idpname);
 
     my ($l, %which, $email);
@@ -9386,7 +9386,7 @@ sub get_which {
 ## return total of messages awaiting moderation
 sub get_mod_spool_size {
     my $self = shift;
-    Sympa::Log::Syslog::do_log('debug3', 'List::get_mod_spool_size()');
+    Sympa::Log::Syslog::do_log('debug3', 'Sympa::List::get_mod_spool_size()');
 
     my $modspool = Sympa::KeySpool->new();
     my @messages = $modspool->get_awaiting_messages(
@@ -10756,7 +10756,7 @@ sub get_subscription_request_count {
 sub delete_subscription_request {
     my ($self, @list_of_email) = @_;
     Sympa::Log::Syslog::do_log('debug2',
-        'List::delete_subscription_request(%s, %s)',
+        'Sympa::List::delete_subscription_request(%s, %s)',
         $self->name, join(',', @list_of_email));
 
     my $subscription_request_spool = new SubscribeSpool;

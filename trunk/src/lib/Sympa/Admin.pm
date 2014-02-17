@@ -122,11 +122,11 @@ Creates a list. Used by the create_list() sub in sympa.pl and the do_create_list
 
 =item * Sympa::Language::gettext_strftime
 
-=item * List::create_shared
+=item * Sympa::List::create_shared
 
-=item * List::has_include_data_sources
+=item * Sympa::List::has_include_data_sources
 
-=item * List::sync_include
+=item * Sympa::List::sync_include
 
 =item * Site::get_etc_filename
 
@@ -894,7 +894,7 @@ sub rename_list {
     ## Save config file for the new() later to reload it
     $list->save_config($param{'user_email'});
 
-    ## This code should be in List::rename()
+    ## This code should be in Sympa::List::rename()
     unless ($param{'mode'} eq 'copy') {
         unless (move($list->dir, $new_dir)) {
             Sympa::Log::Syslog::do_log('err',
@@ -1619,7 +1619,7 @@ sub change_user_email {
 
     ## Change email as list MEMBER
     foreach
-        my $list (&List::get_which($in{'current_email'}, $robot, 'member')) {
+        my $list (&Sympa::List::get_which($in{'current_email'}, $robot, 'member')) {
 
         my $l = $list->name;
 
@@ -1692,7 +1692,7 @@ sub change_user_email {
     my %updated_lists;
     foreach my $role ('owner', 'editor') {
         foreach
-            my $list (&List::get_which($in{'current_email'}, $robot, $role)) {
+            my $list (&Sympa::List::get_which($in{'current_email'}, $robot, $role)) {
 
             ## Check if admin is include via an external datasource
             my $admin_user =

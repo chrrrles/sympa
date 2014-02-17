@@ -276,7 +276,7 @@ Sympa::Log::Syslog::do_log('debug', 'starting infinite loop');
 while (!$end) {
     sleep Site->sleep;
 
-    List::init_list_cache();
+    Sympa::List::init_list_cache();
 
     # Process grouped notifications
     Site->send_notify_to_listmaster(undef, undef, 1, undef);

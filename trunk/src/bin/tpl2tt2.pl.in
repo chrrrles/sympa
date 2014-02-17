@@ -123,7 +123,7 @@ foreach my $robot (@{Robot::get_robots()}) {
     }
 
     ## Search in V. Robot Lists
-    my $listOfLists = List::get_lists($robot);
+    my $listOfLists = Sympa::List::get_lists($robot);
     foreach my $list (@$listOfLists) {
         push @directories, $list->dir;
 

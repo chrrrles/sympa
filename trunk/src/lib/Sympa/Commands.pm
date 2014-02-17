@@ -195,8 +195,8 @@ sub help {
 
     my $data = {};
 
-    my @owner  = &List::get_which($sender, $robot, 'owner');
-    my @editor = &List::get_which($sender, $robot, 'editor');
+    my @owner  = &Sympa::List::get_which($sender, $robot, 'owner');
+    my @editor = &Sympa::List::get_which($sender, $robot, 'editor');
 
     $data->{'is_owner'}  = 1 if scalar @owner;
     $data->{'is_editor'} = 1 if scalar @editor;
@@ -243,7 +243,7 @@ sub lists {
     my $data  = {};
     my $lists = {};
 
-    my $all_lists = List::get_lists($robot);
+    my $all_lists = Sympa::List::get_lists($robot);
 
     foreach my $list (@$all_lists) {
         my $l      = $list->name;
@@ -1296,7 +1296,7 @@ sub signoff {
 
     if ($which eq '*') {
         my $success;
-        foreach $list (&List::get_which($email, $robot, 'member')) {
+        foreach $list (&Sympa::List::get_which($email, $robot, 'member')) {
             $l = $list->name;
 
             ## Skip hidden lists
@@ -2190,7 +2190,7 @@ sub remind {
 
             # this remind is a global remind.
 
-            my $all_lists = List::get_lists($robot);
+            my $all_lists = Sympa::List::get_lists($robot);
             foreach my $list (@$all_lists) {
                 my $listname = $list->name;
                 my $user;
@@ -2508,7 +2508,7 @@ sub set {
     ## Recursive call to subroutine
     if ($which eq "*") {
         my $status;
-        foreach my $list (&List::get_which($sender, $robot, 'member')) {
+        foreach my $list (&Sympa::List::get_which($sender, $robot, 'member')) {
             my $l = $list->name;
 
             ## Skip hidden lists
@@ -3268,7 +3268,7 @@ sub which {
 
     ## Subscriptions
     my $data;
-    foreach my $list (List::get_which($sender, $robot, 'member')) {
+    foreach my $list (Sympa::List::get_which($sender, $robot, 'member')) {
         $listname = $list->name;
 
         my $result = Scenario::request_action(
@@ -3304,7 +3304,7 @@ sub which {
     }
 
     ## Ownership
-    if (@which = &List::get_which($sender, $robot, 'owner')) {
+    if (@which = &Sympa::List::get_which($sender, $robot, 'owner')) {
         foreach my $list (@which) {
             push @{$data->{'owner_lists'}}, $list->name;
         }
@@ -3312,7 +3312,7 @@ sub which {
     }
 
     ## Editorship
-    if (@which = &List::get_which($sender, $robot, 'editor')) {
+    if (@which = &Sympa::List::get_which($sender, $robot, 'editor')) {
         foreach my $list (@which) {
             push @{$data->{'editor_lists'}}, $list->name;
         }

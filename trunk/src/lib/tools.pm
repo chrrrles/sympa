@@ -3450,7 +3450,7 @@ Saves a message file to the "bad/" spool of a given queue. Creates this director
 
 =over 
 
-=item * List::send_notify_to_listmaster
+=item * Sympa::List::send_notify_to_listmaster
 
 =back 
 

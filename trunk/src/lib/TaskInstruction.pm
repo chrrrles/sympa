@@ -852,7 +852,7 @@ sub purge_tables {
     #
     $removed = 0;
     foreach my $robot (@{Robot::get_robots()}) {
-        my $all_lists = List::get_lists($robot);
+        my $all_lists = Sympa::List::get_lists($robot);
         foreach my $list (@$all_lists) {
             $removed +=
                 tracking::remove_message_by_period($list,
@@ -908,7 +908,7 @@ sub purge_user_table {
 
     foreach my $robot (@{Robot::get_robots()}) {
 
-        my $all_lists = List::get_lists($robot);
+        my $all_lists = Sympa::List::get_lists($robot);
         foreach my $list (@$all_lists) {
 
             ## Owners
@@ -974,7 +974,7 @@ sub purge_orphan_bounces {
     my %bounced_users;
     my $all_lists;
 
-    unless ($all_lists = List::get_lists()) {
+    unless ($all_lists = Sympa::List::get_lists()) {
         Sympa::Log::Syslog::do_log('notice', 'No list available');
         return 1;
     }
@@ -1045,7 +1045,7 @@ sub expire_bounce {
     my $delay          = $tab[0];
 
     Sympa::Log::Syslog::do_log('debug2', 'expire_bounce(%d)', $delay);
-    my $all_lists = List::get_lists();
+    my $all_lists = Sympa::List::get_lists();
     foreach my $list (@$all_lists) {
         my $listname = $list->name;
 
@@ -1396,7 +1396,7 @@ sub eval_bouncers {
     #################
     my ($self, $task) = @_;
 
-    my $all_lists = List::get_lists();
+    my $all_lists = Sympa::List::get_lists();
     foreach my $list (@$all_lists) {
         my $listname     = $list->name;
         my $list_traffic = {};
@@ -1491,12 +1491,12 @@ sub process_bouncers {
 
     ## possible actions
     my %actions = (
-        'remove_bouncers' => \&List::remove_bouncers,
-        'notify_bouncers' => \&List::notify_bouncers,
+        'remove_bouncers' => \&Sympa::List::remove_bouncers,
+        'notify_bouncers' => \&Sympa::List::notify_bouncers,
         'none'            => \&none
     );
 
-    my $all_lists = List::get_lists();
+    my $all_lists = Sympa::List::get_lists();
     foreach my $list (@$all_lists) {
         my $listname = $list->name;
 

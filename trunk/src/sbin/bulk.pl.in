@@ -245,7 +245,7 @@ $Sympa::Conf::Conf{'maxsmtp'} = int(Site->maxsmtp / Site->bulk_max_count);    #F
 my $spool = new Sympaspool('bulk');
 
 while (!$end) {
-    &List::init_list_cache();
+    &Sympa::List::init_list_cache();
 
     # Process grouped notifications
     Site->send_notify_to_listmaster(undef, undef, 1, undef);

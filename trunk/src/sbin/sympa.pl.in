@@ -725,7 +725,7 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
 
         my ($all_lists, $list);
         if ($main::options{'dump'} eq 'ALL') {
-            $all_lists = List::get_lists();
+            $all_lists = Sympa::List::get_lists();
         } else {
 
             ## The parameter can be a list address
@@ -754,7 +754,7 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
 
         exit 0;
     } elsif ($main::options{'make_alias_file'}) {
-        my $all_lists = List::get_lists();
+        my $all_lists = Sympa::List::get_lists();
 
         my $aliases_file = Site->tmpdir . '/sympa_aliases' . $$;
         unless (open TMP, '>', $aliases_file) {
@@ -851,11 +851,11 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
         }
 
         print STDERR "Working on user_table...\n";
-        my $total = &List::lowercase_field('user_table', 'email_user');
+        my $total = &Sympa::List::lowercase_field('user_table', 'email_user');
 
         print STDERR "Working on subscriber_table...\n";
         $total +=
-            &List::lowercase_field('subscriber_table', 'user_subscriber');
+            &Sympa::List::lowercase_field('subscriber_table', 'user_subscriber');
 
         unless (defined $total) {
             Sympa::Log::Syslog::fatal_err("Could not work on database");
@@ -1311,7 +1311,7 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
                 Sympa::Log::Syslog::do_log('notice', 'Loading ALL lists...');
                 $that = 'Site';
             }
-            List::get_lists($that, {'reload_config' => 1});
+            Sympa::List::get_lists($that, {'reload_config' => 1});
         }
         Sympa::Log::Syslog::do_log('notice', '...Done.');
 
@@ -1406,7 +1406,7 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
     ##########################################
     elsif ($main::options{'export_list'}) {
         my $robot_id = $main::options{'robot'} || '*';
-        my $all_lists = List::get_lists($robot_id);
+        my $all_lists = Sympa::List::get_lists($robot_id);
         exit 1 unless defined $all_lists;
         foreach my $list (@$all_lists) {
             printf "%s\n", $list->name;
@@ -1449,7 +1449,7 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
 
         Sympa::Language::SetLang($default_lang);
 
-        &List::init_list_cache();
+        &Sympa::List::init_list_cache();
 
         # Process grouped notifications
         Site->send_notify_to_listmaster(undef, undef, 1, undef);
