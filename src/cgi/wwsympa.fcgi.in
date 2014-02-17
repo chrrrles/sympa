@@ -84,7 +84,7 @@ use tracking;
 
 #use Sympaspool; # used in List - Task
 #use SDM; # used by Conf
-use Messagespool;
+use Sympa::MessageSpool;
 
 use OAuthProvider;
 use OAuthConsumer;
@@ -9192,7 +9192,7 @@ sub do_distribute {
             Site->viewmail_dir . '/mod/' . $list->get_list_id() . '/' . $id);
     }
 
-    my $incomingspool = Messagespool->new();
+    my $incomingspool = Sympa::MessageSpool->new();
     unless (
         $incomingspool->store(
             sprintf(
@@ -21143,7 +21143,7 @@ sub do_remind {
         $mail_command = sprintf 'REMIND %s', $param->{'list'};
     }
 
-    my $incomingspool = Messagespool->new();
+    my $incomingspool = Sympa::MessageSpool->new();
     unless (
         $incomingspool->store(
             sprintf(
@@ -22230,7 +22230,7 @@ sub do_send_mail {
         Sympa::Mail::parse_tt2_messageasstring($robot, '', $to, $data);
     my $result;
     if ($in{'sub_action'} eq 'sendmailtolist') {
-        my $incomingspool = Messagespool->new();
+        my $incomingspool = Sympa::MessageSpool->new();
         $result = $incomingspool->store(
             sprintf(
                 "X-Sympa-To: %s\n" .    # FIXME
@@ -22461,7 +22461,7 @@ sub do_tag_topic_by_sender {
     ## CONFIRM
     my $mail_command = sprintf 'QUIET CONFIRM %s', $in{'authkey'};
 
-    my $incomingspool = Messagespool->new();
+    my $incomingspool = Sympa::MessageSpool->new();
     unless (
         $incomingspool->store(
             sprintf(
