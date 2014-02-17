@@ -21,7 +21,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package report;
+package Sympa::Report;
 
 use strict;
 
@@ -63,14 +63,14 @@ sub reject_report_msg {
         or $type eq 'auth'
         or $type eq 'plugin') {
         Sympa::Log::Syslog::do_log('err',
-            "report::reject_report_msg(): error to prepare parsing 'message_report' template to $user : not a valid error type"
+            "Sympa::Report::reject_report_msg(): error to prepare parsing 'message_report' template to $user : not a valid error type"
         );
         return undef;
     }
 
     unless ($user) {
         Sympa::Log::Syslog::do_log('err',
-            "report::reject_report_msg(): unable to send template command_report.tt2 : no user to notify"
+            "Sympa::Report::reject_report_msg(): unable to send template command_report.tt2 : no user to notify"
         );
         return undef;
     }
@@ -107,7 +107,7 @@ sub reject_report_msg {
     $send_to->send_file('message_report', $user, $param)
         or Sympa::Log::Syslog::do_log(
         'notice',
-        "report::reject_report_msg(): Unable to send template 'message_report' to '$user'"
+        "Sympa::Report::reject_report_msg(): Unable to send template 'message_report' to '$user'"
         );
 
     if ($type eq 'intern') {
@@ -204,7 +204,7 @@ sub notice_report_msg {
 
     unless ($user) {
         Sympa::Log::Syslog::do_log('err',
-            "report::notice_report_msg(): unable to send template message_report.tt2 : no user to notify"
+            "Sympa::Report::notice_report_msg(): unable to send template message_report.tt2 : no user to notify"
         );
         return undef;
     }
@@ -228,13 +228,13 @@ sub notice_report_msg {
     if (ref $list and ref $list eq 'List') {
         unless ($list->send_file('message_report', $user, $param)) {
             Sympa::Log::Syslog::do_log('notice',
-                "report::notice_report_msg(): Unable to send template 'message_report' to '$user'"
+                "Sympa::Report::notice_report_msg(): Unable to send template 'message_report' to '$user'"
             );
         }
     } else {
         unless ($robot->send_file('message_report', $user, $param)) {
             Sympa::Log::Syslog::do_log('notice',
-                "report::notice_report_msg(): Unable to send template 'message_report' to '$user'"
+                "Sympa::Report::notice_report_msg(): Unable to send template 'message_report' to '$user'"
             );
         }
     }
@@ -398,7 +398,7 @@ sub global_report_cmd {
 
     unless ($type eq 'intern' || $type eq 'intern_quiet' || $type eq 'user') {
         Sympa::Log::Syslog::do_log('err',
-            "report::global_report_msg(): error to prepare parsing 'command_report' template to $sender : not a valid error type"
+            "Sympa::Report::global_report_msg(): error to prepare parsing 'command_report' template to $sender : not a valid error type"
         );
         return undef;
     }
@@ -484,7 +484,7 @@ sub reject_report_cmd {
         || $type eq 'user'
         || $type eq 'auth') {
         Sympa::Log::Syslog::do_log('err',
-            "report::reject_report_cmd(): error to prepare parsing 'command_report' template to $sender : not a valid error type"
+            "Sympa::Report::reject_report_cmd(): error to prepare parsing 'command_report' template to $sender : not a valid error type"
         );
         return undef;
     }
@@ -782,7 +782,7 @@ sub reject_report_web {
         || $type eq 'user'
         || $type eq 'auth') {
         Sympa::Log::Syslog::do_log('err',
-            "report::reject_report_web(): error  to prepare parsing 'web_tt2/error.tt2' template to $user : not a valid error type"
+            "Sympa::Report::reject_report_web(): error  to prepare parsing 'web_tt2/error.tt2' template to $user : not a valid error type"
         );
         return undef;
     }
