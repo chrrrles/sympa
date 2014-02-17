@@ -44,7 +44,7 @@ use Data::Dumper;
 use List;
 
 #use Conf; # already load in List - Site.
-use Language qw(gettext_strftime);
+use Sympa::Language qw(gettext_strftime);
 
 #use Log; # used in Conf
 #use tools; # used in Conf
@@ -120,7 +120,7 @@ Creates a list. Used by the create_list() sub in sympa.pl and the do_create_list
 
 =item * Sympa::Conf::get_robot_conf
 
-=item * Language::gettext_strftime
+=item * Sympa::Language::gettext_strftime
 
 =item * List::create_shared
 

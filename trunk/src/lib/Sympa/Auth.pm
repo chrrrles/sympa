@@ -25,7 +25,7 @@ package Sympa::Auth;
 
 use Digest::MD5;
 
-use Language qw(gettext_strftime);
+use Sympa::Language qw(gettext_strftime);
 
 #use Log;
 #use Conf;

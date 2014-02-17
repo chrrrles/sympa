@@ -216,7 +216,7 @@ sub load {
     my %datas = tools::string_2_hash($session->{'data'});
 
     ## canonicalize lang if possible.
-    $datas{'lang'} = Language::CanonicLang($datas{'lang'}) || $datas{'lang'}
+    $datas{'lang'} = Sympa::Language::CanonicLang($datas{'lang'}) || $datas{'lang'}
         if $datas{'lang'};
 
     foreach my $key (keys %datas) { $self->{$key} = $datas{$key}; }
@@ -644,10 +644,10 @@ sub list_sessions {
 
     while (my $session = ($sth->fetchrow_hashref('NAME_lc'))) {
         $session->{'formated_date'} =
-            Language::gettext_strftime("%d %b %y  %H:%M",
+            Sympa::Language::gettext_strftime("%d %b %y  %H:%M",
             localtime($session->{'date_session'}));
         $session->{'formated_start_date'} =
-            Language::gettext_strftime("%d %b %y  %H:%M",
+            Sympa::Language::gettext_strftime("%d %b %y  %H:%M",
             localtime($session->{'start_date_session'}));
 
         push @sessions, $session;

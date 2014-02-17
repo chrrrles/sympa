@@ -78,7 +78,7 @@ sub new {
     return undef unless $who;
 
     ## Canonicalize lang if possible
-    $values{'lang'} = Language::CanonicLang($values{'lang'})
+    $values{'lang'} = Sympa::Language::CanonicLang($values{'lang'})
         || $values{'lang'}
         if $values{'lang'};
 
@@ -367,7 +367,7 @@ sub get_global_user {
 
         ## Canonicalize lang if possible
         if ($user->{'lang'}) {
-            $user->{'lang'} = Language::CanonicLang($user->{'lang'})
+            $user->{'lang'} = Sympa::Language::CanonicLang($user->{'lang'})
                 || $user->{'lang'};
         }
 
@@ -466,7 +466,7 @@ sub update_global_user {
         if ($values->{'password'});
 
     ## Canonicalize lang if possible.
-    $values->{'lang'} = Language::CanonicLang($values->{'lang'})
+    $values->{'lang'} = Sympa::Language::CanonicLang($values->{'lang'})
         || $values->{'lang'}
         if $values->{'lang'};
 
@@ -539,7 +539,7 @@ sub add_global_user {
         if ($values->{'password'});
 
     ## Canonicalize lang if possible
-    $values->{'lang'} = Language::CanonicLang($values->{'lang'})
+    $values->{'lang'} = Sympa::Language::CanonicLang($values->{'lang'})
         || $values->{'lang'}
         if $values->{'lang'};
 

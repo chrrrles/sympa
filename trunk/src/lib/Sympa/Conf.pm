@@ -36,7 +36,7 @@ use Data::Dumper;
 #use List; # no longer used
 use SDM;
 use Log;
-use Language qw(gettext);
+use Sympa::Language qw(gettext);
 
 #use wwslib; # no longer used
 use Sympa::ConfDef;
@@ -1160,7 +1160,7 @@ sub load_charset {
                 );
                 next;
             }
-            unless ($lang and $lang = Language::CanonicLang($lang)) {
+            unless ($lang and $lang = Sympa::Language::CanonicLang($lang)) {
                 Sympa::Log::Syslog::do_log('err',
                     'Illegal lang name in configuration file %s line %d',
                     $config_file, $.);

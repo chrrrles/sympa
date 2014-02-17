@@ -29,7 +29,7 @@ use strict;
 #use POSIX; # no longer used
 
 use tools;
-use Language qw(gettext_strftime);
+use Sympa::Language qw(gettext_strftime);
 
 #use List; # not used
 use Log;

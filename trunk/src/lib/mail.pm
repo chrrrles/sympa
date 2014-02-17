@@ -38,7 +38,7 @@ use Data::Dumper;
 #use Bulk;
 #use Conf; # used in List - Site
 #use Log; # load in Conf
-use Language qw(gettext);
+use Sympa::Language qw(gettext);
 
 #use List; # this package is loaded via List
 #use Sympa::Constants; # load in confdef - Conf
@@ -144,9 +144,9 @@ sub parse_tt2_messageasstring {
     }
 
     ## Charset for encoding
-    Language::PushLang($data->{'lang'}) if defined $data->{'lang'};
-    $data->{'charset'} ||= Language::GetCharset();
-    Language::PopLang() if defined $data->{'lang'};
+    Sympa::Language::PushLang($data->{'lang'}) if defined $data->{'lang'};
+    $data->{'charset'} ||= Sympa::Language::GetCharset();
+    Sympa::Language::PopLang() if defined $data->{'lang'};
 
     if ($filename =~ /\.tt2$/) {
 
@@ -154,9 +154,9 @@ sub parse_tt2_messageasstring {
         my $output;
         my @path = split /\//, $filename;
 
-        Language::PushLang($data->{'lang'}) if defined $data->{'lang'};
+        Sympa::Language::PushLang($data->{'lang'}) if defined $data->{'lang'};
         tt2::parse_tt2($data, $path[$#path], \$output);
-        Language::PopLang() if defined $data->{'lang'};
+        Sympa::Language::PopLang() if defined $data->{'lang'};
 
         $message_as_string .= join('', $output);
         $header_possible = 1;
@@ -208,12 +208,12 @@ sub parse_tt2_messageasstring {
         }
         $tzoff = sprintf '%s%02d%02d',
             $sign, int($tzoff / 3600), int($tzoff / 60) % 60;
-        Language::PushLang('en');
+        Sympa::Language::PushLang('en');
         $headers .=
               'Date: '
             . POSIX::strftime("%a, %d %b %Y %H:%M:%S $tzoff", localtime $now)
             . "\n";
-        Language::PopLang();
+        Sympa::Language::PopLang();
     }
 
     unless ($header_ok{'to'}) {

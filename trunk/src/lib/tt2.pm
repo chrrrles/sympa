@@ -30,7 +30,7 @@ use MIME::EncWords;
 use Template;
 
 use Log;
-use Language;
+use Sympa::Language;
 use Sympa::Constants;
 use Sympa::Template::Compat;
 
@@ -47,7 +47,7 @@ sub qencode {
     return MIME::EncWords::encode_mimewords(
         Encode::decode('utf8', $string),
         Encoding => 'A',
-        Charset  => &Language::GetCharset(),
+        Charset  => &Sympa::Language::GetCharset(),
         Field    => "message-id"
     );
 }
@@ -253,7 +253,7 @@ sub parse_tt2 {
         $template = \join('', @$template);
     }
 
-    &Language::SetLang($data->{lang}) if ($data->{'lang'});
+    &Sympa::Language::SetLang($data->{lang}) if ($data->{'lang'});
 
     my $config = {
 

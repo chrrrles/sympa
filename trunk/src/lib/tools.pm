@@ -41,7 +41,7 @@ use Proc::ProcessTable;
 ##use if (5.008 < $] && $] < 5.016), qw(Unicode::CaseFold fc);
 
 use Sympa::Conf;
-use Language qw(gettext_strftime);
+use Sympa::Language qw(gettext_strftime);
 
 #use Log;
 #use Sympa::Constants;
@@ -536,7 +536,7 @@ sub get_list_list_tpl {
 
                 $list_templates->{$template}{'path'} = $dir;
 
-                my $locale = Language::Lang2Locale_old(Language::GetLang());
+                my $locale = Sympa::Language::Lang2Locale_old(Sympa::Language::GetLang());
                 ## FIXME: lang should be used instead of "locale".
                 ## Look for a comment.tt2 in the appropriate locale first
                 if (  -r $dir . '/'
@@ -736,7 +736,7 @@ sub get_templates_list {
             ## Subdirectory for a lang
             if (-d $dir . '/' . $file) {
                 my $lang_dir = $file;
-                my $lang     = Language::CanonicLang($lang_dir);
+                my $lang     = Sympa::Language::CanonicLang($lang_dir);
                 next unless $lang;
                 next unless opendir(LANGDIR, $dir . '/' . $lang_dir);
 
@@ -796,7 +796,7 @@ sub get_template_path {
 
     ##FIXME: path is fixed to older "locale".
     my $locale;
-    $locale = Language::Lang2Locale_old($lang) unless $lang eq 'default';
+    $locale = Sympa::Language::Lang2Locale_old($lang) unless $lang eq 'default';
 
     unless ($type eq 'web' or $type eq 'mail') {
         Sympa::Log::Syslog::do_log('info',
@@ -3645,7 +3645,7 @@ sub wrap_text {
     return $text unless $cols;
 
     $text = Text::LineFold->new(
-        Language      => Language::GetLang(),
+        Language      => Sympa::Language::GetLang(),
         OutputCharset => (&Encode::is_utf8($text) ? '_UNICODE_' : 'utf8'),
         Prep          => 'NONBREAKURI',
         ColumnsMax    => $cols

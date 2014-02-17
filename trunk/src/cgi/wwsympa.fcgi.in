@@ -60,7 +60,7 @@ use List;
 #use Conf; # used in List - Robot - Site
 #use confdef; # used by Conf
 use Sympa::Commands;
-use Language qw(gettext gettext_strftime);
+use Sympa::Language qw(gettext gettext_strftime);
 
 #use Log; # used by Conf
 #use Message: # used by List
@@ -1011,7 +1011,7 @@ my %filtering = (
 );
 
 ## Set locale configuration
-Language::SetLang(Site->lang);
+Sympa::Language::SetLang(Site->lang);
 
 ## Important to leave this there because it defined defaults for
 ## user_data_source
@@ -1070,7 +1070,7 @@ while ($query = &new_loop()) {
     Sympa::Log::Syslog::set_log_level(Site->log_level);
 
     # auto-detect browsers' lang.
-    Language::SetLang(Site->best_language());
+    Sympa::Language::SetLang(Site->best_language());
 
     ## Empty cache of the List.pm module
     &List::init_list_cache();
@@ -1607,7 +1607,7 @@ while ($query = &new_loop()) {
                 next unless $lang;
                 last
                     if $param->{'lang'} =
-                        Language::SetLang($lang, 'just_try' => 1);
+                        Sympa::Language::SetLang($lang, 'just_try' => 1);
             }
 
             ## list topics
@@ -1746,7 +1746,7 @@ while ($query = &new_loop()) {
         $robot->best_language()
         ) {
         next unless $lang;
-        last if $param->{'lang'} = Language::SetLang($lang, 'just_try' => 1);
+        last if $param->{'lang'} = Sympa::Language::SetLang($lang, 'just_try' => 1);
     }
 
     if ($param->{'list'}) {
@@ -1893,12 +1893,12 @@ while ($query = &new_loop()) {
     }
 
     ## Available languages
-    my $saved_lang = Language::GetLang();
+    my $saved_lang = Sympa::Language::GetLang();
 
     foreach my $l ($robot->supported_languages) {
-        Language::SetLang($l) || next;
+        Sympa::Language::SetLang($l) || next;
 
-        $param->{'languages'}{$l}{'complete'} = Language::GetLangName($l)
+        $param->{'languages'}{$l}{'complete'} = Sympa::Language::GetLangName($l)
             || $l;
 
         if ($param->{'lang'} eq $l) {
@@ -1908,7 +1908,7 @@ while ($query = &new_loop()) {
         }
     }
 
-    Language::SetLang($saved_lang);
+    Sympa::Language::SetLang($saved_lang);
 
     $param->{'html_dumpvars'} = &tools::dump_html_var($param)
         if ($session->{'dumpvars'});
@@ -2861,19 +2861,19 @@ sub send_html {
 
     ## Send HTML headers
     if ($param->{'date'}) {
-        Language::PushLang('en');
+        Sympa::Language::PushLang('en');
         printf "Date: %s\n",
             POSIX::strftime("%a, %d %b %Y %H:%M:%S GMT", gmtime(time));
-        Language::PopLang();
+        Sympa::Language::PopLang();
     }
     ## If we set the header indicating the last time the file to send was
     ## modified, add an HTTP header (limitate web harvesting).
     if ($param->{'header_date'}) {
-        Language::PushLang('en');
+        Sympa::Language::PushLang('en');
         printf "Last-Modified: %s\n",
             POSIX::strftime('%a, %d %b %Y %H:%M:%S GMT',
             gmtime($param->{'header_date'}));
-        Language::PopLang();
+        Sympa::Language::PopLang();
     }
     print "Cache-control: no-cache\n" unless ($param->{'action'} eq 'arc');
     print "Content-Type: text/html; charset=utf-8\n";
@@ -2963,7 +2963,7 @@ sub send_html {
 
     # per-locale CSS.
     # FIXME: include language paths, not only old locale paths.
-    my $locale = Language::Lang2Locale_old($param->{'lang'});
+    my $locale = Sympa::Language::Lang2Locale_old($param->{'lang'});
     my $locale_css;
     if (($list || $robot)->get_etc_filename('web_tt2/' . $locale . '/css.tt2')
         ) {
@@ -3066,7 +3066,7 @@ Use it to create a List object and initialize output parameters.
 
 =item * wwslog
 
-=item * Language::SetLang
+=item * Sympa::Language::SetLang
 
 =item * List::am_i
 
@@ -3119,7 +3119,7 @@ sub check_param_in {
         }
 
         ## Set lang to list lang
-        &Language::SetLang($list->lang);
+        &Sympa::Language::SetLang($list->lang);
     }
 
     ## listmaster has owner and editor privileges for the list
@@ -3908,7 +3908,7 @@ sub do_login {
             next unless $lang;
             last
                 if $param->{'lang'} =
-                    Language::SetLang($lang, 'just_try' => 1);
+                    Sympa::Language::SetLang($lang, 'just_try' => 1);
         }
         $session->{'lang'} = $param->{'lang'};
     }
@@ -5950,10 +5950,10 @@ sub do_setpref {
     }
 
     ## Set session language and user language to new value
-    my $current_lang = Language::GetLang();
-    if ($in{'lang'} and Language::SetLang($in{'lang'})) {
-        $session->{'lang'} = Language::GetLang();
-        Language::SetLang($current_lang);
+    my $current_lang = Sympa::Language::GetLang();
+    if ($in{'lang'} and Sympa::Language::SetLang($in{'lang'})) {
+        $session->{'lang'} = Sympa::Language::GetLang();
+        Sympa::Language::SetLang($current_lang);
     }
     $param->{'lang'} = $session->{'lang'};
 
@@ -7275,7 +7275,7 @@ sub do_ls_templates {
                     next;
                 }
                 $param->{'lang_per_level'}{$level}{$lang} =
-                    Language::GetLangName($lang) || $lang;
+                    Sympa::Language::GetLangName($lang) || $lang;
             }
         }
     }
@@ -11516,7 +11516,7 @@ sub do_editsubscriber {
     ## Get language from user_table
     my $user = User::get_global_user($in{'email'});
     $param->{'current_subscriber'}{'lang'} =
-        &Language::GetLangName($user->{'lang'});
+        &Sympa::Language::GetLangName($user->{'lang'});
 
     foreach my $m ($list->available_reception_mode) {
         $param->{'reception'}{$m}{'description'} =
@@ -12996,9 +12996,9 @@ Prepares config data to be sent in the edition form. Adds to the parameters arra
 
 =item * List::may_edit
 
-=item * Language::GetLang
+=item * Sympa::Language::GetLang
 
-=item * Language::SetLang
+=item * Sympa::Language::SetLang
 
 =item * report::reject_report_web
 
@@ -13126,7 +13126,7 @@ sub _prepare_edit_form {
             }
         } elsif ($pname eq 'lang') {
             foreach my $lang (keys %{$p->{'value'}}) {
-                my $t = Language::GetLangName($lang) || $lang;
+                my $t = Sympa::Language::GetLangName($lang) || $lang;
                 $t = sprintf '%s (%s)', $t, $lang
                     if $robot->is_listmaster($param->{'user'}{'email'});
                 $p->{'value'}{$lang}{'title'} = $t;
@@ -18321,7 +18321,7 @@ sub d_unzip_shared_file {
     ## Qencode 8bit filenames afterward
     ## The suspected charset is the one that is associated to the user's
     ## language
-    &tools::qencode_hierarchy($zip_abs_dir . '/zip', &Language::GetCharset());
+    &tools::qencode_hierarchy($zip_abs_dir . '/zip', &Sympa::Language::GetCharset());
 
     return $status;
 }
@@ -22037,7 +22037,7 @@ sub do_send_mail {
 
     if (defined $param->{'subscriber'}) {
         $from = &tools::addrencode($from, $param->{'subscriber'}{'gecos'},
-            &Language::GetCharset());
+            &Sympa::Language::GetCharset());
     }
 
     ##--------------- TOPICS --------------------
@@ -22554,10 +22554,10 @@ sub do_search_user {
 sub do_set_lang {
     &wwslog('info', 'do_set_lang(%s)', $in{'lang'});
 
-    my $current_lang = Language::GetLang();
-    if ($in{'lang'} and Language::SetLang($in{'lang'})) {
-        $session->{'lang'} = Language::GetLang();
-        Language::SetLang($current_lang);
+    my $current_lang = Sympa::Language::GetLang();
+    if ($in{'lang'} and Sympa::Language::SetLang($in{'lang'})) {
+        $session->{'lang'} = Sympa::Language::GetLang();
+        Sympa::Language::SetLang($current_lang);
     }
     $param->{'lang'} = $session->{'lang'};
 

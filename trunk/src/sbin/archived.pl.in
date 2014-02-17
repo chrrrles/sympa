@@ -264,7 +264,7 @@ unless (chdir(Site->home)) {
     exit(-1);
 }
 
-Language::SetLang(Site->lang || 'en');
+Sympa::Language::SetLang(Site->lang || 'en');
 
 Sympa::Log::Syslog::do_log('notice', "archived %s Started",
     Sympa::Constants::VERSION);

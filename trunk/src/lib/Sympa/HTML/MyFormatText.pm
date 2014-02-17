@@ -28,7 +28,7 @@ package Sympa::HTML::MyFormatText;
 
 our @ISA = qw(HTML::FormatText);
 
-use Language;
+use Sympa::Language;
 use strict;
 
 sub img_start {
