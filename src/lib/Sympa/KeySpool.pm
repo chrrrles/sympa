@@ -27,7 +27,7 @@ use strict;
 use warnings;
 
 use SympaspoolClassic;
-use Log;
+use Sympa::Log;
 
 our @ISA = qw(SympaspoolClassic);
 

@@ -35,7 +35,7 @@ use Data::Dumper;
 
 #use List; # no longer used
 use SDM;
-use Log;
+use Sympa::Log;
 use Sympa::Language qw(gettext);
 
 #use wwslib; # no longer used

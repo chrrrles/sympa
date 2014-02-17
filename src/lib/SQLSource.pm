@@ -26,7 +26,7 @@ package SQLSource;
 use strict;
 
 use Carp;
-use Log;
+use Sympa::Log;
 
 #use Conf; # not used
 #use List; # not used

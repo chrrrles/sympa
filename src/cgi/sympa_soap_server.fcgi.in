@@ -22,7 +22,7 @@ use tt2;
 use List;
 use mail;
 use Sympa::Conf;
-use Log;
+use Sympa::Log;
 use Sympa::Language;
 use sympasoap;
 

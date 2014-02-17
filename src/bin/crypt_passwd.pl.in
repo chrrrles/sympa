@@ -35,7 +35,7 @@ unless (require Crypt::CipherSaber) {
 use List;
 
 #use SDM; # used by conf
-#use Log; # used by conf
+#use Sympa::Log; # used by conf
 
 ## Load sympa config
 Site->load or die 'config_error';

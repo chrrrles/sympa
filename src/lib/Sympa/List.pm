@@ -69,7 +69,7 @@ use tt2;
 #use Sympa::Constants; # used in Conf - confdef
 use Sympa::Language qw(gettext gettext_strftime);
 
-#use Log; # used in Conf
+#use Sympa::Log; # used in Conf
 #use Conf; # used in Robot - Site
 use mail;
 use Sympa::Ldap;

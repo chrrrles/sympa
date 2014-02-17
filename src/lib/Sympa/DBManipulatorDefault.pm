@@ -26,7 +26,7 @@ package Sympa::DBManipulatorDefault;
 use strict;
 
 use Carp;
-use Log;
+use Sympa::Log;
 
 use SQLSource;
 use Data::Dumper;

@@ -47,7 +47,7 @@ use Data::Dumper;
 #use tt2; # used in List
 use Sympa::Language qw(gettext_strftime);
 
-#use Log; # used in Conf
+#use Sympa::Log; # used in Conf
 #use SDM; # used in Conf
 use Sympaspool;
 

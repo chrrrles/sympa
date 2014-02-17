@@ -26,7 +26,7 @@ package Sympa::LDAP;
 use strict;
 use Exporter;
 
-use Log;
+use Sympa::Log;
 
 our @ISA    = qw(Exporter);
 our @EXPORT = qw(%Ldap);

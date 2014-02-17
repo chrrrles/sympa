@@ -29,7 +29,7 @@ use Carp qw(croak);
 use Fcntl qw(LOCK_SH LOCK_EX LOCK_NB LOCK_UN);
 use FileHandle;
 
-use Log;
+use Sympa::Log;
 use Sympa::Constants;
 
 my %list_of_locks;

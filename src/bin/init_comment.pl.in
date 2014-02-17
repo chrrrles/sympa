@@ -30,7 +30,7 @@ use lib '--modulesdir--';
 use List;
 
 #use SDM; # used by Conf
-#use Log; # used by Conf
+#use Sympa::Log; # used by Conf
 
 ## Load sympa config
 Site->load or die 'config_error';

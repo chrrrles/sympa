@@ -26,7 +26,7 @@ package Sympa::Datasource;
 use strict;
 
 use Carp;
-use Log;
+use Sympa::Log;
 use Data::Dumper;
 
 ############################################################

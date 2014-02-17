@@ -96,7 +96,7 @@ use Data::Dumper;
 #use Conf; # used in List - Robot- Site
 use List;
 
-#use Log; # used by Conf
+#use Sympa::Log; # used by Conf
 #use SDM; # used by Conf
 #use Sympa::Constants; # used by Conf
 #use Task; # used by List

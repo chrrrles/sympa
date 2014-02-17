@@ -32,7 +32,7 @@ use tools;
 use Sympa::Language qw(gettext_strftime);
 
 #use List; # not used
-use Log;
+use Sympa::Log;
 
 ## Creates a new object
 sub new {
