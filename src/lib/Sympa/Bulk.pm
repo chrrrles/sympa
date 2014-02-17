@@ -295,7 +295,7 @@ sub message_from_spool {
 ## DEPRECATED: Use $message->personalize().
 #sub merge_msg ($entity, $rcpt, $bulk, $data)
 
-## DEPRECATED: Use Message::personalize_text().
+## DEPRECATED: Use Sympa::Message::personalize_text().
 ##sub merge_data ($rcpt, $listname, $robot_id, $data, $body, \$message_output)
 
 ##

@@ -73,7 +73,7 @@ use Sympa::Language qw(gettext gettext_strftime);
 #use Conf; # used in Robot - Site
 use Sympa::Mail;
 use Sympa::Ldap;
-use Message;
+use Sympa::Message;
 use Sympa::Family;    #FIXME: dependency loop between List and Family
 use PlainDigest;
 use tracking;
@@ -1848,7 +1848,7 @@ sub split_spooled_digest_to_messages {
     splice @messages_as_string, 0, 1;
 
     foreach my $message_as_string (@messages_as_string) {
-        my $message = Message->new(
+        my $message = Sympa::Message->new(
             {   'messageasstring' => $message_as_string,
                 'noxsymnpato'     => 1
             }
@@ -2816,7 +2816,7 @@ sub archive_send_last {
     return unless $self->is_archived();    #FIXME
     my $dir = $self->dir . '/archives';
 
-    my $message = Message->new(
+    my $message = Sympa::Message->new(
         {'file' => "$dir/last_message", 'noxsympato' => 'noxsympato'});
     unless ($message) {
         Sympa::Log::Syslog::do_log('err',

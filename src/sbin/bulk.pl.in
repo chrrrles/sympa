@@ -383,7 +383,7 @@ while (!$end) {
             $message_from_spool =
                 $spool->get_message({'messagekey' => $messagekey});
             my $message;
-            $message = Message->new($message_from_spool)
+            $message = Sympa::Message->new($message_from_spool)
                 if $message_from_spool;
             unless ($message) {
                 Sympa::Log::Syslog::do_log(
@@ -449,7 +449,7 @@ while (!$end) {
             my $key;
 
             foreach $rcpt (@rcpts) {
-                my $message = Message->new(
+                my $message = Sympa::Message->new(
                     {   'messageasstring' => $messageasstring_init,
                         'noxsympato'      => 'noxsympato',
                         'list_object'     => $list,
@@ -476,7 +476,7 @@ while (!$end) {
                         || ($message->{'smime_crypted'})) {
 
                         # concat headers from entity with original body
-                        my $msg_body = Message::get_body_from_msg_as_string(
+                        my $msg_body = Sympa::Message::get_body_from_msg_as_string(
                             $messageasstring_init);
                         $messageasstring_init =
                             $entity->head->as_string() . "\n" . $msg_body;

@@ -120,7 +120,7 @@ sub scan_dir_archive {
             "archive::scan_dir_archive($dir, $month): start parsing message $dir/$month/arctxt/$file"
         );
 
-        my $message = Message->new(
+        my $message = Sympa::Message->new(
             {   'file'       => "$dir/$month/arctxt/$file",
                 'noxsympato' => 'noxsympato'
             }
@@ -325,7 +325,7 @@ sub clean_archived_message {
     my $robot   = shift;
     my $input   = shift;
     my $output  = shift;
-    my $message = Message->new({'file' => $input, 'noxsympato' => 1});
+    my $message = Sympa::Message->new({'file' => $input, 'noxsympato' => 1});
 
     if ($message->clean_html($robot)) {
         if (open TMP, '>', $output) {

@@ -354,7 +354,7 @@ use SympaSession;
 #use Sympa::Log; # load in Conf
 #use Sympa::Mail; # load in List - Auth
 #use List; #load in Auth
-use Message;
+use Sympa::Message;
 use Sympa::Admin;
 use Sympa::Config_XML;
 use Sympa::Family;
@@ -1502,7 +1502,7 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
 
         my $message_in_spool = $spool->next;
         my $message;
-        $message = Message->new($message_in_spool)
+        $message = Sympa::Message->new($message_in_spool)
             if $message_in_spool;
         unless ($message) {
             sleep(Site->sleep);

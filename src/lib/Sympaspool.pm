@@ -39,7 +39,7 @@ use Sys::Hostname qw(hostname);
 # tentative
 use Data::Dumper;
 
-use Message;
+use Sympa::Message;
 use SDM;
 
 our @ISA = qw(Exporter);
@@ -515,7 +515,7 @@ sub store {
         && $message_asstring    ne 'rebuild'
         && $self->{'spoolname'} ne 'digest'
         && $self->{'spoolname'} ne 'subscribe') {
-        $message = Message->new(
+        $message = Sympa::Message->new(
             {'messageasstring' => $message_asstring, 'noxsympato' => 1});
     }
 

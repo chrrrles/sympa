@@ -141,7 +141,7 @@ use Digest::MD5;
 use Pod::Usage;
 
 use List;
-use Message;
+use Sympa::Message;
 use Sympa::Commands;
 
 my $daemon_name = Sympa::Log::Syslog::set_daemon($0);
@@ -369,7 +369,7 @@ while (!$end) {
 
                 my $new_message;
                 unless (
-                    $new_message = Message->new(
+                    $new_message = Sympa::Message->new(
                         {   'file'       => "$arcpath/arctxt/$file",
                             'noxsympato' => 'noxsympato'
                         }

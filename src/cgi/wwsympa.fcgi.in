@@ -8462,7 +8462,7 @@ sub do_modindex {
         {'selector' => {'list' => $list_name, 'robot' => $robot_id}});
     foreach my $message_in_spool (@messages) {
         my $message = undef;
-        $message = Message->new($message_in_spool)
+        $message = Sympa::Message->new($message_in_spool)
             if $message_in_spool;
         next unless $message;
         my $id = $message->{'authkey'};
@@ -8935,7 +8935,7 @@ sub do_reject {
             }
         );
         my $message = undef;
-        $message = Message->new($message_in_spool)
+        $message = Sympa::Message->new($message_in_spool)
             if $message_in_spool;
         unless ($message) {
             &report::reject_report_web('user', 'already_moderated', {},
@@ -9141,7 +9141,7 @@ sub do_distribute {
         my $message_in_spool = $modspool->get_message(
             {'list' => $list->name, 'robot' => $robot_id, 'authkey' => $id});
         my $message = undef;
-        $message = Message->new($message_in_spool)
+        $message = Sympa::Message->new($message_in_spool)
             if $message_in_spool;
         unless ($message) {
             report::reject_report_web('user', 'already_moderated', {},
@@ -9256,7 +9256,7 @@ sub do_add_frommod {
         my $message_in_spool = $modspool->get_message(
             {'list' => $list->name, 'robot' => $robot_id, 'authkey' => $id});
         my $message = undef;
-        $message = Message->new($message_in_spool)
+        $message = Sympa::Message->new($message_in_spool)
             if $message_in_spool;
         unless ($message) {
             ## if the message has been accepted via WWSympa, it's in spool
@@ -9268,7 +9268,7 @@ sub do_add_frommod {
                     'authkey' => $id
                 }
             );
-            $message = Message->new($message_in_spool)
+            $message = Sympa::Message->new($message_in_spool)
                 if $message_in_spool;
         }
         unless ($message) {
@@ -10284,7 +10284,7 @@ sub do_send_me {
         close $fh;
 
         unless (
-            $message = Message->new(
+            $message = Sympa::Message->new(
                 {   'messageasstring' => $msg_string,
                     'noxsympato'      => 'noxsympato',
                     'list_object'     => $list
@@ -22199,7 +22199,7 @@ sub do_send_mail {
 
     ## Roughly check TT2 syntax for merge_feature.
     if ($list->merge_feature and $list->merge_feature eq 'on') {
-        unless (defined Message::personalize_text($in{'body'}, $list)) {
+        unless (defined Sympa::Message::personalize_text($in{'body'}, $list)) {
             report::reject_report_web('user', 'merge_failed',
                 {'error' => tt2::get_error()},
                 $param->{'action'});
@@ -22243,7 +22243,7 @@ sub do_send_mail {
             {'list' => $list->name, 'robot' => $list->domain}
         );
     } elsif ($in{'sub_action'} eq 'sendmailtome') {
-        my $message = Message->new(
+        my $message = Sympa::Message->new(
             {   'messageasstring' => $messageasstring,
                 'noxsympato'      => 1,
             }
@@ -22351,7 +22351,7 @@ sub do_request_topic {
         }
     );
     my $message = undef;
-    $message = Message->new($message_in_spool)
+    $message = Sympa::Message->new($message_in_spool)
         if $message_in_spool;
 
     unless ($message) {
@@ -22419,7 +22419,7 @@ sub do_tag_topic_by_sender {
     }
 
     unless ($message =
-        Message->new({%$message_in_spool, 'noxsympato' => 'noxsympato'})) {
+        Sympa::Message->new({%$message_in_spool, 'noxsympato' => 'noxsympato'})) {
         report::reject_report_web('intern',
             'cannot_parse_message retrived by key %s for list %s@%s',
             $in{'authkey'}, $listname, $robot_id);

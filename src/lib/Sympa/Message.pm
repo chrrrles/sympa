@@ -40,7 +40,7 @@ easier.
 
 =cut 
 
-package Message;
+package Sympa::Message;
 
 use strict;
 use warnings;
