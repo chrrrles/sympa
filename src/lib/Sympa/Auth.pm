@@ -234,7 +234,7 @@ sub ldap_authentication {
 
     ## bind in order to have the user's DN
     my $param = &tools::dup_var($ldap);
-    my $ds    = new LDAPSource($param);
+    my $ds    = new Sympa::LDAPSource($param);
 
     unless (defined $ds && ($ldap_anonymous = $ds->connect())) {
         Sympa::Log::Syslog::do_log('err',
@@ -270,7 +270,7 @@ sub ldap_authentication {
     $param->{'ldap_bind_dn'}       = $DN[0];
     $param->{'ldap_bind_password'} = $pwd;
 
-    $ds = new LDAPSource($param);
+    $ds = new Sympa::LDAPSource($param);
 
     unless (defined $ds && ($ldap_passwd = $ds->connect())) {
         Sympa::Log::Syslog::do_log('err',
@@ -364,7 +364,7 @@ sub get_email_by_net_id {
     my $ldap = @{Site->auth_services->{$robot->domain}}[$auth_id];
 
     my $param = &tools::dup_var($ldap);
-    my $ds    = new LDAPSource($param);
+    my $ds    = new Sympa::LDAPSource($param);
     my $ldap_anonymous;
 
     unless (defined $ds && ($ldap_anonymous = $ds->connect())) {

@@ -49,7 +49,7 @@ use Data::Dumper;
 
 #use SQLSource; # used in SDM
 #use Datasource; # used in SQLSource
-use LDAPSource;
+use Sympa::LDAPSource;
 
 #use SDM; # used in Conf
 use Robot;
@@ -7002,7 +7002,7 @@ sub _load_list_members_from_include {
                     $included = 0;
                 }
             } elsif ($type eq 'include_ldap_query') {
-                my $source = new LDAPSource($incl);
+                my $source = new Sympa::LDAPSource($incl);
                 if ($source->is_allowed_to_sync() || $source_is_new) {
                     $included =
                         _include_users_ldap(\%users, $source_id, $source,
@@ -7024,7 +7024,7 @@ sub _load_list_members_from_include {
                     $included = 0;
                 }
             } elsif ($type eq 'include_ldap_2level_query') {
-                my $source = new LDAPSource($incl);
+                my $source = new Sympa::LDAPSource($incl);
                 if ($source->is_allowed_to_sync() || $source_is_new) {
                     my $result =
                         _include_users_ldap_2level(\%users, $source_id,
@@ -7206,12 +7206,12 @@ sub _load_list_admin_from_include {
                         _include_users_sql(\%admin_users, $incl, $source,
                         \%option, 'untied', $self->sql_fetch_timeout);
                 } elsif ($type eq 'include_ldap_query') {
-                    my $source = new LDAPSource($incl);
+                    my $source = new Sympa::LDAPSource($incl);
                     $included =
                         _include_users_ldap(\%admin_users, $incl, $source,
                         \%option);
                 } elsif ($type eq 'include_ldap_2level_query') {
-                    my $source = new LDAPSource($incl);
+                    my $source = new Sympa::LDAPSource($incl);
                     my $result =
                         _include_users_ldap_2level(\%admin_users, $incl,
                         $source, \%option);
@@ -7542,7 +7542,7 @@ sub sync_include_ca {
                 $source = new SQLSource($incl);
             } elsif (($type eq 'include_ldap_ca')
                 or ($type eq 'include_ldap_2level_ca')) {
-                $source = new LDAPSource($incl);
+                $source = new Sympa::LDAPSource($incl);
             }
             next unless (defined($source));
             if ($source->is_allowed_to_sync()) {
