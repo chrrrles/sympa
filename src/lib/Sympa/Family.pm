@@ -43,7 +43,7 @@ use Term::ProgressBar;
 
 #use List; # load in admin
 #use Conf; # no longer used
-use Language qw(gettext_strftime);
+use Sympa::Language qw(gettext_strftime);
 
 #use Log; # load in dmin - List - Robot - Site - Conf
 use Sympa::Admin;

@@ -39,7 +39,7 @@ use Carp qw(croak);
 use Cwd;
 
 use Sympa::Conf;
-use Language qw(gettext gettext_strftime);
+use Sympa::Language qw(gettext gettext_strftime);
 use User;
 use Data::Dumper;
 
@@ -294,7 +294,7 @@ sub best_language {
             if !grep { $_ eq $lang } @langs;
     }
 
-    return Language::NegotiateLang($accept_string, @langs) || $self->lang;
+    return Sympa::Language::NegotiateLang($accept_string, @langs) || $self->lang;
 }
 
 =head3 Handling the Authentication Token
@@ -552,14 +552,14 @@ sub get_etc_include_path {
     my $lang_dirs = undef;
     if ($lang) {
         ## For compatibility: add old-style "locale" directory at first.
-        my $old_lang = Language::Lang2Locale_old($lang);
+        my $old_lang = Sympa::Language::Lang2Locale_old($lang);
         if ($old_lang) {
             $lang_dirs = [$old_lang];
         } else {
             $lang_dirs = [];
         }
         ## Add lang itself and fallback directories.
-        push @$lang_dirs, Language::ImplicatedLangs($lang);
+        push @$lang_dirs, Sympa::Language::ImplicatedLangs($lang);
     }
 
     return [$self->_get_etc_include_path($dir, $lang_dirs)];
@@ -774,9 +774,9 @@ sub send_dsn {
 
     my $header = $message->as_entity()->head->as_string();
 
-    Language::PushLang('en');
+    Sympa::Language::PushLang('en');
     my $date = POSIX::strftime("%a, %d %b %Y %H:%M:%S +0000", gmtime time);
-    Language::PopLang();
+    Sympa::Language::PopLang();
 
     unless (
         $self->send_file(

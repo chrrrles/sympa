@@ -89,7 +89,7 @@ use MIME::EncWords;
 use MIME::Charset;
 use HTML::TreeBuilder;
 use Sympa::HTML::MyFormatText;
-use Language;
+use Sympa::Language;
 use tools;
 
 sub plain_body_as_string {

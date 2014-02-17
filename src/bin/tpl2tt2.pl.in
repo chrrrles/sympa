@@ -27,7 +27,7 @@ use lib '--modulesdir--';
 
 #use wwslib; # no longer used
 use Sympa::Conf;
-use Language;
+use Sympa::Language;
 use tt2;
 use Sympa::Constants;
 use List;
@@ -197,7 +197,7 @@ foreach my $tpl (@templates) {
     if ($dest_file =~ /^([\w\-]+)\.(\w+)\.tt2$/) {
         my $lang = $2;
         $dest_file =~ s/^([\w\-]+)\.(\w+)\.tt2$/$1\.tt2/;
-        $dest_path .= '/' . Language::Lang2Locale($lang);
+        $dest_path .= '/' . Sympa::Language::Lang2Locale($lang);
     }
 
     ## If file has no extension

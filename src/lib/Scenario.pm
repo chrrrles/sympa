@@ -250,7 +250,7 @@ sub _parse_scenario {
             next;
         } elsif ($current_rule =~ /^\s*title\.([-.\w]+)\s+(.*)\s*$/i) {
             my ($lang, $title) = ($1, $2);
-            $lang = Language::CanonicLang($lang) || $lang;
+            $lang = Sympa::Language::CanonicLang($lang) || $lang;
             $structure->{'title'}{$lang} = $title;
             next;
         } elsif ($current_rule =~ /^\s*title\s+(.*)\s*$/i) {
@@ -1905,15 +1905,15 @@ Get internationalized title of the scenario, under current language context.
 sub get_current_title {
     my $self = shift;
 
-    foreach my $lang (Language::ImplicatedLangs()) {
+    foreach my $lang (Sympa::Language::ImplicatedLangs()) {
         if (defined $self->{'title'}{$lang}) {
             return $self->{'title'}{$lang};
         }
     }
     if (defined $self->{'title'}{'gettext'}) {
-        return Language::gettext($self->{'title'}{'gettext'});
+        return Sympa::Language::gettext($self->{'title'}{'gettext'});
     } elsif (defined $self->{'title'}{'us'}) {
-        return Language::gettext($self->{'title'}{'us'});
+        return Sympa::Language::gettext($self->{'title'}{'us'});
     } else {
         return $self->{'name'};
     }

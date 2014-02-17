@@ -731,7 +731,7 @@ sub _get_topic_titles {
             } elsif ($lang eq 'default') {
                 ;
             } else {
-                $lang = Language::CanonicLang($lang) || $lang;
+                $lang = Sympa::Language::CanonicLang($lang) || $lang;
             }
             $title->{$lang} = $topic->{$key};
         }
@@ -742,15 +742,15 @@ sub _get_topic_titles {
 
 sub _get_topic_current_title {
     my $topic = shift;
-    foreach my $lang (Language::ImplicatedLangs()) {
+    foreach my $lang (Sympa::Language::ImplicatedLangs()) {
         if ($topic->{'title'}{$lang}) {
             return $topic->{'title'}{$lang};
         }
     }
     if ($topic->{'title'}{'gettext'}) {
-        return Language::gettext($topic->{'title'}{'gettext'});
+        return Sympa::Language::gettext($topic->{'title'}{'gettext'});
     } elsif ($topic->{'title'}{'default'}) {
-        return Language::gettext($topic->{'title'}{'default'});
+        return Sympa::Language::gettext($topic->{'title'}{'default'});
     } else {
         return undef;
     }

@@ -34,7 +34,7 @@ use Time::Local;
 use MIME::EncWords;
 
 #use Conf; # used in List - Site
-use Language qw(gettext gettext_strftime);
+use Sympa::Language qw(gettext gettext_strftime);
 
 #use Log; # used in List - Site - Conf
 use List;
@@ -201,7 +201,7 @@ sub help {
     $data->{'is_owner'}  = 1 if scalar @owner;
     $data->{'is_editor'} = 1 if scalar @editor;
     $data->{'user'}      = User->new($sender);
-    &Language::SetLang($data->{'user'}->lang)
+    &Sympa::Language::SetLang($data->{'user'}->lang)
         if $data->{'user'}->lang;
     $data->{'subject'}        = gettext("User guide");
     $data->{'auto_submitted'} = 'auto-replied';
@@ -438,7 +438,7 @@ sub getfile {
         return 'unknownlist';
     }
 
-    &Language::SetLang($list->lang);
+    &Sympa::Language::SetLang($list->lang);
 
     unless ($list->is_archived()) {
         &report::reject_report_cmd('user', 'empty_archives', {}, $cmd_line);
@@ -518,7 +518,7 @@ sub last {
         return 'unknownlist';
     }
 
-    &Language::SetLang($list->lang);
+    &Sympa::Language::SetLang($list->lang);
 
     unless ($list->is_archived()) {
         &report::reject_report_cmd('user', 'empty_archives', {}, $cmd_line);
@@ -587,7 +587,7 @@ sub index {
         return 'unknown_list';
     }
 
-    &Language::SetLang($list->lang);
+    &Sympa::Language::SetLang($list->lang);
 
     ## Now check if we may send the list of users to the requestor.
     ## Check all this depending on the values of the Review field in
@@ -663,7 +663,7 @@ sub review {
         return 'unknown_list';
     }
 
-    &Language::SetLang($list->lang);
+    &Sympa::Language::SetLang($list->lang);
 
     $list->on_the_fly_sync_include('use_ttl' => 1);
 
@@ -820,7 +820,7 @@ sub verify {
 
     my $user;
 
-    &Language::SetLang($list->lang);
+    &Sympa::Language::SetLang($list->lang);
 
     if ($sign_mod) {
         Sympa::Log::Syslog::do_log(
@@ -879,7 +879,7 @@ sub subscribe {
         return 'unknown_list';
     }
 
-    &Language::SetLang($list->lang);
+    &Sympa::Language::SetLang($list->lang);
 
     ## This is a really minimalistic handling of the comments,
     ## it is far away from RFC-822 completeness.
@@ -1147,7 +1147,7 @@ sub info {
         return 'unknown_list';
     }
 
-    &Language::SetLang($list->lang);
+    &Sympa::Language::SetLang($list->lang);
 
     my $auth_method = &get_auth_method(
         'info', '',
@@ -1349,7 +1349,7 @@ sub signoff {
         return 'unknown_list';
     }
 
-    &Language::SetLang($list->lang);
+    &Sympa::Language::SetLang($list->lang);
 
     $auth_method = &get_auth_method(
         'signoff',
@@ -1583,7 +1583,7 @@ sub add {
         return 'unknown_list';
     }
 
-    &Language::SetLang($list->lang);
+    &Sympa::Language::SetLang($list->lang);
 
     my $auth_method = &get_auth_method(
         'add', $email,
@@ -1779,7 +1779,7 @@ sub invite {
         return 'unknown_list';
     }
 
-    &Language::SetLang($list->lang);
+    &Sympa::Language::SetLang($list->lang);
 
     my $auth_method = &get_auth_method(
         'invite', $email,
@@ -2066,7 +2066,7 @@ sub remind {
 
     } else {
 
-        &Language::SetLang($list->lang);
+        &Sympa::Language::SetLang($list->lang);
 
         $host = $list->host;
 
@@ -2324,7 +2324,7 @@ sub del {
         return 'unknown_list';
     }
 
-    &Language::SetLang($list->lang);
+    &Sympa::Language::SetLang($list->lang);
 
     my $auth_method = &get_auth_method(
         'del', $who,
@@ -2562,7 +2562,7 @@ sub set {
         return 'unknown_list';
     }
 
-    &Language::SetLang($list->lang);
+    &Sympa::Language::SetLang($list->lang);
 
     ## Check if we know this email on the list and remove it. Otherwise
     ## just reject the message.
@@ -2692,7 +2692,7 @@ sub distribute {
         return 'unknown_list';
     }
 
-    &Language::SetLang($list->lang);
+    &Sympa::Language::SetLang($list->lang);
 
     #read the moderation queue and purge it
 
@@ -2828,7 +2828,7 @@ sub confirm {
 
     my $msg  = $message->as_entity();
     my $list = $message->list;
-    Language::SetLang($list->lang);
+    Sympa::Language::SetLang($list->lang);
 
     my $name  = $list->name;
     my $bytes = $message->{'size'};
@@ -3071,7 +3071,7 @@ sub reject {
         return 'unknown_list';
     }
 
-    &Language::SetLang($list->lang);
+    &Sympa::Language::SetLang($list->lang);
 
     my $name = $list->name;
 
@@ -3176,7 +3176,7 @@ sub modindex {
         return 'unknown_list';
     }
 
-    &Language::SetLang($list->lang);
+    &Sympa::Language::SetLang($list->lang);
 
     unless ($list->may_do('modindex', $sender)) {
         &report::reject_report_cmd('auth', 'restricted_modindex', {},

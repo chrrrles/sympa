@@ -25,7 +25,7 @@ package report;
 
 use strict;
 
-use Language;
+use Sympa::Language;
 use Log;
 use List;
 

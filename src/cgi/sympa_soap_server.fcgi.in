@@ -23,7 +23,7 @@ use List;
 use mail;
 use Sympa::Conf;
 use Log;
-use Language;
+use Sympa::Language;
 use sympasoap;
 
 #XXXuse Sympa::Constants;

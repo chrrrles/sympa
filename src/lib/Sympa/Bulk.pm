@@ -45,7 +45,7 @@ use Data::Dumper;
 
 #use tools; # used in List - Site - Conf
 #use tt2; # used in List
-use Language qw(gettext_strftime);
+use Sympa::Language qw(gettext_strftime);
 
 #use Log; # used in Conf
 #use SDM; # used in Conf
