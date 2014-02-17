@@ -39,7 +39,7 @@ use Sympa::Auth;
 use SympaSession;
 use Sympa::Language;
 use Sympa::Log;
-use mail;
+use Sympa::Mail;
 use MIME::QuotedPrint;
 use List;
 use Message;

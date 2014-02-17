@@ -101,7 +101,7 @@ use Data::Dumper;
 #use Conf; # used in List
 #use Sympa::Log; # used in Conf
 #use Commands; # no longer used
-#use mail; # used in List
+#use Sympa::Mail; # used in List
 use List;
 use Bulk;
 
@@ -529,7 +529,7 @@ while (!$end) {
 
                 # &trace_smime($messageasstring,'dkim');
 
-                *SMTP = mail::smtpto($return_path, \$rcpt, $robot,
+                *SMTP = Sympa::Mail::smtpto($return_path, \$rcpt, $robot,
                     $notification_id);
 
                 # Message with customized data
@@ -561,7 +561,7 @@ while (!$end) {
 
             # &trace_smime($messageasstring_init,'dkim 2');
 
-            *SMTP = mail::smtpto($bulk->{'returnpath'}, \@rcpts, $robot);
+            *SMTP = Sympa::Mail::smtpto($bulk->{'returnpath'}, \@rcpts, $robot);
             print SMTP $messageasstring_init;
             close SMTP;
         }
@@ -590,7 +590,7 @@ while (!$end) {
         ## Sleep for a while if bulk_mailer DB table is empty
         sleep Site->bulk_sleep;
     }
-    &mail::reaper;
+    &Sympa::Mail::reaper;
 
 }
 

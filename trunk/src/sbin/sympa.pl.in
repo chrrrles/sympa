@@ -352,7 +352,7 @@ use SympaSession;
 
 #use Language; # load in List
 #use Sympa::Log; # load in Conf
-#use mail; # load in List - Auth
+#use Sympa::Mail; # load in List - Auth
 #use List; #load in Auth
 use Message;
 use Sympa::Admin;
@@ -1498,7 +1498,7 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
             $latest_msgid_table_cleanup = time;
         }
 
-        &mail::reaper;    # finish terminated process
+        &Sympa::Mail::reaper;    # finish terminated process
 
         my $message_in_spool = $spool->next;
         my $message;
@@ -2242,7 +2242,7 @@ sub DoForward {
     # my $msg_copy = $msg->dup;
     $message->{'msg'} = $msg;
     unless (
-        mail::mail_forward(
+        Sympa::Mail::mail_forward(
             $message, $robot->get_address('owner'),    #FIXME: 'return_path'
             \@rcpt, $robot
         )

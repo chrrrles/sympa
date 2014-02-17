@@ -458,7 +458,7 @@ while (!$end) {
 Site->send_notify_to_listmaster(undef, undef, undef, 1);
 
 ## Free zombie sendmail processes
-&mail::reaper;
+&Sympa::Mail::reaper;
 
 Sympa::Log::Syslog::do_log('notice',
     'archived exited normally due to signal');

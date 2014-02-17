@@ -37,7 +37,7 @@ use Bulk;
 #use Conf; # used in List - Robot - Site
 #use List; # this package is used by List
 #use Sympa::Log; # used by Conf
-#use mail; # used by List
+#use Sympa::Mail; # used by List
 #use Scenario; # not used
 use TaskSpool;
 use TaskInstruction;

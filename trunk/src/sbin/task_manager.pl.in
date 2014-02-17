@@ -256,7 +256,7 @@ while (!$end) {
     }
     sleep 30;
     ## Free zombie sendmail processes
-    &mail::reaper;
+    &Sympa::Mail::reaper;
 }
 
 ## when we catch SIGTERM, just change the value of the loop variable.

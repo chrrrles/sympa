@@ -71,7 +71,7 @@ use Sympa::Language qw(gettext gettext_strftime);
 
 #use Sympa::Log; # used in Conf
 #use Conf; # used in Robot - Site
-use mail;
+use Sympa::Mail;
 use Sympa::Ldap;
 use Message;
 use Sympa::Family;    #FIXME: dependency loop between List and Family
@@ -2176,7 +2176,7 @@ sub send_msg {
         $new_message->prepare_message_according_to_mode($mode);
         my $verp = 'off';
         if ($message->{'rcpts_by_mode'}{$mode}{'noverp'}) {
-            my $result = mail::mail_message(
+            my $result = Sympa::Mail::mail_message(
                 'message' => $new_message,
                 'rcpt'    => $message->{'rcpts_by_mode'}{$mode}{'noverp'},
                 'list'    => $self,
@@ -2214,7 +2214,7 @@ sub send_msg {
 
         if ($message->{'rcpts_by_mode'}{$mode}{'verp'}) {
             ## prepare VERP sending.
-            my $result = mail::mail_message(
+            my $result = Sympa::Mail::mail_message(
                 'message' => $new_message,
                 'rcpt'    => $message->{'rcpts_by_mode'}{$mode}{'verp'},
                 'list'    => $self,

@@ -20,7 +20,7 @@ use strict;
 ## Sympa API
 use tt2;
 use List;
-use mail;
+use Sympa::Mail;
 use Sympa::Conf;
 use Sympa::Log;
 use Sympa::Language;
@@ -60,7 +60,7 @@ unless (&SDM::check_db_connect()) {
 
 ## The process should not fork for sending mail
 ## Messages will be spooled instead
-&mail::set_send_spool(Site->queue);
+&Sympa::Mail::set_send_spool(Site->queue);
 
 ## Loading all Lists at startup, in order to increase execution speed
 Sympa::List::get_lists('Site');
