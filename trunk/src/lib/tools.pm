@@ -2181,7 +2181,7 @@ sub write_pid {
     my @pids;
 
     # Lock PID file
-    my $lock = new Lock($pidfile);
+    my $lock = new Sympa::Lock($pidfile);
     unless (defined $lock) {
         croak sprintf('Lock could not be created. Exiting.');
     }

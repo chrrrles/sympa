@@ -291,7 +291,7 @@ sub create_list_old {
         $robot->get_etc_include_path('create_list_templates/' . $template);
 
     ## Lock config before openning the config file
-    my $lock = new Lock($list_dir . '/config');
+    my $lock = new Sympa::Lock($list_dir . '/config');
     unless (defined $lock) {
         Sympa::Log::Syslog::do_log('err', 'Lock could not be created');
         return undef;
@@ -521,7 +521,7 @@ sub create_list {
     }
 
     ## Lock config before openning the config file
-    my $lock = new Lock($list_dir . '/config');
+    my $lock = new Sympa::Lock($list_dir . '/config');
     unless (defined $lock) {
         Sympa::Log::Syslog::do_log('err', 'Lock could not be created');
         return undef;
@@ -687,7 +687,7 @@ sub update_list {
     }
 
     ## Lock config before openning the config file
-    my $lock = new Lock($list->dir . '/config');
+    my $lock = new Sympa::Lock($list->dir . '/config');
     unless (defined $lock) {
         Sympa::Log::Syslog::do_log('err', 'Lock could not be created');
         return undef;

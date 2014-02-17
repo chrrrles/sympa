@@ -24,7 +24,7 @@ nobase_modules_DATA = Sympa/Admin.pm \
 		      Sympa/LDAPSource.pm \
 		      Sympa/List.pm \
 		      Sympa/ListDef.pm \
-		      Lock.pm \
+		      Sympa/Lock.pm \
 		      Log.pm \
 		      mail.pm \
 		      Marc.pm \
