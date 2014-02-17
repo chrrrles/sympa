@@ -31,7 +31,7 @@ This module keeps definition of modules required by Sympa.
 
 =cut
 
-package moddef;
+package Sympa::ModDef;
 
 use strict;
 
