@@ -13181,7 +13181,7 @@ Returns a reference to a hash containing the data used to edit the parameter (of
 
 =item * I<$name> (STRING), the name of the parameter processed
 
-=item * I<$struct> (HASH_Ref), a ref to the hash describing this parameter in %listdef::pinfo
+=item * I<$struct> (HASH_Ref), a ref to the hash describing this parameter in %Sympa::ListDef::pinfo
 
 =item * I<$data> (), the value(s) taken by this parameter in the current list. Can be a reference to a list or the value of a single parameter.
 

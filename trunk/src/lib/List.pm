@@ -78,7 +78,7 @@ use Sympa::Family;    #FIXME: dependency loop between List and Family
 use PlainDigest;
 use tracking;
 
-#use listdef; used in Robot
+#use Sympa::ListDef; used in Robot
 
 our @ISA = qw(Site_r);    # not fully inherit Robot
 
@@ -9544,12 +9544,12 @@ sub load_topics {
 
 ## Sort function for writing config files
 sub by_order {
-    ($listdef::pinfo{$main::a}{'order'} <=> $listdef::pinfo{$main::b}
+    ($Sympa::ListDef::pinfo{$main::a}{'order'} <=> $Sympa::ListDef::pinfo{$main::b}
             {'order'})
         || ($main::a cmp $main::b);
 }
 
-## Apply defaults to parameters definition (%listdef::pinfo)
+## Apply defaults to parameters definition (%Sympa::ListDef::pinfo)
 ## DEPRECATED: use $robot->list_params().
 ##sub _apply_defaults {
 
@@ -9816,9 +9816,9 @@ sub _load_list_config_file {
         $pname = $1;
 
         ## Parameter aliases (compatibility concerns)
-        if (defined $listdef::alias{$pname}) {
-            $paragraph[0] =~ s/^\s*$pname/$listdef::alias{$pname}/;
-            $pname = $listdef::alias{$pname};
+        if (defined $Sympa::ListDef::alias{$pname}) {
+            $paragraph[0] =~ s/^\s*$pname/$Sympa::ListDef::alias{$pname}/;
+            $pname = $Sympa::ListDef::alias{$pname};
         }
 
         unless (defined $pinfo->{$pname}) {

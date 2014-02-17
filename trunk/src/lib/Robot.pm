@@ -32,7 +32,7 @@ use strict;
 use warnings;
 use Carp qw(carp croak);
 
-use listdef;
+use Sympa::ListDef;
 use Site;
 
 our @ISA = qw(Site);
@@ -578,7 +578,7 @@ sub list_params {
 
     return $self->{'list_params'} if $self->{'list_params'};
 
-    my $pinfo = tools::dup_var(\%listdef::pinfo);
+    my $pinfo = tools::dup_var(\%Sympa::ListDef::pinfo);
     $pinfo->{'lang'}{'format'} = [$self->supported_languages];
 
     return $self->{'list_params'} = $pinfo;
