@@ -45,7 +45,7 @@ use Sympa::Language qw(gettext_strftime);
 
 #use Sympa::Log;
 #use Sympa::Constants;
-use Message;
+use Sympa::Message;
 
 #use SDM;
 
@@ -943,7 +943,7 @@ sub remove_invalid_dkim_signature {
 
     unless (&tools::dkim_verifier($msg_as_string)) {
         my $body_as_string =
-            &Message::get_body_from_msg_as_string($msg_as_string);
+            &Sympa::Message::get_body_from_msg_as_string($msg_as_string);
 
         my $parser = new MIME::Parser;
         $parser->output_to_core(1);
@@ -1073,7 +1073,7 @@ sub dkim_sign {
         Sympa::Log::Syslog::do_log('err', 'Cannot sign (DKIM) message');
         return ($msg_as_string);
     }
-    my $message = Message->new(
+    my $message = Sympa::Message->new(
         {   'file'       => $temporary_file,
             'noxsympato' => 'noxsympato'
         }
@@ -1097,7 +1097,7 @@ sub dkim_sign {
         ->head->add('DKIM-signature', $dkim->signature->as_string());
 
     return $message->as_entity()->head->as_string() . "\n"
-        . Message::get_body_from_msg_as_string($msg_as_string);
+        . Sympa::Message::get_body_from_msg_as_string($msg_as_string);
 }
 
 ## Make a multipart/alternative, a singlepart

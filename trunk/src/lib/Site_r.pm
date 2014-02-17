@@ -1049,21 +1049,21 @@ sub send_file {
 
     my $message;
     if ($list) {
-        $message = Message->new(
+        $message = Sympa::Message->new(
             {   'messageasstring' => $messageasstring,
                 'noxsympato'      => 1,
                 'list_object'     => $list,
             }
         );
     } elsif (ref $robot) {
-        $message = Message->new(
+        $message = Sympa::Message->new(
             {   'messageasstring' => $messageasstring,
                 'noxsympato'      => 1,
                 'robot_object'    => $robot,
             }
         );
     } else {
-        $message = Message->new(
+        $message = Sympa::Message->new(
             {   'messageasstring' => $messageasstring,
                 'noxsympato'      => 1,
             }

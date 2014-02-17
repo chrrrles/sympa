@@ -42,7 +42,7 @@ use Sympa::Log;
 use Sympa::Mail;
 use MIME::QuotedPrint;
 use List;
-use Message;
+use Sympa::Message;
 use Sympa::Admin;
 use Sympa::Config_XML;
 use Sympa::Family;

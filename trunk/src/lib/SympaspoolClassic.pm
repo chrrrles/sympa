@@ -280,7 +280,7 @@ sub next {
     return $data;
 }
 
-#FIXME: This would be replaced by Message::new().
+#FIXME: This would be replaced by Sympa::Message::new().
 sub parse_filename {
     my $self = shift;
     my $key  = shift;
@@ -305,7 +305,7 @@ sub parse_filename {
     return $data;
 }
 
-#FIXME: This would be replaced by Message::load().
+#FIXME: This would be replaced by Sympa::Message::load().
 sub parse_file_content {
     my $self = shift;
     my $key  = shift;
