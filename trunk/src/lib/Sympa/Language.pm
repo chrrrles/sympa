@@ -29,7 +29,7 @@ use Exporter;
 use POSIX qw(setlocale strftime);
 use Locale::Messages qw (:locale_h :libintl_h !gettext);
 
-use Log;
+use Sympa::Log;
 use Sympa::Constants;
 
 our @ISA    = qw(Exporter);

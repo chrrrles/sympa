@@ -29,7 +29,7 @@ use strict;
 #use Email::Simple; # no longer used
 use MIME::Base64;
 
-use Log;
+use Sympa::Log;
 use SDM;
 
 ##############################################

@@ -35,7 +35,7 @@ use Data::Dumper;
 use Site;
 
 #use Conf; # used in Site
-#use Log; # used in Conf
+#use Sympa::Log; # used in Conf
 #use Sympa::Constants; # used in Conf - confdef
 #use SDM; # used in Conf
 
@@ -102,7 +102,7 @@ sub upgrade {
 
     ## Check database connectivity and probe database
     unless (SDM::check_db_connect('just_try') and SDM::probe_db()) {
-        Log::do_log(
+        Sympa::Log::do_log(
             'err',
             'Database %s defined in sympa.conf has not the right structure or is unreachable. verify db_xxx parameters in sympa.conf',
             Site->db_name

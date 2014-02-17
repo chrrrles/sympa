@@ -32,7 +32,7 @@ use CGI::Cookie;
 #use Time::Local; # not used
 
 #use Conf; # no longer used
-#use Log; # used by SDM
+#use Sympa::Log; # used by SDM
 use SDM;
 
 # this structure is used to define which session attributes are stored in a

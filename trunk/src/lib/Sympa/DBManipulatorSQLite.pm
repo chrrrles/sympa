@@ -28,7 +28,7 @@ use Data::Dumper;
 
 use version;
 use Carp;
-use Log;
+use Sympa::Log;
 
 use Sympa::DBManipulatorDefault;
 

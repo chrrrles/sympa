@@ -38,7 +38,7 @@ use Sympa::Conf;
 use Sympa::Auth;
 use SympaSession;
 use Sympa::Language;
-use Log;
+use Sympa::Log;
 use mail;
 use MIME::QuotedPrint;
 use List;

@@ -27,7 +27,7 @@ use strict;
 
 use XML::LibXML;
 
-use Log;
+use Sympa::Log;
 
 #########################################
 # new

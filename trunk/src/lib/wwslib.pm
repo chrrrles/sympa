@@ -23,7 +23,7 @@
 
 package wwslib;
 
-use Log;
+use Sympa::Log;
 use Sympa::Conf;
 use Sympa::Constants;
 

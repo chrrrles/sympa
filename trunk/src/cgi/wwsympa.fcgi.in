@@ -62,7 +62,7 @@ use List;
 use Sympa::Commands;
 use Sympa::Language qw(gettext gettext_strftime);
 
-#use Log; # used by Conf
+#use Sympa::Log; # used by Conf
 #use Message: # used by List
 use Sympa::Auth;
 use Sympa::Admin;
@@ -71,7 +71,7 @@ use SharedDocument;
 #use report;
 use SympaSession;
 
-#use Log;
+#use Sympa::Log;
 #use tools;
 use time_utils;
 

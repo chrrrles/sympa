@@ -30,7 +30,7 @@ use Getopt::Long;
 #use Sympa::Constants; # used by Conf
 use List;
 
-#use Log; # used in List - Robot - Site - Conf
+#use Sympa::Log; # used in List - Robot - Site - Conf
 #use SDM; # used by Conf
 
 my %month_idx = qw(jan 1

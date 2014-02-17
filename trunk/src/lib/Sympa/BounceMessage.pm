@@ -27,7 +27,7 @@ use strict;
 use warnings;
 
 use Message;
-use Log;
+use Sympa::Log;
 use tracking;
 use Data::Dumper;
 

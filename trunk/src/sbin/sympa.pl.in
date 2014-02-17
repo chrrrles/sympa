@@ -351,7 +351,7 @@ use Sympa::Auth;
 use SympaSession;
 
 #use Language; # load in List
-#use Log; # load in Conf
+#use Sympa::Log; # load in Conf
 #use mail; # load in List - Auth
 #use List; #load in Auth
 use Message;

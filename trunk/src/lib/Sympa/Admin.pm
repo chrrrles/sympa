@@ -46,7 +46,7 @@ use List;
 #use Conf; # already load in List - Site.
 use Sympa::Language qw(gettext_strftime);
 
-#use Log; # used in Conf
+#use Sympa::Log; # used in Conf
 #use tools; # used in Conf
 #use Sympa::Constants; # load in Conf - confdef
 

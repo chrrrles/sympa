@@ -32,7 +32,7 @@ use Carp;
 #use tools; # not used
 #use tt2; # not used
 #use Conf; # not used
-use Log;
+use Sympa::Log;
 
 #use List; # not used
 use Data::Dumper;

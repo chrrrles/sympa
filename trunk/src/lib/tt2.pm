@@ -29,7 +29,7 @@ use CGI::Util;
 use MIME::EncWords;
 use Template;
 
-use Log;
+use Sympa::Log;
 use Sympa::Language;
 use Sympa::Constants;
 use Sympa::Template::Compat;

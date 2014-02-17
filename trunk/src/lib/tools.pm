@@ -43,7 +43,7 @@ use Proc::ProcessTable;
 use Sympa::Conf;
 use Sympa::Language qw(gettext_strftime);
 
-#use Log;
+#use Sympa::Log;
 #use Sympa::Constants;
 use Message;
 

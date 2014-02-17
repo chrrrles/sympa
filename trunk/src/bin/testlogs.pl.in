@@ -27,7 +27,7 @@ use lib '--modulesdir--';
 use Getopt::Long;
 
 #use Conf; # used by Site
-#use Log; # used by Conf
+#use Sympa::Log; # used by Conf
 use Site;
 
 my %options;

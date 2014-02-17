@@ -23,7 +23,7 @@
 
 package Sympa::Fetch;
 
-use Log;
+use Sympa::Log;
 
 # request a document using https, return status and content
 sub get_https {
