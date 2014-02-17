@@ -43,7 +43,7 @@ use Sympa::ConfDef;
 use tools;
 
 #use Sympa::Constants; # already load in confdef.
-use Lock;
+use Sympa::Lock;
 
 our @ISA    = qw(Exporter);
 our @EXPORT = qw(%params %Conf);
@@ -2326,7 +2326,7 @@ sub _replace_file_value_by_db_value {
 # Returns 1 or undef if something went wrong.
 sub _save_binary_cache {
     my $param = shift;
-    my $lock  = new Lock($param->{'target_file'});
+    my $lock  = new Sympa::Lock($param->{'target_file'});
     unless (defined $lock) {
         Sympa::Log::Syslog::do_log('err', 'Could not create new lock');
         return undef;
@@ -2385,7 +2385,7 @@ sub _load_binary_cache {
         unless _source_has_not_changed({'config_file' => $config_file});
     my $config_bin = $config_file . $binary_file_extension;
 
-    my $lock = new Lock($config_bin);
+    my $lock = new Sympa::Lock($config_bin);
     unless (defined $lock) {
         Sympa::Log::Syslog::do_log('err', 'Could not create new lock');
         return undef;

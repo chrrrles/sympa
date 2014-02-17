@@ -477,7 +477,7 @@ sub lock_message {
     my $self = shift;
     my $key  = shift;
 
-    $self->{'lock'} = new Lock($key);
+    $self->{'lock'} = new Sympa::Lock($key);
     $self->{'lock'}->set_timeout(-1);
     unless ($self->{'lock'}->lock('write')) {
         Sympa::Log::Syslog::do_log('err', 'Unable to put a lock on file %s',
@@ -493,7 +493,7 @@ sub unlock_message {
     my $self = shift;
     my $key  = shift;
 
-    unless (ref($self->{'lock'}) and $self->{'lock'}->isa('Lock')) {
+    unless (ref($self->{'lock'}) and $self->{'lock'}->isa('Sympa::Lock')) {
         delete $self->{'lock'};
         return undef;
     }
