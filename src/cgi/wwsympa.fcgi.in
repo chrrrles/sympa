@@ -10528,9 +10528,9 @@ sub do_arcsearch {
     return undef
         unless (defined &check_authz('do_arcsearch', 'web_archive.access'));
 
-    use Marc::Search;
+    use Sympa::Marc::Search;
 
-    my $search = new Marc::Search;
+    my $search = new Sympa::Marc::Search;
     $search->search_base($robot->arc_path . '/' . $list->get_list_id());
     $search->base_href($robot->wwsympa_url . '/arc/' . $param->{'list'});
     $search->archive_name($in{'archive_name'});
@@ -10675,9 +10675,9 @@ sub do_arcsearch_id {
         unless (
         defined &check_authz('do_arcsearch_id', 'web_archive.access'));
 
-    use Marc::Search;
+    use Sympa::Marc::Search;
 
-    my $search = new Marc::Search;
+    my $search = new Sympa::Marc::Search;
     $search->search_base($robot->arc_path . '/' . $list->get_list_id());
     $search->base_href($robot->wwsympa_url . '/arc/' . $param->{'list'});
 

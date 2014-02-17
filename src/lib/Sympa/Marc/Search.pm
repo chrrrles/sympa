@@ -2,7 +2,7 @@
 # vim:ft=perl:et:sw=4
 # $Id$
 
-package Marc::Search;
+package Sympa::Marc::Search;
 
 use strict;
 
@@ -10,9 +10,9 @@ use File::Find;
 use HTML::Entities qw(decode_entities encode_entities);
 use Encode qw(decode_utf8 encode_utf8 is_utf8);
 
-use Marc;
+use Sympa::Marc;
 
-our @ISA     = qw(Marc);
+our @ISA     = qw(Sympa::Marc);
 our $VERSION = "4.3";
 our ($AUTOLOAD, @MSGFILES);
 
@@ -53,7 +53,7 @@ my %fields = (
 
 sub new {
     my $class = shift;
-    my $self  = Marc->new(\%fields);
+    my $self  = Sympa::Marc->new(\%fields);
     bless $self, $class;
     return $self;
 }
