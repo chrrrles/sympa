@@ -365,7 +365,7 @@ use Sympa::Family;
 #use Sympa::Constants;
 #use tracking; # not used
 #use Sympaspool; # load in List
-use Messagespool;
+use Sympa::MessageSpool;
 
 #use SDM; # load in Conf
 use Upgrade;
@@ -1442,7 +1442,7 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
     my $index_cleanqueue  = 0;
     my @qfile;
 
-    my $spool = Messagespool->new();
+    my $spool = Sympa::MessageSpool->new();
     ## This is the main loop : look for files in the directory, handles
     ## them, sleeps a while and continues the good job.
     while (!$signal) {
