@@ -26,7 +26,7 @@
 ##   * provide access to robot conf parameters,
 ##   * determine the current robot, given a domain
 ##   * deliver the list of robots
-package Robot;
+package Sympa::Robot;
 
 use strict;
 use warnings;
@@ -857,7 +857,7 @@ sub clean_robot {
         if ($robot and $robot eq '*' and $maybe_site) {
             $robot = 'Site';
         } elsif ($robot and $robot ne '*') {
-            $robot = Robot->new($robot);
+            $robot = Sympa::Robot->new($robot);
         } else {
             croak "Illegal robot argument: " . ($robot || '');
         }
@@ -914,7 +914,7 @@ sub get_robots {
         next unless -d $vhost_etc;
         next unless -f $vhost_etc . '/robot.conf';
 
-        if ($robot = Robot->new($name, %options)) {
+        if ($robot = Sympa::Robot->new($name, %options)) {
             $got_default = 1 if $robot->domain eq Site->domain;
             push @robots, $robot;
             delete $orphan{$robot->domain};
@@ -923,7 +923,7 @@ sub get_robots {
     closedir $dir;
 
     unless ($got_default) {
-        if ($robot = Robot->new(Site->domain, %options)) {
+        if ($robot = Sympa::Robot->new(Site->domain, %options)) {
             push @robots, $robot;
             delete $orphan{$robot->domain};
         }

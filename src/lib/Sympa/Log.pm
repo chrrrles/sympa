@@ -308,7 +308,7 @@ sub db_log {
     }
 
     my $robot_id;
-    if (ref $robot and ref $robot eq 'Robot') {
+    if (ref $robot and ref $robot eq 'Sympa::Robot') {
         $robot_id = $robot->name;
     } else {
         $robot_id = $robot || '';

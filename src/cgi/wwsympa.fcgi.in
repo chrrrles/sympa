@@ -120,7 +120,7 @@ my $rss;
 my $ajax;
 
 ## Load sympa config
-unless (defined Robot::get_robots()) {
+unless (defined Sympa::Robot::get_robots()) {
 
     # we cannot use log without configuration
     my $conf = Sympa::Conf::get_sympa_conf();
@@ -1147,7 +1147,7 @@ while ($query = &new_loop()) {
     $robot_id = Site->host unless $robot_id;    #FIXME: use domain?
 
     ## Create Robot object
-    $robot = Robot->new($robot_id);
+    $robot = Sympa::Robot->new($robot_id);
     $pinfo = $robot->list_params;
 
     ## Default robot
@@ -13545,7 +13545,7 @@ sub do_rename_list_request {
 
     ## Super listmaster can move a list to another robot
     if ($robot->is_listmaster($param->{'user'}{'email'})) {
-        foreach my $r (@{Robot::get_robots()}) {
+        foreach my $r (@{Sympa::Robot::get_robots()}) {
             if ($r->domain eq $robot->domain) {
                 $param->{'robots'}{$r->domain} = 'selected="selected"';
             } else {
@@ -13713,7 +13713,7 @@ sub do_rename_list {
         $param->{'redirect_to'} =
             "$param->{'base_url'}$param->{'path_cgi'}/admin/$in{'new_listname'}";
     } else {
-        my $new_robot = Robot->new($in{'new_robot'});
+        my $new_robot = Sympa::Robot->new($in{'new_robot'});
         $param->{'redirect_to'} =
             $new_robot->wwsympa_url . "/admin/$in{'new_listname'}";
     }
@@ -25106,7 +25106,7 @@ sub get_server_details {
         ## n.b. Site (default) config is not included.
         $param->{'robots'} = {
             map { $_->domain => $_->fullconfig }
-            grep { $_->etc ne Site->etc } @{Robot::get_robots()}
+            grep { $_->etc ne Site->etc } @{Sympa::Robot::get_robots()}
         };
     }
 

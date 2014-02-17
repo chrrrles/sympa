@@ -51,7 +51,7 @@ sub password_fingerprint {
 ## authentication : via email or uid
 sub check_auth {
     Sympa::Log::Syslog::do_log('debug2', '(%s, %s, ...)', @_);
-    my $robot = Robot::clean_robot(shift);
+    my $robot = Sympa::Robot::clean_robot(shift);
     my $auth  = shift;                       ## User email or UID
     my $pwd   = shift;                       ## Password
 
@@ -97,7 +97,7 @@ sub check_auth {
 ## IN : robot, user email
 ## OUT : boolean
 sub may_use_sympa_native_auth {
-    my $robot      = Robot::clean_robot(shift);
+    my $robot      = Sympa::Robot::clean_robot(shift);
     my $user_email = shift;
 
     my $ok = 0;
@@ -121,7 +121,7 @@ sub may_use_sympa_native_auth {
 
 sub authentication {
     Sympa::Log::Syslog::do_log('debug2', '(%s, %s, ...)', @_);
-    my $robot = Robot::clean_robot(shift);
+    my $robot = Sympa::Robot::clean_robot(shift);
     my $email = shift;
     my $pwd   = shift;
     my ($user, $canonic);
@@ -200,7 +200,7 @@ sub authentication {
 
 sub ldap_authentication {
     Sympa::Log::Syslog::do_log('debug2', '(%s, %s, %s, ...)', @_);
-    my $robot       = Robot::clean_robot(shift);
+    my $robot       = Sympa::Robot::clean_robot(shift);
     my $ldap        = shift;
     my $auth        = shift;
     my $pwd         = shift;
@@ -341,7 +341,7 @@ sub ldap_authentication {
 # fetch user email using his cas net_id and the paragrapah number in auth.conf
 ## NOTE: This might be moved to Robot package.
 sub get_email_by_net_id {
-    my $robot      = Robot::clean_robot(shift);
+    my $robot      = Sympa::Robot::clean_robot(shift);
     my $auth_id    = shift;
     my $attributes = shift;
     Sympa::Log::Syslog::do_log('debug2', '(%s, %s, uid=%s)',
@@ -410,7 +410,7 @@ sub get_email_by_net_id {
 sub remote_app_check_password {
     my $trusted_application_name = shift;
     my $password                 = shift;
-    my $robot                    = Robot::clean_robot(shift);
+    my $robot                    = Sympa::Robot::clean_robot(shift);
     Sympa::Log::Syslog::do_log('debug2', '(%s, ..., %s)',
         $trusted_application_name, $robot);
 
@@ -457,7 +457,7 @@ sub remote_app_check_password {
 sub create_one_time_ticket {
     Sympa::Log::Syslog::do_log('debug2', '(%s, %s, %s, %s)', @_);
     my $email       = shift;
-    my $robot       = Robot::clean_robot(shift);
+    my $robot       = Sympa::Robot::clean_robot(shift);
     my $data_string = shift;
     my $remote_addr = shift;
     ## Value may be 'mail' if the IP address is not known

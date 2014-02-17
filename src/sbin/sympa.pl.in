@@ -506,7 +506,7 @@ if ($main::options{'help'}) {
     }
 
     ## Now trying to load full config (including database)
-    unless (Site->load() and Robot::get_robots()) {
+    unless (Site->load() and Sympa::Robot::get_robots()) {
         printf STDERR
             "Unable to load Sympa configuration, file %s or any of the virtual host robot.conf files contain errors. Exiting.\n",
             Sympa::Conf::get_sympa_conf();
@@ -548,7 +548,7 @@ my $signal = 0;
 while ($signal ne 'term') {    #as long as a SIGTERM is not received }
 
     ## Load sympa.conf.
-    unless (Robot::get_robots()) {
+    unless (Sympa::Robot::get_robots()) {
         print STDERR
             "Unable to load Sympa configuration, file %s or any of the virtual host robot.conf files contain errors. Exiting.\n",
             Sympa::Conf::get_sympa_conf();
@@ -901,7 +901,7 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
             exit 1;
         }
 
-        foreach my $robot (@{Robot::get_robots()}) {
+        foreach my $robot (@{Sympa::Robot::get_robots()}) {
             printf STDOUT "Doing processing for virtual robot %s...\n",
                 $robot->name;
             my ($status, $failed_for) = Sympa::Admin::change_user_email(
@@ -1288,7 +1288,7 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
         if (length $listname) {
             Sympa::Log::Syslog::do_log('notice', 'Loading list %s...',
                 $listname);
-            my $robot = Robot->new($robot_id || Site->domain);
+            my $robot = Sympa::Robot->new($robot_id || Site->domain);
             unless (defined $robot) {
                 print STDERR "Error : incorrect robot name '$robot_id'\n";
                 exit 1;
@@ -1302,7 +1302,7 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
             if ($robot_id) {
                 Sympa::Log::Syslog::do_log('notice',
                     'Loading all lists in %s...', $robot_id);
-                $that = Robot->new($robot_id);
+                $that = Sympa::Robot->new($robot_id);
                 unless (defined $that) {
                     print STDERR "Error : incorrect robot name '$robot_id'\n";
                     exit 1;

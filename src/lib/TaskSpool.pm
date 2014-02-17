@@ -122,7 +122,7 @@ sub analyze_file_name {
     $data->{'list'}  = lc($data->{'list'});
     $data->{'robot'} = lc($data->{'robot'});
     return undef
-        unless $data->{'robot_object'} = Robot->new($data->{'robot'});
+        unless $data->{'robot_object'} = Sympa::Robot->new($data->{'robot'});
 
     my $listname;
 
@@ -283,7 +283,7 @@ sub create_required_lists_tasks {
         'Creating required tasks from list models');
 
     my $task;
-    foreach my $robot (@{Robot::get_robots()}) {
+    foreach my $robot (@{Sympa::Robot::get_robots()}) {
         Sympa::Log::Syslog::do_log('debug3',
             'creating list task : current bot is %s', $robot);
         my $all_lists = Sympa::List::get_lists($robot);

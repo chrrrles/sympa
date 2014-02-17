@@ -254,7 +254,7 @@ sub edit_configuration {
 
     ## Load sympa config (but not using database)
     unless (
-        defined Robot::get_robots('config_file' => $sympa_conf, 'no_db' => 1))
+        defined Sympa::Robot::get_robots('config_file' => $sympa_conf, 'no_db' => 1))
     {
         Sympa::Log::Syslog::fatal_err(
             Sympa::Language::gettext(

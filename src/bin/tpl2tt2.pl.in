@@ -97,7 +97,7 @@ if (-d "$sympa_etc/create_list_templates") {
 }
 
 ## Go through Virtual Robots
-foreach my $robot (@{Robot::get_robots()}) {
+foreach my $robot (@{Sympa::Robot::get_robots()}) {
     my $robot_etc = $robot->etc;
 
     ## Search in etc/

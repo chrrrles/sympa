@@ -663,7 +663,7 @@ sub check_spam_status {
 
     return $self->{'spam_status'} if $self->{'spam_status'};
 
-    return undef unless ref $self->robot eq 'Robot';
+    return undef unless ref $self->robot eq 'Sympa::Robot';
 
     my $spam_status =
         Scenario::request_action($self->robot, 'spam_status', 'smtp',
@@ -684,7 +684,7 @@ sub check_dkim_signature {
     my $self = shift;
 
     # verify DKIM signature
-    if (ref($self->robot) eq 'Robot'
+    if (ref($self->robot) eq 'Sympa::Robot'
         and $self->robot->dkim_feature eq 'on') {
         $self->{'dkim_pass'} =
             &tools::dkim_verifier($self->{'msg_as_string'});

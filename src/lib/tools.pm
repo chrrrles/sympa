@@ -476,7 +476,7 @@ sub load_edit_list_conf {
 ## return a hash from the edit_list_conf file
 ## NOTE: This might be moved to wwslib along with get_list_list_tpl().
 sub load_create_list_conf {
-    my $robot = Robot::clean_robot(shift);
+    my $robot = Sympa::Robot::clean_robot(shift);
 
     my $file;
     my $conf;
@@ -516,7 +516,7 @@ sub load_create_list_conf {
 
 ## NOTE: This might be moved to wwslib.
 sub get_list_list_tpl {
-    my $robot = Robot::clean_robot(shift);
+    my $robot = Sympa::Robot::clean_robot(shift);
 
     my $list_conf;
     my $list_templates;
@@ -845,7 +845,7 @@ sub get_dkim_parameters {
 
         $data->{'selector'} = $self->dkim_parameters->{'selector'};
         $keyfile = $self->dkim_parameters->{'private_key_path'};
-    } elsif (ref $self and ref $self eq 'Robot' or $self eq 'Site') {
+    } elsif (ref $self and ref $self eq 'Sympa::Robot' or $self eq 'Site') {
 
         # in robot context
         $data->{'d'}        = $self->dkim_signer_domain;
@@ -1964,7 +1964,7 @@ sub get_filename {
     } elsif (ref $robot) {
         return $robot->get_etc_filename($name, $options);
     } elsif ($robot and $robot ne '*') {
-        return Robot->new($robot)->get_etc_filename($name, $options);
+        return Sympa::Robot->new($robot)->get_etc_filename($name, $options);
     } else {
         return Site->get_etc_filename($name, $options);
     }
@@ -2319,7 +2319,7 @@ sub get_message_id {
     my $domain;
     unless ($robot) {
         $domain = Site->domain;
-    } elsif (ref $robot and ref $robot eq 'Robot') {
+    } elsif (ref $robot and ref $robot eq 'Sympa::Robot') {
         $domain = $robot->domain;
     } elsif ($robot eq 'Site') {
         $domain = Site->domain;
@@ -3468,7 +3468,7 @@ sub save_to_bad {
         unless (mkdir $queue . '/bad', 0775) {
             Sympa::Log::Syslog::do_log('notice',
                 'Unable to create %s/bad/ directory.', $queue);
-            Robot->new($hostname)
+            Sympa::Robot->new($hostname)
                 ->send_notify_to_listmaster('unable_to_create_dir',
                 {'dir' => "$queue/bad"});
             return undef;

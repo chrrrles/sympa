@@ -851,7 +851,7 @@ sub purge_tables {
 
     #
     $removed = 0;
-    foreach my $robot (@{Robot::get_robots()}) {
+    foreach my $robot (@{Sympa::Robot::get_robots()}) {
         my $all_lists = Sympa::List::get_lists($robot);
         foreach my $list (@$all_lists) {
             $removed +=
@@ -906,7 +906,7 @@ sub purge_user_table {
         $known_people{$l} = 1;
     }
 
-    foreach my $robot (@{Robot::get_robots()}) {
+    foreach my $robot (@{Sympa::Robot::get_robots()}) {
 
         my $all_lists = Sympa::List::get_lists($robot);
         foreach my $list (@$all_lists) {

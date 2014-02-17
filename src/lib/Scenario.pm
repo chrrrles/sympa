@@ -93,7 +93,7 @@ sub new {
     );
 
     unless (ref $that and ref $that eq 'List'
-        or ref $that and ref $that eq 'Robot'
+        or ref $that and ref $that eq 'Sympa::Robot'
         or $that eq 'Site') {    # FIXME: really maybe a Site?
         croak 'bug in logic.  Ask developer';
     }
@@ -347,7 +347,7 @@ sub request_action {
         $list  = $that;
         $robot = $that->robot;
     } else {
-        $robot = Robot::clean_robot($that, 1);    #FIXME: really maybe Site?
+        $robot = Sympa::Robot::clean_robot($that, 1);    #FIXME: really maybe Site?
     }
 
     my $trace_scenario;
@@ -411,7 +411,7 @@ sub request_action {
             Sympa::Log::Syslog::do_log('info',
                 'Will evaluate scenario %s for list %s',
                 $operation, $that);
-        } elsif (ref $that and ref $that eq 'Robot') {
+        } elsif (ref $that and ref $that eq 'Sympa::Robot') {
             $trace_scenario =
                   'scenario request '
                 . $operation
@@ -746,7 +746,7 @@ sub verify {
     } elsif ($context->{'robot_object'}) {
         $robot = $context->{'robot_object'};
     } elsif ($context->{'robot_domain'}) {
-        $robot = Robot::clean_robot($context->{'robot_domain'});
+        $robot = Sympa::Robot::clean_robot($context->{'robot_domain'});
     }
 
     my $pinfo;
@@ -1547,7 +1547,7 @@ sub search {
     my $context     = shift;
 
     unless (ref $that and ref $that eq 'List') {
-        $that = Robot::clean_robot($that, 1);    #FIXME: really may be Site?
+        $that = Sympa::Robot::clean_robot($that, 1);    #FIXME: really may be Site?
     }
 
     my $sender = $context->{'sender'};
@@ -1827,7 +1827,7 @@ sub verify_custom {
     if (ref $that and ref $that eq 'List') {
         $robot = $that->robot;
     } else {
-        $that = Robot::clean_robot($that, 1);    #FIXME: really may be Site?
+        $that = Sympa::Robot::clean_robot($that, 1);    #FIXME: really may be Site?
         $robot = $that;
     }
 
