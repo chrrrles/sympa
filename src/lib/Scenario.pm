@@ -1674,7 +1674,7 @@ sub search {
         my $time = time;
         my %ldap_conf;
 
-        return undef unless (%ldap_conf = &Ldap::load($file));
+        return undef unless (%ldap_conf = &Sympa::LDAP::load($file));
 
         my $filter = $ldap_conf{'filter'};
 

@@ -72,7 +72,7 @@ use Sympa::Language qw(gettext gettext_strftime);
 #use Log; # used in Conf
 #use Conf; # used in Robot - Site
 use mail;
-use Ldap;
+use Sympa::Ldap;
 use Message;
 use Sympa::Family;    #FIXME: dependency loop between List and Family
 use PlainDigest;
