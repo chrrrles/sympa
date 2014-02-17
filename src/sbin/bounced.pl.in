@@ -306,7 +306,7 @@ while (!$end) {
             $spool->move_to_bad($bounce->{'messagekey'});
         }
         ## Free zombie sendmail processes
-        mail::reaper;
+        Sympa::Mail::reaper;
     }
 }
 

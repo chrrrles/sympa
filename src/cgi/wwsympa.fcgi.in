@@ -56,7 +56,7 @@ use Data::Dumper;
 ## Sympa API
 use List;
 
-#use mail; # used by List
+#use Sympa::Mail; # used by List
 #use Conf; # used in List - Robot - Site
 #use confdef; # used by Conf
 use Sympa::Commands;
@@ -141,7 +141,7 @@ if (eval "require Sympa::Plugin::Manager") {
     $plugins = Sympa::Plugin::Manager->new(application => 'website');
 }
 
-&mail::set_send_spool(Site->queue);
+&Sympa::Mail::set_send_spool(Site->queue);
 
 if (Site->use_fast_cgi) {
     require CGI::Fast;
@@ -10220,7 +10220,7 @@ sub do_remove_arc {
 ####################################################
 #  Sends a web archive message to a
 #  requesting user
-#  It uses mail::mail_forward() to do it.
+#  It uses Sympa::Mail::mail_forward() to do it.
 #
 # IN : -
 #
@@ -10297,7 +10297,7 @@ sub do_send_me {
             return undef;
         }
         unless (
-            mail::mail_forward(
+            Sympa::Mail::mail_forward(
                 $message,                  $robot->get_address(),
                 $param->{'user'}{'email'}, $robot
             )
@@ -22227,7 +22227,7 @@ sub do_send_mail {
     $data->{'not_auto_submitted'} = 1;
 
     my $messageasstring =
-        mail::parse_tt2_messageasstring($robot, '', $to, $data);
+        Sympa::Mail::parse_tt2_messageasstring($robot, '', $to, $data);
     my $result;
     if ($in{'sub_action'} eq 'sendmailtolist') {
         my $incomingspool = Messagespool->new();
@@ -22248,7 +22248,7 @@ sub do_send_mail {
                 'noxsympato'      => 1,
             }
         );
-        $result = mail::sending(
+        $result = Sympa::Mail::sending(
             'message'  => $message,
             'rcpt'     => $to,
             'from'     => $robot->get_address('owner'),

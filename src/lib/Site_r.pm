@@ -1044,7 +1044,7 @@ sub send_file {
         unless ($data->{'alarm'});
 
     my $messageasstring =
-        mail::parse_tt2_messageasstring($robot, $filename, $who, $data);
+        Sympa::Mail::parse_tt2_messageasstring($robot, $filename, $who, $data);
     return $messageasstring if $options->{'parse_and_return'};
 
     my $message;
@@ -1072,7 +1072,7 @@ sub send_file {
 
     ## SENDING
     unless (
-        defined mail::sending(
+        defined Sympa::Mail::sending(
             'message' => $message,
             'rcpt'    => $who,
             'from' =>
