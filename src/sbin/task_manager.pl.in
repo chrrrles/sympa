@@ -228,7 +228,7 @@ while (!$end) {
     my $rep          = &tools::adate($current_date);
 
     ## Empty cache of the List.pm module
-    &List::init_list_cache();
+    &Sympa::List::init_list_cache();
 
     # Process grouped notifications
     Site->send_notify_to_listmaster(undef, undef, 1, undef);

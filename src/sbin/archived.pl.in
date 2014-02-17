@@ -278,7 +278,7 @@ my $spoolarchive = new SympaspoolClassic('outgoing');
 ## infinite loop scanning the queue (unless a sig TERM is received
 while (!$end) {
 
-    &List::init_list_cache();
+    &Sympa::List::init_list_cache();
     sleep 1;
     my $item = $spoolarchive->next;
 
@@ -362,7 +362,7 @@ while (!$end) {
             unless ($list->am_i('privileged_owner', $sender)
                 || $list->am_i('owner',  $sender)
                 || $list->am_i('editor', $sender)
-                || &List::is_listmaster($sender, $list->{'domain'})) {
+                || &Sympa::List::is_listmaster($sender, $list->{'domain'})) {
 
                 # if not list owner or list editor or listmaster,n check if
                 # sender of remove order is sender of the message to remove
@@ -628,7 +628,7 @@ Rebuilds archives for the list the name of which is given in the argument $adrli
 
 =item * unset_hidden_mode
 
-=item * List::new
+=item * Sympa::List::new
 
 =item * Sympa::Log::Syslog::do_log
 
@@ -897,13 +897,13 @@ Archives one message into one list archives directory.
 
 =item * unset_hidden_mode
 
-=item * List::get_arc_size
+=item * Sympa::List::get_arc_size
 
-=item * List::get_list_id
+=item * Sympa::List::get_list_id
 
-=item * List::new
+=item * Sympa::List::new
 
-=item * List::send_notify_to_owner
+=item * Sympa::List::send_notify_to_owner
 
 =item * Sympa::Log::Syslog::do_log
 

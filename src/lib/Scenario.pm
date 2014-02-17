@@ -366,7 +366,7 @@ sub request_action {
     ## Check that authorization method is one of those known by Sympa
     unless ($auth_method =~ /^(smtp|md5|pgp|smime|dkim)/) {
         Sympa::Log::Syslog::do_log('info',
-            "fatal error : unknown auth method $auth_method in List::get_action"
+            "fatal error : unknown auth method $auth_method in Sympa::List::get_action"
         );
         return undef;
     }
@@ -758,7 +758,7 @@ sub verify {
 
     unless (defined($context->{'sender'})) {
         Sympa::Log::Syslog::do_log('info',
-            "internal error, no sender find in List::verify, report authors");
+            "internal error, no sender find in Sympa::List::verify, report authors");
         return undef;
     }
 
@@ -1759,7 +1759,7 @@ sub search {
 
         $ds->disconnect()
             or Sympa::Log::Syslog::do_log('notice',
-            'List::search_ldap.Unbind impossible');
+            'Sympa::List::search_ldap.Unbind impossible');
         $persistent_cache{'named_filter'}{$filter_file}{$filter}{'update'} =
             time;
 
@@ -1768,7 +1768,7 @@ sub search {
 
     } elsif ($filter_file =~ /\.txt$/) {
 
-        # Sympa::Log::Syslog::do_log('info', 'List::search: eval %s',
+        # Sympa::Log::Syslog::do_log('info', 'Sympa::List::search: eval %s',
         # $filter_file);
         my @files =
             $that->get_etc_filename("search_filters/$filter_file",
@@ -1788,7 +1788,7 @@ sub search {
         my $sender = lc($sender);
         foreach my $file (@files) {
             Sympa::Log::Syslog::do_log('debug3',
-                'List::search: found file  %s', $file);
+                'Sympa::List::search: found file  %s', $file);
             unless (open FILE, $file) {
                 Sympa::Log::Syslog::do_log('err', 'Could not open file %s',
                     $file);
@@ -1796,7 +1796,7 @@ sub search {
             }
             while (<FILE>) {
 
-                # Sympa::Log::Syslog::do_log('debug3', 'List::search: eval
+                # Sympa::Log::Syslog::do_log('debug3', 'Sympa::List::search: eval
                 # rule %s', $_);
                 next if (/^\s*$/o || /^[\#\;]/o);
                 my $regexp = $_;
@@ -1804,7 +1804,7 @@ sub search {
                 $regexp =~ s/\*/.*/;
                 $regexp = '^' . $regexp . '$';
 
-                # Sympa::Log::Syslog::do_log('debug3', 'List::search: eval  %s
+                # Sympa::Log::Syslog::do_log('debug3', 'Sympa::List::search: eval  %s
                 # =~ /%s/i', $sender,$regexp);
                 return 1 if ($sender =~ /$regexp/i);
             }

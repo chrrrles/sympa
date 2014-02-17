@@ -822,7 +822,7 @@ configuration)
 Message is signed if the list has a key and a 
 certificate
 
-Note: List::send_global_file() was deprecated.
+Note: Sympa::List::send_global_file() was deprecated.
 
 IN :
       -$self (+): ref(List) | ref(Robot) | "Site"
@@ -1106,7 +1106,7 @@ sub send_file {
 Sends a notice to (super or normal) listmaster by parsing
 listmaster_notification.tt2 template
 
-Note: List::send_notify_to_listmaster() was deprecated.
+Note: Sympa::List::send_notify_to_listmaster() was deprecated.
 
 IN :
        -$self (+): ref(Robot) | "Site"

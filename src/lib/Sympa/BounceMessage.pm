@@ -872,7 +872,7 @@ sub process_email_feedback_report {
                 push @lists, $list;
             } elsif ($self->{'efr'}{'feedback_type'} =~ /opt-out/
                 && (defined $self->{'efr'}{'original_rcpt'})) {
-                @lists = List::get_which($self->{'efr'}{'original_rcpt'},
+                @lists = Sympa::List::get_which($self->{'efr'}{'original_rcpt'},
                     $self->{'robotname'}, 'member');
             } else {
                 Sympa::Log::Syslog::do_log(

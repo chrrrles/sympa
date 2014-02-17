@@ -63,7 +63,7 @@ unless (&SDM::check_db_connect()) {
 &mail::set_send_spool(Site->queue);
 
 ## Loading all Lists at startup, in order to increase execution speed
-List::get_lists('Site');
+Sympa::List::get_lists('Site');
 
 ##############################################################################
 #    Soap part

@@ -118,7 +118,7 @@ Calls:
 
 =item * Sympa::Log::Syslog::do_log
 
-=item * List::new
+=item * Sympa::List::new
 
 =item * Mail::Address::parse
 
