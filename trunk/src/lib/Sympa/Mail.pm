@@ -529,7 +529,7 @@ sub mail_forward {
     my $message = shift;
     my $from    = shift;
     my $rcpt    = shift;
-    my $robot   = Robot::clean_robot(shift, 1);    #FIXME: may be Site?
+    my $robot   = Sympa::Robot::clean_robot(shift, 1);    #FIXME: may be Site?
 
     unless (ref $message and $message->isa('Message')) {
         Sympa::Log::Syslog::do_log('err', 'Unexpected parameter type: %s',
@@ -623,7 +623,7 @@ sub sendto {
     my $from        = $params{'from'};
     my $rcpt        = $params{'rcpt'};
     my $listname    = $params{'listname'};
-    my $robot       = Robot::clean_robot($params{'robot'});  # may not be Site
+    my $robot       = Sympa::Robot::clean_robot($params{'robot'});  # may not be Site
     my $priority    = $params{'priority'};
     my $verp        = $params{'verp'};
     my $merge       = $params{'merge'};
@@ -743,7 +743,7 @@ sub sending {
     my $message     = $params{'message'};
     my $rcpt        = $params{'rcpt'};
     my $from        = $params{'from'};
-    my $robot       = Robot::clean_robot($params{'robot'}, 1);   # May be Site
+    my $robot       = Sympa::Robot::clean_robot($params{'robot'}, 1);   # May be Site
     my $listname    = $params{'listname'};
     my $sign_mode   = $params{'sign_mode'};
     my $sympa_email = $params{'sympa_email'};
@@ -860,7 +860,7 @@ sub smtpto {
     Sympa::Log::Syslog::do_log('debug2', '(%s, %s, %s, %s, %s)', @_);
     my $from      = shift;
     my $rcpt      = shift;
-    my $robot     = Robot::clean_robot(shift, 1);
+    my $robot     = Sympa::Robot::clean_robot(shift, 1);
     my $msgkey    = shift;
     my $sign_mode = shift;
 

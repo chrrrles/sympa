@@ -407,7 +407,7 @@ sub analyze_file_name {
     $data->{'list'}  = lc($data->{'list'});
     $data->{'robot'} = lc($data->{'robot'});
     return undef
-        unless $data->{'robot_object'} = Robot->new($data->{'robot'});
+        unless $data->{'robot_object'} = Sympa::Robot->new($data->{'robot'});
 
     my $listname;
 

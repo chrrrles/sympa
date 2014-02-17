@@ -166,7 +166,7 @@ $main::options{'log_to_stderr'} = 1
     if ($main::options{'debug'} || $main::options{'foreground'});
 
 # Load sympa.conf
-unless (defined Robot::get_robots()) {
+unless (defined Sympa::Robot::get_robots()) {
     Sympa::Log::Syslog::fatal_err(
         'Unable to load sympa configuration, file %s has errors.',
         Sympa::Conf::get_sympa_conf());
@@ -241,7 +241,7 @@ unless (($( == (getgrnam(Sympa::Constants::GROUP))[2])
 ## Sets the UMASK
 umask(oct(Site->umask));
 
-foreach my $robot (@{Robot::get_robots()}) {
+foreach my $robot (@{Sympa::Robot::get_robots()}) {
     my $arc_dir = $robot->arc_path;
     ## Create arc_path if required
     if ($arc_dir) {

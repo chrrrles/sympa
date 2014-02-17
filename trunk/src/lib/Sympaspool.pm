@@ -303,7 +303,7 @@ sub next {
     my $robot;
 
     if ($robot_id and $robot_id ne '*') {
-        $robot = Robot->new($robot_id);
+        $robot = Sympa::Robot->new($robot_id);
     }
     if ($robot) {
         if ($listname and length $listname) {
@@ -386,7 +386,7 @@ sub get_message {
     $message->{'spoolname'} = $self->{'spoolname'};
 
     if ($message->{'list'} && $message->{'robot'}) {
-        my $robot = Robot->new($message->{'robot'});
+        my $robot = Sympa::Robot->new($message->{'robot'});
         if ($robot) {
             my $list = List->new($message->{'list'}, $robot);
             if ($list) {

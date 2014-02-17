@@ -52,7 +52,7 @@ my %session_hard_attributes = (
 
 sub new {
     my $pkg     = shift;
-    my $robot   = Robot::clean_robot(shift, 1);   #FIXME: maybe a Site object?
+    my $robot   = Sympa::Robot::clean_robot(shift, 1);   #FIXME: maybe a Site object?
     my $context = shift || {};
 
     my $cookie = $context->{'cookie'};
@@ -471,7 +471,7 @@ sub renew {
 ## delay is a parameter in seconds
 sub purge_old_sessions {
     Sympa::Log::Syslog::do_log('debug2', '(%s)', @_);
-    my $robot = Robot::clean_robot(shift, 1);
+    my $robot = Sympa::Robot::clean_robot(shift, 1);
 
     my $delay = tools::duration_conv(Site->session_table_ttl);
     my $anonymous_delay =
@@ -492,7 +492,7 @@ sub purge_old_sessions {
 
     my $condition = '';
     $condition = sprintf 'robot_session = %s', SDM::quote($robot->name)
-        if ref $robot eq 'Robot';
+        if ref $robot eq 'Sympa::Robot';
     my $anonymous_condition = $condition;
 
     $condition .= sprintf '%s%d > date_session',
@@ -557,7 +557,7 @@ sub purge_old_sessions {
 ##
 sub purge_old_tickets {
     Sympa::Log::Syslog::do_log('debug2', '(%s)', @_);
-    my $robot = Robot::clean_robot(shift, 1);
+    my $robot = Sympa::Robot::clean_robot(shift, 1);
 
     my $delay = tools::duration_conv(Site->one_time_ticket_table_ttl);
     unless ($delay) {
@@ -573,7 +573,7 @@ sub purge_old_tickets {
         if $delay;
     $condition .= sprintf '%srobot_one_time_ticket = %s',
         ($condition ? ' AND ' : ''), SDM::quote($robot->name)
-        if ref $robot eq 'Robot';
+        if ref $robot eq 'Sympa::Robot';
     $condition = " WHERE $condition"
         if $condition;
 
@@ -608,7 +608,7 @@ sub purge_old_tickets {
 sub list_sessions {
     Sympa::Log::Syslog::do_log('debug2', '(%s, %s, %s)', @_);
     my $delay          = shift;
-    my $robot          = Robot::clean_robot(shift, 1);
+    my $robot          = Sympa::Robot::clean_robot(shift, 1);
     my $connected_only = shift;
 
     my @sessions;
@@ -617,7 +617,7 @@ sub list_sessions {
 
     my $condition = '';
     $condition = sprintf 'robot_session = %s', SDM::quote($robot->name)
-        if ref $robot eq 'Robot';
+        if ref $robot eq 'Sympa::Robot';
     $condition .= sprintf '%s%d < date_session',
         ($condition ? ' AND ' : ''), $time - $delay
         if $delay;

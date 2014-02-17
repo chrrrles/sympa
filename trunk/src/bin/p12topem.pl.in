@@ -107,7 +107,7 @@ if ($main::options{'help'} or !-r $p12input or ($listname and $robot_id)) {
         $cert       = $list->dir . '/cert.pem';
         $privatekey = $list->dir . '/private_key';
     } elsif ($robot_id) {
-        my $robot = Robot->new($robot_id);
+        my $robot = Sympa::Robot->new($robot_id);
         unless ($robot) {
             printf "unknown robot %s\n", $robot_id;
             die;

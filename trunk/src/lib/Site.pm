@@ -130,7 +130,7 @@ sub AUTOLOAD {
     *{$AUTOLOAD} = sub {
         my $self = shift;
 
-        if (ref $self and ref $self eq 'Robot') {
+        if (ref $self and ref $self eq 'Sympa::Robot') {
             if ($type->{'RobotAttribute'}) {
                 ## getter for list attributes.
                 croak "Can't modify \"$attr\" attribute" if scalar @_ > 1;
@@ -250,11 +250,11 @@ sub lang {
 
     croak "Can't modify \"lang\" attribute" if scalar @_ > 1;
     if (    ref $self
-        and ref $self eq 'Robot'
+        and ref $self eq 'Sympa::Robot'
         and $self->{'etc'} ne Site->etc
         and exists Site->robots_config->{$self->{'name'}}{'lang'}) {
         $lang = Site->robots_config->{$self->{'name'}}{'lang'};
-    } elsif (ref $self and ref $self eq 'Robot'
+    } elsif (ref $self and ref $self eq 'Sympa::Robot'
         or !ref $self and $self eq 'Site') {
         croak "Can't call method \"lang\" on uninitialized $self class"
             unless $Site::is_initialized;
@@ -296,7 +296,7 @@ sub listmasters {
     my $self = shift;
 
     croak "Can't modify \"listmasters\" attribute" if scalar @_ > 1;
-    if (ref $self and ref $self eq 'Robot') {
+    if (ref $self and ref $self eq 'Sympa::Robot') {
         if (wantarray) {
             @{Site->robots_config->{$self->domain}{'listmasters'} || []};
         } else {

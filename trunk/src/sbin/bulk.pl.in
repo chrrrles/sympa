@@ -142,7 +142,7 @@ if ($main::options{'help'}) {
 }
 
 # Load sympa.conf
-unless (Robot::get_robots()) {
+unless (Sympa::Robot::get_robots()) {
     print STDERR
         "Unable to load Sympa configuration, file %s or any of the virtual host robot.conf files contain errors. Exiting.\n",
         Sympa::Conf::get_sympa_conf();

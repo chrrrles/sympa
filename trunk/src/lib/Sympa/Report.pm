@@ -78,7 +78,7 @@ sub reject_report_msg {
     if (ref $list and ref $list eq 'List') {
         $robot = $list->robot;
     } else {
-        $robot = Robot::clean_robot($robot, 1);    #FIXME: really may be Site?
+        $robot = Sympa::Robot::clean_robot($robot, 1);    #FIXME: really may be Site?
     }
     unless ($robot) {
         Sympa::Log::Syslog::do_log('err',
@@ -212,7 +212,7 @@ sub notice_report_msg {
     if (ref $list and ref $list eq 'List') {
         $robot = $list->robot;
     } else {
-        $robot = Robot::clean_robot($robot, 1);    #FIXME: really may be Site?
+        $robot = Sympa::Robot::clean_robot($robot, 1);    #FIXME: really may be Site?
     }
     unless ($robot) {
         Sympa::Log::Syslog::do_log('err',
@@ -324,7 +324,7 @@ sub send_report_cmd {
 
     my $robot = undef;
     if ($robot_id and $robot_id ne '*') {
-        $robot = Robot->new($robot_id);
+        $robot = Sympa::Robot->new($robot_id);
     }
 
     unless ($robot) {
@@ -405,7 +405,7 @@ sub global_report_cmd {
 
     my $robot;
     if ($robot_id and $robot_id ne '*') {
-        $robot = Robot->new($robot_id);
+        $robot = Sympa::Robot->new($robot_id);
     }
 
     if ($type eq 'intern') {
@@ -490,7 +490,7 @@ sub reject_report_cmd {
     }
 
     if ($type eq 'intern') {
-        $robot = Robot::clean_robot($robot, 1);    # Site or Robot
+        $robot = Sympa::Robot::clean_robot($robot, 1);    # Site or Robot
         if ($robot) {
             my $listname;
             if (defined $data->{'listname'}) {
@@ -791,7 +791,7 @@ sub reject_report_web {
     if (ref $list and ref $list eq 'List') {
         $robot = $list->robot;
     } elsif ($robot_id and $robot_id ne '*') {
-        $robot = Robot->new($robot_id);
+        $robot = Sympa::Robot->new($robot_id);
     }
 
     my $listname;

@@ -178,7 +178,7 @@ sub upgrade {
         }
 
         ## Go through Virtual Robots
-        foreach my $vr (@{Robot::get_robots()}) {
+        foreach my $vr (@{Sympa::Robot::get_robots()}) {
             if (-d $vr->etc . '/web_tt2') {
                 push @directories, $vr->etc . '/web_tt2';
             }
@@ -250,7 +250,7 @@ sub upgrade {
             'Updating the new robot_subscriber and robot_admin  Db fields...'
         );
 
-        foreach my $r (@{Robot::get_robots()}) {
+        foreach my $r (@{Sympa::Robot::get_robots()}) {
             my $all_lists = Sympa::List::get_lists($r, {'skip_sync_admin' => 1});
             foreach my $list (@$all_lists) {
                 foreach my $table ('subscriber', 'admin') {
@@ -525,7 +525,7 @@ sub upgrade {
 
         Sympa::Log::Syslog::do_log('notice',
             'Looking for customized mhonarc-ressources.tt2 files...');
-        foreach my $vr (@{Robot::get_robots()}) {
+        foreach my $vr (@{Sympa::Robot::get_robots()}) {
             my $etc_dir = $vr->etc;
 
             if (-f $etc_dir . '/mhonarc-ressources.tt2') {
@@ -622,7 +622,7 @@ sub upgrade {
         }
 
         ## Go through Virtual Robots
-        foreach my $vr (@{Robot::get_robots()}) {
+        foreach my $vr (@{Sympa::Robot::get_robots()}) {
             foreach my $type (
                 'mail_tt2', 'web_tt2',
                 'scenari',  'create_list_templates',
@@ -883,7 +883,7 @@ sub upgrade {
                     'Unable to gather informations from the exclusions table.'
                 );
             }
-            my @robots = @{Robot::get_robots() || []};
+            my @robots = @{Sympa::Robot::get_robots() || []};
             while (my $data = $sth->fetchrow_hashref) {
                 next
                     if defined $data->{'robot_exclusion'}
@@ -1015,7 +1015,7 @@ sub upgrade {
                     $meta{'date'}    = (stat($spooldir . '/' . $filename))[9];
                 } elsif ($spoolparameter eq 'queuesubscribe') {
                     my $match = 0;
-                    foreach my $robot (@{Robot::get_robots()}) {
+                    foreach my $robot (@{Sympa::Robot::get_robots()}) {
                         my $robot_id = $robot->domain;
                         Sympa::Log::Syslog::do_log('notice', 'robot : %s',
                             $robot_id);
@@ -1043,7 +1043,7 @@ sub upgrade {
                     $meta{'date'} = $2;
                     $robot_id = lc($robot_id || Site->domain);
                     ## check if robot exists
-                    unless ($robot = Robot->new($robot_id)) {
+                    unless ($robot = Sympa::Robot->new($robot_id)) {
                         $ignored .= ',' . $filename;
                         next;
                     }
@@ -1078,7 +1078,7 @@ sub upgrade {
                 $listname = lc($listname);
                 $robot_id = lc($robot_id || Site->domain);
                 ## check if robot exists
-                unless ($robot = Robot->new($robot_id)) {
+                unless ($robot = Sympa::Robot->new($robot_id)) {
                     $ignored .= ',' . $filename;
                     next;
                 }

@@ -111,7 +111,7 @@ Returns the list of existing families in the Sympa installation.
 =cut
 
 sub get_families {
-    my $robot = Robot::clean_robot(shift);
+    my $robot = Sympa::Robot::clean_robot(shift);
 
     my @families;
 
@@ -224,7 +224,7 @@ sub new {
 
     my $class = shift;
     my $name  = shift;
-    my $robot = Robot::clean_robot(shift);
+    my $robot = Sympa::Robot::clean_robot(shift);
 
     my $self = {};
 
@@ -3284,7 +3284,7 @@ sub name {
 }
 
 sub robot {
-    Robot->new(shift->domain);
+    Sympa::Robot->new(shift->domain);
 }
 
 sub state {
@@ -3315,7 +3315,7 @@ sub get_id {
 
     return '' unless $self->{'name'} and $self->{'robot'};
     return sprintf '%s@%s',
-        $self->{'name'}, Robot->new($self->{'robot'})->get_id;
+        $self->{'name'}, Sympa::Robot->new($self->{'robot'})->get_id;
 }
 
 1;

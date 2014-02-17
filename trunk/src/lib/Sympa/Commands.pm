@@ -105,7 +105,7 @@ my $quiet;
 sub parse {
     Sympa::Log::Syslog::do_log('debug2', '(%s, %s, %s, %s, %s)', @_);
     $sender = lc(shift);
-    my $robot    = Robot::clean_robot(shift);
+    my $robot    = Sympa::Robot::clean_robot(shift);
     my $i        = shift;
     my $sign_mod = shift;
     my $message  = shift;
