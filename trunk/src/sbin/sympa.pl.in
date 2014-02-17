@@ -359,7 +359,7 @@ use Sympa::Admin;
 use Sympa::Config_XML;
 use Sympa::Family;
 
-#use report; # load in Auth
+#use Sympa::Report; # load in Auth
 #use tools; # load in Conf
 #use tt2; # load in List
 #use Sympa::Constants;
@@ -1709,7 +1709,7 @@ sub process_message {
     }
 
     ## Initialize command report
-    &report::init_report_cmd();
+    &Sympa::Report::init_report_cmd();
 
     ## Maybe daemon is handling an automatic list
     my $dyn_list_family = $message->get_family;
@@ -2024,7 +2024,7 @@ sub process_message {
     }
 
     ## Mail back the result.
-    if (&report::is_there_any_report_cmd()) {
+    if (&Sympa::Report::is_there_any_report_cmd()) {
 
         ## Loop prevention
 
@@ -2064,7 +2064,7 @@ sub process_message {
         }
 
         ## Send the reply message
-        &report::send_report_cmd($sender, $robot_id);
+        &Sympa::Report::send_report_cmd($sender, $robot_id);
         Sympa::Log::Syslog::db_log(
             {   'robot'        => $robot_id,
                 'list'         => $listname,
@@ -2207,7 +2207,7 @@ sub DoForward {
                 sprintf
                 'Impossible to forward a message %s to %s function %s: undefined function',
                 $message->get_id, $list->get_id, $function;
-            report::reject_report_msg(
+            Sympa::Report::reject_report_msg(
                 'intern', $string, $sender,
                 {   'msg_id'   => $messageid,
                     'entry'    => 'forward',
@@ -2253,7 +2253,7 @@ sub DoForward {
         my $string = sprintf
             'Impossible to forward message %s for %s function %s',
             $message->get_id, $list->get_id, $function;
-        report::reject_report_msg(
+        Sympa::Report::reject_report_msg(
             'intern', $string, $sender,
             {   'msg_id'   => $messageid,
                 'entry'    => 'forward',
@@ -2371,7 +2371,7 @@ sub DoMessage {
         if (tools::checkcommand($message->as_entity(), $sender, $robot)) {
             Sympa::Log::Syslog::do_log('err',
                 'Found command in message, ignoring message');
-            report::reject_report_msg('user', 'routing_error', $sender,
+            Sympa::Report::reject_report_msg('user', 'routing_error', $sender,
                 {'message' => $message},
                 $robot, $msg_string, $list);
             Sympa::Log::Syslog::db_log(
@@ -2482,7 +2482,7 @@ sub DoMessage {
             $message,
             $list
         );
-        report::reject_report_msg(
+        Sympa::Report::reject_report_msg(
             'intern',
             'Message ignored because scenario "send" cannot be evaluated',
             $sender,
@@ -2557,7 +2557,7 @@ sub DoMessage {
         unless (defined($numsmtp)) {
             Sympa::Log::Syslog::do_log('err',
                 'Unable to send message to list %s', $list);
-            report::reject_report_msg('intern', '', $sender,
+            Sympa::Report::reject_report_msg('intern', '', $sender,
                 {'msg_id' => $messageid, 'message' => $message},
                 $robot, $msg_string, $list);
             Sympa::Log::Syslog::db_log(
@@ -2612,7 +2612,7 @@ sub DoMessage {
                 $sender,
                 $list
             );
-            report::reject_report_msg(
+            Sympa::Report::reject_report_msg(
                 'intern', 'The request authentication sending failed',
                 $sender, {'msg_id' => $messageid, 'message' => $message},
                 $robot, $msg_string,
@@ -2675,7 +2675,7 @@ sub DoMessage {
                 $sender,
                 $list
             );
-            report::reject_report_msg(
+            Sympa::Report::reject_report_msg(
                 'intern',
                 'The request moderation sending to moderator failed.',
                 $sender,
@@ -2712,7 +2712,7 @@ sub DoMessage {
                 and $message->{'spam_status'} eq 'spam')
             ) {
             unless (
-                report::notice_report_msg(
+                Sympa::Report::notice_report_msg(
                     'moderating_message', $sender,
                     {'message' => $message}, $robot,
                     $list
@@ -2749,7 +2749,7 @@ sub DoMessage {
                 $sender,
                 $list
             );
-            report::reject_report_msg(
+            Sympa::Report::reject_report_msg(
                 'intern',
                 'The request moderation sending to moderator failed.',
                 $sender,
@@ -2786,7 +2786,7 @@ sub DoMessage {
                 and $message->{'spam_status'} eq 'spam')
             ) {
             unless (
-                report::notice_report_msg(
+                Sympa::Report::notice_report_msg(
                     'moderating_message', $sender,
                     {'message' => $message}, $robot,
                     $list
@@ -2825,7 +2825,7 @@ sub DoMessage {
                 }
             } else {
                 unless (
-                    report::reject_report_msg(
+                    Sympa::Report::reject_report_msg(
                         'auth', $result->{'reason'},
                         $sender, {'message' => $message},
                         $robot, $msg_string,
@@ -2858,7 +2858,7 @@ sub DoMessage {
     } else {
         Sympa::Log::Syslog::do_log('err',
             'Unknown action "%s" returned by the scenario "send"', $action);
-        report::reject_report_msg(
+        Sympa::Report::reject_report_msg(
             'intern', 'Unknown action returned by the scenario "send"',
             $sender, {'msg_id' => $messageid, 'message' => $message},
             $robot, $msg_string,
@@ -3009,7 +3009,7 @@ sub DoCommand {
         unless (defined $status) {
             Sympa::Log::Syslog::do_log('err',
                 'Could not change multipart to singlepart');
-            &report::global_report_cmd('user', 'error_content_type', {});
+            &Sympa::Report::global_report_cmd('user', 'error_content_type', {});
             Sympa::Log::Syslog::db_log(
                 {   'robot'        => $robot->name,
                     'list'         => '',
@@ -3066,7 +3066,7 @@ sub DoCommand {
             Sympa::Log::Syslog::do_log('err',
                 'Ignoring message body not in text/plain, Content-type: %s',
                 $content_type);
-            &report::global_report_cmd('user', 'error_content_type', {});
+            &Sympa::Report::global_report_cmd('user', 'error_content_type', {});
             Sympa::Log::Syslog::db_log(
                 {   'robot'        => $robot->name,
                     'list'         => '',
@@ -3105,7 +3105,7 @@ sub DoCommand {
             if ($status eq 'unknown_cmd') {
                 Sympa::Log::Syslog::do_log('notice',
                     "Unknown command found :%s", $i);
-                &report::reject_report_cmd('user', 'not_understood', {}, $i);
+                &Sympa::Report::reject_report_cmd('user', 'not_understood', {}, $i);
                 Sympa::Log::Syslog::db_log(
                     {   'robot'        => $robot->name,
                         'list'         => '',
@@ -3134,7 +3134,7 @@ sub DoCommand {
     unless ($cmd_found) {
         Sympa::Log::Syslog::do_log('info', 'No command found in message %s',
             $message);
-        &report::global_report_cmd('user', 'no_cmd_found', {});
+        &Sympa::Report::global_report_cmd('user', 'no_cmd_found', {});
         Sympa::Log::Syslog::db_log(
             {   'robot'        => $robot->name,
                 'list'         => '',

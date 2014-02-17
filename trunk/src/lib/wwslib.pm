@@ -203,14 +203,14 @@ sub get_email_from_cookie {
     # "get_email_from_cookie($cookie,$secret)");
 
     unless (defined $secret) {
-        &report::reject_report_web('intern', 'cookie_error', {}, '', '', '',
+        &Sympa::Report::reject_report_web('intern', 'cookie_error', {}, '', '', '',
             $robot);
         Sympa::Log::Syslog::do_log('info',
             'parameter cookie undefined, authentication failure');
     }
 
     unless ($cookie) {
-        &report::reject_report_web('intern', 'cookie_error', $cookie,
+        &Sympa::Report::reject_report_web('intern', 'cookie_error', $cookie,
             'get_email_from_cookie', '', '', $robot);
         Sympa::Log::Syslog::do_log('info',
             ' cookie undefined, authentication failure');
@@ -218,7 +218,7 @@ sub get_email_from_cookie {
 
     ($email, $auth) = &Sympa::CookieLib::check_cookie($cookie, $secret);
     unless ($email) {
-        &report::reject_report_web('user', 'auth_failed', {}, '');
+        &Sympa::Report::reject_report_web('user', 'auth_failed', {}, '');
         Sympa::Log::Syslog::do_log('info',
             'get_email_from_cookie: auth failed for user %s', $email);
         return undef;
@@ -266,7 +266,7 @@ sub init_passwd {
                     }
                 )
                 ) {
-                &report::reject_report_web('intern', 'update_user_db_failed',
+                &Sympa::Report::reject_report_web('intern', 'update_user_db_failed',
                     {'user' => $email},
                     '', '', $email, $robot);
                 Sympa::Log::Syslog::do_log('info',
@@ -285,7 +285,7 @@ sub init_passwd {
                 }
             )
             ) {
-            &report::reject_report_web('intern', 'add_user_db_failed',
+            &Sympa::Report::reject_report_web('intern', 'add_user_db_failed',
                 {'user' => $email},
                 '', '', $email, $robot);
             Sympa::Log::Syslog::do_log('info', 'init_passwd: add failed');

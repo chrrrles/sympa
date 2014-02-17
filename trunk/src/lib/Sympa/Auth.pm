@@ -30,7 +30,7 @@ use Sympa::Language qw(gettext_strftime);
 #use Sympa::Log;
 #use Conf;
 #use List; # not used
-use report;
+use Sympa::Report;
 
 #use SDM;
 
@@ -82,7 +82,7 @@ sub check_auth {
             };
 
         } else {
-            &report::reject_report_web('user', 'incorrect_passwd', {})
+            &Sympa::Report::reject_report_web('user', 'incorrect_passwd', {})
                 unless ($ENV{'SYMPA_SOAP'});
             Sympa::Log::Syslog::do_log('err', "Incorrect LDAP password");
             return undef;
@@ -138,7 +138,7 @@ sub authentication {
         # too many wrong login attemp
         User::update_global_user($email,
             {wrong_login_count => $user->{'wrong_login_count'} + 1});
-        &report::reject_report_web('user', 'too_many_wrong_login', {})
+        &Sympa::Report::reject_report_web('user', 'too_many_wrong_login', {})
             unless ($ENV{'SYMPA_SOAP'});
         Sympa::Log::Syslog::do_log('err',
             'login is blocked : too many wrong password submission for %s',
@@ -188,7 +188,7 @@ sub authentication {
     User::update_global_user($email,
         {wrong_login_count => $user->{'wrong_login_count'} + 1});
 
-    &report::reject_report_web('user', 'incorrect_passwd', {})
+    &Sympa::Report::reject_report_web('user', 'incorrect_passwd', {})
         unless ($ENV{'SYMPA_SOAP'});
     Sympa::Log::Syslog::do_log('err',
         'authentication: incorrect password for user %s', $email);
