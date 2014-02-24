@@ -10192,7 +10192,7 @@ sub do_remove_arc {
         # Removing tracking should be done by archived.
         tracking::remove_message_by_id($list, $msgid);
     }
-    my $spoolarchive = new SympaspoolClassic('outgoing');
+    my $spoolarchive = new Sympa::ClassicSpool('outgoing');
     $spoolarchive->store($removeorder,
         {'list' => $in{'list'}, 'robot' => $robot_id});
 
@@ -11858,7 +11858,7 @@ sub do_resetbounce {
 sub do_rebuildarc {
     &wwslog('info', 'do_rebuildarc(%s, %s)', $param->{'list'}, $in{'month'});
 
-    my $spoolarchive = new SympaspoolClassic('outgoing');
+    my $spoolarchive = new Sympa::ClassicSpool('outgoing');
 
     unless (
         $spoolarchive->store(
@@ -11896,7 +11896,7 @@ sub do_rebuildallarc {
     #FIXME: past archives should be rebuilt even if archiving is disabled.
     my $errors = 0;
     my $spoolarchive;
-    unless ($spoolarchive = new SympaspoolClassic('outgoing')) {
+    unless ($spoolarchive = new Sympa::ClassicSpool('outgoing')) {
         &Sympa::Report::reject_report_web('intern', 'cannot fetch archive spool',
             {}, $param->{'action'}, $list, $param->{'user'}{'email'},
             $robot_id);

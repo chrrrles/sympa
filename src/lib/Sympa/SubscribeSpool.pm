@@ -27,10 +27,10 @@ use strict;
 use warnings;
 use Data::Dumper;
 
-use SympaspoolClassic;
+use Sympa::ClassicSpool;
 use Sympa::Log;
 
-our @ISA = qw(SympaspoolClassic);
+our @ISA = qw(Sympa::ClassicSpool);
 
 sub new {
     Sympa::Log::Syslog::do_log('debug2', '(%s, %s)', @_);
