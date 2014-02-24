@@ -21,7 +21,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package SharedDocument;
+package Sympa::SharedDocument;
 
 use strict;
 
@@ -255,7 +255,7 @@ sub new {
         foreach my $d (@{$dir}) {
 
             my $sub_document =
-                new SharedDocument($list, $document->{'path'} . '/' . $d,
+                new Sympa::SharedDocument($list, $document->{'path'} . '/' . $d,
                 $param);
             push @{$document->{'subdir'}}, $sub_document;
         }
