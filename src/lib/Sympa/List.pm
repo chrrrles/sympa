@@ -80,7 +80,7 @@ use tracking;
 
 #use Sympa::ListDef; used in Robot
 
-our @ISA = qw(Site_r);    # not fully inherit Robot
+our @ISA = qw(Sympa::Site_r);    # not fully inherit Robot
 
 my @sources_providing_listmembers = qw/
     include_file

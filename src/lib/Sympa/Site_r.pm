@@ -31,7 +31,7 @@
 #### Don't access to the contents of this class directly.  This class is
 #### used by subclasses such as List to exclude autoloading accessors
 #### from inherited methods.
-package Site_r;
+package Sympa::Site_r;
 
 use strict;
 use warnings;
