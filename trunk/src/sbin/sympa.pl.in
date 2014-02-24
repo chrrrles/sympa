@@ -361,7 +361,7 @@ use Sympa::Family;
 
 #use Sympa::Report; # load in Auth
 #use Sympa::Tools; # load in Conf
-#use tt2; # load in List
+#use Sympa::Template; # load in List
 #use Sympa::Constants;
 #use tracking; # not used
 #use Sympaspool; # load in List

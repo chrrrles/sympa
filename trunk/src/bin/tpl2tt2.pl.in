@@ -28,7 +28,7 @@ use lib '--modulesdir--';
 #use wwslib; # no longer used
 use Sympa::Conf;
 use Sympa::Language;
-use tt2;
+use Sympa::Template;
 use Sympa::Constants;
 use List;
 use Sympa::Log;

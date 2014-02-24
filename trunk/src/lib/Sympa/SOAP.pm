@@ -1839,11 +1839,11 @@ sub get_reason_string {
     my $tt2_include_path = $robot->get_etc_include_path('mail_tt2');
 
     unless (
-        &tt2::parse_tt2(
+        &Sympa::Template::parse_tt2(
             $data, 'authorization_reject.tt2', \$string, $tt2_include_path
         )
         ) {
-        my $error = &tt2::get_error();
+        my $error = &Sympa::Template::get_error();
         $robot->send_notify_to_listmaster('web_tt2_error', [$error]);
         Sympa::Log::Syslog::do_log('info',
             "get_reason_string : error parsing");

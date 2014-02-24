@@ -136,7 +136,7 @@ Creates a list. Used by the create_list() sub in sympa.pl and the do_create_list
 
 =item * Site::get_etc_include_path
 
-=item * tt2::parse_tt2 
+=item * Sympa::Template::parse_tt2 
 
 =back 
 
@@ -310,7 +310,7 @@ sub create_list_old {
     ## Use an intermediate handler to encode to filesystem_encoding
     my $config = '';
     my $fd     = new IO::Scalar \$config;
-    &tt2::parse_tt2($param, 'config.tt2', $fd, $tt2_include_path);
+    &Sympa::Template::parse_tt2($param, 'config.tt2', $fd, $tt2_include_path);
 
     #    Encode::from_to($config, 'utf8', Sympa::Site->filesystem_encoding);
     print CONFIG $config;
@@ -494,7 +494,7 @@ sub create_list {
     $param->{'family_config'} = $family_config->{$family->name};
     my $conf;
     my $tt_result =
-        &tt2::parse_tt2($param, 'config.tt2', \$conf, [$family->dir]);
+        &Sympa::Template::parse_tt2($param, 'config.tt2', \$conf, [$family->dir]);
     unless (defined $tt_result || !$abort_on_error) {
         Sympa::Log::Syslog::do_log('err',
             'abort on tt2 error. List %s from family %s',
@@ -540,7 +540,7 @@ sub create_list {
         return undef;
     }
 
-    #&tt2::parse_tt2($param, 'config.tt2', \*CONFIG, [$family->dir]);
+    #&Sympa::Template::parse_tt2($param, 'config.tt2', \*CONFIG, [$family->dir]);
     print CONFIG $conf;
     close CONFIG;
 
@@ -570,7 +570,7 @@ sub create_list {
         my $template_file = $family->get_etc_filename($file . ".tt2");
         if (defined $template_file) {
             my $file_content;
-            my $tt_result = &tt2::parse_tt2($param, $file . ".tt2",
+            my $tt_result = &Sympa::Template::parse_tt2($param, $file . ".tt2",
                 \$file_content, [$family->dir]);
             unless (defined $tt_result) {
                 Sympa::Log::Syslog::do_log('err',
@@ -705,7 +705,7 @@ sub update_list {
         $lock->unlock();
         return undef;
     }
-    &tt2::parse_tt2($param, 'config.tt2', \*CONFIG, [$family->dir]);
+    &Sympa::Template::parse_tt2($param, 'config.tt2', \*CONFIG, [$family->dir]);
     close CONFIG;
 
     ## Unlock config file

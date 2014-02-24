@@ -44,7 +44,7 @@ use TaskInstruction;
 
 #use Sympa::Tools; # used by Conf
 #use tracking; # not used
-#use tt2; # used by List
+#use Sympa::Template; # used by List
 
 #### Task level subs ####
 ##########################

@@ -67,7 +67,7 @@ use Sympa::Language qw(gettext_strftime);
 
 #use Sympa::Site; # loaded in List - Robot
 #use Sympa::Tools; # loaded in Conf
-#use tt2; # loaded by List
+#use Sympa::Template; # loaded by List
 #use Conf; # loaded in Site
 #use Sympa::Log; # loaded in Conf
 
@@ -2330,7 +2330,7 @@ sub personalize_text {
     # Parse the TT2 in the message : replace the tags and the parameters by
     # the corresponding values
     my $output;
-    unless (tt2::parse_tt2($data, \$body, \$output, '', $options)) {
+    unless (Sympa::Template::parse_tt2($data, \$body, \$output, '', $options)) {
         return undef;
     }
 
@@ -2605,7 +2605,7 @@ sub _urlize_part {
 
     my $tt2_include_path = $list->get_etc_include_path('mail_tt2', $lang);
 
-    &tt2::parse_tt2(
+    &Sympa::Template::parse_tt2(
         {   'file_name' => $file_name,
             'file_url'  => $file_url,
             'file_size' => $size,

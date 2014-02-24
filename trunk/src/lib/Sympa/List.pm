@@ -64,7 +64,7 @@ use Sympa::ClassicSpool;
 use Sympa::KeySpool;
 use Sympa::SubscribeSpool;
 use Sympa::Archive;
-use tt2;
+use Sympa::Template;
 
 #use Sympa::Constants; # used in Conf - confdef
 use Sympa::Language qw(gettext gettext_strftime);
@@ -1566,7 +1566,7 @@ sub distribute_msg {
         ## Add subject tag
         $message->as_entity()->head->delete('Subject');
         my $parsed_tag;
-        &tt2::parse_tt2(
+        &Sympa::Template::parse_tt2(
             {   'list' => {
                     'name'     => $self->name,
                     'sequence' => $self->stats->[0]
@@ -2641,7 +2641,7 @@ sub send_to_editor {
             Sympa::Log::Syslog::do_log('debug',
                 "ticket $param->{'one_time_ticket'} created");
         }
-        &tt2::allow_absolute_path();
+        &Sympa::Template::allow_absolute_path();
         $param->{'auto_submitted'} = 'auto-forwarded';
 
         unless ($self->send_file('moderate', $recipient, $param)) {
@@ -2734,7 +2734,7 @@ sub send_auth {
         $param->{'msg'} = $message->get_mime_message;
     }
 
-    &tt2::allow_absolute_path();
+    &Sympa::Template::allow_absolute_path();
     $param->{'auto_submitted'} = 'auto-forwarded';
 
     unless ($self->send_file('send_auth', $sender, $param)) {
@@ -7289,7 +7289,7 @@ sub _load_include_admin_user_file {
         my $output = '';
 
         unless (
-            &tt2::parse_tt2(
+            &Sympa::Template::parse_tt2(
                 $vars, $parsing->{'template'},
                 \$output, [$parsing->{'include_path'}]
             )

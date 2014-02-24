@@ -44,7 +44,7 @@ use Data::Dumper;
 ##"use List" MUST precede to "use Bulk".
 
 #use Sympa::Tools; # used in List - Site - Conf
-#use tt2; # used in List
+#use Sympa::Template; # used in List
 use Sympa::Language qw(gettext_strftime);
 
 #use Sympa::Log; # used in Conf

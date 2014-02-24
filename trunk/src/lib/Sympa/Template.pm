@@ -21,7 +21,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package tt2;
+package Sympa::Template;
 
 use strict;
 use warnings;
@@ -265,12 +265,12 @@ sub parse_tt2 {
 
         FILTERS => {
             unescape => \&CGI::Util::unescape,
-            l        => [\&tt2::maketext, 1],
-            loc      => [\&tt2::maketext, 1],
-            helploc  => [\&tt2::maketext, 1],
-            locdt    => [\&tt2::locdatetime, 1],
-            wrap         => [\&tt2::wrap,    1],
-            optdesc      => [\&tt2::optdesc, 1],
+            l        => [\&Sympa::Template::maketext, 1],
+            loc      => [\&Sympa::Template::maketext, 1],
+            helploc  => [\&Sympa::Template::maketext, 1],
+            locdt    => [\&Sympa::Template::locdatetime, 1],
+            wrap         => [\&Sympa::Template::wrap,    1],
+            optdesc      => [\&Sympa::Template::optdesc, 1],
             qencode      => [\&qencode,      0],
             escape_xml   => [\&escape_xml,   0],
             escape_url   => [\&escape_url,   0],
