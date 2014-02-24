@@ -213,7 +213,7 @@ Is the user listmaster?
 
 sub is_listmaster {
     my $self = shift;
-    my $who = tools::clean_email(shift || '');
+    my $who = Sympa::Tools::clean_email(shift || '');
     return 0 unless $who;
 
     if (ref $self and ref $self eq 'Sympa::Robot') {
@@ -876,7 +876,7 @@ sub send_file {
         croak 'bug in logic.  Ask developer';
     }
 
-    my $data = &tools::dup_var($context);
+    my $data = &Sympa::Tools::dup_var($context);
 
     ## Any recipients
     if (  !defined $who
@@ -889,7 +889,7 @@ sub send_file {
 
     ## Unless multiple recipients
     unless (ref $who) {
-        $who = tools::clean_email($who);
+        $who = Sympa::Tools::clean_email($who);
         my $lang = $self->lang || 'en';
         unless (ref $data->{'user'} and $data->{'user'}{'email'}) {
             if ($options->{'skip_db'}) {
@@ -922,7 +922,7 @@ sub send_file {
         }
 
         unless ($data->{'user'}->password) {
-            $data->{'user'}->password(&tools::tmp_passwd($who));
+            $data->{'user'}->password(&Sympa::Tools::tmp_passwd($who));
         }
 
         if (ref $self eq 'List') {
@@ -971,7 +971,7 @@ sub send_file {
     }
 
     my @path = &tt2::get_include_path();
-    my $filename = &tools::find_file($tpl . '.tt2', @path);
+    my $filename = &Sympa::Tools::find_file($tpl . '.tt2', @path);
 
     unless (defined $filename) {
         Sympa::Log::Syslog::do_log('err',
@@ -1029,13 +1029,13 @@ sub send_file {
         }
     }
 
-    $data->{'boundary'} = '----------=_' . &tools::get_message_id($robot)
+    $data->{'boundary'} = '----------=_' . &Sympa::Tools::get_message_id($robot)
         unless $data->{'boundary'};
 
     my $dkim_feature          = $robot->dkim_feature;
     my $dkim_add_signature_to = $robot->dkim_add_signature_to;
     if ($dkim_feature eq 'on' and $dkim_add_signature_to =~ /robot/) {
-        $data->{'dkim'} = &tools::get_dkim_parameters($robot);
+        $data->{'dkim'} = &Sympa::Tools::get_dkim_parameters($robot);
     }
 
     # use verp excepted for alarms. We should make this configurable in
@@ -1187,7 +1187,7 @@ sub send_notify_to_listmaster {
                         operation             => $operation,
                         notification_messages => $messages{$email},
                         boundary              => '----------=_'
-                            . &tools::get_message_id($robot)
+                            . &Sympa::Tools::get_message_id($robot)
                     };
 
                     my $options = {};
@@ -1322,14 +1322,14 @@ sub send_notify_to_listmaster {
 
     if ($operation eq 'loop_command') {
         ## Loop detected in Sympa
-        $data->{'boundary'} = '----------=_' . &tools::get_message_id($self);
+        $data->{'boundary'} = '----------=_' . &Sympa::Tools::get_message_id($self);
         &tt2::allow_absolute_path();
     }
 
     if (   ($operation eq 'request_list_creation')
         or ($operation eq 'request_list_renaming')) {
         foreach my $email (split(/\,/, $listmaster)) {
-            my $cdata = &tools::dup_var($data);
+            my $cdata = &Sympa::Tools::dup_var($data);
             $cdata->{'one_time_ticket'} =
                 &Sympa::Auth::create_one_time_ticket($email, $robot_id,
                 'get_pending_lists', $cdata->{'ip'});

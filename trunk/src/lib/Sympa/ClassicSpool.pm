@@ -533,7 +533,7 @@ sub refresh_spool_files_list {
         return undef;
     }
     my @qfile =
-        sort tools::by_date grep { !/^\./ && -f "$self->{'dir'}/$_" }
+        sort Sympa::Tools::by_date grep { !/^\./ && -f "$self->{'dir'}/$_" }
         readdir(SPOOLDIR);
     closedir(SPOOLDIR);
     $self->{'spool_files_list'} = \@qfile;
@@ -555,7 +555,7 @@ sub refresh_spool_dirs_list {
         return undef;
     }
     my @qdir =
-        sort tools::by_date grep { !/^(\.\.|\.)$/ && -d "$self->{'dir'}/$_" }
+        sort Sympa::Tools::by_date grep { !/^(\.\.|\.)$/ && -d "$self->{'dir'}/$_" }
         readdir(SPOOLDIR);
     closedir(SPOOLDIR);
     $self->{'spool_dirs_list'} = \@qdir;
@@ -796,7 +796,7 @@ sub clean {
     @to_kill = $self->get_dirs_in_spool;
     foreach my $d (@to_kill) {
         if ((stat "$self->{'dir'}/$d")[9] < $freshness_date) {
-            if (tools::remove_dir("$self->{'dir'}/$d")) {
+            if (Sympa::Tools::remove_dir("$self->{'dir'}/$d")) {
                 $deleted++;
                 Sympa::Log::Syslog::do_log('notice', 'Deleting old file %s',
                     "$self->{'dir'}/$d");

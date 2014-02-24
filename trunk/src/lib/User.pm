@@ -72,7 +72,7 @@ Create new User object.
 
 sub new {
     my $pkg    = shift;
-    my $who    = tools::clean_email(shift || '');
+    my $who    = Sympa::Tools::clean_email(shift || '');
     my %values = @_;
     my $self;
     return undef unless $who;
@@ -139,7 +139,7 @@ Change email of user.
 
 sub moveto {
     my $self = shift;
-    my $newemail = tools::clean_email(shift || '');
+    my $newemail = Sympa::Tools::clean_email(shift || '');
 
     unless ($newemail) {
         Sympa::Log::Syslog::do_log('err', 'No email');
@@ -301,7 +301,7 @@ sub delete_global_user {
     return undef unless ($#users >= 0);
 
     foreach my $who (@users) {
-        $who = &tools::clean_email($who);
+        $who = &Sympa::Tools::clean_email($who);
         ## Update field
 
         unless (
@@ -321,7 +321,7 @@ sub delete_global_user {
 ## Returns a hash for a given user
 sub get_global_user {
     Sympa::Log::Syslog::do_log('debug2', '(%s)', @_);
-    my $who = &tools::clean_email(shift);
+    my $who = &Sympa::Tools::clean_email(shift);
 
     ## Additional subscriber fields
     my $additional = '';
@@ -362,7 +362,7 @@ sub get_global_user {
         ## decrypt password
         if ($user->{'password'}) {
             $user->{'password'} =
-                &tools::decrypt_password($user->{'password'});
+                &Sympa::Tools::decrypt_password($user->{'password'});
         }
 
         ## Canonicalize lang if possible
@@ -386,7 +386,7 @@ sub get_global_user {
         }
         ## Turn data_user into a hash
         if ($user->{'data'}) {
-            my %prefs = &tools::string_2_hash($user->{'data'});
+            my %prefs = &Sympa::Tools::string_2_hash($user->{'data'});
             $user->{'prefs'} = \%prefs;
         }
     }
@@ -421,7 +421,7 @@ sub get_all_global_user {
 
 ## Is the person in user table (db only)
 sub is_global_user {
-    my $who = &tools::clean_email(pop);
+    my $who = &Sympa::Tools::clean_email(pop);
     Sympa::Log::Syslog::do_log('debug3', '(%s)', $who);
 
     return undef unless ($who);
@@ -459,7 +459,7 @@ sub update_global_user {
         $values = {@_};
     }
 
-    $who = &tools::clean_email($who);
+    $who = &Sympa::Tools::clean_email($who);
 
     ## use md5 fingerprint to store password
     $values->{'password'} = &Sympa::Auth::password_fingerprint($values->{'password'})
@@ -543,7 +543,7 @@ sub add_global_user {
         || $values->{'lang'}
         if $values->{'lang'};
 
-    return undef unless (my $who = &tools::clean_email($values->{'email'}));
+    return undef unless (my $who = &Sympa::Tools::clean_email($values->{'email'}));
     return undef if (is_global_user($who));
 
     ## Update each table

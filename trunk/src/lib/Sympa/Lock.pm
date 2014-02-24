@@ -55,7 +55,7 @@ sub new {
     }
 
     unless (
-        tools::set_file_rights(
+        Sympa::Tools::set_file_rights(
             file  => $lock_filename,
             user  => Sympa::Constants::USER,
             group => Sympa::Constants::GROUP,

@@ -30,7 +30,7 @@ use Sympa::Log;
 
 #use Conf; # not used
 #use List; # not used
-#use tools; # not used
+#use Sympa::Tools; # not used
 #use tt2; # not used
 use Exporter;
 use Data::Dumper;

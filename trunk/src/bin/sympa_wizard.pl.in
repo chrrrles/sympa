@@ -117,10 +117,10 @@ if ($modfail) {
 
     eval { require Text::Wrap; };
     if ($@) {
-        *tools::wrap_text = sub {"$_[1]$_[0]\n"};
+        *Sympa::Tools::wrap_text = sub {"$_[1]$_[0]\n"};
     } else {
         $Text::Wrap::columns = 78;
-        *tools::wrap_text =
+        *Sympa::Tools::wrap_text =
             sub { Text::Wrap::wrap($_[1], $_[2], $_[0]) . "\n"; };
     }
 } else {
@@ -190,7 +190,7 @@ sub create_configuration {
     }
 
     # print NEWF
-    # tools::wrap_text(Sympa::Language::gettext("Configuration file for Sympa\nMany parameters are optional.\nPlease refer to the documentation for a detailed list of parameters."),
+    # Sympa::Tools::wrap_text(Sympa::Language::gettext("Configuration file for Sympa\nMany parameters are optional.\nPlease refer to the documentation for a detailed list of parameters."),
     # '## ', '## ') . "\n\n";
 
     my $title;
@@ -210,11 +210,11 @@ sub create_configuration {
             undef $title;
         }
 
-        print NEWF tools::wrap_text(Sympa::Language::gettext($param->{'gettext_id'}),
+        print NEWF Sympa::Tools::wrap_text(Sympa::Language::gettext($param->{'gettext_id'}),
             '## ', '## ')
             if (defined $param->{'gettext_id'});
 
-        print NEWF tools::wrap_text(
+        print NEWF Sympa::Tools::wrap_text(
             Sympa::Language::gettext($param->{'gettext_comment'}),
             '## ', '## ')
             if (defined $param->{'gettext_comment'});
@@ -313,8 +313,8 @@ sub edit_configuration {
             print "\n\n** $title **\n" if $title;
 
             print "\n";
-            print tools::wrap_text($query || '', '* ', '  ');
-            print tools::wrap_text($advice, '  ... ', '  ') if $advice;
+            print Sympa::Tools::wrap_text($query || '', '* ', '  ');
+            print Sympa::Tools::wrap_text($advice, '  ... ', '  ') if $advice;
             printf(Sympa::Language::gettext('%s [%s] : '), $name, $current_value);
             $new_value = <STDIN>;
             chomp $new_value;
@@ -343,17 +343,17 @@ sub edit_configuration {
         if ($new_value eq '') {
             next unless $sample;
 
-            push @new_sympa_conf, tools::wrap_text($query, '## ', '## ');
+            push @new_sympa_conf, Sympa::Tools::wrap_text($query, '## ', '## ');
 
             if (defined $advice and length $advice) {
-                push @new_sympa_conf, tools::wrap_text($advice, '## ', '## ');
+                push @new_sympa_conf, Sympa::Tools::wrap_text($advice, '## ', '## ');
             }
 
             push @new_sympa_conf, "# $name\t$sample\n\n";
         } else {
-            push @new_sympa_conf, tools::wrap_text($query, '## ', '## ');
+            push @new_sympa_conf, Sympa::Tools::wrap_text($query, '## ', '## ');
             if (defined $advice and length $advice) {
-                push @new_sympa_conf, tools::wrap_text($advice, '## ', '## ');
+                push @new_sympa_conf, Sympa::Tools::wrap_text($advice, '## ', '## ');
             }
 
             if ($current_value ne $new_value) {
@@ -407,7 +407,7 @@ sub check_cpan {
     require Sympa::ModDef;
 
     print '#' x 78 . "\n";
-    print tools::wrap_text(
+    print Sympa::Tools::wrap_text(
         Sympa::Language::gettext(
             "This process will help you install all Perl (CPAN) modules required by Sympa software.\nSympa requires from 50 to 65 additional Perl modules to run properly.  The whole installation process should take around 15 minutes.\nYou will first have to configure the CPAN shell itself and select your favourite CPAN server.\nNote that you might prefer to install the required Perl modules using your favourite DEB/RPM mechanism.\nFeel free to interrupt the process if needed ; you can restart it safely afterward."
             )
@@ -450,7 +450,7 @@ sub check_cpan {
     ) . "\n";
     check_modules('n', \%Sympa::ModDef::cpan_modules, 'optional');
 
-    print tools::wrap_text(
+    print Sympa::Tools::wrap_text(
         Sympa::Language::gettext(
             "******* NOTE *******\nYou can retrieve all these modules from any CPAN server (for example ftp://ftp.pasteur.fr/pub/computing/CPAN/CPAN.html)."
             )
@@ -554,14 +554,14 @@ sub install_module {
     }
 
     unless ($options->{'force'}) {
-        print tools::wrap_text(
+        print Sympa::Tools::wrap_text(
             sprintf(
                 Sympa::Language::gettext('-> Usage of this module: %s') . "\n",
                 Sympa::Language::gettext($cpan_modules->{$module}{'gettext_id'})
             ),
             '', '   '
         ) if $cpan_modules->{$module}{'gettext_id'};
-        print tools::wrap_text(
+        print Sympa::Tools::wrap_text(
             sprintf(
                 Sympa::Language::gettext('-> Prerequisites: %s') . "\n",
                 Sympa::Language::gettext(

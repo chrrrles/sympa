@@ -47,7 +47,7 @@ use List;
 use Sympa::Language qw(gettext_strftime);
 
 #use Sympa::Log; # used in Conf
-#use tools; # used in Conf
+#use Sympa::Tools; # used in Conf
 #use Sympa::Constants; # load in Conf - confdef
 
 =pod 
@@ -132,7 +132,7 @@ Creates a list. Used by the create_list() sub in sympa.pl and the do_create_list
 
 =item * Sympa::Log::Syslog::do_log
 
-=item * tools::get_regexp
+=item * Sympa::Tools::get_regexp
 
 =item * Site::get_etc_include_path
 
@@ -206,7 +206,7 @@ sub create_list_old {
 
     ## check listname
     $param->{'listname'} = lc($param->{'listname'});
-    my $listname_regexp = &tools::get_regexp('listname');
+    my $listname_regexp = &Sympa::Tools::get_regexp('listname');
 
     unless ($param->{'listname'} =~ /^$listname_regexp$/i) {
         Sympa::Log::Syslog::do_log('err',
@@ -440,7 +440,7 @@ sub create_list {
 
     ## check listname
     $param->{'listname'} = lc($param->{'listname'});
-    my $listname_regexp = &tools::get_regexp('listname');
+    my $listname_regexp = &Sympa::Tools::get_regexp('listname');
 
     unless ($param->{'listname'} =~ /^$listname_regexp$/i) {
         Sympa::Log::Syslog::do_log('err', 'incorrect listname %s',
@@ -776,7 +776,7 @@ sub rename_list {
 
     # check new listname syntax
     my $new_listname    = lc($param{'new_listname'});
-    my $listname_regexp = &tools::get_regexp('listname');
+    my $listname_regexp = &Sympa::Tools::get_regexp('listname');
 
     unless ($new_listname =~ /^$listname_regexp$/i) {
         Sympa::Log::Syslog::do_log('err', 'incorrect listname %s',
@@ -1082,7 +1082,7 @@ sub rename_list {
                 }
 
                 ## Change X-Sympa-To
-                &tools::change_x_sympa_to(Sympa::Site->$spool . "/$newfile",
+                &Sympa::Tools::change_x_sympa_to(Sympa::Site->$spool . "/$newfile",
                     "$param{'new_listname'}\@$param{'new_robot'}");
             }
 
@@ -1188,7 +1188,7 @@ sub clone_list_as_empty {
     foreach my $subdir ('etc', 'web_tt2', 'mail_tt2', 'data_sources') {
         if (-d $new_dir . '/' . $subdir) {
             unless (
-                &tools::copy_dir(
+                &Sympa::Tools::copy_dir(
                     $list->dir . '/' . $subdir,
                     $new_dir . '/' . $subdir
                 )

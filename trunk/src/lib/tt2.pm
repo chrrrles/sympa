@@ -177,7 +177,7 @@ sub wrap {
     return sub {
         my $text = shift;
         my $nl   = $text =~ /\n$/;
-        my $ret  = &tools::wrap_text($text, $init, $subs, $cols);
+        my $ret  = &Sympa::Tools::wrap_text($text, $init, $subs, $cols);
         $ret =~ s/\n$// unless $nl;
         $ret;
     };

@@ -280,10 +280,10 @@ sub db_log {
     my $action       = $arg->{'action'};
     my $parameters   = $arg->{'parameters'};
     my $target_email = $arg->{'target_email'};
-    my $msg_id       = &tools::clean_msg_id($arg->{'msg_id'});
+    my $msg_id       = &Sympa::Tools::clean_msg_id($arg->{'msg_id'});
     my $status       = $arg->{'status'};
     my $error_type   = $arg->{'error_type'};
-    my $user_email   = &tools::clean_msg_id($arg->{'user_email'});
+    my $user_email   = &Sympa::Tools::clean_msg_id($arg->{'user_email'});
     my $client       = $arg->{'client'};
     my $daemon       = $arg->{'daemon'};
     my $date         = Time::HiRes::time;
@@ -716,7 +716,7 @@ sub aggregate_data {
     #store reslults in stat_counter_table
     foreach my $key_op (keys(%$aggregated_data)) {
 
-        #open TMP2, ">/tmp/digdump"; &tools::dump_var($aggregated_data->{$key_op}, 0, \*TMP2); close TMP2;
+        #open TMP2, ">/tmp/digdump"; &Sympa::Tools::dump_var($aggregated_data->{$key_op}, 0, \*TMP2); close TMP2;
 
         #store send mail data-------------------------------
         if ($key_op eq 'send_mail') {
@@ -1374,7 +1374,7 @@ sub agregate_daily_data {
     my $first_date = $param->{'first_date'} || time;
     my $last_date  = $param->{'last_date'}  || time;
     foreach my $begin_date (sort keys %{$param->{'hourly_data'}}) {
-        my $reftime = tools::get_midnight_time($begin_date);
+        my $reftime = Sympa::Tools::get_midnight_time($begin_date);
         unless (defined $param->{'first_date'}) {
             $first_date = $reftime if ($reftime < $first_date);
         }

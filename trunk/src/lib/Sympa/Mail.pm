@@ -42,7 +42,7 @@ use Sympa::Language qw(gettext);
 
 #use List; # this package is loaded via List
 #use Sympa::Constants; # load in confdef - Conf
-#use tools; # load in Conf
+#use Sympa::Tools; # load in Conf
 
 our @ISA    = qw(Exporter);
 our @EXPORT = qw(mail_file mail_message mail_forward set_send_spool);
@@ -194,7 +194,7 @@ sub parse_tt2_messageasstring {
 
     unless ($header_ok{'message-id'}) {
         $headers .=
-            sprintf("Message-Id: %s\n", tools::get_message_id($robot));
+            sprintf("Message-Id: %s\n", Sympa::Tools::get_message_id($robot));
     }
 
     unless ($header_ok{'date'}) {
@@ -236,7 +236,7 @@ sub parse_tt2_messageasstring {
             or $data->{'from'} eq 'sympa'
             or $data->{'from'} eq $data->{'conf'}{'sympa'}) {
             $headers .= 'From: '
-                . &tools::addrencode(
+                . &Sympa::Tools::addrencode(
                 $data->{'conf'}{'sympa'},
                 $data->{'conf'}{'email_gecos'},
                 $data->{'charset'}
@@ -908,7 +908,7 @@ sub smtpto {
         croak sprintf('Unable to create a channel in smtpto: %s', "$!");
         ## No return
     }
-    $pid = &tools::safefork();
+    $pid = &Sympa::Tools::safefork();
     $pid{$pid} = 0;
 
     my $sendmail = $robot->sendmail;
@@ -1099,7 +1099,7 @@ sub fix_part($$$$) {
         } elsif ($eff_type eq 'text/plain'
             and lc($head->mime_attr('Content-type.Format') || '') ne 'flowed')
         {
-            $wrap = &tools::wrap_text($body);
+            $wrap = &Sympa::Tools::wrap_text($body);
         }
         my $charset = $head->mime_attr("Content-Type.Charset") || $defcharset;
 

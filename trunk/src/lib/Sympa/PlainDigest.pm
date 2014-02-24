@@ -74,7 +74,7 @@
 # - moved repeated code to get charset into sub _getCharset
 # - added use of MIME::Charset to check charset aliases
 # 20100810 - S. Ikeda
-# - Remove dependency on Text::Wrap: use common utility tools::wrap_text().
+# - Remove dependency on Text::Wrap: use common utility Sympa::Tools::wrap_text().
 # - Use MIME::Charset OO to handle vendor-defined encodings.
 # - Use MIME::EncWords instead of MIME::WordDecoder.
 # - Now HTML::FormatText is mandatory.  Remove Lynx support.
@@ -90,7 +90,7 @@ use MIME::Charset;
 use HTML::TreeBuilder;
 use Sympa::HTML::MyFormatText;
 use Sympa::Language;
-use tools;
+use Sympa::Tools;
 
 sub plain_body_as_string {
 
@@ -103,7 +103,7 @@ sub plain_body_as_string {
     # clean up after ourselves
     $topent->purge;
 
-    return &tools::wrap_text($outstring, '', '');
+    return &Sympa::Tools::wrap_text($outstring, '', '');
 }
 
 sub _do_toplevel {
@@ -182,15 +182,15 @@ sub _do_message {
         return undef;
     }
 
-    my $from = tools::decode_header($msgent, 'From');
+    my $from = Sympa::Tools::decode_header($msgent, 'From');
     $from = gettext("[Unknown]") unless defined $from and length $from;
-    my $subject = tools::decode_header($msgent, 'Subject');
+    my $subject = Sympa::Tools::decode_header($msgent, 'Subject');
     $subject = '' unless defined $subject;
-    my $date = tools::decode_header($msgent, 'Date');
+    my $date = Sympa::Tools::decode_header($msgent, 'Date');
     $date = '' unless defined $date;
-    my $to = tools::decode_header($msgent, 'To', ', ');
+    my $to = Sympa::Tools::decode_header($msgent, 'To', ', ');
     $to = '' unless defined $to;
-    my $cc = tools::decode_header($msgent, 'Cc', ', ');
+    my $cc = Sympa::Tools::decode_header($msgent, 'Cc', ', ');
     $cc = '' unless defined $cc;
 
     my @fromline = Mail::Address->parse($msgent->head->get('From'));
@@ -213,7 +213,7 @@ sub _do_message {
     $headers .= sprintf(gettext("Cc: %s\n"),      $cc)      if $cc;
     $headers .= sprintf(gettext("Subject: %s\n"), $subject) if $subject;
     $headers .= "\n";
-    $outstring .= &tools::wrap_text($headers, '', '    ');
+    $outstring .= &Sympa::Tools::wrap_text($headers, '', '    ');
 
     _do_toplevel($msgent);
 

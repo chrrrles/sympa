@@ -21,7 +21,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package tools;
+package Sympa::Tools;
 
 use strict;
 use Carp qw(croak);
@@ -383,7 +383,7 @@ sub checkcommand {
     chomp $subject if $subject;
 
     Sympa::Log::Syslog::do_log('debug3',
-        'tools::checkcommand(msg->head->get(subject): %s,%s)',
+        'Sympa::Tools::checkcommand(msg->head->get(subject): %s,%s)',
         $subject, $sender);
 
     if ($subject) {
@@ -941,7 +941,7 @@ sub remove_invalid_dkim_signature {
     Sympa::Log::Syslog::do_log('debug', "removing invalid DKIM signature");
     my $msg_as_string = shift;
 
-    unless (&tools::dkim_verifier($msg_as_string)) {
+    unless (&Sympa::Tools::dkim_verifier($msg_as_string)) {
         my $body_as_string =
             &Sympa::Message::get_body_from_msg_as_string($msg_as_string);
 
@@ -975,7 +975,7 @@ sub dkim_sign {
 
     Sympa::Log::Syslog::do_log(
         'debug2',
-        'tools::dkim_sign (msg:%s,dkim_d:%s,dkim_i%s,dkim_selector:%s,dkim_privatekey:%s)',
+        'Sympa::Tools::dkim_sign (msg:%s,dkim_d:%s,dkim_i%s,dkim_selector:%s,dkim_privatekey:%s)',
         substr($msg_as_string, 0, 30),
         $dkim_d,
         $dkim_i,
@@ -1430,7 +1430,7 @@ sub crypt_password {
 ## decrypt a password
 sub decrypt_password {
     my $inpasswd = shift;
-    Sympa::Log::Syslog::do_log('debug2', 'tools::decrypt_password (%s)',
+    Sympa::Log::Syslog::do_log('debug2', 'Sympa::Tools::decrypt_password (%s)',
         $inpasswd);
 
     return $inpasswd unless ($inpasswd =~ /^crypt\.(.*)$/);
@@ -1857,7 +1857,7 @@ sub epoch_conv {
     my $arg = $_[0];             # argument date to convert
     my $time = $_[1] || time;    # the epoch current date
 
-    Sympa::Log::Syslog::do_log('debug3', 'tools::epoch_conv(%s, %d)',
+    Sympa::Log::Syslog::do_log('debug3', 'Sympa::Tools::epoch_conv(%s, %d)',
         $arg, $time);
 
     my $result;
@@ -1978,7 +1978,7 @@ sub get_filename {
 sub find_file {
     my ($filename, @directories) = @_;
     Sympa::Log::Syslog::do_log(
-        'debug3', 'tools::find_file(%s,%s)',
+        'debug3', 'Sympa::Tools::find_file(%s,%s)',
         $filename, join(':', @directories)
     );
 
@@ -2040,7 +2040,7 @@ sub qencode_hierarchy {
 
     my $count;
     my @all_files;
-    &tools::list_dir($dir, \@all_files, $original_encoding);
+    &Sympa::Tools::list_dir($dir, \@all_files, $original_encoding);
 
     foreach my $f_struct (reverse @all_files) {
 
@@ -2053,7 +2053,7 @@ sub qencode_hierarchy {
         Encode::from_to($new_filename, $encoding, 'utf8') if $encoding;
 
         ## Q-encode file name to escape chars with accents
-        $new_filename = &tools::qencode_filename($new_filename);
+        $new_filename = &Sympa::Tools::qencode_filename($new_filename);
 
         my $orig_f = $f_struct->{'directory'} . '/' . $f_struct->{'filename'};
         my $new_f  = $f_struct->{'directory'} . '/' . $new_filename;
@@ -2168,7 +2168,7 @@ sub write_pid {
     mkdir($piddir, 0755) unless (-d $piddir);
 
     unless (
-        tools::set_file_rights(
+        Sympa::Tools::set_file_rights(
             'file'  => $piddir,
             'user'  => Sympa::Constants::USER,
             'group' => Sympa::Constants::GROUP,
@@ -2252,7 +2252,7 @@ sub write_pid {
     }
 
     unless (
-        tools::set_file_rights(
+        Sympa::Tools::set_file_rights(
             'file'  => $pidfile,
             'user'  => Sympa::Constants::USER,
             'group' => Sympa::Constants::GROUP,
@@ -2274,7 +2274,7 @@ sub direct_stderr_to_file {
     ## Useful if process crashes
     open(STDERR, '>>', Sympa::Site->tmpdir . '/' . $data{'pid'} . '.stderr');
     unless (
-        &tools::set_file_rights(
+        &Sympa::Tools::set_file_rights(
             file  => Sympa::Site->tmpdir . '/' . $data{'pid'} . '.stderr',
             user  => Sympa::Constants::USER,
             group => Sympa::Constants::GROUP,
@@ -2440,7 +2440,7 @@ sub remove_dir {
 ## for 'decrypt', these are arrayrefs containing absolute file names
 sub smime_find_keys {
     my ($dir, $oper) = @_;
-    Sympa::Log::Syslog::do_log('debug', 'tools::smime_find_keys(%s, %s)',
+    Sympa::Log::Syslog::do_log('debug', 'Sympa::Tools::smime_find_keys(%s, %s)',
         $dir, $oper);
 
     my (%certs, %keys);
@@ -2512,7 +2512,7 @@ sub smime_find_keys {
 #  sign => true if v3 purpose is signing
 sub smime_parse_cert {
     my ($arg) = @_;
-    Sympa::Log::Syslog::do_log('debug', 'tools::smime_parse_cert(%s)',
+    Sympa::Log::Syslog::do_log('debug', 'Sympa::Tools::smime_parse_cert(%s)',
         join('/', %{$arg}));
 
     unless (ref($arg)) {
@@ -2601,7 +2601,7 @@ sub smime_parse_cert {
 
 sub smime_extract_certs {
     my ($mime, $outfile) = @_;
-    Sympa::Log::Syslog::do_log('debug2', "tools::smime_extract_certs(%s)",
+    Sympa::Log::Syslog::do_log('debug2', "Sympa::Tools::smime_extract_certs(%s)",
         $mime->mime_type);
 
     if ($mime->mime_type =~ /application\/(x-)?pkcs7-/) {
@@ -3078,7 +3078,7 @@ sub add_in_blacklist {
     my $robot = shift;
     my $list  = shift;
 
-    Sympa::Log::Syslog::do_log('info', "tools::add_in_blacklist(%s,%s,%s)",
+    Sympa::Log::Syslog::do_log('info', "Sympa::Tools::add_in_blacklist(%s,%s,%s)",
         $entry, $robot, $list->name);
     $entry = lc($entry);
     chomp $entry;
@@ -3086,18 +3086,18 @@ sub add_in_blacklist {
     # robot blacklist not yet available
     unless ($list) {
         Sympa::Log::Syslog::do_log('info',
-            "tools::add_in_blacklist: robot blacklist not yet availible, missing list parameter"
+            "Sympa::Tools::add_in_blacklist: robot blacklist not yet availible, missing list parameter"
         );
         return undef;
     }
     unless (($entry) && ($robot)) {
         Sympa::Log::Syslog::do_log('info',
-            "tools::add_in_blacklist:  missing parameters");
+            "Sympa::Tools::add_in_blacklist:  missing parameters");
         return undef;
     }
     if ($entry =~ /\*.*\*/) {
         Sympa::Log::Syslog::do_log('info',
-            "tools::add_in_blacklist: incorrect parameter $entry");
+            "Sympa::Tools::add_in_blacklist: incorrect parameter $entry");
         return undef;
     }
     my $dir = $list->dir . '/search_filters';
@@ -3524,7 +3524,7 @@ Clean all messages in spool $spool_dir older than $clean_delay.
 
 =over 
 
-=item * tools::remove_dir
+=item * Sympa::Tools::remove_dir
 
 =back 
 
@@ -3564,7 +3564,7 @@ sub CleanDir {
                 Sympa::Log::Syslog::do_log('notice', 'Deleting old file %s',
                     "$dir/$f");
             } elsif (-d "$dir/$f") {
-                unless (&tools::remove_dir("$dir/$f")) {
+                unless (&Sympa::Tools::remove_dir("$dir/$f")) {
                     Sympa::Log::Syslog::do_log('err',
                         'Cannot remove old directory %s : %s',
                         "$dir/$f", $!);

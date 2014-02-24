@@ -360,7 +360,7 @@ use Sympa::Config_XML;
 use Sympa::Family;
 
 #use Sympa::Report; # load in Auth
-#use tools; # load in Conf
+#use Sympa::Tools; # load in Conf
 #use tt2; # load in List
 #use Sympa::Constants;
 #use tracking; # not used
@@ -574,9 +574,9 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
             Sympa::Site->log_level);
     }
 
-    &tools::ciphersaber_installed();
+    &Sympa::Tools::ciphersaber_installed();
 
-    if (&tools::cookie_changed(Sympa::Site->cookie)) {
+    if (&Sympa::Tools::cookie_changed(Sympa::Site->cookie)) {
         Sympa::Log::Syslog::fatal_err(
             'sympa.conf/cookie parameter has changed. You may have severe inconsitencies into password storage. Restore previous cookie or write some tool to re-encrypt password in database and check spools contents (look at %s/cookies.history file)',
             Sympa::Site->etc
@@ -681,9 +681,9 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
             ## dedicated file
             my $options;
             $options->{'stderr_to_tty'} = 1 if ($main::options{'foreground'});
-            tools::write_pid('sympa', $$, $options);
+            Sympa::Tools::write_pid('sympa', $$, $options);
             unless ($options->{'stderr_to_tty'}) {
-                &tools::direct_stderr_to_file(('pid' => $$));
+                &Sympa::Tools::direct_stderr_to_file(('pid' => $$));
             }
         }
 
@@ -776,7 +776,7 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
 
         exit 0;
     } elsif ($main::options{'md5_digest'}) {
-        my $md5 = &tools::md5_fingerprint($main::options{'md5_digest'});
+        my $md5 = &Sympa::Tools::md5_fingerprint($main::options{'md5_digest'});
         printf "MD5 digest : %s \n", $md5;
 
         exit 0;
@@ -1263,7 +1263,7 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
             &Sympa::Language::SetLang($list->lang);
             my $list_encoding = &Sympa::Language::GetCharset();
 
-            my $count = &tools::qencode_hierarchy($list->dir . '/shared',
+            my $count = &Sympa::Tools::qencode_hierarchy($list->dir . '/shared',
                 $list_encoding);
 
             if ($count) {
@@ -1488,7 +1488,7 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
                 {'delay' => Sympa::Site->clean_delay_queueautomatic});
 
             # this is not a message spool
-            &tools::CleanDir(Sympa::Site->tmpdir, Sympa::Site->clean_delay_tmpdir);
+            &Sympa::Tools::CleanDir(Sympa::Site->tmpdir, Sympa::Site->clean_delay_tmpdir);
         }
         ## Cleanup in-memory msgid table, only in a while
         if (time >
@@ -1573,7 +1573,7 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
 }    #end of block while ($signal ne 'term'){
 
 Sympa::Log::Syslog::do_log('notice', 'Sympa exited normally due to signal');
-tools::remove_pid('sympa', $$);
+Sympa::Tools::remove_pid('sympa', $$);
 
 exit(0);
 
@@ -1871,7 +1871,7 @@ sub process_message {
     }
 
     # anti-virus
-    my $rc = tools::virus_infected($message->as_entity());
+    my $rc = Sympa::Tools::virus_infected($message->as_entity());
     if ($rc) {
         if ($robot->antivirus_notify eq 'sender') {
             unless (
@@ -2368,7 +2368,7 @@ sub DoMessage {
     # Reject messages with commands
     if (Sympa::Site->misaddressed_commands =~ /reject/i) {
         ## Check the message for commands and catch them.
-        if (tools::checkcommand($message->as_entity(), $sender, $robot)) {
+        if (Sympa::Tools::checkcommand($message->as_entity(), $sender, $robot)) {
             Sympa::Log::Syslog::do_log('err',
                 'Found command in message, ignoring message');
             Sympa::Report::reject_report_msg('user', 'routing_error', $sender,
@@ -2519,13 +2519,13 @@ sub DoMessage {
     if ($action =~ /^do_it/) {
         my $apply_dkim_signature = 'off';
         $apply_dkim_signature = 'on'
-            if &tools::is_in_array($list->dkim_signature_apply_on, 'any');
+            if &Sympa::Tools::is_in_array($list->dkim_signature_apply_on, 'any');
         $apply_dkim_signature = 'on'
-            if &tools::is_in_array($list->dkim_signature_apply_on,
+            if &Sympa::Tools::is_in_array($list->dkim_signature_apply_on,
             'smime_authenticated_messages')
             and $is_signed->{'body'};
         $apply_dkim_signature = 'on'
-            if &tools::is_in_array($list->dkim_signature_apply_on,
+            if &Sympa::Tools::is_in_array($list->dkim_signature_apply_on,
             'dkim_authenticated_messages');
 
         ## Check TT2 syntax for merge_feature.
@@ -2986,7 +2986,7 @@ sub DoCommand {
     ## Process the Subject of the message
     ## Search and process a command in the Subject field
     my $subject_field = $message->{'decoded_subject'};
-    my $re_regexp     = tools::get_regexp('re');
+    my $re_regexp     = Sympa::Tools::get_regexp('re');
     $subject_field =~ s/^\s*(?:$re_regexp)?\s*(.*)\s*$/$1/i
         if $subject_field;
 
@@ -3004,7 +3004,7 @@ sub DoCommand {
 
     ## Make multipart singlepart
     if ($msg->is_multipart()) {
-        my $status = &tools::as_singlepart($msg, 'text/plain');
+        my $status = &Sympa::Tools::as_singlepart($msg, 'text/plain');
 
         unless (defined $status) {
             Sympa::Log::Syslog::do_log('err',

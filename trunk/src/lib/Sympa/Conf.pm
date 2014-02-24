@@ -40,7 +40,7 @@ use Sympa::Language qw(gettext);
 
 #use wwslib; # no longer used
 use Sympa::ConfDef;
-use tools;
+use Sympa::Tools;
 
 #use Sympa::Constants; # already load in confdef.
 use Sympa::Lock;
@@ -525,7 +525,7 @@ sub checkfiles_as_root {
             $Conf{'sendmail_aliases'}
         );
         unless (
-            &tools::set_file_rights(
+            &Sympa::Tools::set_file_rights(
                 file  => $Conf{'sendmail_aliases'},
                 user  => Sympa::Constants::USER,
                 group => Sympa::Constants::GROUP,
@@ -554,7 +554,7 @@ sub checkfiles_as_root {
             }
 
             unless (
-                &tools::set_file_rights(
+                &Sympa::Tools::set_file_rights(
                     file  => $dir,
                     user  => Sympa::Constants::USER,
                     group => Sympa::Constants::GROUP,
@@ -602,7 +602,7 @@ sub checkfiles {
                 $config_err++;
             }
             unless (
-                &tools::set_file_rights(
+                &Sympa::Tools::set_file_rights(
                     file  => $Conf{$qdir},
                     user  => Sympa::Constants::USER,
                     group => Sympa::Constants::GROUP,
@@ -627,7 +627,7 @@ sub checkfiles {
                 $config_err++;
             }
             unless (
-                &tools::set_file_rights(
+                &Sympa::Tools::set_file_rights(
                     file  => $subdir,
                     user  => Sympa::Constants::USER,
                     group => Sympa::Constants::GROUP,
@@ -738,7 +738,7 @@ sub checkfiles {
 
         ## Create directory if required
         unless (-d $dir) {
-            unless (&tools::mkdir_all($dir, 0755)) {
+            unless (&Sympa::Tools::mkdir_all($dir, 0755)) {
                 my $msg = "Failed to create directory $dir: $!";
                 Sympa::Log::Syslog::do_log('err', '%s', $msg);
                 $robot->send_notify_to_listmaster('cannot_mkdir', $msg);
@@ -2228,7 +2228,7 @@ sub _set_listmasters_entry {
             split(/,/, $param->{'config_hash'}{'listmaster'});
         $number_of_email_provided = scalar @emails_provided;
         foreach my $lismaster_address (@emails_provided) {
-            if (&tools::valid_email($lismaster_address)) {
+            if (&Sympa::Tools::valid_email($lismaster_address)) {
                 push @{$param->{'config_hash'}{'listmasters'}},
                     $lismaster_address;
                 $number_of_valid_email++;
@@ -2432,7 +2432,7 @@ sub _save_config_hash_to_binary {
 
 sub _source_has_not_changed {
     my $param    = shift;
-    my $is_older = &tools::a_is_older_than_b(
+    my $is_older = &Sympa::Tools::a_is_older_than_b(
         {   'a_file' => $param->{'config_file'},
             'b_file' => $param->{'config_file'} . $binary_file_extension,
         }
@@ -2462,7 +2462,7 @@ sub _get_config_file_name {
 
 sub _create_robot_like_config_for_main_robot {
     return if (defined $Sympa::Conf::Conf{'robots'}{$Sympa::Conf::Conf{'domain'}});
-    my $main_conf_no_robots = &tools::dup_var(\%Conf);
+    my $main_conf_no_robots = &Sympa::Tools::dup_var(\%Conf);
     delete $main_conf_no_robots->{'robots'};
     &_remove_unvalid_robot_entry(
         {'config_hash' => $main_conf_no_robots, 'quiet' => 1});

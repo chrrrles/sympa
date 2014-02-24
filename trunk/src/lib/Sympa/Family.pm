@@ -198,7 +198,7 @@ Creates a new Sympa::Family object of name $name, belonging to the robot $robot.
 
 =item * Sympa::Log::Syslog::do_log
 
-=item * tools::get_regexp
+=item * Sympa::Tools::get_regexp
 
 =back 
 
@@ -244,7 +244,7 @@ sub new {
     # create a new object family
     bless $self, $class;
 
-    my $family_name_regexp = &tools::get_regexp('family_name');
+    my $family_name_regexp = &Sympa::Tools::get_regexp('family_name');
 
     ## family name
     unless ($name && ($name =~ /^$family_name_regexp$/io)) {
@@ -3074,7 +3074,7 @@ sub _load_param_constraint_conf {
 
 ###########################"
     #   open TMP, ">/tmp/dump1";
-    #   &tools::dump_var ($constraint, 0, \*TMP);
+    #   &Sympa::Tools::dump_var ($constraint, 0, \*TMP);
     #    close TMP;
 
     return $constraint;
