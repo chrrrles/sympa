@@ -42,7 +42,7 @@ use Sympa::Message;
 use Sympa::Report;
 use Data::Dumper;
 
-#use tools; # used in List - Site - Conf
+#use Sympa::Tools; # used in List - Site - Conf
 #use Sympa::Constants; # used in confdef - Conf
 
 our @ISA       = qw(Exporter);
@@ -1066,7 +1066,7 @@ sub subscribe {
         if ($Site::use_db) {
             my $u = User->new($sender);
             $u->lang($list->lang) unless $u->lang;
-            $u->password(&tools::tmp_passwd($sender)) unless $u->password;
+            $u->password(&Sympa::Tools::tmp_passwd($sender)) unless $u->password;
             $u->save;
         }
 
@@ -1566,7 +1566,7 @@ sub add {
     my $sign_mod = shift;
     my $message  = shift;
 
-    my $email_regexp = &tools::get_regexp('email');
+    my $email_regexp = &Sympa::Tools::get_regexp('email');
 
     $what =~ /^(\S+)\s+($email_regexp)(\s+(.+))?\s*$/;
     my ($which, $email, $comment) = ($1, $2, $6);
@@ -1694,7 +1694,7 @@ sub add {
         if ($Site::use_db) {
             my $u = User->new($email);
             $u->lang($list->lang) unless $u->lang;
-            $u->password(&tools::tmp_passwd($email)) unless $u->password;
+            $u->password(&Sympa::Tools::tmp_passwd($email)) unless $u->password;
             $u->save;
         }
 
@@ -2307,7 +2307,7 @@ sub del {
     my $sign_mod = shift;
     my $message  = shift;
 
-    my $email_regexp = &tools::get_regexp('email');
+    my $email_regexp = &Sympa::Tools::get_regexp('email');
 
     $what =~ /^(\S+)\s+($email_regexp)\s*/;
     my ($which, $who) = ($1, $2);
@@ -2727,9 +2727,9 @@ sub distribute {
     my $numsmtp;
     my $apply_dkim_signature = 'off';
     $apply_dkim_signature = 'on'
-        if &tools::is_in_array($list->dkim_signature_apply_on, 'any');
+        if &Sympa::Tools::is_in_array($list->dkim_signature_apply_on, 'any');
     $apply_dkim_signature = 'on'
-        if &tools::is_in_array($list->dkim_signature_apply_on,
+        if &Sympa::Tools::is_in_array($list->dkim_signature_apply_on,
         'editor_validated_messages');
 
     $numsmtp = $list->distribute_msg(
@@ -2990,9 +2990,9 @@ sub confirm {
         my $numsmtp;
         my $apply_dkim_signature = 'off';
         $apply_dkim_signature = 'on'
-            if &tools::is_in_array($list->dkim_signature_apply_on, 'any');
+            if &Sympa::Tools::is_in_array($list->dkim_signature_apply_on, 'any');
         $apply_dkim_signature = 'on'
-            if &tools::is_in_array($list->dkim_signature_apply_on,
+            if &Sympa::Tools::is_in_array($list->dkim_signature_apply_on,
             'md5_authenticated_messages');
 
         $numsmtp = $list->distribute_msg(
@@ -3101,7 +3101,7 @@ sub reject {
     unless (@sender_hdr) {
         my $rejected_sender = $sender_hdr[0]->address;
         my %context;
-        $context{'subject'} = &tools::decode_header($message, 'Subject');
+        $context{'subject'} = &Sympa::Tools::decode_header($message, 'Subject');
         $context{'rejected_by'} = $sender;
         $context{'editor_msg_body'} = $editor_msg->as_entity()->body_as_string
             if ($editor_msg);
@@ -3138,7 +3138,7 @@ sub reject {
     Sympa::Log::Syslog::do_log('info',
         'REJECT %s %s from %s accepted (%d seconds)',
         $name, $sender, $key, time - $time_command);
-    &tools::remove_dir(
+    &Sympa::Tools::remove_dir(
         Sympa::Site->viewmail_dir . '/mod/' . $list->get_list_id() . '/' . $key);
 
     $modspool->remove_message({'list' => $list, 'authkey' => $key});

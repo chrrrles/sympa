@@ -607,7 +607,7 @@ sub new {
         }
 
         ## Only process the list if the name is valid.
-        my $listname_regexp = &tools::get_regexp('listname');
+        my $listname_regexp = &Sympa::Tools::get_regexp('listname');
         unless ($name and ($name =~ /^($listname_regexp)$/io)) {
             Sympa::Log::Syslog::do_log('err', 'Incorrect listname "%s"',
                 $name)
@@ -1589,7 +1589,7 @@ sub distribute_msg {
         $subject_field =~ s/\s+$//;
 
         # truncate multiple "Re:" and equivalents.
-        my $re_regexp = tools::get_regexp('re');
+        my $re_regexp = Sympa::Tools::get_regexp('re');
         if ($subject_field =~ /^\s*($re_regexp\s*)($re_regexp\s*)*/) {
             ($before_tag, $after_tag) = ($1, $');    #'
         } else {
@@ -1842,7 +1842,7 @@ sub split_spooled_digest_to_messages {
         $self->get_list_id);
     my $message_in_spool = $param->{'message_in_spool'};
     $self->{'digest'}{'list_of_mail'} = [];
-    my $separator = "\n\n" . &tools::get_separator() . "\n\n";
+    my $separator = "\n\n" . &Sympa::Tools::get_separator() . "\n\n";
     my @messages_as_string =
         split(/$separator/, $message_in_spool->{'messageasstring'});
     splice @messages_as_string, 0, 1;
@@ -1871,9 +1871,9 @@ sub prepare_messages_for_digest {
     return undef unless ($self->{'digest'}{'list_of_mail'});
     foreach my $i (0 .. $#{$self->{'digest'}{'list_of_mail'}}) {
         my $mail    = ${$self->{'digest'}{'list_of_mail'}}[$i];
-        my $subject = &tools::decode_header($mail, 'Subject');
-        my $from    = &tools::decode_header($mail, 'From');
-        my $date    = &tools::decode_header($mail, 'Date');
+        my $subject = &Sympa::Tools::decode_header($mail, 'Subject');
+        my $from    = &Sympa::Tools::decode_header($mail, 'From');
+        my $date    = &Sympa::Tools::decode_header($mail, 'Date');
 
         my $msg = {};
         $msg->{'id'}      = $i + 1;
@@ -1889,10 +1889,10 @@ sub prepare_messages_for_digest {
         ## Should be extracted from Date:
         $msg->{'month'} = &POSIX::strftime("%Y-%m", localtime(time));
         $msg->{'message_id'} =
-            tools::clean_msg_id($mail->get_header('Message-Id'));
+            Sympa::Tools::clean_msg_id($mail->get_header('Message-Id'));
 
         ## Clean up Message-ID
-        $msg->{'message_id'} = &tools::escape_chars($msg->{'message_id'});
+        $msg->{'message_id'} = &Sympa::Tools::escape_chars($msg->{'message_id'});
 
         #push @{$param->{'msg_list'}}, $msg ;
         push @{$self->{'digest'}{'all_msg'}}, $msg;
@@ -1917,8 +1917,8 @@ sub prepare_digest_parameters {
         'replyto'          => $self->get_list_address('owner'),
         'to'               => $self->get_list_address(),
         'table_of_content' => gettext("Table of contents:"),
-        'boundary1' => '----------=_' . &tools::get_message_id($self->domain),
-        'boundary2' => '----------=_' . &tools::get_message_id($self->domain),
+        'boundary1' => '----------=_' . &Sympa::Tools::get_message_id($self->domain),
+        'boundary2' => '----------=_' . &Sympa::Tools::get_message_id($self->domain),
     };
     if ($self->get_reply_to() =~ /^list$/io) {
         $self->{'digest'}{'template_params'}{'replyto'} = "$param->{'to'}";
@@ -2155,7 +2155,7 @@ sub send_msg {
 
     # prepare dkim parameters
     if ($apply_dkim_signature eq 'on') {
-        $dkim_parameters = &tools::get_dkim_parameters($self);
+        $dkim_parameters = &Sympa::Tools::get_dkim_parameters($self);
     }
 
     # separate subscribers depending on user reception option and also if VERP
@@ -2307,9 +2307,9 @@ sub get_list_members_per_mode {
         } elsif (
             $message->{'smime_crypted'}
             && (!-r Sympa::Site->ssl_cert_dir . '/'
-                . &tools::escape_chars($user->{'email'})
+                . &Sympa::Tools::escape_chars($user->{'email'})
                 && !-r Sympa::Site->ssl_cert_dir . '/'
-                . &tools::escape_chars($user->{'email'} . '@enc'))
+                . &Sympa::Tools::escape_chars($user->{'email'} . '@enc'))
             ) {
             Sympa::Log::Syslog::do_log('debug3', 'No certificate for user %s',
                 $user->{'email'});
@@ -2599,7 +2599,7 @@ sub send_to_editor {
         }
     }
 
-    my $subject = tools::decode_header($hdr, 'Subject');
+    my $subject = Sympa::Tools::decode_header($hdr, 'Subject');
     my $param = {
         'modkey'         => $modkey,
         'boundary'       => $boundary,
@@ -2787,8 +2787,8 @@ sub archive_send {
         'filename' => $file
     };
 
-    $param->{'boundary1'} = &tools::get_message_id($self->robot);
-    $param->{'boundary2'} = &tools::get_message_id($self->robot);
+    $param->{'boundary1'} = &Sympa::Tools::get_message_id($self->robot);
+    $param->{'boundary2'} = &Sympa::Tools::get_message_id($self->robot);
     $param->{'from'}      = $self->robot->get_address();            #FIXME
 
     $param->{'auto_submitted'} = 'auto-replied';
@@ -2828,9 +2828,9 @@ sub archive_send_last {
     my $msg = {};
     $msg->{'id'} = 1;
 
-    $msg->{'subject'} = tools::decode_header($message, 'Subject');
-    $msg->{'from'}    = tools::decode_header($message, 'From');
-    $msg->{'date'}    = tools::decode_header($message, 'Date');
+    $msg->{'subject'} = Sympa::Tools::decode_header($message, 'Subject');
+    $msg->{'from'}    = Sympa::Tools::decode_header($message, 'From');
+    $msg->{'date'}    = Sympa::Tools::decode_header($message, 'Date');
 
     $msg->{'full_msg'} = $message->as_string();    # raw message
 
@@ -2842,8 +2842,8 @@ sub archive_send_last {
         'filename' => 'last_message'
     };
 
-    $param->{'boundary1'}      = &tools::get_message_id($self->robot);
-    $param->{'boundary2'}      = &tools::get_message_id($self->robot);
+    $param->{'boundary1'}      = &Sympa::Tools::get_message_id($self->robot);
+    $param->{'boundary2'}      = &Sympa::Tools::get_message_id($self->robot);
     $param->{'from'}           = $self->robot->get_address();           #FIXME
     $param->{'auto_submitted'} = 'auto-replied';
 
@@ -3054,7 +3054,7 @@ sub find_picture_filenames {
     my $self  = shift;
     my $email = shift;
 
-    my $login = tools::md5_fingerprint($email);
+    my $login = Sympa::Tools::md5_fingerprint($email);
     my @ret   = ();
 
     foreach my $ext (qw{gif jpg jpeg png}) {
@@ -3321,7 +3321,7 @@ sub delete_list_member {
     my $total = 0;
 
     foreach my $who (@u) {
-        $who = &tools::clean_email($who);
+        $who = &Sympa::Tools::clean_email($who);
 
         ## Include in exclusion_table only if option is set.
         if ($exclude == 1) {
@@ -3377,7 +3377,7 @@ sub delete_list_admin {
     my $total = 0;
 
     foreach my $who (@u) {
-        $who = &tools::clean_email($who);
+        $who = &Sympa::Tools::clean_email($who);
 
         $self->user($role, $who, 0);
 
@@ -3740,7 +3740,7 @@ sub get_resembling_list_members_no_object {
     my $name = $options->{'name'};
     my @output;
 
-    my $email    = &tools::clean_email($options->{'email'});
+    my $email    = &Sympa::Tools::clean_email($options->{'email'});
     my $robot    = $options->{'domain'};
     my $listname = $options->{'name'};
 
@@ -3909,7 +3909,7 @@ sub get_resembling_list_members_no_object {
 sub find_list_member_by_pattern_no_object {
     my $options       = shift;
     my $name          = $options->{'name'};
-    my $email_pattern = &tools::clean_email($options->{'email_pattern'});
+    my $email_pattern = &Sympa::Tools::clean_email($options->{'email_pattern'});
     my @resembling_users;
 
     push @sth_stack, $sth;
@@ -3942,7 +3942,7 @@ sub find_list_member_by_pattern_no_object {
         if (defined $user) {
 
             $user->{'reception'} ||= 'mail';
-            $user->{'escaped_email'} = &tools::escape_chars($user->{'email'});
+            $user->{'escaped_email'} = &Sympa::Tools::escape_chars($user->{'email'});
             $user->{'update_date'} ||= $user->{'date'};
             if (defined $user->{custom_attribute}) {
                 $user->{'custom_attribute'} =
@@ -4159,7 +4159,7 @@ sub createXMLCustomAttribute {
     foreach my $k (sort keys %{$custom_attr}) {
         $XMLstr .=
               "<custom_attribute id=\"$k\"><value>"
-            . &tools::escape_html($custom_attr->{$k}{value})
+            . &Sympa::Tools::escape_html($custom_attr->{$k}{value})
             . "</value></custom_attribute>";
     }
     $XMLstr .= "</custom_attributes>";
@@ -4555,7 +4555,7 @@ sub is_list_member {
 sub update_list_member {
     my ($self, $who, $values) = @_;
     Sympa::Log::Syslog::do_log('debug2', '(%s)', $who);
-    $who = &tools::clean_email($who);
+    $who = &Sympa::Tools::clean_email($who);
 
     my ($field, $value);
 
@@ -4729,7 +4729,7 @@ sub update_list_member {
         foreach my $path ($self->find_picture_paths($who)) {
             my $extension = [reverse split /\./, $path]->[0];
             my $new_path = $self->get_picture_path(
-                tools::md5_fingerprint($values->{'email'}) . '.'
+                Sympa::Tools::md5_fingerprint($values->{'email'}) . '.'
                     . $extension);
             unless (rename $path, $new_path) {
                 Sympa::Log::Syslog::do_log('err',
@@ -4751,7 +4751,7 @@ sub update_list_member {
 sub update_list_admin {
     my ($self, $who, $role, $values) = @_;
     Sympa::Log::Syslog::do_log('debug2', '(%s,%s)', $role, $who);
-    $who = &tools::clean_email($who);
+    $who = &Sympa::Tools::clean_email($who);
 
     my ($field, $value);
 
@@ -4925,7 +4925,7 @@ sub add_list_member {
     my $current_list_members_count = $self->total;
 
     foreach my $new_user (@new_users) {
-        my $who = &tools::clean_email($new_user->{'email'});
+        my $who = &Sympa::Tools::clean_email($new_user->{'email'});
         next unless $who;
         unless ($current_list_members_count < $self->max_list_members
             or $self->max_list_members == 0) {
@@ -4962,7 +4962,7 @@ sub add_list_member {
         unless ($new_user->{'password'}
             and $new_user->{'password'} =~ /^crypt/) {
             $new_user->{'password'} =
-                tools::crypt_password($new_user->{'password'});
+                Sympa::Tools::crypt_password($new_user->{'password'});
         }
 
         $self->user('member', $who, undef);
@@ -5087,7 +5087,7 @@ sub add_list_admin {
     my $total = 0;
 
     foreach my $new_admin_user (@new_admin_users) {
-        my $who = &tools::clean_email($new_admin_user->{'email'});
+        my $who = &Sympa::Tools::clean_email($new_admin_user->{'email'});
 
         next unless $who;
 
@@ -5177,7 +5177,7 @@ sub am_i {
     Sympa::Log::Syslog::do_log('debug2', '(%s, %s, %s, %s)', @_);
     my $self     = shift;
     my $function = lc(shift || '');
-    my $who      = &tools::clean_email(shift || '');
+    my $who      = &Sympa::Tools::clean_email(shift || '');
     my $options  = shift || {};
 
     return undef unless $self and $who;
@@ -5254,7 +5254,7 @@ sub may_edit {
         ) {
 
         $edit_conf = $edit_list_conf{$edit_conf_file} =
-            &tools::load_edit_list_conf($self);
+            &Sympa::Tools::load_edit_list_conf($self);
         $mtime{'edit_list_conf'}{$edit_conf_file} = time;
     } else {
         $edit_conf = $edit_list_conf{$edit_conf_file};
@@ -5317,11 +5317,11 @@ sub may_create_parameter {
     if ($self->robot->is_listmaster($who)) {
         return 1;
     }
-    my $edit_conf = &tools::load_edit_list_conf($self);
+    my $edit_conf = &Sympa::Tools::load_edit_list_conf($self);
     $edit_conf->{$parameter} ||= $edit_conf->{'default'};
     if (!$edit_conf->{$parameter}) {
         Sympa::Log::Syslog::do_log('notice',
-            'tools::load_edit_list_conf privilege for parameter $parameter undefined'
+            'Sympa::Tools::load_edit_list_conf privilege for parameter $parameter undefined'
         );
         return undef;
     }
@@ -5574,7 +5574,7 @@ sub load_scenario_list {
     foreach my $dir (@{$self->get_etc_include_path('scenari')}) {
         next unless -d $dir;
 
-        my $scenario_regexp = tools::get_regexp('scenario');
+        my $scenario_regexp = Sympa::Tools::get_regexp('scenario');
 
         while (<$dir/$action.*:ignore>) {
             if (/$action\.($scenario_regexp):ignore$/) {
@@ -5613,7 +5613,7 @@ sub load_scenario_list {
 
     ## Return a copy of the data to prevent unwanted changes in the central
     ## scenario data structure
-    return tools::dup_var(\%list_of_scenario);
+    return Sympa::Tools::dup_var(\%list_of_scenario);
 }
 
 =over 4
@@ -6048,7 +6048,7 @@ sub _include_users_file {
     my $id           = Sympa::Datasource::_get_datasource_id($filename);
     my $lines        = 0;
     my $emails_found = 0;
-    my $email_regexp = &tools::get_regexp('email');
+    my $email_regexp = &Sympa::Tools::get_regexp('email');
 
     while (<INCLUDE>) {
         if ($lines > 49 && $emails_found == 0) {
@@ -6075,9 +6075,9 @@ sub _include_users_file {
             next;
         }
         my ($email, $gecos) = ($1, $5);
-        $email = tools::clean_email($email);
+        $email = Sympa::Tools::clean_email($email);
 
-        unless (&tools::valid_email($email)) {
+        unless (&Sympa::Tools::valid_email($email)) {
             Sympa::Log::Syslog::do_log('err',
                 "Skip badly formed email address: '%s'", $email);
             next;
@@ -6152,7 +6152,7 @@ sub _include_users_remote_file {
         my @remote_file  = split(/\n/, $res->content);
         my $lines        = 0;
         my $emails_found = 0;
-        my $email_regexp = &tools::get_regexp('email');
+        my $email_regexp = &Sympa::Tools::get_regexp('email');
 
         # forgot headers (all line before one that contain a email
         foreach my $line (@remote_file) {
@@ -6180,9 +6180,9 @@ sub _include_users_remote_file {
                 next;
             }
             my ($email, $gecos) = ($1, $5);
-            $email = tools::clean_email($email);
+            $email = Sympa::Tools::clean_email($email);
 
-            unless (&tools::valid_email($email)) {
+            unless (&Sympa::Tools::valid_email($email)) {
                 Sympa::Log::Syslog::do_log('err',
                     "Skip badly formed email address: '%s'", $line);
                 next;
@@ -6280,7 +6280,7 @@ sub _include_users_voot_group {
     foreach my $member (@$members) {
 
         if (my $email = shift(@{$member->{'emails'}})) {
-            unless (&tools::valid_email($email)) {
+            unless (&Sympa::Tools::valid_email($email)) {
                 Sympa::Log::Syslog::do_log('err',
                     "Skip badly formed email address: '%s'", $email);
                 next;
@@ -6391,9 +6391,9 @@ sub _include_users_ldap {
         ## Multiple values
         if (ref($emailentry) eq 'ARRAY') {
             foreach my $email (@{$emailentry}) {
-                my $cleanmail = &tools::clean_email($email);
+                my $cleanmail = &Sympa::Tools::clean_email($email);
                 ## Skip badly formed emails
-                unless (&tools::valid_email($email)) {
+                unless (&Sympa::Tools::valid_email($email)) {
                     Sympa::Log::Syslog::do_log('err',
                         "Skip badly formed email address: '%s'", $email);
                     next;
@@ -6405,9 +6405,9 @@ sub _include_users_ldap {
                 last if ($ldap_select eq 'first');
             }
         } else {
-            my $cleanmail = &tools::clean_email($emailentry);
+            my $cleanmail = &Sympa::Tools::clean_email($emailentry);
             ## Skip badly formed emails
-            unless (&tools::valid_email($emailentry)) {
+            unless (&Sympa::Tools::valid_email($emailentry)) {
                 Sympa::Log::Syslog::do_log('err',
                     "Skip badly formed email address: '%s'", $emailentry);
                 next;
@@ -6430,7 +6430,7 @@ sub _include_users_ldap {
         my ($email, $gecos) = @$emailgecos;
         next if ($email =~ /^\s*$/);
 
-        $email = &tools::clean_email($email);
+        $email = &Sympa::Tools::clean_email($email);
         my %u;
         ## Check if user has already been included
         if ($users->{$email}) {
@@ -6612,9 +6612,9 @@ sub _include_users_ldap_2level {
             ## Multiple values
             if (ref($emailentry) eq 'ARRAY') {
                 foreach my $email (@{$emailentry}) {
-                    my $cleanmail = &tools::clean_email($email);
+                    my $cleanmail = &Sympa::Tools::clean_email($email);
                     ## Skip badly formed emails
-                    unless (&tools::valid_email($email)) {
+                    unless (&Sympa::Tools::valid_email($email)) {
                         Sympa::Log::Syslog::do_log('err',
                             "Skip badly formed email address: '%s'", $email);
                         next;
@@ -6629,9 +6629,9 @@ sub _include_users_ldap_2level {
                     last if ($ldap_select2 eq 'first');
                 }
             } else {
-                my $cleanmail = &tools::clean_email($emailentry);
+                my $cleanmail = &Sympa::Tools::clean_email($emailentry);
                 ## Skip badly formed emails
-                unless (&tools::valid_email($emailentry)) {
+                unless (&Sympa::Tools::valid_email($emailentry)) {
                     Sympa::Log::Syslog::do_log('err',
                         "Skip badly formed email address: '%s'", $emailentry);
                     next;
@@ -6661,7 +6661,7 @@ sub _include_users_ldap_2level {
         my ($email, $gecos) = @$emailgecos;
         next if ($email =~ /^\s*$/);
 
-        $email = &tools::clean_email($email);
+        $email = &Sympa::Tools::clean_email($email);
         my %u;
         ## Check if user has already been included
         if ($users->{$email}) {
@@ -6874,10 +6874,10 @@ sub _include_users_sql {
         ## Empty value
         next if ($email =~ /^\s*$/);
 
-        $email = &tools::clean_email($email);
+        $email = &Sympa::Tools::clean_email($email);
 
         ## Skip badly formed emails
-        unless (&tools::valid_email($email)) {
+        unless (&Sympa::Tools::valid_email($email)) {
             Sympa::Log::Syslog::do_log('err',
                 "Skip badly formed email address: '%s'", $email);
             next;
@@ -6945,7 +6945,7 @@ sub _load_list_members_from_include {
 
             # Work with a copy of admin hash branch to avoid including
             # temporary variables into the actual admin hash.[bug #3182]
-            my $incl          = tools::dup_var($tmp_incl);
+            my $incl          = Sympa::Tools::dup_var($tmp_incl);
             my $source_id     = Sympa::Datasource::_get_datasource_id($tmp_incl);
             my $source_is_new = defined $old_subs->{$source_id};
 
@@ -7185,7 +7185,7 @@ sub _load_list_admin_from_include {
 
                 # Work with a copy of admin hash branch to avoid including
                 # temporary variables into the actual admin hash. [bug #3182]
-                my $incl = &tools::dup_var($tmp_incl);
+                my $incl = &Sympa::Tools::dup_var($tmp_incl);
 
                 # get the list of admin users
                 # does it need to define a 'default_admin_user_option'?
@@ -7535,7 +7535,7 @@ sub sync_include_ca {
         foreach my $tmp_incl (@{$self->$type}) {
             ## Work with a copy of admin hash branch to avoid including
             ## temporary variables into the actual admin hash.[bug #3182]
-            my $incl   = &tools::dup_var($tmp_incl);
+            my $incl   = &Sympa::Tools::dup_var($tmp_incl);
             my $source = undef;
             my $srcca  = undef;
             if ($type eq 'include_sql_ca') {
@@ -8489,7 +8489,7 @@ sub _compare_addresses {
 sub store_digest {
     Sympa::Log::Syslog::do_log('debug2', '(%s, %s)', @_);
     my ($self, $message) = @_;
-    my $separator = &tools::get_separator();
+    my $separator = &Sympa::Tools::get_separator();
 
     my @now = localtime(time);
 
@@ -8509,10 +8509,10 @@ sub store_digest {
             POSIX::strftime("%a %b %e %H:%M:%S %Y", @now);
         $message_as_string .= sprintf
             "------- THIS IS A RFC934 COMPLIANT DIGEST, YOU CAN BURST IT -------\n\n";
-        $message_as_string .= sprintf "\n%s\n\n", &tools::get_separator();
+        $message_as_string .= sprintf "\n%s\n\n", &Sympa::Tools::get_separator();
     }
     $message_as_string .= $message->as_string();    #without metadata
-    $message_as_string .= sprintf "\n%s\n\n", &tools::get_separator();
+    $message_as_string .= sprintf "\n%s\n\n", &Sympa::Tools::get_separator();
 
     # update and unlock current digest message or create it
     if ($current_digest) {
@@ -8787,9 +8787,9 @@ sub get_lists {
                     $key_sql  = 'name_list';
                     $vl       = lc $vals;
                 } else {
-                    $key_perl = 'tools::foldcase($list->subject)';
+                    $key_perl = 'Sympa::Tools::foldcase($list->subject)';
                     $key_sql  = 'searchkey_list';
-                    $vl       = tools::foldcase($vals);
+                    $vl       = Sympa::Tools::foldcase($vals);
                 }
 
                 ## Perl expression
@@ -9361,7 +9361,7 @@ function to any list in ROBOT.
 
 sub get_which {
     Sympa::Log::Syslog::do_log('debug2', '(%s, %s, %s)', @_);
-    my $email = &tools::clean_email(shift);
+    my $email = &Sympa::Tools::clean_email(shift);
     my $robot = Sympa::Robot::clean_robot(shift);
     my $role  = shift;
 
@@ -9681,7 +9681,7 @@ sub get_cert {
     # it will have the respective cert attached anyways.
     # (the problem is that netscape, opera and IE can't only
     # read the first cert in a file)
-    my ($certs, $keys) = tools::smime_find_keys($self->dir, 'encrypt');
+    my ($certs, $keys) = Sympa::Tools::smime_find_keys($self->dir, 'encrypt');
 
     my @cert;
     if ($format eq 'pem') {
@@ -10327,7 +10327,7 @@ sub compute_topic {
     # getting keywords
     foreach my $topic (@{$self->msg_topic}) {
         my $list_keyw =
-            &tools::get_array_from_splitted_string($topic->{'keywords'});
+            &Sympa::Tools::get_array_from_splitted_string($topic->{'keywords'});
 
         foreach my $keyw (@{$list_keyw}) {
             $keywords{$keyw} = $topic->{'name'};
@@ -10369,11 +10369,11 @@ sub compute_topic {
     }
 
     # foldcase string
-    $mail_string = tools::foldcase($mail_string);
+    $mail_string = Sympa::Tools::foldcase($mail_string);
 
     # parsing
     foreach my $keyw (keys %keywords) {
-        if (index($mail_string, tools::foldcase($keyw)) >= 0) {
+        if (index($mail_string, Sympa::Tools::foldcase($keyw)) >= 0) {
             $topic_hash{$keywords{$keyw}} = 1;
         }
     }
@@ -10527,7 +10527,7 @@ sub modifying_msg_topic_for_list_members() {
     }
 
     my $msg_topic_changes =
-        &tools::diff_on_arrays(\@old_msg_topic_name, \@new_msg_topic_name);
+        &Sympa::Tools::diff_on_arrays(\@old_msg_topic_name, \@new_msg_topic_name);
 
     if ($#{$msg_topic_changes->{'deleted'}} >= 0) {
 
@@ -10538,9 +10538,9 @@ sub modifying_msg_topic_for_list_members() {
             ) {
 
             if ($subscriber->{'reception'} eq 'mail') {
-                my $topics = &tools::diff_on_arrays(
+                my $topics = &Sympa::Tools::diff_on_arrays(
                     $msg_topic_changes->{'deleted'},
-                    &tools::get_array_from_splitted_string(
+                    &Sympa::Tools::get_array_from_splitted_string(
                         $subscriber->{'topics'}
                     )
                 );
@@ -10611,7 +10611,7 @@ sub select_list_members_for_topic {
     my $msg_topics;
 
     if ($string_topic) {
-        $msg_topics = &tools::get_array_from_splitted_string($string_topic);
+        $msg_topics = &Sympa::Tools::get_array_from_splitted_string($string_topic);
     }
 
     foreach my $user (@$subscribers) {
@@ -10629,15 +10629,15 @@ sub select_list_members_for_topic {
             next;
         }
         my $user_topics =
-            &tools::get_array_from_splitted_string($info_user->{'topics'});
+            &Sympa::Tools::get_array_from_splitted_string($info_user->{'topics'});
 
         if ($string_topic) {
-            my $result = &tools::diff_on_arrays($msg_topics, $user_topics);
+            my $result = &Sympa::Tools::diff_on_arrays($msg_topics, $user_topics);
             if ($#{$result->{'intersection'}} >= 0) {
                 push @selected_users, $user;
             }
         } else {
-            my $result = &tools::diff_on_arrays(['other'], $user_topics);
+            my $result = &Sympa::Tools::diff_on_arrays(['other'], $user_topics);
             if ($#{$result->{'intersection'}} >= 0) {
                 push @selected_users, $user;
             }
@@ -10924,14 +10924,14 @@ sub delete_signoff_request {
 sub get_shared_size {
     my $self = shift;
 
-    return tools::get_dir_size($self->dir . '/shared');
+    return Sympa::Tools::get_dir_size($self->dir . '/shared');
 }
 
 sub get_arc_size {
     my $self = shift;
     my $dir  = shift;
 
-    return tools::get_dir_size($dir . '/' . $self->get_list_id());
+    return Sympa::Tools::get_dir_size($dir . '/' . $self->get_list_id());
 }
 
 # return the date epoch for next delivery planified for a list
@@ -11173,8 +11173,8 @@ sub purge {
 
     if ($self->name) {
         my $arc_dir = $self->robot->arc_path;
-        &tools::remove_dir($arc_dir . '/' . $self->get_id);
-        &tools::remove_dir($self->get_bounce_dir());
+        &Sympa::Tools::remove_dir($arc_dir . '/' . $self->get_id);
+        &Sympa::Tools::remove_dir($self->get_bounce_dir());
     }
 
     ## Clean list table if needed
@@ -11187,7 +11187,7 @@ sub purge {
     ## Clean memory cache
     $self->robot->lists($self->name, undef);
 
-    &tools::remove_dir($self->dir);
+    &Sympa::Tools::remove_dir($self->dir);
 
     #log ind stat table to make statistics
     Sympa::Log::Syslog::db_stat_log(
@@ -11504,7 +11504,7 @@ sub add_list_header {
                 sprintf '%s/arcsearch_id/%s/%s-%s/%s',
                 $self->robot->wwsympa_url,
                 $self->name, $yyyy, $mm,
-                &tools::clean_msg_id($hdr->get('Message-Id'));
+                &Sympa::Tools::clean_msg_id($hdr->get('Message-Id'));
             $hdr->add('Archived-At', '<' . $archived_msg_url . '>');
         } else {
             return 0;
@@ -11906,7 +11906,7 @@ sub _set_list_param {
         } else {
             $config_hash->{$config_attr} = $val;
         }
-        $admin_hash->{$config_attr} = tools::dup_var($val);
+        $admin_hash->{$config_attr} = Sympa::Tools::dup_var($val);
     } else {
         delete $config_hash->{$config_attr};
         delete $admin_hash->{$config_attr};
@@ -11945,7 +11945,7 @@ sub admin {
         $self->$p;
     }
     ## get copy to prevent breaking cache
-    return tools::dup_var($self->{'admin'});
+    return Sympa::Tools::dup_var($self->{'admin'});
 }
 
 =over 4
@@ -11976,7 +11976,7 @@ sub config {
         $self->$p;
     }
     ## Get copy to prevent breaking config
-    return tools::dup_var($self->{'config'});
+    return Sympa::Tools::dup_var($self->{'config'});
 }
 
 =over 4
@@ -12133,7 +12133,7 @@ If C<undef> was given as INFO, cache entry on the memory will be removed.
 sub user {
     my $self = shift;
     my $role = shift;
-    my $who  = &tools::clean_email(shift || '');
+    my $who  = &Sympa::Tools::clean_email(shift || '');
     my $info;
 
     unless ($role eq 'member' or $role eq 'owner' or $role eq 'editor') {
@@ -12460,7 +12460,7 @@ sub list_cache_update_config {
     my $config;
 
     my $name      = $self->name;
-    my $searchkey = tools::foldcase($self->subject);
+    my $searchkey = Sympa::Tools::foldcase($self->subject);
     my $status    = $self->status;
     my $robot     = $self->domain;
 

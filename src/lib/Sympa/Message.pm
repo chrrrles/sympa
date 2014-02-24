@@ -66,7 +66,7 @@ use Sympa::Language qw(gettext_strftime);
 ##"use List" MUST precede to "use Message".
 
 #use Sympa::Site; # loaded in List - Robot
-#use tools; # loaded in Conf
+#use Sympa::Tools; # loaded in Conf
 #use tt2; # loaded by List
 #use Conf; # loaded in Site
 #use Sympa::Log; # loaded in Conf
@@ -132,11 +132,11 @@ Calls:
 
 =item * MIME::Parser::read
 
-=item * tools::valid_email
+=item * Sympa::Tools::valid_email
 
-=item * tools::smime_decrypt
+=item * Sympa::Tools::smime_decrypt
 
-=item * tools::smime_sign_check
+=item * Sympa::Tools::smime_sign_check
 
 =back 
 
@@ -458,7 +458,7 @@ sub get_envelope_sender {
                 $self->{'envelope_sender'} = '<>';
             } else {
                 my @addrs = Mail::Address->parse($addr);
-                if (@addrs and tools::valid_email($addrs[0]->address)) {
+                if (@addrs and Sympa::Tools::valid_email($addrs[0]->address)) {
                     $self->{'envelope_sender'} = $addrs[0]->address;
                 }
             }
@@ -506,7 +506,7 @@ sub get_sender_email {
             Sympa::Log::Syslog::do_log('err', 'No valid sender address');
             return undef;
         }
-        unless (tools::valid_email($sender)) {
+        unless (Sympa::Tools::valid_email($sender)) {
             Sympa::Log::Syslog::do_log('err', 'Invalid sender address "%s"',
                 $sender);
             return undef;
@@ -559,7 +559,7 @@ sub get_subject {
         }
         if ($self->{'subject_charset'}) {
             $self->{'decoded_subject'} =
-                tools::decode_header($self, 'Subject');
+                Sympa::Tools::decode_header($self, 'Subject');
         } else {
             if ($subject) {
                 chomp $subject;
@@ -687,7 +687,7 @@ sub check_dkim_signature {
     if (ref($self->robot) eq 'Sympa::Robot'
         and $self->robot->dkim_feature eq 'on') {
         $self->{'dkim_pass'} =
-            &tools::dkim_verifier($self->{'msg_as_string'});
+            &Sympa::Tools::dkim_verifier($self->{'msg_as_string'});
     }
     return 1;
 }
@@ -957,7 +957,7 @@ sub _fix_html_part {
         }
 
         my $filtered_body =
-            tools::sanitize_html('string' => $body, 'robot' => $robot);
+            Sympa::Tools::sanitize_html('string' => $body, 'robot' => $robot);
 
         my $io = $bodyh->open("w");
         unless (defined $io) {
@@ -1001,7 +1001,7 @@ sub smime_decrypt {
     } else {
         $dir = Sympa::Site->home . '/sympa';
     }
-    my ($certs, $keys) = tools::smime_find_keys($dir, 'decrypt');
+    my ($certs, $keys) = Sympa::Tools::smime_find_keys($dir, 'decrypt');
     unless (defined $certs && @$certs) {
         Sympa::Log::Syslog::do_log('err',
             "Unable to decrypt message : missing certificate file");
@@ -1143,9 +1143,9 @@ sub smime_encrypt {
 
     if ($list eq 'list') {
         my $self = new List($email);
-        ($usercert, $dummy) = tools::smime_find_keys($self->{dir}, 'encrypt');
+        ($usercert, $dummy) = Sympa::Tools::smime_find_keys($self->{dir}, 'encrypt');
     } else {
-        my $base = Sympa::Site->ssl_cert_dir . '/' . tools::escape_chars($email);
+        my $base = Sympa::Site->ssl_cert_dir . '/' . Sympa::Tools::escape_chars($email);
         if (-f "$base\@enc") {
             $usercert = "$base\@enc";
         } else {
@@ -1249,7 +1249,7 @@ sub smime_sign {
     my $list = $self->{'list'};
     Sympa::Log::Syslog::do_log('debug2', '(%s, list=%s)', $self, $list);
 
-    my ($cert, $key) = tools::smime_find_keys($list->dir, 'sign');
+    my ($cert, $key) = Sympa::Tools::smime_find_keys($list->dir, 'sign');
     my $temporary_file = Sympa::Site->tmpdir . '/' . $list->get_id . "." . $$;
     my $temporary_pwd  = Sympa::Site->tmpdir . '/pass.' . $$;
 
@@ -1384,7 +1384,7 @@ sub smime_sign_check {
     }
     ## second step is the message signer match the sender
     ## a better analyse should be performed to extract the signer email.
-    my $signer = tools::smime_parse_cert({file => $temporary_file});
+    my $signer = Sympa::Tools::smime_parse_cert({file => $temporary_file});
 
     unless ($signer->{'email'}{lc($message->{'sender'})}) {
         unlink($temporary_file) unless ($main::options{'debug'});
@@ -1428,12 +1428,12 @@ sub smime_sign_check {
     Sympa::Log::Syslog::do_log('debug3', 'smime_sign_check: parsing %d parts',
         $nparts);
     if ($nparts == 0) {    # could be opaque signing...
-        $extracted += tools::smime_extract_certs($message->get_mime_message,
+        $extracted += Sympa::Tools::smime_extract_certs($message->get_mime_message,
             $certbundle);
     } else {
         for (my $i = 0; $i < $nparts; $i++) {
             my $part = $message->get_mime_message->parts($i);
-            $extracted += tools::smime_extract_certs($part, $certbundle);
+            $extracted += Sympa::Tools::smime_extract_certs($part, $certbundle);
             last if $extracted;
         }
     }
@@ -1465,7 +1465,7 @@ sub smime_sign_check {
             }
             print CERT $workcert;
             close(CERT);
-            my ($parsed) = tools::smime_parse_cert({file => $tmpcert});
+            my ($parsed) = Sympa::Tools::smime_parse_cert({file => $tmpcert});
             unless ($parsed) {
                 Sympa::Log::Syslog::do_log('err',
                     'No result from smime_parse_cert');
@@ -1516,7 +1516,7 @@ sub smime_sign_check {
     ## or as email@addr@sign / email@addr@enc for split certs.
     foreach my $c (keys %certs) {
         my $fn = Sympa::Site->ssl_cert_dir . '/'
-            . tools::escape_chars(lc($message->{'sender'}));
+            . Sympa::Tools::escape_chars(lc($message->{'sender'}));
         if ($c ne 'both') {
             unlink($fn);    # just in case there's an old cert left...
             $fn .= "\@$c";
@@ -2318,7 +2318,7 @@ sub personalize_text {
 
     # this method as been removed because some users may forward
     # authentication link
-    # $user->{'fingerprint'} = &tools::get_fingerprint($rcpt);
+    # $user->{'fingerprint'} = &Sympa::Tools::get_fingerprint($rcpt);
 
     my $data = {
         'listname'    => $list->name,
@@ -2421,7 +2421,7 @@ sub prepare_reception_txt {
     Sympa::Log::Syslog::do_log('debug3',
         'preparing message for txt reception mode');
     return 0 if ($self->is_signed);
-    if (tools::as_singlepart($self->get_mime_message, 'text/plain')) {
+    if (Sympa::Tools::as_singlepart($self->get_mime_message, 'text/plain')) {
         Sympa::Log::Syslog::do_log('notice',
             'Multipart message changed to text singlepart');
     }
@@ -2435,7 +2435,7 @@ sub prepare_reception_html {
     Sympa::Log::Syslog::do_log('debug3',
         'preparing message for html reception mode');
     return 0 if ($self->is_signed);
-    if (tools::as_singlepart($self->get_mime_message, 'text/html')) {
+    if (Sympa::Tools::as_singlepart($self->get_mime_message, 'text/html')) {
         Sympa::Log::Syslog::do_log('notice',
             'Multipart message changed to html singlepart');
     }
@@ -2465,11 +2465,11 @@ sub prepare_reception_urlize {
     }
 
     my $dir1 =
-        &tools::clean_msg_id(
+        &Sympa::Tools::clean_msg_id(
         $self->get_mime_message->head->get('Message-ID'));
 
     ## Clean up Message-ID
-    $dir1 = &tools::escape_chars($dir1);
+    $dir1 = &Sympa::Tools::escape_chars($dir1);
     $dir1 = '/' . $dir1;
 
     unless (mkdir("$expl/$dir1", 0775)) {
@@ -2479,7 +2479,7 @@ sub prepare_reception_urlize {
         printf "Unable to create urlized directory %s/%s\n", $expl, $dir1;
         return 0;
     }
-    my $mime_types = &tools::load_mime_types();
+    my $mime_types = &Sympa::Tools::load_mime_types();
     my @parts      = ();
     my $i          = 0;
     foreach my $part ($self->get_mime_message->parts()) {
@@ -2594,7 +2594,7 @@ sub _urlize_part {
 
     # do NOT escape '/' chars
     my $file_url = "$wwsympa_url/attach/$listname"
-        . &tools::escape_chars("$dir/$filename", '/');
+        . &Sympa::Tools::escape_chars("$dir/$filename", '/');
 
     my $parser = new MIME::Parser;
     $parser->output_to_core(1);
@@ -2636,7 +2636,7 @@ sub get_id {
     my $self = shift;
     return sprintf 'key=%s;id=%s',
         ($self->{'messagekey'} || ''),
-        tools::clean_msg_id($self->get_msg_id || '');
+        Sympa::Tools::clean_msg_id($self->get_msg_id || '');
 }
 
 1;

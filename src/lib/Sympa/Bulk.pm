@@ -43,7 +43,7 @@ use Data::Dumper;
 ##The line above was removed to avoid dependency loop.
 ##"use List" MUST precede to "use Bulk".
 
-#use tools; # used in List - Site - Conf
+#use Sympa::Tools; # used in List - Site - Conf
 #use tt2; # used in List
 use Sympa::Language qw(gettext_strftime);
 
@@ -75,7 +75,7 @@ sub next {
     Sympa::Log::Syslog::do_log('debug2', '()');
 
     # lock next packet
-    my $lock = &tools::get_lockname();
+    my $lock = &Sympa::Tools::get_lockname();
 
     my $order;
     my $limit_oracle = '';
@@ -428,7 +428,7 @@ sub store {
         } else {
             $rcptasstring = $packet;
         }
-        my $packetid = &tools::md5_fingerprint($rcptasstring);
+        my $packetid = &Sympa::Tools::md5_fingerprint($rcptasstring);
         my $packet_already_exist;
         if (ref $listname eq 'List') {
             $listname = $listname->name;

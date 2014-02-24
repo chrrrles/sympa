@@ -578,7 +578,7 @@ sub list_params {
 
     return $self->{'list_params'} if $self->{'list_params'};
 
-    my $pinfo = tools::dup_var(\%Sympa::ListDef::pinfo);
+    my $pinfo = Sympa::Tools::dup_var(\%Sympa::ListDef::pinfo);
     $pinfo->{'lang'}{'format'} = [$self->supported_languages];
 
     return $self->{'list_params'} = $pinfo;
@@ -703,7 +703,7 @@ sub topics {
         $self->{'topics'} = $list_of_topics;
     }
 
-    $list_of_topics = tools::dup_var($self->{'topics'});
+    $list_of_topics = Sympa::Tools::dup_var($self->{'topics'});
 
     ## Set the title in the current language
     foreach my $top (keys %{$list_of_topics}) {

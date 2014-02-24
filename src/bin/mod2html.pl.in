@@ -90,7 +90,7 @@ foreach $msg (sort grep(!/^\./, readdir SPOOL)) {
             die "May not create $tmp_dir";
         }
         my $mhonarc_ressources =
-            &tools::get_filename('etc', {}, 'mhonarc-ressources.tt2', $robot,
+            &Sympa::Tools::get_filename('etc', {}, 'mhonarc-ressources.tt2', $robot,
             $self);
         unless ($mhonarc_ressources) {
             die "Cannot find any templates of MHonArc resource file";

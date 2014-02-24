@@ -51,7 +51,7 @@ use Net::LDAPS;
 use POSIX;
 
 #use Conf; # load in Site - Robot
-#use tools; # load in Conf - Robot
+#use Sympa::Tools; # load in Conf - Robot
 use tt2;
 
 #use Sympa::Constants; # load in confdef - Conf

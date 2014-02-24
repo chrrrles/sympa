@@ -893,7 +893,7 @@ sub add {
         $u->{'email'}    = $email;
         $u->{'gecos'}    = $gecos || $u2->gecos;
         $u->{'date'}     = $u->{'update_date'} = time;
-        $u->{'password'} = $u2->password || &tools::tmp_passwd($email);
+        $u->{'password'} = $u2->password || &Sympa::Tools::tmp_passwd($email);
         $u->{'lang'}     = $u2->lang || $list->lang;
 
         $list->add_list_member($u);

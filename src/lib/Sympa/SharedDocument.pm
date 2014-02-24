@@ -28,7 +28,7 @@ use strict;
 #use Carp; # currently not used
 #use POSIX; # no longer used
 
-use tools;
+use Sympa::Tools;
 use Sympa::Language qw(gettext_strftime);
 
 #use List; # not used
@@ -54,7 +54,7 @@ sub new {
 
     $document->{'path'} = &main::no_slash_end($path);
     $document->{'escaped_path'} =
-        &tools::escape_chars($document->{'path'}, '/');
+        &Sympa::Tools::escape_chars($document->{'path'}, '/');
 
     ### Document isn't a description file
     if ($document->{'path'} =~ /\.desc/) {
@@ -121,7 +121,7 @@ sub new {
     }
 
     $document->{'escaped_filename'} =
-        &tools::escape_chars($document->{'filename'});
+        &Sympa::Tools::escape_chars($document->{'filename'});
 
     ## Father dir
     if ($document->{'path'} =~ /^(([^\/]*\/)*)([^\/]+)$/) {
@@ -130,7 +130,7 @@ sub new {
         $document->{'father_path'} = '';
     }
     $document->{'escaped_father_path'} =
-        &tools::escape_chars($document->{'father_path'}, '/');
+        &Sympa::Tools::escape_chars($document->{'father_path'}, '/');
 
     ### File, directory or URL ?
     if (!(-d $document->{'absolute_path'})) {
@@ -175,7 +175,7 @@ sub new {
         $document->{'owner'} = $desc_hash{'email'};
         $document->{'title'} = $desc_hash{'title'};
         $document->{'escaped_title'} =
-            &tools::escape_html($document->{'title'});
+            &Sympa::Tools::escape_html($document->{'title'});
 
         # Author
         if ($desc_hash{'email'}) {
@@ -273,7 +273,7 @@ sub dump {
     my $self = shift;
     my $fd   = shift;
 
-    &tools::dump_var($self, 0, $fd);
+    &Sympa::Tools::dump_var($self, 0, $fd);
 
 }
 

@@ -101,7 +101,7 @@ use List;
 #use Sympa::Constants; # used by Conf
 #use Task; # used by List
 #use TaskSpool; # used by Task
-#use tools; # used by Conf
+#use Sympa::Tools; # used by Conf
 
 my %options;
 
@@ -179,9 +179,9 @@ unless ($main::options{'debug'} || $main::options{'foreground'}) {
 ## If process is running in foreground, don't write STDERR to a dedicated file
 my $options;
 $options->{'stderr_to_tty'} = 1 if ($main::options{'foreground'});
-tools::write_pid('task_manager', $$, $options);
+Sympa::Tools::write_pid('task_manager', $$, $options);
 unless ($options->{'stderr_to_tty'}) {
-    &tools::direct_stderr_to_file(('pid' => $$));
+    &Sympa::Tools::direct_stderr_to_file(('pid' => $$));
 }
 
 ## Set the UserID & GroupID for the process
@@ -225,7 +225,7 @@ undef my $log;
 ###### INFINITE LOOP SCANING THE SPOOL (unless a sig TERM is received) ######
 while (!$end) {
     my $current_date = time;                           # current epoch date
-    my $rep          = &tools::adate($current_date);
+    my $rep          = &Sympa::Tools::adate($current_date);
 
     ## Empty cache of the List.pm module
     &Sympa::List::init_list_cache();
@@ -269,6 +269,6 @@ Sympa::Site->send_notify_to_listmaster(undef, undef, undef, 1);
 
 Sympa::Log::Syslog::do_log('notice',
     'task_manager exited normally due to signal');
-tools::remove_pid('task_manager', $$);
+Sympa::Tools::remove_pid('task_manager', $$);
 
 exit(0);

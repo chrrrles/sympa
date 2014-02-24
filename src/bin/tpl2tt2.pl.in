@@ -213,7 +213,7 @@ foreach my $tpl (@templates) {
             next;
         }
         unless (
-            &tools::set_file_rights(
+            &Sympa::Tools::set_file_rights(
                 file  => $dest_path,
                 user  => Sympa::Constants::USER,
                 group => Sympa::Constants::GROUP,
@@ -270,7 +270,7 @@ sub convert {
     print "Template file $in_file has been converted to $out_file\n";
 
     unless (
-        &tools::set_file_rights(
+        &Sympa::Tools::set_file_rights(
             file  => $out_file,
             user  => Sympa::Constants::USER,
             group => Sympa::Constants::GROUP

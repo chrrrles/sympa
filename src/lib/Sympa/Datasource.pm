@@ -87,7 +87,7 @@ sub is_allowed_to_sync {
     my $ranges = $self->{'nosync_time_ranges'};
     $ranges =~ s/^\s+//;
     $ranges =~ s/\s+$//;
-    my $rsre = &tools::get_regexp('time_ranges');
+    my $rsre = &Sympa::Tools::get_regexp('time_ranges');
     return 1 unless ($ranges =~ /^$rsre$/);
 
     Sympa::Log::Syslog::do_log('debug',

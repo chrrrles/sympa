@@ -137,9 +137,9 @@ sub scan_dir_archive {
         my $msg = {};
         $msg->{'id'} = $i;
 
-        $msg->{'subject'} = tools::decode_header($message, 'Subject');
-        $msg->{'from'}    = tools::decode_header($message, 'From');
-        $msg->{'date'}    = tools::decode_header($message, 'Date');
+        $msg->{'subject'} = Sympa::Tools::decode_header($message, 'Subject');
+        $msg->{'from'}    = Sympa::Tools::decode_header($message, 'From');
+        $msg->{'date'}    = Sympa::Tools::decode_header($message, 'Date');
 
         $msg->{'full_msg'} = $message->as_string();    # raw message
 
@@ -281,7 +281,7 @@ sub clean_archive_directory {
     $answer->{'dir_to_rebuild'} = $arc_root . '/' . $dir_to_rebuild;
     $answer->{'cleaned_dir'}    = Sympa::Site->tmpdir . '/' . $dir_to_rebuild;
     unless (
-        my $number_of_copies = &tools::copy_dir(
+        my $number_of_copies = &Sympa::Tools::copy_dir(
             $answer->{'dir_to_rebuild'},
             $answer->{'cleaned_dir'}
         )
@@ -314,7 +314,7 @@ sub clean_archive_directory {
             'Unable to open directory %s: %s',
             $answer->{'dir_to_rebuild'}, $!
         );
-        &tools::del_dir($answer->{'cleaned_dir'});
+        &Sympa::Tools::del_dir($answer->{'cleaned_dir'});
         return undef;
     }
     return $answer;
@@ -394,7 +394,7 @@ sub convert_single_message {
     }
 
     unless (-d $destination_dir) {
-        unless (tools::mkdir_all($destination_dir, 0755)) {
+        unless (Sympa::Tools::mkdir_all($destination_dir, 0755)) {
             Sympa::Log::Syslog::do_log('err', 'Unable to create %s',
                 $destination_dir);
             return undef;

@@ -31,7 +31,7 @@ unless (require Crypt::CipherSaber) {
 
 #use wwslib; # not used
 #use Sympa::Constants; # used in List - Robot - Site - Conf - confdef
-#require tools; # used by Conf
+#require Sympa::Tools; # used by Conf
 use List;
 
 #use Sympa::DatabaseManager; # used by conf
@@ -61,7 +61,7 @@ while ($user = $sth->fetchrow_hashref('NAME_lc')) {
 
     printf "\n%s", $user->{'email_user'};
 
-    my $crypted_password = tools::crypt_password($user->{'password_user'});
+    my $crypted_password = Sympa::Tools::crypt_password($user->{'password_user'});
 
     printf " => %s", $crypted_password;
 

@@ -68,7 +68,7 @@ sub new {
     # passive_session are session not stored in the database, they are used
     # for crawler bots and action such as css, wsdl, ajax and rss
 
-    if (tools::is_a_crawler(
+    if (Sympa::Tools::is_a_crawler(
             $robot, {'user_agent_string' => $ENV{'HTTP_USER_AGENT'}}
         )
         ) {
@@ -213,7 +213,7 @@ sub load {
         );
     }
 
-    my %datas = tools::string_2_hash($session->{'data'});
+    my %datas = Sympa::Tools::string_2_hash($session->{'data'});
 
     ## canonicalize lang if possible.
     $datas{'lang'} = Sympa::Language::CanonicLang($datas{'lang'}) || $datas{'lang'}
@@ -254,7 +254,7 @@ sub store {
         next unless ($var);
         $hash{$var} = $self->{$var};
     }
-    my $data_string = tools::hash_2_string(\%hash);
+    my $data_string = Sympa::Tools::hash_2_string(\%hash);
     my $time        = time;
 
     ## If this is a new session, then perform an INSERT
@@ -357,7 +357,7 @@ sub renew {
         next unless ($var);
         $hash{$var} = $self->{$var};
     }
-    my $data_string = tools::hash_2_string(\%hash);
+    my $data_string = Sympa::Tools::hash_2_string(\%hash);
 
     my $sth;
     ## Cookie may contain previous session ID.
@@ -473,9 +473,9 @@ sub purge_old_sessions {
     Sympa::Log::Syslog::do_log('debug2', '(%s)', @_);
     my $robot = Sympa::Robot::clean_robot(shift, 1);
 
-    my $delay = tools::duration_conv(Sympa::Site->session_table_ttl);
+    my $delay = Sympa::Tools::duration_conv(Sympa::Site->session_table_ttl);
     my $anonymous_delay =
-        tools::duration_conv(Sympa::Site->anonymous_session_table_ttl);
+        Sympa::Tools::duration_conv(Sympa::Site->anonymous_session_table_ttl);
 
     unless ($delay) {
         Sympa::Log::Syslog::do_log('debug3', 'exit with delay null');
@@ -559,7 +559,7 @@ sub purge_old_tickets {
     Sympa::Log::Syslog::do_log('debug2', '(%s)', @_);
     my $robot = Sympa::Robot::clean_robot(shift, 1);
 
-    my $delay = tools::duration_conv(Sympa::Site->one_time_ticket_table_ttl);
+    my $delay = Sympa::Tools::duration_conv(Sympa::Site->one_time_ticket_table_ttl);
     unless ($delay) {
         Sympa::Log::Syslog::do_log('debug3', 'exit with delay null');
         return;
@@ -798,7 +798,7 @@ sub encrypt_session_id {
     my $id_session = shift;
 
     return $id_session unless Sympa::Site->cookie;
-    my $cipher = tools::ciphersaber_installed();
+    my $cipher = Sympa::Tools::ciphersaber_installed();
     return $id_session unless $cipher;
 
     my $id_session_bin = pack 'nN', ($id_session >> 32),
@@ -812,7 +812,7 @@ sub decrypt_session_id {
     my $cookie = shift;
 
     return $cookie unless Sympa::Site->cookie;
-    my $cipher = tools::ciphersaber_installed();
+    my $cipher = Sympa::Tools::ciphersaber_installed();
     return $cookie unless $cipher;
 
     return undef unless $cookie =~ /\A[0-9a-f]+\z/;
