@@ -47,7 +47,7 @@ nobase_modules_DATA = Sympa/Admin.pm \
 		      Sympa/Template/Compat.pm \
 		      Sympa/Session.pm \
 		      Sympa/SOAP.pm \
-		      Sympaspool.pm \
+		      Sympa/Spool.pm \
 		      SympaspoolClassic.pm \
 		      SympaTransport.pm \
 		      Task.pm \

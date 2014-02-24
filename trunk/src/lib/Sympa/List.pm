@@ -2704,7 +2704,7 @@ sub send_auth {
     my $authkey = Digest::MD5::md5_hex(join('/', $self->cookie, $messageid));
     chomp $authkey;
 
-    my $spool = new Sympaspool('auth');
+    my $spool = new Sympa::Spool('auth');
     $spool->update(
         {'messagekey' => $message->{'messagekey'}},
         {   "spoolname"   => 'auth',
@@ -10795,7 +10795,7 @@ sub store_signoff_request {
     Sympa::Log::Syslog::do_log('debug2', '(%s, %s)', @_);
     my ($self, $email) = @_;
 
-    my $signoff_request_spool = new Sympaspool('signoff');
+    my $signoff_request_spool = new Sympa::Spool('signoff');
 
     if ($signoff_request_spool->get_content(
             {   'selector' => {
@@ -10830,7 +10830,7 @@ sub get_signoff_requests {
 
     my %signoffs;
 
-    my $signoff_request_spool = new Sympaspool('signoff');
+    my $signoff_request_spool = new Sympa::Spool('signoff');
     my @sigrequests           = $signoff_request_spool->get_content(
         {   'selector'  => {'list' => $self->name, 'robot' => $self->domain},
             'selection' => '*'
@@ -10888,7 +10888,7 @@ sub get_signoff_requests {
 sub get_signoff_request_count {
     my $self = shift;
 
-    my $signoff_request_spool = new Sympaspool('signoff');
+    my $signoff_request_spool = new Sympa::Spool('signoff');
     return $signoff_request_spool->get_content(
         {   'selector'  => {'list' => $self->name, 'robot' => $self->domain},
             'selection' => 'count'
@@ -10901,7 +10901,7 @@ sub delete_signoff_request {
     Sympa::Log::Syslog::do_log('debug2', '(%s, %s)', $self,
         join(',', @list_of_email));
 
-    my $signoff_request_spool = new Sympaspool('signoff');
+    my $signoff_request_spool = new Sympa::Spool('signoff');
 
     my $removed = 0;
     foreach my $email (@list_of_email) {

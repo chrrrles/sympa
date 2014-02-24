@@ -242,7 +242,7 @@ my %created_children;
 $options->{'multiple_process'} = 1;
 $Sympa::Conf::Conf{'maxsmtp'} = int(Sympa::Site->maxsmtp / Sympa::Site->bulk_max_count);    #FIXME
 
-my $spool = new Sympaspool('bulk');
+my $spool = new Sympa::Spool('bulk');
 
 while (!$end) {
     &Sympa::List::init_list_cache();

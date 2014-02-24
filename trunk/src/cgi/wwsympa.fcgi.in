@@ -11900,7 +11900,7 @@ sub do_rebuildallarc {
         &Sympa::Report::reject_report_web('intern', 'cannot fetch archive spool',
             {}, $param->{'action'}, $list, $param->{'user'}{'email'},
             $robot_id);
-        &wwslog('err', 'error in  new Sympaspool(archive) ');
+        &wwslog('err', 'error in  new Sympa::Spool(archive) ');
     }
     my $all_lists = Sympa::List::get_lists($robot);
     foreach my $list (@$all_lists) {
@@ -22342,7 +22342,7 @@ sub do_request_topic {
 
     my $listname = $list->name;
 
-    my $spoolauth = new Sympaspool('auth');
+    my $spoolauth = new Sympa::Spool('auth');
 
     my $message_in_spool = $spoolauth->get_message(
         {   'list'    => $list->name,
@@ -22401,7 +22401,7 @@ sub do_tag_topic_by_sender {
 
     my $message;
 
-    my $authspool        = new Sympaspool('auth');
+    my $authspool        = new Sympa::Spool('auth');
     my $message_in_spool = $authspool->get_message(
         {   'list'    => $listname,
             'robot'   => $robot_id,
@@ -23592,8 +23592,8 @@ sub do_viewspools {
         }
     }
 
-    $param->{'global_count_ok'}  = &Sympaspool::global_count('ok');
-    $param->{'global_count_bad'} = &Sympaspool::global_count('bad');
+    $param->{'global_count_ok'}  = &Sympa::Spool::global_count('ok');
+    $param->{'global_count_bad'} = &Sympa::Spool::global_count('bad');
 
     my $spool_page_size;
     if ($in{'spool_page_size'}) {
@@ -23604,7 +23604,7 @@ sub do_viewspools {
     }
     $param->{'spool_page_size'} = $spool_page_size;
 
-    my $spool = new Sympaspool($spoolname, $spool_status);
+    my $spool = new Sympa::Spool($spoolname, $spool_status);
     unless ($spool) {
         &Sympa::Report::reject_report_web('intern', 'unknown_spool', {},
             $param->{'action'}, $list);
@@ -23722,7 +23722,7 @@ sub do_viewspool_message {
         'do_viewspool_message(spoolname = %s,messagekey = %s, status =%s)',
         $spoolname, $messagekey, $status);
 
-    my $spool = new Sympaspool($spoolname, $status);
+    my $spool = new Sympa::Spool($spoolname, $status);
     unless ($spool) {
         &Sympa::Report::reject_report_web('intern', 'unknown_spool', {},
             $param->{'action'}, $list);
@@ -23812,7 +23812,7 @@ sub do_viewspool_message_dump {
         &wwslog('info', 'authorization failed, insufficient privileges');
     }
 
-    my $spool = new Sympaspool($spoolname, $status);
+    my $spool = new Sympa::Spool($spoolname, $status);
     unless ($spool) {
         &Sympa::Report::reject_report_web('intern', 'unknown_spool', {},
             $param->{'action'}, $list);
@@ -23870,7 +23870,7 @@ sub do_viewspool_message_remove {
         &wwslog('info', 'authorization failed, insufficient privileges');
     }
 
-    my $spool = new Sympaspool($spoolname, $status);
+    my $spool = new Sympa::Spool($spoolname, $status);
     unless ($spool) {
         &Sympa::Report::reject_report_web('intern', 'unknown_spool', {},
             $param->{'action'}, $list);
@@ -23937,7 +23937,7 @@ sub do_viewspool_message_mv {
         &wwslog('info', 'authorization failed, insufficient privileges');
     }
 
-    my $spool = new Sympaspool($spoolname, $status);
+    my $spool = new Sympa::Spool($spoolname, $status);
     unless ($spool) {
         &Sympa::Report::reject_report_web('intern', 'unknown_spool', {},
             $param->{'action'}, $list);
@@ -23945,7 +23945,7 @@ sub do_viewspool_message_mv {
         return undef;
     }
 
-    unless (new Sympaspool($newspool, $newstatus)) {
+    unless (new Sympa::Spool($newspool, $newstatus)) {
         &Sympa::Report::reject_report_web('user', 'unknown_spool', {},
             $param->{'action'}, $list);
         &wwslog('info', 'could not move message to unknown spool %s/%s',
