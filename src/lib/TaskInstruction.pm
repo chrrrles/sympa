@@ -530,7 +530,7 @@ sub next_cmd {
     }
     Sympa::Log::Syslog::do_log('debug2', 'Will create next task');
     unless (
-        Task::create(
+        Sympa::Task::create(
             {   'creation_date' => $date,
                 'label'         => $tab[1],
                 'model'         => $model,
@@ -695,7 +695,7 @@ sub create_cmd {
         $data{'list'}{'name'} = $list->name;
     }
     $type = '_global';
-    unless (Task::create($task->{'date'}, '', $model, $flavour, \%data)) {
+    unless (Sympa::Task::create($task->{'date'}, '', $model, $flavour, \%data)) {
         $self->error(
             {   'task'    => $task,
                 'type'    => 'execution',

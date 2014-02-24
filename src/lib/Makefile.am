@@ -50,7 +50,7 @@ nobase_modules_DATA = Sympa/Admin.pm \
 		      Sympa/Spool.pm \
 		      Sympa/ClassicSpool.pm \
 		      Sympa/Transport.pm \
-		      Task.pm \
+		      Sympa/Task.pm \
 		      TaskInstruction.pm \
 		      TaskSpool.pm \
 		      time_utils.pm \

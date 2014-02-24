@@ -241,7 +241,7 @@ while (!$end) {
         'Processing tasks anterior to the current date');
     foreach my $task_in_spool ($taskspool->get_content) {
         my $task = undef;
-        $task = Task->new($task_in_spool)
+        $task = Sympa::Task->new($task_in_spool)
             if $task_in_spool;
         next unless $task;
 

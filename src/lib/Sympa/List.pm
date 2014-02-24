@@ -11163,7 +11163,7 @@ sub purge {
             }
         )
         ) {
-        my $task = Task->new($task_in_spool)
+        my $task = Sympa::Task->new($task_in_spool)
             if $task_in_spool;
         unlink $task->{'filepath'};
     }
