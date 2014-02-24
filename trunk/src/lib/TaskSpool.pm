@@ -253,7 +253,7 @@ sub create_required_global_tasks {
         unless ($used_models{$global_models{$key}}) {
             if (Sympa::Site->$key) {
                 unless (
-                    $task = Task::create(
+                    $task = Sympa::Task::create(
                         {   'creation_date' => $param->{'current_date'},
                             'model'         => $global_models{$key},
                             'flavour'       => Sympa::Site->$key,
@@ -313,7 +313,7 @@ sub create_required_lists_tasks {
                             unless $list->has_include_data_sources()
                                 and $list->status eq 'open';
                         unless (
-                            $task = Task::create(
+                            $task = Sympa::Task::create(
                                 {   'creation_date' =>
                                         $param->{'current_date'},
                                     'label'   => 'INIT',
@@ -342,7 +342,7 @@ sub create_required_lists_tasks {
                         and defined $list->$model_task_parameter->{'name'}
                         and $list->status eq 'open') {
                         unless (
-                            $task = Task::create(
+                            $task = Sympa::Task::create(
                                 {   'creation_date' =>
                                         $param->{'current_date'},
                                     'model' => $model,

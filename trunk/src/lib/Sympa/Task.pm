@@ -21,7 +21,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package Task;
+package Sympa::Task;
 
 use strict;
 
@@ -55,7 +55,7 @@ sub new {
     my $task;
     Sympa::Log::Syslog::do_log(
         'debug2',
-        'Task::new  messagekey = %s',
+        'Sympa::Task::new  messagekey = %s',
         $task_in_spool->{'messagekey'}
     );
     if ($task_in_spool) {
