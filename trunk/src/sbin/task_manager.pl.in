@@ -210,7 +210,7 @@ unless (chdir(Sympa::Site->home)) {
     exit(-1);
 }
 
-my $taskspool = TaskSpool->new();
+my $taskspool = Sympa::TaskSpool->new();
 
 ## Catch SIGTERM, in order to exit cleanly, whenever possible.
 $SIG{'TERM'} = 'sigterm';
@@ -233,7 +233,7 @@ while (!$end) {
     # Process grouped notifications
     Sympa::Site->send_notify_to_listmaster(undef, undef, 1, undef);
 
-    TaskSpool::create_required_tasks($current_date);
+    Sympa::TaskSpool::create_required_tasks($current_date);
 
     ## Execute existing tasks
     ## processing of tasks anterior to the current date
