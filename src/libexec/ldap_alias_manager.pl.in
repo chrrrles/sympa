@@ -52,7 +52,7 @@ use POSIX;
 
 #use Conf; # load in Site - Robot
 #use Sympa::Tools; # load in Conf - Robot
-use tt2;
+use Sympa::Template;
 
 #use Sympa::Constants; # load in confdef - Conf
 use Sympa::Robot;
@@ -157,7 +157,7 @@ my @aliases;
 my $tt2_include_path = $robot->get_etc_include_path();
 
 my $aliases_dump;
-&tt2::parse_tt2(\%data, 'list_aliases.tt2', \$aliases_dump,
+&Sympa::Template::parse_tt2(\%data, 'list_aliases.tt2', \$aliases_dump,
     $tt2_include_path);
 
 @aliases = split /\n/, $aliases_dump;
@@ -204,7 +204,7 @@ if ($operation eq 'add') {
         $data{'list'}{'alias'}    = $alias_value;
         $data{'list'}{'command'}  = $command_value;
         $data{'list'}{'maildrop'} = $maildrop;
-        &tt2::parse_tt2(\%data, 'ldap_alias_entry.tt2', \$ldif_dump,
+        &Sympa::Template::parse_tt2(\%data, 'ldap_alias_entry.tt2', \$ldif_dump,
             $tt2_include_path);
         my @attribute_lines = split /\n/, $ldif_dump;
 
@@ -265,7 +265,7 @@ elsif ($operation eq 'del') {
 
         my $ldif_dump;
         $data{'list'}{'alias'} = $alias_value;
-        &tt2::parse_tt2(\%data, 'ldap_alias_entry.tt2', \$ldif_dump,
+        &Sympa::Template::parse_tt2(\%data, 'ldap_alias_entry.tt2', \$ldif_dump,
             $tt2_include_path);
         my $value = (grep(/^dn:/, split(/\n/, $ldif_dump)))[0];
         $value =~ s/^dn:\s*//;

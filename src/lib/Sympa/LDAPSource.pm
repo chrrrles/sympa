@@ -30,7 +30,7 @@ use Sympa::Datasource;
 use Carp;
 
 #use Sympa::Tools; # not used
-#use tt2; # not used
+#use Sympa::Template; # not used
 #use Conf; # not used
 use Sympa::Log;
 

@@ -776,11 +776,11 @@ sub checkfiles {
                 }
 
                 unless (
-                    &tt2::parse_tt2(
+                    &Sympa::Template::parse_tt2(
                         $param, 'css.tt2', \*CSS, $tt2_include_path
                     )
                     ) {
-                    my $error = &tt2::get_error();
+                    my $error = &Sympa::Template::get_error();
                     $param->{'tt2_error'} = $error;
                     $robot->send_notify_to_listmaster('web_tt2_error',
                         $error);

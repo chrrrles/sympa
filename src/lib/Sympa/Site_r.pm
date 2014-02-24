@@ -427,7 +427,7 @@ sub request_auth {
         croak 'bug in logic.  Ask developer';
     }
 
-    $data->{'command_escaped'} = &tt2::escape_url($data->{'command'});
+    $data->{'command_escaped'} = &Sympa::Template::escape_url($data->{'command'});
     $data->{'auto_submitted'}  = 'auto-replied';
     unless ($self->send_file('request_auth', $email, $data)) {
         Sympa::Log::Syslog::do_log('notice',
@@ -967,10 +967,10 @@ sub send_file {
     }
 
     foreach my $d (@{$tt2_include_path}) {
-        &tt2::add_include_path($d);
+        &Sympa::Template::add_include_path($d);
     }
 
-    my @path = &tt2::get_include_path();
+    my @path = &Sympa::Template::get_include_path();
     my $filename = &Sympa::Tools::find_file($tpl . '.tt2', @path);
 
     unless (defined $filename) {
@@ -1323,7 +1323,7 @@ sub send_notify_to_listmaster {
     if ($operation eq 'loop_command') {
         ## Loop detected in Sympa
         $data->{'boundary'} = '----------=_' . &Sympa::Tools::get_message_id($self);
-        &tt2::allow_absolute_path();
+        &Sympa::Template::allow_absolute_path();
     }
 
     if (   ($operation eq 'request_list_creation')
