@@ -25,7 +25,7 @@
 use strict;
 use lib '--modulesdir--';
 
-#use wwslib; # not used
+#use Sympa::Wwslib; # not used
 #use Sympa::Constants; # used in List - Robot - Site - Conf - confdef
 use List;
 

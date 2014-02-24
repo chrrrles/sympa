@@ -59,7 +59,7 @@ nobase_modules_DATA = Sympa/Admin.pm \
 		      Sympa/Template.pm \
 		      Sympa/Upgrade.pm \
 		      Sympa/User.pm \
-		      wwslib.pm
+		      Sympa/Wwslib.pm
 
 EXTRA_DIST = Sympa/Constants.pm.in $(nobase_modules_DATA)
 CLEANFILES = Sympa/Constants.pm
