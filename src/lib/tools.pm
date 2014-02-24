@@ -2636,7 +2636,7 @@ sub dump_var {
                 &dump_var($var->[$index], $level + 1, $fd);
             }
         } elsif (ref($var) eq 'HASH'
-            || ref($var) eq 'Scenario'
+            || ref($var) eq 'Sympa::Scenario'
             || ref($var) eq 'List'
             || ref($var) eq 'CGI::Fast') {
             foreach my $key (sort keys %{$var}) {
@@ -2671,7 +2671,7 @@ sub dump_html_var {
             }
             $html .= '</ul>';
         } elsif (ref($var) eq 'HASH'
-            || ref($var) eq 'Scenario'
+            || ref($var) eq 'Sympa::Scenario'
             || ref($var) eq 'List') {
             $html .= '<ul>';
             foreach my $key (sort keys %{$var}) {
@@ -2709,7 +2709,7 @@ sub dump_html_var2 {
             }
             $html .= '</ul>';
         } elsif (ref($var) eq 'HASH'
-            || ref($var) eq 'Scenario'
+            || ref($var) eq 'Sympa::Scenario'
             || ref($var) eq 'List') {
 
             #$html .= " (".ref($var).') <ul>';

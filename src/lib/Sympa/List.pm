@@ -5221,9 +5221,9 @@ sub am_i {
 }
 
 ## Check list authorizations
-## OBSOLETED; Use Scenario::request_action();
+## OBSOLETED; Use Sympa::Scenario::request_action();
 sub check_list_authz {
-    return Scenario::request_action(@_);
+    return Sympa::Scenario::request_action(@_);
 }
 
 ## Initialize internal list cache
@@ -5590,7 +5590,7 @@ sub load_scenario_list {
             next if defined $list_of_scenario{$name};
             next if defined $skip_scenario{$name};
 
-            my $scenario = Scenario->new(
+            my $scenario = Sympa::Scenario->new(
                 $self,
                 'function' => $action,
                 'name'     => $name
@@ -11833,14 +11833,14 @@ sub _set_list_param {
 
     ## Reload scenario to get real value
     if ($p->{'scenario'}) {
-        if (ref $val eq 'Scenario') {
-            $val = Scenario->new(
+        if (ref $val eq 'Sympa::Scenario') {
+            $val = Sympa::Scenario->new(
                 $self,
                 'function' => $p->{'scenario'},
                 'name'     => $val->{'name'}
             );
         } elsif (ref $val eq 'HASH') {
-            $val = Scenario->new(
+            $val = Sympa::Scenario->new(
                 $self,
                 'function' => $p->{'scenario'},
                 'name'     => $val->{'name'}
@@ -11861,7 +11861,7 @@ sub _set_list_param {
             $self->{'dir'});
         ## Load scenario to get real default
         if ($p->{'scenario'} and ref $default eq 'HASH') {
-            $default = Scenario->new(
+            $default = Sympa::Scenario->new(
                 $self,
                 'function' => $p->{'scenario'},
                 'name'     => $default->{'name'}

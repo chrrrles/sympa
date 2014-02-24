@@ -666,7 +666,7 @@ sub check_spam_status {
     return undef unless ref $self->robot eq 'Sympa::Robot';
 
     my $spam_status =
-        Scenario::request_action($self->robot, 'spam_status', 'smtp',
+        Sympa::Scenario::request_action($self->robot, 'spam_status', 'smtp',
         {'message' => $self});
     $self->{'spam_status'} = 'unknown';
     if (defined $spam_status) {

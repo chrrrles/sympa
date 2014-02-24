@@ -247,7 +247,7 @@ sub lists {
 
     foreach my $list (@$all_lists) {
         my $l      = $list->name;
-        my $result = Scenario::request_action(
+        my $result = Sympa::Scenario::request_action(
             $list,
             'visibility', 'smtp',    # 'smtp' isn't it a bug ?
             {   'sender'  => $sender,
@@ -338,7 +338,7 @@ sub stats {
     return 'wrong_auth'
         unless (defined $auth_method);
 
-    my $result = Scenario::request_action(
+    my $result = Sympa::Scenario::request_action(
         $list, 'review',
         $auth_method,
         {   'sender'  => $sender,
@@ -679,7 +679,7 @@ sub review {
     return 'wrong_auth'
         unless (defined $auth_method);
 
-    my $result = Scenario::request_action(
+    my $result = Sympa::Scenario::request_action(
         $list, 'review',
         $auth_method,
         {   'sender'  => $sender,
@@ -905,7 +905,7 @@ sub subscribe {
 
     ## query what to do with this subscribtion request
 
-    my $result = Scenario::request_action(
+    my $result = Sympa::Scenario::request_action(
         $list,
         'subscribe',
         $auth_method,
@@ -1162,7 +1162,7 @@ sub info {
     return 'wrong_auth'
         unless (defined $auth_method);
 
-    my $result = Scenario::request_action(
+    my $result = Sympa::Scenario::request_action(
         $list, 'info',
         $auth_method,
         {   'sender'  => $sender,
@@ -1300,7 +1300,7 @@ sub signoff {
             $l = $list->name;
 
             ## Skip hidden lists
-            my $result = Scenario::request_action(
+            my $result = Sympa::Scenario::request_action(
                 $list,
                 'visibility',
                 'smtp',
@@ -1364,7 +1364,7 @@ sub signoff {
     return 'wrong_auth'
         unless (defined $auth_method);
 
-    my $result = Scenario::request_action(
+    my $result = Sympa::Scenario::request_action(
         $list,
         'unsubscribe',
         $auth_method,
@@ -1597,7 +1597,7 @@ sub add {
     return 'wrong_auth'
         unless (defined $auth_method);
 
-    my $result = Scenario::request_action(
+    my $result = Sympa::Scenario::request_action(
         $list, 'add',
         $auth_method,
         {   'email'   => $email,
@@ -1793,7 +1793,7 @@ sub invite {
     return 'wrong_auth'
         unless (defined $auth_method);
 
-    my $result = Scenario::request_action(
+    my $result = Sympa::Scenario::request_action(
         $list, 'invite',
         $auth_method,
         {   'sender'  => $sender,
@@ -1865,7 +1865,7 @@ sub invite {
             $context{'user'}{'gecos'} = $comment;
             $context{'requested_by'}  = $sender;
 
-            my $result = Scenario::request_action(
+            my $result = Sympa::Scenario::request_action(
                 $list,
                 'subscribe',
                 'smtp',
@@ -2060,7 +2060,7 @@ sub remind {
 
     if ($listname eq '*') {
         $result =
-            Scenario::request_action($robot, 'global_remind', $auth_method,
+            Sympa::Scenario::request_action($robot, 'global_remind', $auth_method,
             {'sender' => $sender});
         $action = $result->{'action'} if (ref($result) eq 'HASH');
 
@@ -2070,7 +2070,7 @@ sub remind {
 
         $host = $list->host;
 
-        $result = Scenario::request_action(
+        $result = Sympa::Scenario::request_action(
             $list, 'remind',
             $auth_method,
             {   'sender'  => $sender,
@@ -2198,7 +2198,7 @@ sub remind {
 
                 do {
                     my $email  = lc($user->{'email'});
-                    my $result = Scenario::request_action(
+                    my $result = Sympa::Scenario::request_action(
                         $list,
                         'visibility',
                         'smtp',
@@ -2339,7 +2339,7 @@ sub del {
         unless (defined $auth_method);
 
     ## query what to do with this DEL request
-    my $result = Scenario::request_action(
+    my $result = Sympa::Scenario::request_action(
         $list, 'del',
         $auth_method,
         {   'sender'  => $sender,
@@ -2512,7 +2512,7 @@ sub set {
             my $l = $list->name;
 
             ## Skip hidden lists
-            my $result = Scenario::request_action(
+            my $result = Sympa::Scenario::request_action(
                 $list,
                 'visibility',
                 'smtp',
@@ -2837,7 +2837,7 @@ sub confirm {
     my $msgid      = $message->get_msg_id;
     my $msg_string = $message->as_string();    # raw message
 
-    my $result = Scenario::request_action(
+    my $result = Sympa::Scenario::request_action(
         $list, 'send', 'md5',
         {   'sender'  => $sender,
             'message' => $message,
@@ -3271,7 +3271,7 @@ sub which {
     foreach my $list (Sympa::List::get_which($sender, $robot, 'member')) {
         $listname = $list->name;
 
-        my $result = Scenario::request_action(
+        my $result = Sympa::Scenario::request_action(
             $list,
             'visibility',
             'smtp',

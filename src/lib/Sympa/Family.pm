@@ -3130,7 +3130,7 @@ sub is_allowed_to_create_automatic_lists {
     my $listname   = $param{'listname'};
 
     # check authorization
-    my $result = Scenario::request_action(
+    my $result = Sympa::Scenario::request_action(
         $self->robot,
         'automatic_list_creation',
         $auth_level,

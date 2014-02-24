@@ -581,7 +581,7 @@ sub select_subs {
         push(@users, $user);
     }
 
-    # parameter of subroutine Scenario::verify
+    # parameter of subroutine Sympa::Scenario::verify
     my $verify_context = {
         'sender'      => 'nobody',
         'email'       => 'nobody',
@@ -597,7 +597,7 @@ sub select_subs {
         # condition rewriting for older and newer
         $new_condition = "$1($user->{'update_date'}, $2)"
             if ($condition =~ /(older|newer)\((\d+)\)/);
-        if (&Scenario::verify($verify_context, $new_condition) == 1) {
+        if (&Sympa::Scenario::verify($verify_context, $new_condition) == 1) {
             $selection{$user->{'email'}} = undef;
             Sympa::Log::Syslog::do_log('notice',
                 "--> user $user->{'email'} has been selected");
@@ -621,7 +621,7 @@ sub delete_subs_cmd {
 
     foreach my $email (keys %{$self->{'variables'}{$var}}) {
         Sympa::Log::Syslog::do_log('notice', "email : $email");
-        my $result = Scenario::request_action(
+        my $result = Sympa::Scenario::request_action(
             $list, 'del', 'smime',
             {   'sender' => Site->listmaster,
                 'email'  => $email,
@@ -1377,7 +1377,7 @@ sub update_crl {
         my $verify_context;
         $verify_context->{'sender'} = 'nobody';
 
-        if (&Scenario::verify($verify_context, $condition) == 1) {
+        if (&Sympa::Scenario::verify($verify_context, $condition) == 1) {
             unlink($file);
             Sympa::Log::Syslog::do_log('notice',
                 "--> updating of the $file CRL file");

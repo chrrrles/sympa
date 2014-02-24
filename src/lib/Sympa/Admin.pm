@@ -796,7 +796,7 @@ sub rename_list {
     ## Evaluate authorization scenario unless run as listmaster (sympa.pl)
     my ($result, $r_action, $reason);
     unless ($param{'options'}{'skip_authz'}) {
-        $result = Scenario::request_action(
+        $result = Sympa::Scenario::request_action(
             $new_robot,
             'create_list',
             $param{'auth_method'},
