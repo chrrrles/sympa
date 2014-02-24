@@ -250,8 +250,8 @@ sub init_passwd {
 
     my ($passwd, $user);
 
-    if (User::is_global_user($email)) {
-        $user = User::get_global_user($email);
+    if (Sympa::User::is_global_user($email)) {
+        $user = Sympa::User::get_global_user($email);
 
         $passwd = $user->{'password'};
 
@@ -259,7 +259,7 @@ sub init_passwd {
             $passwd = &new_passwd();
 
             unless (
-                User::update_global_user(
+                Sympa::User::update_global_user(
                     $email,
                     {   'password' => $passwd,
                         'lang'     => $user->{'lang'} || $data->{'lang'}
@@ -277,7 +277,7 @@ sub init_passwd {
     } else {
         $passwd = &new_passwd();
         unless (
-            User::add_global_user(
+            Sympa::User::add_global_user(
                 {   'email'    => $email,
                     'password' => $passwd,
                     'lang'     => $data->{'lang'},

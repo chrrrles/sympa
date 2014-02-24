@@ -671,9 +671,9 @@ sub createList {
     # prepare parameters
     my $param = {};
     $param->{'user'}{'email'} = $sender;
-    if (User::is_global_user($param->{'user'}{'email'})) {
+    if (Sympa::User::is_global_user($param->{'user'}{'email'})) {
         ##FIXME: use User object
-        $param->{'user'} = User::get_global_user($sender);
+        $param->{'user'} = Sympa::User::get_global_user($sender);
     }
     my $parameters;
     $parameters->{'creation_email'} = $sender;
@@ -888,7 +888,7 @@ sub add {
     } else {
         my $u;
         my $defaults = $list->default_user_options;
-        my $u2       = User->new($email);
+        my $u2       = Sympa::User->new($email);
         %{$u} = %{$defaults};
         $u->{'email'}    = $email;
         $u->{'gecos'}    = $gecos || $u2->gecos;
@@ -1624,7 +1624,7 @@ sub subscribe {
         }
 
         if ($Sympa::Site::use_db) {
-            my $u = User->new($sender);
+            my $u = Sympa::User->new($sender);
             unless ($u->lang) {
                 $u->lang($list->lang);
                 $u->save();

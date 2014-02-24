@@ -896,10 +896,10 @@ sub send_file {
                 $data->{'user'} =
                     bless {'email' => $who, 'lang' => $lang} => 'User';
             } else {
-                $data->{'user'} = User->new($who, 'lang' => $lang);
+                $data->{'user'} = Sympa::User->new($who, 'lang' => $lang);
             }
         } else {
-            $data->{'user'} = User::clean_user($data->{'user'});
+            $data->{'user'} = Sympa::User::clean_user($data->{'user'});
         }
 
         if (ref $self eq 'List') {
