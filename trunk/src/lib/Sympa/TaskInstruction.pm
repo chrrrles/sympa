@@ -33,7 +33,7 @@ use Time::Local qw(timegm timelocal);
 # tentative
 use Data::Dumper;
 
-#use List; # this package is used by Task which is used by List.
+#use Sympa::List; # this package is used by Task which is used by List.
 #use Sympa::Tools; # load in Conf - Site - List
 #use Task; # this package is used by Task
 

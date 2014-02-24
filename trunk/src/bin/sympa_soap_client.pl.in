@@ -41,7 +41,7 @@ use Sympa::Language;
 use Sympa::Log;
 use Sympa::Mail;
 use MIME::QuotedPrint;
-use List;
+use Sympa::List;
 use Sympa::Message;
 use Sympa::Admin;
 use Sympa::Config_XML;

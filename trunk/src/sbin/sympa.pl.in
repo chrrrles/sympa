@@ -353,7 +353,7 @@ use Sympa::Session;
 #use Language; # load in List
 #use Sympa::Log; # load in Conf
 #use Sympa::Mail; # load in List - Auth
-#use List; #load in Auth
+#use Sympa::List; #load in Auth
 use Sympa::Message;
 use Sympa::Admin;
 use Sympa::Config_XML;
@@ -363,8 +363,8 @@ use Sympa::Family;
 #use Sympa::Tools; # load in Conf
 #use Sympa::Template; # load in List
 #use Sympa::Constants;
-#use tracking; # not used
-#use Sympaspool; # load in List
+#use Sympa::Tracking; # not used
+#use Sympa::Spool; # load in List
 use Sympa::MessageSpool;
 
 #use Sympa::DatabaseManager; # load in Conf

@@ -140,7 +140,7 @@ use Getopt::Long;
 use Digest::MD5;
 use Pod::Usage;
 
-use List;
+use Sympa::List;
 use Sympa::Message;
 use Sympa::Commands;
 

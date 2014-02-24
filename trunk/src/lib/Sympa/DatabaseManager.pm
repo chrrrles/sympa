@@ -31,7 +31,7 @@ use Exporter;
 #use Conf; # SDM is used in Conf
 use Sympa::Log;
 
-#use List; # no longer used
+#use Sympa::List; # no longer used
 use Sympa::Constants;
 use Sympa::SQLSource;
 use Data::Dumper;

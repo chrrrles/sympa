@@ -29,7 +29,7 @@ use Carp;
 use Sympa::Log;
 
 #use Conf; # not used
-#use List; # not used
+#use Sympa::List; # not used
 #use Sympa::Tools; # not used
 #use Sympa::Template; # not used
 use Exporter;

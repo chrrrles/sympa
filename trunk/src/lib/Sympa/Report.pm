@@ -27,7 +27,7 @@ use strict;
 
 use Sympa::Language;
 use Sympa::Log;
-use List;
+use Sympa::List;
 
 ### MESSAGE DIFFUSION REPORT ###
 

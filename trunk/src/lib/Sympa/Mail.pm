@@ -35,12 +35,12 @@ use MIME::Tools;
 # tentative
 use Data::Dumper;
 
-#use Bulk;
+#use Sympa::Bulk;
 #use Conf; # used in List - Site
 #use Sympa::Log; # load in Conf
 use Sympa::Language qw(gettext);
 
-#use List; # this package is loaded via List
+#use Sympa::List; # this package is loaded via List
 #use Sympa::Constants; # load in confdef - Conf
 #use Sympa::Tools; # load in Conf
 

@@ -61,7 +61,7 @@ use Data::Dumper;
 
 use Sympa::Language qw(gettext_strftime);
 
-#use List;
+#use Sympa::List;
 ##The line above was removed to avoid dependency loop.
 ##"use List" MUST precede to "use Message".
 

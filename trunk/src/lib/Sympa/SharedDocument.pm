@@ -31,7 +31,7 @@ use strict;
 use Sympa::Tools;
 use Sympa::Language qw(gettext_strftime);
 
-#use List; # not used
+#use Sympa::List; # not used
 use Sympa::Log;
 
 ## Creates a new object

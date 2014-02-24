@@ -76,7 +76,7 @@ use Sympa::LDAP;
 use Sympa::Message;
 use Sympa::Family;    #FIXME: dependency loop between List and Family
 use Sympa::PlainDigest;
-use tracking;
+use Sympa::Tracking;
 
 #use Sympa::ListDef; used in Robot
 

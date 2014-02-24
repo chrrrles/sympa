@@ -32,7 +32,7 @@ unless (require Crypt::CipherSaber) {
 #use Sympa::Wwslib; # not used
 #use Sympa::Constants; # used in List - Robot - Site - Conf - confdef
 #require Sympa::Tools; # used by Conf
-use List;
+use Sympa::List;
 
 #use Sympa::DatabaseManager; # used by conf
 #use Sympa::Log; # used by conf

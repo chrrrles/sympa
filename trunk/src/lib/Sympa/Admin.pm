@@ -41,7 +41,7 @@ use File::Copy;
 # tentative
 use Data::Dumper;
 
-use List;
+use Sympa::List;
 
 #use Conf; # already load in List - Site.
 use Sympa::Language qw(gettext_strftime);
