@@ -24,7 +24,7 @@ use Sympa::Mail;
 use Sympa::Conf;
 use Sympa::Log;
 use Sympa::Language;
-use sympasoap;
+use Sympa::SOAP;
 
 #XXXuse Sympa::Constants;
 
@@ -71,7 +71,7 @@ Sympa::List::get_lists('Site');
 
 my $server = SOAP::Transport::HTTP::FCGI::Sympa->new();
 
-#$server->dispatch_with({'urn:Sympa' => 'sympasoap'});
-$server->dispatch_to('--modulesdir--', 'sympasoap');
+#$server->dispatch_with({'urn:Sympa' => 'Sympa::SOAP'});
+$server->dispatch_to('--modulesdir--', 'Sympa::SOAP');
 
 $server->handle($birthday);
