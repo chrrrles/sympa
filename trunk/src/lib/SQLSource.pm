@@ -190,7 +190,7 @@ sub establish_connection {
             $self->{'db_type'},
             $self->{'db_type'}
         );
-        Site->send_notify_to_listmaster('missing_dbd',
+        Sympa::Site->send_notify_to_listmaster('missing_dbd',
             {'db_type' => $self->{'db_type'}});
         return undef;
     }
@@ -262,7 +262,7 @@ sub establish_connection {
                     && $db_connections{$self->{'connect_string'}}{'status'} eq
                     'failed') {
 
-                    Site->send_notify_to_listmaster('no_db', {});
+                    Sympa::Site->send_notify_to_listmaster('no_db', {});
                 }
             }
             if ($self->{'reconnect_options'}{'keep_trying'}) {
@@ -305,7 +305,7 @@ sub establish_connection {
                     'Connection to Database %s restored.',
                     $self->{'connect_string'}
                 );
-                Site->send_notify_to_listmaster('db_restored', {});
+                Sympa::Site->send_notify_to_listmaster('db_restored', {});
             }
         }
 
@@ -420,7 +420,7 @@ sub establish_connection {
         ##    load()-ed later.
         if ($self->{'db_type'} eq 'Oracle' or $self->{'db_type'} eq 'Sybase')
         {
-            $self->{'dbh'}->{LongReadLen} = Site->max_size * 2;
+            $self->{'dbh'}->{LongReadLen} = Sympa::Site->max_size * 2;
             $self->{'dbh'}->{LongTruncOk} = 0;
         }
         Sympa::Log::Syslog::do_log(

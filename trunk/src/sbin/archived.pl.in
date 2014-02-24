@@ -176,7 +176,7 @@ unless (defined Sympa::Robot::get_robots()) {
 unless (&Sympa::DatabaseManager::check_db_connect()) {
     Sympa::Log::Syslog::fatal_err(
         'Database %s defined in sympa.conf has not the right structure or is unreachable.',
-        Site->db_name
+        Sympa::Site->db_name
     );
 }
 
@@ -213,13 +213,13 @@ if ($main::options{'log_level'}) {
         "Configuration file read, log level set using options : $main::options{'log_level'}"
     );
 } else {
-    Sympa::Log::Syslog::set_log_level(Site->log_level);
+    Sympa::Log::Syslog::set_log_level(Sympa::Site->log_level);
     Sympa::Log::Syslog::do_log('info',
         'Configuration file read, default log level %s',
-        Site->log_level);
+        Sympa::Site->log_level);
 }
 
-Sympa::Log::Syslog::do_openlog(Site->log_facility, Site->log_socket_type,
+Sympa::Log::Syslog::do_openlog(Sympa::Site->log_facility, Sympa::Site->log_socket_type,
     'archived');
 
 ## Set the User ID & Group ID for the process
@@ -239,7 +239,7 @@ unless (($( == (getgrnam(Sympa::Constants::GROUP))[2])
 }
 
 ## Sets the UMASK
-umask(oct(Site->umask));
+umask(oct(Sympa::Site->umask));
 
 foreach my $robot (@{Sympa::Robot::get_robots()}) {
     my $arc_dir = $robot->arc_path;
@@ -259,12 +259,12 @@ foreach my $robot (@{Sympa::Robot::get_robots()}) {
 }
 
 ## Change to list root
-unless (chdir(Site->home)) {
+unless (chdir(Sympa::Site->home)) {
     Sympa::Log::Syslog::do_log('err', 'unable to change directory');
     exit(-1);
 }
 
-Sympa::Language::SetLang(Site->lang || 'en');
+Sympa::Language::SetLang(Sympa::Site->lang || 'en');
 
 Sympa::Log::Syslog::do_log('notice', "archived %s Started",
     Sympa::Constants::VERSION);
@@ -317,7 +317,7 @@ while (!$end) {
         my $listadress = $item->{'list'} . '@' . $item->{'robot'};
 
         my $arclistdir = $listadress . '.' . $yyyymm;
-        my $arcpath    = Site->arc_path . "/$listadress/$yyyymm";
+        my $arcpath    = Sympa::Site->arc_path . "/$listadress/$yyyymm";
 
         Sympa::Log::Syslog::do_log('debug',
             "start remove process :listadress :'$listadress' arclistdir '$arclistdir' arcpath '$arcpath'  yyyymm '$yyyymm'"
@@ -438,7 +438,7 @@ while (!$end) {
                 and $item->{'robot_object'}
                 ->send_notify_to_listmaster('archiving_failed')
                 or !$item->{'robot_object'}
-                and Site->send_notify_to_listmaster('archiving_failed')) {
+                and Sympa::Site->send_notify_to_listmaster('archiving_failed')) {
                 Sympa::Log::Syslog::do_log('notice',
                     "Unable to send notify 'archiving_failed' to listmaster");
             }
@@ -455,7 +455,7 @@ while (!$end) {
 }
 
 # Purge grouped notifications
-Site->send_notify_to_listmaster(undef, undef, undef, 1);
+Sympa::Site->send_notify_to_listmaster(undef, undef, undef, 1);
 
 ## Free zombie sendmail processes
 &Sympa::Mail::reaper;
@@ -594,7 +594,7 @@ sub remove {
     my $mm   = $2;
 
     $msgid =~ s/\$/\\\$/g;
-    system Site->mhonarc
+    system Sympa::Site->mhonarc
         . "  -outdir $arcpath/$adrlist/$yyyy-$mm -rmm $msgid";
 }
 
@@ -734,10 +734,10 @@ sub rebuild {
         my $cmd =
             sprintf
             '%s -modifybodyaddresses -addressmodifycode \'%s\' -rcfile %s -outdir %s/%s/%s-%s  -definevars \"listname=\'%s\' hostname=%s yyyy=%s mois=%s yyyymm=%s-%s wdir=%s base=%s/arc tag=%s\" -umask %s %s',
-            Site->mhonarc, $ENV{'M2H_ADDRESSMODIFYCODE'},
+            Sympa::Site->mhonarc, $ENV{'M2H_ADDRESSMODIFYCODE'},
             $mhonarc_ressources, $arcpath, $adrlist, $yyyy, $mm,
             $listname, $hostname, $yyyy, $mm, $yyyy, $mm, $arcpath,
-            $robot->wwsympa_url, $tag, Site->umask, $dir_to_rebuild;
+            $robot->wwsympa_url, $tag, Sympa::Site->umask, $dir_to_rebuild;
 
         Sympa::Log::Syslog::do_log('debug', "System call : $cmd");
         my $exitcode = system($cmd);
@@ -816,10 +816,10 @@ sub rebuild {
             my $cmd =
                 sprintf
                 '%s -modifybodyaddresses -addressmodifycode \'%s\' -rcfile %s -outdir %s -definevars \"listname=%s hostname=%s yyyy=%s mois=%s yyyymm=%s-%s wdir=%s base=%s/arc tag=%s\" -umask %s %s',
-                Site->mhonarc, $ENV{'M2H_ADDRESSMODIFYCODE'},
+                Sympa::Site->mhonarc, $ENV{'M2H_ADDRESSMODIFYCODE'},
                 $mhonarc_ressources, $arcdir, $listname, $hostname,
                 $yyyy, $mm, $yyyy, $mm, $arcpath, $robot->wwsympa_url,
-                $tag, Site->umask, $dir_to_rebuild;
+                $tag, Sympa::Site->umask, $dir_to_rebuild;
             my $exitcode = system($cmd);
             $exitcode = $exitcode >> 8;
 
@@ -957,14 +957,14 @@ sub mail2arc {
         unset_hidden_mode();
     }
 
-    if (Site->custom_archiver) {
+    if (Sympa::Site->custom_archiver) {
         my $file =
-              Site->tmpdir . "/arc."
+              Sympa::Site->tmpdir . "/arc."
             . $list->get_id
             . $message_in_spool->{'messagekey'};
         open DUMP, '>', $file;
         print DUMP $message_in_spool->{'messageasstring'};
-        my $cmd = sprintf '%s --list=%s --file=%s', Site->custom_archiver,
+        my $cmd = sprintf '%s --list=%s --file=%s', Sympa::Site->custom_archiver,
             $list->get_id, $file;
         `$cmd`;
         return 1;
@@ -1094,7 +1094,7 @@ sub mail2arc {
 
         # savee arctxt dump of original message.
         my $file   = $monthdir . '/arctxt/' . $newfile;
-        my $output = Site->tmpdir . '/arc' . $newfile;
+        my $output = Sympa::Site->tmpdir . '/arc' . $newfile;
         open DUMP, '>', $file;
         print DUMP $message_in_spool->{'messageasstring'};
         close DUMP;
@@ -1115,10 +1115,10 @@ sub mail2arc {
         # message
         my $cmd = sprintf
             '%s -add -modifybodyaddresses -addressmodifycode \'%s\' -rcfile %s -outdir %s -definevars "listname=\'%s\' hostname=%s yyyy=%s mois=%s yyyymm=%s-%s wdir=%s base=%s/arc tag=%s" -umask %s < %s',
-            Site->mhonarc, $ENV{'M2H_ADDRESSMODIFYCODE'},
+            Sympa::Site->mhonarc, $ENV{'M2H_ADDRESSMODIFYCODE'},
             $mhonarc_ressources, $monthdir, $list->name, $robot->domain,
             $yyyy, $mm, $yyyy, $mm, $robot->arc_path, $robot->wwsympa_url,
-            $tag, Site->umask, $output;
+            $tag, Sympa::Site->umask, $output;
 
         my $exitcode = system($cmd);
         $exitcode = $exitcode >> 8;
@@ -1302,7 +1302,7 @@ sub get_tag {
     my $listname = shift;
 
     return (
-        substr(Digest::MD5::md5_hex(join('/', Site->cookie, $listname)), -10)
+        substr(Digest::MD5::md5_hex(join('/', Sympa::Site->cookie, $listname)), -10)
     );
 }
 

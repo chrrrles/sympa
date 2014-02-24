@@ -133,9 +133,9 @@ sub get_https2 {
     my $ssl_data = shift;
 
     my $trusted_ca_file = $ssl_data->{'cafile'};
-    $trusted_ca_file ||= Site->cafile;
+    $trusted_ca_file ||= Sympa::Site->cafile;
     my $trusted_ca_path = $ssl_data->{'capath'};
-    $trusted_ca_path ||= Site->capath;
+    $trusted_ca_path ||= Sympa::Site->capath;
 
     Sympa::Log::Syslog::do_log('debug', 'Fetch::get_https2 (%s,%s,%s,%s,%s)',
         $host, $port, $path, $trusted_ca_file, $trusted_ca_path);

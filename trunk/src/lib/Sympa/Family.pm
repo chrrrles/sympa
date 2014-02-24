@@ -1020,8 +1020,8 @@ sub instantiate {
     $progress->max_update_rate(1);
     my $next_update = 0;
     my $aliasmanager_output_file =
-        Site->tmpdir . '/aliasmanager.stdout.' . $$;
-    my $output_file = Site->tmpdir . '/instantiate_family.stdout.' . $$;
+        Sympa::Site->tmpdir . '/aliasmanager.stdout.' . $$;
+    my $output_file = Sympa::Site->tmpdir . '/instantiate_family.stdout.' . $$;
     my $output      = '';
 
     ## EACH FAMILY LIST
@@ -1978,8 +1978,8 @@ sub _get_directory {
     my $name  = $self->name;
 
     my @try = (
-        Site->etc . "/$robot/families",
-        Site->etc . "/families",
+        Sympa::Site->etc . "/$robot/families",
+        Sympa::Site->etc . "/families",
         Sympa::Constants::DEFAULTDIR . "/families"
     );
 

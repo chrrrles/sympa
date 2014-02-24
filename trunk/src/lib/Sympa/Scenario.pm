@@ -562,7 +562,7 @@ sub request_action {
     }
 
     ## Include a Blacklist rules if configured for this action
-    if (Site->blacklist->{$operation}) {
+    if (Sympa::Site->blacklist->{$operation}) {
         foreach my $auth ('smtp', 'dkim', 'md5', 'pgp', 'smime') {
             my $blackrule = {
                 'condition'   => "search('blacklist.txt',[sender])",

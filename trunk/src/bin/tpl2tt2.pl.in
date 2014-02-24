@@ -45,13 +45,13 @@ $| = 1;
 #}
 
 ## Load sympa config
-Site->load or die 'config_error';
+Sympa::Site->load or die 'config_error';
 
-if (Site->db_name and Site->db_type) {
+if (Sympa::Site->db_name and Sympa::Site->db_type) {
     unless (Sympa::DatabaseManager::check_db_connect('just_try') and Sympa::DatabaseManager::probe_db()) {
         die sprintf
             'Database %s defined in sympa.conf has not the right structure or is unreachable. If you don\'t use any database, comment db_xxx parameters in sympa.conf',
-            Site->db_name;
+            Sympa::Site->db_name;
     }
 }
 
@@ -72,20 +72,20 @@ if ($#ARGV >= 0) {
 
 my @directories;
 my @templates;
-my $sympa_etc = Site->etc;
+my $sympa_etc = Sympa::Site->etc;
 
 ## Search in main robot
-if (-d Site->etc) {
-    push @directories, Site->etc;
+if (-d Sympa::Site->etc) {
+    push @directories, Sympa::Site->etc;
 }
-if (-d Site->etc . '/templates') {
-    push @directories, Site->etc . '/templates';
+if (-d Sympa::Site->etc . '/templates') {
+    push @directories, Sympa::Site->etc . '/templates';
 }
-if (-d Site->etc . '/wws_templates') {
-    push @directories, Site->etc . '/wws_templates';
+if (-d Sympa::Site->etc . '/wws_templates') {
+    push @directories, Sympa::Site->etc . '/wws_templates';
 }
-if (-f Site->etc . '/mhonarc-ressources') {
-    push @templates, Site->etc . '/mhonarc-ressources';
+if (-f Sympa::Site->etc . '/mhonarc-ressources') {
+    push @templates, Sympa::Site->etc . '/mhonarc-ressources';
 }
 
 ## Create_list_templates
@@ -221,7 +221,7 @@ foreach my $tpl (@templates) {
             )
             ) {
             Sympa::Log::Syslog::do_log('err', 'Unable to set rights on %s',
-                Site->db_name);
+                Sympa::Site->db_name);
             next;
         }
     }

@@ -185,7 +185,7 @@ sub get_template {
     # for global model
     if ($self->{'object'} eq '_global') {
         unless (
-            $self->{'template'} = Site->get_etc_filename(
+            $self->{'template'} = Sympa::Site->get_etc_filename(
                 "global_task_models/$self->{'model_name'}")
             ) {
             Sympa::Log::Syslog::do_log('err',
@@ -719,7 +719,7 @@ sub error_report {
         'Execution of task %s failed. sending detailed report to listmaster',
         $self->get_description
     );
-    Site->send_notify_to_listmaster('task_error', $data);
+    Sympa::Site->send_notify_to_listmaster('task_error', $data);
 }
 
 #### Task line level subs ####

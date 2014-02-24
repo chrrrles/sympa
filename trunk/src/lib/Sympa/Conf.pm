@@ -479,7 +479,7 @@ sub conf_2_db {
 
     ## Load configuration file. Ignoring database config and get result
     my $global_conf;
-    unless ($global_conf = Site->load('no_db' => 1, 'return_result' => 1)) {
+    unless ($global_conf = Sympa::Site->load('no_db' => 1, 'return_result' => 1)) {
         Sympa::Log::Syslog::do_log('err', 'Configuration file %s has errors.',
             get_sympa_conf());
         return undef;
@@ -645,7 +645,7 @@ sub checkfiles {
         unless (-f $Conf{'cafile'} && -r $Conf{'cafile'}) {
             Sympa::Log::Syslog::do_log('err', 'Cannot access cafile %s',
                 $Conf{'cafile'});
-            Site->send_notify_to_listmaster('cannot_access_cafile',
+            Sympa::Site->send_notify_to_listmaster('cannot_access_cafile',
                 $Conf{'cafile'});
             $config_err++;
         }
@@ -655,7 +655,7 @@ sub checkfiles {
         unless (-d $Conf{'capath'} && -x $Conf{'capath'}) {
             Sympa::Log::Syslog::do_log('err', 'Cannot access capath %s',
                 $Conf{'capath'});
-            Site->send_notify_to_listmaster('cannot_access_capath',
+            Sympa::Site->send_notify_to_listmaster('cannot_access_capath',
                 $Conf{'capath'});
             $config_err++;
         }
@@ -668,7 +668,7 @@ sub checkfiles {
             'Error in config: queuebounce and bounce_path parameters pointing to the same directory (%s)',
             $Conf{'queuebounce'}
         );
-        Site->send_notify_to_listmaster(
+        Sympa::Site->send_notify_to_listmaster(
             'queuebounce_and_bounce_path_are_the_same',
             $Conf{'queuebounce'});
         $config_err++;
@@ -800,7 +800,7 @@ sub checkfiles {
     }
     if ($css_updated) {
         ## Notify main listmaster
-        Site->send_notify_to_listmaster('css_updated',
+        Sympa::Site->send_notify_to_listmaster('css_updated',
             "Static CSS files have been updated ; check log file for details"
         );
     }

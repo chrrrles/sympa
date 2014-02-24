@@ -79,7 +79,7 @@ sub fatal_err {
     };
     if ($@ && ($warning_date < time - $warning_timeout)) {
         $warning_date = time + $warning_timeout;
-        unless (Site->send_notify_to_listmaster('logs_failed', [$@])) {
+        unless (Sympa::Site->send_notify_to_listmaster('logs_failed', [$@])) {
             print STDERR "No logs available, can't send warning message";
         }
     }
@@ -88,9 +88,9 @@ sub fatal_err {
     my $full_msg = sprintf $m, @_;
 
     ## Notify listmaster
-    Site->send_notify_to_listmaster('sympa_died', [$full_msg]);
+    Sympa::Site->send_notify_to_listmaster('sympa_died', [$full_msg]);
 
-    eval { Site->send_notify_to_listmaster(undef, undef, undef, 1); };
+    eval { Sympa::Site->send_notify_to_listmaster(undef, undef, undef, 1); };
     eval { Sympa::DatabaseManager::db_disconnect(); };    # unlock database
     Sys::Syslog::closelog();           # flush log
 
@@ -208,7 +208,7 @@ sub do_log {
 
     if ($@ && ($warning_date < time - $warning_timeout)) {
         $warning_date = time + $warning_timeout;
-        Site->send_notify_to_listmaster('logs_failed', [$@]);
+        Sympa::Site->send_notify_to_listmaster('logs_failed', [$@]);
     }
 }
 
@@ -237,7 +237,7 @@ sub do_connect {
     eval { openlog("$log_service\[$$\]", 'ndelay,nofatal', $log_facility) };
     if ($@ && ($warning_date < time - $warning_timeout)) {
         $warning_date = time + $warning_timeout;
-        unless (Site->send_notify_to_listmaster('logs_failed', [$@])) {
+        unless (Sympa::Site->send_notify_to_listmaster('logs_failed', [$@])) {
             print STDERR "No logs available, can't send warning message";
         }
     }
@@ -435,7 +435,7 @@ sub db_stat_counter_log {
 
 # delete logs in RDBMS
 sub db_log_del {
-    my $exp = Site->logs_expiration_period;
+    my $exp = Sympa::Site->logs_expiration_period;
     my $date = time - ($exp * 30 * 24 * 60 * 60);
 
     unless (
@@ -607,7 +607,7 @@ sub get_first_db_log {
 
     if ($sortby eq 'date') {
         $statement .= sprintf 'ORDER BY date_logs %s ', $way;
-    } elsif (Site->db_type =~ /^(mysql|Sybase)$/) {
+    } elsif (Sympa::Site->db_type =~ /^(mysql|Sybase)$/) {
 
         # On MySQL, collation is case-insensitive by default.
         # On Sybase, collation is defined at the time of database creation.

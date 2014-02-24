@@ -390,10 +390,10 @@ sub renew {
     my $time        = time;
     my $remote_addr = $ENV{'REMOTE_ADDR'};
     my $refresh_term;
-    if (Site->cookie_refresh == 0) {
+    if (Sympa::Site->cookie_refresh == 0) {
         $refresh_term = $time;
     } else {
-        my $cookie_refresh = Site->cookie_refresh;
+        my $cookie_refresh = Sympa::Site->cookie_refresh;
         $refresh_term =
             int($time - $cookie_refresh * 0.25 - rand($cookie_refresh * 0.5));
     }
@@ -473,9 +473,9 @@ sub purge_old_sessions {
     Sympa::Log::Syslog::do_log('debug2', '(%s)', @_);
     my $robot = Sympa::Robot::clean_robot(shift, 1);
 
-    my $delay = tools::duration_conv(Site->session_table_ttl);
+    my $delay = tools::duration_conv(Sympa::Site->session_table_ttl);
     my $anonymous_delay =
-        tools::duration_conv(Site->anonymous_session_table_ttl);
+        tools::duration_conv(Sympa::Site->anonymous_session_table_ttl);
 
     unless ($delay) {
         Sympa::Log::Syslog::do_log('debug3', 'exit with delay null');
@@ -559,7 +559,7 @@ sub purge_old_tickets {
     Sympa::Log::Syslog::do_log('debug2', '(%s)', @_);
     my $robot = Sympa::Robot::clean_robot(shift, 1);
 
-    my $delay = tools::duration_conv(Site->one_time_ticket_table_ttl);
+    my $delay = tools::duration_conv(Sympa::Site->one_time_ticket_table_ttl);
     unless ($delay) {
         Sympa::Log::Syslog::do_log('debug3', 'exit with delay null');
         return;
@@ -797,7 +797,7 @@ sub is_anonymous {
 sub encrypt_session_id {
     my $id_session = shift;
 
-    return $id_session unless Site->cookie;
+    return $id_session unless Sympa::Site->cookie;
     my $cipher = tools::ciphersaber_installed();
     return $id_session unless $cipher;
 
@@ -811,7 +811,7 @@ sub encrypt_session_id {
 sub decrypt_session_id {
     my $cookie = shift;
 
-    return $cookie unless Site->cookie;
+    return $cookie unless Sympa::Site->cookie;
     my $cipher = tools::ciphersaber_installed();
     return $cookie unless $cipher;
 

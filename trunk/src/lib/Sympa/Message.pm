@@ -65,7 +65,7 @@ use Sympa::Language qw(gettext_strftime);
 ##The line above was removed to avoid dependency loop.
 ##"use List" MUST precede to "use Message".
 
-#use Site; # loaded in List - Robot
+#use Sympa::Site; # loaded in List - Robot
 #use tools; # loaded in Conf
 #use tt2; # loaded by List
 #use Conf; # loaded in Site
@@ -296,7 +296,7 @@ sub load {
     $self->check_dkim_signature;
 
     ## S/MIME
-    if (Site->openssl) {
+    if (Sympa::Site->openssl) {
         return undef unless $self->decrypt;
         $self->check_smime_signature;
     }
@@ -477,7 +477,7 @@ sub get_sender_email {
         my $hdr    = $self->as_entity()->head;
         my $sender = undef;
         my $gecos  = undef;
-        foreach my $field (split /[\s,]+/, Site->sender_headers) {
+        foreach my $field (split /[\s,]+/, Sympa::Site->sender_headers) {
             if (lc $field eq 'from_') {
                 ## Try to get envelope sender
                 if (    $self->get_envelope_sender
@@ -999,7 +999,7 @@ sub smime_decrypt {
     if ($list) {
         $dir = $list->dir;
     } else {
-        $dir = Site->home . '/sympa';
+        $dir = Sympa::Site->home . '/sympa';
     }
     my ($certs, $keys) = tools::smime_find_keys($dir, 'decrypt');
     unless (defined $certs && @$certs) {
@@ -1008,8 +1008,8 @@ sub smime_decrypt {
         return undef;
     }
 
-    my $temporary_file = Site->tmpdir . "/" . $list->get_list_id() . "." . $$;
-    my $temporary_pwd  = Site->tmpdir . '/pass.' . $$;
+    my $temporary_file = Sympa::Site->tmpdir . "/" . $list->get_list_id() . "." . $$;
+    my $temporary_pwd  = Sympa::Site->tmpdir . '/pass.' . $$;
 
     ## dump the incoming message.
     if (!open(MSGDUMP, "> $temporary_file")) {
@@ -1022,7 +1022,7 @@ sub smime_decrypt {
 
     my $pass_option;
     $self->{'decrypted_msg_as_string'} = '';
-    if (Site->key_passwd ne '') {
+    if (Sympa::Site->key_passwd ne '') {
 
         # if password is defined in sympa.conf pass the password to OpenSSL
         $pass_option = "-passin file:$temporary_pwd";
@@ -1033,7 +1033,7 @@ sub smime_decrypt {
         my $keyfile = shift @$keys;
         Sympa::Log::Syslog::do_log('debug', 'Trying decrypt with %s, %s',
             $certfile, $keyfile);
-        if (Site->key_passwd ne '') {
+        if (Sympa::Site->key_passwd ne '') {
             unless (mkfifo($temporary_pwd, 0600)) {
                 Sympa::Log::Syslog::do_log('err',
                     'Unable to make fifo for %s',
@@ -1042,19 +1042,19 @@ sub smime_decrypt {
             }
         }
         my $cmd = sprintf '%s smime -decrypt -in %s -recip %s -inkey %s %s',
-            Site->openssl, $temporary_file, $certfile, $keyfile,
+            Sympa::Site->openssl, $temporary_file, $certfile, $keyfile,
             $pass_option;
         Sympa::Log::Syslog::do_log('debug3', '%s', $cmd);
         open(NEWMSG, "$cmd |");
 
-        if (defined Site->key_passwd and Site->key_passwd ne '') {
+        if (defined Sympa::Site->key_passwd and Sympa::Site->key_passwd ne '') {
             unless (open(FIFO, "> $temporary_pwd")) {
                 Sympa::Log::Syslog::do_log('err',
                     'Unable to open fifo for %s',
                     $temporary_pwd);
                 return undef;
             }
-            print FIFO Site->key_passwd;
+            print FIFO Sympa::Site->key_passwd;
             close FIFO;
             unlink($temporary_pwd);
         }
@@ -1145,7 +1145,7 @@ sub smime_encrypt {
         my $self = new List($email);
         ($usercert, $dummy) = tools::smime_find_keys($self->{dir}, 'encrypt');
     } else {
-        my $base = Site->ssl_cert_dir . '/' . tools::escape_chars($email);
+        my $base = Sympa::Site->ssl_cert_dir . '/' . tools::escape_chars($email);
         if (-f "$base\@enc") {
             $usercert = "$base\@enc";
         } else {
@@ -1153,11 +1153,11 @@ sub smime_encrypt {
         }
     }
     if (-r $usercert) {
-        my $temporary_file = Site->tmpdir . "/" . $email . "." . $$;
+        my $temporary_file = Sympa::Site->tmpdir . "/" . $email . "." . $$;
 
         ## encrypt the incoming message parse it.
         my $cmd = sprintf '%s smime -encrypt -out %s -des3 %s',
-            Site->openssl, $temporary_file, $usercert;
+            Sympa::Site->openssl, $temporary_file, $usercert;
         Sympa::Log::Syslog::do_log('debug3', '%s', $cmd);
         if (!open(MSGDUMP, "| $cmd")) {
             Sympa::Log::Syslog::do_log('info',
@@ -1250,11 +1250,11 @@ sub smime_sign {
     Sympa::Log::Syslog::do_log('debug2', '(%s, list=%s)', $self, $list);
 
     my ($cert, $key) = tools::smime_find_keys($list->dir, 'sign');
-    my $temporary_file = Site->tmpdir . '/' . $list->get_id . "." . $$;
-    my $temporary_pwd  = Site->tmpdir . '/pass.' . $$;
+    my $temporary_file = Sympa::Site->tmpdir . '/' . $list->get_id . "." . $$;
+    my $temporary_pwd  = Sympa::Site->tmpdir . '/pass.' . $$;
 
     my ($signed_msg, $pass_option);
-    $pass_option = "-passin file:$temporary_pwd" if (Site->key_passwd ne '');
+    $pass_option = "-passin file:$temporary_pwd" if (Sympa::Site->key_passwd ne '');
 
     ## Keep a set of header fields ONLY
     ## OpenSSL only needs content type & encoding to generate a
@@ -1274,7 +1274,7 @@ sub smime_sign {
     $dup_msg->print(\*MSGDUMP);
     close(MSGDUMP);
 
-    if (Site->key_passwd ne '') {
+    if (Sympa::Site->key_passwd ne '') {
         unless (mkfifo($temporary_pwd, 0600)) {
             Sympa::Log::Syslog::do_log('notice', 'Unable to make fifo for %s',
                 $temporary_pwd);
@@ -1282,7 +1282,7 @@ sub smime_sign {
     }
     my $cmd = sprintf
         '%s smime -sign -rand %s/rand -signer %s %s -inkey %s -in %s',
-        Site->openssl, Site->tmpdir, $cert, $pass_option, $key,
+        Sympa::Site->openssl, Sympa::Site->tmpdir, $cert, $pass_option, $key,
         $temporary_file;
     Sympa::Log::Syslog::do_log('debug2', '%s', $cmd);
     unless (open NEWMSG, "$cmd |") {
@@ -1291,13 +1291,13 @@ sub smime_sign {
         return undef;
     }
 
-    if (Site->key_passwd ne '') {
+    if (Sympa::Site->key_passwd ne '') {
         unless (open(FIFO, "> $temporary_pwd")) {
             Sympa::Log::Syslog::do_log('notice', 'Unable to open fifo for %s',
                 $temporary_pwd);
         }
 
-        print FIFO Site->key_passwd;
+        print FIFO Sympa::Site->key_passwd;
         close FIFO;
         unlink($temporary_pwd);
     }
@@ -1355,12 +1355,12 @@ sub smime_sign_check {
     ## first step is the msg signing OK ; /tmp/sympa-smime.$$ is created
     ## to store the signer certificat for step two. I known, that's dirty.
 
-    my $temporary_file     = Site->tmpdir . "/" . 'smime-sender.' . $$;
+    my $temporary_file     = Sympa::Site->tmpdir . "/" . 'smime-sender.' . $$;
     my $trusted_ca_options = '';
-    $trusted_ca_options = "-CAfile " . Site->cafile . " " if Site->cafile;
-    $trusted_ca_options .= "-CApath " . Site->capath . " " if Site->capath;
+    $trusted_ca_options = "-CAfile " . Sympa::Site->cafile . " " if Sympa::Site->cafile;
+    $trusted_ca_options .= "-CApath " . Sympa::Site->capath . " " if Sympa::Site->capath;
     my $cmd = sprintf '%s smime -verify %s -signer %s',
-        Site->openssl, $trusted_ca_options, $temporary_file;
+        Sympa::Site->openssl, $trusted_ca_options, $temporary_file;
     Sympa::Log::Syslog::do_log('debug2', '%s', $cmd);
 
     unless (open MSGDUMP, "| $cmd > /dev/null") {
@@ -1403,14 +1403,14 @@ sub smime_sign_check {
         join(',', keys %{$signer->{'email'}})
     );
     ## store the signer certificat
-    unless (-d Site->ssl_cert_dir) {
-        if (mkdir(Site->ssl_cert_dir, 0775)) {
+    unless (-d Sympa::Site->ssl_cert_dir) {
+        if (mkdir(Sympa::Site->ssl_cert_dir, 0775)) {
             Sympa::Log::Syslog::do_log('info', 'creating spool %s',
-                Site->ssl_cert_dir);
+                Sympa::Site->ssl_cert_dir);
         } else {
             Sympa::Log::Syslog::do_log('err',
                 'Unable to create user certificat directory %s',
-                Site->ssl_cert_dir);
+                Sympa::Site->ssl_cert_dir);
         }
     }
 
@@ -1421,8 +1421,8 @@ sub smime_sign_check {
     ## are also included), and look at the purpose:
     ## "S/MIME signing : Yes/No"
     ## "S/MIME encryption : Yes/No"
-    my $certbundle = Site->tmpdir . "/certbundle.$$";
-    my $tmpcert    = Site->tmpdir . "/cert.$$";
+    my $certbundle = Sympa::Site->tmpdir . "/certbundle.$$";
+    my $tmpcert    = Sympa::Site->tmpdir . "/cert.$$";
     my $nparts     = $message->get_mime_message->parts;
     my $extracted  = 0;
     Sympa::Log::Syslog::do_log('debug3', 'smime_sign_check: parsing %d parts',
@@ -1515,7 +1515,7 @@ sub smime_sign_check {
     ## or a pair of single-purpose. save them, as email@addr if combined,
     ## or as email@addr@sign / email@addr@enc for split certs.
     foreach my $c (keys %certs) {
-        my $fn = Site->ssl_cert_dir . '/'
+        my $fn = Sympa::Site->ssl_cert_dir . '/'
             . tools::escape_chars(lc($message->{'sender'}));
         if ($c ne 'both') {
             unlink($fn);    # just in case there's an old cert left...
@@ -1760,8 +1760,8 @@ sub add_parts {
     foreach my $file (
         "$listdir/message.header",
         "$listdir/message.header.mime",
-        Site->etc . '/mail_tt2/message.header',
-        Site->etc . '/mail_tt2/message.header.mime'
+        Sympa::Site->etc . '/mail_tt2/message.header',
+        Sympa::Site->etc . '/mail_tt2/message.header.mime'
         ) {
         if (-f $file) {
             unless (-r $file) {
@@ -1777,8 +1777,8 @@ sub add_parts {
     foreach my $file (
         "$listdir/message.footer",
         "$listdir/message.footer.mime",
-        Site->etc . '/mail_tt2/message.footer',
-        Site->etc . '/mail_tt2/message.footer.mime'
+        Sympa::Site->etc . '/mail_tt2/message.footer',
+        Sympa::Site->etc . '/mail_tt2/message.footer.mime'
         ) {
         if (-f $file) {
             unless (-r $file) {
@@ -2581,7 +2581,7 @@ sub _urlize_part {
     my $size = (-s $file);
 
     ## Only URLize files with a moderate size
-    if ($size < Site->urlize_min_size) {
+    if ($size < Sympa::Site->urlize_min_size) {
         unlink "$expl/$dir/$filename";
         return undef;
     }

@@ -67,22 +67,22 @@ use List;
 #use Sympa::DatabaseManager; # used by Conf
 
 ## Load sympa config
-Site->load or die 'config_error';
+Sympa::Site->load or die 'config_error';
 
 ## Probe Db if defined
-if (Site->db_name and Site->db_type) {
+if (Sympa::Site->db_name and Sympa::Site->db_type) {
     unless (Sympa::DatabaseManager::check_db_connect('just_try') and Sympa::DatabaseManager::probe_db()) {
         die sprintf
             'Database %s defined in sympa.conf has not the right structure or is unreachable. If you don\'t use any database, comment db_xxx parameters in sympa.conf',
-            Site->db_name;
+            Sympa::Site->db_name;
     }
 }
 
-my $openssl    = Site->openssl;
-my $etc_sympa  = Site->etc;
-my $home_sympa = Site->home;
-my $outpass    = Site->key_passwd;
-my $etc_dir    = Site->etc;
+my $openssl    = Sympa::Site->openssl;
+my $etc_sympa  = Sympa::Site->etc;
+my $home_sympa = Sympa::Site->home;
+my $outpass    = Sympa::Site->key_passwd;
+my $etc_dir    = Sympa::Site->etc;
 
 ## Check option
 my %options;

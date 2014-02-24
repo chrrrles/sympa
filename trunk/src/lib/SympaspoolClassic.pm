@@ -75,7 +75,7 @@ sub new {
     my $queue = 'queue' . $spoolname;
     $queue = 'queue' if ($spoolname eq 'msg');
     my $dir;
-    eval { $dir = Site->$queue; };    # check if parameter is defined.
+    eval { $dir = Sympa::Site->$queue; };    # check if parameter is defined.
     if ($@) {
         Sympa::Log::Syslog::do_log('err', 'internal error unknown spool %s',
             $spoolname);

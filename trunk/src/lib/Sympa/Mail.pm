@@ -420,7 +420,7 @@ sub mail_message {
         length($robot->sendmail_args) +
         length(' -N success,delay,failure -V ') + 32 +
         length(" -f $from ");
-    my $db_type = Site->db_type;
+    my $db_type = Sympa::Site->db_type;
 
     while (defined($i = shift(@rcpt))) {
         my @k = reverse split(/[\.@]/, $i);
@@ -434,13 +434,13 @@ sub mail_message {
         $rcpt_by_dom{$dom} += 1;
         Sympa::Log::Syslog::do_log('debug3',
             'domain: %s ; rcpt by dom: %s ; limit for this domain: %s',
-            $dom, $rcpt_by_dom{$dom}, Site->nrcpt_by_domain->{$dom});
+            $dom, $rcpt_by_dom{$dom}, Sympa::Site->nrcpt_by_domain->{$dom});
 
         if (
 
             # number of recipients by each domain
-            (   defined Site->nrcpt_by_domain->{$dom}
-                and $rcpt_by_dom{$dom} >= Site->nrcpt_by_domain->{$dom}
+            (   defined Sympa::Site->nrcpt_by_domain->{$dom}
+                and $rcpt_by_dom{$dom} >= Sympa::Site->nrcpt_by_domain->{$dom}
             )
             or
 

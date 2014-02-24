@@ -128,7 +128,7 @@ sub check_db_connect {
     my @options = @_;
 
     ## Is the Database defined
-    unless (Site->db_name) {
+    unless (Sympa::Site->db_name) {
         Sympa::Log::Syslog::do_log('err',
             'No db_name defined in configuration file');
         return undef;
@@ -179,7 +179,7 @@ sub connect_sympa_database {
         return undef;
     }
     Sympa::Log::Syslog::do_log('debug3', 'Connected to Database %s',
-        Site->db_name);
+        Sympa::Site->db_name);
 
     return 1;
 }
@@ -231,7 +231,7 @@ sub probe_db {
                 push @report, $rep;
                 Sympa::Log::Syslog::do_log('notice',
                     'Table %s created in database %s',
-                    $t1, Site->db_name);
+                    $t1, Sympa::Site->db_name);
                 push @tables, $t1;
                 $real_struct{$t1} = {};
             }
@@ -251,8 +251,8 @@ sub probe_db {
                     'err',
                     "Table '%s' not found in database '%s' ; you should create it with create_db.%s script",
                     $t,
-                    Site->db_name,
-                    Site->db_type
+                    Sympa::Site->db_name,
+                    Sympa::Site->db_type
                 );
                 return undef;
             }
@@ -281,9 +281,9 @@ sub probe_db {
                 delete $real_struct{$t}{'temporary'};
             }
 
-            if (   Site->db_type eq 'mysql'
-                or Site->db_type eq 'Pg'
-                or Site->db_type eq 'SQLite') {
+            if (   Sympa::Site->db_type eq 'mysql'
+                or Sympa::Site->db_type eq 'Pg'
+                or Sympa::Site->db_type eq 'SQLite') {
                 ## Check that primary key has the right structure.
                 unless (
                     &check_primary_key({'table' => $t, 'report' => \@report}))
@@ -350,7 +350,7 @@ sub probe_db {
     $Site::use_db = 1;
 
     ## Notify listmaster
-    Site->send_notify_to_listmaster('db_struct_updated',
+    Sympa::Site->send_notify_to_listmaster('db_struct_updated',
         {'report' => \@report})
         if scalar @report;
 
@@ -363,25 +363,25 @@ sub check_fields {
     my %real_struct = %{$param->{'real_struct'}};
     my $report_ref  = $param->{'report'};
 
-    foreach my $f (sort keys %{$db_struct{Site->db_type}{$t}}) {
+    foreach my $f (sort keys %{$db_struct{Sympa::Site->db_type}{$t}}) {
         unless ($real_struct{$t}{$f}) {
             push @{$report_ref},
                 sprintf(
                 "Field '%s' (table '%s' ; database '%s') was NOT found. Attempting to add it...",
-                $f, $t, Site->db_name);
+                $f, $t, Sympa::Site->db_name);
             Sympa::Log::Syslog::do_log(
                 'info',
                 "Field '%s' (table '%s' ; database '%s') was NOT found. Attempting to add it...",
                 $f,
                 $t,
-                Site->db_name
+                Sympa::Site->db_name
             );
 
             my $rep;
             if ($rep = $db_source->add_field(
                     {   'table'   => $t,
                         'field'   => $f,
-                        'type'    => $db_struct{Site->db_type}{$t}{$f},
+                        'type'    => $db_struct{Sympa::Site->db_type}{$t}{$f},
                         'notnull' => $not_null{$f},
                         'autoinc' => ($autoincrement{$t} eq $f),
                         'primary' => ($autoincrement{$t} eq $f),
@@ -399,25 +399,25 @@ sub check_fields {
         }
 
         ## Change DB types if different and if update_db_types enabled
-        if (Site->update_db_field_types eq 'auto') {
+        if (Sympa::Site->update_db_field_types eq 'auto') {
             unless (
                 &check_db_field_type(
                     effective_format => $real_struct{$t}{$f},
-                    required_format  => $db_struct{Site->db_type}{$t}{$f}
+                    required_format  => $db_struct{Sympa::Site->db_type}{$t}{$f}
                 )
                 ) {
                 push @{$report_ref},
                     sprintf(
                     "Field '%s'  (table '%s' ; database '%s') does NOT have awaited type (%s). Attempting to change it...",
-                    $f, $t, Site->db_name, $db_struct{Site->db_type}{$t}{$f});
+                    $f, $t, Sympa::Site->db_name, $db_struct{Sympa::Site->db_type}{$t}{$f});
 
                 Sympa::Log::Syslog::do_log(
                     'notice',
                     "Field '%s'  (table '%s' ; database '%s') does NOT have awaited type (%s) where type in database seems to be (%s). Attempting to change it...",
                     $f,
                     $t,
-                    Site->db_name,
-                    $db_struct{Site->db_type}{$t}{$f},
+                    Sympa::Site->db_name,
+                    $db_struct{Sympa::Site->db_type}{$t}{$f},
                     $real_struct{$t}{$f}
                 );
 
@@ -425,7 +425,7 @@ sub check_fields {
                 if ($rep = $db_source->update_field(
                         {   'table'   => $t,
                             'field'   => $f,
-                            'type'    => $db_struct{Site->db_type}{$t}{$f},
+                            'type'    => $db_struct{Sympa::Site->db_type}{$t}{$f},
                             'notnull' => $not_null{$f},
                         }
                     )
@@ -438,15 +438,15 @@ sub check_fields {
                 }
             }
         } else {
-            unless ($real_struct{$t}{$f} eq $db_struct{Site->db_type}{$t}{$f})
+            unless ($real_struct{$t}{$f} eq $db_struct{Sympa::Site->db_type}{$t}{$f})
             {
                 Sympa::Log::Syslog::do_log(
                     'err',
                     'Field \'%s\'  (table \'%s\' ; database \'%s\') does NOT have awaited type (%s).',
                     $f,
                     $t,
-                    Site->db_name,
-                    $db_struct{Site->db_type}{$t}{$f}
+                    Sympa::Site->db_name,
+                    $db_struct{Sympa::Site->db_type}{$t}{$f}
                 );
                 Sympa::Log::Syslog::do_log('err',
                     'Sympa\'s database structure may have change since last update ; please check RELEASE_NOTES'
@@ -659,7 +659,7 @@ sub check_indexes {
 ## Check if data structures are uptodate
 ## If not, no operation should be performed before the upgrade process is run
 sub data_structure_uptodate {
-    my $version_file = Site->etc . '/data_structure.version';
+    my $version_file = Sympa::Site->etc . '/data_structure.version';
     my $data_structure_version;
 
     if (-f $version_file) {

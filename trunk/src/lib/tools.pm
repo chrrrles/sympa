@@ -387,9 +387,9 @@ sub checkcommand {
         $subject, $sender);
 
     if ($subject) {
-        if (Site->misaddressed_commands_regexp) {
+        if (Sympa::Site->misaddressed_commands_regexp) {
             my $misaddressed_commands_regexp =
-                Site->misaddressed_commands_regexp;
+                Sympa::Site->misaddressed_commands_regexp;
             if ($subject =~ /^$misaddressed_commands_regexp\b/im) {
                 return 1;
             }
@@ -399,9 +399,9 @@ sub checkcommand {
     return 0 if ($#{$msg->body} >= 5);    ## More than 5 lines in the text.
 
     foreach $i (@{$msg->body}) {
-        if (Site->misaddressed_commands_regexp) {
+        if (Sympa::Site->misaddressed_commands_regexp) {
             my $misaddressed_commands_regexp =
-                Site->misaddressed_commands_regexp;
+                Sympa::Site->misaddressed_commands_regexp;
             if ($i =~ /^$misaddressed_commands_regexp\b/im) {
                 return 1;
             }
@@ -710,8 +710,8 @@ sub get_templates_list {
     }
 
     my $distrib_dir = Sympa::Constants::DEFAULTDIR . '/' . $type . '_tt2';
-    my $site_dir    = Site->etc . '/' . $type . '_tt2';
-    my $robot_dir   = Site->etc . '/' . $robot . '/' . $type . '_tt2';
+    my $site_dir    = Sympa::Site->etc . '/' . $type . '_tt2';
+    my $robot_dir   = Sympa::Site->etc . '/' . $robot . '/' . $type . '_tt2';
 
     my @try;
 
@@ -811,10 +811,10 @@ sub get_template_path {
             return undef;
         }
         $dir = $list->dir;
-    } elsif ($scope eq 'robot' and $robot->etc ne Site->etc) {
+    } elsif ($scope eq 'robot' and $robot->etc ne Sympa::Site->etc) {
         $dir = $robot->etc;
     } elsif ($scope eq 'site') {
-        $dir = Site->etc;
+        $dir = Sympa::Site->etc;
     } elsif ($scope eq 'distrib') {
         $dir = Sympa::Constants::DEFAULTDIR;
     } else {
@@ -887,7 +887,7 @@ sub dkim_verifier {
         return undef;
     }
 
-    my $temporary_file = Site->tmpdir . "/dkim." . $$;
+    my $temporary_file = Sympa::Site->tmpdir . "/dkim." . $$;
     if (!open(MSGDUMP, "> $temporary_file")) {
         Sympa::Log::Syslog::do_log('err', 'Can\'t store message in file %s',
             $temporary_file);
@@ -999,7 +999,7 @@ sub dkim_sign {
         return $msg_as_string;
     }
 
-    my $temporary_keyfile = Site->tmpdir . "/dkimkey." . $$;
+    my $temporary_keyfile = Sympa::Site->tmpdir . "/dkimkey." . $$;
     if (!open(MSGDUMP, "> $temporary_keyfile")) {
         Sympa::Log::Syslog::do_log('err', 'Can\'t store key in file %s',
             $temporary_keyfile);
@@ -1044,7 +1044,7 @@ sub dkim_sign {
         Sympa::Log::Syslog::do_log('err', 'Can\'t create Mail::DKIM::Signer');
         return ($msg_as_string);
     }
-    my $temporary_file = Site->tmpdir . "/dkim." . $$;
+    my $temporary_file = Sympa::Site->tmpdir . "/dkim." . $$;
     if (!open(MSGDUMP, "> $temporary_file")) {
         Sympa::Log::Syslog::do_log('err', 'Can\'t store message in file %s',
             $temporary_file);
@@ -1213,7 +1213,7 @@ sub escape_docname {
     $filename = MIME::EncWords::decode_mimewords($filename);
 
     ## Decode from FS encoding to utf-8
-    #$filename = &Encode::decode(Site->filesystem_encoding, $filename);
+    #$filename = &Encode::decode(Sympa::Site->filesystem_encoding, $filename);
 
     ## escape some chars for use in URL
     return &escape_chars($filename, $except);
@@ -1344,7 +1344,7 @@ sub tmp_passwd {
     my $email = shift;
 
     return ('init'
-            . substr(Digest::MD5::md5_hex(join('/', Site->cookie, $email)),
+            . substr(Digest::MD5::md5_hex(join('/', Sympa::Site->cookie, $email)),
             -8));
 }
 
@@ -1352,7 +1352,7 @@ sub tmp_passwd {
 sub sympa_checksum {
     my $rcpt = shift;
     my $checksum =
-        (substr(Digest::MD5::md5_hex(join('/', Site->cookie, $rcpt)), -10));
+        (substr(Digest::MD5::md5_hex(join('/', Sympa::Site->cookie, $rcpt)), -10));
     return $checksum;
 }
 
@@ -1362,7 +1362,7 @@ sub ciphersaber_installed {
 
     eval { require Crypt::CipherSaber; };
     unless ($@) {
-        $cipher = Crypt::CipherSaber->new(Site->cookie);
+        $cipher = Crypt::CipherSaber->new(Sympa::Site->cookie);
     } else {
         $cipher = '';
     }
@@ -1373,10 +1373,10 @@ sub ciphersaber_installed {
 sub cookie_changed {
     my $current = shift;
     my $changed = 1;
-    if (-f Site->etc . '/cookies.history') {
-        unless (open COOK, '<', Site->etc . '/cookies.history') {
+    if (-f Sympa::Site->etc . '/cookies.history') {
+        unless (open COOK, '<', Sympa::Site->etc . '/cookies.history') {
             Sympa::Log::Syslog::do_log('err',
-                'Unable to read %s/cookies.history', Site->etc);
+                'Unable to read %s/cookies.history', Sympa::Site->etc);
             return undef;
         }
         my $oldcook = <COOK>;
@@ -1390,9 +1390,9 @@ sub cookie_changed {
 
             #	}else{
             #	    push @cookies, $current ;
-            #	    unless (open COOK, '>', Site->etc . '/cookies.history') {
+            #	    unless (open COOK, '>', Sympa::Site->etc . '/cookies.history') {
             #		Sympa::Log::Syslog::do_log('err',
-            #		"Unable to create %s/cookies.history", Site->etc);
+            #		"Unable to create %s/cookies.history", Sympa::Site->etc);
             #		return undef ;
             #	    }
             #	    print COOK join(" ", @cookies);
@@ -1402,16 +1402,16 @@ sub cookie_changed {
         return $changed;
     } else {
         my $umask = umask 037;
-        unless (open COOK, '>', Site->etc . '/cookies.history') {
+        unless (open COOK, '>', Sympa::Site->etc . '/cookies.history') {
             umask $umask;
             Sympa::Log::Syslog::do_log('err',
-                'Unable to create %s/cookies.history', Site->etc);
+                'Unable to create %s/cookies.history', Sympa::Site->etc);
             return undef;
         }
         umask $umask;
         chown [getpwnam(Sympa::Constants::USER)]->[2],
             [getgrnam(Sympa::Constants::GROUP)]->[2],
-            Site->etc . '/cookies.history';
+            Sympa::Site->etc . '/cookies.history';
         print COOK "$current ";
         close COOK;
         return (0);
@@ -1562,13 +1562,13 @@ sub virus_infected {
     my $file = int(rand(time));
     Sympa::Log::Syslog::do_log('debug2', 'Scan virus in %s', $file);
 
-    unless (Site->antivirus_path) {
+    unless (Sympa::Site->antivirus_path) {
         Sympa::Log::Syslog::do_log('debug',
             'Sympa not configured to scan virus in message');
         return 0;
     }
     my @name = split(/\//, $file);
-    my $work_dir = Site->tmpdir . '/antivirus';
+    my $work_dir = Sympa::Site->tmpdir . '/antivirus';
 
     unless ((-d $work_dir) || (mkdir $work_dir, 0755)) {
         Sympa::Log::Syslog::do_log('err',
@@ -1576,7 +1576,7 @@ sub virus_infected {
         return undef;
     }
 
-    $work_dir = Site->tmpdir . '/antivirus/' . $name[$#name];
+    $work_dir = Sympa::Site->tmpdir . '/antivirus/' . $name[$#name];
 
     unless ((-d $work_dir) || mkdir($work_dir, 0755)) {
         Sympa::Log::Syslog::do_log('err',
@@ -1597,17 +1597,17 @@ sub virus_infected {
     my $result;
 
     ## McAfee
-    if (Site->antivirus_path =~ /\/uvscan$/) {
+    if (Sympa::Site->antivirus_path =~ /\/uvscan$/) {
 
         # impossible to look for viruses with no option set
-        unless (Site->antivirus_args) {
+        unless (Sympa::Site->antivirus_args) {
             Sympa::Log::Syslog::do_log('err',
                 "Missing 'antivirus_args' in sympa.conf");
             return undef;
         }
 
         my $cmd = sprintf '%s %s %s',
-            Site->antivirus_path, Site->antivirus_args, $work_dir;
+            Sympa::Site->antivirus_path, Sympa::Site->antivirus_args, $work_dir;
         open(ANTIVIR, "$cmd |");
 
         while (<ANTIVIR>) {
@@ -1643,9 +1643,9 @@ sub virus_infected {
             && $status != 19);
 
         ## Trend Micro
-    } elsif (Site->antivirus_path =~ /\/vscan$/) {
+    } elsif (Sympa::Site->antivirus_path =~ /\/vscan$/) {
         my $cmd = sprintf '%s %s %s',
-            Site->antivirus_path, Site->antivirus_args, $work_dir;
+            Sympa::Site->antivirus_path, Sympa::Site->antivirus_args, $work_dir;
         open(ANTIVIR, "$cmd |");
 
         while (<ANTIVIR>) {
@@ -1663,17 +1663,17 @@ sub virus_infected {
         }
 
         ## F-Secure
-    } elsif (Site->antivirus_path =~ /\/fsav$/) {
+    } elsif (Sympa::Site->antivirus_path =~ /\/fsav$/) {
         my $dbdir = $`;
 
         # impossible to look for viruses with no option set
-        unless (Site->antivirus_args) {
+        unless (Sympa::Site->antivirus_args) {
             Sympa::Log::Syslog::do_log('err',
                 "Missing 'antivirus_args' in sympa.conf");
             return undef;
         }
         my $cmd = sprintf '%s --databasedirectory %s %s %s',
-            Site->antivirus_path, $dbdir, Site->antivirus_args, $work_dir;
+            Sympa::Site->antivirus_path, $dbdir, Sympa::Site->antivirus_args, $work_dir;
         open(ANTIVIR, "$cmd |");
 
         while (<ANTIVIR>) {
@@ -1691,11 +1691,11 @@ sub virus_infected {
         if (($status == 3) and not($virusfound)) {
             $virusfound = "unknown";
         }
-    } elsif (Site->antivirus_path =~ /f-prot\.sh$/) {
+    } elsif (Sympa::Site->antivirus_path =~ /f-prot\.sh$/) {
 
         Sympa::Log::Syslog::do_log('debug2', 'f-prot is running');
         my $cmd = sprintf '%s %s %s',
-            Site->antivirus_path, Site->antivirus_args, $work_dir;
+            Sympa::Site->antivirus_path, Sympa::Site->antivirus_args, $work_dir;
         open(ANTIVIR, "$cmd |");
 
         while (<ANTIVIR>) {
@@ -1714,16 +1714,16 @@ sub virus_infected {
         if (($status == 3) and not($virusfound)) {
             $virusfound = "unknown";
         }
-    } elsif (Site->antivirus_path =~ /kavscanner/) {
+    } elsif (Sympa::Site->antivirus_path =~ /kavscanner/) {
 
         # impossible to look for viruses with no option set
-        unless (Site->antivirus_args) {
+        unless (Sympa::Site->antivirus_args) {
             Sympa::Log::Syslog::do_log('err',
                 "Missing 'antivirus_args' in sympa.conf");
             return undef;
         }
         my $cmd = sprintf '%s %s %s',
-            Site->antivirus_path, Site->antivirus_args, $work_dir;
+            Sympa::Site->antivirus_path, Sympa::Site->antivirus_args, $work_dir;
         open(ANTIVIR, "$cmd |");
 
         while (<ANTIVIR>) {
@@ -1743,16 +1743,16 @@ sub virus_infected {
         }
 
         ## Sophos Antivirus... by liuk@publinet.it
-    } elsif (Site->antivirus_path =~ /\/sweep$/) {
+    } elsif (Sympa::Site->antivirus_path =~ /\/sweep$/) {
 
         # impossible to look for viruses with no option set
-        unless (Site->antivirus_args) {
+        unless (Sympa::Site->antivirus_args) {
             Sympa::Log::Syslog::do_log('err',
                 "Missing 'antivirus_args' in sympa.conf");
             return undef;
         }
         my $cmd = sprintf '%s %s %s',
-            Site->antivirus_path, Site->antivirus_args, $work_dir;
+            Sympa::Site->antivirus_path, Sympa::Site->antivirus_args, $work_dir;
         open(ANTIVIR, "$cmd |");
 
         while (<ANTIVIR>) {
@@ -1770,9 +1770,9 @@ sub virus_infected {
         }
 
         ## Clam antivirus
-    } elsif (Site->antivirus_path =~ /\/clamd?scan$/) {
+    } elsif (Sympa::Site->antivirus_path =~ /\/clamd?scan$/) {
         my $cmd = sprintf '%s %s %s',
-            Site->antivirus_path, Site->antivirus_args, $work_dir;
+            Sympa::Site->antivirus_path, Sympa::Site->antivirus_args, $work_dir;
         open(ANTIVIR, "$cmd |");
 
         my $result;
@@ -1799,7 +1799,7 @@ sub virus_infected {
 
     ## Error while running antivir, notify listmaster
     if ($error_msg) {
-        Site->send_notify_to_listmaster('virus_scan_failed',
+        Sympa::Site->send_notify_to_listmaster('virus_scan_failed',
             {'filename' => $file, 'error_msg' => $error_msg});
     }
 
@@ -1955,7 +1955,7 @@ sub duration_conv {
 ## Look for a file in the list > robot > server > default locations
 ## Possible values for $options : order=all
 ## OBSOLETED: use $list->get_etc_filename(), $family->get_etc_filename(),
-##   $robot->get_etc_filaname() or Site->get_etc_filename().
+##   $robot->get_etc_filaname() or Sympa::Site->get_etc_filename().
 sub get_filename {
     my ($type, $options, $name, $robot, $object) = @_;
 
@@ -1966,13 +1966,13 @@ sub get_filename {
     } elsif ($robot and $robot ne '*') {
         return Sympa::Robot->new($robot)->get_etc_filename($name, $options);
     } else {
-        return Site->get_etc_filename($name, $options);
+        return Sympa::Site->get_etc_filename($name, $options);
     }
 }
 
 ## sub make_tt2_include_path
 ## DEPRECATED: use $list->get_etc_include_path(),
-##    $robot->get_etc_include_path() or Site->get_etc_include_path().
+##    $robot->get_etc_include_path() or Sympa::Site->get_etc_include_path().
 
 ## Find a file in an ordered list of directories
 sub find_file {
@@ -2134,7 +2134,7 @@ sub remove_pid {
                 $pidfile, "$!");
             return undef;
         }
-        my $err_file = Site->tmpdir . '/' . $pid . '.stderr';
+        my $err_file = Sympa::Site->tmpdir . '/' . $pid . '.stderr';
         if (-f $err_file) {
             unless (unlink $err_file) {
                 Sympa::Log::Syslog::do_log('err', 'Failed to remove %s: %s',
@@ -2154,7 +2154,7 @@ sub is_a_crawler {
     my $robot = shift;
     my $context = shift || {};
 
-    return Site->crawlers_detection->{'user_agent_string'}
+    return Sympa::Site->crawlers_detection->{'user_agent_string'}
         {$context->{'user_agent_string'} || ''};
 }
 
@@ -2272,10 +2272,10 @@ sub direct_stderr_to_file {
     my %data = @_;
     ## Error output is stored in a file with PID-based name
     ## Useful if process crashes
-    open(STDERR, '>>', Site->tmpdir . '/' . $data{'pid'} . '.stderr');
+    open(STDERR, '>>', Sympa::Site->tmpdir . '/' . $data{'pid'} . '.stderr');
     unless (
         &tools::set_file_rights(
-            file  => Site->tmpdir . '/' . $data{'pid'} . '.stderr',
+            file  => Sympa::Site->tmpdir . '/' . $data{'pid'} . '.stderr',
             user  => Sympa::Constants::USER,
             group => Sympa::Constants::GROUP,
         )
@@ -2283,7 +2283,7 @@ sub direct_stderr_to_file {
         Sympa::Log::Syslog::do_log(
             'err',
             'Unable to set rights on %s',
-            Site->tmpdir . '/' . $data{'pid'} . '.stderr'
+            Sympa::Site->tmpdir . '/' . $data{'pid'} . '.stderr'
         );
         return undef;
     }
@@ -2295,7 +2295,7 @@ sub send_crash_report {
     my %data = @_;
     Sympa::Log::Syslog::do_log('debug', 'Sending crash report for process %s',
         $data{'pid'}),
-        my $err_file = Site->tmpdir . '/' . $data{'pid'} . '.stderr';
+        my $err_file = Sympa::Site->tmpdir . '/' . $data{'pid'} . '.stderr';
     my (@err_output, $err_date);
     if (-f $err_file) {
         open ERR, '<', $err_file;
@@ -2304,7 +2304,7 @@ sub send_crash_report {
         $err_date = gettext_strftime "%d %b %Y  %H:%M",
             localtime((stat($err_file))[9]);
     }
-    Site->send_notify_to_listmaster(
+    Sympa::Site->send_notify_to_listmaster(
         'crash',
         {   'crashed_process' => $data{'pname'},
             'crash_err'       => \@err_output,
@@ -2318,11 +2318,11 @@ sub get_message_id {
     my $robot = shift;
     my $domain;
     unless ($robot) {
-        $domain = Site->domain;
+        $domain = Sympa::Site->domain;
     } elsif (ref $robot and ref $robot eq 'Sympa::Robot') {
         $domain = $robot->domain;
     } elsif ($robot eq 'Site') {
-        $domain = Site->domain;
+        $domain = Sympa::Site->domain;
     } else {
         $domain = $robot;
     }
@@ -2541,9 +2541,9 @@ sub smime_parse_cert {
     }
 
     ## Extract information from cert
-    my ($tmpfile) = Site->tmpdir . "/parse_cert.$$";
+    my ($tmpfile) = Sympa::Site->tmpdir . "/parse_cert.$$";
     my $cmd = sprintf '%s x509 -email -subject -purpose -noout',
-        Site->openssl;
+        Sympa::Site->openssl;
     unless (open(PSC, "| $cmd > $tmpfile")) {
         Sympa::Log::Syslog::do_log('err', 'open |openssl: %s', $!);
         return undef;
@@ -2605,7 +2605,7 @@ sub smime_extract_certs {
         $mime->mime_type);
 
     if ($mime->mime_type =~ /application\/(x-)?pkcs7-/) {
-        my $cmd = sprintf '%s pkcs7 -print_certs -inform der', Site->openssl;
+        my $cmd = sprintf '%s pkcs7 -print_certs -inform der', Sympa::Site->openssl;
         unless (open(MSGDUMP, "| $cmd > $outfile")) {
             Sympa::Log::Syslog::do_log('err',
                 'unable to run openssl pkcs7: %s', $!);

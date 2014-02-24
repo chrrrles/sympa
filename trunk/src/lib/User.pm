@@ -27,7 +27,7 @@ use strict;
 use warnings;
 use Carp qw(carp croak);
 
-#use Site; # this module is used in Site
+#use Sympa::Site; # this module is used in Site
 
 ## Database and SQL statement handlers
 my ($sth, @sth_stack);
@@ -325,8 +325,8 @@ sub get_global_user {
 
     ## Additional subscriber fields
     my $additional = '';
-    if (Site->db_additional_user_fields) {
-        $additional = ', ' . Site->db_additional_user_fields;
+    if (Sympa::Site->db_additional_user_fields) {
+        $additional = ', ' . Sympa::Site->db_additional_user_fields;
     }
 
     push @sth_stack, $sth;

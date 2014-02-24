@@ -89,7 +89,7 @@ use Sympa::Constants;
 my $modfail;
 
 BEGIN {
-    eval { require Site; };
+    eval { require Sympa::Site; };
     $modfail = 1 if $@;
 }
 
@@ -293,7 +293,7 @@ sub edit_configuration {
 
         next unless $file;
         if ($file eq 'sympa.conf' or $file eq 'wwsympa.conf') {
-            $current_value = Site->$name;
+            $current_value = Sympa::Site->$name;
             $current_value = '' unless defined $current_value;
         } else {
             next;

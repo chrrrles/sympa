@@ -90,8 +90,8 @@ sub process {
 
     Sympa::Log::Syslog::do_log('info', 'Processing bounce %s', $self);
     Sympa::Log::Syslog::do_log('debug3',
-        'Bounce for :%s:  Site->bounce_email_prefix=%s',
-        $self->{'to'}, Site->bounce_email_prefix);
+        'Bounce for :%s:  Sympa::Site->bounce_email_prefix=%s',
+        $self->{'to'}, Sympa::Site->bounce_email_prefix);
 
     if ($self->is_verp_in_use) {    #VERP in use
         $self->analyze_verp_header();
@@ -249,9 +249,9 @@ sub analyze_verp_header {
 sub is_verp_in_use {
     my $self = shift;
     Sympa::Log::Syslog::do_log('debug2', '(%s, to=%s, prefix=%s)',
-        $self, $self->{'to'}, Site->bounce_email_prefix);
+        $self, $self->{'to'}, Sympa::Site->bounce_email_prefix);
     return $self->{'verp'}{'is_used'} if (defined $self->{'verp'}{'is_used'});
-    my $bounce_email_prefix = Site->bounce_email_prefix;
+    my $bounce_email_prefix = Sympa::Site->bounce_email_prefix;
     if ($self->{'to'} =~ /^$bounce_email_prefix\+(.*)\@(.*)$/) {
         $self->{'local_part'} = $1;
         $self->{'robotname'}  = $2;
@@ -442,7 +442,7 @@ sub delete_bouncer {
     my $result = Sympa::Scenario::request_action(
         $self->{'list'},
         'del', 'smtp',
-        {   'sender' => [Site->listmasters]->[0],
+        {   'sender' => [Sympa::Site->listmasters]->[0],
             'email'  => $self->{'who'}
         }
     );
@@ -1001,7 +1001,7 @@ sub process_ndn {
         ## Bounce directory
         if (!-d $bounce_dir) {
             unless (mkdir $bounce_dir, 0777) {
-                Site->send_notify_to_listmaster(
+                Sympa::Site->send_notify_to_listmaster(
                     'bounce_intern_error',
                     {   'error' =>
                             "Failed to list create bounce directory $bounce_dir"
@@ -1100,7 +1100,7 @@ sub store_bounce {
     Sympa::Log::Syslog::do_log('debug', 'store_bounce(%s,%s,%s)', $self,
         $bounce_dir, $rcpt);
 
-    my $queue = Site->queuebounce;
+    my $queue = Sympa::Site->queuebounce;
 
     my $filename = tools::escape_chars($rcpt);
 
@@ -1356,7 +1356,7 @@ sub anabounce {
     # a temporary file is used when introducing database spool. It should be
     # rewrited! It should be rewrited! It should be rewrited! Yes, it should
     # be rewrited!
-    my $tmpfile = Site->tmpdir . '/bounce.' . $$;
+    my $tmpfile = Sympa::Site->tmpdir . '/bounce.' . $$;
     my $fh;
     unless (open $fh, '>', $tmpfile) {
         Sympa::Log::Syslog::do_log('err', 'Could not create %s', $tmpfile);
