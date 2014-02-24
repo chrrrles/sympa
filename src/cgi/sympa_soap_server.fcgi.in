@@ -12,7 +12,7 @@ use SOAP::Transport::HTTP;
 use lib '--modulesdir--';
 
 ## Defines SOAP::Transport::HTTP::FCGI::Sympa with a modified handle()
-use SympaTransport;
+use Sympa::Transport;
 
 use Getopt::Long;
 use strict;
