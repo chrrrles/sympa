@@ -41,7 +41,7 @@ nobase_modules_DATA = Sympa/Admin.pm \
 		      Sympa/Site.pm \
 		      Sympa/Site_r.pm \
 		      Sympa/SQLSource.pm \
-		      SubscribeSpool.pm \
+		      Sympa/SubscribeSpool.pm \
 		      Sympa/Constants.pm \
 		      Sympa/DatabaseDescription.pm \
 		      Sympa/Template/Compat.pm \
