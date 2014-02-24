@@ -86,7 +86,7 @@ my $etc_dir    = Sympa::Site->etc;
 
 ## Check option
 my %options;
-&GetOptions(\%main::options, 'pkcs12=s', 'listname=s', 'robot=s', 'help|h');
+GetOptions(\%main::options, 'pkcs12=s', 'listname=s', 'robot=s', 'help|h');
 
 $main::options{'foreground'} = 1;
 my $listname = $main::options{'listname'};

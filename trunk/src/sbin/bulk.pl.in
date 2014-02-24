@@ -194,15 +194,15 @@ $options->{'multiple_process'} = 0;
 # Save the PID number
 Sympa::Tools::write_pid('bulk', $$, $options);
 unless ($options->{'stderr_to_tty'}) {
-    &Sympa::Tools::direct_stderr_to_file(('pid' => $$));
+    Sympa::Tools::direct_stderr_to_file(('pid' => $$));
 }
 ## Set the User ID & Group ID for the process
 $( = $) = (getgrnam(Sympa::Constants::GROUP))[2];
 $< = $> = (getpwnam(Sympa::Constants::USER))[2];
 
 ## Required on FreeBSD to change ALL IDs(effective UID + real UID + saved UID)
-&POSIX::setuid((getpwnam(Sympa::Constants::USER))[2]);
-&POSIX::setgid((getgrnam(Sympa::Constants::GROUP))[2]);
+POSIX::setuid((getpwnam(Sympa::Constants::USER))[2]);
+POSIX::setgid((getgrnam(Sympa::Constants::GROUP))[2]);
 
 ## Check if the UID has correctly been set (useful on OS X)
 unless (($( == (getgrnam(Sympa::Constants::GROUP))[2])
@@ -245,7 +245,7 @@ $Sympa::Conf::Conf{'maxsmtp'} = int(Sympa::Site->maxsmtp / Sympa::Site->bulk_max
 my $spool = Sympa::Spool->new('bulk');
 
 while (!$end) {
-    &Sympa::List::init_list_cache();
+    Sympa::List::init_list_cache();
 
     # Process grouped notifications
     Sympa::Site->send_notify_to_listmaster(undef, undef, 1, undef);
@@ -264,7 +264,7 @@ while (!$end) {
         if (   ($main::daemon_usage eq 'DAEMON_MASTER')
             && (time() - $last_check_date > $timeout)) {
             ## Clean up PID file (in case some child bulks would have died)
-            my @actual_children = &Sympa::Tools::get_children_processes_list();
+            my @actual_children = Sympa::Tools::get_children_processes_list();
             my @remaining_children;
             my %dead_children = %created_children;
             foreach my $apid (@actual_children) {
@@ -289,7 +289,7 @@ while (!$end) {
                         );
                         my $pname = $0;
                         $pname =~ s/.*\/(\w+)/$1/;
-                        &Sympa::Tools::send_crash_report(
+                        Sympa::Tools::send_crash_report(
                             ('pid' => $fpid, 'pname' => $pname));
                         Sympa::Tools::remove_pid('bulk', $fpid, $options);
                         delete $dead_children{$fpid};
@@ -301,14 +301,14 @@ while (!$end) {
             unless (defined($pids_in_pfile)) {
                 Sympa::Tools::write_pid('bulk', $$, $options);
                 close STDERR;
-                &Sympa::Tools::direct_stderr_to_file(('pid' => $$));
+                Sympa::Tools::direct_stderr_to_file(('pid' => $$));
                 $pids_in_pfile = [$$];
             }
             ## Start new processes if there remain at least
             ## 'bulk_fork_threshold' packets to send in the bulkpacket_table
             ## table
             if ((   my $r_packets =
-                    &Sympa::Bulk::there_is_too_much_remaining_packets()
+                    Sympa::Bulk::there_is_too_much_remaining_packets()
                 )
                 && ($#remaining_children + 1 < Sympa::Site->bulk_max_count)
                 ) {
@@ -343,7 +343,7 @@ while (!$end) {
                         } else {
                             ## We're in a child bulk process
                             close STDERR;
-                            &Sympa::Tools::direct_stderr_to_file(('pid' => $$));
+                            Sympa::Tools::direct_stderr_to_file(('pid' => $$));
                             $date_of_last_activity = time();
                             $main::daemon_usage =
                                 'DAEMON_SLAVE';    # automatic lists creation
@@ -363,7 +363,7 @@ while (!$end) {
     ## number of remaining packets to send is reasonnable).
     if (   ($main::daemon_usage eq 'DAEMON_SLAVE')
         && (time() - $date_of_last_activity > Sympa::Site->bulk_lazytime)
-        && !(my $r_packets = &Sympa::Bulk::there_is_too_much_remaining_packets())) {
+        && !(my $r_packets = Sympa::Bulk::there_is_too_much_remaining_packets())) {
         Sympa::Log::Syslog::do_log('info',
             "Process %s didn't send any message since %s seconds, exiting.",
             $$, Sympa::Site->bulk_lazytime);
@@ -484,7 +484,7 @@ while (!$end) {
                         $messageasstring_init = $entity->as_string();
                     }
 
-                    # &trace_smime($messageasstring,'tracking');
+                    # trace_smime($messageasstring,'tracking');
                 } else {    # VERP
                     $return_path = $list->get_bounce_address($rcpt);
                 }
@@ -508,7 +508,7 @@ while (!$end) {
 
                 if ($robot->dkim_feature eq 'on') {
                     $messageasstring =
-                        &Sympa::Tools::remove_invalid_dkim_signature(
+                        Sympa::Tools::remove_invalid_dkim_signature(
                         $messageasstring);
                 }
                 if ($message_from_spool->{'dkim_d'}) {
@@ -527,7 +527,7 @@ while (!$end) {
                     );
                 }
 
-                # &trace_smime($messageasstring,'dkim');
+                # trace_smime($messageasstring,'dkim');
 
                 *SMTP = Sympa::Mail::smtpto($return_path, \$rcpt, $robot,
                     $notification_id);
@@ -541,7 +541,7 @@ while (!$end) {
             # message doesn't need personalization, so can be sent by packet.
             if ($robot->dkim_feature eq 'on') {
                 $messageasstring_init =
-                    &Sympa::Tools::remove_invalid_dkim_signature(
+                    Sympa::Tools::remove_invalid_dkim_signature(
                     $messageasstring_init);
             }
 
@@ -559,7 +559,7 @@ while (!$end) {
                 );
             }
 
-            # &trace_smime($messageasstring_init,'dkim 2');
+            # trace_smime($messageasstring_init,'dkim 2');
 
             *SMTP = Sympa::Mail::smtpto($bulk->{'returnpath'}, \@rcpts, $robot);
             print SMTP $messageasstring_init;
@@ -567,7 +567,7 @@ while (!$end) {
         }
 
         ## Remove packet once it has been processed
-        unless (&Sympa::Bulk::remove($bulk->{'messagekey'}, $bulk->{'packetid'})) {
+        unless (Sympa::Bulk::remove($bulk->{'messagekey'}, $bulk->{'packetid'})) {
             Sympa::Log::Syslog::do_log('err',
                 "failed to remove processed packet '%s', messagekey '%s'",
                 $bulk->{'messagekey'}, $bulk->{'packetid'});
@@ -590,7 +590,7 @@ while (!$end) {
         ## Sleep for a while if bulk_mailer DB table is empty
         sleep Sympa::Site->bulk_sleep;
     }
-    &Sympa::Mail::reaper;
+    Sympa::Mail::reaper();
 
 }
 

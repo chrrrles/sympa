@@ -87,7 +87,7 @@ $0 --soap_url=<SOAP Sympa server URL> --cookie=sympauser=someone\@cru.fr
 
 my %options;
 unless (
-    &GetOptions(
+    GetOptions(
         \%main::options,                  'soap_url=s',
         'service=s',                      'trusted_application=s',
         'trusted_application_password=s', 'user_email=s',
@@ -134,11 +134,11 @@ if (defined $trusted_application) {
         exit;
     }
 
-    &play_soap_as_trusted($soap_url, $trusted_application,
+    play_soap_as_trusted($soap_url, $trusted_application,
         $trusted_application_password, $service, $proxy_vars,
         $service_parameters);
 } elsif ($service eq 'getUserEmailByCookie') {
-    &play_soap(
+    play_soap(
         soap_url   => $soap_url,
         session_id => $session_id,
         service    => $service
@@ -146,7 +146,7 @@ if (defined $trusted_application) {
 
 } elsif (defined $cookie) {
     print "error : get_email_cookie\n";
-    &get_email($soap_url, $cookie);
+    get_email($soap_url, $cookie);
     exit;
 } else {
     unless (defined $session_id
@@ -157,7 +157,7 @@ if (defined $trusted_application) {
         exit;
     }
 
-    &play_soap(
+    play_soap(
         soap_url           => $soap_url,
         user_email         => $user_email,
         user_password      => $user_password,
@@ -189,7 +189,7 @@ sub play_soap_as_trusted {
     my $reponse =
         $soap->authenticateRemoteAppAndRun($trusted_application,
         $trusted_application_password, $proxy_vars, $service, \@parameters);
-    &print_result($reponse);
+    print_result($reponse);
 }
 
 sub get_email {
@@ -216,7 +216,7 @@ sub get_email {
 
     print "\n\ngetEmailUserByCookie....\n";
     $reponse = $soap->getUserEmailByCookie($cookie);
-    &print_result($reponse);
+    print_result($reponse);
     exit;
 
 }
@@ -272,7 +272,7 @@ sub play_soap {
         #$reponse = $soap->casLogin($soap_url);
         $reponse = $soap->login($user_email, $user_password);
         $cookies->save;
-        &print_result($reponse);
+        print_result($reponse);
         $session_id = $reponse->result;
     }
 
@@ -313,7 +313,7 @@ sub play_soap {
             \@parameters);
     }
 
-    &print_result($reponse);
+    print_result($reponse);
 
 }
 
@@ -338,7 +338,7 @@ sub print_result {
         } else {
             @ret = $r->result;
         }
-        &Sympa::Tools::dump_var(\@ret, 0, \*STDOUT);
+        Sympa::Tools::dump_var(\@ret, 0, \*STDOUT);
     }
 
     return 1;

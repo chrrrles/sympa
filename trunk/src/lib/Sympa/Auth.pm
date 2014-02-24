@@ -42,9 +42,9 @@ sub password_fingerprint {
 
     my $pwd = shift;
     if (Sympa::Site->password_case eq 'insensitive') {
-        return &Sympa::Tools::md5_fingerprint(lc($pwd));
+        return Sympa::Tools::md5_fingerprint(lc($pwd));
     } else {
-        return &Sympa::Tools::md5_fingerprint($pwd);
+        return Sympa::Tools::md5_fingerprint($pwd);
     }
 }
 
@@ -57,7 +57,7 @@ sub check_auth {
 
     my ($canonic, $user);
 
-    if (&Sympa::Tools::valid_email($auth)) {
+    if (Sympa::Tools::valid_email($auth)) {
         return authentication($robot, $auth, $pwd);
     } else {
         ## This is an UID
@@ -82,7 +82,7 @@ sub check_auth {
             };
 
         } else {
-            &Sympa::Report::reject_report_web('user', 'incorrect_passwd', {})
+            Sympa::Report::reject_report_web('user', 'incorrect_passwd', {})
                 unless ($ENV{'SYMPA_SOAP'});
             Sympa::Log::Syslog::do_log('err', "Incorrect LDAP password");
             return undef;
@@ -138,7 +138,7 @@ sub authentication {
         # too many wrong login attemp
         Sympa::User::update_global_user($email,
             {wrong_login_count => $user->{'wrong_login_count'} + 1});
-        &Sympa::Report::reject_report_web('user', 'too_many_wrong_login', {})
+        Sympa::Report::reject_report_web('user', 'too_many_wrong_login', {})
             unless ($ENV{'SYMPA_SOAP'});
         Sympa::Log::Syslog::do_log('err',
             'login is blocked : too many wrong password submission for %s',
@@ -156,7 +156,7 @@ sub authentication {
         ## the user passwords
         ## Other backends are Single Sign-On solutions
         if ($auth_service->{'auth_type'} eq 'user_table') {
-            my $fingerprint = &password_fingerprint($pwd);
+            my $fingerprint = password_fingerprint($pwd);
 
             if ($fingerprint eq $user->{'password'}) {
                 Sympa::User::update_global_user($email, {wrong_login_count => 0});
@@ -188,13 +188,13 @@ sub authentication {
     Sympa::User::update_global_user($email,
         {wrong_login_count => $user->{'wrong_login_count'} + 1});
 
-    &Sympa::Report::reject_report_web('user', 'incorrect_passwd', {})
+    Sympa::Report::reject_report_web('user', 'incorrect_passwd', {})
         unless ($ENV{'SYMPA_SOAP'});
     Sympa::Log::Syslog::do_log('err',
         'authentication: incorrect password for user %s', $email);
 
     $param->{'init_email'}         = $email;
-    $param->{'escaped_init_email'} = &Sympa::Tools::escape_chars($email);
+    $param->{'escaped_init_email'} = Sympa::Tools::escape_chars($email);
     return undef;
 }
 
@@ -233,7 +233,7 @@ sub ldap_authentication {
     $filter =~ s/\[sender\]/$auth/ig;
 
     ## bind in order to have the user's DN
-    my $param = &Sympa::Tools::dup_var($ldap);
+    my $param = Sympa::Tools::dup_var($ldap);
     my $ds    = Sympa::LDAPSource->new($param);
 
     unless (defined $ds && ($ldap_anonymous = $ds->connect())) {
@@ -266,7 +266,7 @@ sub ldap_authentication {
 
     ## Duplicate structure first
     ## Then set the bind_dn and password according to the current user
-    $param                         = &Sympa::Tools::dup_var($ldap);
+    $param                         = Sympa::Tools::dup_var($ldap);
     $param->{'ldap_bind_dn'}       = $DN[0];
     $param->{'ldap_bind_password'} = $pwd;
 
@@ -331,7 +331,7 @@ sub ldap_authentication {
     ## If the identifier provided was a valid email, return the provided
     ## email.
     ## Otherwise, return the canonical email guessed after the login.
-    if (&Sympa::Tools::valid_email($auth) && !$robot->ldap_force_canonical_email) {
+    if (Sympa::Tools::valid_email($auth) && !$robot->ldap_force_canonical_email) {
         return ($auth);
     } else {
         return lc($canonic_email[0]);
@@ -363,7 +363,7 @@ sub get_email_by_net_id {
 
     my $ldap = @{Sympa::Site->auth_services->{$robot->domain}}[$auth_id];
 
-    my $param = &Sympa::Tools::dup_var($ldap);
+    my $param = Sympa::Tools::dup_var($ldap);
     my $ds    = Sympa::LDAPSource->new($param);
     my $ldap_anonymous;
 
@@ -414,7 +414,7 @@ sub remote_app_check_password {
     Sympa::Log::Syslog::do_log('debug2', '(%s, ..., %s)',
         $trusted_application_name, $robot);
 
-    my $md5 = &Sympa::Tools::md5_fingerprint($password);
+    my $md5 = Sympa::Tools::md5_fingerprint($password);
 
     my $vars;
 
@@ -462,7 +462,7 @@ sub create_one_time_ticket {
     my $remote_addr = shift;
     ## Value may be 'mail' if the IP address is not known
 
-    my $ticket = &Sympa::Session::get_random();
+    my $ticket = Sympa::Session::get_random();
 
     my $date = time;
     my $sth;

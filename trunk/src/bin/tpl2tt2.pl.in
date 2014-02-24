@@ -63,7 +63,7 @@ if ($#ARGV >= 0) {
         die "unable to find file $f";
     }
 
-    &convert($f);
+    convert($f);
 
     exit 0;
 }
@@ -208,12 +208,12 @@ foreach my $tpl (@templates) {
     ## Create directory if required
     unless (-d $dest_path) {
         print "Creating $dest_path directory\n";
-        unless (&my_mkdir($dest_path)) {
+        unless (my_mkdir($dest_path)) {
             print STDERR "Error : Cannot create $dest_path directory : $!\n";
             next;
         }
         unless (
-            &Sympa::Tools::set_file_rights(
+            Sympa::Tools::set_file_rights(
                 file  => $dest_path,
                 user  => Sympa::Constants::USER,
                 group => Sympa::Constants::GROUP,
@@ -228,7 +228,7 @@ foreach my $tpl (@templates) {
 
     my $tt2 = "$dest_path/$dest_file";
 
-    &convert($tpl, $tt2);
+    convert($tpl, $tt2);
     $total++;
 
     ## Rename old files to .converted
@@ -270,7 +270,7 @@ sub convert {
     print "Template file $in_file has been converted to $out_file\n";
 
     unless (
-        &Sympa::Tools::set_file_rights(
+        Sympa::Tools::set_file_rights(
             file  => $out_file,
             user  => Sympa::Constants::USER,
             group => Sympa::Constants::GROUP

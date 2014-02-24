@@ -119,7 +119,7 @@ sub set_cookie_extern {
     }
     my $emails = join(',', @mails);
 
-    $value = sprintf '%s&%s', $emails, &get_mac($emails, $secret);
+    $value = sprintf '%s&%s', $emails, get_mac($emails, $secret);
 
     if ($http_domain eq 'localhost') {
         $http_domain = "";
@@ -164,7 +164,7 @@ sub check_cookie {
     my $http_cookie = shift;
     my $secret      = shift;
 
-    my $user = &generic_get_cookie($http_cookie, 'sympauser');
+    my $user = generic_get_cookie($http_cookie, 'sympauser');
 
     my @values = split /:/, $user;
     if ($#values >= 1) {
@@ -172,7 +172,7 @@ sub check_cookie {
         $auth ||= 'classic';
 
         ## Check the MAC
-        if (&get_mac($email, $secret) eq $mac) {
+        if (get_mac($email, $secret) eq $mac) {
             return ($email, $auth);
         }
     }
@@ -183,10 +183,10 @@ sub check_cookie {
 sub check_cookie_extern {
     my ($http_cookie, $secret, $user_email) = @_;
 
-    my $extern_value = &generic_get_cookie($http_cookie, 'sympa_altemails');
+    my $extern_value = generic_get_cookie($http_cookie, 'sympa_altemails');
 
     if ($extern_value =~ /^(\S+)&(\w+)$/) {
-        return undef unless (&get_mac($1, $secret) eq $2);
+        return undef unless (get_mac($1, $secret) eq $2);
 
         my %alt_emails;
         foreach my $element (split(/,/, $1)) {

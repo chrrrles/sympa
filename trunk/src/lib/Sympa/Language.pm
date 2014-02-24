@@ -33,7 +33,7 @@ use Sympa::Log;
 use Sympa::Constants;
 
 our @ISA    = qw(Exporter);
-our @EXPORT = qw(&gettext gettext_strftime);
+our @EXPORT = qw(gettext gettext_strftime);
 
 BEGIN {
     ## Using the Pure Perl implementation of gettext
@@ -768,9 +768,9 @@ sub maketext {
     my $textdomain = $template2textdomain{$template_file};
 
     if ($textdomain) {
-        $translation = &sympa_dgettext($textdomain, $msg);
+        $translation = sympa_dgettext($textdomain, $msg);
     } else {
-        $translation = &gettext($msg);
+        $translation = gettext($msg);
     }
 
     ## replace parameters in string

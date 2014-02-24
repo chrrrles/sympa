@@ -26,7 +26,7 @@ use Getopt::Long;
 
 my %opt;
 unless (
-    &GetOptions(
+    GetOptions(
         \%opt,     'host=s', 'suffix=s', 'filter=s',
         'attrs=s', 'ssl=s',  'scope=s'
     )

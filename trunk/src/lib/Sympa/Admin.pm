@@ -185,7 +185,7 @@ sub create_list_old {
 
     # owner.email || owner_include.source
     unless (
-        &check_owner_defined($param->{'owner'}, $param->{'owner_include'})) {
+        check_owner_defined($param->{'owner'}, $param->{'owner_include'})) {
         Sympa::Log::Syslog::do_log('err',
             'create_list_old : problem in owner definition in this list creation'
         );
@@ -206,7 +206,7 @@ sub create_list_old {
 
     ## check listname
     $param->{'listname'} = lc($param->{'listname'});
-    my $listname_regexp = &Sympa::Tools::get_regexp('listname');
+    my $listname_regexp = Sympa::Tools::get_regexp('listname');
 
     unless ($param->{'listname'} =~ /^$listname_regexp$/i) {
         Sympa::Log::Syslog::do_log('err',
@@ -231,7 +231,7 @@ sub create_list_old {
     }
 
     ## Check listname on SMTP server
-    my $res = &list_check_smtp($param->{'listname'}, $robot);
+    my $res = list_check_smtp($param->{'listname'}, $robot);
     unless (defined $res) {
         Sympa::Log::Syslog::do_log('err',
             "create_list_old : can't check list %.128s on %s",
@@ -310,7 +310,7 @@ sub create_list_old {
     ## Use an intermediate handler to encode to filesystem_encoding
     my $config = '';
     my $fd     = IO::Scalar->new(\$config);
-    &Sympa::Template::parse_tt2($param, 'config.tt2', $fd, $tt2_include_path);
+    Sympa::Template::parse_tt2($param, 'config.tt2', $fd, $tt2_include_path);
 
     #    Encode::from_to($config, 'utf8', Sympa::Site->filesystem_encoding);
     print CONFIG $config;
@@ -371,7 +371,7 @@ sub create_list_old {
     $return->{'list'} = $list;
 
     if ($list->status eq 'open') {
-        $return->{'aliases'} = &install_aliases($list);
+        $return->{'aliases'} = install_aliases($list);
     } else {
         $return->{'aliases'} = 1;
     }
@@ -440,7 +440,7 @@ sub create_list {
 
     ## check listname
     $param->{'listname'} = lc($param->{'listname'});
-    my $listname_regexp = &Sympa::Tools::get_regexp('listname');
+    my $listname_regexp = Sympa::Tools::get_regexp('listname');
 
     unless ($param->{'listname'} =~ /^$listname_regexp$/i) {
         Sympa::Log::Syslog::do_log('err', 'incorrect listname %s',
@@ -463,7 +463,7 @@ sub create_list {
     }
 
     ## Check listname on SMTP server
-    my $res = &list_check_smtp($param->{'listname'}, $robot);
+    my $res = list_check_smtp($param->{'listname'}, $robot);
     unless (defined $res) {
         Sympa::Log::Syslog::do_log('err',
             'can\'t check list %.128s on robot %s',
@@ -494,7 +494,7 @@ sub create_list {
     $param->{'family_config'} = $family_config->{$family->name};
     my $conf;
     my $tt_result =
-        &Sympa::Template::parse_tt2($param, 'config.tt2', \$conf, [$family->dir]);
+        Sympa::Template::parse_tt2($param, 'config.tt2', \$conf, [$family->dir]);
     unless (defined $tt_result || !$abort_on_error) {
         Sympa::Log::Syslog::do_log('err',
             'abort on tt2 error. List %s from family %s',
@@ -540,7 +540,7 @@ sub create_list {
         return undef;
     }
 
-    #&Sympa::Template::parse_tt2($param, 'config.tt2', \*CONFIG, [$family->dir]);
+    #Sympa::Template::parse_tt2($param, 'config.tt2', \*CONFIG, [$family->dir]);
     print CONFIG $conf;
     close CONFIG;
 
@@ -570,7 +570,7 @@ sub create_list {
         my $template_file = $family->get_etc_filename($file . ".tt2");
         if (defined $template_file) {
             my $file_content;
-            my $tt_result = &Sympa::Template::parse_tt2($param, $file . ".tt2",
+            my $tt_result = Sympa::Template::parse_tt2($param, $file . ".tt2",
                 \$file_content, [$family->dir]);
             unless (defined $tt_result) {
                 Sympa::Log::Syslog::do_log('err',
@@ -619,7 +619,7 @@ sub create_list {
     $return->{'list'} = $list;
 
     if ($list->status eq 'open') {
-        $return->{'aliases'} = &install_aliases($list);
+        $return->{'aliases'} = install_aliases($list);
     } else {
         $return->{'aliases'} = 1;
     }
@@ -705,7 +705,7 @@ sub update_list {
         $lock->unlock();
         return undef;
     }
-    &Sympa::Template::parse_tt2($param, 'config.tt2', \*CONFIG, [$family->dir]);
+    Sympa::Template::parse_tt2($param, 'config.tt2', \*CONFIG, [$family->dir]);
     close CONFIG;
 
     ## Unlock config file
@@ -776,7 +776,7 @@ sub rename_list {
 
     # check new listname syntax
     my $new_listname    = lc($param{'new_listname'});
-    my $listname_regexp = &Sympa::Tools::get_regexp('listname');
+    my $listname_regexp = Sympa::Tools::get_regexp('listname');
 
     unless ($new_listname =~ /^$listname_regexp$/i) {
         Sympa::Log::Syslog::do_log('err', 'incorrect listname %s',
@@ -855,7 +855,7 @@ sub rename_list {
         $list->_save_list_members_file(
             $list->dir . "/subscribers.closed.dump");
 
-        $param{'aliases'} = &remove_aliases($list);
+        $param{'aliases'} = remove_aliases($list);
     }
 
     ## Rename or create this list directory itself
@@ -864,7 +864,7 @@ sub rename_list {
     ## If we are in 'copy' mode, create en new list
     if ($param{'mode'} eq 'copy') {
         unless (
-            $list = &clone_list_as_empty(
+            $list = clone_list_as_empty(
                 $list->name,            $list->domain,
                 $param{'new_listname'}, $param{'new_robot'},
                 $param{'user_email'}
@@ -935,7 +935,7 @@ sub rename_list {
 
         # if subscribtion are stored in database rewrite the database
         unless (
-            &Sympa::DatabaseManager::do_prepared_query(
+            Sympa::DatabaseManager::do_prepared_query(
                 'UPDATE subscriber_table SET list_subscriber = ?, robot_subscriber = ? WHERE list_subscriber = ? AND robot_subscriber = ?',
                 $param{'new_listname'}, $param{'new_robot'},
                 $list->name,            $list->domain
@@ -947,7 +947,7 @@ sub rename_list {
             return 'internal';
         }
         unless (
-            &Sympa::DatabaseManager::do_prepared_query(
+            Sympa::DatabaseManager::do_prepared_query(
                 'UPDATE admin_table SET list_admin = ?, robot_admin = ? WHERE list_admin = ? AND robot_admin = ?',
                 $param{'new_listname'}, $param{'new_robot'},
                 $list->name,            $list->domain
@@ -968,12 +968,12 @@ sub rename_list {
     }
     ## Move stats
     unless (
-        &Sympa::DatabaseManager::do_query(
+        Sympa::DatabaseManager::do_query(
             "UPDATE stat_table SET list_stat=%s, robot_stat=%s WHERE (list_stat = %s AND robot_stat = %s )",
-            &Sympa::DatabaseManager::quote($param{'new_listname'}),
-            &Sympa::DatabaseManager::quote($param{'new_robot'}),
-            &Sympa::DatabaseManager::quote($list->name),
-            &Sympa::DatabaseManager::quote($robot)
+            Sympa::DatabaseManager::quote($param{'new_listname'}),
+            Sympa::DatabaseManager::quote($param{'new_robot'}),
+            Sympa::DatabaseManager::quote($list->name),
+            Sympa::DatabaseManager::quote($robot)
         )
         ) {
         Sympa::Log::Syslog::do_log('err',
@@ -983,12 +983,12 @@ sub rename_list {
 
     ## Move stat counters
     unless (
-        &Sympa::DatabaseManager::do_query(
+        Sympa::DatabaseManager::do_query(
             "UPDATE stat_counter_table SET list_counter=%s, robot_counter=%s WHERE (list_counter = %s AND robot_counter = %s )",
-            &Sympa::DatabaseManager::quote($param{'new_listname'}),
-            &Sympa::DatabaseManager::quote($param{'new_robot'}),
-            &Sympa::DatabaseManager::quote($list->name),
-            &Sympa::DatabaseManager::quote($robot)
+            Sympa::DatabaseManager::quote($param{'new_listname'}),
+            Sympa::DatabaseManager::quote($param{'new_robot'}),
+            Sympa::DatabaseManager::quote($list->name),
+            Sympa::DatabaseManager::quote($robot)
         )
         ) {
         Sympa::Log::Syslog::do_log('err',
@@ -1022,7 +1022,7 @@ sub rename_list {
     }
 
     if ($list->status eq 'open') {
-        $param{'aliases'} = &install_aliases($list);
+        $param{'aliases'} = install_aliases($list);
     }
 
     unless ($param{'mode'} eq 'copy') {
@@ -1082,7 +1082,7 @@ sub rename_list {
                 }
 
                 ## Change X-Sympa-To
-                &Sympa::Tools::change_x_sympa_to(Sympa::Site->$spool . "/$newfile",
+                Sympa::Tools::change_x_sympa_to(Sympa::Site->$spool . "/$newfile",
                     "$param{'new_listname'}\@$param{'new_robot'}");
             }
 
@@ -1188,7 +1188,7 @@ sub clone_list_as_empty {
     foreach my $subdir ('etc', 'web_tt2', 'mail_tt2', 'data_sources') {
         if (-d $new_dir . '/' . $subdir) {
             unless (
-                &Sympa::Tools::copy_dir(
+                Sympa::Tools::copy_dir(
                     $list->dir . '/' . $subdir,
                     $new_dir . '/' . $subdir
                 )
@@ -1207,7 +1207,7 @@ sub clone_list_as_empty {
     # copy mandatory files
     foreach my $file ('config') {
         unless (
-            &File::Copy::copy(
+            File::Copy::copy(
                 $list->dir . '/' . $file,
                 $new_dir . '/' . $file
             )
@@ -1226,7 +1226,7 @@ sub clone_list_as_empty {
     {
         if (-f $list->dir . '/' . $file) {
             unless (
-                &File::Copy::copy(
+                File::Copy::copy(
                     $list->dir . '/' . $file,
                     $new_dir . '/' . $file
                 )
@@ -1619,7 +1619,7 @@ sub change_user_email {
 
     ## Change email as list MEMBER
     foreach
-        my $list (&Sympa::List::get_which($in{'current_email'}, $robot, 'member')) {
+        my $list (Sympa::List::get_which($in{'current_email'}, $robot, 'member')) {
 
         my $l = $list->name;
 
@@ -1692,7 +1692,7 @@ sub change_user_email {
     my %updated_lists;
     foreach my $role ('owner', 'editor') {
         foreach
-            my $list (&Sympa::List::get_which($in{'current_email'}, $robot, $role)) {
+            my $list (Sympa::List::get_which($in{'current_email'}, $robot, $role)) {
 
             ## Check if admin is include via an external datasource
             my $admin_user =

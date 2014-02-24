@@ -42,13 +42,13 @@ our $AUTOLOAD;
 use Sympa::DatabaseDescription;
 
 # db structure description has moved in Sympa/Constant.pm
-my %db_struct = &Sympa::DatabaseDescription::db_struct();
+my %db_struct = Sympa::DatabaseDescription::db_struct();
 
-my %not_null = &Sympa::DatabaseDescription::not_null();
+my %not_null = Sympa::DatabaseDescription::not_null();
 
-my %primary = &Sympa::DatabaseDescription::primary();
+my %primary = Sympa::DatabaseDescription::primary();
 
-my %autoincrement = &Sympa::DatabaseDescription::autoincrement();
+my %autoincrement = Sympa::DatabaseDescription::autoincrement();
 
 ## List the required INDEXES
 ##   1st key is the concerned table
@@ -155,7 +155,7 @@ sub connect_sympa_database {
     ## We keep trying to connect if this is the first attempt
     ## Unless in a web context, because we can't afford long response time on
     ## the web interface
-    my $db_conf = &Sympa::Conf::get_parameters_group('*', 'Database related');
+    my $db_conf = Sympa::Conf::get_parameters_group('*', 'Database related');
     $db_conf->{'reconnect_options'} = {
         'keep_trying' => (
             $option ne 'just_try'
@@ -257,7 +257,7 @@ sub probe_db {
                 return undef;
             }
             unless (
-                &check_fields(
+                check_fields(
                     {   'table'       => $t,
                         'report'      => \@report,
                         'real_struct' => \%real_struct
@@ -286,7 +286,7 @@ sub probe_db {
                 or Sympa::Site->db_type eq 'SQLite') {
                 ## Check that primary key has the right structure.
                 unless (
-                    &check_primary_key({'table' => $t, 'report' => \@report}))
+                    check_primary_key({'table' => $t, 'report' => \@report}))
                 {
                     Sympa::Log::Syslog::do_log(
                         'err',
@@ -296,7 +296,7 @@ sub probe_db {
                     return undef;
                 }
 
-                unless (&check_indexes({'table' => $t, 'report' => \@report}))
+                unless (check_indexes({'table' => $t, 'report' => \@report}))
                 {
                     Sympa::Log::Syslog::do_log(
                         'err',
@@ -401,7 +401,7 @@ sub check_fields {
         ## Change DB types if different and if update_db_types enabled
         if (Sympa::Site->update_db_field_types eq 'auto') {
             unless (
-                &check_db_field_type(
+                check_db_field_type(
                     effective_format => $real_struct{$t}{$f},
                     required_format  => $db_struct{Sympa::Site->db_type}{$t}{$f}
                 )
@@ -721,7 +721,7 @@ sub quote {
     if (defined $db_source) {
         return $db_source->quote($param);
     } else {
-        if (&check_db_connect()) {
+        if (check_db_connect()) {
             return $db_source->quote($param);
         } else {
             Sympa::Log::Syslog::do_log('err',
@@ -736,7 +736,7 @@ sub get_substring_clause {
     if (defined $db_source) {
         return $db_source->get_substring_clause($param);
     } else {
-        if (&check_db_connect()) {
+        if (check_db_connect()) {
             return $db_source->get_substring_clause($param);
         } else {
             Sympa::Log::Syslog::do_log('err',
@@ -751,7 +751,7 @@ sub get_limit_clause {
     if (defined $db_source) {
         return ' ' . $db_source->get_limit_clause($param) . ' ';
     } else {
-        if (&check_db_connect()) {
+        if (check_db_connect()) {
             return ' ' . $db_source->get_limit_clause($param) . ' ';
         } else {
             Sympa::Log::Syslog::do_log('err',
@@ -771,7 +771,7 @@ sub get_canonical_write_date {
     if (defined $db_source) {
         return $db_source->get_canonical_write_date($param);
     } else {
-        if (&check_db_connect()) {
+        if (check_db_connect()) {
             return $db_source->get_canonical_write_date($param);
         } else {
             Sympa::Log::Syslog::do_log('err',
@@ -791,7 +791,7 @@ sub get_canonical_read_date {
     if (defined $db_source) {
         return $db_source->get_canonical_read_date($param);
     } else {
-        if (&check_db_connect()) {
+        if (check_db_connect()) {
             return $db_source->get_canonical_read_date($param);
         } else {
             Sympa::Log::Syslog::do_log('err',

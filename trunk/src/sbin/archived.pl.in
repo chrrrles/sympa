@@ -173,7 +173,7 @@ unless (defined Sympa::Robot::get_robots()) {
 }
 
 ## Check databse connectivity
-unless (&Sympa::DatabaseManager::check_db_connect()) {
+unless (Sympa::DatabaseManager::check_db_connect()) {
     Sympa::Log::Syslog::fatal_err(
         'Database %s defined in sympa.conf has not the right structure or is unreachable.',
         Sympa::Site->db_name
@@ -203,7 +203,7 @@ $options->{'stderr_to_tty'} = 1 if ($main::options{'foreground'});
 ## Create and write the PID file
 Sympa::Tools::write_pid('archived', $$, $options);
 unless ($options->{'stderr_to_tty'}) {
-    &Sympa::Tools::direct_stderr_to_file(('pid' => $$));
+    Sympa::Tools::direct_stderr_to_file(('pid' => $$));
 }
 
 # setting log_level using conf unless it is set by calling option
@@ -227,8 +227,8 @@ $( = $) = (getgrnam(Sympa::Constants::GROUP))[2];
 $< = $> = (getpwnam(Sympa::Constants::USER))[2];
 
 ## Required on FreeBSD to change ALL IDs(effective UID + real UID + saved UID)
-&POSIX::setuid((getpwnam(Sympa::Constants::USER))[2]);
-&POSIX::setgid((getgrnam(Sympa::Constants::GROUP))[2]);
+POSIX::setuid((getpwnam(Sympa::Constants::USER))[2]);
+POSIX::setgid((getgrnam(Sympa::Constants::GROUP))[2]);
 
 ## Check if the UID has correctly been set (useful on OS X)
 unless (($( == (getgrnam(Sympa::Constants::GROUP))[2])
@@ -245,7 +245,7 @@ foreach my $robot (@{Sympa::Robot::get_robots()}) {
     my $arc_dir = $robot->arc_path;
     ## Create arc_path if required
     if ($arc_dir) {
-        unless (&directory_check($arc_dir)) {
+        unless (directory_check($arc_dir)) {
             Sympa::Log::Syslog::do_log('err',
                 'No vailable directory to store archives. Exiting.');
             exit -1;
@@ -278,7 +278,7 @@ my $spoolarchive = Sympa::ClassicSpool->new()('outgoing');
 ## infinite loop scanning the queue (unless a sig TERM is received
 while (!$end) {
 
-    &Sympa::List::init_list_cache();
+    Sympa::List::init_list_cache();
     sleep 1;
     my $item = $spoolarchive->next;
 
@@ -294,7 +294,7 @@ while (!$end) {
     if ($orders[0] =~ /^rebuild\s*$/) {
         Sympa::Log::Syslog::do_log('debug', "rebuild found ");
         if ($item->{'list'} && $item->{'robot'}) {
-            &rebuild($item->{'list'} . '@' . $item->{'robot'});
+            rebuild($item->{'list'} . '@' . $item->{'robot'});
             $spoolarchive->remove_message($item->{'messagekey'});
         } else {
             Sympa::Log::Syslog::do_log('err',
@@ -332,7 +332,7 @@ while (!$end) {
         }
         Sympa::Log::Syslog::do_log('debug', "remove found : for $arclistdir");
 
-        my $email_regexp = &Sympa::Tools::get_regexp('email');
+        my $email_regexp = Sympa::Tools::get_regexp('email');
 
         foreach my $order (@orders) {
             unless ($order =~ /(.*)\|\|($email_regexp)/) {
@@ -351,7 +351,7 @@ while (!$end) {
             }
 
             my $file;
-            unless ($file = &Sympa::Archive::search_msgid("$arcpath/arctxt", $msgid))
+            unless ($file = Sympa::Archive::search_msgid("$arcpath/arctxt", $msgid))
             {
                 Sympa::Log::Syslog::do_log('err',
                     'No message with message-id %s found in %s/arctxt',
@@ -362,7 +362,7 @@ while (!$end) {
             unless ($list->am_i('privileged_owner', $sender)
                 || $list->am_i('owner',  $sender)
                 || $list->am_i('editor', $sender)
-                || &Sympa::List::is_listmaster($sender, $list->{'domain'})) {
+                || Sympa::List::is_listmaster($sender, $list->{'domain'})) {
 
                 # if not list owner or list editor or listmaster,n check if
                 # sender of remove order is sender of the message to remove
@@ -391,10 +391,10 @@ while (!$end) {
 
             # this point : requested command is from a authorized personn
             # (message sender or list admin or listmaster
-            &remove($arclistdir, $msgid);
+            remove($arclistdir, $msgid);
 
             my $url_dir = $list->dir . '/urlized/' . $msgid;
-            &Sympa::Tools::remove_dir($url_dir);
+            Sympa::Tools::remove_dir($url_dir);
 
             unless (-d "$arcpath/deleted") {
                 unless (mkdir("$arcpath/deleted", 0777)) {
@@ -421,7 +421,7 @@ while (!$end) {
             my @files = grep(/^\d+$/, readdir(DIR));
             closedir(DIR);
             if ($#files == -1) {
-                &Sympa::Tools::remove_dir($arcpath);
+                Sympa::Tools::remove_dir($arcpath);
             }
         }
         $spoolarchive->remove_message($item->{'messagekey'});
@@ -458,7 +458,7 @@ while (!$end) {
 Sympa::Site->send_notify_to_listmaster(undef, undef, undef, 1);
 
 ## Free zombie sendmail processes
-&Sympa::Mail::reaper;
+Sympa::Mail::reaper();
 
 Sympa::Log::Syslog::do_log('notice',
     'archived exited normally due to signal');
@@ -588,7 +588,7 @@ sub remove {
         Sympa::Log::Syslog::do_log('error',
             'archived::remove: unable to log event');
     }
-    my $arcpath = &Sympa::Conf::get_robot_conf($robot, 'arc_path');
+    my $arcpath = Sympa::Conf::get_robot_conf($robot, 'arc_path');
     $arc =~ /^(\d{4})-(\d{2})$/;
     my $yyyy = $1;
     my $mm   = $2;
@@ -674,9 +674,9 @@ sub rebuild {
 
     if (    $list->web_archive_spam_protection ne 'none'
         and $list->web_archive_spam_protection ne 'cookie') {
-        &set_hidden_mode($tag);
+        set_hidden_mode($tag);
     } else {
-        &unset_hidden_mode();
+        unset_hidden_mode();
     }
 
     Sympa::Log::Syslog::do_log('notice',
@@ -699,18 +699,18 @@ sub rebuild {
             if ($#files == -1) {
                 Sympa::Log::Syslog::do_log('notice',
                     "Removing empty directory %s", $arcdir);
-                &Sympa::Tools::remove_dir($arcdir);
+                Sympa::Tools::remove_dir($arcdir);
                 next;
             }
 
             ## index file was removed ; recreate it
             my $index = $files[$#files];
-            &save_idx($arcdir . '/index', $index + 1);
+            save_idx($arcdir . '/index', $index + 1);
         }
 
         ## recreate index file if needed
         unless (-f $arcdir . '/index') {
-            &create_idx($arcdir);
+            create_idx($arcdir);
         }
 
         ## Remove .mhonarc.db
@@ -745,7 +745,7 @@ sub rebuild {
 
         # Delete temporary directory containing files with escaped HTML.
         if ($arcs_dir && -d $arcs_dir->{'cleaned_dir'}) {
-            &Sympa::Tools::del_dir($arcs_dir->{'cleaned_dir'});
+            Sympa::Tools::del_dir($arcs_dir->{'cleaned_dir'});
         }
 
         ## Remove lock if required
@@ -810,7 +810,7 @@ sub rebuild {
             }
             ## recreate index file if needed
             unless (-f $arcdir . '/index') {
-                &create_idx($arcdir);
+                create_idx($arcdir);
             }
 
             my $cmd =
@@ -825,7 +825,7 @@ sub rebuild {
 
             # Delete temporary directory containing files with escaped HTML.
             if ($arcs_dir && -d $arcs_dir->{'cleaned_dir'}) {
-                &Sympa::Tools::del_dir($arcs_dir->{'cleaned_dir'});
+                Sympa::Tools::del_dir($arcs_dir->{'cleaned_dir'});
             }
 
             ## Remove lock if required
@@ -922,7 +922,7 @@ sub mail2arc {
     my $list  = $message_in_spool->{'list_object'};
     my $robot = $message_in_spool->{'robot_object'};
     my ($yyyy, $mm, $dd, $hh, $min, $ss) = @_;
-    my $txtdate = &Sympa::Tools::epoch2yyyymmjj_hhmmss($message_in_spool->{'date'});
+    my $txtdate = Sympa::Tools::epoch2yyyymmjj_hhmmss($message_in_spool->{'date'});
     if ($txtdate =~ /(\d\d\d\d)\-(\d\d)\-(\d\d)\s*(\d\d)\:(\d\d)/) {
         $yyyy = $1;
         $mm   = $2;
@@ -1284,7 +1284,7 @@ sub create_idx {
 
     my @files = (sort { $a <=> $b; } grep(/^\d+$/, (readdir DIR)));
     my $index = $files[$#files];
-    &save_idx($arc_dir . '/index', $index);
+    save_idx($arc_dir . '/index', $index);
 
     closedir DIR;
 
@@ -1317,7 +1317,7 @@ sub directory_check {
             return undef;
         }
         unless (
-            &Sympa::Tools::set_file_rights(
+            Sympa::Tools::set_file_rights(
                 file  => $dir,
                 user  => Sympa::Constants::USER,
                 group => Sympa::Constants::GROUP,

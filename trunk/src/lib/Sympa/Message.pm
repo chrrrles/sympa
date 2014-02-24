@@ -687,7 +687,7 @@ sub check_dkim_signature {
     if (ref($self->robot) eq 'Sympa::Robot'
         and $self->robot->dkim_feature eq 'on') {
         $self->{'dkim_pass'} =
-            &Sympa::Tools::dkim_verifier($self->{'msg_as_string'});
+            Sympa::Tools::dkim_verifier($self->{'msg_as_string'});
     }
     return 1;
 }
@@ -1811,7 +1811,7 @@ sub add_parts {
             $footer_msg = '' unless $footer_msg =~ /\S/;
         }
         if (length $header_msg or length $footer_msg) {
-            if (&_append_parts($msg, $header_msg, $footer_msg)) {
+            if (_append_parts($msg, $header_msg, $footer_msg)) {
                 $msg->sync_headers(Length => 'COMPUTE')
                     if $msg->head->get('Content-Length');
             }
@@ -2318,7 +2318,7 @@ sub personalize_text {
 
     # this method as been removed because some users may forward
     # authentication link
-    # $user->{'fingerprint'} = &Sympa::Tools::get_fingerprint($rcpt);
+    # $user->{'fingerprint'} = Sympa::Tools::get_fingerprint($rcpt);
 
     my $data = {
         'listname'    => $list->name,
@@ -2465,11 +2465,11 @@ sub prepare_reception_urlize {
     }
 
     my $dir1 =
-        &Sympa::Tools::clean_msg_id(
+        Sympa::Tools::clean_msg_id(
         $self->get_mime_message->head->get('Message-ID'));
 
     ## Clean up Message-ID
-    $dir1 = &Sympa::Tools::escape_chars($dir1);
+    $dir1 = Sympa::Tools::escape_chars($dir1);
     $dir1 = '/' . $dir1;
 
     unless (mkdir("$expl/$dir1", 0775)) {
@@ -2479,12 +2479,12 @@ sub prepare_reception_urlize {
         printf "Unable to create urlized directory %s/%s\n", $expl, $dir1;
         return 0;
     }
-    my $mime_types = &Sympa::Tools::load_mime_types();
+    my $mime_types = Sympa::Tools::load_mime_types();
     my @parts      = ();
     my $i          = 0;
     foreach my $part ($self->get_mime_message->parts()) {
         my $entity =
-            &_urlize_part($part, $self->{'list'}, $dir1, $i, $mime_types,
+            _urlize_part($part, $self->{'list'}, $dir1, $i, $mime_types,
             $self->{'list'}->robot->wwsympa_url);
         if (defined $entity) {
             push @parts, $entity;
@@ -2594,7 +2594,7 @@ sub _urlize_part {
 
     # do NOT escape '/' chars
     my $file_url = "$wwsympa_url/attach/$listname"
-        . &Sympa::Tools::escape_chars("$dir/$filename", '/');
+        . Sympa::Tools::escape_chars("$dir/$filename", '/');
 
     my $parser = MIME::Parser->new();
     $parser->output_to_core(1);
@@ -2605,7 +2605,7 @@ sub _urlize_part {
 
     my $tt2_include_path = $list->get_etc_include_path('mail_tt2', $lang);
 
-    &Sympa::Template::parse_tt2(
+    Sympa::Template::parse_tt2(
         {   'file_name' => $file_name,
             'file_url'  => $file_url,
             'file_size' => $size,

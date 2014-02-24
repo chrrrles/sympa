@@ -527,7 +527,7 @@ sub unset_primary_key {
 	  FROM information_schema.table_constraints AS tc
 	  WHERE tc.table_catalog = %s AND tc.table_name = %s AND
 		tc.constraint_type = 'PRIMARY KEY'},
-            &Sympa::DatabaseManager::quote($self->{'db_name'}), &Sympa::DatabaseManager::quote($param->{'table'})
+            Sympa::DatabaseManager::quote($self->{'db_name'}), Sympa::DatabaseManager::quote($param->{'table'})
         )
         ) {
         Sympa::Log::Syslog::do_log('err',

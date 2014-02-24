@@ -50,7 +50,7 @@ our @EXPORT = qw(mail_file mail_message mail_forward set_send_spool);
 my $opensmtp = 0;
 my $fh       = 'fh0000000000';    ## File handle for the stream.
 
-my $max_arg = eval { &POSIX::_SC_ARG_MAX; };
+my $max_arg = eval { POSIX::_SC_ARG_MAX; };
 if ($@) {
     $max_arg = 4096;
     printf STDERR gettext(
@@ -236,7 +236,7 @@ sub parse_tt2_messageasstring {
             or $data->{'from'} eq 'sympa'
             or $data->{'from'} eq $data->{'conf'}{'sympa'}) {
             $headers .= 'From: '
-                . &Sympa::Tools::addrencode(
+                . Sympa::Tools::addrencode(
                 $data->{'conf'}{'sympa'},
                 $data->{'conf'}{'email_gecos'},
                 $data->{'charset'}
@@ -489,7 +489,7 @@ sub mail_message {
     }
 
     unless (
-        &sendto(
+        sendto(
             'message'       => $message,
             'from'          => $from,
             'rcpt'          => \@sendtobypacket,
@@ -576,7 +576,7 @@ sub reaper {
     my $i;
 
     $block = 1 unless (defined($block));
-    while (($i = waitpid(-1, $block ? &POSIX::WNOHANG : 0)) > 0) {
+    while (($i = waitpid(-1, $block ? POSIX::WNOHANG : 0)) > 0) {
         $block = 1;
         if (!defined($pid{$i})) {
             Sympa::Log::Syslog::do_log('debug2',
@@ -673,7 +673,7 @@ sub sendto {
                     return undef;
                 }
                 unless (
-                    &sending(
+                    sending(
                         'message'       => $message,
                         'rcpt'          => $email,
                         'from'          => $from,
@@ -695,7 +695,7 @@ sub sendto {
     } else {
         $message->{'msg_as_string'} =
             $msg_header->as_string() . "\n" . $msg_body;
-        my $result = &sending(
+        my $result = sending(
             'message'       => $message,
             'rcpt'          => $rcpt,
             'from'          => $from,
@@ -793,7 +793,7 @@ sub sending {
         }
 
         ##Bulk package determine robots or site.
-        my $bulk_code = &Sympa::Bulk::store(
+        my $bulk_code = Sympa::Bulk::store(
             'message'          => $message,
             'rcpts'            => $rcpt,
             'from'             => $from,
@@ -829,7 +829,7 @@ sub sending {
             $string_to_send = $message->get_mime_message->as_string();  #FIXME
         }
 
-        *SMTP = &smtpto($from, $rcpt, $robot);
+        *SMTP = smtpto($from, $rcpt, $robot);
         print SMTP $string_to_send;
         unless (close SMTP) {
             Sympa::Log::Syslog::do_log('err',
@@ -898,7 +898,7 @@ sub smtpto {
     while ($opensmtp > $robot->maxsmtp) {
         Sympa::Log::Syslog::do_log('debug3',
             "Sympa::Mail::smtpto: too many open SMTP ($opensmtp), calling reaper");
-        last if (&reaper(0) == -1);    ## Blocking call to the reaper.
+        last if (reaper(0) == -1);    ## Blocking call to the reaper.
     }
 
     *IN  = ++$fh;
@@ -908,7 +908,7 @@ sub smtpto {
         croak sprintf('Unable to create a channel in smtpto: %s', "$!");
         ## No return
     }
-    $pid = &Sympa::Tools::safefork();
+    $pid = Sympa::Tools::safefork();
     $pid{$pid} = 0;
 
     my $sendmail = $robot->sendmail;
@@ -1037,7 +1037,7 @@ sub reformat_message($;$$) {
         }
     }
     $msg->head->delete("X-Mailer");
-    $msg = &fix_part($msg, $parser, $attachments, $defcharset);
+    $msg = fix_part($msg, $parser, $attachments, $defcharset);
     $msg->head->add("X-Mailer", sprintf "Sympa %s",
         Sympa::Constants::VERSION);
     return $msg->as_string();
@@ -1078,7 +1078,7 @@ sub fix_part($$$$) {
     } elsif ($part->parts) {
         my @newparts = ();
         foreach ($part->parts) {
-            push @newparts, &fix_part($_, $parser, $attachments, $defcharset);
+            push @newparts, fix_part($_, $parser, $attachments, $defcharset);
         }
         $part->parts(\@newparts);
     } elsif ($eff_type =~ m{^(?:multipart|message)(?:/|\Z)}i) {
@@ -1099,7 +1099,7 @@ sub fix_part($$$$) {
         } elsif ($eff_type eq 'text/plain'
             and lc($head->mime_attr('Content-type.Format') || '') ne 'flowed')
         {
-            $wrap = &Sympa::Tools::wrap_text($body);
+            $wrap = Sympa::Tools::wrap_text($body);
         }
         my $charset = $head->mime_attr("Content-Type.Charset") || $defcharset;
 

@@ -712,7 +712,7 @@ sub error_report {
     if (defined $self->{'list_object'}) {
         $data->{'list'} = $self->{'list_object'};
     }
-    $self->{'human_date'} = &Sympa::Tools::adate($self->{'date'});
+    $self->{'human_date'} = Sympa::Tools::adate($self->{'date'});
     $data->{'task'}       = $self;
     Sympa::Log::Syslog::do_log(
         'err',

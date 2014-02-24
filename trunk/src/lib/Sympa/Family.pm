@@ -244,7 +244,7 @@ sub new {
     # create a new object family
     bless $self, $class;
 
-    my $family_name_regexp = &Sympa::Tools::get_regexp('family_name');
+    my $family_name_regexp = Sympa::Tools::get_regexp('family_name');
 
     ## family name
     unless ($name && ($name =~ /^$family_name_regexp$/io)) {
@@ -400,7 +400,7 @@ sub add_list {
     }
 
     #list creation
-    my $result = &Sympa::Admin::create_list($hash_list->{'config'},
+    my $result = Sympa::Admin::create_list($hash_list->{'config'},
         $self, $self->{'robot'}, $abort_on_error);
     unless (defined $result) {
         push @{$return->{'string_error'}},
@@ -641,7 +641,7 @@ sub modify_list {
     my $old_status     = $list->status;
 
     ## list config family updating
-    my $result = &Sympa::Admin::update_list($list, $hash_list->{'config'},
+    my $result = Sympa::Admin::update_list($list, $hash_list->{'config'},
         $self, $self->{'robot'});
     unless (defined $result) {
         Sympa::Log::Syslog::do_log('err',
@@ -1091,7 +1091,7 @@ sub instantiate {
         } else {
 
             ## Create the list
-            my $result = &Sympa::Admin::create_list($hash_list->{'config'},
+            my $result = Sympa::Admin::create_list($hash_list->{'config'},
                 $self, $self->{'robot'});
             unless (defined $result) {
                 push(
@@ -2387,7 +2387,7 @@ sub _update_existing_list {
     my $old_status     = $list->status;
 
     ## list config family updating
-    my $result = &Sympa::Admin::update_list($list, $hash_list->{'config'},
+    my $result = Sympa::Admin::update_list($list, $hash_list->{'config'},
         $self, $self->{'robot'});
     unless (defined $result) {
         Sympa::Log::Syslog::do_log('err',
@@ -2740,7 +2740,7 @@ sub _set_status_changes {
     if ($list->status eq 'open') {
         unless ($old_status eq 'open') {
             $result->{'install_remove'} = 'install';
-            $result->{'aliases'}        = &Sympa::Admin::install_aliases($list);
+            $result->{'aliases'}        = Sympa::Admin::install_aliases($list);
         }
     }
 
@@ -2748,19 +2748,19 @@ sub _set_status_changes {
         and ($old_status eq 'open' or $old_status eq 'error_config')) {
         $result->{'install_remove'} = 'remove';
         $result->{'aliases'} =
-            &Sympa::Admin::remove_aliases($list, $self->{'robot'});
+            Sympa::Admin::remove_aliases($list, $self->{'robot'});
     }
 
 ##    ## subscribers
 ##    if (($old_status ne 'pending') && ($old_status ne 'open')) {
 ##
 ##	if ($list->user_data_source eq 'file') {
-##	    $list->{'users'} = &Sympa::List::_load_users_file($list->dir . '/subscribers.closed.dump');
+##	    $list->{'users'} = Sympa::List::_load_users_file($list->dir . '/subscribers.closed.dump');
 ##	}elsif ($list->user_data_source eq 'database') {
 ##	    unless (-f $list->dir . '/subscribers.closed.dump') {
 ##		Sympa::Log::Syslog::do_log('notice', 'No subscribers to restore');
 ##	    }
-##	    my @users = &Sympa::List::_load_users_file($list->dir . '/subscribers.closed.dump');
+##	    my @users = Sympa::List::_load_users_file($list->dir . '/subscribers.closed.dump');
 ##
 ##	    ## Insert users in database
 ##	    foreach my $user (@users) {
@@ -2946,7 +2946,7 @@ sub _copy_files {
 
     # instance.xml
     if (defined $file) {
-        unless (&File::Copy::copy("$dir/$file", "$list_dir/instance.xml")) {
+        unless (File::Copy::copy("$dir/$file", "$list_dir/instance.xml")) {
             Sympa::Log::Syslog::do_log('err',
                 'impossible to copy %s/%s into %s/instance.xml : %s',
                 $dir, $file, $list_dir, $!);
@@ -3074,7 +3074,7 @@ sub _load_param_constraint_conf {
 
 ###########################"
     #   open TMP, ">/tmp/dump1";
-    #   &Sympa::Tools::dump_var ($constraint, 0, \*TMP);
+    #   Sympa::Tools::dump_var ($constraint, 0, \*TMP);
     #    close TMP;
 
     return $constraint;
@@ -3188,13 +3188,13 @@ sub insert_delete_exclusion {
         ## Insert: family, user and date
         ## Add dummy list_exclusion column to satisfy constraint.
         unless (
-            &Sympa::DatabaseManager::do_query(
+            Sympa::DatabaseManager::do_query(
                 'INSERT INTO exclusion_table (list_exclusion, family_exclusion, robot_exclusion, user_exclusion, date_exclusion) VALUES (%s, %s, %s, %s, %s)',
-                &Sympa::DatabaseManager::quote('family:' . $name),
-                &Sympa::DatabaseManager::quote($name),
-                &Sympa::DatabaseManager::quote($robot->domain),
-                &Sympa::DatabaseManager::quote($email),
-                &Sympa::DatabaseManager::quote($date)
+                Sympa::DatabaseManager::quote('family:' . $name),
+                Sympa::DatabaseManager::quote($name),
+                Sympa::DatabaseManager::quote($robot->domain),
+                Sympa::DatabaseManager::quote($email),
+                Sympa::DatabaseManager::quote($date)
             )
             ) {
             Sympa::Log::Syslog::do_log('err',
