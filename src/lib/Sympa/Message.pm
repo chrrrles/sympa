@@ -1074,7 +1074,7 @@ sub smime_decrypt {
 
         unlink($temporary_file) unless ($main::options{'debug'});
 
-        my $parser = new MIME::Parser;
+        my $parser = MIME::Parser->new();
         $parser->output_to_core(1);
         unless ($self->{'decrypted_msg'} =
             $parser->parse_data($self->{'decrypted_msg_as_string'})) {
@@ -1142,7 +1142,7 @@ sub smime_encrypt {
     my $dummy;
 
     if ($list eq 'list') {
-        my $self = new List($email);
+        my $self = Sympa::List->new($email);
         ($usercert, $dummy) = Sympa::Tools::smime_find_keys($self->{dir}, 'encrypt');
     } else {
         my $base = Sympa::Site->ssl_cert_dir . '/' . Sympa::Tools::escape_chars($email);
@@ -1193,7 +1193,7 @@ sub smime_encrypt {
 
         ## Get as MIME object
         open(NEWMSG, $temporary_file);
-        my $parser = new MIME::Parser;
+        my $parser = MIME::Parser->new();
         $parser->output_to_core(1);
         unless ($self->{'crypted_message'} = $parser->read(\*NEWMSG)) {
             Sympa::Log::Syslog::do_log('notice', 'Unable to parse message');
@@ -1307,7 +1307,7 @@ sub smime_sign {
         $new_message_as_string .= $_;
     }
 
-    my $parser = new MIME::Parser;
+    my $parser = MIME::Parser->new();
 
     $parser->output_to_core(1);
     unless ($signed_msg = $parser->parse_data($new_message_as_string)) {
@@ -1818,7 +1818,7 @@ sub add_parts {
         }
     } else {
         ## MIME footer/header
-        my $parser = new MIME::Parser;
+        my $parser = MIME::Parser->new();
         $parser->output_to_core(1);
 
         if (   $eff_type =~ /^multipart\/alternative/i
@@ -2570,7 +2570,7 @@ sub _urlize_part {
         close TMP;
 
         open BODY, "$expl/$dir/$filename.$encoding";
-        my $decoder = new MIME::Decoder $encoding;
+        my $decoder = MIME::Decoder->($encoding);
         $decoder->decode(\*BODY, \*OFILE);
         unlink "$expl/$dir/$filename.$encoding";
     } else {
@@ -2596,7 +2596,7 @@ sub _urlize_part {
     my $file_url = "$wwsympa_url/attach/$listname"
         . &Sympa::Tools::escape_chars("$dir/$filename", '/');
 
-    my $parser = new MIME::Parser;
+    my $parser = MIME::Parser->new();
     $parser->output_to_core(1);
     my $new_part;
 

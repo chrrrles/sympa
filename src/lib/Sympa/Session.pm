@@ -699,7 +699,7 @@ sub set_cookie {
 
     my $cookie;
     if ($expires =~ /session/i) {
-        $cookie = new CGI::Cookie(
+        $cookie = CGI::Cookie->new(
             -name     => 'sympa_session',
             -value    => $value,
             -domain   => $http_domain,
@@ -708,7 +708,7 @@ sub set_cookie {
             -httponly => 1
         );
     } else {
-        $cookie = new CGI::Cookie(
+        $cookie = CGI::Cookie->new(
             -name     => 'sympa_session',
             -value    => $value,
             -expires  => $expiration,

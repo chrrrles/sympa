@@ -316,7 +316,7 @@ sub stats {
     my $sign_mod = shift;
     my $message  = shift;
 
-    my $list = new List($listname, $robot);
+    my $list = Sympa::List->new($listname, $robot);
     unless ($list) {
         &Sympa::Report::reject_report_cmd('user', 'no_existing_list',
             {'listname' => $listname}, $cmd_line);
@@ -428,7 +428,7 @@ sub getfile {
     my ($which, $file) = split(/\s+/, shift);
     my $robot = shift;
 
-    my $list = new List($which, $robot);
+    my $list = Sympa::List->new($which, $robot);
     unless ($list) {
         &Sympa::Report::reject_report_cmd('user', 'no_existing_list',
             {'listname' => $which}, $cmd_line);
@@ -508,7 +508,7 @@ sub last {
 
     my $sympa = $robot->get_address();
 
-    my $list = new List($which, $robot);
+    my $list = Sympa::List->new($which, $robot);
     unless ($list) {
         &Sympa::Report::reject_report_cmd('user', 'no_existing_list',
             {'listname' => $which}, $cmd_line);
@@ -577,7 +577,7 @@ sub index {
     my $which = shift;
     my $robot = shift;
 
-    my $list = new List($which, $robot);
+    my $list = Sympa::List->new($which, $robot);
     unless ($list) {
         &Sympa::Report::reject_report_cmd('user', 'no_existing_list',
             {'listname' => $which}, $cmd_line);
@@ -652,7 +652,7 @@ sub review {
     my $sympa = $robot->get_address();
 
     my $user;
-    my $list = new List($listname, $robot);
+    my $list = Sympa::List->new($listname, $robot);
 
     unless ($list) {
         &Sympa::Report::reject_report_cmd('user', 'no_existing_list',
@@ -869,7 +869,7 @@ sub subscribe {
 
     ## Load the list if not already done, and reject the
     ## subscription if this list is unknown to us.
-    my $list = new List($which, $robot);
+    my $list = Sympa::List->new($which, $robot);
     unless ($list) {
         &Sympa::Report::reject_report_cmd('user', 'no_existing_list',
             {'listname' => $which}, $cmd_line);
@@ -1137,7 +1137,7 @@ sub info {
 
     my $sympa = $robot->get_address();
 
-    my $list = new List($listname, $robot);
+    my $list = Sympa::List->new($listname, $robot);
     unless ($list) {
         &Sympa::Report::reject_report_cmd('user', 'no_existing_list',
             {'listname' => $listname}, $cmd_line);
@@ -1337,7 +1337,7 @@ sub signoff {
         return ($success);
     }
 
-    $list = new List($which, $robot);
+    $list = Sympa::List->new($which, $robot);
 
     ## Is this list defined
     unless ($list) {
@@ -1573,7 +1573,7 @@ sub add {
 
     ## Load the list if not already done, and reject the
     ## subscription if this list is unknown to us.
-    my $list = new List($which, $robot);
+    my $list = Sympa::List->new($which, $robot);
     unless ($list) {
         &Sympa::Report::reject_report_cmd('user', 'no_existing_list',
             {'listname' => $which}, $cmd_line);
@@ -1769,7 +1769,7 @@ sub invite {
 
     ## Load the list if not already done, and reject the
     ## subscription if this list is unknown to us.
-    my $list = new List($which, $robot);
+    my $list = Sympa::List->new($which, $robot);
     unless ($list) {
         &Sympa::Report::reject_report_cmd('user', 'no_existing_list',
             {'listname' => $which}, $cmd_line);
@@ -2018,7 +2018,7 @@ sub remind {
     my $list;
 
     unless ($listname eq '*') {
-        $list = new List($listname, $robot);
+        $list = Sympa::List->new($listname, $robot);
         unless ($list) {
             &Sympa::Report::reject_report_cmd('user', 'no_existing_list',
                 {'listname' => $which}, $cmd_line);
@@ -2314,7 +2314,7 @@ sub del {
 
     ## Load the list if not already done, and reject the
     ## subscription if this list is unknown to us.
-    my $list = new List($which, $robot);
+    my $list = Sympa::List->new($which, $robot);
     unless ($list) {
         &Sympa::Report::reject_report_cmd('user', 'no_existing_list',
             {'listname' => $which}, $cmd_line);
@@ -2551,7 +2551,7 @@ sub set {
 
     ## Load the list if not already done, and reject
     ## if this list is unknown to us.
-    my $list = new List($which, $robot);
+    my $list = Sympa::List->new($which, $robot);
 
     unless ($list) {
         &Sympa::Report::reject_report_cmd('user', 'no_existing_list',
@@ -2681,7 +2681,7 @@ sub distribute {
     my $start_time = time;    # get the time at the beginning
     ## Load the list if not already done, and reject the
     ## subscription if this list is unknown to us.
-    my $list = new List($which, $robot);
+    my $list = Sympa::List->new($which, $robot);
     unless ($list) {
         Sympa::Log::Syslog::do_log('info',
             'DISTRIBUTE %s %s from %s refused, unknown list for robot %s',
@@ -3059,7 +3059,7 @@ sub reject {
     my $modqueue = $robot->queuemod;
     ## Load the list if not already done, and reject the
     ## subscription if this list is unknown to us.
-    my $list = new List($which, $robot);
+    my $list = Sympa::List->new($which, $robot);
 
     unless ($list) {
         Sympa::Log::Syslog::do_log('info',
@@ -3166,7 +3166,7 @@ sub modindex {
 
     $name = lc $name;
 
-    my $list = new List($name, $robot);
+    my $list = Sympa::List->new($name, $robot);
     unless ($list) {
         &Sympa::Report::reject_report_cmd('user', 'no_existing_list',
             {'listname' => $name}, $cmd_line);

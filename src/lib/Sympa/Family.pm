@@ -128,7 +128,7 @@ sub get_families {
         ## directory, then it is worth being added to the list.
         foreach my $subdir (grep !/^\.\.?$/, readdir FAMILIES) {
             next unless -d ("$dir/$subdir");
-            if (my $family = new Sympa::Family($subdir, $robot)) {
+            if (my $family = Sympa::Family->new($subdir, $robot)) {
                 push @families, $family;
             }
         }
@@ -388,7 +388,7 @@ sub add_list {
 
         # get list data
         open(FIC, '<:raw', $self->dir . '/_new_list.xml');
-        my $config = new Sympa::Config_XML(\*FIC);
+        my $config = Sympa::Config_XML->new(\*FIC);
         close FIC;
         unless (defined $config->createHash()) {
             push @{$return->{'string_error'}},
@@ -592,7 +592,7 @@ sub modify_list {
 
     # get list data
     open(FIC, '<:raw', $self->dir . '/_mod_list.xml');
-    my $config = new Sympa::Config_XML(\*FIC);
+    my $config = Sympa::Config_XML->new(\*FIC);
     close FIC;
     unless (defined $config->createHash()) {
         push @{$return->{'string_error'}},
@@ -605,7 +605,7 @@ sub modify_list {
     #getting list
     my $list;
     unless ($list =
-        new List($hash_list->{'config'}{'listname'}, $self->robot)) {
+        Sympa::List->new($hash_list->{'config'}{'listname'}, $self->robot)) {
         push @{$return->{'string_error'}},
             "The list $hash_list->{'config'}{'listname'} does not exist.";
         return $return;
@@ -1027,13 +1027,13 @@ sub instantiate {
     ## EACH FAMILY LIST
     foreach my $listname (@{$self->{'list_to_generate'}}) {
 
-        my $list = new List($listname, $self->{'robot'});
+        my $list = Sympa::List->new($listname, $self->{'robot'});
 
         ## get data from list XML file. Stored into $config (class
         ## Config_XML).
         my $xml_fh;
         open $xml_fh, '<:raw', $self->dir . "/" . $listname . ".xml";
-        my $config = new Sympa::Config_XML($xml_fh);
+        my $config = Sympa::Config_XML->new($xml_fh);
         close $xml_fh;
         unless (defined $config->createHash()) {
             push(
@@ -1183,7 +1183,7 @@ sub instantiate {
     ## PREVIOUS LIST LEFT
     foreach my $l (keys %{$previous_family_lists}) {
         my $list;
-        unless ($list = new List($l, $self->{'robot'})) {
+        unless ($list = Sympa::List->new($l, $self->{'robot'})) {
             push(@{$self->{'errors'}{'previous_list'}}, $l);
             next;
         }
@@ -1213,7 +1213,7 @@ sub instantiate {
             ## get data from list xml file
             my $xml_fh;
             open $xml_fh, '<:raw', $list->dir . '/instance.xml';
-            my $config = new Sympa::Config_XML($xml_fh);
+            my $config = Sympa::Config_XML->new($xml_fh);
             close $xml_fh;
             unless (defined $config->createHash()) {
                 push(
@@ -3110,7 +3110,7 @@ sub create_automatic_list {
             $self, join(';', @{$details}));
         return undef;
     }
-    my $list = new List($listname, $self->robot);
+    my $list = Sympa::List->new($listname, $self->robot);
     unless (defined $list) {
         Sympa::Log::Syslog::do_log('err',
             'dynamic list %s could not be created', $listname);

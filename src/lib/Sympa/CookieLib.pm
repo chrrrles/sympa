@@ -45,7 +45,7 @@ sub generic_set_cookie {
         $cookie_param{'-domain'} = '';
     }
 
-    my $cookie = new CGI::Cookie(%cookie_param);
+    my $cookie = CGI::Cookie->new(%cookie_param);
 
     ## Send cookie to the client
     printf "Set-Cookie:  %s\n", $cookie->as_string;
@@ -97,7 +97,7 @@ sub get_mac {
         return undef;
     }
 
-    my $md5 = new Digest::MD5;
+    my $md5 = Digest::MD5->new;
 
     $md5->reset;
     $md5->add($email . $secret);
@@ -125,7 +125,7 @@ sub set_cookie_extern {
         $http_domain = "";
     }
 
-    $cookie = new CGI::Cookie(
+    $cookie = CGI::Cookie->new(
         -name    => 'sympa_altemails',
         -value   => $value,
         -expires => '+1y',

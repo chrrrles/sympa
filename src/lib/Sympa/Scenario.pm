@@ -768,7 +768,7 @@ sub verify {
     my $list;
     if ($context->{'listname'} && !defined $context->{'list_object'}) {
         unless ($context->{'list_object'} =
-            new List($context->{'listname'}, $robot)) {
+            Sympa::List->new($context->{'listname'}, $robot)) {
             Sympa::Log::Syslog::do_log(
                 'err',
                 'Unable to create List object for list %s',
@@ -1227,9 +1227,9 @@ sub verify {
 
         ## The list is local or in another local robot
         if ($args[0] =~ /\@/) {
-            $list2 = new List($args[0]);
+            $list2 = Sympa::List->new($args[0]);
         } else {
-            $list2 = new List($args[0], $robot);
+            $list2 = Sympa::List->new($args[0], $robot);
         }
 
         if (!$list2) {
@@ -1620,7 +1620,7 @@ sub search {
                 {'value'};
         }
 
-        my $ds = new Sympa::SQLSource($sql_conf->{'sql_named_filter_query'});
+        my $ds = Sympa::SQLSource->new($sql_conf->{'sql_named_filter_query'});
         unless (defined $ds && $ds->connect() && $ds->ping) {
             Sympa::Log::Syslog::do_log(
                 'notice',
@@ -1721,7 +1721,7 @@ sub search {
 
         my $ldap;
         my $param = &Sympa::Tools::dup_var(\%ldap_conf);
-        my $ds    = new Sympa::LDAPSource($param);
+        my $ds    = Sympa::LDAPSource->new($param);
 
         unless (defined $ds && ($ldap = $ds->connect())) {
             Sympa::Log::Syslog::do_log('err',

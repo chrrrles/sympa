@@ -242,7 +242,7 @@ my %created_children;
 $options->{'multiple_process'} = 1;
 $Sympa::Conf::Conf{'maxsmtp'} = int(Sympa::Site->maxsmtp / Sympa::Site->bulk_max_count);    #FIXME
 
-my $spool = new Sympa::Spool('bulk');
+my $spool = Sympa::Spool->new('bulk');
 
 while (!$end) {
     &Sympa::List::init_list_cache();
@@ -434,7 +434,7 @@ while (!$end) {
         #  -6 dkim sign
         #
 
-        #my $list = new List($bulk->{'listname'}, $bulk->{'robot'});
+        #my $list = Sympa::List->new($bulk->{'listname'}, $bulk->{'robot'});
         my $listname = $bulk->{'listname'};
         my $robot_id = $bulk->{'robot'};
         my $list     = $bulk->{'list_object'};

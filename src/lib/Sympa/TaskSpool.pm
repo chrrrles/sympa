@@ -140,7 +140,7 @@ sub analyze_file_name {
 # Initialize Sympaspool global object.
 #NO LONGER USED.
 #sub set_spool {
-#    $taskspool = new Sympa::TaskSpool;
+#    $taskspool = Sympa::TaskSpool->new;
 #}
 
 ## Build all Task objects
@@ -159,7 +159,7 @@ sub list_tasks {
 
     ## Create Task objects
     foreach my $t (@tasks) {
-        my $task = new Task($t);
+        my $task = Sympa::Task->new($t);
         ## Maintain list of tasks
         push @task_list, $task;
 
