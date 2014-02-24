@@ -21,7 +21,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package Scenario;
+package Sympa::Scenario;
 
 use strict;
 use warnings;
@@ -49,7 +49,7 @@ my %persistent_cache;
 
 =head1 NAME
 
-Scenario - Sympa scenarios
+Sympa::Scenario - Sympa scenarios
 
 =head1 DESCRIPTION
 
@@ -480,7 +480,7 @@ sub request_action {
             my @operations = split /\./, $operation;
 
             # loading of the structure
-            $scenario = Scenario->new(
+            $scenario = Sympa::Scenario->new(
                 $list,
                 'function' => $operations[$#operations],
                 'name'     => $context->{'scenario'},
@@ -490,7 +490,7 @@ sub request_action {
 
     } elsif ($context->{'topicname'}) {
         ## Topics
-        $scenario = Scenario->new(
+        $scenario = Sympa::Scenario->new(
             $robot,
             'function' => 'topics_visibility',
             'name' => $robot->topics->{$context->{'topicname'}}{'visibility'},
@@ -505,7 +505,7 @@ sub request_action {
             )
             and $p[0]->{'scenario'}
             ) {
-            $scenario = Scenario->new(
+            $scenario = Sympa::Scenario->new(
                 $robot,
                 'function' => $operation,
                 'name'     => $robot->$operation,
@@ -531,7 +531,7 @@ sub request_action {
     }
 
     ## Include include.<action>.header if found
-    my $include_scenario = Scenario->new(
+    my $include_scenario = Sympa::Scenario->new(
         $that,
         'function' => 'include',
         'name'     => $operation . '.header',
@@ -546,7 +546,7 @@ sub request_action {
         if ($rules[$idx]->{'condition'} =~
             /^\s*include\s*\(?\'?([\w\.]+)\'?\)?\s*$/i) {
             my $include_file     = $1;
-            my $include_scenario = Scenario->new(
+            my $include_scenario = Sympa::Scenario->new(
                 $that,
                 'function' => 'include',
                 'name'     => $include_file,

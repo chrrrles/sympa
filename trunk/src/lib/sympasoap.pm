@@ -98,7 +98,7 @@ sub lists {
         my $listname = $list->name;
 
         my $result_item = {};
-        my $result      = Scenario::request_action(
+        my $result      = Sympa::Scenario::request_action(
             $list,
             'visibility',
             'md5',
@@ -502,7 +502,7 @@ sub info {
 
     my $sympa = $list->robot->get_address();
 
-    my $result = Scenario::request_action(
+    my $result = Sympa::Scenario::request_action(
         $list, 'info', 'md5',
         {   'sender'                  => $sender,
             'remote_application_name' => $ENV{'remote_application_name'}
@@ -643,7 +643,7 @@ sub createList {
     }
 
     # check authorization
-    my $result = Scenario::request_action(
+    my $result = Sympa::Scenario::request_action(
         $robot,
         'create_list',
         'md5',
@@ -836,7 +836,7 @@ sub add {
 
     # check authorization
 
-    my $result = Scenario::request_action(
+    my $result = Sympa::Scenario::request_action(
         $list, 'add', 'md5',
         {   'sender'                  => $sender,
             'email'                   => $email,
@@ -991,7 +991,7 @@ sub del {
 
     # check authorization
 
-    my $result = Scenario::request_action(
+    my $result = Sympa::Scenario::request_action(
         $list, 'del', 'md5',
         {   'sender'                  => $sender,
             'email'                   => $email,
@@ -1130,7 +1130,7 @@ sub review {
 
     my $user;
 
-    my $result = Scenario::request_action(
+    my $result = Sympa::Scenario::request_action(
         $list, 'review', 'md5',
         {   'sender'                  => $sender,
             'remote_application_name' => $ENV{'remote_application_name'}
@@ -1362,7 +1362,7 @@ sub signoff {
 
     $list = List->new($listname, $robot);
 
-    my $result = Scenario::request_action(
+    my $result = Sympa::Scenario::request_action(
         $list,
         'unsubscribe',
         'md5',
@@ -1526,7 +1526,7 @@ sub subscribe {
     $gecos = "\"$gecos\"" if ($gecos =~ /[<>\(\)]/);
 
     ## query what to do with this subscribtion request
-    my $result = Scenario::request_action(
+    my $result = Sympa::Scenario::request_action(
         $list,
         'subscribe',
         'md5',
@@ -1729,7 +1729,7 @@ sub which {
         my $list_address;
         my $result_item;
 
-        my $result = Scenario::request_action(
+        my $result = Sympa::Scenario::request_action(
             $list,
             'visibility',
             'md5',

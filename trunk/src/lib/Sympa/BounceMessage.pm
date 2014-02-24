@@ -439,7 +439,7 @@ sub delete_bouncer {
 
     Sympa::Log::Syslog::do_log('debug2', 'Deleting bouncing user %s',
         $self->{'who'});
-    my $result = Scenario::request_action(
+    my $result = Sympa::Scenario::request_action(
         $self->{'list'},
         'del', 'smtp',
         {   'sender' => [Site->listmasters]->[0],
@@ -887,7 +887,7 @@ sub process_email_feedback_report {
             }
             foreach my $list (@lists) {
                 my $result =
-                    Scenario::request_action($list, 'unsubscribe', 'smtp',
+                    Sympa::Scenario::request_action($list, 'unsubscribe', 'smtp',
                     {'sender' => $self->{'efr'}{'original_rcpt'}});
                 my $action;
                 $action = $result->{'action'} if (ref($result) eq 'HASH');
