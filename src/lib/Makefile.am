@@ -59,7 +59,6 @@ nobase_modules_DATA = Sympa/Admin.pm \
 		      Sympa/Template.pm \
 		      Sympa/Upgrade.pm \
 		      Sympa/User.pm \
-		      WebAgent.pm \
 		      wwslib.pm
 
 EXTRA_DIST = Sympa/Constants.pm.in $(nobase_modules_DATA)
