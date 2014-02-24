@@ -911,13 +911,13 @@ sub verify {
         } elsif ($value =~ /\[user\-\>([\w\-]+)\]/i) {
 
             $context->{'user'} ||=
-                User::get_global_user($context->{'sender'});
+                Sympa::User::get_global_user($context->{'sender'});
             $value =~ s/\[user\-\>([\w\-]+)\]/$context->{'user'}{$1}/;
 
         } elsif ($value =~ /\[user_attributes\-\>([\w\-]+)\]/i) {
 
             $context->{'user'} ||=
-                User::get_global_user($context->{'sender'});
+                Sympa::User::get_global_user($context->{'sender'});
             $value =~
                 s/\[user_attributes\-\>([\w\-]+)\]/$context->{'user'}{'attributes'}{$1}/;
 

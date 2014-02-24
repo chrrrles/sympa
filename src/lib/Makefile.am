@@ -58,7 +58,7 @@ nobase_modules_DATA = Sympa/Admin.pm \
 		      Sympa/Tracking.pm \
 		      Sympa/Template.pm \
 		      Sympa/Upgrade.pm \
-		      User.pm \
+		      Sympa/User.pm \
 		      WebAgent.pm \
 		      wwslib.pm
 

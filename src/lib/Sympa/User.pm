@@ -21,7 +21,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package User;
+package Sympa::User;
 
 use strict;
 use warnings;
@@ -64,7 +64,7 @@ User - All Users Identified by Sympa
 
 =item new ( EMAIL, [ KEY => VAL, ... ] )
 
-Create new User object.
+Create new Sympa::User object.
 
 =back
 

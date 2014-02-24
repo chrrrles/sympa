@@ -896,7 +896,7 @@ sub purge_user_table {
     Sympa::Log::Syslog::do_log('debug2', 'purge_user_table()');
 
     ## Load user_table entries
-    my @users = User::get_all_global_user();
+    my @users = Sympa::User::get_all_global_user();
 
     ## Load known subscribers/owners/editors
     my %known_people;
@@ -948,7 +948,7 @@ sub purge_user_table {
     }
 
     unless ($#purged_users < 0) {
-        unless (User::delete_global_user(@purged_users)) {
+        unless (Sympa::User::delete_global_user(@purged_users)) {
             $self->error(
                 {   'task'    => $task,
                     'type'    => 'execution',

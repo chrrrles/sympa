@@ -72,7 +72,7 @@ sub check_auth {
         }
         if ($canonic) {
 
-            unless ($user = User::get_global_user($canonic)) {
+            unless ($user = Sympa::User::get_global_user($canonic)) {
                 $user = {'email' => $canonic};
             }
             return {
@@ -126,7 +126,7 @@ sub authentication {
     my $pwd   = shift;
     my ($user, $canonic);
 
-    unless ($user = User::get_global_user($email)) {
+    unless ($user = Sympa::User::get_global_user($email)) {
         $user = {'email' => $email};
     }
     unless ($user->{'password'}) {
@@ -136,7 +136,7 @@ sub authentication {
     if ($user->{'wrong_login_count'} > $robot->max_wrong_password) {
 
         # too many wrong login attemp
-        User::update_global_user($email,
+        Sympa::User::update_global_user($email,
             {wrong_login_count => $user->{'wrong_login_count'} + 1});
         &Sympa::Report::reject_report_web('user', 'too_many_wrong_login', {})
             unless ($ENV{'SYMPA_SOAP'});
@@ -159,7 +159,7 @@ sub authentication {
             my $fingerprint = &password_fingerprint($pwd);
 
             if ($fingerprint eq $user->{'password'}) {
-                User::update_global_user($email, {wrong_login_count => 0});
+                Sympa::User::update_global_user($email, {wrong_login_count => 0});
                 return {
                     'user'       => $user,
                     'auth'       => 'classic',
@@ -171,10 +171,10 @@ sub authentication {
                     $robot, $auth_service, $email, $pwd, 'email_filter'
                 )
                 ) {
-                unless ($user = User::get_global_user($canonic)) {
+                unless ($user = Sympa::User::get_global_user($canonic)) {
                     $user = {'email' => $canonic};
                 }
-                User::update_global_user($canonic, {wrong_login_count => 0});
+                Sympa::User::update_global_user($canonic, {wrong_login_count => 0});
                 return {
                     'user'       => $user,
                     'auth'       => 'ldap',
@@ -185,7 +185,7 @@ sub authentication {
     }
 
     # increment wrong login count.
-    User::update_global_user($email,
+    Sympa::User::update_global_user($email,
         {wrong_login_count => $user->{'wrong_login_count'} + 1});
 
     &Sympa::Report::reject_report_web('user', 'incorrect_passwd', {})

@@ -1747,9 +1747,9 @@ sub change_user_email {
 
     ## Update User_table and remove existing entry first (to avoid duplicate
     ## entries)
-    my $oldu = User->new($in{'new_email'});
+    my $oldu = Sympa::User->new($in{'new_email'});
     $oldu->expire if $oldu;
-    my $u = User->new($in{'current_email'});
+    my $u = Sympa::User->new($in{'current_email'});
     unless ($u and $u->moveto($in{'new_mail'})) {
         Sympa::Log::Syslog::do_log('err', 'change_email: update failed');
         return undef;
