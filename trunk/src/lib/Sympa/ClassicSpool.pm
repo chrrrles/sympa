@@ -21,7 +21,7 @@
 
 =head1 NAME
 
-SympaspoolClassic - Classic spool
+Sympa::ClassicSpool - Classic spool
 
 =head1 DESCRIPTION
 
@@ -29,7 +29,7 @@ This class implements a spool based on filesystem.
 
 =cut
 
-package SympaspoolClassic;
+package Sympa::ClassicSpool;
 
 use strict;
 use warnings;
@@ -57,7 +57,7 @@ our %classes = (
 =item new ( NAME, STATUS, OPTIONS... )
 
 I<Constructor>.
-Creates a new L<SympaspoolClassic> object.
+Creates a new L<Sympa::ClassicSpool> object.
 
 XXX @todo doc
 
@@ -654,7 +654,7 @@ sub move_to {
     my $param        = shift;
     my $target       = shift;
     my $file_to_move = $self->get_message($param);
-    my $new_spool    = new SympaspoolClassic($target);
+    my $new_spool    = new Sympa::ClassicSpool($target);
     if ($classes{$target}) {
         bless $new_spool, $target;
     }

@@ -60,7 +60,7 @@ use Task;
 use Scenario;
 use Sympa::Fetch;
 use WebAgent;
-use SympaspoolClassic;
+use Sympa::ClassicSpool;
 use Sympa::KeySpool;
 use Sympa::SubscribeSpool;
 use Sympa::Archive;
@@ -1524,7 +1524,7 @@ sub distribute_msg {
 
         # rename update topic content id of the message
         if ($info_msg_topic) {
-            my $topicspool = new SympaspoolClassic('topic');
+            my $topicspool = new Sympa::ClassicSpool('topic');
             rename(
                 "$topicspool->{'dir'}/$info_msg_topic->{'filename'}",
                 "$topicspool->{'dir'}/$self->->get_id.$new_id"
@@ -5476,7 +5476,7 @@ sub archive_msg {
                 'Do not archive message with no-archive flag for list %s',
                 $self);
         } else {
-            my $spoolarchive = new SympaspoolClassic('outgoing');
+            my $spoolarchive = new Sympa::ClassicSpool('outgoing');
             unless (
                 $spoolarchive->store(
                     $msgtostore,
@@ -10411,7 +10411,7 @@ sub tag_topic {
 
     my $topic_item = sprintf "TOPIC   %s\n", $topic_list;
     $topic_item .= sprintf "METHOD  %s\n", $method;
-    my $topicspool = new SympaspoolClassic('topic');
+    my $topicspool = new Sympa::ClassicSpool('topic');
 
     return (
         $topicspool->store(
@@ -10446,7 +10446,7 @@ sub load_msg_topic {
     Sympa::Log::Syslog::do_log('debug2', '(%s, %s)', @_);
     my ($self, $msg_id, $robot) = @_;
 
-    my $topicspool = new SympaspoolClassic('topic');
+    my $topicspool = new Sympa::ClassicSpool('topic');
 
     my $topics_from_spool = $topicspool->get_message(
         {   'list'      => $self->name,
