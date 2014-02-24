@@ -37,7 +37,7 @@ use Site;
 #use Conf; # used in Site
 #use Sympa::Log; # used in Conf
 #use Sympa::Constants; # used in Conf - confdef
-#use SDM; # used in Conf
+#use Sympa::DatabaseManager; # used in Conf
 
 ## Return the previous Sympa version, ie the one listed in
 ## data_structure.version
@@ -101,7 +101,7 @@ sub upgrade {
     }
 
     ## Check database connectivity and probe database
-    unless (SDM::check_db_connect('just_try') and SDM::probe_db()) {
+    unless (Sympa::DatabaseManager::check_db_connect('just_try') and Sympa::DatabaseManager::probe_db()) {
         Sympa::Log::do_log(
             'err',
             'Database %s defined in sympa.conf has not the right structure or is unreachable. verify db_xxx parameters in sympa.conf',
@@ -255,15 +255,15 @@ sub upgrade {
             foreach my $list (@$all_lists) {
                 foreach my $table ('subscriber', 'admin') {
                     unless (
-                        SDM::do_query(
+                        Sympa::DatabaseManager::do_query(
                             q{UPDATE %s_table
 			  SET robot_%s = %s
 			  WHERE list_%s = %s},
                             $table,
                             $table,
-                            SDM::quote($list->domain),
+                            Sympa::DatabaseManager::quote($list->domain),
                             $table,
-                            SDM::quote($list->name)
+                            Sympa::DatabaseManager::quote($list->name)
                         )
                         ) {
                         Sympa::Log::Syslog::do_log(
@@ -274,7 +274,7 @@ sub upgrade {
                         Site->send_notify_to_listmaster(
                             'upgrade_failed',
                             {   'error' =>
-                                    $SDM::db_source->{'db_handler'}->errstr
+                                    $Sympa::DatabaseManager::db_source->{'db_handler'}->errstr
                             }
                         );
                         return undef;
@@ -348,7 +348,7 @@ sub upgrade {
     ## DB fields of enum type have been changed to int
     if (&tools::lower_version($previous_version, '5.2a.1')) {
 
-        if (&SDM::use_db && Site->db_type eq 'mysql') {
+        if (&Sympa::DatabaseManager::use_db && Site->db_type eq 'mysql') {
             my %check = (
                 'subscribed_subscriber' => 'subscriber_table',
                 'included_subscriber'   => 'subscriber_table',
@@ -360,7 +360,7 @@ sub upgrade {
                 my $statement;
                 my $sth;
 
-                $sth = SDM::do_query(q{SELECT max(%s) FROM %s},
+                $sth = Sympa::DatabaseManager::do_query(q{SELECT max(%s) FROM %s},
                     $field, $check{$field});
                 unless ($sth) {
                     Sympa::Log::Syslog::do_log('err',
@@ -379,7 +379,7 @@ sub upgrade {
                         'Fixing DB field %s ; turning 1 to 0...', $field);
                     my $rows;
                     $sth =
-                        SDM::do_query(q{UPDATE %s SET %s = %d WHERE %s = %d},
+                        Sympa::DatabaseManager::do_query(q{UPDATE %s SET %s = %d WHERE %s = %d},
                         $check{$field}, $field, 0, $field, 1);
                     unless ($sth) {
                         Sympa::Log::Syslog::do_log('err',
@@ -398,7 +398,7 @@ sub upgrade {
                         $check{$field}, $field, 1, $field, 2;
 
                     $sth =
-                        SDM::do_query(q{UPDATE %s SET %s = %d WHERE %s = %d},
+                        Sympa::DatabaseManager::do_query(q{UPDATE %s SET %s = %d WHERE %s = %d},
                         $check{$field}, $field, 1, $field, 2);
                     unless ($sth) {
                         Sympa::Log::Syslog::do_log('err',
@@ -415,7 +415,7 @@ sub upgrade {
                 Sympa::Log::Syslog::do_log('notice',
                     'Updating subscribed field of the subscriber table...');
                 my $rows;
-                $sth = SDM::do_query(
+                $sth = Sympa::DatabaseManager::do_query(
                     q{UPDATE subscriber_table
 		      SET subscribed_subscriber = 1
 		      WHERE (included_subscriber IS NULL OR
@@ -877,7 +877,7 @@ sub upgrade {
             ## Exclusion table was not robot-enabled.
             Sympa::Log::Syslog::do_log('notice',
                 'fixing robot column of exclusion table.');
-            my $sth = SDM::do_query(q{SELECT * FROM exclusion_table});
+            my $sth = Sympa::DatabaseManager::do_query(q{SELECT * FROM exclusion_table});
             unless ($sth) {
                 Sympa::Log::Syslog::do_log('err',
                     'Unable to gather informations from the exclusions table.'
@@ -902,13 +902,13 @@ sub upgrade {
                 }
                 if ($#valid_robot_candidates == 0) {
                     $valid_robot = $valid_robot_candidates[0];
-                    my $sth = SDM::do_query(
+                    my $sth = Sympa::DatabaseManager::do_query(
                         q{UPDATE exclusion_table
 			  SET robot_exclusion = %s
 			  WHERE list_exclusion = %s AND user_exclusion = %s},
-                        SDM::quote($valid_robot->domain),
-                        SDM::quote($data->{'list_exclusion'}),
-                        SDM::quote($data->{'user_exclusion'})
+                        Sympa::DatabaseManager::quote($valid_robot->domain),
+                        Sympa::DatabaseManager::quote($data->{'list_exclusion'}),
+                        Sympa::DatabaseManager::quote($data->{'user_exclusion'})
                     );
                     unless ($sth) {
                         Sympa::Log::Syslog::do_log(
@@ -1442,14 +1442,14 @@ sub upgrade {
     return 1;
 }
 
-##DEPRECATED: Use SDM::probe_db().
+##DEPRECATED: Use Sympa::DatabaseManager::probe_db().
 ##sub probe_db {
-##    &SDM::probe_db();
+##    &Sympa::DatabaseManager::probe_db();
 ##}
 
-##DEPRECATED: Use SDM::data_structure_uptodate().
+##DEPRECATED: Use Sympa::DatabaseManager::data_structure_uptodate().
 ##sub data_structure_uptodate {
-##    &SDM::data_structure_uptodate();
+##    &Sympa::DatabaseManager::data_structure_uptodate();
 ##}
 
 ## used to encode files to UTF-8
@@ -1580,12 +1580,12 @@ sub md5_encode_password {
         'Upgrade::md5_encode_password() recoding password using MD5 fingerprint'
     );
 
-    unless (SDM::check_db_connect('just_try')) {
+    unless (Sympa::DatabaseManager::check_db_connect('just_try')) {
         return undef;
     }
 
     my $sth =
-        SDM::do_query(q{SELECT email_user, password_user FROM user_table});
+        Sympa::DatabaseManager::do_query(q{SELECT email_user, password_user FROM user_table});
     unless ($sth) {
         Sympa::Log::Syslog::do_log('err', 'Unable to execute SQL statement');
         return undef;
@@ -1618,12 +1618,12 @@ sub md5_encode_password {
 
         ## Updating Db
         unless (
-            SDM::do_query(
+            Sympa::DatabaseManager::do_query(
                 q{UPDATE user_table
 	      SET password_user = %s
 	      WHERE email_user = %s},
-                SDM::quote(Sympa::Auth::password_fingerprint($clear_password)),
-                SDM::quote($user->{'email_user'})
+                Sympa::DatabaseManager::quote(Sympa::Auth::password_fingerprint($clear_password)),
+                Sympa::DatabaseManager::quote($user->{'email_user'})
             )
             ) {
             Sympa::Log::Syslog::do_log('err',

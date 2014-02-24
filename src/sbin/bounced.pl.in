@@ -185,7 +185,7 @@ unless (defined Sympa::Robot::get_robots()) {
 ##unshift @INC, Site->wws_path;
 
 ## Check databse connectivity
-unless (SDM::check_db_connect()) {
+unless (Sympa::DatabaseManager::check_db_connect()) {
     Sympa::Log::Syslog::fatal_err(
         'Database %s defined in sympa.conf has not the right structure or is unreachable.',
         Site->db_name

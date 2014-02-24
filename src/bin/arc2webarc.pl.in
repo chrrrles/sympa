@@ -31,7 +31,7 @@ use Getopt::Long;
 use List;
 
 #use Sympa::Log; # used in List - Robot - Site - Conf
-#use SDM; # used by Conf
+#use Sympa::DatabaseManager; # used by Conf
 
 my %month_idx = qw(jan 1
     fev 2
@@ -85,7 +85,7 @@ unless (Site->load) {
     die 'config_error';
 }
 
-unless (SDM::check_db_connect('just_try') and SDM::probe_db()) {
+unless (Sympa::DatabaseManager::check_db_connect('just_try') and Sympa::DatabaseManager::probe_db()) {
     printf STDERR
         "Database %s defined in sympa.conf has not the right structure or is unreachable. verify db_xxx parameters in sympa.conf\n",
         Site->db_name;

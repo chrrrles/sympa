@@ -32,7 +32,7 @@ use Sympa::Language qw(gettext_strftime);
 #use List; # not used
 use Sympa::Report;
 
-#use SDM;
+#use Sympa::DatabaseManager;
 
 ## return the password finger print (this proc allow futur replacement of md5
 ## by sha1 or ....)
@@ -468,7 +468,7 @@ sub create_one_time_ticket {
     my $sth;
 
     unless (
-        SDM::do_prepared_query(
+        Sympa::DatabaseManager::do_prepared_query(
             q{INSERT INTO one_time_ticket_table
 	  (ticket_one_time_ticket, robot_one_time_ticket,
 	   email_one_time_ticket, date_one_time_ticket, data_one_time_ticket,
@@ -500,7 +500,7 @@ sub get_one_time_ticket {
     my $sth;
 
     unless (
-        $sth = SDM::do_prepared_query(
+        $sth = Sympa::DatabaseManager::do_prepared_query(
             q{SELECT ticket_one_time_ticket AS ticket,
 		 robot_one_time_ticket AS robot,
 		 email_one_time_ticket AS email,
@@ -558,7 +558,7 @@ sub get_one_time_ticket {
 
     if ($result eq 'success') {
         unless (
-            $sth = SDM::do_prepared_query(
+            $sth = Sympa::DatabaseManager::do_prepared_query(
                 q{UPDATE one_time_ticket_table
 	      SET status_one_time_ticket = ?
 	      WHERE ticket_one_time_ticket = ? AND robot_one_time_ticket = ?},

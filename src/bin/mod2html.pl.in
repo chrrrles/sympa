@@ -40,7 +40,7 @@ Sympa::Log::Syslog::do_openlog($Conf{'syslog'}, $Conf{'log_socket_type'},
     'sympa');
 
 if ($Conf{'db_name'} and $Conf{'db_type'}) {
-    unless (SDM::probe_db()) {
+    unless (Sympa::DatabaseManager::probe_db()) {
         die "Sympa can't connect to database";
     }
 }    #  to check availabity of Sympa database

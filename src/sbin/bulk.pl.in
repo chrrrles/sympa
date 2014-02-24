@@ -317,7 +317,7 @@ while (!$end) {
                 ## to prevent DB handlers to be shared by different processes
                 # when loading conf in database disconnect because of sharing
                 # database handler may crash bulk.pl
-                SDM::db_disconnect();
+                Sympa::DatabaseManager::db_disconnect();
 
                 if (Site->bulk_max_count > 1) {
                     Sympa::Log::Syslog::do_log(

@@ -47,7 +47,7 @@ use Sympa::Language qw(gettext_strftime);
 #use Sympa::Constants;
 use Sympa::Message;
 
-#use SDM;
+#use Sympa::DatabaseManager;
 
 ## global var to store a CipherSaber object
 my $cipher;
@@ -3320,7 +3320,7 @@ sub md5_fingerprint {
 sub get_db_random {
 
     my $sth;
-    unless ($sth = &SDM::do_query("SELECT random FROM fingerprint_table")) {
+    unless ($sth = &Sympa::DatabaseManager::do_query("SELECT random FROM fingerprint_table")) {
         Sympa::Log::Syslog::do_log('err',
             'Unable to retrieve random value from fingerprint_table');
         return undef;
@@ -3351,7 +3351,7 @@ sub init_db_random {
     my $random = int(rand($range)) + $minimum;
 
     unless (
-        &SDM::do_query('INSERT INTO fingerprint_table VALUES (%d)', $random))
+        &Sympa::DatabaseManager::do_query('INSERT INTO fingerprint_table VALUES (%d)', $random))
     {
         Sympa::Log::Syslog::do_log('err',
             'Unable to set random value in fingerprint_table');

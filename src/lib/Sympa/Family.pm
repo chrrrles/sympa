@@ -3188,13 +3188,13 @@ sub insert_delete_exclusion {
         ## Insert: family, user and date
         ## Add dummy list_exclusion column to satisfy constraint.
         unless (
-            &SDM::do_query(
+            &Sympa::DatabaseManager::do_query(
                 'INSERT INTO exclusion_table (list_exclusion, family_exclusion, robot_exclusion, user_exclusion, date_exclusion) VALUES (%s, %s, %s, %s, %s)',
-                &SDM::quote('family:' . $name),
-                &SDM::quote($name),
-                &SDM::quote($robot->domain),
-                &SDM::quote($email),
-                &SDM::quote($date)
+                &Sympa::DatabaseManager::quote('family:' . $name),
+                &Sympa::DatabaseManager::quote($name),
+                &Sympa::DatabaseManager::quote($robot->domain),
+                &Sympa::DatabaseManager::quote($email),
+                &Sympa::DatabaseManager::quote($date)
             )
             ) {
             Sympa::Log::Syslog::do_log('err',

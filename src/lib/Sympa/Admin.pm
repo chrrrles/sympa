@@ -935,7 +935,7 @@ sub rename_list {
 
         # if subscribtion are stored in database rewrite the database
         unless (
-            &SDM::do_prepared_query(
+            &Sympa::DatabaseManager::do_prepared_query(
                 'UPDATE subscriber_table SET list_subscriber = ?, robot_subscriber = ? WHERE list_subscriber = ? AND robot_subscriber = ?',
                 $param{'new_listname'}, $param{'new_robot'},
                 $list->name,            $list->domain
@@ -947,7 +947,7 @@ sub rename_list {
             return 'internal';
         }
         unless (
-            &SDM::do_prepared_query(
+            &Sympa::DatabaseManager::do_prepared_query(
                 'UPDATE admin_table SET list_admin = ?, robot_admin = ? WHERE list_admin = ? AND robot_admin = ?',
                 $param{'new_listname'}, $param{'new_robot'},
                 $list->name,            $list->domain
@@ -968,12 +968,12 @@ sub rename_list {
     }
     ## Move stats
     unless (
-        &SDM::do_query(
+        &Sympa::DatabaseManager::do_query(
             "UPDATE stat_table SET list_stat=%s, robot_stat=%s WHERE (list_stat = %s AND robot_stat = %s )",
-            &SDM::quote($param{'new_listname'}),
-            &SDM::quote($param{'new_robot'}),
-            &SDM::quote($list->name),
-            &SDM::quote($robot)
+            &Sympa::DatabaseManager::quote($param{'new_listname'}),
+            &Sympa::DatabaseManager::quote($param{'new_robot'}),
+            &Sympa::DatabaseManager::quote($list->name),
+            &Sympa::DatabaseManager::quote($robot)
         )
         ) {
         Sympa::Log::Syslog::do_log('err',
@@ -983,12 +983,12 @@ sub rename_list {
 
     ## Move stat counters
     unless (
-        &SDM::do_query(
+        &Sympa::DatabaseManager::do_query(
             "UPDATE stat_counter_table SET list_counter=%s, robot_counter=%s WHERE (list_counter = %s AND robot_counter = %s )",
-            &SDM::quote($param{'new_listname'}),
-            &SDM::quote($param{'new_robot'}),
-            &SDM::quote($list->name),
-            &SDM::quote($robot)
+            &Sympa::DatabaseManager::quote($param{'new_listname'}),
+            &Sympa::DatabaseManager::quote($param{'new_robot'}),
+            &Sympa::DatabaseManager::quote($list->name),
+            &Sympa::DatabaseManager::quote($robot)
         )
         ) {
         Sympa::Log::Syslog::do_log('err',
