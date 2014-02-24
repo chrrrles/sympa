@@ -51,7 +51,7 @@ use Sympa::Config_XML;
 
 #use Sympa::Constants; # load in Conf - confdef
 
-our @ISA = qw(Site_r);    # not fully inherit Robot.
+our @ISA = qw(Sympa::Site_r);    # not fully inherit Robot.
 
 my @uncompellable_param = (
     'msg_topic.keywords',
