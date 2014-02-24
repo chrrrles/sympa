@@ -837,7 +837,7 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
             );
         }
 
-        my $total = &Upgrade::md5_encode_password();
+        my $total = &Sympa::Upgrade::md5_encode_password();
         printf STDERR "Total password re-encoded using MD5: %d\n", $total;
 
         exit 0;
@@ -1197,7 +1197,7 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
         ## Migration from one version to another
         Sympa::Log::Syslog::do_log('notice', "Upgrade process...");
 
-        $main::options{'from'} ||= &Upgrade::get_previous_version();
+        $main::options{'from'} ||= &Sympa::Upgrade::get_previous_version();
         $main::options{'to'}   ||= Sympa::Constants::VERSION;
 
         if ($main::options{'from'} eq $main::options{'to'}) {
@@ -1212,14 +1212,14 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
 
         Sympa::DatabaseManager::probe_db;
         unless (
-            &Upgrade::upgrade($main::options{'from'}, $main::options{'to'})) {
+            &Sympa::Upgrade::upgrade($main::options{'from'}, $main::options{'to'})) {
             Sympa::Log::Syslog::do_log('err',
                 "Migration from %s to %s failed",
                 $main::options{'from'}, $main::options{'to'});
             exit 1;
         }
         Sympa::Log::Syslog::do_log('notice', "Upgrade process finished.");
-        &Upgrade::update_version();
+        &Sympa::Upgrade::update_version();
 
         exit 0;
 
