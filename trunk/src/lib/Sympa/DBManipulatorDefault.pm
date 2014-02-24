@@ -28,10 +28,10 @@ use strict;
 use Carp;
 use Sympa::Log;
 
-use SQLSource;
+use Sympa::SQLSource;
 use Data::Dumper;
 
-our @ISA = qw(SQLSource);
+our @ISA = qw(Sympa::SQLSource);
 
 ############################
 #### Section containing generic functions          #

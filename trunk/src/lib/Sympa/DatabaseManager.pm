@@ -33,7 +33,7 @@ use Sympa::Log;
 
 #use List; # no longer used
 use Sympa::Constants;
-use SQLSource;
+use Sympa::SQLSource;
 use Data::Dumper;
 
 our @ISA;
@@ -163,13 +163,13 @@ sub connect_sympa_database {
         ),
         'warn' => 1
     };
-    unless ($db_source = new SQLSource($db_conf)) {
+    unless ($db_source = new Sympa::SQLSource($db_conf)) {
         Sympa::Log::Syslog::do_log('err',
-            'Unable to create SQLSource object');
+            'Unable to create Sympa::SQLSource object');
         return undef;
     }
     ## Used to check that connecting to the Sympa database works and the
-    ## SQLSource object is created.
+    ## Sympa::SQLSource object is created.
     $use_db = 1;
 
     # Just in case, we connect to the database here. Probably not necessary.

@@ -47,8 +47,8 @@ use Time::Local qw(timelocal);
 # tentative
 use Data::Dumper;
 
-#use SQLSource; # used in SDM
-#use Datasource; # used in SQLSource
+#use Sympa::SQLSource; # used in SDM
+#use Datasource; # used in Sympa::SQLSource
 use Sympa::LDAPSource;
 
 #use Sympa::DatabaseManager; # used in Conf
@@ -6977,7 +6977,7 @@ sub _load_list_members_from_include {
             ## Else if we can't synchronize sources. We make an array with
             ## excluded sources.
             if ($type eq 'include_sql_query') {
-                my $source = new SQLSource($incl);
+                my $source = new Sympa::SQLSource($incl);
                 if ($source->is_allowed_to_sync() || $source_is_new) {
                     Sympa::Log::Syslog::do_log('debug', 'is_new %d, syncing',
                         $source_is_new);
@@ -7201,7 +7201,7 @@ sub _load_list_admin_from_include {
                         admin_only    => 1
                     );
                 } elsif ($type eq 'include_sql_query') {
-                    my $source = new SQLSource($incl);
+                    my $source = new Sympa::SQLSource($incl);
                     $included =
                         _include_users_sql(\%admin_users, $incl, $source,
                         \%option, 'untied', $self->sql_fetch_timeout);
@@ -7539,7 +7539,7 @@ sub sync_include_ca {
             my $source = undef;
             my $srcca  = undef;
             if ($type eq 'include_sql_ca') {
-                $source = new SQLSource($incl);
+                $source = new Sympa::SQLSource($incl);
             } elsif (($type eq 'include_ldap_ca')
                 or ($type eq 'include_ldap_2level_ca')) {
                 $source = new Sympa::LDAPSource($incl);

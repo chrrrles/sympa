@@ -1620,7 +1620,7 @@ sub search {
                 {'value'};
         }
 
-        my $ds = new SQLSource($sql_conf->{'sql_named_filter_query'});
+        my $ds = new Sympa::SQLSource($sql_conf->{'sql_named_filter_query'});
         unless (defined $ds && $ds->connect() && $ds->ping) {
             Sympa::Log::Syslog::do_log(
                 'notice',
