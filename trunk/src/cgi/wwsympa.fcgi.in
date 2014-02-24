@@ -66,7 +66,7 @@ use Sympa::Language qw(gettext gettext_strftime);
 #use Message: # used by List
 use Sympa::Auth;
 use Sympa::Admin;
-use SharedDocument;
+use Sympa::SharedDocument;
 
 #use Sympa::Report;
 use SympaSession;
@@ -24782,7 +24782,7 @@ sub new_d_read {
     # current list / current shared directory
     my $list_name = $list->name;
 
-    my $document = new SharedDocument($list, $in{'path'}, $param);
+    my $document = new Sympa::SharedDocument($list, $in{'path'}, $param);
 
     unless (defined $document) {
         &Sympa::Report::reject_report_web('intern', 'new_document_failed',
