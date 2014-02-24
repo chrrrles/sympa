@@ -64,14 +64,14 @@ use Pod::Usage;
 #use Conf; # used in List - Robot - Site
 use List;
 
-#use SDM; # used by Conf
+#use Sympa::DatabaseManager; # used by Conf
 
 ## Load sympa config
 Site->load or die 'config_error';
 
 ## Probe Db if defined
 if (Site->db_name and Site->db_type) {
-    unless (SDM::check_db_connect('just_try') and SDM::probe_db()) {
+    unless (Sympa::DatabaseManager::check_db_connect('just_try') and Sympa::DatabaseManager::probe_db()) {
         die sprintf
             'Database %s defined in sympa.conf has not the right structure or is unreachable. If you don\'t use any database, comment db_xxx parameters in sympa.conf',
             Site->db_name;

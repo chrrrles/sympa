@@ -34,7 +34,7 @@ use Storable;
 use Data::Dumper;
 
 #use List; # no longer used
-use SDM;
+use Sympa::DatabaseManager;
 use Sympa::Log;
 use Sympa::Language qw(gettext);
 
@@ -324,10 +324,10 @@ sub get_db_conf {
     unless ($robot) { $robot = '*' }
 
     unless (
-        $sth = &SDM::do_query(
+        $sth = &Sympa::DatabaseManager::do_query(
             "SELECT value_conf AS value FROM conf_table WHERE (robot_conf =%s AND label_conf =%s)",
-            &SDM::quote($robot),
-            &SDM::quote($label)
+            &Sympa::DatabaseManager::quote($robot),
+            &Sympa::DatabaseManager::quote($label)
         )
         ) {
         Sympa::Log::Syslog::do_log(
@@ -361,10 +361,10 @@ sub set_robot_conf {
     }
 
     unless (
-        $sth = &SDM::do_query(
+        $sth = &Sympa::DatabaseManager::do_query(
             "SELECT count(*) FROM conf_table WHERE (robot_conf=%s AND label_conf =%s)",
-            &SDM::quote($robot),
-            &SDM::quote($label)
+            &Sympa::DatabaseManager::quote($robot),
+            &Sympa::DatabaseManager::quote($label)
         )
         ) {
         Sympa::Log::Syslog::do_log(
@@ -381,11 +381,11 @@ sub set_robot_conf {
 
     if ($count == 0) {
         unless (
-            $sth = &SDM::do_query(
+            $sth = &Sympa::DatabaseManager::do_query(
                 "INSERT INTO conf_table (robot_conf, label_conf, value_conf) VALUES (%s,%s,%s)",
-                &SDM::quote($robot),
-                &SDM::quote($label),
-                &SDM::quote($value)
+                &Sympa::DatabaseManager::quote($robot),
+                &Sympa::DatabaseManager::quote($label),
+                &Sympa::DatabaseManager::quote($value)
             )
             ) {
             Sympa::Log::Syslog::do_log(
@@ -399,13 +399,13 @@ sub set_robot_conf {
         }
     } else {
         unless (
-            $sth = &SDM::do_query(
+            $sth = &Sympa::DatabaseManager::do_query(
                 "UPDATE conf_table SET robot_conf=%s, label_conf=%s, value_conf=%s WHERE ( robot_conf  =%s AND label_conf =%s)",
-                &SDM::quote($robot),
-                &SDM::quote($label),
-                &SDM::quote($value),
-                &SDM::quote($robot),
-                &SDM::quote($label)
+                &Sympa::DatabaseManager::quote($robot),
+                &Sympa::DatabaseManager::quote($label),
+                &Sympa::DatabaseManager::quote($value),
+                &Sympa::DatabaseManager::quote($robot),
+                &Sympa::DatabaseManager::quote($label)
             )
             ) {
             Sympa::Log::Syslog::do_log(

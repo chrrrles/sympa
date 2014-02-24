@@ -40,7 +40,7 @@ use Sys::Hostname qw(hostname);
 use Data::Dumper;
 
 use Sympa::Message;
-use SDM;
+use Sympa::DatabaseManager;
 
 our @ISA = qw(Exporter);
 
@@ -83,7 +83,7 @@ sub global_count {
     my $message_status = shift;
 
     push @sth_stack, $sth;
-    $sth = &SDM::do_query(
+    $sth = &Sympa::DatabaseManager::do_query(
         "SELECT COUNT(*) FROM spool_table where message_status_spool = '"
             . $message_status
             . "'");
@@ -151,19 +151,19 @@ sub get_content {
     $statement =
         $statement
         . sprintf " FROM spool_table WHERE %s AND spoolname_spool = %s ",
-        $sql_where, &SDM::quote($self->{'spoolname'});
+        $sql_where, &Sympa::DatabaseManager::quote($self->{'spoolname'});
 
     if ($orderby) {
         $statement = $statement . ' ORDER BY ' . $orderby . '_spool ';
         $statement = $statement . ' DESC' if ($way eq 'desc');
     }
     if ($page_size) {
-        $statement .= SDM::get_limit_clause(
+        $statement .= Sympa::DatabaseManager::get_limit_clause(
             {'offset' => $offset, 'rows_count' => $page_size});
     }
 
     push @sth_stack, $sth;
-    unless ($sth = &SDM::do_query($statement)) {
+    unless ($sth = &Sympa::DatabaseManager::do_query($statement)) {
         $sth = pop @sth_stack;
         return undef;
     }
@@ -218,14 +218,14 @@ sub next {
     my $messagekey;
     while (1) {
         unless (
-            $sth = SDM::do_query(
+            $sth = Sympa::DatabaseManager::do_query(
                 q{SELECT messagekey_spool FROM spool_table
 	      WHERE messagelock_spool IS NULL AND spoolname_spool = %s AND
 		    (priority_spool <> 'z' OR priority_spool IS NULL) AND %s
 	      ORDER by priority_spool, date_spool
 	      %s},
-                SDM::quote($self->{'spoolname'}), $sql_where,
-                SDM::get_limit_clause({'rows_count' => 1})
+                Sympa::DatabaseManager::quote($self->{'spoolname'}), $sql_where,
+                Sympa::DatabaseManager::get_limit_clause({'rows_count' => 1})
             )
             ) {
             Sympa::Log::Syslog::do_log('err', 'Could not search spool %s',
@@ -242,7 +242,7 @@ sub next {
         }
 
         unless (
-            $sth = &SDM::do_prepared_query(
+            $sth = &Sympa::DatabaseManager::do_prepared_query(
                 q{UPDATE spool_table
 	      SET messagelock_spool = ?, lockdate_spool = ?
 	      WHERE messagekey_spool = ? AND messagelock_spool IS NULL},
@@ -261,7 +261,7 @@ sub next {
     }
 
     unless (
-        $sth = &SDM::do_prepared_query(
+        $sth = &Sympa::DatabaseManager::do_prepared_query(
             sprintf(
                 q{SELECT %s
 	      FROM spool_table
@@ -352,14 +352,14 @@ sub get_message {
     push @sth_stack, $sth;
 
     unless (
-        $sth = SDM::do_query(
+        $sth = Sympa::DatabaseManager::do_query(
             q{SELECT %s
 	  FROM spool_table
 	  WHERE spoolname_spool = %s%s
 	  %s},
-            $all, SDM::quote($self->{'spoolname'}),
+            $all, Sympa::DatabaseManager::quote($self->{'spoolname'}),
             ($sqlselector ? " AND $sqlselector" : ''),
-            SDM::get_limit_clause({'rows_count' => 1})
+            Sympa::DatabaseManager::get_limit_clause({'rows_count' => 1})
         )
         ) {
         Sympa::Log::Syslog::do_log('err',
@@ -452,7 +452,7 @@ sub update {
             # SQL set  xx = NULL and set xx = 'NULL' is not the same !
             $set = $set . $meta . '_spool = NULL';
         } else {
-            $set = $set . $meta . '_spool = ' . &SDM::quote($values->{$meta});
+            $set = $set . $meta . '_spool = ' . &Sympa::DatabaseManager::quote($values->{$meta});
         }
         if ($meta eq 'messagelock') {
             if ($values->{'messagelock'} eq 'NULL') {
@@ -480,7 +480,7 @@ sub update {
     my $statement = sprintf "UPDATE spool_table SET %s WHERE (%s)", $set,
         $where;
 
-    unless (&SDM::do_query($statement)) {
+    unless (&Sympa::DatabaseManager::do_query($statement)) {
         Sympa::Log::Syslog::do_log('err',
             'Unable to execute SQL statement "%s"', $statement);
         return undef;
@@ -562,7 +562,7 @@ sub store {
 
     push @sth_stack, $sth;
 
-    $sth = SDM::do_prepared_query(
+    $sth = Sympa::DatabaseManager::do_prepared_query(
         sprintf(
             q{INSERT INTO spool_table
 	      (spoolname_spool, messagelock_spool, message_spool%s)
@@ -576,7 +576,7 @@ sub store {
     );
 
     # this query returns the autoinc primary key as result of this insert
-    $sth = SDM::do_prepared_query(
+    $sth = Sympa::DatabaseManager::do_prepared_query(
         q{SELECT messagekey_spool as messagekey
 	  FROM spool_table
 	  WHERE messagelock_spool = ? AND date_spool = ?},
@@ -611,10 +611,10 @@ sub remove_message {
     push @sth_stack, $sth;
 
     unless (
-        $sth = SDM::do_query(
+        $sth = Sympa::DatabaseManager::do_query(
             q{DELETE FROM spool_table
 	  WHERE spoolname_spool = %s%s},
-            SDM::quote($self->{'spoolname'}),
+            Sympa::DatabaseManager::quote($self->{'spoolname'}),
             ($sqlselector ? " AND $sqlselector" : '')
         )
         ) {
@@ -664,7 +664,7 @@ sub clean {
     my $sqlquery =
         sprintf
         "DELETE FROM spool_table WHERE spoolname_spool = %s AND date_spool < %s ",
-        &SDM::quote($spoolname), $freshness_date;
+        &Sympa::DatabaseManager::quote($spoolname), $freshness_date;
     if ($bad) {
         $sqlquery = $sqlquery . " AND message_status_spool = 'bad' ";
     } else {
@@ -672,7 +672,7 @@ sub clean {
     }
 
     push @sth_stack, $sth;
-    $sth = &SDM::do_query('%s', $sqlquery);
+    $sth = &Sympa::DatabaseManager::do_query('%s', $sqlquery);
     $sth->finish;
     Sympa::Log::Syslog::do_log('debug',
         "%s entries older than %s days removed from spool %s",
@@ -821,14 +821,14 @@ sub _sqlselector {
                 . $field
                 . '_spool '
                 . $compare_operator . ' '
-                . &SDM::quote($selector->{$field});
+                . &Sympa::DatabaseManager::quote($selector->{$field});
         } else {
             $sqlselector =
                   ' ' 
                 . $field
                 . '_spool '
                 . $compare_operator . ' '
-                . &SDM::quote($selector->{$field});
+                . &Sympa::DatabaseManager::quote($selector->{$field});
         }
     }
     return $sqlselector;

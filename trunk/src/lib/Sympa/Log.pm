@@ -33,7 +33,7 @@ use Sys::Syslog;
 use Time::HiRes;
 
 #XXXuse List; # no longer used
-#use SDM; #FIXME: dependency loop between Log & SDM
+#use Sympa::DatabaseManager; #FIXME: dependency loop between Log & SDM
 
 our @ISA    = qw(Exporter);
 our @EXPORT = qw($log_level %levels);
@@ -91,7 +91,7 @@ sub fatal_err {
     Site->send_notify_to_listmaster('sympa_died', [$full_msg]);
 
     eval { Site->send_notify_to_listmaster(undef, undef, undef, 1); };
-    eval { SDM::db_disconnect(); };    # unlock database
+    eval { Sympa::DatabaseManager::db_disconnect(); };    # unlock database
     Sys::Syslog::closelog();           # flush log
 
     printf STDERR "$m\n", @_;
@@ -259,7 +259,7 @@ sub get_log_date {
     my @dates;
     foreach my $query ('MIN', 'MAX') {
         unless ($sth =
-            SDM::do_query("SELECT $query(date_logs) FROM logs_table")) {
+            Sympa::DatabaseManager::do_query("SELECT $query(date_logs) FROM logs_table")) {
             do_log('err', 'Unable to get %s date from logs_table', $query);
             return undef;
         }
@@ -322,13 +322,13 @@ sub db_log {
     ## Insert in log_table
 
     unless (
-        SDM::do_prepared_query(
+        Sympa::DatabaseManager::do_prepared_query(
             q{INSERT INTO logs_table
 	  (id_logs, date_logs, robot_logs, list_logs, action_logs,
 	   parameters_logs, target_email_logs, msg_id_logs, status_logs,
 	   error_type_logs, user_email_logs, client_logs, daemon_logs)
 	  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)},
-            $id, SDM::AS_DOUBLE($date), $robot_id, $listname, $action,
+            $id, Sympa::DatabaseManager::AS_DOUBLE($date), $robot_id, $listname, $action,
             substr($parameters, 0, 100), $target_email, $msg_id, $status,
             $error_type, $user_email, $client, $daemon
         )
@@ -372,18 +372,18 @@ sub db_stat_log {
 
     ##insert in stat table
     unless (
-        &SDM::do_query(
+        &Sympa::DatabaseManager::do_query(
             'INSERT INTO stat_table (id_stat, date_stat, email_stat, operation_stat, list_stat, daemon_stat, user_ip_stat, robot_stat, parameter_stat, read_stat) VALUES (%s, %d, %s, %s, %s, %s, %s, %s, %s, %d)',
             $id,
             $date,
-            &SDM::quote($mail),
-            &SDM::quote($operation),
-            &SDM::quote($list),
-            &SDM::quote($daemon),
-            &SDM::quote($ip),
-            &SDM::quote($robot),
-            &SDM::quote($parameter),
-            &SDM::quote($read)
+            &Sympa::DatabaseManager::quote($mail),
+            &Sympa::DatabaseManager::quote($operation),
+            &Sympa::DatabaseManager::quote($list),
+            &Sympa::DatabaseManager::quote($daemon),
+            &Sympa::DatabaseManager::quote($ip),
+            &Sympa::DatabaseManager::quote($robot),
+            &Sympa::DatabaseManager::quote($parameter),
+            &Sympa::DatabaseManager::quote($read)
         )
         ) {
         do_log('err', 'Unable to insert new stat entry in the database');
@@ -413,14 +413,14 @@ sub db_stat_counter_log {
     }
 
     unless (
-        &SDM::do_query(
+        &Sympa::DatabaseManager::do_query(
             'INSERT INTO stat_counter_table (id_counter, beginning_date_counter, end_date_counter, data_counter, robot_counter, list_counter, variation_counter, total_counter) VALUES (%s, %d, %d, %s, %s, %s, %d, %d)',
             $id,
             $date_deb,
             $date_fin,
-            &SDM::quote($data),
-            &SDM::quote($robot),
-            &SDM::quote($list),
+            &Sympa::DatabaseManager::quote($data),
+            &Sympa::DatabaseManager::quote($robot),
+            &Sympa::DatabaseManager::quote($list),
             $variation,
             $total
         )
@@ -439,7 +439,7 @@ sub db_log_del {
     my $date = time - ($exp * 30 * 24 * 60 * 60);
 
     unless (
-        SDM::do_query(
+        Sympa::DatabaseManager::do_query(
             q{DELETE FROM logs_table
 	  WHERE logs_table.date_logs <= %d},
             $date
@@ -515,7 +515,7 @@ sub get_first_db_log {
     my $statement =
         sprintf
         "SELECT date_logs, robot_logs AS robot, list_logs AS list, action_logs AS action, parameters_logs AS parameters, target_email_logs AS target_email,msg_id_logs AS msg_id, status_logs AS status, error_type_logs AS error_type, user_email_logs AS user_email, client_logs AS client, daemon_logs AS daemon FROM logs_table WHERE robot_logs=%s ",
-        &SDM::quote($select->{'robot'});
+        &Sympa::DatabaseManager::quote($select->{'robot'});
 
     #if a type of target and a target are specified
     if (($select->{'target_type'}) && ($select->{'target_type'} ne 'none')) {
@@ -525,7 +525,7 @@ sub get_first_db_log {
             $statement .= 'AND '
                 . $select->{'target_type'}
                 . '_logs = '
-                . &SDM::quote($select->{'target'}) . ' ';
+                . &Sympa::DatabaseManager::quote($select->{'target'}) . ' ';
         }
     }
 
@@ -587,7 +587,7 @@ sub get_first_db_log {
     #if the listmaster want to make a search by an IP adress.
     if ($select->{'ip'}) {
         $statement .= sprintf 'AND client_logs = %s ',
-            SDM::quote($select->{'ip'});
+            Sympa::DatabaseManager::quote($select->{'ip'});
     }
 
     ## Currently not used
@@ -595,14 +595,14 @@ sub get_first_db_log {
     if ($select->{'user_email'}) {
         $select->{'user_email'} = lc($select->{'user_email'});
         $statement .= sprintf 'AND user_email_logs = %s ',
-            SDM::quote($select->{'user_email'});
+            Sympa::DatabaseManager::quote($select->{'user_email'});
     }
 
     #if a list is specified -just for owner or above-
     if ($select->{'list'}) {
         $select->{'list'} = lc($select->{'list'});
         $statement .= sprintf 'AND list_logs = %s ',
-            SDM::quote($select->{'list'});
+            Sympa::DatabaseManager::quote($select->{'list'});
     }
 
     if ($sortby eq 'date') {
@@ -619,7 +619,7 @@ sub get_first_db_log {
     }
 
     push @sth_stack, $sth;
-    unless ($sth = &SDM::do_query($statement)) {
+    unless ($sth = &Sympa::DatabaseManager::do_query($statement)) {
         do_log('err', 'Unable to retrieve logs entry from the database');
         return undef;
     }
@@ -678,7 +678,7 @@ sub aggregate_data {
     my $aggregated_data;
 
     unless (
-        $sth = SDM::do_query(
+        $sth = Sympa::DatabaseManager::do_query(
             q{SELECT *
 	  FROM stat_table
 	  WHERE (date_stat BETWEEN %s AND %s) AND (read_stat = 0)},
@@ -697,7 +697,7 @@ sub aggregate_data {
 
     #the line is read, so update the read_stat from 0 to 1
     unless (
-        $sth = SDM::do_query(
+        $sth = Sympa::DatabaseManager::do_query(
             q{UPDATE stat_table
 	  SET read_stat = 1
 	  WHERE date_stat BETWEEN %s AND %s},
@@ -1323,7 +1323,7 @@ sub update_subscriber_msg_send {
         $counter);
 
     unless (
-        $sth = &SDM::do_query(
+        $sth = &Sympa::DatabaseManager::do_query(
             "SELECT number_messages_subscriber from subscriber_table WHERE (robot_subscriber = '%s' AND list_subscriber = '%s' AND user_subscriber = '%s')",
             $robot, $list, $mail
         )
@@ -1338,7 +1338,7 @@ sub update_subscriber_msg_send {
         $sth->fetchrow_hashref('number_messages_subscriber') + $counter;
 
     unless (
-        &SDM::do_query(
+        &Sympa::DatabaseManager::do_query(
             "UPDATE subscriber_table SET number_messages_subscriber = '%d' WHERE (robot_subscriber = '%s' AND list_subscriber = '%s' AND user_subscriber = '%s')",
             $nb_msg, $robot, $list, $mail
         )
@@ -1356,7 +1356,7 @@ sub update_subscriber_msg_send {
 sub get_last_date_aggregation {
 
     unless (
-        $sth = &SDM::do_query(
+        $sth = &Sympa::DatabaseManager::do_query(
             " SELECT MAX( end_date_counter ) FROM `stat_counter_table` ")
         ) {
         &do_log('err', 'Unable to retrieve last date of aggregation');

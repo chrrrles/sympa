@@ -97,7 +97,7 @@ use Data::Dumper;
 use List;
 
 #use Sympa::Log; # used by Conf
-#use SDM; # used by Conf
+#use Sympa::DatabaseManager; # used by Conf
 #use Sympa::Constants; # used by Conf
 #use Task; # used by List
 #use TaskSpool; # used by Task

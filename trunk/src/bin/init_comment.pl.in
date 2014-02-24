@@ -29,7 +29,7 @@ use lib '--modulesdir--';
 #use Sympa::Constants; # used in List - Robot - Site - Conf - confdef
 use List;
 
-#use SDM; # used by Conf
+#use Sympa::DatabaseManager; # used by Conf
 #use Sympa::Log; # used by Conf
 
 ## Load sympa config
@@ -37,9 +37,9 @@ Site->load or die 'config_error';
 
 chdir Site->home;
 
-SDM::check_db_connect('just_try') or die "Can't connect to database";
+Sympa::DatabaseManager::check_db_connect('just_try') or die "Can't connect to database";
 
-my $sth = SDM::do_query(
+my $sth = Sympa::DatabaseManager::do_query(
     q{SELECT user_subscriber, comment_subscriber
       FROM subscriber_table}
 ) or die 'Unable to execute SQL statement';
@@ -50,7 +50,7 @@ while ($user = $sth->fetchrow_hashref('NAME_lc')) {
     printf "\nUser: %s", $user->{'user_subscriber'};
 
     unless ($user->{'comment_subscriber'}) {
-        my $sth2 = SDM::do_prepared_query(
+        my $sth2 = Sympa::DatabaseManager::do_prepared_query(
             q{SELECT gecos_user
 	      FROM user_table
 	      WHERE email_user = ?},
@@ -62,7 +62,7 @@ while ($user = $sth->fetchrow_hashref('NAME_lc')) {
 
         if ($gecos) {
             printf " =>%s", $gecos;
-            my $sth2 = SDM::do_prepared_query(
+            my $sth2 = Sympa::DatabaseManager::do_prepared_query(
                 q{UPDATE subscriber_table
 		  SET comment_subscriber = ?
 		  WHERE user_subscriber = ?},
@@ -76,4 +76,4 @@ while ($user = $sth->fetchrow_hashref('NAME_lc')) {
 $sth->finish();
 
 ## Disconnect from Database
-SDM::db_disconnect();
+Sympa::DatabaseManager::db_disconnect();

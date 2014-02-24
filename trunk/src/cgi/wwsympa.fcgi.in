@@ -83,7 +83,7 @@ use Sympa::CookieLib;
 use tracking;
 
 #use Sympaspool; # used in List - Task
-#use SDM; # used by Conf
+#use Sympa::DatabaseManager; # used by Conf
 use Sympa::MessageSpool;
 
 use OAuthProvider;
@@ -1015,7 +1015,7 @@ Sympa::Language::SetLang(Site->lang);
 
 ## Important to leave this there because it defined defaults for
 ## user_data_source
-&SDM::check_db_connect();
+&Sympa::DatabaseManager::check_db_connect();
 
 # Now, load all components which are implemented as plugins.  Those will
 # add fields to above configuration and may do database upgrades.
@@ -1024,7 +1024,7 @@ $plugins->start if $plugins;
 ## Check that the data structure is uptodate
 ## If not, set the web interface to maintenance mode
 my $maintenance_mode;
-unless (SDM::data_structure_uptodate()) {
+unless (Sympa::DatabaseManager::data_structure_uptodate()) {
     $maintenance_mode = 1;
     Sympa::Log::Syslog::do_log('err',
         "Web interface set to maintenance mode ; you should run sympa.pl --upgrade"
@@ -1097,14 +1097,14 @@ while ($query = &new_loop()) {
     $< = $>;    ## UID
     $( = $);    ## GID
 
-    unless (&SDM::check_db_connect()) {
+    unless (&Sympa::DatabaseManager::check_db_connect()) {
         &Sympa::Report::reject_report_web('system_quiet', 'no_database', {}, '', '');
         Sympa::Log::Syslog::do_log('info', 'WWSympa requires a RDBMS to run');
     }
 
     ## If in maintenance mode, check if the data structure is now uptodate
     if ($maintenance_mode
-        && (SDM::data_structure_uptodate()
+        && (Sympa::DatabaseManager::data_structure_uptodate()
             && ($> eq (getpwnam(Sympa::Constants::USER))[2]))
         ) {
         $maintenance_mode = undef;
@@ -2162,7 +2162,7 @@ sub crash_handler {
     print STDERR "DIED: $msg";
     &wwslog('err', 'DIED: %s', $msg);
     eval { Site->send_notify_to_listmaster(undef, undef, undef, 1); };
-    eval { SDM::db_disconnect(); };    # unlock database
+    eval { Sympa::DatabaseManager::db_disconnect(); };    # unlock database
     Sys::Syslog::closelog();                  # flush log
     Sympa::Log::Syslog::set_log_level(-1);    # disable log
 

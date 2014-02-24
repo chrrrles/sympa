@@ -34,7 +34,7 @@ unless (require Crypt::CipherSaber) {
 #require tools; # used by Conf
 use List;
 
-#use SDM; # used by conf
+#use Sympa::DatabaseManager; # used by conf
 #use Sympa::Log; # used by conf
 
 ## Load sympa config
@@ -42,11 +42,11 @@ Site->load or die 'config_error';
 
 Site->home;
 
-SDM::check_db_connect('just_try') or die "Can't connect to database";
+Sympa::DatabaseManager::check_db_connect('just_try') or die "Can't connect to database";
 
 print "Searching uncrypted passwords\n";
 
-my $sth = SDM::do_query(
+my $sth = Sympa::DatabaseManager::do_query(
     q{SELECT email_user, password_user
       FROM user_table
       WHERE password_user NOT LIKE 'crypt.%'}
@@ -65,7 +65,7 @@ while ($user = $sth->fetchrow_hashref('NAME_lc')) {
 
     printf " => %s", $crypted_password;
 
-    my $sth2 = SDM::do_prepared_query(
+    my $sth2 = Sympa::DatabaseManager::do_prepared_query(
         q{UPDATE user_table
 	  SET password_user = ?
 	  WHERE email_user = ?},
@@ -79,6 +79,6 @@ while ($user = $sth->fetchrow_hashref('NAME_lc')) {
 $sth->finish();
 
 ## Disconnect from Database
-SDM::db_disconnect();
+Sympa::DatabaseManager::db_disconnect();
 
 printf "Encrypted %d passwords\n", $count;

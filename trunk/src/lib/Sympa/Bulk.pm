@@ -48,7 +48,7 @@ use Data::Dumper;
 use Sympa::Language qw(gettext_strftime);
 
 #use Sympa::Log; # used in Conf
-#use SDM; # used in Conf
+#use Sympa::DatabaseManager; # used in Conf
 use Sympaspool;
 
 ## Database and SQL statement handlers
@@ -95,7 +95,7 @@ sub next {
 
     # Select the most prioritary packet to lock.
     unless (
-        $sth = SDM::do_prepared_query(
+        $sth = Sympa::DatabaseManager::do_prepared_query(
             sprintf(
                 q{SELECT %s messagekey_bulkpacket AS messagekey,
 		 packetid_bulkpacket AS packetid
@@ -121,7 +121,7 @@ sub next {
 
     # Lock the packet previously selected.
     unless (
-        $sth = SDM::do_prepared_query(
+        $sth = Sympa::DatabaseManager::do_prepared_query(
             q{UPDATE bulkpacket_table
 	  SET lock_bulkpacket = ?
 	  WHERE messagekey_bulkpacket = ? AND packetid_bulkpacket = ? AND
@@ -151,7 +151,7 @@ sub next {
 
     # select the packet that has been locked previously
     unless (
-        $sth = SDM::do_query(
+        $sth = Sympa::DatabaseManager::do_query(
             q{SELECT messagekey_bulkpacket AS messagekey,
 		 messageid_bulkpacket AS messageid,
 		 packetid_bulkpacket AS packetid,
@@ -166,7 +166,7 @@ sub next {
 		 delivery_date_bulkpacket AS delivery_date
 	  FROM bulkpacket_table
 	  WHERE lock_bulkpacket=%s %s},
-            SDM::quote($lock), $order
+            Sympa::DatabaseManager::quote($lock), $order
         )
         ) {
         Sympa::Log::Syslog::do_log('err',
@@ -206,10 +206,10 @@ sub remove {
         $packetid);
 
     unless (
-        $sth = SDM::do_query(
+        $sth = Sympa::DatabaseManager::do_query(
             q{DELETE FROM bulkpacket_table
 	  WHERE packetid_bulkpacket = %s AND messagekey_bulkpacket = %s},
-            SDM::quote($packetid), SDM::quote($messagekey)
+            Sympa::DatabaseManager::quote($packetid), Sympa::DatabaseManager::quote($messagekey)
         )
         ) {
         Sympa::Log::Syslog::do_log('err',
@@ -227,9 +227,9 @@ sub messageasstring {
         $messagekey);
 
     unless (
-        $sth = &SDM::do_query(
+        $sth = &Sympa::DatabaseManager::do_query(
             "SELECT message_bulkspool AS message FROM bulkspool_table WHERE messagekey_bulkspool = %s",
-            &SDM::quote($messagekey)
+            &Sympa::DatabaseManager::quote($messagekey)
         )
         ) {
         Sympa::Log::Syslog::do_log(
@@ -265,9 +265,9 @@ sub message_from_spool {
     Sympa::Log::Syslog::do_log('debug', '(messagekey : %s)', $messagekey);
 
     unless (
-        $sth = &SDM::do_query(
+        $sth = &Sympa::DatabaseManager::do_query(
             "SELECT message_bulkspool AS message, messageid_bulkspool AS messageid, dkim_d_bulkspool AS  dkim_d,  dkim_i_bulkspool AS  dkim_i, dkim_privatekey_bulkspool AS dkim_privatekey, dkim_selector_bulkspool AS dkim_selector FROM bulkspool_table WHERE messagekey_bulkspool = %s",
-            &SDM::quote($messagekey)
+            &Sympa::DatabaseManager::quote($messagekey)
         )
         ) {
         Sympa::Log::Syslog::do_log('err',
@@ -437,7 +437,7 @@ sub store {
             ## search if this packet is already in spool database : mailfile
             ## may perform multiple submission of exactly the same message
             unless (
-                $sth = SDM::do_prepared_query(
+                $sth = Sympa::DatabaseManager::do_prepared_query(
                     q{SELECT count(*)
 		  FROM bulkpacket_table
 		  WHERE messagekey_bulkpacket = ? AND packetid_bulkpacket = ?},
@@ -462,7 +462,7 @@ sub store {
 
         } else {
             unless (
-                SDM::do_prepared_query(
+                Sympa::DatabaseManager::do_prepared_query(
                     q{INSERT INTO bulkpacket_table
 		  (messagekey_bulkpacket, messageid_bulkpacket,
 		   packetid_bulkpacket,
@@ -503,7 +503,7 @@ sub purge_bulkspool {
     Sympa::Log::Syslog::do_log('debug', 'purge_bulkspool');
 
     unless (
-        $sth = SDM::do_prepared_query(
+        $sth = Sympa::DatabaseManager::do_prepared_query(
             q{SELECT messagekey_spool AS messagekey
 	  FROM spool_table LEFT JOIN bulkpacket_table
 	  ON messagekey_spool = messagekey_bulkpacket
@@ -539,9 +539,9 @@ sub remove_bulkspool_message {
     my $key   = 'messagekey_' . $spool;
 
     unless (
-        &SDM::do_query(
+        &Sympa::DatabaseManager::do_query(
             "DELETE FROM %s WHERE %s = %s", $table,
-            $key,                           &SDM::quote($messagekey)
+            $key,                           &Sympa::DatabaseManager::quote($messagekey)
         )
         ) {
         Sympa::Log::Syslog::do_log('err', 'Unable to delete %s %s from %s',
@@ -558,7 +558,7 @@ sub get_remaining_packets_count {
     my $m_count = 0;
 
     unless (
-        $sth = SDM::do_prepared_query(
+        $sth = Sympa::DatabaseManager::do_prepared_query(
             q{SELECT COUNT(*)
 	  FROM bulkpacket_table
 	  WHERE lock_bulkpacket IS NULL}

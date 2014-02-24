@@ -130,11 +130,11 @@ if ($operation eq 'add') {
 
         # We create the new mysql alias.
         unless (
-            SDM::do_query(
+            Sympa::DatabaseManager::do_query(
                 q{INSERT INTO valias
 	      SET alias = %s, domain = %s, valias_line = %s},
-                SDM::quote($alias_value), SDM::quote($domain),
-                SDM::quote($command_value)
+                Sympa::DatabaseManager::quote($alias_value), Sympa::DatabaseManager::quote($domain),
+                Sympa::DatabaseManager::quote($command_value)
             )
             ) {
             die $DBI::errstr;
@@ -160,10 +160,10 @@ if ($operation eq 'add') {
         $alias_value =~ s/\+/\-/g;
 
         unless (
-            SDM::do_query(
+            Sympa::DatabaseManager::do_query(
                 q{DELETE FROM valias
 	      WHERE alias = %s and domain = %s},
-                SDM::quote($alias_value), SDM::quote($domain)
+                Sympa::DatabaseManager::quote($alias_value), Sympa::DatabaseManager::quote($domain)
             )
             ) {
             die $DBI::errstr;
@@ -196,11 +196,11 @@ sub already_defined {
 
         my $sth;
         unless (
-            $sth = SDM::do_query(
+            $sth = Sympa::DatabaseManager::do_query(
                 q{SELECT COUNT(alias) as e_alias
 	      FROM valias
 	      WHERE alias = %s and domain = %s},
-                SDM::quote($alias_value), SDM::quote($domain)
+                Sympa::DatabaseManager::quote($alias_value), Sympa::DatabaseManager::quote($domain)
             )
             ) {
             die $DBI::errstr;
@@ -231,5 +231,5 @@ sub initialize_mysql {
 
 ## Close the MySQL Connection
 sub finalize_mysql {
-    SDM::db_disconnect;
+    Sympa::DatabaseManager::db_disconnect;
 }

@@ -8,6 +8,7 @@ nobase_modules_DATA = Sympa/Admin.pm \
 		      Sympa/ConfDef.pm \
 		      Sympa/Config_XML.pm \
 		      Sympa/CookieLib.pm \
+		      Sympa/DatabaseManager.pm \
 		      Sympa/Datasource.pm \
 		      Sympa/DBManipulatorDefault.pm \
 		      Sympa/DBManipulatorMySQL.pm \
@@ -36,7 +37,6 @@ nobase_modules_DATA = Sympa/Admin.pm \
 		      Sympa/Report.pm \
 		      Sympa/Robot.pm \
 		      Sympa/Scenario.pm \
-		      SDM.pm \
 		      SharedDocument.pm \
 		      Site.pm \
 		      Site_r.pm \

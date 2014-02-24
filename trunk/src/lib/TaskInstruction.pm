@@ -766,13 +766,13 @@ sub purge_logs_table {
 
     my $sth;
     unless (
-        $sth = SDM::do_query(
+        $sth = Sympa::DatabaseManager::do_query(
             q{SELECT date_stat
 	      FROM stat_table
 	      WHERE read_stat = 0
 	      ORDER BY date_stat ASC
 	      %s},
-            SDM::get_limit_clause({'rows_count' => 1})
+            Sympa::DatabaseManager::get_limit_clause({'rows_count' => 1})
         )
         ) {
         $self->error(

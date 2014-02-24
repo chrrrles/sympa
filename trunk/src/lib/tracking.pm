@@ -30,7 +30,7 @@ use strict;
 use MIME::Base64;
 
 use Sympa::Log;
-use SDM;
+use Sympa::DatabaseManager;
 
 ##############################################
 #   get_recipients_status
@@ -57,7 +57,7 @@ sub get_recipients_status {
     # the message->head method return message-id including <blabla@dom>
     # where mhonarc return blabla@dom that's why we test both of them
     unless (
-        $sth = SDM::do_query(
+        $sth = Sympa::DatabaseManager::do_query(
             q{SELECT recipient_notification AS recipient,
 	  reception_option_notification AS reception_option,
 	  status_notification AS status,
@@ -69,9 +69,9 @@ sub get_recipients_status {
 	       (message_id_notification = %s OR
 		CONCAT('<',message_id_notification,'>') = %s OR
 		message_id_notification = %s)},
-            SDM::quote($listname), SDM::quote($robot_id),
-            SDM::quote($msgid),    SDM::quote($msgid),
-            SDM::quote('<' . $msgid . '>')
+            Sympa::DatabaseManager::quote($listname), Sympa::DatabaseManager::quote($robot_id),
+            Sympa::DatabaseManager::quote($msgid),    Sympa::DatabaseManager::quote($msgid),
+            Sympa::DatabaseManager::quote('<' . $msgid . '>')
         )
         ) {
         Sympa::Log::Syslog::do_log(
@@ -130,7 +130,7 @@ sub db_init_notification_table {
         my $email = lc($email);
 
         unless (
-            SDM::do_prepared_query(
+            Sympa::DatabaseManager::do_prepared_query(
                 q{INSERT INTO notification_table
 	      (message_id_notification, recipient_notification,
 	       reception_option_notification,
@@ -187,7 +187,7 @@ sub db_insert_notification {
     $notification_as_string = MIME::Base64::encode($notification_as_string);
 
     unless (
-        SDM::do_prepared_query(
+        Sympa::DatabaseManager::do_prepared_query(
             q{UPDATE notification_table
 	  SET status_notification = ?, arrival_date_notification = ?,
 	      message_notification = ?
@@ -231,14 +231,14 @@ sub find_notification_id_by_message {
     # the message->head method return message-id including <blabla@dom> where
     # mhonarc return blabla@dom that's why we test both of them
     unless (
-        $sth = &SDM::do_query(
+        $sth = &Sympa::DatabaseManager::do_query(
             "SELECT pk_notification FROM notification_table WHERE ( recipient_notification = %s AND list_notification = %s AND robot_notification = %s AND (message_id_notification = %s OR CONCAT('<',message_id_notification,'>') = %s OR message_id_notification = %s ))",
-            &SDM::quote($recipient),
-            &SDM::quote($listname),
-            &SDM::quote($robot_id),
-            &SDM::quote($msgid),
-            &SDM::quote($msgid),
-            &SDM::quote('<' . $msgid . '>')
+            &Sympa::DatabaseManager::quote($recipient),
+            &Sympa::DatabaseManager::quote($listname),
+            &Sympa::DatabaseManager::quote($robot_id),
+            &Sympa::DatabaseManager::quote($msgid),
+            &Sympa::DatabaseManager::quote($msgid),
+            &Sympa::DatabaseManager::quote('<' . $msgid . '>')
         )
         ) {
         Sympa::Log::Syslog::do_log(
@@ -290,7 +290,7 @@ sub remove_message_by_id {
 
     my $sth;
     unless (
-        $sth = SDM::do_prepared_query(
+        $sth = Sympa::DatabaseManager::do_prepared_query(
             q{DELETE FROM notification_table
 	  WHERE message_id_notification = ? AND
 	  list_notification = ? AND robot_notification = ?},
@@ -334,7 +334,7 @@ sub remove_message_by_period {
     my $limit = time - ($period * 24 * 60 * 60);
 
     unless (
-        $sth = SDM::do_prepared_query(
+        $sth = Sympa::DatabaseManager::do_prepared_query(
             q{DELETE FROM notification_table
 	  WHERE "date_notification" < ? AND
 	  list_notification = ? AND robot_notification = ?},
