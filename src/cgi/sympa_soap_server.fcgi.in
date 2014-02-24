@@ -41,10 +41,10 @@ unless (defined Sympa::Robot::get_robots()) {
     );
 }
 
-Sympa::Log::Syslog::set_log_level(Site->log_level);
+Sympa::Log::Syslog::set_log_level(Sympa::Site->log_level);
 
 ## Open log
-Sympa::Log::Syslog::do_openlog(Site->log_facility, Site->log_socket_type,
+Sympa::Log::Syslog::do_openlog(Sympa::Site->log_facility, Sympa::Site->log_socket_type,
     'soap');
 Sympa::Log::Syslog::do_log('info', 'SOAP server launched');
 
@@ -60,7 +60,7 @@ unless (&Sympa::DatabaseManager::check_db_connect()) {
 
 ## The process should not fork for sending mail
 ## Messages will be spooled instead
-&Sympa::Mail::set_send_spool(Site->queue);
+&Sympa::Mail::set_send_spool(Sympa::Site->queue);
 
 ## Loading all Lists at startup, in order to increase execution speed
 Sympa::List::get_lists('Site');

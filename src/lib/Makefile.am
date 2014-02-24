@@ -38,7 +38,7 @@ nobase_modules_DATA = Sympa/Admin.pm \
 		      Sympa/Robot.pm \
 		      Sympa/Scenario.pm \
 		      Sympa/SharedDocument.pm \
-		      Site.pm \
+		      Sympa/Site.pm \
 		      Site_r.pm \
 		      SQLSource.pm \
 		      SubscribeSpool.pm \

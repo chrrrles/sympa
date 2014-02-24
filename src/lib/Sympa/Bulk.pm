@@ -83,13 +83,13 @@ sub next {
     ## Only the first record found is locked, thanks to the "LIMIT 1" clause
     $order =
         'ORDER BY priority_message_bulkpacket ASC, priority_packet_bulkpacket ASC, reception_date_bulkpacket ASC, verp_bulkpacket ASC';
-    if (   Site->db_type eq 'mysql'
-        or Site->db_type eq 'Pg'
-        or Site->db_type eq 'SQLite') {
+    if (   Sympa::Site->db_type eq 'mysql'
+        or Sympa::Site->db_type eq 'Pg'
+        or Sympa::Site->db_type eq 'SQLite') {
         $order .= ' LIMIT 1';
-    } elsif (Site->db_type eq 'Oracle') {
+    } elsif (Sympa::Site->db_type eq 'Oracle') {
         $limit_oracle = 'AND rownum<=1';
-    } elsif (Site->db_type eq 'Sybase') {
+    } elsif (Sympa::Site->db_type eq 'Sybase') {
         $limit_sybase = 'TOP 1';
     }
 
@@ -581,7 +581,7 @@ sub there_is_too_much_remaining_packets {
     Sympa::Log::Syslog::do_log('debug3', '()');
     my $remaining_packets = get_remaining_packets_count();
     if (    $remaining_packets
-        and $remaining_packets > Site->bulk_fork_threshold) {
+        and $remaining_packets > Sympa::Site->bulk_fork_threshold) {
         return $remaining_packets;
     } else {
         return 0;

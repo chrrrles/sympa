@@ -139,7 +139,7 @@ unless (Sympa::Robot::get_robots()) {
     exit 1;
 }
 
-Sympa::Log::Syslog::do_openlog(Site->log_facility, Site->log_socket_type,
+Sympa::Log::Syslog::do_openlog(Sympa::Site->log_facility, Sympa::Site->log_socket_type,
     'task_manager');
 
 # setting log_level using conf unless it is set by calling option
@@ -151,10 +151,10 @@ if ($main::options{'log_level'}) {
         $main::options{'log_level'}
     );
 } else {
-    Sympa::Log::Syslog::set_log_level(Site->log_level);
+    Sympa::Log::Syslog::set_log_level(Sympa::Site->log_level);
     Sympa::Log::Syslog::do_log('info',
         'Configuration file read, default log level %s',
-        Site->log_level);
+        Sympa::Site->log_level);
 }
 
 ## Put ourselves in background if not in debug mode.
@@ -201,12 +201,12 @@ unless (($( == (getgrnam(Sympa::Constants::GROUP))[2])
 }
 
 ## Sets the UMASK
-umask(oct(Site->umask));
+umask(oct(Sympa::Site->umask));
 
 ## Change to list root
-unless (chdir(Site->home)) {
+unless (chdir(Sympa::Site->home)) {
     Sympa::Log::Syslog::do_log('err',
-        'error : unable to change to directory %s', Site->home);
+        'error : unable to change to directory %s', Sympa::Site->home);
     exit(-1);
 }
 
@@ -231,7 +231,7 @@ while (!$end) {
     &Sympa::List::init_list_cache();
 
     # Process grouped notifications
-    Site->send_notify_to_listmaster(undef, undef, 1, undef);
+    Sympa::Site->send_notify_to_listmaster(undef, undef, 1, undef);
 
     TaskSpool::create_required_tasks($current_date);
 
@@ -265,7 +265,7 @@ sub sigterm {
 }
 
 # Purge grouped notifications
-Site->send_notify_to_listmaster(undef, undef, undef, 1);
+Sympa::Site->send_notify_to_listmaster(undef, undef, undef, 1);
 
 Sympa::Log::Syslog::do_log('notice',
     'task_manager exited normally due to signal');

@@ -149,7 +149,7 @@ unless (Sympa::Robot::get_robots()) {
     exit 1;
 }
 
-Sympa::Log::Syslog::do_openlog(Site->syslog, Site->log_socket_type, 'bulk');
+Sympa::Log::Syslog::do_openlog(Sympa::Site->syslog, Sympa::Site->log_socket_type, 'bulk');
 
 # setting log_level using conf unless it is set by calling option
 if ($main::options{'log_level'}) {
@@ -160,10 +160,10 @@ if ($main::options{'log_level'}) {
         $main::options{'log_level'}
     );
 } else {
-    Sympa::Log::Syslog::set_log_level(Site->log_level);
+    Sympa::Log::Syslog::set_log_level(Sympa::Site->log_level);
     Sympa::Log::Syslog::do_log('info',
         'Configuration file read, default log level %s',
-        Site->log_level);
+        Sympa::Site->log_level);
 }
 
 ## Set the process as main bulk daemon by default.
@@ -185,7 +185,7 @@ unless ($main::options{'debug'} || $main::options{'foreground'}) {
         exit(0);
     }
 }
-Sympa::Log::Syslog::do_openlog(Site->syslog, Site->log_socket_type, 'bulk');
+Sympa::Log::Syslog::do_openlog(Sympa::Site->syslog, Sympa::Site->log_socket_type, 'bulk');
 ## If process is running in foreground, don't write STDERR to a dedicated file
 my $options;
 $options->{'stderr_to_tty'} = 1 if ($main::options{'foreground'});
@@ -213,10 +213,10 @@ unless (($( == (getgrnam(Sympa::Constants::GROUP))[2])
 }
 
 ## Sets the UMASK
-umask(oct(Site->umask));
+umask(oct(Sympa::Site->umask));
 
 ## Change to list root
-unless (chdir(Site->home)) {
+unless (chdir(Sympa::Site->home)) {
     Sympa::Log::Syslog::do_log('err', 'unable to change directory');
     exit(-1);
 }
@@ -235,12 +235,12 @@ my $messagekey;    # the key of the current message in the message_table
 my $messageasstring_init;    # the current message as a string
 my $messageasstring;         # the transformed message.
 
-my $timeout         = Site->bulk_wait_to_fork;
+my $timeout         = Sympa::Site->bulk_wait_to_fork;
 my $last_check_date = 0;
 my %created_children;
 
 $options->{'multiple_process'} = 1;
-$Sympa::Conf::Conf{'maxsmtp'} = int(Site->maxsmtp / Site->bulk_max_count);    #FIXME
+$Sympa::Conf::Conf{'maxsmtp'} = int(Sympa::Site->maxsmtp / Sympa::Site->bulk_max_count);    #FIXME
 
 my $spool = new Sympaspool('bulk');
 
@@ -248,7 +248,7 @@ while (!$end) {
     &Sympa::List::init_list_cache();
 
     # Process grouped notifications
-    Site->send_notify_to_listmaster(undef, undef, 1, undef);
+    Sympa::Site->send_notify_to_listmaster(undef, undef, 1, undef);
 
     my $bulk;
     my $message_from_spool;
@@ -310,7 +310,7 @@ while (!$end) {
             if ((   my $r_packets =
                     &Sympa::Bulk::there_is_too_much_remaining_packets()
                 )
-                && ($#remaining_children + 1 < Site->bulk_max_count)
+                && ($#remaining_children + 1 < Sympa::Site->bulk_max_count)
                 ) {
 
                 ## disconnect from database before fork
@@ -319,15 +319,15 @@ while (!$end) {
                 # database handler may crash bulk.pl
                 Sympa::DatabaseManager::db_disconnect();
 
-                if (Site->bulk_max_count > 1) {
+                if (Sympa::Site->bulk_max_count > 1) {
                     Sympa::Log::Syslog::do_log(
                         'info',
                         'Important workload: %s packets to process. Creating %s child bulks to increase sending rate.',
                         $r_packets,
-                        Site->bulk_max_count- ($#remaining_children + 1)
+                        Sympa::Site->bulk_max_count- ($#remaining_children + 1)
                     );
                     for my $process_count (
-                        1 .. Site->bulk_max_count- ($#remaining_children + 1))
+                        1 .. Sympa::Site->bulk_max_count- ($#remaining_children + 1))
                     {
                         Sympa::Log::Syslog::do_log('info', "Will fork: %s",
                             $process_count);
@@ -347,8 +347,8 @@ while (!$end) {
                             $date_of_last_activity = time();
                             $main::daemon_usage =
                                 'DAEMON_SLAVE';    # automatic lists creation
-                            Sympa::Log::Syslog::do_openlog(Site->syslog,
-                                Site->log_socket_type, 'bulk');
+                            Sympa::Log::Syslog::do_openlog(Sympa::Site->syslog,
+                                Sympa::Site->log_socket_type, 'bulk');
                             Sympa::Log::Syslog::do_log('info',
                                 "Bulk slave daemon started with PID %s", $$);
                             last;
@@ -362,11 +362,11 @@ while (!$end) {
     ## If a child bulk process is running for long enough, stop it (if the
     ## number of remaining packets to send is reasonnable).
     if (   ($main::daemon_usage eq 'DAEMON_SLAVE')
-        && (time() - $date_of_last_activity > Site->bulk_lazytime)
+        && (time() - $date_of_last_activity > Sympa::Site->bulk_lazytime)
         && !(my $r_packets = &Sympa::Bulk::there_is_too_much_remaining_packets())) {
         Sympa::Log::Syslog::do_log('info',
             "Process %s didn't send any message since %s seconds, exiting.",
-            $$, Site->bulk_lazytime);
+            $$, Sympa::Site->bulk_lazytime);
         last;
     }
 
@@ -573,7 +573,7 @@ while (!$end) {
                 $bulk->{'messagekey'}, $bulk->{'packetid'});
         }
 
-        if ($bulk->{'priority_packet'} == Site->sympa_packet_priority + 5) {
+        if ($bulk->{'priority_packet'} == Sympa::Site->sympa_packet_priority + 5) {
             Sympa::Log::Syslog::do_log(
                 'notice',
                 'Done sending message "%s" (key "%s") to list "%s@%s" (priority %s) in %s seconds since scheduled expedition date.',
@@ -588,14 +588,14 @@ while (!$end) {
         $date_of_last_activity = time();
     } else {
         ## Sleep for a while if bulk_mailer DB table is empty
-        sleep Site->bulk_sleep;
+        sleep Sympa::Site->bulk_sleep;
     }
     &Sympa::Mail::reaper;
 
 }
 
 # Purge grouped notifications
-Site->send_notify_to_listmaster(undef, undef, undef, 1);
+Sympa::Site->send_notify_to_listmaster(undef, undef, undef, 1);
 
 Sympa::Log::Syslog::do_log('notice', 'bulk.pl exited normally due to signal');
 tools::remove_pid('bulk', $$, $options);
@@ -616,13 +616,13 @@ sub trace_smime {
     my $where                = shift;
 
     my $trusted_ca_options = '';
-    $trusted_ca_options = "-CAfile " . Site->cafile . " " if Site->cafile;
-    $trusted_ca_options .= "-CApath " . Site->capath . " " if Site->capath;
+    $trusted_ca_options = "-CAfile " . Sympa::Site->cafile . " " if Sympa::Site->cafile;
+    $trusted_ca_options .= "-CApath " . Sympa::Site->capath . " " if Sympa::Site->capath;
 
     unless (
         open(MSGDUMP,
                   "| "
-                . Site->openssl
+                . Sympa::Site->openssl
                 . " smime -verify  $trusted_ca_options > /dev/null"
         )
         ) {

@@ -62,7 +62,7 @@ our %listmaster_messages_stack;
 =item load ( OBJECT, [ OPT => VAL, ... ] )
 
     # To load global config
-    Site->load();
+    Sympa::Site->load();
     # To load robot config
     $robot->load();
 
@@ -97,7 +97,7 @@ sub load {
         }
         $opts{'config_file'} = $self->{'etc'} . '/robot.conf';
         $opts{'robot'}       = $self->{'name'};
-    } elsif ($self eq 'Site') {
+    } elsif ($self eq 'Sympa::Site') {
         $opts{'config_file'} ||= Sympa::Conf::get_sympa_conf();
         $opts{'robot'} = '*';
     } else {
@@ -107,13 +107,13 @@ sub load {
     my $result = Sympa::Conf::load_robot_conf(\%opts);
 
     ## Robot cache must be reloaded if Site config had been reloaded.
-    Site->init_robot_cache() if !ref $self and $self eq 'Site' and $result;
+    Sympa::Site->init_robot_cache() if !ref $self and $self eq 'Sympa::Site' and $result;
 
     return undef unless defined $result;
     return $result if $opts{'return_result'};
 
     ## Site configuration was successfully initialized.
-    $Site::is_initialized = 1 if !ref $self and $self eq 'Site';
+    $Site::is_initialized = 1 if !ref $self and $self eq 'Sympa::Site';
 
     return 1;
 }
@@ -127,7 +127,7 @@ sub load {
 =item get_address ( [ TYPE ] )
 
     # To get super listmaster address
-    $addr = Site->get_address('listmaster');
+    $addr = Sympa::Site->get_address('listmaster');
     # To get robot addresses
     $addr = $robot->get_address();              # sympa
     $addr = $robot->get_address('listmaster');
@@ -172,7 +172,7 @@ sub get_address {
         } elsif ($type eq 'unsubscribe') {
             return $self->name . '-unsubscribe' . '@' . $self->host;
         }
-    } elsif (ref $self and ref $self eq 'Sympa::Robot' or $self eq 'Site') {
+    } elsif (ref $self and ref $self eq 'Sympa::Robot' or $self eq 'Sympa::Site') {
         unless ($type) {
             return $self->email . '@' . $self->host;
         } elsif ($type eq 'sympa') {    # same as above, for convenience
@@ -201,7 +201,7 @@ sub get_address {
 =item is_listmaster ( WHO )
 
     # Is the user super listmaster?
-    if (Site->is_listmaster($email) ...
+    if (Sympa::Site->is_listmaster($email) ...
     # Is the user normal or super listmaster?
     if ($robot->is_listmaster($email) ...
 
@@ -220,13 +220,13 @@ sub is_listmaster {
         foreach my $listmaster (($self->listmasters,)) {
             return 1 if $listmaster eq $who;
         }
-    } elsif ($self eq 'Site') {
+    } elsif ($self eq 'Sympa::Site') {
         ;
     } else {
         croak 'bug is logic.  Ask developer';
     }
 
-    foreach my $listmaster ((Site->listmasters,)) {
+    foreach my $listmaster ((Sympa::Site->listmasters,)) {
         return 1 if $listmaster eq $who;
     }
 
@@ -240,7 +240,7 @@ sub is_listmaster {
 =item best_language ( LANG, ... )
 
     # To get site-wide best language.
-    $lang = Site->best_language('de', 'en-US;q=0.9');
+    $lang = Sympa::Site->best_language('de', 'en-US;q=0.9');
     # To get robot-wide best language.
     $lang = $robot->best_language('de', 'en-US;q=0.9');
     # To get list-specific best language.
@@ -269,7 +269,7 @@ sub best_language {
 
     if (ref $self eq 'List') {
         @supported_languages = $self->robot->supported_languages;
-    } elsif (ref $self eq 'Sympa::Robot' or !ref $self and $self eq 'Site') {
+    } elsif (ref $self eq 'Sympa::Robot' or !ref $self and $self eq 'Sympa::Site') {
         @supported_languages = $self->supported_languages;
     } else {
         croak 'bug in logic.  Ask developer';
@@ -285,7 +285,7 @@ sub best_language {
             if $supported_languages{$lang} and !grep { $_ eq $lang } @langs;
     }
     if (ref $self eq 'List' or ref $self eq 'Sympa::Robot') {
-        $lang = Site->lang;
+        $lang = Sympa::Site->lang;
         push @langs, $lang
             if $supported_languages{$lang} and !grep { $_ eq $lang } @langs;
     }
@@ -304,7 +304,7 @@ sub best_language {
 =item compute_auth
 
     # To compute site-wide token
-    Site->compute_auth('user@dom.ain', 'remind');
+    Sympa::Site->compute_auth('user@dom.ain', 'remind');
     # To cpmpute a token specific to a list
     $list->compute_auth('user@dom.ain', 'subscribe');
 
@@ -328,7 +328,7 @@ sub compute_auth {
         ## Method excluded from inheritance chain
         croak sprintf 'Can\'t locate object method "%s" via package "%s"',
             'compute_auth', ref $self;
-    } elsif ($self eq 'Site') {
+    } elsif ($self eq 'Sympa::Site') {
         $listname = '';
     } else {
         croak 'bug in logic.  Ask developer';
@@ -347,7 +347,7 @@ sub compute_auth {
 =item request_auth
 
     # To send robot or site auth request
-    Site->request_auth('user@dom.ain', 'remind');
+    Sympa::Site->request_auth('user@dom.ain', 'remind');
     # To send auth request specific to a list
     $list->request_auth('user@dom.ain', 'subscribe'):
 
@@ -417,7 +417,7 @@ sub request_auth {
         ## Method excluded from inheritance chain
         croak sprintf 'Can\'t locate object method "%s" via package "%s"',
             'request_auth', ref $self;
-    } elsif ($self eq 'Site') {
+    } elsif ($self eq 'Sympa::Site') {
         if ($cmd eq 'remind') {
             my $keyauth = $self->compute_auth('', $cmd);
             $data->{'command'} = "auth $keyauth $cmd *";
@@ -445,7 +445,7 @@ sub request_auth {
 =item get_etc_filename
 
     # To get file name for global site
-    $file = Site->get_etc_filename($name);
+    $file = Sympa::Site->get_etc_filename($name);
     # To get file name for a robot
     $file = $robot->get_etc_filename($name);
     # To get file name for a family
@@ -470,7 +470,7 @@ sub get_etc_filename {
     unless (ref $self eq 'List'
         or ref $self eq 'Sympa::Family'
         or ref $self eq 'Sympa::Robot'
-        or $self     eq 'Site') {
+        or $self     eq 'Sympa::Site') {
         croak 'bug in logic.  Ask developer';
     }
 
@@ -517,7 +517,7 @@ sub get_etc_filename {
 =item get_etc_include_path
 
     # To make include path for global site
-    @path = @{Site->get_etc_include_path};
+    @path = @{Sympa::Site->get_etc_include_path};
     # To make include path for a robot
     @path = @{$robot->get_etc_include_path};
     # To make include path for a family
@@ -622,9 +622,9 @@ sub _get_etc_include_path {
         }
     } elsif (ref $self and ref $self eq 'Sympa::Robot') {
         my $path_robot;
-        @include_path = Site->_get_etc_include_path(@_);
+        @include_path = Sympa::Site->_get_etc_include_path(@_);
 
-        if ($self->etc ne Site->etc) {
+        if ($self->etc ne Sympa::Site->etc) {
             if ($dir) {
                 $path_robot = $self->etc . '/' . $dir;
             } else {
@@ -638,16 +638,16 @@ sub _get_etc_include_path {
                 unshift @include_path, $path_robot;
             }
         }
-    } elsif ($self eq 'Site') {
+    } elsif ($self eq 'Sympa::Site') {
         my $path_etcbindir;
         my $path_etcdir;
 
         if ($dir) {
             $path_etcbindir = Sympa::Constants::DEFAULTDIR . '/' . $dir;
-            $path_etcdir    = Site->etc . '/' . $dir;
+            $path_etcdir    = Sympa::Site->etc . '/' . $dir;
         } else {
             $path_etcbindir = Sympa::Constants::DEFAULTDIR;
-            $path_etcdir    = Site->etc;
+            $path_etcdir    = Sympa::Site->etc;
         }
         if ($lang_dirs) {
             @include_path = (
@@ -673,7 +673,7 @@ sub _get_etc_include_path {
 =item send_dsn ( MESSAGE_OBJECT, [ OPTIONS, [ STATUS, [ DIAG ] ] ] )
 
     # To send site-wide DSN
-    Site->send_dsn($message, {'recipient' => $rcpt},
+    Sympa::Site->send_dsn($message, {'recipient' => $rcpt},
         '5.1.2', 'Unknown robot');
     # To send DSN related to a robot
     $robot->send_dsn($message, {'listname' => $name},
@@ -726,7 +726,7 @@ sub send_dsn {
         }
         $recipient ||= $param->{'recipient'};
         $status ||= '5.1.1';
-    } elsif ($self eq 'Site') {
+    } elsif ($self eq 'Sympa::Site') {
         $recipient = $param->{'recipient'};
         $status ||= '5.1.2';
     } else {
@@ -808,7 +808,7 @@ sub send_dsn {
 
     # To send site-global (not relative to a list or a robot)
     # message
-    Site->send_file($template, $who, ...);
+    Sympa::Site->send_file($template, $who, ...);
     # To send global (not relative to a list, but relative to a
     # robot) message 
     $robot->send_file($template, $who, ...);
@@ -846,7 +846,7 @@ OUT : 1 | undef
 =cut
 
 ## This method proxies site-global, robot-global and list-local methods,
-## i.e. Site->send_file(), $robot->send_file() and $list->send_file().
+## i.e. Sympa::Site->send_file(), $robot->send_file() and $list->send_file().
 
 sub send_file {
     Sympa::Log::Syslog::do_log('debug2', '(%s, %s, %s, ...)', @_);
@@ -867,7 +867,7 @@ sub send_file {
         $list     = '';
         $robot_id = $self->name;
         $listname = '';
-    } elsif ($self eq 'Site') {
+    } elsif ($self eq 'Sympa::Site') {
         $robot    = $self;
         $list     = '';
         $robot_id = '*';
@@ -1003,7 +1003,7 @@ sub send_file {
 
         ## Sign mode
         my $sign_mode;
-        if (    Site->openssl
+        if (    Sympa::Site->openssl
             and -r $self->dir . '/cert.pem'
             and -r $self->dir . '/private_key') {
             $sign_mode = 'smime';
@@ -1099,7 +1099,7 @@ sub send_file {
 =item send_notify_to_listmaster ( OPERATION, DATA, CHECKSTACK, PURGE )
 
     # To send notify to super listmaster(s)
-    Site->send_notify_to_listmaster('css_updated', ...);
+    Sympa::Site->send_notify_to_listmaster('css_updated', ...);
     # To send notify to normal (per-robot) listmaster(s)
     $robot->send_notify_to_listmaster('web_tt2_error', ...);
 
@@ -1121,7 +1121,7 @@ OUT : 1 | undef
 =cut
 
 ## This method proxies site-global and robot-global methods, i.e.
-## Site->send_notify_to_listmaster() and $robot->send_notify_to_listmaster().
+## Sympa::Site->send_notify_to_listmaster() and $robot->send_notify_to_listmaster().
 
 sub send_notify_to_listmaster {
     Sympa::Log::Syslog::do_log('debug2', '(%s, %s, ...)', @_);
@@ -1138,7 +1138,7 @@ sub send_notify_to_listmaster {
             'send_notify_to_listmaster', ref $self;
     } elsif (ref $self and ref $self eq 'Sympa::Robot') {
         $robot_id = $self->name;
-    } elsif ($self eq 'Site') {
+    } elsif ($self eq 'Sympa::Site') {
         $robot_id = '*';
     } else {
         croak 'bug in logic.  Ask developer';
@@ -1422,7 +1422,7 @@ sub robots {
         my $v = shift;
         unless (defined $v) {
             delete $robots{$name};
-            delete Site->robots_config->{$name};
+            delete Sympa::Site->robots_config->{$name};
         } else {
             $robots{$name} = $v;
         }

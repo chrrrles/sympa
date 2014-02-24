@@ -33,7 +33,7 @@ use warnings;
 use Carp qw(carp croak);
 
 use Sympa::ListDef;
-use Site;
+use Sympa::Site;
 
 our @ISA = qw(Site);
 
@@ -75,24 +75,24 @@ sub new {
     ##XXX$name = '*' unless defined $name and length $name;
 
     ## load global config if needed
-    Site->load(%options)
+    Sympa::Site->load(%options)
         if !$Site::is_initialized
             or $options{'force_reload'};
     return undef unless $Site::is_initialized;
 
     my $robot;
     ## If robot already in memory
-    if (Site->robots($name)) {
+    if (Sympa::Site->robots($name)) {
 
         # use the current robot in memory and update it
-        $robot = Site->robots($name);
+        $robot = Sympa::Site->robots($name);
     } else {
 
         # create a new object robot
         $robot = bless {} => $pkg;
         my $status = $robot->load($name, %options);
         unless (defined $status) {
-            Site->robots($name, undef);
+            Sympa::Site->robots($name, undef);
             return undef;
         }
     }
@@ -131,26 +131,26 @@ sub load {
     my $name    = shift;
     my %options = @_;
 
-    $name = Site->domain
+    $name = Sympa::Site->domain
         unless defined $name
             and length $name
             and $name ne '*';
 
     ## load global config if needed
-    Site->load(%options)
+    Sympa::Site->load(%options)
         if !$Site::is_initialized
             or $options{'force_reload'};
     return undef unless $Site::is_initialized;
 
     unless ($self->{'name'} and $self->{'etc'}) {
-        my $vhost_etc = Site->etc . '/' . $name;
+        my $vhost_etc = Sympa::Site->etc . '/' . $name;
 
         if (-f $vhost_etc . '/robot.conf') {
             ## virtual robot, even if its domain is same as that of main conf
             $self->{'etc'} = $vhost_etc;
-        } elsif ($name eq Site->domain) {
+        } elsif ($name eq Sympa::Site->domain) {
             ## robot of main conf
-            $self->{'etc'} = Site->etc;
+            $self->{'etc'} = Sympa::Site->etc;
         } else {
             Sympa::Log::Syslog::do_log('err',
                 'Unknown robot "%s": config directory was not found', $name)
@@ -166,14 +166,14 @@ sub load {
         return undef;
     }
 
-    unless ($self->{'etc'} eq Site->etc) {
+    unless ($self->{'etc'} eq Sympa::Site->etc) {
         ## the robot uses per-robot config
         my $config_file = $self->{'etc'} . '/robot.conf';
 
         unless (-r $config_file) {
             Sympa::Log::Syslog::do_log('err', 'No read access on %s',
                 $config_file);
-            Site->send_notify_to_listmaster(
+            Sympa::Site->send_notify_to_listmaster(
                 'cannot_access_robot_conf',
                 [   "No read access on $config_file. you should change privileges on this file to activate this virtual host. "
                 ]
@@ -196,19 +196,19 @@ sub load {
             Sympa::Log::Syslog::do_log('err',
                 'Robot name "%s" is not same as domain "%s"',
                 $name, $self->domain);
-            Site->robots($name, undef);
-            ##delete Site->robots_config->{$self->domain};
+            Sympa::Site->robots($name, undef);
+            ##delete Sympa::Site->robots_config->{$self->domain};
             return undef;
         }
     }
 
     unless ($self->{'home'}) {
-        my $vhost_home = Site->home . '/' . $name;
+        my $vhost_home = Sympa::Site->home . '/' . $name;
 
         if (-d $vhost_home) {
             $self->{'home'} = $vhost_home;
-        } elsif ($self->domain eq Site->domain) {
-            $self->{'home'} = Site->home;
+        } elsif ($self->domain eq Sympa::Site->domain) {
+            $self->{'home'} = Sympa::Site->home;
         } else {
             Sympa::Log::Syslog::do_log('err',
                 'Unknown robot "%s": home directory was not found', $name);
@@ -216,7 +216,7 @@ sub load {
         }
     }
 
-    Site->robots($name, $self);
+    Sympa::Site->robots($name, $self);
     return 1;
 }
 
@@ -352,14 +352,14 @@ sub split_listname {
             grep { $_ and length $_ }
             split(/[\s,]+/, $self->list_check_suffixes));
 
-    if ($mailbox eq 'sympa' and $self->domain eq Site->domain) {    # compat.
+    if ($mailbox eq 'sympa' and $self->domain eq Sympa::Site->domain) {    # compat.
         return (undef, 'sympa');
     } elsif ($mailbox eq $self->email
-        or $self->domain eq Site->domain and $mailbox eq Site->email) {
+        or $self->domain eq Sympa::Site->domain and $mailbox eq Sympa::Site->email) {
         return (undef, 'sympa');
     } elsif ($mailbox eq $self->listmaster_email
-        or $self->domain eq Site->domain
-        and $mailbox eq Site->listmaster_email) {
+        or $self->domain eq Sympa::Site->domain
+        and $mailbox eq Sympa::Site->listmaster_email) {
         return (undef, 'listmaster');
     } elsif ($mailbox =~ /^(\S+)$return_path_suffix$/) {            # -owner
         return ($1, 'return_path');
@@ -630,7 +630,7 @@ sub topics {
         my $index = 0;
         my (@rough_data, $topic);
         while (<FILE>) {
-            Encode::from_to($_, Site->filesystem_encoding, 'utf8');
+            Encode::from_to($_, Sympa::Site->filesystem_encoding, 'utf8');
             if (/^([\-\w\/]+)\s*$/) {
                 $index++;
                 $topic = {
@@ -888,34 +888,34 @@ sub get_robots {
     my $dir;
 
     ## load global config if needed
-    Site->load(%options)
+    Sympa::Site->load(%options)
         if !$Site::is_initialized
             or $options{'force_reload'};
     return undef unless $Site::is_initialized;
 
     ## Check memory cache first.
-    if (Site->robots_ok) {
-        @robots = Site->robots;
+    if (Sympa::Site->robots_ok) {
+        @robots = Sympa::Site->robots;
         return \@robots;
     }
 
     ## get all cached robots
-    %orphan = map { $_->domain => 1 } Site->robots;
+    %orphan = map { $_->domain => 1 } Sympa::Site->robots;
 
-    unless (opendir $dir, Site->etc) {
+    unless (opendir $dir, Sympa::Site->etc) {
         Sympa::Log::Syslog::do_log('err',
             'Unable to open directory %s for virtual robots config',
-            Site->etc);
+            Sympa::Site->etc);
         return undef;
     }
     foreach my $name (readdir $dir) {
         next if $name =~ /^\./;
-        my $vhost_etc = Site->etc . '/' . $name;
+        my $vhost_etc = Sympa::Site->etc . '/' . $name;
         next unless -d $vhost_etc;
         next unless -f $vhost_etc . '/robot.conf';
 
         if ($robot = Sympa::Robot->new($name, %options)) {
-            $got_default = 1 if $robot->domain eq Site->domain;
+            $got_default = 1 if $robot->domain eq Sympa::Site->domain;
             push @robots, $robot;
             delete $orphan{$robot->domain};
         }
@@ -923,7 +923,7 @@ sub get_robots {
     closedir $dir;
 
     unless ($got_default) {
-        if ($robot = Sympa::Robot->new(Site->domain, %options)) {
+        if ($robot = Sympa::Robot->new(Sympa::Site->domain, %options)) {
             push @robots, $robot;
             delete $orphan{$robot->domain};
         }
@@ -933,10 +933,10 @@ sub get_robots {
     foreach my $domain (keys %orphan) {
         Sympa::Log::Syslog::do_log('debug3', 'removing orphan robot %s',
             $domain);
-        Site->robots($domain, undef);
+        Sympa::Site->robots($domain, undef);
     }
 
-    Site->robots_ok(1);
+    Sympa::Site->robots_ok(1);
 
     return \@robots;
 }

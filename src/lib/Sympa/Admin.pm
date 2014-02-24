@@ -312,7 +312,7 @@ sub create_list_old {
     my $fd     = new IO::Scalar \$config;
     &tt2::parse_tt2($param, 'config.tt2', $fd, $tt2_include_path);
 
-    #    Encode::from_to($config, 'utf8', Site->filesystem_encoding);
+    #    Encode::from_to($config, 'utf8', Sympa::Site->filesystem_encoding);
     print CONFIG $config;
 
     close CONFIG;
@@ -332,7 +332,7 @@ sub create_list_old {
     }
     if (defined $param->{'description'}) {
         Encode::from_to($param->{'description'},
-            'utf8', Site->filesystem_encoding);
+            'utf8', Sympa::Site->filesystem_encoding);
         print INFO $param->{'description'};
     }
     close INFO;
@@ -1035,10 +1035,10 @@ sub rename_list {
             'queue',          'queueoutgoing',
             'queuesubscribe', 'queueautomatic'
             ) {
-            unless (opendir(DIR, Site->$spool)) {
+            unless (opendir(DIR, Sympa::Site->$spool)) {
                 Sympa::Log::Syslog::do_log('err',
                     "Unable to open '%s' spool : %s",
-                    Site->$spool, $!);
+                    Sympa::Site->$spool, $!);
             }
 
             foreach my $file (sort readdir(DIR)) {
@@ -1070,54 +1070,54 @@ sub rename_list {
 
                 ## Rename file
                 unless (
-                    move(Site->$spool . "/$file", Site->$spool . "/$newfile"))
+                    move(Sympa::Site->$spool . "/$file", Sympa::Site->$spool . "/$newfile"))
                 {
                     Sympa::Log::Syslog::do_log(
                         'err',
                         "Unable to rename %s to %s : %s",
-                        Site->$spool . "/$file",
-                        Site->$spool . "/$newfile", $!
+                        Sympa::Site->$spool . "/$file",
+                        Sympa::Site->$spool . "/$newfile", $!
                     );
                     next;
                 }
 
                 ## Change X-Sympa-To
-                &tools::change_x_sympa_to(Site->$spool . "/$newfile",
+                &tools::change_x_sympa_to(Sympa::Site->$spool . "/$newfile",
                     "$param{'new_listname'}\@$param{'new_robot'}");
             }
 
             close DIR;
         }
         ## Digest spool
-        if (-f Site->queuedigest . "/$old_listname") {
+        if (-f Sympa::Site->queuedigest . "/$old_listname") {
             unless (
                 move(
-                    Site->queuedigest . "/$old_listname",
-                    Site->queuedigest . "/$param{'new_listname'}"
+                    Sympa::Site->queuedigest . "/$old_listname",
+                    Sympa::Site->queuedigest . "/$param{'new_listname'}"
                 )
                 ) {
                 Sympa::Log::Syslog::do_log(
                     'err',
                     "Unable to rename %s to %s : %s",
-                    Site->queuedigest . "/$old_listname",
-                    Site->queuedigest . "/$param{'new_listname'}",
+                    Sympa::Site->queuedigest . "/$old_listname",
+                    Sympa::Site->queuedigest . "/$param{'new_listname'}",
                     $!
                 );
                 next;
             }
-        } elsif (-f Site->queuedigest . "/$old_listname\@$robot") {
+        } elsif (-f Sympa::Site->queuedigest . "/$old_listname\@$robot") {
             unless (
                 move(
-                    Site->queuedigest . "/$old_listname\@$robot",
-                    Site->queuedigest
+                    Sympa::Site->queuedigest . "/$old_listname\@$robot",
+                    Sympa::Site->queuedigest
                         . "/$param{'new_listname'}\@$param{'new_robot'}"
                 )
                 ) {
                 Sympa::Log::Syslog::do_log(
                     'err',
                     "Unable to rename %s to %s : %s",
-                    Site->queuedigest . "/$old_listname\@$robot",
-                    Site->queuedigest
+                    Sympa::Site->queuedigest . "/$old_listname\@$robot",
+                    Sympa::Site->queuedigest
                         . "/$param{'new_listname'}\@$param{'new_robot'}",
                     $!
                 );
@@ -1165,10 +1165,10 @@ sub clone_list_as_empty {
     );
 
     my $new_dir;
-    if (-d Site->home . '/' . $new_robot_id) {
-        $new_dir = Site->home . '/' . $new_robot_id . '/' . $new_listname;
-    } elsif ($new_robot_id eq Site->domain) {
-        $new_dir = Site->home . '/' . $new_listname;
+    if (-d Sympa::Site->home . '/' . $new_robot_id) {
+        $new_dir = Sympa::Site->home . '/' . $new_robot_id . '/' . $new_listname;
+    } elsif ($new_robot_id eq Sympa::Site->domain) {
+        $new_dir = Sympa::Site->home . '/' . $new_listname;
     } else {
         Sympa::Log::Syslog::do_log('err',
             "Admin::clone_list_as_empty : unknown robot $new_robot_id");
@@ -1441,11 +1441,11 @@ sub install_aliases {
     my $list = shift;
 
     return 1
-        if Site->sendmail_aliases =~ /^none$/i;
+        if Sympa::Site->sendmail_aliases =~ /^none$/i;
 
-    my $alias_manager     = Site->alias_manager;
-    my $output_file       = Site->tmpdir . '/aliasmanager.stdout.' . $$;
-    my $error_output_file = Site->tmpdir . '/aliasmanager.stderr.' . $$;
+    my $alias_manager     = Sympa::Site->alias_manager;
+    my $output_file       = Sympa::Site->tmpdir . '/aliasmanager.stdout.' . $$;
+    my $error_output_file = Sympa::Site->tmpdir . '/aliasmanager.stderr.' . $$;
     Sympa::Log::Syslog::do_log('debug3', '%s add alias %s@%s for list %s',
         $alias_manager, $list->name, $list->host, $list);
 
@@ -1549,7 +1549,7 @@ sub remove_aliases {
     my $list = shift;
 
     return 1
-        if Site->sendmail_aliases =~ /^none$/i;
+        if Sympa::Site->sendmail_aliases =~ /^none$/i;
 
     my $status = $list->remove_aliases();
     my $suffix = $list->robot->return_path_suffix;

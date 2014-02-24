@@ -38,9 +38,9 @@ use List;
 #use Sympa::Log; # used by conf
 
 ## Load sympa config
-Site->load or die 'config_error';
+Sympa::Site->load or die 'config_error';
 
-Site->home;
+Sympa::Site->home;
 
 Sympa::DatabaseManager::check_db_connect('just_try') or die "Can't connect to database";
 

@@ -129,11 +129,11 @@ unless (defined Sympa::Robot::get_robots()) {
 }
 
 ## Open log
-Sympa::Log::Syslog::set_log_level(Site->log_level);
+Sympa::Log::Syslog::set_log_level(Sympa::Site->log_level);
 
 my $daemon_name = Sympa::Log::Syslog::set_daemon($0);
 
-Sympa::Log::Syslog::do_openlog(Site->log_facility, Site->log_socket_type,
+Sympa::Log::Syslog::do_openlog(Sympa::Site->log_facility, Sympa::Site->log_socket_type,
     'wwsympa');
 
 ## Start plugins
@@ -141,9 +141,9 @@ if (eval "require Sympa::Plugin::Manager") {
     $plugins = Sympa::Plugin::Manager->new(application => 'website');
 }
 
-&Sympa::Mail::set_send_spool(Site->queue);
+&Sympa::Mail::set_send_spool(Sympa::Site->queue);
 
-if (Site->use_fast_cgi) {
+if (Sympa::Site->use_fast_cgi) {
     require CGI::Fast;
 } else {
     require CGI;
@@ -162,21 +162,21 @@ my $mime_types = &wwslib::load_mime_types();
 my %icon_table;
 
 # application file
-$icon_table{'unknown'} = Site->static_content_url . '/icons/unknown.png';
-$icon_table{'folder'}  = Site->static_content_url . '/icons/folder.png';
+$icon_table{'unknown'} = Sympa::Site->static_content_url . '/icons/unknown.png';
+$icon_table{'folder'}  = Sympa::Site->static_content_url . '/icons/folder.png';
 $icon_table{'current_folder'} =
-    Site->static_content_url . '/icons/folder.open.png';
-$icon_table{'application'}  = Site->static_content_url . '/icons/unknown.png';
-$icon_table{'octet-stream'} = Site->static_content_url . '/icons/binary.png';
-$icon_table{'audio'}        = Site->static_content_url . '/icons/sound1.png';
-$icon_table{'image'}        = Site->static_content_url . '/icons/image2.png';
-$icon_table{'text'}         = Site->static_content_url . '/icons/text.png';
-$icon_table{'video'}        = Site->static_content_url . '/icons/movie.png';
-$icon_table{'father'}       = Site->static_content_url . '/icons/back.png';
-$icon_table{'sort'}         = Site->static_content_url . '/icons/down.png';
-$icon_table{'url'}          = Site->static_content_url . '/icons/link.png';
-$icon_table{'left'}         = Site->static_content_url . '/icons/left.png';
-$icon_table{'right'}        = Site->static_content_url . '/icons/right.png';
+    Sympa::Site->static_content_url . '/icons/folder.open.png';
+$icon_table{'application'}  = Sympa::Site->static_content_url . '/icons/unknown.png';
+$icon_table{'octet-stream'} = Sympa::Site->static_content_url . '/icons/binary.png';
+$icon_table{'audio'}        = Sympa::Site->static_content_url . '/icons/sound1.png';
+$icon_table{'image'}        = Sympa::Site->static_content_url . '/icons/image2.png';
+$icon_table{'text'}         = Sympa::Site->static_content_url . '/icons/text.png';
+$icon_table{'video'}        = Sympa::Site->static_content_url . '/icons/movie.png';
+$icon_table{'father'}       = Sympa::Site->static_content_url . '/icons/back.png';
+$icon_table{'sort'}         = Sympa::Site->static_content_url . '/icons/down.png';
+$icon_table{'url'}          = Sympa::Site->static_content_url . '/icons/link.png';
+$icon_table{'left'}         = Sympa::Site->static_content_url . '/icons/left.png';
+$icon_table{'right'}        = Sympa::Site->static_content_url . '/icons/right.png';
 ## Shared directory and description file
 
 #$shared = 'shared';
@@ -1011,7 +1011,7 @@ my %filtering = (
 );
 
 ## Set locale configuration
-Sympa::Language::SetLang(Site->lang);
+Sympa::Language::SetLang(Sympa::Site->lang);
 
 ## Important to leave this there because it defined defaults for
 ## user_data_source
@@ -1067,16 +1067,16 @@ while ($query = &new_loop()) {
     undef $ajax;
     undef $session;
 
-    Sympa::Log::Syslog::set_log_level(Site->log_level);
+    Sympa::Log::Syslog::set_log_level(Sympa::Site->log_level);
 
     # auto-detect browsers' lang.
-    Sympa::Language::SetLang(Site->best_language());
+    Sympa::Language::SetLang(Sympa::Site->best_language());
 
     ## Empty cache of the List.pm module
     &Sympa::List::init_list_cache();
 
     # Process grouped notifications
-    Site->send_notify_to_listmaster(undef, undef, 1, undef);
+    Sympa::Site->send_notify_to_listmaster(undef, undef, 1, undef);
 
     ## Check effective ID
     unless ($> eq (getpwnam(Sympa::Constants::USER))[2]) {
@@ -1128,12 +1128,12 @@ while ($query = &new_loop()) {
     ## Parse CGI parameters
     #    &CGI::ReadParse();
 
-    if (defined Site->robot_by_http_host->{&get_header_field('SERVER_NAME')})
+    if (defined Sympa::Site->robot_by_http_host->{&get_header_field('SERVER_NAME')})
     {
         my ($selected_robot, $selected_path);
         my ($k,              $v);
         while (($k, $v) = each
-            %{Site->robot_by_http_host->{&get_header_field('SERVER_NAME')}}) {
+            %{Sympa::Site->robot_by_http_host->{&get_header_field('SERVER_NAME')}}) {
             if ($ENV{'REQUEST_URI'} =~ /^$k/) {
                 ## Longer path wins
                 if (length($k) > length($selected_path)) {
@@ -1144,14 +1144,14 @@ while ($query = &new_loop()) {
         $robot_id = $selected_robot;
     }
 
-    $robot_id = Site->host unless $robot_id;    #FIXME: use domain?
+    $robot_id = Sympa::Site->host unless $robot_id;    #FIXME: use domain?
 
     ## Create Robot object
     $robot = Sympa::Robot->new($robot_id);
     $pinfo = $robot->list_params;
 
     ## Default robot
-    if ($robot_id eq Site->host) {              #FIXME
+    if ($robot_id eq Sympa::Site->host) {              #FIXME
         $param->{'default_robot'} = 1;
     }
 
@@ -1179,27 +1179,27 @@ while ($query = &new_loop()) {
     get_safe_robot_conf();
 
     ## SSO
-    foreach my $auth (keys %{Site->cas_id->{$robot_id}}) {
+    foreach my $auth (keys %{Sympa::Site->cas_id->{$robot_id}}) {
         Sympa::Log::Syslog::do_log('debug2',
             "cas authentication service $auth");
         $param->{'sso'}{$auth} =
-            Site->cas_id->{$robot_id}{$auth}{'auth_service_friendly_name'};
+            Sympa::Site->cas_id->{$robot_id}{$auth}{'auth_service_friendly_name'};
     }
 
-    foreach my $auth (keys %{Site->generic_sso_id->{$robot_id}}) {
+    foreach my $auth (keys %{Sympa::Site->generic_sso_id->{$robot_id}}) {
         Sympa::Log::Syslog::do_log('debug',
             "Generic SSO authentication service $auth");
         $param->{'sso'}{$auth} =
-            Site->auth_services->{$robot_id}
-            [Site->generic_sso_id->{$robot_id}{$auth}]{'service_name'};
+            Sympa::Site->auth_services->{$robot_id}
+            [Sympa::Site->generic_sso_id->{$robot_id}{$auth}]{'service_name'};
     }
 
     $param->{'sso_number'} =
-        Site->cas_number->{$robot_id} + Site->generic_sso_number->{$robot_id};
-    $param->{'use_passwd'} = Site->use_passwd->{$robot_id};
+        Sympa::Site->cas_number->{$robot_id} + Sympa::Site->generic_sso_number->{$robot_id};
+    $param->{'use_passwd'} = Sympa::Site->use_passwd->{$robot_id};
     $param->{'use_sso'} = 1 if ($param->{'sso_number'});
     $param->{'authentication_info_url'} =
-        Site->authentication_info_url->{$robot_id};
+        Sympa::Site->authentication_info_url->{$robot_id};
     $param->{'wwsconf'} = &Sympa::Conf::_load_wwsconf;    #FIXME: no longer used?
 
     $param->{'path_cgi'} = $ENV{'SCRIPT_NAME'};
@@ -1235,7 +1235,7 @@ while ($query = &new_loop()) {
     };
 
     ## Change to site root
-    unless (chdir(Site->home)) {
+    unless (chdir(Sympa::Site->home)) {
         &Sympa::Report::reject_report_web('intern', 'chdir_error', {}, '', '', '',
             $robot_id);
         &wwslog('info', 'unable to change directory');
@@ -1243,7 +1243,7 @@ while ($query = &new_loop()) {
     }
 
     ## Sets the UMASK
-    umask(oct(Site->umask));
+    umask(oct(Sympa::Site->umask));
 
     ## Authentication
     ## use https client certificat information if define.
@@ -1409,7 +1409,7 @@ while ($query = &new_loop()) {
 
                 my $ticket = $in{'ticket'};
                 my $cas_server =
-                    Site->auth_services->{$robot_id}[$cas_id]{'cas_server'};
+                    Sympa::Site->auth_services->{$robot_id}[$cas_id]{'cas_server'};
 
                 my $service_url = &wwslib::get_my_url();
                 $service_url =~ s/(\?|&)ticket\=.+$//;
@@ -1439,13 +1439,13 @@ while ($query = &new_loop()) {
                     "Internal error while receiving a CAS ticket $session->{'checked_cas'} "
                 );
             }
-        } elsif ((Site->cas_number->{$robot_id} > 0)
+        } elsif ((Sympa::Site->cas_number->{$robot_id} > 0)
             && ($in{'action'} !~ /^(login|sso_login|wsdl)$/))
         {    # some cas server are defined but no CAS ticket detected
             unless ($session->{'do_not_use_cas'}) {
 
                 # user not taggued as not using cas
-                foreach my $auth_service (@{Site->auth_services->{$robot_id}})
+                foreach my $auth_service (@{Sympa::Site->auth_services->{$robot_id}})
                 {
 
                     # skip auth services not related to cas
@@ -1462,7 +1462,7 @@ while ($query = &new_loop()) {
                     ## don't have more then 10 CAS servers (because we don't
                     ## properly split the list of values)
                     my $cas_id =
-                        Site->cas_id->{$robot_id}
+                        Sympa::Site->cas_id->{$robot_id}
                         {$auth_service->{'auth_service_name'}}{'id'};
                     Sympa::Log::Syslog::do_log(
                         'debug',
@@ -1509,7 +1509,7 @@ while ($query = &new_loop()) {
         ##Cookie extern : sympa_altemails
         ## !!
         $param->{'alt_emails'} =
-            &Sympa::CookieLib::check_cookie_extern($ENV{'HTTP_COOKIE'}, Site->cookie,
+            &Sympa::CookieLib::check_cookie_extern($ENV{'HTTP_COOKIE'}, Sympa::Site->cookie,
             $param->{'user'}{'email'});
 
         if ($param->{'user'}{'email'}) {
@@ -1524,7 +1524,7 @@ while ($query = &new_loop()) {
             ## For the parser to display an empty field instead of [xxx]
             $param->{'user'}{'gecos'} ||= '';
             unless (defined $param->{'user'}{'cookie_delay'}) {
-                $param->{'user'}{'cookie_delay'} = Site->cookie_expire;
+                $param->{'user'}{'cookie_delay'} = Sympa::Site->cookie_expire;
             }
 
             ## Skip get_which if either in a list context or accessing the CSS
@@ -1785,7 +1785,7 @@ while ($query = &new_loop()) {
 
         my $delay = $param->{'user'}{'cookie_delay'};
         unless (defined $delay) {
-            $delay = Site->cookie_expire;
+            $delay = Sympa::Site->cookie_expire;
         }
 
         if ($delay == 0) {
@@ -1877,7 +1877,7 @@ while ($query = &new_loop()) {
                 unless ($number == 0) {
                     unless (
                         &Sympa::CookieLib::set_cookie_extern(
-                            Site->cookie,
+                            Sympa::Site->cookie,
                             $param->{'cookie_domain'},
                             %{$param->{'alt_emails'}}
                         )
@@ -1888,7 +1888,7 @@ while ($query = &new_loop()) {
                 }
             }
         }    #elsif ($ENV{'HTTP_COOKIE'} =~ /sympauser\=/){
-         #   &Sympa::CookieLib::set_cookie('unknown', Site->cookie, $param->{'cookie_domain'}, 'now');
+         #   &Sympa::CookieLib::set_cookie('unknown', Sympa::Site->cookie, $param->{'cookie_domain'}, 'now');
          #}
     }
 
@@ -2007,7 +2007,7 @@ while ($query = &new_loop()) {
         print "Content-Type: text/html; charset=utf-8\n\n";
 
         ## Icons
-        $param->{'icons_url'} = Site->static_content_url . '/icons';
+        $param->{'icons_url'} = Sympa::Site->static_content_url . '/icons';
 
         ## Retro compatibility concerns
         $param->{'active'} = 1;
@@ -2060,7 +2060,7 @@ while ($query = &new_loop()) {
 }
 
 # Purge grouped notifications
-Site->send_notify_to_listmaster(undef, undef, undef, 1);
+Sympa::Site->send_notify_to_listmaster(undef, undef, undef, 1);
 
 ##############################################################
 #-#\#|#/#-#\#|#/#-#\#|#/#-#\#|#/#-#\#|#/#-#\#|#/#-#\#|#/#-#\#|#/
@@ -2161,7 +2161,7 @@ sub crash_handler {
     chomp $msg;
     print STDERR "DIED: $msg";
     &wwslog('err', 'DIED: %s', $msg);
-    eval { Site->send_notify_to_listmaster(undef, undef, undef, 1); };
+    eval { Sympa::Site->send_notify_to_listmaster(undef, undef, undef, 1); };
     eval { Sympa::DatabaseManager::db_disconnect(); };    # unlock database
     Sys::Syslog::closelog();                  # flush log
     Sympa::Log::Syslog::set_log_level(-1);    # disable log
@@ -2191,7 +2191,7 @@ sub new_loop {
     $loop++;
     my $query;
 
-    if (Site->use_fast_cgi) {
+    if (Sympa::Site->use_fast_cgi) {
         $query = new CGI::Fast;
         $loop_count++;
     } else {
@@ -2377,7 +2377,7 @@ sub get_parameters {
         } elsif ($pname =~ /^custom_attribute(.*)$/) {
             my $key = $tokens[1];
             $regexp = $in_regexp{'custom_attribute'};
-            ##Sympa::Log::Syslog::do_log ('debug2', "get_parameters (custom_attribute) : ($p)($key) $pname $in{$p} ". Site->$key->{type});
+            ##Sympa::Log::Syslog::do_log ('debug2', "get_parameters (custom_attribute) : ($p)($key) $pname $in{$p} ". Sympa::Site->$key->{type});
             $custom_attribute->{$key} = {value => $in{$p}};
             undef $in{$p};
         } elsif ($pname =~ /^custom_input(.*)$/) {
@@ -2385,7 +2385,7 @@ sub get_parameters {
             $regexp = $in_regexp{'custom_input'};
             Sympa::Log::Syslog::do_log('debug2',
                 "get_parameters (custom_input) : ($p)($key) $pname $in{$p} "
-                    . Site->$key->{type});
+                    . Sympa::Site->$key->{type});
             $custom_input->{$key} = $in{$p};
             undef $in{$p};
         } elsif ($in_regexp{$pname}) {
@@ -2652,7 +2652,7 @@ sub get_parameters_old {
             $regexp = $in_regexp{'custom_attribute'};
             Sympa::Log::Syslog::do_log('debug2',
                 "get_parameters (custom_attribute) : ($p)($key) $pname $in{$p} "
-                    . Site->$key->{type});
+                    . Sympa::Site->$key->{type});
             $custom_attribute->{$key} = {value => $in{$p}};
             undef $in{$p};
 
@@ -3870,7 +3870,7 @@ sub do_login {
     unless ($param->{'alt_emails'}{$email}) {
         unless (
             &Sympa::CookieLib::set_cookie_extern(
-                Site->cookie, $param->{'cookie_domain'},
+                Sympa::Site->cookie, $param->{'cookie_domain'},
                 %{$param->{'alt_emails'}}
             )
             ) {
@@ -4001,11 +4001,11 @@ sub do_sso_login {
     ## This is a CAS service
     if (defined(
             my $cas_id =
-                Site->cas_id->{$robot_id}{$in{'auth_service_name'}}{'id'}
+                Sympa::Site->cas_id->{$robot_id}{$in{'auth_service_name'}}{'id'}
         )
         ) {
         my $cas_server =
-            Site->auth_services->{$robot_id}[$cas_id]{'cas_server'};
+            Sympa::Site->auth_services->{$robot_id}[$cas_id]{'cas_server'};
 
         my $path = '';
         if ($param->{'nomenu'}) {
@@ -4031,7 +4031,7 @@ sub do_sso_login {
     } elsif (
         defined(
             my $sso_id =
-                Site->generic_sso_id->{$robot_id}{$in{'auth_service_name'}}
+                Sympa::Site->generic_sso_id->{$robot_id}{$in{'auth_service_name'}}
         )
         ) {
         ## Generic SSO
@@ -4074,7 +4074,7 @@ sub do_sso_login {
 
         my $email;
         ## We need to collect/verify the user's email address
-        if (defined Site->auth_services->{$robot_id}[$sso_id]
+        if (defined Sympa::Site->auth_services->{$robot_id}[$sso_id]
             {'force_email_verify'}) {
             my $email_is_trusted = 0;
 
@@ -4082,7 +4082,7 @@ sub do_sso_login {
             ## sendssopasswd, confirmemail
 
             ## get email from NetiD table
-            if (defined Site->auth_services->{$robot_id}[$sso_id]
+            if (defined Sympa::Site->auth_services->{$robot_id}[$sso_id]
                 {'internal_email_by_netid'}) {
                 &wwslog('debug', 'do_sso_login(): lookup email internal: %s',
                     $sso_id);
@@ -4093,14 +4093,14 @@ sub do_sso_login {
             }
 
             ## get email from authN module
-            if (defined Site->auth_services->{$robot_id}[$sso_id]
+            if (defined Sympa::Site->auth_services->{$robot_id}[$sso_id]
                 {'email_http_header'} && !$email_is_trusted) {
                 my $http_header_value_separator =
-                    Site->auth_services->{$robot_id}[$sso_id]
+                    Sympa::Site->auth_services->{$robot_id}[$sso_id]
                     {'http_header_value_separator'};
                 my @email_list = split(
                     /$http_header_value_separator/,
-                    lc( $ENV{Site->auth_services->{$robot_id}[$sso_id]
+                    lc( $ENV{Sympa::Site->auth_services->{$robot_id}[$sso_id]
                                 {'email_http_header'}
                             }
                     )
@@ -4229,14 +4229,14 @@ sub do_sso_login {
 
                 ## TODO : netidmap_table should also be used when no
                 ## confirmation is performed
-                if (defined Site->auth_services->{$robot_id}[$sso_id]
+                if (defined Sympa::Site->auth_services->{$robot_id}[$sso_id]
                     {'internal_email_by_netid'}) {
 
                     my $netid =
-                        $ENV{Site->auth_services->{$robot_id}[$sso_id]
+                        $ENV{Sympa::Site->auth_services->{$robot_id}[$sso_id]
                             {'netid_http_header'}};
                     my $idpname =
-                        Site->auth_services->{$robot_id}[$sso_id]
+                        Sympa::Site->auth_services->{$robot_id}[$sso_id]
                         {'service_id'};
 
                     unless (
@@ -4269,12 +4269,12 @@ sub do_sso_login {
 
         } else {
             ##
-            if (defined Site->auth_services->{$robot_id}[$sso_id]
+            if (defined Sympa::Site->auth_services->{$robot_id}[$sso_id]
                 {'email_http_header'}) {
                 my @email_list = split(
-                    Site->auth_services->{$robot_id}[$sso_id]
+                    Sympa::Site->auth_services->{$robot_id}[$sso_id]
                         {'http_header_value_separator'},
-                    lc( $ENV{Site->auth_services->{$robot_id}[$sso_id]
+                    lc( $ENV{Sympa::Site->auth_services->{$robot_id}[$sso_id]
                                 {'email_http_header'}
                             }
                     )
@@ -4284,9 +4284,9 @@ sub do_sso_login {
 
             } else {
                 unless (
-                    defined Site->auth_services->{$robot_id}[$sso_id]
+                    defined Sympa::Site->auth_services->{$robot_id}[$sso_id]
                     {'ldap_host'}
-                    && defined Site->auth_services->{$robot_id}[$sso_id]
+                    && defined Sympa::Site->auth_services->{$robot_id}[$sso_id]
                     {'ldap_get_email_by_uid_filter'}) {
                     &Sympa::Report::reject_report_web('intern',
                         'auth_conf_no_identified_user',
@@ -4315,7 +4315,7 @@ sub do_sso_login {
             &wwslog(
                 'err',
                 'do_sso_login: user could not be identified, no %s HTTP header set',
-                Site->auth_services->{$robot_id}[$sso_id]{'email_http_header'}
+                Sympa::Site->auth_services->{$robot_id}[$sso_id]{'email_http_header'}
             );
             &web_db_log(
                 {   'parameters' => $in{'auth_service_name'},
@@ -4338,9 +4338,9 @@ sub do_sso_login {
         ## Either with a defined header prefix (http_header_prefix)
         ## Or with an explicit list of header fields (http_header_list)
         my @sso_attr;
-        if (Site->auth_services->{$robot_id}[$sso_id]{'http_header_list'}) {
+        if (Sympa::Site->auth_services->{$robot_id}[$sso_id]{'http_header_list'}) {
             my $list_of_headers =
-                Site->auth_services->{$robot_id}[$sso_id]{'http_header_list'};
+                Sympa::Site->auth_services->{$robot_id}[$sso_id]{'http_header_list'};
 
             foreach my $field (split(/,/, $list_of_headers)) {
                 if (defined $ENV{$field}) {
@@ -4349,10 +4349,10 @@ sub do_sso_login {
             }
 
         } elsif (
-            Site->auth_services->{$robot_id}[$sso_id]{'http_header_list'}) {
+            Sympa::Site->auth_services->{$robot_id}[$sso_id]{'http_header_list'}) {
 
             my $prefix =
-                Site->auth_services->{$robot_id}[$sso_id]
+                Sympa::Site->auth_services->{$robot_id}[$sso_id]
                 {'http_header_prefix'};
 
             foreach my $k (keys %ENV) {
@@ -4482,7 +4482,7 @@ sub is_ldap_user {
 
     ## List all LDAP servers first
     my @ldap_servers;
-    foreach my $ldap (@{Site->auth_services->{$robot_id}}) {
+    foreach my $ldap (@{Sympa::Site->auth_services->{$robot_id}}) {
         next unless ($ldap->{'auth_type'} eq 'ldap');
 
         push @ldap_servers, $ldap;
@@ -4646,12 +4646,12 @@ sub do_logout {
     # $param->{'lang'} = $param->{'cookie_lang'} = &Sympa::CookieLib::check_lang_cookie($ENV{'HTTP_COOKIE'}) || ($list || $robot)->lang;
 
     if (defined $session->{'cas_server'}
-        && (defined Site->auth_services->{$robot_id}[$session->{'cas_server'}]
+        && (defined Sympa::Site->auth_services->{$robot_id}[$session->{'cas_server'}]
         )) {
 
         # this user was logged using CAS
         my $cas_server =
-            Site->auth_services->{$robot_id}[$session->{'cas_server'}]
+            Sympa::Site->auth_services->{$robot_id}[$session->{'cas_server'}]
             {'cas_server'};
 
         $in{'action'} = 'redirect';
@@ -5284,7 +5284,7 @@ sub do_info {
             return undef;
         }
         while (<FILE>) {
-            Encode::from_to($_, Site->filesystem_encoding, 'utf8');
+            Encode::from_to($_, Sympa::Site->filesystem_encoding, 'utf8');
             $param->{'homepage_content'} .= $_;
         }
         close FILE;
@@ -5309,7 +5309,7 @@ sub do_info {
             return undef;
         }
         while (<FILE>) {
-            Encode::from_to($_, Site->filesystem_encoding, 'utf8');
+            Encode::from_to($_, Sympa::Site->filesystem_encoding, 'utf8');
             $param->{'info_content'} .= $_;
         }
         close FILE;
@@ -5364,7 +5364,7 @@ sub do_review {
         $size =
                $param->{'user'}{'prefs'}{'review_page_size'}
             || $session->{'review_page_size'}
-            || Site->review_page_size;
+            || Sympa::Site->review_page_size;
     }
     $param->{'review_page_size'} = $size;
 
@@ -5399,12 +5399,12 @@ sub do_review {
 
     ## We might not use LIMIT clause
     my ($limit_not_used, $count);
-    unless ((Site->db_type =~ /^(Pg|mysql$)/)) {
+    unless ((Sympa::Site->db_type =~ /^(Pg|mysql$)/)) {
         $limit_not_used = 1;
     }
 
     ## Additional DB fields
-    my @additional_fields = split ',', Site->db_additional_subscriber_fields;
+    my @additional_fields = split ',', Sympa::Site->db_additional_subscriber_fields;
 
     ## Members list synchronization if list has included data sources.
     if ($list->has_include_data_sources()) {
@@ -5467,7 +5467,7 @@ sub do_review {
     #######################
 
     ## additional DB fields
-    $param->{'additional_fields'} = Site->db_additional_subscriber_fields;
+    $param->{'additional_fields'} = Sympa::Site->db_additional_subscriber_fields;
     &web_db_log({'status' => 'success'});
 
     ## msg_topics
@@ -5516,7 +5516,7 @@ sub do_search {
     my %emails;
 
     ## Additional DB fields
-    my @additional_fields = split ',', Site->db_additional_subscriber_fields;
+    my @additional_fields = split ',', Sympa::Site->db_additional_subscriber_fields;
     ## Access control
     return undef unless (defined &check_authz('do_search', 'review'));
     ## Search key
@@ -8998,15 +8998,15 @@ sub do_reject {
             }
         }
 
-        if (($in{'signal_spam'}) && (Site->reporting_spam_script_path ne ''))
+        if (($in{'signal_spam'}) && (Sympa::Site->reporting_spam_script_path ne ''))
         {
-            if (-x Site->reporting_spam_script_path) {
-                unless (open(SCRIPT, '|' . Site->reporting_spam_script_path))
+            if (-x Sympa::Site->reporting_spam_script_path) {
+                unless (open(SCRIPT, '|' . Sympa::Site->reporting_spam_script_path))
                 {
                     Sympa::Log::Syslog::do_log(
                         'err',
                         'could not execute %s',
-                        Site->reporting_spam_script_path
+                        Sympa::Site->reporting_spam_script_path
                     );
                 }
 
@@ -9027,7 +9027,7 @@ sub do_reject {
                 Sympa::Log::Syslog::do_log(
                     'err',
                     'ignoring parameter reporting_spam_script_path, value %s because not an executable script',
-                    Site->reporting_spam_script_path
+                    Sympa::Site->reporting_spam_script_path
                 );
             }
         }
@@ -9061,7 +9061,7 @@ sub do_reject {
 
         # clean html view of the message
         &tools::remove_dir(
-            Site->viewmail_dir . '/mod/' . $list->get_list_id() . '/' . $id);
+            Sympa::Site->viewmail_dir . '/mod/' . $list->get_list_id() . '/' . $id);
 
     }
     &web_db_log(
@@ -9189,7 +9189,7 @@ sub do_distribute {
 
         # clean html view of the message
         &tools::remove_dir(
-            Site->viewmail_dir . '/mod/' . $list->get_list_id() . '/' . $id);
+            Sympa::Site->viewmail_dir . '/mod/' . $list->get_list_id() . '/' . $id);
     }
 
     my $incomingspool = Sympa::MessageSpool->new();
@@ -9327,7 +9327,7 @@ sub do_viewmod {
     }
 
     my $html_dir =
-        Site->viewmail_dir . '/mod/' . $list->get_id . '/' . $in{'id'};
+        Sympa::Site->viewmail_dir . '/mod/' . $list->get_id . '/' . $in{'id'};
 
     unless (-d $html_dir) {
         &Sympa::Report::reject_report_web('intern', 'no_html_message_available',
@@ -9500,7 +9500,7 @@ sub do_editfile {
             }
 
             while (<FILE>) {
-                Encode::from_to($_, Site->filesystem_encoding, 'utf8');
+                Encode::from_to($_, Sympa::Site->filesystem_encoding, 'utf8');
                 $param->{'filecontent'} .= $_;
             }
             close FILE;
@@ -9625,18 +9625,18 @@ sub do_savefile {
             return undef;
         }
 
-        if ($robot_id ne Site->domain) {
+        if ($robot_id ne Sympa::Site->domain) {
             if ($in{'file'} eq 'list_aliases.tt2') {
-                $param->{'filepath'} = Site->etc . "/$robot_id/$in{'file'}";
+                $param->{'filepath'} = Sympa::Site->etc . "/$robot_id/$in{'file'}";
             } else {
                 $param->{'filepath'} =
-                    Site->etc . "/$robot_id/mail_tt2/$in{'file'}";
+                    Sympa::Site->etc . "/$robot_id/mail_tt2/$in{'file'}";
             }
         } else {
             if ($in{'file'} eq 'list_aliases.tt2') {
-                $param->{'filepath'} = Site->etc . "/$in{'file'}";
+                $param->{'filepath'} = Sympa::Site->etc . "/$in{'file'}";
             } else {
-                $param->{'filepath'} = Site->etc . "/mail_tt2/$in{'file'}";
+                $param->{'filepath'} = Sympa::Site->etc . "/mail_tt2/$in{'file'}";
             }
         }
     }
@@ -9708,7 +9708,7 @@ sub do_savefile {
             return undef;
         }
         my $e = $in{'content'};
-        Encode::from_to($e, 'utf8', Site->filesystem_encoding);
+        Encode::from_to($e, 'utf8', Sympa::Site->filesystem_encoding);
         print FILE $e;
         close FILE;
     } elsif (-f $param->{'filepath'}) {
@@ -9735,7 +9735,7 @@ sub do_arc {
     &wwslog('info', 'do_arc(%s, %s)', $in{'month'}, $in{'arc_file'});
     my $latest;
 
-    my $index = $session->{'arc_mode'} || Site->archive_default_index;
+    my $index = $session->{'arc_mode'} || Sympa::Site->archive_default_index;
 
     ## Clean arc_file
     if ($in{'arc_file'} eq '/') {
@@ -11555,16 +11555,16 @@ sub do_editsubscriber {
     }
 
     ## Additional DB fields
-    if (Site->db_additional_subscriber_fields) {
+    if (Sympa::Site->db_additional_subscriber_fields) {
         my @additional_fields = split ',',
-            Site->db_additional_subscriber_fields;
+            Sympa::Site->db_additional_subscriber_fields;
 
         my %data;
 
         foreach my $field (@additional_fields) {
 
             ## Is the Database defined
-            unless (Site->db_name) {
+            unless (Sympa::Site->db_name) {
                 &wwslog('info', 'No db_name defined in configuration file');
                 return undef;
             }
@@ -11698,7 +11698,7 @@ sub do_scenario_test {
 ## Bouncing addresses review
 sub do_reviewbouncing {
     &wwslog('info', 'do_reviewbouncing(%s)', $in{'page'});
-    my $size = $in{'size'} || Site->review_page_size;
+    my $size = $in{'size'} || Sympa::Site->review_page_size;
 
     ## Owner
     $param->{'page'} = $in{'page'} || 1;
@@ -18091,7 +18091,7 @@ sub do_d_unzip {
     # directory for the uploaded file
     my $date         = time;
     my $zip_dir_name = $listname . $date . $$;
-    my $zip_abs_dir  = Site->tmpdir . '/' . $zip_dir_name;
+    my $zip_abs_dir  = Sympa::Site->tmpdir . '/' . $zip_dir_name;
 
     unless (mkdir("$zip_abs_dir", 0777)) {
         &Sympa::Report::reject_report_web('intern', 'cannot_mkdir',
@@ -23446,7 +23446,7 @@ sub do_viewlogs {
     &wwslog('info', 'do_viewlogs(%s)', $in{'page'});
 
     $param->{'page'} = int($in{'page'}) || 1;
-    $param->{'size'} = int($in{'size'}) || Site->viewlogs_page_size;
+    $param->{'size'} = int($in{'size'}) || Sympa::Site->viewlogs_page_size;
 
     my @date = Sympa::Log::Syslog::get_log_date();
     $param->{'date_from_formated'} = gettext_strftime "%Y-%m-%d-%H-%M-%S",
@@ -23766,7 +23766,7 @@ sub do_viewspool_message {
     $param->{'spool_message_asstring'} = $messages[0]->{'messageasstring'};
 
     my $destination_dir =
-        Site->viewmail_dir . '/spool/viewmail/' . $messagekey;
+        Sympa::Site->viewmail_dir . '/spool/viewmail/' . $messagekey;
     unless (-d $destination_dir) {
         Sympa::Archive::convert_single_message(
             ($list || $robot),
@@ -23891,7 +23891,7 @@ sub do_viewspool_message_remove {
 
     # clean html view of the message
     #FIXME: inconsistent removal.
-    my $dir = Site->viewmail_dir . '/spool/viewmail/' . $messagekey;
+    my $dir = Sympa::Site->viewmail_dir . '/spool/viewmail/' . $messagekey;
     tools::remove_dir($dir) if -d $dir;
 
     $param->{'removed'} = 1;
@@ -24008,7 +24008,7 @@ sub do_arc_download {
 
     ##zip file name:listname_archives.zip
     my $zip_file_name = $in{'list'} . '_archives.zip';
-    my $zip_abs_file  = Site->tmpdir . '/' . $zip_file_name;
+    my $zip_abs_file  = Sympa::Site->tmpdir . '/' . $zip_file_name;
     my $zip           = Archive::Zip->new();
 
     #Search for months to put in zip
@@ -25101,12 +25101,12 @@ sub check_authz {
 
 sub get_server_details {
     ## All Robots are shown to super listmaster
-    if (Site->is_listmaster($param->{'user'}{'email'})) {
+    if (Sympa::Site->is_listmaster($param->{'user'}{'email'})) {
         $param->{'main_robot'} = 1;
         ## n.b. Site (default) config is not included.
         $param->{'robots'} = {
             map { $_->domain => $_->fullconfig }
-            grep { $_->etc ne Site->etc } @{Sympa::Robot::get_robots()}
+            grep { $_->etc ne Sympa::Site->etc } @{Sympa::Robot::get_robots()}
         };
     }
 

@@ -26,7 +26,7 @@
 ####
 #### This implements accessor methods to global config
 ####
-package Site;
+package Sympa::Site;
 
 use strict;
 use warnings;
@@ -137,21 +137,21 @@ sub AUTOLOAD {
                 return $self->{$attr};
             } elsif ($type->{'RobotParameter'}) {
                 ## getters for robot parameters.
-                unless ($self->{'etc'} eq Site->etc
-                    or defined Site->robots_config->{$self->{'name'}}) {
+                unless ($self->{'etc'} eq Sympa::Site->etc
+                    or defined Sympa::Site->robots_config->{$self->{'name'}}) {
                     croak "Can't call method \"$attr\" on uninitialized "
                         . (ref $self)
                         . " object";
                 }
                 croak "Can't modify \"$attr\" attribute" if scalar @_;
 
-                if ($self->{'etc'} ne Site->etc
-                    and defined Site->robots_config->{$self->{'name'}}{$attr})
+                if ($self->{'etc'} ne Sympa::Site->etc
+                    and defined Sympa::Site->robots_config->{$self->{'name'}}{$attr})
                 {
                     ##FIXME: Might "exists" be used?
-                    Site->robots_config->{$self->{'name'}}{$attr};
+                    Sympa::Site->robots_config->{$self->{'name'}}{$attr};
                 } else {
-                    Site->$attr;
+                    Sympa::Site->$attr;
                 }
             } else {
                 croak "Can't call method \"$attr\" on "
@@ -251,9 +251,9 @@ sub lang {
     croak "Can't modify \"lang\" attribute" if scalar @_ > 1;
     if (    ref $self
         and ref $self eq 'Sympa::Robot'
-        and $self->{'etc'} ne Site->etc
-        and exists Site->robots_config->{$self->{'name'}}{'lang'}) {
-        $lang = Site->robots_config->{$self->{'name'}}{'lang'};
+        and $self->{'etc'} ne Sympa::Site->etc
+        and exists Sympa::Site->robots_config->{$self->{'name'}}{'lang'}) {
+        $lang = Sympa::Site->robots_config->{$self->{'name'}}{'lang'};
     } elsif (ref $self and ref $self eq 'Sympa::Robot'
         or !ref $self and $self eq 'Site') {
         croak "Can't call method \"lang\" on uninitialized $self class"
@@ -298,9 +298,9 @@ sub listmasters {
     croak "Can't modify \"listmasters\" attribute" if scalar @_ > 1;
     if (ref $self and ref $self eq 'Sympa::Robot') {
         if (wantarray) {
-            @{Site->robots_config->{$self->domain}{'listmasters'} || []};
+            @{Sympa::Site->robots_config->{$self->domain}{'listmasters'} || []};
         } else {
-            Site->robots_config->{$self->domain}{'listmasters'};
+            Sympa::Site->robots_config->{$self->domain}{'listmasters'};
         }
     } elsif ($self eq 'Site') {
         croak "Can't call method \"listmasters\" on uninitialized $self class"
@@ -423,7 +423,7 @@ sub _crash_handler {
     my $msg = $_[0];
     chomp $msg;
     Sympa::Log::Syslog::do_log('err', 'DIED: %s', $msg);
-    eval { Site->send_notify_to_listmaster(undef, undef, undef, 1); };
+    eval { Sympa::Site->send_notify_to_listmaster(undef, undef, undef, 1); };
     eval { Sympa::DatabaseManager::db_disconnect(); };    # unlock database
     Sys::Syslog::closelog();           # flush log
 

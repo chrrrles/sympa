@@ -230,7 +230,7 @@ sub add_lock {
     }
 
     my $lock_method = 'flock';
-    $lock_method = Site->lock_method if $Site::is_initialized;
+    $lock_method = Sympa::Site->lock_method if $Site::is_initialized;
 
     my ($fh, $nfs_lock);
     if ($lock_method eq 'nfs') {
@@ -260,7 +260,7 @@ sub remove_lock {
     my $previous_mode;
 
     my $lock_method = 'flock';
-    $lock_method = Site->lock_method if $Site::is_initialized;
+    $lock_method = Sympa::Site->lock_method if $Site::is_initialized;
 
     if ($lock_method eq 'nfs') {
         my $nfs_lock = $list_of_locks{$self->{'lock_filename'}}{'nfs_lock'};

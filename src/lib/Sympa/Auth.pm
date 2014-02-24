@@ -41,7 +41,7 @@ sub password_fingerprint {
     Sympa::Log::Syslog::do_log('debug', 'Sympa::Auth::password_fingerprint');
 
     my $pwd = shift;
-    if (Site->password_case eq 'insensitive') {
+    if (Sympa::Site->password_case eq 'insensitive') {
         return &tools::md5_fingerprint(lc($pwd));
     } else {
         return &tools::md5_fingerprint($pwd);
@@ -61,7 +61,7 @@ sub check_auth {
         return authentication($robot, $auth, $pwd);
     } else {
         ## This is an UID
-        foreach my $ldap (@{Site->auth_services->{$robot->domain}}) {
+        foreach my $ldap (@{Sympa::Site->auth_services->{$robot->domain}}) {
 
             # only ldap service are to be applied here
             next unless ($ldap->{'auth_type'} eq 'ldap');
@@ -102,7 +102,7 @@ sub may_use_sympa_native_auth {
 
     my $ok = 0;
     ## check each auth.conf paragrpah
-    foreach my $auth_service (@{Site->auth_services->{$robot->domain}}) {
+    foreach my $auth_service (@{Sympa::Site->auth_services->{$robot->domain}}) {
         next unless ($auth_service->{'auth_type'} eq 'user_table');
 
         next
@@ -145,7 +145,7 @@ sub authentication {
             $email);
         return undef;
     }
-    foreach my $auth_service (@{Site->auth_services->{$robot->domain}}) {
+    foreach my $auth_service (@{Sympa::Site->auth_services->{$robot->domain}}) {
         next if ($auth_service->{'auth_type'} eq 'authentication_info_url');
         next if ($email !~ /$auth_service->{'regexp'}/i);
         next
@@ -212,7 +212,7 @@ sub ldap_authentication {
     }
 
     ## No LDAP entry is defined in auth.conf
-    if ($#{Site->auth_services->{$robot->domain}} < 0) {
+    if ($#{Sympa::Site->auth_services->{$robot->domain}} < 0) {
         Sympa::Log::Syslog::do_log('notice', 'Skipping empty auth.conf');
         return undef;
     }
@@ -347,21 +347,21 @@ sub get_email_by_net_id {
     Sympa::Log::Syslog::do_log('debug2', '(%s, %s, uid=%s)',
         $robot, $auth_id, $attributes->{'uid'});
 
-    if (defined Site->auth_services->{$robot->domain}[$auth_id]
+    if (defined Sympa::Site->auth_services->{$robot->domain}[$auth_id]
         {'internal_email_by_netid'}) {
-        my $sso_config   = @{Site->auth_services->{$robot->domain}}[$auth_id];
+        my $sso_config   = @{Sympa::Site->auth_services->{$robot->domain}}[$auth_id];
         my $netid_cookie = $sso_config->{'netid_http_header'};
 
         $netid_cookie =~ s/(\w+)/$attributes->{$1}/ig;
 
         $email =
             $robot->get_netidtoemail_db($netid_cookie,
-            Site->auth_services->{$robot->domain}[$auth_id]{'service_id'});
+            Sympa::Site->auth_services->{$robot->domain}[$auth_id]{'service_id'});
 
         return $email;
     }
 
-    my $ldap = @{Site->auth_services->{$robot->domain}}[$auth_id];
+    my $ldap = @{Sympa::Site->auth_services->{$robot->domain}}[$auth_id];
 
     my $param = &tools::dup_var($ldap);
     my $ds    = new Sympa::LDAPSource($param);

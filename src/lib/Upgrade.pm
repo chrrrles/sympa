@@ -32,7 +32,7 @@ use POSIX qw(strftime);
 # tentative
 use Data::Dumper;
 
-use Site;
+use Sympa::Site;
 
 #use Conf; # used in Site
 #use Sympa::Log; # used in Conf
@@ -42,7 +42,7 @@ use Site;
 ## Return the previous Sympa version, ie the one listed in
 ## data_structure.version
 sub get_previous_version {
-    my $version_file = Site->etc . '/data_structure.version';
+    my $version_file = Sympa::Site->etc . '/data_structure.version';
     my $previous_version;
 
     if (-f $version_file) {
@@ -67,7 +67,7 @@ sub get_previous_version {
 }
 
 sub update_version {
-    my $version_file = Site->etc . '/data_structure.version';
+    my $version_file = Sympa::Site->etc . '/data_structure.version';
 
     ## Saving current version if required
     unless (open VFILE, ">$version_file") {
@@ -75,7 +75,7 @@ sub update_version {
             'err',
             "Unable to write %s ; sympa.pl needs write access on %s directory : %s",
             $version_file,
-            Site->etc,
+            Sympa::Site->etc,
             $!
         );
         return undef;
@@ -105,7 +105,7 @@ sub upgrade {
         Sympa::Log::do_log(
             'err',
             'Database %s defined in sympa.conf has not the right structure or is unreachable. verify db_xxx parameters in sympa.conf',
-            Site->db_name
+            Sympa::Site->db_name
         );
         return undef;
     }
@@ -142,7 +142,7 @@ sub upgrade {
         my $all_lists = Sympa::List::get_lists('Site');
         foreach my $list (@$all_lists) {
             next unless %{$list->web_archive};    #FIXME: always success
-            my $file = Site->queueoutgoing . '/.rebuild.' . $list->get_id();
+            my $file = Sympa::Site->queueoutgoing . '/.rebuild.' . $list->get_id();
 
             unless (open REBUILD, ">$file") {
                 Sympa::Log::Syslog::do_log('err', 'Cannot create %s', $file);
@@ -173,8 +173,8 @@ sub upgrade {
 
         my @directories;
 
-        if (-d Site->etc . '/web_tt2') {
-            push @directories, Site->etc . '/web_tt2';
+        if (-d Sympa::Site->etc . '/web_tt2') {
+            push @directories, Sympa::Site->etc . '/web_tt2';
         }
 
         ## Go through Virtual Robots
@@ -271,7 +271,7 @@ sub upgrade {
                             'Unable to fille the robot_admin and robot_subscriber fields in database for robot %s.',
                             $r
                         );
-                        Site->send_notify_to_listmaster(
+                        Sympa::Site->send_notify_to_listmaster(
                             'upgrade_failed',
                             {   'error' =>
                                     $Sympa::DatabaseManager::db_source->{'db_handler'}->errstr
@@ -292,7 +292,7 @@ sub upgrade {
         Sympa::Log::Syslog::do_log('notice',
             'Renaming web archive directories with the list domain...');
 
-        my $root_dir = Site->arc_path;
+        my $root_dir = Sympa::Site->arc_path;
         unless (opendir ARCDIR, $root_dir) {
             Sympa::Log::Syslog::do_log('err',
                 "Unable to open $root_dir : $!");
@@ -348,7 +348,7 @@ sub upgrade {
     ## DB fields of enum type have been changed to int
     if (&tools::lower_version($previous_version, '5.2a.1')) {
 
-        if (&Sympa::DatabaseManager::use_db && Site->db_type eq 'mysql') {
+        if (&Sympa::DatabaseManager::use_db && Sympa::Site->db_type eq 'mysql') {
             my %check = (
                 'subscribed_subscriber' => 'subscriber_table',
                 'included_subscriber'   => 'subscriber_table',
@@ -441,7 +441,7 @@ sub upgrade {
         Sympa::Log::Syslog::do_log('notice',
             'Renaming bounce sub-directories adding list domain...');
 
-        my $root_dir = Site->bounce_path;
+        my $root_dir = Sympa::Site->bounce_path;
         unless (opendir BOUNCEDIR, $root_dir) {
             Sympa::Log::Syslog::do_log('err',
                 "Unable to open $root_dir : $!");
@@ -538,7 +538,7 @@ sub upgrade {
                     $etc_dir . '/mhonarc-ressources.tt2',
                     $new_filename
                 );
-                Site->send_notify_to_listmaster('file_removed',
+                Sympa::Site->send_notify_to_listmaster('file_removed',
                     [$etc_dir . '/mhonarc-ressources.tt2', $new_filename]);
             }
         }
@@ -547,7 +547,7 @@ sub upgrade {
         my $all_lists = Sympa::List::get_lists('Site');
         foreach my $list (@$all_lists) {
             next unless %{$list->web_archive};    #FIXME: always true
-            my $file = Site->queueoutgoing . '/.rebuild.' . $list->get_id();
+            my $file = Sympa::Site->queueoutgoing . '/.rebuild.' . $list->get_id();
 
             unless (open REBUILD, ">$file") {
                 Sympa::Log::Syslog::do_log('err', 'Cannot create %s', $file);
@@ -566,7 +566,7 @@ sub upgrade {
         Sympa::Log::Syslog::do_log('notice',
             'Q-Encoding web documents filenames...');
 
-        Sympa::Language::PushLang(Site->lang);
+        Sympa::Language::PushLang(Sympa::Site->lang);
         my $all_lists = Sympa::List::get_lists('Site');
         foreach my $list (@$all_lists) {
             if (-d $list->dir . '/shared') {
@@ -607,17 +607,17 @@ sub upgrade {
             'scenari',  'create_list_templates',
             'families'
             ) {
-            if (-d Site->etc . '/' . $type) {
-                push @directories, [Site->etc . '/' . $type, Site->lang];
+            if (-d Sympa::Site->etc . '/' . $type) {
+                push @directories, [Sympa::Site->etc . '/' . $type, Sympa::Site->lang];
             }
         }
 
         foreach my $f (
             Sympa::Conf::get_sympa_conf(),     Sympa::Conf::get_wwsympa_conf(),
-            Site->etc . '/topics.conf', Site->etc . '/auth.conf'
+            Sympa::Site->etc . '/topics.conf', Sympa::Site->etc . '/auth.conf'
             ) {
             if (-f $f) {
-                push @files, [$f, Site->lang];
+                push @files, [$f, Sympa::Site->lang];
             }
         }
 
@@ -680,7 +680,7 @@ sub upgrade {
             } elsif ($d =~ /(create_list_templates|families)$/) {
                 foreach my $subdir (grep(/^\w+$/, readdir DIR)) {
                     if (-d "$d/$subdir") {
-                        push @directories, ["$d/$subdir", Site->lang];
+                        push @directories, ["$d/$subdir", Sympa::Site->lang];
                     }
                 }
                 closedir DIR;
@@ -783,10 +783,10 @@ sub upgrade {
         ## Remove OTHER/ subdirectories in bounces
         Sympa::Log::Syslog::do_log('notice',
             "Removing obsolete OTHER/ bounce directories");
-        if (opendir BOUNCEDIR, Site->bounce_path) {
+        if (opendir BOUNCEDIR, Sympa::Site->bounce_path) {
 
             foreach my $subdir (sort grep (!/^\.+$/, readdir(BOUNCEDIR))) {
-                my $other_dir = Site->bounce_path . '/' . $subdir . '/OTHER';
+                my $other_dir = Sympa::Site->bounce_path . '/' . $subdir . '/OTHER';
                 if (-d $other_dir) {
                     &tools::remove_dir($other_dir);
                     Sympa::Log::Syslog::do_log('notice',
@@ -798,7 +798,7 @@ sub upgrade {
 
         } else {
             Sympa::Log::Syslog::do_log('err',
-                "Failed to open directory Site->queuebounce : $!");
+                "Failed to open directory Sympa::Site->queuebounce : $!");
         }
 
     }
@@ -943,7 +943,7 @@ sub upgrade {
             # task is to be done later
             next if ($spoolparameter eq 'queuetask');
 
-            my $spooldir = Site->$spoolparameter;
+            my $spooldir = Sympa::Site->$spoolparameter;
 
             unless (-d $spooldir) {
                 Sympa::Log::Syslog::do_log(
@@ -1041,7 +1041,7 @@ sub upgrade {
                     my $recipient = $1;
                     ($listname, $robot_id) = split /\@/, $recipient;
                     $meta{'date'} = $2;
-                    $robot_id = lc($robot_id || Site->domain);
+                    $robot_id = lc($robot_id || Sympa::Site->domain);
                     ## check if robot exists
                     unless ($robot = Sympa::Robot->new($robot_id)) {
                         $ignored .= ',' . $filename;
@@ -1055,7 +1055,7 @@ sub upgrade {
                             $meta{'type'} = $type if $type;
 
                             my $email = $robot->email;
-                            my $host  = Site->host;
+                            my $host  = Sympa::Site->host;
 
                             my $priority;
 
@@ -1076,7 +1076,7 @@ sub upgrade {
                 }
 
                 $listname = lc($listname);
-                $robot_id = lc($robot_id || Site->domain);
+                $robot_id = lc($robot_id || Sympa::Site->domain);
                 ## check if robot exists
                 unless ($robot = Sympa::Robot->new($robot_id)) {
                     $ignored .= ',' . $filename;
@@ -1118,7 +1118,7 @@ sub upgrade {
                 if ($spoolparameter eq 'queuemod') {
                     my $html_view_dir = $spooldir . '/.' . $filename;
                     my $list_html_view_dir =
-                          Site->viewmail_dir . '/mod/'
+                          Sympa::Site->viewmail_dir . '/mod/'
                         . $listname . '@'
                         . $robot_id;
                     my $new_html_view_dir =
@@ -1222,7 +1222,7 @@ sub upgrade {
         );
         ## Old params
         my %old_param = (
-            'alias_manager' => 'No more used, using ' . Site->alias_manager,
+            'alias_manager' => 'No more used, using ' . Sympa::Site->alias_manager,
             'wws_path'      => 'No more used',
             'icons_url' =>
                 'No more used. Using static_content/icons instead.',
@@ -1235,7 +1235,7 @@ sub upgrade {
         );
 
         ## Set language of new file content
-        Sympa::Language::PushLang(Site->lang);
+        Sympa::Language::PushLang(Sympa::Site->lang);
         $date =
             Sympa::Language::gettext_strftime("%d.%b.%Y-%H.%M.%S", localtime time);
 

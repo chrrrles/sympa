@@ -2109,7 +2109,7 @@ sub remind {
     } elsif ($action =~ /request_auth/i) {
         Sympa::Log::Syslog::do_log('debug2', "auth requested from $sender");
         if ($listname eq '*') {
-            unless (Site->request_auth($sender, 'remind')) {
+            unless (Sympa::Site->request_auth($sender, 'remind')) {
                 my $error =
                     "Unable to request authentification for command 'remind'";
                 &Sympa::Report::reject_report_cmd('intern', $error,
@@ -3139,7 +3139,7 @@ sub reject {
         'REJECT %s %s from %s accepted (%d seconds)',
         $name, $sender, $key, time - $time_command);
     &tools::remove_dir(
-        Site->viewmail_dir . '/mod/' . $list->get_list_id() . '/' . $key);
+        Sympa::Site->viewmail_dir . '/mod/' . $list->get_list_id() . '/' . $key);
 
     $modspool->remove_message({'list' => $list, 'authkey' => $key});
 
@@ -3370,7 +3370,7 @@ sub get_auth_method {
             $compute = $list->compute_auth($email, $cmd);
             $that = $list->robot;
         } else {
-            $compute = Site->compute_auth($email, $cmd);
+            $compute = Sympa::Site->compute_auth($email, $cmd);
             $that = 'Site';
         }
         if ($auth eq $compute) {

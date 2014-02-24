@@ -81,22 +81,22 @@ unless ([getpwuid $<]->[0] eq Sympa::Constants::USER) {
 }
 
 ## Load sympa config
-unless (Site->load) {
+unless (Sympa::Site->load) {
     die 'config_error';
 }
 
 unless (Sympa::DatabaseManager::check_db_connect('just_try') and Sympa::DatabaseManager::probe_db()) {
     printf STDERR
         "Database %s defined in sympa.conf has not the right structure or is unreachable. verify db_xxx parameters in sympa.conf\n",
-        Site->db_name;
+        Sympa::Site->db_name;
     exit 1;
 }
 
-chdir Site->home;
+chdir Sympa::Site->home;
 
 my $robot;
 my $list;
-unless ($robot = Sympa::Robot->new($robot_id || Site->domain)
+unless ($robot = Sympa::Robot->new($robot_id || Sympa::Site->domain)
     and $list = List->new($listname, $robot)) {
     die 'Cannot create List object';
 }

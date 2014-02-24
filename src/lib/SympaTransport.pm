@@ -35,17 +35,17 @@ sub request {
 
     if (my $request = $_[0]) {
         ## Select appropriate robot
-        if (Site->robot_by_soap_url->{$ENV{'SERVER_NAME'}
+        if (Sympa::Site->robot_by_soap_url->{$ENV{'SERVER_NAME'}
                     . $ENV{'SCRIPT_NAME'}}) {
             $ENV{'SYMPA_ROBOT'} =
-                Site->robot_by_soap_url->{$ENV{'SERVER_NAME'}
+                Sympa::Site->robot_by_soap_url->{$ENV{'SERVER_NAME'}
                     . $ENV{'SCRIPT_NAME'}};
             Sympa::Log::Syslog::do_log('debug2', 'Robot : %s',
                 $ENV{'SYMPA_ROBOT'});
         } else {
             Sympa::Log::Syslog::do_log('debug2', 'URL : %s',
                 $ENV{'SERVER_NAME'} . $ENV{'SCRIPT_NAME'});
-            $ENV{'SYMPA_ROBOT'} = Site->domain;
+            $ENV{'SYMPA_ROBOT'} = Sympa::Site->domain;
         }
 
         ## Empty list cache of the robot
@@ -86,7 +86,7 @@ sub response {
     if (my $response = $_[0]) {
         if (defined $ENV{'SESSION_ID'}) {
             my $expire = $main::param->{'user'}{'cookie_delay'}
-                || Site->cookie_expire;
+                || Sympa::Site->cookie_expire;
             my $cookie =
                 SympaSession::soap_cookie2($ENV{'SESSION_ID'},
                 $ENV{'SERVER_NAME'}, $expire);

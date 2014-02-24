@@ -279,7 +279,7 @@ sub clean_archive_directory {
     my $arc_root = $robot->arc_path;
     my $answer;
     $answer->{'dir_to_rebuild'} = $arc_root . '/' . $dir_to_rebuild;
-    $answer->{'cleaned_dir'}    = Site->tmpdir . '/' . $dir_to_rebuild;
+    $answer->{'cleaned_dir'}    = Sympa::Site->tmpdir . '/' . $dir_to_rebuild;
     unless (
         my $number_of_copies = &tools::copy_dir(
             $answer->{'dir_to_rebuild'},
@@ -427,7 +427,7 @@ sub convert_single_message {
         '-outdir'     => $destination_dir,
         '-attachmentdir' => $destination_dir,
         '-attachmenturl' => $attachement_url,
-        '-umask'         => Site->umask,
+        '-umask'         => Sympa::Site->umask,
         '-stdout'        => "$destination_dir/msg00000.html",
         '--', $msg_file
     ) >> 8;
@@ -488,7 +488,7 @@ sub get_tag {
     my $that = shift;
 
     return
-        substr(Digest::MD5::md5_hex(join '/', Site->cookie, $that->name),
+        substr(Digest::MD5::md5_hex(join '/', Sympa::Site->cookie, $that->name),
         -10);
 }
 

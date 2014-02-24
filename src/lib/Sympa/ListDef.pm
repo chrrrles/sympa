@@ -286,7 +286,7 @@ our %pinfo = (
     'lang' => {
         'group'      => 'description',
         'gettext_id' => "Language of the list",
-        'format'      => [],      ## Site->supported_languages called later
+        'format'      => [],      ## Sympa::Site->supported_languages called later
         'file_format' => '\w+',
         'default' => {'conf' => 'lang'}
     },
