@@ -25,7 +25,7 @@
 use strict;
 use lib '--modulesdir--';
 
-#use wwslib; # no longer used
+#use Sympa::Wwslib; # no longer used
 use Sympa::Conf;
 use Sympa::Language;
 use Sympa::Template;

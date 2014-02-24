@@ -26,7 +26,7 @@ use strict;
 use lib '--modulesdir--';
 use Getopt::Long;
 
-#use wwslib; # no longer used
+#use Sympa::Wwslib; # no longer used
 #use Sympa::Constants; # used by Conf
 use List;
 

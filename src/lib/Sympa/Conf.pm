@@ -38,7 +38,7 @@ use Sympa::DatabaseManager;
 use Sympa::Log;
 use Sympa::Language qw(gettext);
 
-#use wwslib; # no longer used
+#use Sympa::Wwslib; # no longer used
 use Sympa::ConfDef;
 use Sympa::Tools;
 
