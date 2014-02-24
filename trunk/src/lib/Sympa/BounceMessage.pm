@@ -629,7 +629,7 @@ sub process_dsn {
         }
     }
 
-    if (tracking::db_insert_notification(
+    if (Sympa::Tracking::db_insert_notification(
             $self->{'distribution_id'}, 'DSN',
             $self->{'dsn'}{'status'},   $arrival_date,
             $self->get_message_as_string
@@ -770,7 +770,7 @@ sub process_mdn {
 
     Sympa::Log::Syslog::do_log('debug2', 'Save in database...');
     unless (
-        tracking::db_insert_notification(
+        Sympa::Tracking::db_insert_notification(
             $self->{'distribution_id'}, 'MDN',
             $self->{'mdn'}{'status'},   $self->{'mdn'}{'date'},
             $self->get_message_as_string

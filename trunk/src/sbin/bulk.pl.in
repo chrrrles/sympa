@@ -465,7 +465,7 @@ while (!$end) {
                     # tracking by MDN required tracking by DSN to
                     my $msgid = $message->get_msg_id;
                     $notification_id =
-                        tracking::find_notification_id_by_message($rcpt,
+                        Sympa::Tracking::find_notification_id_by_message($rcpt,
                         $msgid, $listname, $robot_id);
                     $return_path =
                         $list->get_bounce_address($rcpt, $notification_id);

@@ -855,7 +855,7 @@ sub purge_tables {
         my $all_lists = Sympa::List::get_lists($robot);
         foreach my $list (@$all_lists) {
             $removed +=
-                tracking::remove_message_by_period($list,
+                Sympa::Tracking::remove_message_by_period($list,
                 $list->tracking->{'retention_period'});
         }
     }

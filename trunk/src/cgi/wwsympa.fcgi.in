@@ -10190,7 +10190,7 @@ sub do_remove_arc {
         $removeorder .= sprintf "%s||%s\n", $msgid, $param->{'user'}{'email'};
 
         # Removing tracking should be done by archived.
-        tracking::remove_message_by_id($list, $msgid);
+        Sympa::Tracking::remove_message_by_id($list, $msgid);
     }
     my $spoolarchive = new Sympa::ClassicSpool('outgoing');
     $spoolarchive->store($removeorder,
@@ -10483,7 +10483,7 @@ sub do_tracking {
     $param->{'listname'} = $in{'list'};
 
     unless ($param->{'tracking_info'} =
-        tracking::get_recipients_status($list, $in{'msgid'})) {
+        Sympa::Tracking::get_recipients_status($list, $in{'msgid'})) {
         &Sympa::Report::reject_report_web('intern', 'could_not_get_tracking_info',
             {}, $param->{'action'}, $list, $param->{'user'}{'email'},
             $robot_id);
