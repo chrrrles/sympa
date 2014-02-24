@@ -2198,7 +2198,7 @@ sub send_msg {
 
         if (($apply_tracking eq 'dsn') || ($apply_tracking eq 'mdn')) {
             $verp = $apply_tracking;
-            tracking::db_init_notification_table(
+            Sympa::Tracking::db_init_notification_table(
                 $self,
                 'msgid' => $original_message_id,
 
