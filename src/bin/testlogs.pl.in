@@ -31,7 +31,7 @@ use Getopt::Long;
 use Sympa::Site;
 
 my %options;
-&GetOptions(\%main::options, 'debug|d', 'log_level=s', 'config|f=s');
+GetOptions(\%main::options, 'debug|d', 'log_level=s', 'config|f=s');
 
 my $config_file = $main::options{'config'} || Sympa::Constants::CONFIG;
 ## Load configuration file

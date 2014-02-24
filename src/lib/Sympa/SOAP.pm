@@ -251,7 +251,7 @@ sub casLogin {
                 'CAS ticket %s not validated by server %s : %s',
                 $proxyTicket,
                 $auth_service->{'base_url'},
-                &AuthCAS::get_errors()
+                AuthCAS::get_errors()
             );
             next;
         }
@@ -275,7 +275,7 @@ sub casLogin {
 
     ## Now fetch email attribute from LDAP
     unless ($email =
-        &Sympa::Auth::get_email_by_net_id($robot, $cas_id, {'uid' => $user})) {
+        Sympa::Auth::get_email_by_net_id($robot, $cas_id, {'uid' => $user})) {
         Sympa::Log::Syslog::do_log('err',
             'Could not get email address from LDAP for user %s', $user);
         die SOAP::Fault->faultcode('Server')
@@ -389,7 +389,7 @@ sub authenticateRemoteAppAndRun {
             ->faultdetail('Use : <appname> <apppassword> <vars> <service>');
     }
     my $proxy_vars =
-        &Sympa::Auth::remote_app_check_password($appname, $apppassword, $robot);
+        Sympa::Auth::remote_app_check_password($appname, $apppassword, $robot);
 
     unless (defined $proxy_vars) {
         Sympa::Log::Syslog::do_log('notice',
@@ -695,7 +695,7 @@ sub createList {
 
     ## create liste
     my $resul =
-        &Sympa::Admin::create_list_old($parameters, $template, $robot, "soap");
+        Sympa::Admin::create_list_old($parameters, $template, $robot, "soap");
     unless (defined $resul) {
         Sympa::Log::Syslog::do_log('info',
             'unable to create list %s@%s from %s ',
@@ -893,7 +893,7 @@ sub add {
         $u->{'email'}    = $email;
         $u->{'gecos'}    = $gecos || $u2->gecos;
         $u->{'date'}     = $u->{'update_date'} = time;
-        $u->{'password'} = $u2->password || &Sympa::Tools::tmp_passwd($email);
+        $u->{'password'} = $u2->password || Sympa::Tools::tmp_passwd($email);
         $u->{'lang'}     = $u2->lang || $list->lang;
 
         $list->add_list_member($u);
@@ -1355,7 +1355,7 @@ sub signoff {
         foreach my $list (Sympa::List::get_which($sender, $robot, 'member')) {
             my $l = $list->name;
 
-            $success ||= &signoff($l, $sender);    #FIXME: take care of robot
+            $success ||= signoff($l, $sender);    #FIXME: take care of robot
         }
         return SOAP::Data->name('result')->value($success);
     }
@@ -1839,11 +1839,11 @@ sub get_reason_string {
     my $tt2_include_path = $robot->get_etc_include_path('mail_tt2');
 
     unless (
-        &Sympa::Template::parse_tt2(
+        Sympa::Template::parse_tt2(
             $data, 'authorization_reject.tt2', \$string, $tt2_include_path
         )
         ) {
-        my $error = &Sympa::Template::get_error();
+        my $error = Sympa::Template::get_error();
         $robot->send_notify_to_listmaster('web_tt2_error', [$error]);
         Sympa::Log::Syslog::do_log('info',
             "get_reason_string : error parsing");

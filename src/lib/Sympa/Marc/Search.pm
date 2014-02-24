@@ -305,7 +305,7 @@ sub search {
                 }
             } elsif (/^<!--X-Subject: (.*)( -->|$)/) {
                 ## No more need to decode header fields
-                # $subj = &MIME::Words::decode_mimewords($1);
+                # $subj = MIME::Words::decode_mimewords($1);
                 $subj = $1;
                 last if (/-->/);
             }
@@ -315,7 +315,7 @@ sub search {
         ($from = <FH>) =~ s/^<!--X-From-R13: (.*) -->/$1/;
 
         ## No more need to decode header fields
-        #$from = &MIME::Words::decode_mimewords($from);
+        #$from = MIME::Words::decode_mimewords($from);
 
         $from =~ tr/N-Z[@A-Mn-za-m/@A-Z[a-z/;
 

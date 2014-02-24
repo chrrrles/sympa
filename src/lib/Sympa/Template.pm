@@ -47,7 +47,7 @@ sub qencode {
     return MIME::EncWords::encode_mimewords(
         Encode::decode('utf8', $string),
         Encoding => 'A',
-        Charset  => &Sympa::Language::GetCharset(),
+        Charset  => Sympa::Language::GetCharset(),
         Field    => "message-id"
     );
 }
@@ -95,8 +95,8 @@ sub encode_utf8 {
     my $string = shift;
 
     ## Skip if already internally tagged utf8
-    if (&Encode::is_utf8($string)) {
-        return &Encode::encode_utf8($string);
+    if (Encode::is_utf8($string)) {
+        return Encode::encode_utf8($string);
     }
 
     return $string;
@@ -107,11 +107,11 @@ sub decode_utf8 {
     my $string = shift;
 
     ## Skip if already internally tagged utf8
-    unless (&Encode::is_utf8($string)) {
+    unless (Encode::is_utf8($string)) {
         ## Wrapped with eval to prevent Sympa process from dying
         ## FB_CROAK is used instead of FB_WARN to pass $string intact to
         ## succeeding processes it operation fails
-        eval { $string = &Encode::decode('utf8', $string, Encode::FB_CROAK); };
+        eval { $string = Encode::decode('utf8', $string, Encode::FB_CROAK); };
         $@ = '';
     }
 
@@ -137,7 +137,7 @@ sub maketext {
     # my $s = $stash->_dump();
 
     return sub {
-        &Language::maketext($template_name, $_[0], @arg);
+        Sympa::Language::maketext($template_name, $_[0], @arg);
         }
 }
 
@@ -177,7 +177,7 @@ sub wrap {
     return sub {
         my $text = shift;
         my $nl   = $text =~ /\n$/;
-        my $ret  = &Sympa::Tools::wrap_text($text, $init, $subs, $cols);
+        my $ret  = Sympa::Tools::wrap_text($text, $init, $subs, $cols);
         $ret =~ s/\n$// unless $nl;
         $ret;
     };
@@ -253,7 +253,7 @@ sub parse_tt2 {
         $template = \join('', @$template);
     }
 
-    &Sympa::Language::SetLang($data->{lang}) if ($data->{'lang'});
+    Sympa::Language::SetLang($data->{lang}) if ($data->{'lang'});
 
     my $config = {
 
@@ -264,13 +264,13 @@ sub parse_tt2 {
         UNICODE => 0,    # Prevent BOM auto-detection
 
         FILTERS => {
-            unescape => \&CGI::Util::unescape,
-            l        => [\&Sympa::Template::maketext, 1],
-            loc      => [\&Sympa::Template::maketext, 1],
-            helploc  => [\&Sympa::Template::maketext, 1],
-            locdt    => [\&Sympa::Template::locdatetime, 1],
-            wrap         => [\&Sympa::Template::wrap,    1],
-            optdesc      => [\&Sympa::Template::optdesc, 1],
+            unescape => \CGI::Util::unescape,
+            l        => [\Sympa::Template::maketext, 1],
+            loc      => [\Sympa::Template::maketext, 1],
+            helploc  => [\Sympa::Template::maketext, 1],
+            locdt    => [\Sympa::Template::locdatetime, 1],
+            wrap         => [\Sympa::Template::wrap,    1],
+            optdesc      => [\Sympa::Template::optdesc, 1],
             qencode      => [\&qencode,      0],
             escape_xml   => [\&escape_xml,   0],
             escape_url   => [\&escape_url,   0],

@@ -607,7 +607,7 @@ sub new {
         }
 
         ## Only process the list if the name is valid.
-        my $listname_regexp = &Sympa::Tools::get_regexp('listname');
+        my $listname_regexp = Sympa::Tools::get_regexp('listname');
         unless ($name and ($name =~ /^($listname_regexp)$/io)) {
             Sympa::Log::Syslog::do_log('err', 'Incorrect listname "%s"',
                 $name)
@@ -1566,7 +1566,7 @@ sub distribute_msg {
         ## Add subject tag
         $message->as_entity()->head->delete('Subject');
         my $parsed_tag;
-        &Sympa::Template::parse_tt2(
+        Sympa::Template::parse_tt2(
             {   'list' => {
                     'name'     => $self->name,
                     'sequence' => $self->stats->[0]
@@ -1842,7 +1842,7 @@ sub split_spooled_digest_to_messages {
         $self->get_list_id);
     my $message_in_spool = $param->{'message_in_spool'};
     $self->{'digest'}{'list_of_mail'} = [];
-    my $separator = "\n\n" . &Sympa::Tools::get_separator() . "\n\n";
+    my $separator = "\n\n" . Sympa::Tools::get_separator() . "\n\n";
     my @messages_as_string =
         split(/$separator/, $message_in_spool->{'messageasstring'});
     splice @messages_as_string, 0, 1;
@@ -1871,9 +1871,9 @@ sub prepare_messages_for_digest {
     return undef unless ($self->{'digest'}{'list_of_mail'});
     foreach my $i (0 .. $#{$self->{'digest'}{'list_of_mail'}}) {
         my $mail    = ${$self->{'digest'}{'list_of_mail'}}[$i];
-        my $subject = &Sympa::Tools::decode_header($mail, 'Subject');
-        my $from    = &Sympa::Tools::decode_header($mail, 'From');
-        my $date    = &Sympa::Tools::decode_header($mail, 'Date');
+        my $subject = Sympa::Tools::decode_header($mail, 'Subject');
+        my $from    = Sympa::Tools::decode_header($mail, 'From');
+        my $date    = Sympa::Tools::decode_header($mail, 'Date');
 
         my $msg = {};
         $msg->{'id'}      = $i + 1;
@@ -1887,12 +1887,12 @@ sub prepare_messages_for_digest {
             $mail->as_entity()->PlainDigest::plain_body_as_string();
 
         ## Should be extracted from Date:
-        $msg->{'month'} = &POSIX::strftime("%Y-%m", localtime(time));
+        $msg->{'month'} = POSIX::strftime("%Y-%m", localtime(time));
         $msg->{'message_id'} =
             Sympa::Tools::clean_msg_id($mail->get_header('Message-Id'));
 
         ## Clean up Message-ID
-        $msg->{'message_id'} = &Sympa::Tools::escape_chars($msg->{'message_id'});
+        $msg->{'message_id'} = Sympa::Tools::escape_chars($msg->{'message_id'});
 
         #push @{$param->{'msg_list'}}, $msg ;
         push @{$self->{'digest'}{'all_msg'}}, $msg;
@@ -1917,8 +1917,8 @@ sub prepare_digest_parameters {
         'replyto'          => $self->get_list_address('owner'),
         'to'               => $self->get_list_address(),
         'table_of_content' => gettext("Table of contents:"),
-        'boundary1' => '----------=_' . &Sympa::Tools::get_message_id($self->domain),
-        'boundary2' => '----------=_' . &Sympa::Tools::get_message_id($self->domain),
+        'boundary1' => '----------=_' . Sympa::Tools::get_message_id($self->domain),
+        'boundary2' => '----------=_' . Sympa::Tools::get_message_id($self->domain),
     };
     if ($self->get_reply_to() =~ /^list$/io) {
         $self->{'digest'}{'template_params'}{'replyto'} = "$param->{'to'}";
@@ -2155,7 +2155,7 @@ sub send_msg {
 
     # prepare dkim parameters
     if ($apply_dkim_signature eq 'on') {
-        $dkim_parameters = &Sympa::Tools::get_dkim_parameters($self);
+        $dkim_parameters = Sympa::Tools::get_dkim_parameters($self);
     }
 
     # separate subscribers depending on user reception option and also if VERP
@@ -2307,9 +2307,9 @@ sub get_list_members_per_mode {
         } elsif (
             $message->{'smime_crypted'}
             && (!-r Sympa::Site->ssl_cert_dir . '/'
-                . &Sympa::Tools::escape_chars($user->{'email'})
+                . Sympa::Tools::escape_chars($user->{'email'})
                 && !-r Sympa::Site->ssl_cert_dir . '/'
-                . &Sympa::Tools::escape_chars($user->{'email'} . '@enc'))
+                . Sympa::Tools::escape_chars($user->{'email'} . '@enc'))
             ) {
             Sympa::Log::Syslog::do_log('debug3', 'No certificate for user %s',
                 $user->{'email'});
@@ -2630,7 +2630,7 @@ sub send_to_editor {
         # create a one time ticket that will be used as an MD5 URL credential
 
         unless (
-            $param->{'one_time_ticket'} = &Sympa::Auth::create_one_time_ticket(
+            $param->{'one_time_ticket'} = Sympa::Auth::create_one_time_ticket(
                 $recipient, $robot, 'modindex/' . $name, 'mail'
             )
             ) {
@@ -2641,7 +2641,7 @@ sub send_to_editor {
             Sympa::Log::Syslog::do_log('debug',
                 "ticket $param->{'one_time_ticket'} created");
         }
-        &Sympa::Template::allow_absolute_path();
+        Sympa::Template::allow_absolute_path();
         $param->{'auto_submitted'} = 'auto-forwarded';
 
         unless ($self->send_file('moderate', $recipient, $param)) {
@@ -2734,7 +2734,7 @@ sub send_auth {
         $param->{'msg'} = $message->get_mime_message;
     }
 
-    &Sympa::Template::allow_absolute_path();
+    Sympa::Template::allow_absolute_path();
     $param->{'auto_submitted'} = 'auto-forwarded';
 
     unless ($self->send_file('send_auth', $sender, $param)) {
@@ -2787,8 +2787,8 @@ sub archive_send {
         'filename' => $file
     };
 
-    $param->{'boundary1'} = &Sympa::Tools::get_message_id($self->robot);
-    $param->{'boundary2'} = &Sympa::Tools::get_message_id($self->robot);
+    $param->{'boundary1'} = Sympa::Tools::get_message_id($self->robot);
+    $param->{'boundary2'} = Sympa::Tools::get_message_id($self->robot);
     $param->{'from'}      = $self->robot->get_address();            #FIXME
 
     $param->{'auto_submitted'} = 'auto-replied';
@@ -2842,8 +2842,8 @@ sub archive_send_last {
         'filename' => 'last_message'
     };
 
-    $param->{'boundary1'}      = &Sympa::Tools::get_message_id($self->robot);
-    $param->{'boundary2'}      = &Sympa::Tools::get_message_id($self->robot);
+    $param->{'boundary1'}      = Sympa::Tools::get_message_id($self->robot);
+    $param->{'boundary2'}      = Sympa::Tools::get_message_id($self->robot);
     $param->{'from'}           = $self->robot->get_address();           #FIXME
     $param->{'auto_submitted'} = 'auto-replied';
 
@@ -2926,7 +2926,7 @@ sub send_notify_to_owner {
             $param->{'escaped_who'} =~ s/\s/\%20/g;
             foreach my $owner (@to) {
                 $param->{'one_time_ticket'} =
-                    &Sympa::Auth::create_one_time_ticket($owner, $robot,
+                    Sympa::Auth::create_one_time_ticket($owner, $robot,
                     'search/' . $self->name . '/' . $param->{'escaped_who'},
                     $param->{'ip'});
                 unless (
@@ -2949,7 +2949,7 @@ sub send_notify_to_owner {
             $param->{'escaped_who'} =~ s/\s/\%20/g;
             foreach my $owner (@to) {
                 $param->{'one_time_ticket'} =
-                    &Sympa::Auth::create_one_time_ticket($owner, $robot,
+                    Sympa::Auth::create_one_time_ticket($owner, $robot,
                     'subindex/' . $self->name,
                     $param->{'ip'});
                 unless (
@@ -3321,7 +3321,7 @@ sub delete_list_member {
     my $total = 0;
 
     foreach my $who (@u) {
-        $who = &Sympa::Tools::clean_email($who);
+        $who = Sympa::Tools::clean_email($who);
 
         ## Include in exclusion_table only if option is set.
         if ($exclude == 1) {
@@ -3334,7 +3334,7 @@ sub delete_list_member {
 
         ## Delete record in SUBSCRIBER
         unless (
-            &Sympa::DatabaseManager::do_prepared_query(
+            Sympa::DatabaseManager::do_prepared_query(
                 q{DELETE FROM subscriber_table WHERE user_subscriber = ? AND list_subscriber = ? AND robot_subscriber = ?},
                 $who, $name, $self->domain
             )
@@ -3377,13 +3377,13 @@ sub delete_list_admin {
     my $total = 0;
 
     foreach my $who (@u) {
-        $who = &Sympa::Tools::clean_email($who);
+        $who = Sympa::Tools::clean_email($who);
 
         $self->user($role, $who, 0);
 
         ## Delete record in ADMIN
         unless (
-            &Sympa::DatabaseManager::do_prepared_query(
+            Sympa::DatabaseManager::do_prepared_query(
                 q{DELETE FROM admin_table WHERE user_admin = ? AND list_admin = ? AND robot_admin = ? AND role_admin = ?},
                 $who, $name, $self->domain, $role
             )
@@ -3407,7 +3407,7 @@ sub delete_all_list_admin {
     my $total = 0;
 
     ## Delete record in ADMIN
-    unless ($sth = &Sympa::DatabaseManager::do_prepared_query(q{DELETE FROM admin_table})) {
+    unless ($sth = Sympa::DatabaseManager::do_prepared_query(q{DELETE FROM admin_table})) {
         Sympa::Log::Syslog::do_log('err',
             'Unable to remove all admin from database');
         return undef;
@@ -3449,7 +3449,7 @@ sub get_real_total {
 
     ## Query the Database
     unless (
-        $sth = &Sympa::DatabaseManager::do_prepared_query(
+        $sth = Sympa::DatabaseManager::do_prepared_query(
             q{SELECT count(*) FROM subscriber_table WHERE list_subscriber = ? AND robot_subscriber = ?},
             $self->name,
             $self->domain
@@ -3497,7 +3497,7 @@ sub suspend_subscription {
         unless ref $self;    #prototype changed (6.2)
 
     unless (
-        &Sympa::DatabaseManager::do_prepared_query(
+        Sympa::DatabaseManager::do_prepared_query(
             q{UPDATE subscriber_table SET suspend_subscriber = 1, suspend_start_date_subscriber = ?, suspend_end_date_subscriber = ? WHERE user_subscriber = ? AND list_subscriber = ? AND robot_subscriber = ?},
             $data->{'startdate'}, $data->{'enddate'}, $email,
             $self->name,          $self->domain
@@ -3531,7 +3531,7 @@ sub restore_suspended_subscription {
         unless ref $self;    #prototype changed (6.2)
 
     unless (
-        &Sympa::DatabaseManager::do_prepared_query(
+        Sympa::DatabaseManager::do_prepared_query(
             q{UPDATE subscriber_table SET suspend_subscriber = 0, suspend_start_date_subscriber = NULL, suspend_end_date_subscriber = NULL WHERE user_subscriber = ? AND list_subscriber = ? AND robot_subscriber = ?},
             $email, $self->name, $self->domain
         )
@@ -3671,7 +3671,7 @@ sub get_exclusion {
         }
     } else {
         unless (
-            $sth = &Sympa::DatabaseManager::do_prepared_query(
+            $sth = Sympa::DatabaseManager::do_prepared_query(
                 q{SELECT user_exclusion AS email, date_exclusion AS "date"
 		  FROM exclusion_table
 		  WHERE list_exclusion = ? AND robot_exclusion=?},
@@ -3740,7 +3740,7 @@ sub get_resembling_list_members_no_object {
     my $name = $options->{'name'};
     my @output;
 
-    my $email    = &Sympa::Tools::clean_email($options->{'email'});
+    my $email    = Sympa::Tools::clean_email($options->{'email'});
     my $robot    = $options->{'domain'};
     my $listname = $options->{'name'};
 
@@ -3754,7 +3754,7 @@ sub get_resembling_list_members_no_object {
     if ($local_part =~ /^(.*)\+(.*)$/) {
 
         foreach my $subscriber (
-            &find_list_member_by_pattern_no_object(
+            find_list_member_by_pattern_no_object(
                 {   'email_pattern' => $1 . '@' . $subscriber_domain,
                     'name'          => $listname,
                     'domain'        => $robot
@@ -3769,7 +3769,7 @@ sub get_resembling_list_members_no_object {
 
     # is some subscriber resembling with a plused email ?
     foreach my $subscriber (
-        &find_list_member_by_pattern_no_object(
+        find_list_member_by_pattern_no_object(
             {   'email_pattern' => $local_part . '+%@' . $subscriber_domain,
                 'name'          => $listname,
                 'domain'        => $robot
@@ -3784,7 +3784,7 @@ sub get_resembling_list_members_no_object {
     # resembling local part
     # try to compare firstname.name@domain with name@domain
     foreach my $subscriber (
-        &find_list_member_by_pattern_no_object(
+        find_list_member_by_pattern_no_object(
             {   'email_pattern' => '%'
                     . $local_part . '@'
                     . $subscriber_domain,
@@ -3800,7 +3800,7 @@ sub get_resembling_list_members_no_object {
 
     if ($local_part =~ /^(.*)\.(.*)$/) {
         foreach my $subscriber (
-            &find_list_member_by_pattern_no_object(
+            find_list_member_by_pattern_no_object(
                 {   'email_pattern' => $2 . '@' . $subscriber_domain,
                     'name'          => $listname,
                     'domain'        => $robot
@@ -3823,7 +3823,7 @@ sub get_resembling_list_members_no_object {
             # remove first token if there is still at least 2 tokens try to
             # find a subscriber with that domain
             foreach my $subscriber (
-                &find_list_member_by_pattern_no_object(
+                find_list_member_by_pattern_no_object(
                     {   'email_pattern' => $local_part . '@' . $upperdomain,
                         'name'          => $listname,
                         'domain'        => $robot
@@ -3837,7 +3837,7 @@ sub get_resembling_list_members_no_object {
         }
     }
     foreach my $subscriber (
-        &find_list_member_by_pattern_no_object(
+        find_list_member_by_pattern_no_object(
             {   'email_pattern' => $local_part . '@%' . $subscriber_domain,
                 'name'          => $listname,
                 'domain'        => $robot
@@ -3861,7 +3861,7 @@ sub get_resembling_list_members_no_object {
             $initial = $initial . $1;
         }
         foreach my $subscriber (
-            &find_list_member_by_pattern_no_object(
+            find_list_member_by_pattern_no_object(
                 {   'email_pattern' => $initial . '@' . $subscriber_domain,
                     'name'          => $listname,
                     'domain'        => $robot
@@ -3877,7 +3877,7 @@ sub get_resembling_list_members_no_object {
     #### users in the same local part in any other domain
     #
     foreach my $subscriber (
-        &find_list_member_by_pattern_no_object(
+        find_list_member_by_pattern_no_object(
             {   'email_pattern' => $local_part . '@%',
                 'name'          => $listname,
                 'domain'        => $robot
@@ -3909,7 +3909,7 @@ sub get_resembling_list_members_no_object {
 sub find_list_member_by_pattern_no_object {
     my $options       = shift;
     my $name          = $options->{'name'};
-    my $email_pattern = &Sympa::Tools::clean_email($options->{'email_pattern'});
+    my $email_pattern = Sympa::Tools::clean_email($options->{'email_pattern'});
     my @resembling_users;
 
     push @sth_stack, $sth;
@@ -3942,11 +3942,11 @@ sub find_list_member_by_pattern_no_object {
         if (defined $user) {
 
             $user->{'reception'} ||= 'mail';
-            $user->{'escaped_email'} = &Sympa::Tools::escape_chars($user->{'email'});
+            $user->{'escaped_email'} = Sympa::Tools::escape_chars($user->{'email'});
             $user->{'update_date'} ||= $user->{'date'};
             if (defined $user->{custom_attribute}) {
                 $user->{'custom_attribute'} =
-                    &parseCustomAttribute($user->{'custom_attribute'});
+                    parseCustomAttribute($user->{'custom_attribute'});
             }
             push @resembling_users, $user;
         }
@@ -3967,8 +3967,8 @@ sub _list_member_cols {
     return
         sprintf
         'user_subscriber AS email, comment_subscriber AS gecos, bounce_subscriber AS bounce, bounce_score_subscriber AS bounce_score, bounce_address_subscriber AS bounce_address, reception_subscriber AS reception, topics_subscriber AS topics, visibility_subscriber AS visibility, %s AS "date", %s AS update_date, subscribed_subscriber AS subscribed, included_subscriber AS included, include_sources_subscriber AS id, custom_attribute_subscriber AS custom_attribute, suspend_subscriber AS suspend, suspend_start_date_subscriber AS startdate, suspend_end_date_subscriber AS enddate%s',
-        &Sympa::DatabaseManager::get_canonical_read_date('date_subscriber'),
-        &Sympa::DatabaseManager::get_canonical_read_date('update_subscriber'),
+        Sympa::DatabaseManager::get_canonical_read_date('date_subscriber'),
+        Sympa::DatabaseManager::get_canonical_read_date('update_subscriber'),
         $additional;
 }
 
@@ -3984,8 +3984,8 @@ sub _list_admin_cols {
     return
         sprintf
         'user_admin AS email, comment_admin AS gecos, reception_admin AS reception, visibility_admin AS visibility, %s AS "date", %s AS update_date, info_admin AS info, profile_admin AS profile, subscribed_admin AS subscribed, included_admin AS included, include_sources_admin AS id',
-        &Sympa::DatabaseManager::get_canonical_read_date('date_admin'),
-        &Sympa::DatabaseManager::get_canonical_read_date('update_admin');
+        Sympa::DatabaseManager::get_canonical_read_date('date_admin'),
+        Sympa::DatabaseManager::get_canonical_read_date('update_admin');
 }
 
 ## Returns the first user for the list.
@@ -4025,7 +4025,7 @@ sub get_first_list_member {
         $selection =
             sprintf
             " AND (user_subscriber LIKE %s OR comment_subscriber LIKE %s)",
-            &Sympa::DatabaseManager::quote($sql_regexp), &Sympa::DatabaseManager::quote($sql_regexp);
+            Sympa::DatabaseManager::quote($sql_regexp), Sympa::DatabaseManager::quote($sql_regexp);
     }
 
     ## Additional subscriber fields
@@ -4066,7 +4066,7 @@ sub get_first_list_member {
 
     ## LIMIT clause
     if (defined($rows) and defined($offset)) {
-        $statement .= &Sympa::DatabaseManager::get_limit_clause(
+        $statement .= Sympa::DatabaseManager::get_limit_clause(
             {'rows_count' => $rows, 'offset' => $offset});
     }
 
@@ -4092,7 +4092,7 @@ sub get_first_list_member {
         ######################################################################
         if (defined $user->{custom_attribute}) {
             $user->{'custom_attribute'} =
-                &parseCustomAttribute($user->{'custom_attribute'});
+                parseCustomAttribute($user->{'custom_attribute'});
         }
     } else {
         $sth->finish;
@@ -4159,7 +4159,7 @@ sub createXMLCustomAttribute {
     foreach my $k (sort keys %{$custom_attr}) {
         $XMLstr .=
               "<custom_attribute id=\"$k\"><value>"
-            . &Sympa::Tools::escape_html($custom_attr->{$k}{value})
+            . Sympa::Tools::escape_html($custom_attr->{$k}{value})
             . "</value></custom_attribute>";
     }
     $XMLstr .= "</custom_attributes>";
@@ -4204,7 +4204,7 @@ sub get_first_list_admin {
     if ($sql_regexp) {
         $selection =
             sprintf " AND (user_admin LIKE %s OR comment_admin LIKE %s)",
-            &Sympa::DatabaseManager::quote($sql_regexp), &Sympa::DatabaseManager::quote($sql_regexp);
+            Sympa::DatabaseManager::quote($sql_regexp), Sympa::DatabaseManager::quote($sql_regexp);
     }
 
     $statement = sprintf q{SELECT %s
@@ -4224,15 +4224,15 @@ sub get_first_list_admin {
 	      FROM admin_table
 	      WHERE list_admin = %s AND robot_admin = %s AND role_admin = %s
 	      ORDER BY dom}, _list_admin_cols(),
-            &Sympa::DatabaseManager::get_substring_clause(
+            Sympa::DatabaseManager::get_substring_clause(
             {   'source_field'     => 'user_admin',
                 'separator'        => '\@',
                 'substring_length' => '50'
             }
             ),
-            &Sympa::DatabaseManager::quote($name),
-            &Sympa::DatabaseManager::quote($self->domain),
-            &Sympa::DatabaseManager::quote($role);
+            Sympa::DatabaseManager::quote($name),
+            Sympa::DatabaseManager::quote($self->domain),
+            Sympa::DatabaseManager::quote($role);
     } elsif ($sortby eq 'email') {
         $statement .= ' ORDER BY email';
     } elsif ($sortby eq 'date') {
@@ -4245,13 +4245,13 @@ sub get_first_list_admin {
 
     ## LIMIT clause
     if (defined($rows) and defined($offset)) {
-        $statement .= &Sympa::DatabaseManager::get_substring_clause(
+        $statement .= Sympa::DatabaseManager::get_substring_clause(
             {'rows_count' => $rows, 'offset' => $offset});
     }
 
     push @sth_stack, $sth;
 
-    unless ($sth = &Sympa::DatabaseManager::do_query($statement)) {
+    unless ($sth = Sympa::DatabaseManager::do_query($statement)) {
         Sympa::Log::Syslog::do_log('err',
             'Unable to get admins having role %s for list %s',
             $role, $self);
@@ -4313,7 +4313,7 @@ sub get_next_list_member {
             $user->{'email'});
         if (defined $user->{custom_attribute}) {
             my $custom_attr =
-                &parseCustomAttribute($user->{'custom_attribute'});
+                parseCustomAttribute($user->{'custom_attribute'});
             unless (defined $custom_attr) {
                 Sympa::Log::Syslog::do_log(
                     'err',
@@ -4463,7 +4463,7 @@ sub get_next_bouncing_list_member {
 
         if (defined $user->{custom_attribute}) {
             $user->{'custom_attribute'} =
-                &parseCustomAttribute($user->{'custom_attribute'});
+                parseCustomAttribute($user->{'custom_attribute'});
         }
 
     } else {
@@ -4555,7 +4555,7 @@ sub is_list_member {
 sub update_list_member {
     my ($self, $who, $values) = @_;
     Sympa::Log::Syslog::do_log('debug2', '(%s)', $who);
-    $who = &Sympa::Tools::clean_email($who);
+    $who = Sympa::Tools::clean_email($who);
 
     my ($field, $value);
 
@@ -4648,7 +4648,7 @@ sub update_list_member {
 
             if ($map_table{$field} eq $table) {
                 if ($field eq 'date' || $field eq 'update_date') {
-                    $value = &Sympa::DatabaseManager::get_canonical_write_date($value);
+                    $value = Sympa::DatabaseManager::get_canonical_write_date($value);
                 } elsif ($value eq 'NULL') {    ## get_null_value?
                     if (Sympa::Site->db_type eq 'mysql') {
                         $value = '\N';
@@ -4657,7 +4657,7 @@ sub update_list_member {
                     if ($numeric_field{$map_field{$field}}) {
                         $value ||= 0;           ## Can't have a null value
                     } else {
-                        $value = &Sympa::DatabaseManager::quote($value);
+                        $value = Sympa::DatabaseManager::quote($value);
                     }
                 }
                 my $set = sprintf "%s=%s", $map_field{$field}, $value;
@@ -4669,10 +4669,10 @@ sub update_list_member {
         ## Update field
         if ($table eq 'user_table') {
             unless (
-                &Sympa::DatabaseManager::do_query(
+                Sympa::DatabaseManager::do_query(
                     "UPDATE %s SET %s WHERE (email_user=%s)",
                     $table, join(',', @set_list),
-                    &Sympa::DatabaseManager::quote($who)
+                    Sympa::DatabaseManager::quote($who)
                 )
                 ) {
                 Sympa::Log::Syslog::do_log('err',
@@ -4683,12 +4683,12 @@ sub update_list_member {
         } elsif ($table eq 'subscriber_table') {
             if ($who eq '*') {
                 unless (
-                    &Sympa::DatabaseManager::do_query(
+                    Sympa::DatabaseManager::do_query(
                         "UPDATE %s SET %s WHERE (list_subscriber=%s AND robot_subscriber = %s)",
                         $table,
                         join(',', @set_list),
-                        &Sympa::DatabaseManager::quote($name),
-                        &Sympa::DatabaseManager::quote($self->domain)
+                        Sympa::DatabaseManager::quote($name),
+                        Sympa::DatabaseManager::quote($self->domain)
                     )
                     ) {
                     Sympa::Log::Syslog::do_log(
@@ -4702,13 +4702,13 @@ sub update_list_member {
                 }
             } else {
                 unless (
-                    &Sympa::DatabaseManager::do_query(
+                    Sympa::DatabaseManager::do_query(
                         "UPDATE %s SET %s WHERE (user_subscriber=%s AND list_subscriber=%s AND robot_subscriber = %s)",
                         $table,
                         join(',', @set_list),
-                        &Sympa::DatabaseManager::quote($who),
-                        &Sympa::DatabaseManager::quote($name),
-                        &Sympa::DatabaseManager::quote($self->domain)
+                        Sympa::DatabaseManager::quote($who),
+                        Sympa::DatabaseManager::quote($name),
+                        Sympa::DatabaseManager::quote($self->domain)
                     )
                     ) {
                     Sympa::Log::Syslog::do_log(
@@ -4751,7 +4751,7 @@ sub update_list_member {
 sub update_list_admin {
     my ($self, $who, $role, $values) = @_;
     Sympa::Log::Syslog::do_log('debug2', '(%s,%s)', $role, $who);
-    $who = &Sympa::Tools::clean_email($who);
+    $who = Sympa::Tools::clean_email($who);
 
     my ($field, $value);
 
@@ -4814,7 +4814,7 @@ sub update_list_admin {
 
             if ($map_table{$field} eq $table) {
                 if ($field eq 'date' || $field eq 'update_date') {
-                    $value = &Sympa::DatabaseManager::get_canonical_write_date($value);
+                    $value = Sympa::DatabaseManager::get_canonical_write_date($value);
                 } elsif ($value eq 'NULL') {    #get_null_value?
                     if (Sympa::Site->db_type eq 'mysql') {
                         $value = '\N';
@@ -4823,7 +4823,7 @@ sub update_list_admin {
                     if ($numeric_field{$map_field{$field}}) {
                         $value ||= 0;           ## Can't have a null value
                     } else {
-                        $value = &Sympa::DatabaseManager::quote($value);
+                        $value = Sympa::DatabaseManager::quote($value);
                     }
                 }
                 my $set = sprintf "%s=%s", $map_field{$field}, $value;
@@ -4836,10 +4836,10 @@ sub update_list_admin {
         ## Update field
         if ($table eq 'user_table') {
             unless (
-                $sth = &Sympa::DatabaseManager::do_query(
+                $sth = Sympa::DatabaseManager::do_query(
                     "UPDATE %s SET %s WHERE (email_user=%s)",
                     $table, join(',', @set_list),
-                    &Sympa::DatabaseManager::quote($who)
+                    Sympa::DatabaseManager::quote($who)
                 )
                 ) {
                 Sympa::Log::Syslog::do_log('err',
@@ -4851,13 +4851,13 @@ sub update_list_admin {
         } elsif ($table eq 'admin_table') {
             if ($who eq '*') {
                 unless (
-                    $sth = &Sympa::DatabaseManager::do_query(
+                    $sth = Sympa::DatabaseManager::do_query(
                         "UPDATE %s SET %s WHERE (list_admin=%s AND robot_admin=%s AND role_admin=%s)",
                         $table,
                         join(',', @set_list),
-                        &Sympa::DatabaseManager::quote($name),
-                        &Sympa::DatabaseManager::quote($self->domain),
-                        &Sympa::DatabaseManager::quote($role)
+                        Sympa::DatabaseManager::quote($name),
+                        Sympa::DatabaseManager::quote($self->domain),
+                        Sympa::DatabaseManager::quote($role)
                     )
                     ) {
                     Sympa::Log::Syslog::do_log(
@@ -4871,14 +4871,14 @@ sub update_list_admin {
                 }
             } else {
                 unless (
-                    $sth = &Sympa::DatabaseManager::do_query(
+                    $sth = Sympa::DatabaseManager::do_query(
                         "UPDATE %s SET %s WHERE (user_admin=%s AND list_admin=%s AND robot_admin=%s AND role_admin=%s )",
                         $table,
                         join(',', @set_list),
-                        &Sympa::DatabaseManager::quote($who),
-                        &Sympa::DatabaseManager::quote($name),
-                        &Sympa::DatabaseManager::quote($self->domain),
-                        &Sympa::DatabaseManager::quote($role)
+                        Sympa::DatabaseManager::quote($who),
+                        Sympa::DatabaseManager::quote($name),
+                        Sympa::DatabaseManager::quote($self->domain),
+                        Sympa::DatabaseManager::quote($role)
                     )
                     ) {
                     Sympa::Log::Syslog::do_log(
@@ -4925,7 +4925,7 @@ sub add_list_member {
     my $current_list_members_count = $self->total;
 
     foreach my $new_user (@new_users) {
-        my $who = &Sympa::Tools::clean_email($new_user->{'email'});
+        my $who = Sympa::Tools::clean_email($new_user->{'email'});
         next unless $who;
         unless ($current_list_members_count < $self->max_list_members
             or $self->max_list_members == 0) {
@@ -4951,7 +4951,7 @@ sub add_list_member {
         my %custom_attr = %{$subscriptions->{$who}{'custom_attribute'}}
             if (defined $subscriptions->{$who}{'custom_attribute'});
         $new_user->{'custom_attribute'} ||=
-            &createXMLCustomAttribute(\%custom_attr);
+            createXMLCustomAttribute(\%custom_attr);
         Sympa::Log::Syslog::do_log(
             'debug2',
             'custom_attribute = %s',
@@ -5064,16 +5064,16 @@ sub _create_add_error_string {
     my $self = shift;
     $self->{'add_outcome'}{'errors'}{'error_message'} = '';
     if ($self->{'add_outcome'}{'errors'}{'max_list_members_exceeded'}) {
-        $self->{'add_outcome'}{'errors'}{'error_message'} .= sprintf &gettext(
+        $self->{'add_outcome'}{'errors'}{'error_message'} .= sprintf gettext(
             'Attempt to exceed the max number of members (%s) for this list.'
         ), $self->max_list_members;
     }
     if ($self->{'add_outcome'}{'errors'}{'unable_to_add_to_database'}) {
         $self->{'add_outcome'}{'error_message'} .=
-            ' ' . &gettext('Attempts to add some users in database failed.');
+            ' ' . gettext('Attempts to add some users in database failed.');
     }
     $self->{'add_outcome'}{'errors'}{'error_message'} .=
-        ' ' . sprintf &gettext('Added %s users out of %s required.'),
+        ' ' . sprintf gettext('Added %s users out of %s required.'),
         $self->{'add_outcome'}{'added_members'},
         $self->{'add_outcome'}{'expected_number_of_added_users'};
 }
@@ -5087,7 +5087,7 @@ sub add_list_admin {
     my $total = 0;
 
     foreach my $new_admin_user (@new_admin_users) {
-        my $who = &Sympa::Tools::clean_email($new_admin_user->{'email'});
+        my $who = Sympa::Tools::clean_email($new_admin_user->{'email'});
 
         next unless $who;
 
@@ -5177,7 +5177,7 @@ sub am_i {
     Sympa::Log::Syslog::do_log('debug2', '(%s, %s, %s, %s)', @_);
     my $self     = shift;
     my $function = lc(shift || '');
-    my $who      = &Sympa::Tools::clean_email(shift || '');
+    my $who      = Sympa::Tools::clean_email(shift || '');
     my $options  = shift || {};
 
     return undef unless $self and $who;
@@ -5254,7 +5254,7 @@ sub may_edit {
         ) {
 
         $edit_conf = $edit_list_conf{$edit_conf_file} =
-            &Sympa::Tools::load_edit_list_conf($self);
+            Sympa::Tools::load_edit_list_conf($self);
         $mtime{'edit_list_conf'}{$edit_conf_file} = time;
     } else {
         $edit_conf = $edit_list_conf{$edit_conf_file};
@@ -5317,7 +5317,7 @@ sub may_create_parameter {
     if ($self->robot->is_listmaster($who)) {
         return 1;
     }
-    my $edit_conf = &Sympa::Tools::load_edit_list_conf($self);
+    my $edit_conf = Sympa::Tools::load_edit_list_conf($self);
     $edit_conf->{$parameter} ||= $edit_conf->{'default'};
     if (!$edit_conf->{$parameter}) {
         Sympa::Log::Syslog::do_log('notice',
@@ -5886,7 +5886,7 @@ sub _include_users_remote_sympa_list {
     my $email;
 
     foreach my $line (
-        &Sympa::Fetch::get_https(
+        Sympa::Fetch::get_https(
             $host, $port, $path,
             $cert_file,
             $key_file,
@@ -6048,7 +6048,7 @@ sub _include_users_file {
     my $id           = Sympa::Datasource::_get_datasource_id($filename);
     my $lines        = 0;
     my $emails_found = 0;
-    my $email_regexp = &Sympa::Tools::get_regexp('email');
+    my $email_regexp = Sympa::Tools::get_regexp('email');
 
     while (<INCLUDE>) {
         if ($lines > 49 && $emails_found == 0) {
@@ -6077,7 +6077,7 @@ sub _include_users_file {
         my ($email, $gecos) = ($1, $5);
         $email = Sympa::Tools::clean_email($email);
 
-        unless (&Sympa::Tools::valid_email($email)) {
+        unless (Sympa::Tools::valid_email($email)) {
             Sympa::Log::Syslog::do_log('err',
                 "Skip badly formed email address: '%s'", $email);
             next;
@@ -6150,7 +6150,7 @@ sub _include_users_remote_file {
         my @remote_file  = split(/\n/, $res->content);
         my $lines        = 0;
         my $emails_found = 0;
-        my $email_regexp = &Sympa::Tools::get_regexp('email');
+        my $email_regexp = Sympa::Tools::get_regexp('email');
 
         # forgot headers (all line before one that contain a email
         foreach my $line (@remote_file) {
@@ -6180,7 +6180,7 @@ sub _include_users_remote_file {
             my ($email, $gecos) = ($1, $5);
             $email = Sympa::Tools::clean_email($email);
 
-            unless (&Sympa::Tools::valid_email($email)) {
+            unless (Sympa::Tools::valid_email($email)) {
                 Sympa::Log::Syslog::do_log('err',
                     "Skip badly formed email address: '%s'", $line);
                 next;
@@ -6266,7 +6266,7 @@ sub _include_users_voot_group {
         my $url = $consumer->getOAuthConsumer()->mustRedirect();
 
         # Report error with redirect URL
-        #return &do_redirect($url) if(defined $url);
+        #return do_redirect($url) if(defined $url);
         return undef;
     }
 
@@ -6275,7 +6275,7 @@ sub _include_users_voot_group {
     foreach my $member (@$members) {
 
         if (my $email = shift(@{$member->{'emails'}})) {
-            unless (&Sympa::Tools::valid_email($email)) {
+            unless (Sympa::Tools::valid_email($email)) {
                 Sympa::Log::Syslog::do_log('err',
                     "Skip badly formed email address: '%s'", $email);
                 next;
@@ -6386,9 +6386,9 @@ sub _include_users_ldap {
         ## Multiple values
         if (ref($emailentry) eq 'ARRAY') {
             foreach my $email (@{$emailentry}) {
-                my $cleanmail = &Sympa::Tools::clean_email($email);
+                my $cleanmail = Sympa::Tools::clean_email($email);
                 ## Skip badly formed emails
-                unless (&Sympa::Tools::valid_email($email)) {
+                unless (Sympa::Tools::valid_email($email)) {
                     Sympa::Log::Syslog::do_log('err',
                         "Skip badly formed email address: '%s'", $email);
                     next;
@@ -6400,9 +6400,9 @@ sub _include_users_ldap {
                 last if ($ldap_select eq 'first');
             }
         } else {
-            my $cleanmail = &Sympa::Tools::clean_email($emailentry);
+            my $cleanmail = Sympa::Tools::clean_email($emailentry);
             ## Skip badly formed emails
-            unless (&Sympa::Tools::valid_email($emailentry)) {
+            unless (Sympa::Tools::valid_email($emailentry)) {
                 Sympa::Log::Syslog::do_log('err',
                     "Skip badly formed email address: '%s'", $emailentry);
                 next;
@@ -6425,7 +6425,7 @@ sub _include_users_ldap {
         my ($email, $gecos) = @$emailgecos;
         next if ($email =~ /^\s*$/);
 
-        $email = &Sympa::Tools::clean_email($email);
+        $email = Sympa::Tools::clean_email($email);
         my %u;
         ## Check if user has already been included
         if ($users->{$email}) {
@@ -6607,9 +6607,9 @@ sub _include_users_ldap_2level {
             ## Multiple values
             if (ref($emailentry) eq 'ARRAY') {
                 foreach my $email (@{$emailentry}) {
-                    my $cleanmail = &Sympa::Tools::clean_email($email);
+                    my $cleanmail = Sympa::Tools::clean_email($email);
                     ## Skip badly formed emails
-                    unless (&Sympa::Tools::valid_email($email)) {
+                    unless (Sympa::Tools::valid_email($email)) {
                         Sympa::Log::Syslog::do_log('err',
                             "Skip badly formed email address: '%s'", $email);
                         next;
@@ -6624,9 +6624,9 @@ sub _include_users_ldap_2level {
                     last if ($ldap_select2 eq 'first');
                 }
             } else {
-                my $cleanmail = &Sympa::Tools::clean_email($emailentry);
+                my $cleanmail = Sympa::Tools::clean_email($emailentry);
                 ## Skip badly formed emails
-                unless (&Sympa::Tools::valid_email($emailentry)) {
+                unless (Sympa::Tools::valid_email($emailentry)) {
                     Sympa::Log::Syslog::do_log('err',
                         "Skip badly formed email address: '%s'", $emailentry);
                     next;
@@ -6656,7 +6656,7 @@ sub _include_users_ldap_2level {
         my ($email, $gecos) = @$emailgecos;
         next if ($email =~ /^\s*$/);
 
-        $email = &Sympa::Tools::clean_email($email);
+        $email = Sympa::Tools::clean_email($email);
         my %u;
         ## Check if user has already been included
         if ($users->{$email}) {
@@ -6869,10 +6869,10 @@ sub _include_users_sql {
         ## Empty value
         next if ($email =~ /^\s*$/);
 
-        $email = &Sympa::Tools::clean_email($email);
+        $email = Sympa::Tools::clean_email($email);
 
         ## Skip badly formed emails
-        unless (&Sympa::Tools::valid_email($email)) {
+        unless (Sympa::Tools::valid_email($email)) {
             Sympa::Log::Syslog::do_log('err',
                 "Skip badly formed email address: '%s'", $email);
             next;
@@ -7060,7 +7060,7 @@ sub _load_list_members_from_include {
                 }
             } elsif ($type eq 'include_list') {
                 $depend_on->{$name} = 1;
-                if (&_inclusion_loop($name, $incl, $depend_on)) {
+                if (_inclusion_loop($name, $incl, $depend_on)) {
                     Sympa::Log::Syslog::do_log(
                         'err',
                         'loop detection in list inclusion : could not include again %s in %s',
@@ -7180,7 +7180,7 @@ sub _load_list_admin_from_include {
 
                 # Work with a copy of admin hash branch to avoid including
                 # temporary variables into the actual admin hash. [bug #3182]
-                my $incl = &Sympa::Tools::dup_var($tmp_incl);
+                my $incl = Sympa::Tools::dup_var($tmp_incl);
 
                 # get the list of admin users
                 # does it need to define a 'default_admin_user_option'?
@@ -7226,7 +7226,7 @@ sub _load_list_admin_from_include {
                         $incl, $dir, $self->domain, \%option);
                 } elsif ($type eq 'include_list') {
                     $depend_on->{$name} = 1;
-                    if (&_inclusion_loop($name, $incl, $depend_on)) {
+                    if (_inclusion_loop($name, $incl, $depend_on)) {
                         Sympa::Log::Syslog::do_log(
                             'err',
                             'loop detection in list inclusion : could not include again %s in %s',
@@ -7284,7 +7284,7 @@ sub _load_include_admin_user_file {
         my $output = '';
 
         unless (
-            &Sympa::Template::parse_tt2(
+            Sympa::Template::parse_tt2(
                 $vars, $parsing->{'template'},
                 \$output, [$parsing->{'include_path'}]
             )
@@ -7530,7 +7530,7 @@ sub sync_include_ca {
         foreach my $tmp_incl (@{$self->$type}) {
             ## Work with a copy of admin hash branch to avoid including
             ## temporary variables into the actual admin hash.[bug #3182]
-            my $incl   = &Sympa::Tools::dup_var($tmp_incl);
+            my $incl   = Sympa::Tools::dup_var($tmp_incl);
             my $source = undef;
             my $srcca  = undef;
             if ($type eq 'include_sql_ca') {
@@ -7571,7 +7571,7 @@ sub sync_include_ca {
         if ($self->update_list_member(
                 $email,
                 {   'custom_attribute' =>
-                        &createXMLCustomAttribute($users{$email})
+                        createXMLCustomAttribute($users{$email})
                 }
             )
             ) {
@@ -7616,7 +7616,7 @@ sub purge_ca {
         if ($self->update_list_member(
                 $email,
                 {   'custom_attribute' =>
-                        &createXMLCustomAttribute($users{$email})
+                        createXMLCustomAttribute($users{$email})
                 }
             )
             ) {
@@ -8077,7 +8077,7 @@ sub sync_include_admin {
                     $param->{'subscribed'} = 1;
 
                     my $param_update =
-                        &is_update_param($param, $old_admin_users->{$email});
+                        is_update_param($param, $old_admin_users->{$email});
 
                     # updating
                     if (defined $param_update) {
@@ -8144,7 +8144,7 @@ sub sync_include_admin {
                     $param->{'subscribed'} = 0;
 
                     my $param_update =
-                        &is_update_param($param, $old_admin_users->{$email});
+                        is_update_param($param, $old_admin_users->{$email});
 
                     # updating
                     if (defined $param_update) {
@@ -8205,7 +8205,7 @@ sub sync_include_admin {
                 $param->{'id'}         = '';
                 $param->{'subscribed'} = 1;
                 my $param_update =
-                    &is_update_param($param, $old_admin_users->{$email});
+                    is_update_param($param, $old_admin_users->{$email});
 
                 # updating
                 if (defined $param_update) {
@@ -8484,7 +8484,7 @@ sub _compare_addresses {
 sub store_digest {
     Sympa::Log::Syslog::do_log('debug2', '(%s, %s)', @_);
     my ($self, $message) = @_;
-    my $separator = &Sympa::Tools::get_separator();
+    my $separator = Sympa::Tools::get_separator();
 
     my @now = localtime(time);
 
@@ -8504,10 +8504,10 @@ sub store_digest {
             POSIX::strftime("%a %b %e %H:%M:%S %Y", @now);
         $message_as_string .= sprintf
             "------- THIS IS A RFC934 COMPLIANT DIGEST, YOU CAN BURST IT -------\n\n";
-        $message_as_string .= sprintf "\n%s\n\n", &Sympa::Tools::get_separator();
+        $message_as_string .= sprintf "\n%s\n\n", Sympa::Tools::get_separator();
     }
     $message_as_string .= $message->as_string();    #without metadata
-    $message_as_string .= sprintf "\n%s\n\n", &Sympa::Tools::get_separator();
+    $message_as_string .= sprintf "\n%s\n\n", Sympa::Tools::get_separator();
 
     # update and unlock current digest message or create it
     if ($current_digest) {
@@ -8795,14 +8795,14 @@ sub get_lists {
 
                 ## SQL expression
                 if ($a or $b) {
-                    $ve = &Sympa::DatabaseManager::quote($vl);
+                    $ve = Sympa::DatabaseManager::quote($vl);
                     $ve =~ s/^["'](.*)['"]$/$1/;
                     $ve =~ s/([%_])/\\$1/g;
                     push @expr_sql,
                         sprintf("%s LIKE '%s'", $key_sql, "$b$ve$a");
                 } else {
                     push @expr_sql,
-                        sprintf('%s = %s', $key_sql, &Sympa::DatabaseManager::quote($vl));
+                        sprintf('%s = %s', $key_sql, Sympa::DatabaseManager::quote($vl));
                 }
 
                 next;
@@ -8850,13 +8850,13 @@ sub get_lists {
 ##			 sprintf('web_archive_list = %d', ($v+0 ? 1 : 0));
                 } elsif ($k eq 'status') {
                     push @expr_sql,
-                        sprintf('%s_list = %s', $k, &Sympa::DatabaseManager::quote($v));
+                        sprintf('%s_list = %s', $k, Sympa::DatabaseManager::quote($v));
                 } elsif ($k eq 'topics') {
                     my $ve = lc $v;
                     if ($ve eq 'others' or $ve eq 'topicsless') {
                         push @expr_sql, "topics_list = ''";
                     } else {
-                        $ve = &Sympa::DatabaseManager::quote($ve);
+                        $ve = Sympa::DatabaseManager::quote($ve);
                         $ve =~ s/^["'](.*)['"]$/$1/;
                         $ve =~ s/([%_])/\\$1/g;
                         push @expr_sql,
@@ -8989,14 +8989,14 @@ sub get_lists {
                 push @sth_stack, $sth;
 
                 if ($which_role eq 'member') {
-                    $sth = &Sympa::DatabaseManager::do_prepared_query(
+                    $sth = Sympa::DatabaseManager::do_prepared_query(
                         q{SELECT list_subscriber
 			  FROM subscriber_table
 			  WHERE robot_subscriber = ? AND user_subscriber = ?},
                         $robot->domain, $which_user
                     );
                 } else {
-                    $sth = &Sympa::DatabaseManager::do_prepared_query(
+                    $sth = Sympa::DatabaseManager::do_prepared_query(
                         q{SELECT list_admin
 			  FROM admin_table
 			  WHERE robot_admin = ? AND user_admin = ? AND
@@ -9036,7 +9036,7 @@ sub get_lists {
                 push @sth_stack, $sth;
 
                 unless (
-                    $sth = &Sympa::DatabaseManager::do_prepared_query(
+                    $sth = Sympa::DatabaseManager::do_prepared_query(
                         q{SELECT name_list
 			  FROM list_table
 			  WHERE robot_list = ?},
@@ -9144,7 +9144,7 @@ sub get_lists {
 		  name_list = list_admin AND
 		  role_admin = %s AND
 		  user_admin = %s AND }, Sympa::DatabaseManager::quote($which_role), Sympa::DatabaseManager::quote($which_user);
-            $cols = ', ' . &_list_admin_cols;
+            $cols = ', ' . _list_admin_cols();
         }
 
         push @sth_stack, $sth;
@@ -9287,7 +9287,7 @@ sub set_netidtoemail_db {
     my ($l, %which);
 
     unless (
-        &Sympa::DatabaseManager::do_prepared_query(
+        Sympa::DatabaseManager::do_prepared_query(
             q{INSERT INTO netidmap_table
 	      (netid_netidmap, serviceid_netidmap, email_netidmap,
 	       robot_netidmap)
@@ -9356,7 +9356,7 @@ function to any list in ROBOT.
 
 sub get_which {
     Sympa::Log::Syslog::do_log('debug2', '(%s, %s, %s)', @_);
-    my $email = &Sympa::Tools::clean_email(shift);
+    my $email = Sympa::Tools::clean_email(shift);
     my $robot = Sympa::Robot::clean_robot(shift);
     my $role  = shift;
 
@@ -9417,7 +9417,7 @@ sub get_shared_moderated {
     }
 
     ## sort of the shared
-    my @mod_dir = &sort_dir_to_get_mod("$shareddir");
+    my @mod_dir = sort_dir_to_get_mod("$shareddir");
     return \@mod_dir;
 }
 
@@ -9459,7 +9459,7 @@ sub sort_dir_to_get_mod {
         }
 
         if (-d $path_d) {
-            push(@moderate_dir, &sort_dir_to_get_mod($path_d));
+            push(@moderate_dir, sort_dir_to_get_mod($path_d));
         }
     }
 
@@ -9472,7 +9472,7 @@ sub get_db_field_type {
     my ($table, $field) = @_;
 ## TODO: Won't work with anything apart from MySQL. should use SDM framework
 ## subs.
-    unless ($sth = &Sympa::DatabaseManager::do_query("SHOW FIELDS FROM $table")) {
+    unless ($sth = Sympa::DatabaseManager::do_query("SHOW FIELDS FROM $table")) {
         Sympa::Log::Syslog::do_log('err',
             'get the list of fields for table %s', $table);
         return undef;
@@ -9493,7 +9493,7 @@ sub lowercase_field {
 
     my $total = 0;
 
-    unless ($sth = &Sympa::DatabaseManager::do_prepared_query("SELECT $field from $table")) {
+    unless ($sth = Sympa::DatabaseManager::do_prepared_query("SELECT $field from $table")) {
         Sympa::Log::Syslog::do_log('err',
             'Unable to get values of field %s for table %s',
             $field, $table);
@@ -9508,7 +9508,7 @@ sub lowercase_field {
 
         ## Updating Db
         unless (
-            $sth = &Sympa::DatabaseManager::do_prepared_query(
+            $sth = Sympa::DatabaseManager::do_prepared_query(
                 sprintf(
                     q{UPDATE %s SET %s = ? WHERE %s = ?},
                     $table, $field, $field
@@ -10322,7 +10322,7 @@ sub compute_topic {
     # getting keywords
     foreach my $topic (@{$self->msg_topic}) {
         my $list_keyw =
-            &Sympa::Tools::get_array_from_splitted_string($topic->{'keywords'});
+            Sympa::Tools::get_array_from_splitted_string($topic->{'keywords'});
 
         foreach my $keyw (@{$list_keyw}) {
             $keywords{$keyw} = $topic->{'name'};
@@ -10522,7 +10522,7 @@ sub modifying_msg_topic_for_list_members() {
     }
 
     my $msg_topic_changes =
-        &Sympa::Tools::diff_on_arrays(\@old_msg_topic_name, \@new_msg_topic_name);
+        Sympa::Tools::diff_on_arrays(\@old_msg_topic_name, \@new_msg_topic_name);
 
     if ($#{$msg_topic_changes->{'deleted'}} >= 0) {
 
@@ -10533,9 +10533,9 @@ sub modifying_msg_topic_for_list_members() {
             ) {
 
             if ($subscriber->{'reception'} eq 'mail') {
-                my $topics = &Sympa::Tools::diff_on_arrays(
+                my $topics = Sympa::Tools::diff_on_arrays(
                     $msg_topic_changes->{'deleted'},
-                    &Sympa::Tools::get_array_from_splitted_string(
+                    Sympa::Tools::get_array_from_splitted_string(
                         $subscriber->{'topics'}
                     )
                 );
@@ -10606,7 +10606,7 @@ sub select_list_members_for_topic {
     my $msg_topics;
 
     if ($string_topic) {
-        $msg_topics = &Sympa::Tools::get_array_from_splitted_string($string_topic);
+        $msg_topics = Sympa::Tools::get_array_from_splitted_string($string_topic);
     }
 
     foreach my $user (@$subscribers) {
@@ -10624,15 +10624,15 @@ sub select_list_members_for_topic {
             next;
         }
         my $user_topics =
-            &Sympa::Tools::get_array_from_splitted_string($info_user->{'topics'});
+            Sympa::Tools::get_array_from_splitted_string($info_user->{'topics'});
 
         if ($string_topic) {
-            my $result = &Sympa::Tools::diff_on_arrays($msg_topics, $user_topics);
+            my $result = Sympa::Tools::diff_on_arrays($msg_topics, $user_topics);
             if ($#{$result->{'intersection'}} >= 0) {
                 push @selected_users, $user;
             }
         } else {
-            my $result = &Sympa::Tools::diff_on_arrays(['other'], $user_topics);
+            my $result = Sympa::Tools::diff_on_arrays(['other'], $user_topics);
             if ($#{$result->{'intersection'}} >= 0) {
                 push @selected_users, $user;
             }
@@ -10719,7 +10719,7 @@ sub get_subscription_requests {
             next;
         }
         ## Following lines may contain custom attributes in an XML format
-        my $xml = &parseCustomAttribute($customattributes);
+        my $xml = parseCustomAttribute($customattributes);
 
         $subscriptions{$email} = {
             'gecos'            => $gecos,
@@ -10981,7 +10981,7 @@ sub search_datasource {
         if (defined($self->$p)) {
             ## Go through sources
             foreach my $s (@{$self->$p}) {
-                if (&Sympa::Datasource::_get_datasource_id($s) eq $id) {
+                if (Sympa::Datasource::_get_datasource_id($s) eq $id) {
                     return {'type' => $p, 'def' => $s};
                 }
             }
@@ -11168,21 +11168,21 @@ sub purge {
 
     if ($self->name) {
         my $arc_dir = $self->robot->arc_path;
-        &Sympa::Tools::remove_dir($arc_dir . '/' . $self->get_id);
-        &Sympa::Tools::remove_dir($self->get_bounce_dir());
+        Sympa::Tools::remove_dir($arc_dir . '/' . $self->get_id);
+        Sympa::Tools::remove_dir($self->get_bounce_dir());
     }
 
     ## Clean list table if needed
     if ($self->robot->cache_list_config eq 'database') {
         unless (defined $self->list_cache_purge) {
-            &do_log('err', 'Cannot remove list %s from table', $self);
+            do_log('err', 'Cannot remove list %s from table', $self);
         }
     }
 
     ## Clean memory cache
     $self->robot->lists($self->name, undef);
 
-    &Sympa::Tools::remove_dir($self->dir);
+    Sympa::Tools::remove_dir($self->dir);
 
     #log ind stat table to make statistics
     Sympa::Log::Syslog::db_stat_log(
@@ -11499,7 +11499,7 @@ sub add_list_header {
                 sprintf '%s/arcsearch_id/%s/%s-%s/%s',
                 $self->robot->wwsympa_url,
                 $self->name, $yyyy, $mm,
-                &Sympa::Tools::clean_msg_id($hdr->get('Message-Id'));
+                Sympa::Tools::clean_msg_id($hdr->get('Message-Id'));
             $hdr->add('Archived-At', '<' . $archived_msg_url . '>');
         } else {
             return 0;
@@ -12128,7 +12128,7 @@ If C<undef> was given as INFO, cache entry on the memory will be removed.
 sub user {
     my $self = shift;
     my $role = shift;
-    my $who  = &Sympa::Tools::clean_email(shift || '');
+    my $who  = Sympa::Tools::clean_email(shift || '');
     my $info;
 
     unless ($role eq 'member' or $role eq 'owner' or $role eq 'editor') {
@@ -12197,7 +12197,7 @@ sub user {
             );
             if (defined $info->{custom_attribute}) {
                 $info->{'custom_attribute'} =
-                    &parseCustomAttribute($info->{'custom_attribute'});
+                    parseCustomAttribute($info->{'custom_attribute'});
             }
             $info->{'reception'} = $self->default_user_options->{'reception'}
                 unless $self->is_available_reception_mode(
@@ -12210,7 +12210,7 @@ sub user {
         }
     } else {
         unless (
-            $sth = &Sympa::DatabaseManager::do_prepared_query(
+            $sth = Sympa::DatabaseManager::do_prepared_query(
                 sprintf(
                     'SELECT %s FROM admin_table WHERE user_admin = ? AND list_admin = ? AND robot_admin = ? AND role_admin = ?',
                     _list_admin_cols()),
@@ -12337,7 +12337,7 @@ sub list_cache_fetch {
         push @sth_stack, $sth;
 
         unless (
-            $sth = &Sympa::DatabaseManager::do_prepared_query(
+            $sth = Sympa::DatabaseManager::do_prepared_query(
                 q{SELECT cache_epoch_list AS epoch, total_list AS total,
 			 config_list AS "config"
 		  FROM list_table
@@ -12494,7 +12494,7 @@ sub list_cache_update_config {
     ## update database cache
     ## try INSERT then UPDATE
     unless (
-        $sth = &Sympa::DatabaseManager::do_prepared_query(
+        $sth = Sympa::DatabaseManager::do_prepared_query(
             q{UPDATE list_table
 	      SET status_list = ?, name_list = ?, robot_list = ?,
 	      family_list = ?,
@@ -12511,7 +12511,7 @@ sub list_cache_update_config {
             $robot,     $name
         )
         and $sth->rows
-        or $sth = &Sympa::DatabaseManager::do_prepared_query(
+        or $sth = Sympa::DatabaseManager::do_prepared_query(
             q{INSERT INTO list_table
 	      (status_list, name_list, robot_list,
 	       family_list,
@@ -12545,7 +12545,7 @@ sub list_cache_update_total {
 
     if ($cache_list_config eq 'database') {
         unless (
-            &Sympa::DatabaseManager::do_prepared_query(
+            Sympa::DatabaseManager::do_prepared_query(
                 q{UPDATE list_table
 		  SET total_list = ?
 		  WHERE name_list = ? AND robot_list = ?},
@@ -12586,7 +12586,7 @@ sub list_cache_purge {
     return 1 unless $cache_list_config eq 'database';
 
     return
-        defined &Sympa::DatabaseManager::do_prepared_query(
+        defined Sympa::DatabaseManager::do_prepared_query(
         q{DELETE from list_table WHERE name_list = ? AND robot_list = ?},
         $self->name, $self->domain);
 }

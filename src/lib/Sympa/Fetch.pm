@@ -88,11 +88,11 @@ sub get_https {
     unless ($ssl_socket) {
         Sympa::Log::Syslog::do_log('err',
             'error %s unable to connect https://%s:%s/',
-            &IO::Socket::SSL::errstr, $host, $port);
+            IO::Socket::SSL::errstr, $host, $port);
         return undef;
     }
     Sympa::Log::Syslog::do_log('debug', 'connected to https://%s:%s/',
-        &IO::Socket::SSL::errstr, $host, $port);
+        IO::Socket::SSL::errstr, $host, $port);
 
     if (ref($ssl_socket) eq "IO::Socket::SSL") {
         my $subject_name = $ssl_socket->peer_certificate("subject");
@@ -179,7 +179,7 @@ sub get_https2 {
     unless ($ssl_socket) {
         Sympa::Log::Syslog::do_log('err',
             'error %s unable to connect https://%s:%s/',
-            &IO::Socket::SSL::errstr, $host, $port);
+            IO::Socket::SSL::errstr, $host, $port);
         return undef;
     }
     Sympa::Log::Syslog::do_log('debug', "connected to https://$host:$port/");

@@ -90,7 +90,7 @@ foreach $msg (sort grep(!/^\./, readdir SPOOL)) {
             die "May not create $tmp_dir";
         }
         my $mhonarc_ressources =
-            &Sympa::Tools::get_filename('etc', {}, 'mhonarc-ressources.tt2', $robot,
+            Sympa::Tools::get_filename('etc', {}, 'mhonarc-ressources.tt2', $robot,
             $self);
         unless ($mhonarc_ressources) {
             die "Cannot find any templates of MHonArc resource file";
@@ -98,7 +98,7 @@ foreach $msg (sort grep(!/^\./, readdir SPOOL)) {
 
         ## generate HTML
         chdir $tmp_dir;
-        my $mhonarc = &Sympa::Conf::get_robot_conf($robot, 'mhonarc');
+        my $mhonarc = Sympa::Conf::get_robot_conf($robot, 'mhonarc');
         open ARCMOD,
             "$mhonarc  -single -rcfile $mhonarc_ressources -definevars listname=$name -definevars hostname=$host $modqueue/$name\_$modkey|";
         open MSG, ">msg00000.html";

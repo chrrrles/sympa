@@ -29,9 +29,9 @@ our @ISA = qw(Exporter);
 our @EXPORT =
     qw(db_struct not_null %not_null primary %primary autoincrement %autoincrement %indexes %former_indexes);
 
-our %not_null      = &not_null;
-our %primary       = &primary;
-our %autoincrement = &autoincrement;
+our %not_null      = not_null();
+our %primary       = primary();
+our %autoincrement = autoincrement();
 
 sub full_db_struct {
 
@@ -1288,7 +1288,7 @@ sub full_db_struct {
 sub db_struct {
 
     my %db_struct;
-    my %full_db_struct = &full_db_struct();
+    my %full_db_struct = full_db_struct();
 
     foreach my $table (keys %full_db_struct) {
         foreach my $field (keys %{$full_db_struct{$table}{'fields'}}) {
@@ -1358,8 +1358,8 @@ sub db_struct {
 
 sub not_null {
     my %not_null;
-    my %full_db_struct = &full_db_struct();
-    my %db_struct      = &db_struct();
+    my %full_db_struct = full_db_struct();
+    my %db_struct      = db_struct();
     foreach my $table (keys %full_db_struct) {
         foreach my $field (keys %{$full_db_struct{$table}{'fields'}}) {
             $not_null{'$field'} =
@@ -1371,8 +1371,8 @@ sub not_null {
 
 sub autoincrement {
     my %autoincrement;
-    my %full_db_struct = &full_db_struct();
-    my %db_struct      = &db_struct();
+    my %full_db_struct = full_db_struct();
+    my %db_struct      = db_struct();
     foreach my $table (keys %full_db_struct) {
         foreach my $field (keys %{$full_db_struct{$table}{'fields'}}) {
             $autoincrement{$table} = $field
@@ -1385,7 +1385,7 @@ sub autoincrement {
 
 sub primary {
     my %primary;
-    my %full_db_struct = &full_db_struct();
+    my %full_db_struct = full_db_struct();
 
     foreach my $table (keys %full_db_struct) {
         my @primarykey;

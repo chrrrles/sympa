@@ -114,7 +114,7 @@ sub reject_report_msg {
         chomp $param->{'msg_id'} if $param->{'msg_id'};
 
         $param ||= {};
-        $param->{'error'}  = &gettext($error);
+        $param->{'error'}  = gettext($error);
         $param->{'who'}    = $user;
         $param->{'action'} = 'message diffusion';
         $param->{'msg_id'} = $param->{'msg_id'};
@@ -222,7 +222,7 @@ sub notice_report_msg {
 
     ## Prepare the original message if provided
     if (defined $param->{'message'}) {
-        $param->{'original_msg'} = &_get_msg_as_hash($param->{'message'});
+        $param->{'original_msg'} = _get_msg_as_hash($param->{'message'});
     }
 
     if (ref $list and ref $list eq 'List') {
@@ -367,7 +367,7 @@ sub send_report_cmd {
             'Unable to send template "command_report" to %s', $sender);
     }
 
-    &init_report_cmd();
+    init_report_cmd();
 }
 
 #########################################################
@@ -413,7 +413,7 @@ sub global_report_cmd {
         if ($robot) {
             my $param = $data;
             $param ||= {};
-            $param->{'error'}  = &gettext($error);
+            $param->{'error'}  = gettext($error);
             $param->{'who'}    = $sender;
             $param->{'action'} = 'Command process';
 
@@ -442,7 +442,7 @@ sub global_report_cmd {
             );
             return undef;
         }
-        &send_report_cmd($sender, $robot_id);
+        send_report_cmd($sender, $robot_id);
 
     }
 }
@@ -499,7 +499,7 @@ sub reject_report_cmd {
 
             my $param = $data;
             $param ||= {};
-            $param->{'error'}    = &gettext($error);
+            $param->{'error'}    = gettext($error);
             $param->{'cmd'}      = $cmd;
             $param->{'listname'} = $listname;
             $param->{'who'}      = $sender;
@@ -804,7 +804,7 @@ sub reject_report_web {
         if ($robot) {
             my $param = $data;
             $param ||= {};
-            $param->{'error'} = &gettext($error);
+            $param->{'error'} = gettext($error);
             $param->{'list'}  = $list if (defined $list);
             $param->{'who'}   = $user;
             $param->{'action'} ||= 'Command process';

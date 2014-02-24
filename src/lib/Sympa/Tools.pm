@@ -257,7 +257,7 @@ sub sanitize_var {
             foreach my $index (0 .. $#{$parameters{'var'}}) {
                 if (   (ref($parameters{'var'}->[$index]) eq 'ARRAY')
                     || (ref($parameters{'var'}->[$index]) eq 'HASH')) {
-                    &sanitize_var(
+                    sanitize_var(
                         'var'              => $parameters{'var'}->[$index],
                         'level'            => $level + 1,
                         'robot'            => $robot,
@@ -276,7 +276,7 @@ sub sanitize_var {
             foreach my $key (keys %{$parameters{'var'}}) {
                 if (   (ref($parameters{'var'}->{$key}) eq 'ARRAY')
                     || (ref($parameters{'var'}->{$key}) eq 'HASH')) {
-                    &sanitize_var(
+                    sanitize_var(
                         'var'              => $parameters{'var'}->{$key},
                         'level'            => $level + 1,
                         'robot'            => $robot,
@@ -520,7 +520,7 @@ sub get_list_list_tpl {
 
     my $list_conf;
     my $list_templates;
-    unless ($list_conf = &load_create_list_conf($robot)) {
+    unless ($list_conf = load_create_list_conf($robot)) {
         return undef;
     }
 
@@ -569,7 +569,7 @@ sub copy_dir {
             "Directory source '%s' doesn't exist. Copy impossible", $dir1);
         return undef;
     }
-    return (&File::Copy::Recursive::dircopy($dir1, $dir2));
+    return (File::Copy::Recursive::dircopy($dir1, $dir2));
 }
 
 #delete a directory and its content
@@ -607,7 +607,7 @@ sub mk_parent_dir {
     my $dir = $1;
 
     return 1 if (-d $dir);
-    &mkdir_all($dir, 0755);
+    mkdir_all($dir, 0755);
 }
 
 ## Recursively create directory and all parent directories
@@ -628,7 +628,7 @@ sub mkdir_all {
     my $parent_path = join '/', @token;
 
     unless (-d $parent_path) {
-        unless (&mkdir_all($parent_path, $mode)) {
+        unless (mkdir_all($parent_path, $mode)) {
             $status = undef;
         }
     }
@@ -941,9 +941,9 @@ sub remove_invalid_dkim_signature {
     Sympa::Log::Syslog::do_log('debug', "removing invalid DKIM signature");
     my $msg_as_string = shift;
 
-    unless (&Sympa::Tools::dkim_verifier($msg_as_string)) {
+    unless (Sympa::Tools::dkim_verifier($msg_as_string)) {
         my $body_as_string =
-            &Sympa::Message::get_body_from_msg_as_string($msg_as_string);
+            Sympa::Message::get_body_from_msg_as_string($msg_as_string);
 
         my $parser = MIME::Parser->new();
         $parser->output_to_core(1);
@@ -1141,7 +1141,7 @@ sub as_singlepart {
         $msg->parts([$parts[0]]);
         $msg->make_singlepart();
 
-        $done ||= &as_singlepart($msg, $preferred_type, $loops);
+        $done ||= as_singlepart($msg, $preferred_type, $loops);
 
     } elsif ($msg->effective_type() =~ /^multipart/) {
         foreach my $part ($msg->parts) {
@@ -1149,7 +1149,7 @@ sub as_singlepart {
             next unless (defined $part);    ## Skip empty parts
 
             if ($part->effective_type() =~ /^multipart\/alternative/) {
-                if (&as_singlepart($part, $preferred_type, $loops)) {
+                if (as_singlepart($part, $preferred_type, $loops)) {
                     $msg->parts([$part]);
                     $msg->make_singlepart();
                     $done = 1;
@@ -1213,18 +1213,18 @@ sub escape_docname {
     $filename = MIME::EncWords::decode_mimewords($filename);
 
     ## Decode from FS encoding to utf-8
-    #$filename = &Encode::decode(Sympa::Site->filesystem_encoding, $filename);
+    #$filename = Encode::decode(Sympa::Site->filesystem_encoding, $filename);
 
     ## escape some chars for use in URL
-    return &escape_chars($filename, $except);
+    return escape_chars($filename, $except);
 }
 
 ## Convert from Perl Unicode encoding to UTF-8
 sub unicode_to_utf8 {
     my $s = shift;
 
-    if (&Encode::is_utf8($s)) {
-        return &Encode::encode_utf8($s);
+    if (Encode::is_utf8($s)) {
+        return Encode::encode_utf8($s);
     }
 
     return $s;
@@ -1240,7 +1240,7 @@ sub recursive_transformation {
     if (ref($var) eq 'ARRAY') {
         foreach my $index (0 .. $#{$var}) {
             if (ref($var->[$index])) {
-                &recursive_transformation($var->[$index], $subref);
+                recursive_transformation($var->[$index], $subref);
             } else {
                 $var->[$index] = &{$subref}($var->[$index]);
             }
@@ -1248,7 +1248,7 @@ sub recursive_transformation {
     } elsif (ref($var) eq 'HASH') {
         foreach my $key (sort keys %{$var}) {
             if (ref($var->{$key})) {
-                &recursive_transformation($var->{$key}, $subref);
+                recursive_transformation($var->{$key}, $subref);
             } else {
                 $var->{$key} = &{$subref}($var->{$key});
             }
@@ -1298,7 +1298,7 @@ sub qdecode_filename {
     ## Unicode
     ## Check if string is already Q-encoded first
     #if ($filename =~ /\=\?UTF-8\?/) {
-    $filename = Encode::encode_utf8(&Encode::decode('MIME-Q', $filename));
+    $filename = Encode::encode_utf8(Encode::decode('MIME-Q', $filename));
 
     #}
 
@@ -1424,7 +1424,7 @@ sub crypt_password {
 
     ciphersaber_installed();
     return $inpasswd unless $cipher;
-    return ("crypt." . &MIME::Base64::encode($cipher->encrypt($inpasswd)));
+    return ("crypt." . MIME::Base64::encode($cipher->encrypt($inpasswd)));
 }
 
 ## decrypt a password
@@ -1442,7 +1442,7 @@ sub decrypt_password {
             'password seems encrypted while CipherSaber is not installed !');
         return $inpasswd;
     }
-    return ($cipher->decrypt(&MIME::Base64::decode($inpasswd)));
+    return ($cipher->decrypt(MIME::Base64::decode($inpasswd)));
 }
 
 sub load_mime_types {
@@ -1499,7 +1499,7 @@ sub split_mail {
         || ($message->mime_type eq 'message/rfc822')) {
 
         for (my $i = 0; $i < $message->parts; $i++) {
-            &split_mail($message->parts($i), $pathname . '.' . $i, $dir);
+            split_mail($message->parts($i), $pathname . '.' . $i, $dir);
         }
     } else {
         my $fileExt;
@@ -1509,7 +1509,7 @@ sub split_mail {
         } elsif ($head->recommended_filename =~ /\.(\w+)\s*\"*$/) {
             $fileExt = $1;
         } else {
-            my $mime_types = &load_mime_types();
+            my $mime_types = load_mime_types();
 
             $fileExt = $mime_types->{$head->mime_type};
             my $var = $head->mime_type;
@@ -1587,7 +1587,7 @@ sub virus_infected {
     #$mail->dump_skeleton;
 
     ## Call the procedure of splitting mail
-    unless (&split_mail($mail, 'msg', $work_dir)) {
+    unless (split_mail($mail, 'msg', $work_dir)) {
         Sympa::Log::Syslog::do_log('err', 'Could not split mail %s', $mail);
         return undef;
     }
@@ -2006,7 +2006,7 @@ sub list_dir {
             ## Guess filename encoding
             my ($encoding, $guess);
             my $decoder =
-                &Encode::Guess::guess_encoding($file, $original_encoding,
+                Encode::Guess::guess_encoding($file, $original_encoding,
                 'utf-8');
             if (ref $decoder) {
                 $encoding = $decoder->name;
@@ -2022,7 +2022,7 @@ sub list_dir {
                 'guess'     => $guess
                 };
             if (-d "$dir/$file") {
-                &list_dir($dir . '/' . $file, $all, $original_encoding);
+                list_dir($dir . '/' . $file, $all, $original_encoding);
             }
         }
         closedir DIR;
@@ -2040,7 +2040,7 @@ sub qencode_hierarchy {
 
     my $count;
     my @all_files;
-    &Sympa::Tools::list_dir($dir, \@all_files, $original_encoding);
+    Sympa::Tools::list_dir($dir, \@all_files, $original_encoding);
 
     foreach my $f_struct (reverse @all_files) {
 
@@ -2053,7 +2053,7 @@ sub qencode_hierarchy {
         Encode::from_to($new_filename, $encoding, 'utf8') if $encoding;
 
         ## Q-encode file name to escape chars with accents
-        $new_filename = &Sympa::Tools::qencode_filename($new_filename);
+        $new_filename = Sympa::Tools::qencode_filename($new_filename);
 
         my $orig_f = $f_struct->{'directory'} . '/' . $f_struct->{'filename'};
         my $new_f  = $f_struct->{'directory'} . '/' . $new_filename;
@@ -2230,7 +2230,7 @@ sub write_pid {
                 $other_pid);
             my $pname = $0;
             $pname =~ s/.*\/(\w+)/$1/;
-            &send_crash_report(('pid' => $other_pid, 'pname' => $pname));
+            send_crash_report(('pid' => $other_pid, 'pname' => $pname));
         }
 
         unless (open(PIDFILE, '> ' . $pidfile)) {
@@ -2274,7 +2274,7 @@ sub direct_stderr_to_file {
     ## Useful if process crashes
     open(STDERR, '>>', Sympa::Site->tmpdir . '/' . $data{'pid'} . '.stderr');
     unless (
-        &Sympa::Tools::set_file_rights(
+        Sympa::Tools::set_file_rights(
             file  => Sympa::Site->tmpdir . '/' . $data{'pid'} . '.stderr',
             user  => Sympa::Constants::USER,
             group => Sympa::Constants::GROUP,
@@ -2633,7 +2633,7 @@ sub dump_var {
         if (ref($var) eq 'ARRAY') {
             foreach my $index (0 .. $#{$var}) {
                 print $fd "\t" x $level . $index . "\n";
-                &dump_var($var->[$index], $level + 1, $fd);
+                dump_var($var->[$index], $level + 1, $fd);
             }
         } elsif (ref($var) eq 'HASH'
             || ref($var) eq 'Sympa::Scenario'
@@ -2641,7 +2641,7 @@ sub dump_var {
             || ref($var) eq 'CGI::Fast') {
             foreach my $key (sort keys %{$var}) {
                 print $fd "\t" x $level . '_' . $key . '_' . "\n";
-                &dump_var($var->{$key}, $level + 1, $fd);
+                dump_var($var->{$key}, $level + 1, $fd);
             }
         } else {
             printf $fd "%s'%s'\n", ("\t" x $level), ref($var);
@@ -2666,7 +2666,7 @@ sub dump_html_var {
             $html .= '<ul>';
             foreach my $index (0 .. $#{$var}) {
                 $html .= '<li> ' . $index . ':';
-                $html .= &dump_html_var($var->[$index]);
+                $html .= dump_html_var($var->[$index]);
                 $html .= '</li>';
             }
             $html .= '</ul>';
@@ -2676,7 +2676,7 @@ sub dump_html_var {
             $html .= '<ul>';
             foreach my $key (sort keys %{$var}) {
                 $html .= '<li>' . $key . '=';
-                $html .= &dump_html_var($var->{$key});
+                $html .= dump_html_var($var->{$key});
                 $html .= '</li>';
             }
             $html .= '</ul>';
@@ -2685,7 +2685,7 @@ sub dump_html_var {
         }
     } else {
         if (defined $var) {
-            $html .= &escape_html($var);
+            $html .= escape_html($var);
         } else {
             $html .= 'UNDEF';
         }
@@ -2704,7 +2704,7 @@ sub dump_html_var2 {
             $html .= 'ARRAY <ul>';
             foreach my $index (0 .. $#{$var}) {
                 $html .= '<li> ' . $index;
-                $html .= &dump_html_var($var->[$index]);
+                $html .= dump_html_var($var->[$index]);
                 $html .= '</li>';
             }
             $html .= '</ul>';
@@ -2716,7 +2716,7 @@ sub dump_html_var2 {
             $html .= '<ul>';
             foreach my $key (sort keys %{$var}) {
                 $html .= '<li>' . $key . '=';
-                $html .= &dump_html_var($var->{$key});
+                $html .= dump_html_var($var->{$key});
                 $html .= '</li>';
             }
             $html .= '</ul>';
@@ -2740,13 +2740,13 @@ sub remove_empty_entries {
     if (ref($var)) {
         if (ref($var) eq 'ARRAY') {
             foreach my $index (0 .. $#{$var}) {
-                my $status = &remove_empty_entries($var->[$index]);
+                my $status = remove_empty_entries($var->[$index]);
                 $var->[$index] = undef unless ($status);
                 $not_empty ||= $status;
             }
         } elsif (ref($var) eq 'HASH') {
             foreach my $key (sort keys %{$var}) {
-                my $status = &remove_empty_entries($var->{$key});
+                my $status = remove_empty_entries($var->{$key});
                 $var->{$key} = undef unless ($status);
                 $not_empty ||= $status;
             }
@@ -2768,13 +2768,13 @@ sub dup_var {
         if (ref($var) eq 'ARRAY') {
             my $new_var = [];
             foreach my $index (0 .. $#{$var}) {
-                $new_var->[$index] = &dup_var($var->[$index]);
+                $new_var->[$index] = dup_var($var->[$index]);
             }
             return $new_var;
         } elsif (ref($var) eq 'HASH') {
             my $new_var = {};
             foreach my $key (sort keys %{$var}) {
-                $new_var->{$key} = &dup_var($var->{$key});
+                $new_var->{$key} = dup_var($var->{$key});
             }
             return $new_var;
         }
@@ -3256,17 +3256,17 @@ sub get_fingerprint {
     my $random;
     my $random_email;
 
-    unless ($random = &get_db_random()) {
+    unless ($random = get_db_random()) {
 
         # si un random existe : get_db_random
-        $random = &init_db_random();    # sinon init_db_random
+        $random = init_db_random();    # sinon init_db_random
     }
 
     $random_email = ($random . $email);
 
     if ($fingerprint) {    #si on veut vérifier le fingerprint dans l'url
 
-        if ($fingerprint eq &md5_fingerprint($random_email)) {
+        if ($fingerprint eq md5_fingerprint($random_email)) {
             return 1;
         } else {
             return undef;
@@ -3274,7 +3274,7 @@ sub get_fingerprint {
 
     } else { #si on veut créer une url de type http://.../sympa/unsub/$list/$email/&get_fingerprint($email)
 
-        $fingerprint = &md5_fingerprint($random_email);
+        $fingerprint = md5_fingerprint($random_email);
         return $fingerprint;
 
     }
@@ -3320,7 +3320,7 @@ sub md5_fingerprint {
 sub get_db_random {
 
     my $sth;
-    unless ($sth = &Sympa::DatabaseManager::do_query("SELECT random FROM fingerprint_table")) {
+    unless ($sth = Sympa::DatabaseManager::do_query("SELECT random FROM fingerprint_table")) {
         Sympa::Log::Syslog::do_log('err',
             'Unable to retrieve random value from fingerprint_table');
         return undef;
@@ -3351,7 +3351,7 @@ sub init_db_random {
     my $random = int(rand($range)) + $minimum;
 
     unless (
-        &Sympa::DatabaseManager::do_query('INSERT INTO fingerprint_table VALUES (%d)', $random))
+        Sympa::DatabaseManager::do_query('INSERT INTO fingerprint_table VALUES (%d)', $random))
     {
         Sympa::Log::Syslog::do_log('err',
             'Unable to set random value in fingerprint_table');
@@ -3564,7 +3564,7 @@ sub CleanDir {
                 Sympa::Log::Syslog::do_log('notice', 'Deleting old file %s',
                     "$dir/$f");
             } elsif (-d "$dir/$f") {
-                unless (&Sympa::Tools::remove_dir("$dir/$f")) {
+                unless (Sympa::Tools::remove_dir("$dir/$f")) {
                     Sympa::Log::Syslog::do_log('err',
                         'Cannot remove old directory %s : %s',
                         "$dir/$f", $!);
@@ -3646,7 +3646,7 @@ sub wrap_text {
 
     $text = Text::LineFold->new(
         Language      => Sympa::Language::GetLang(),
-        OutputCharset => (&Encode::is_utf8($text) ? '_UNICODE_' : 'utf8'),
+        OutputCharset => (Encode::is_utf8($text) ? '_UNICODE_' : 'utf8'),
         Prep          => 'NONBREAKURI',
         ColumnsMax    => $cols
     )->fold($init, $subs, $text);

@@ -84,7 +84,7 @@ unless ($robot = Sympa::Robot->new($domain, 'no_db' => 1)) {
 $default_domain = Sympa::Site->domain;
 
 my %data;
-$data{'date'} = &POSIX::strftime("%d %b %Y", localtime(time));
+$data{'date'} = POSIX::strftime("%d %b %Y", localtime(time));
 $data{'list'}{'domain'} = $data{'robot'} = $domain;
 $data{'list'}{'name'}   = $listname;
 $data{'default_domain'} = $default_domain;
@@ -96,7 +96,7 @@ my @aliases;
 my $tt2_include_path = $robot->get_etc_include_path();
 
 my $aliases_dump;
-&Sympa::Template::parse_tt2(\%data, 'list_aliases.tt2', \$aliases_dump,
+Sympa::Template::parse_tt2(\%data, 'list_aliases.tt2', \$aliases_dump,
     $tt2_include_path);
 
 @aliases = split /\n/, $aliases_dump;
@@ -108,12 +108,12 @@ unless (@aliases) {
 
 if ($operation eq 'add') {
     ## Check existing aliases
-    if (&already_defined(@aliases)) {
+    if (already_defined(@aliases)) {
         print STDERR "some alias already exist\n";
         exit(13);
     }
 
-    if (!&initialize_mysql) {
+    if (!initialize_mysql()) {
         print STDERR "Can't connect to MySQL database\n";
         exit(14);
     }
@@ -141,11 +141,11 @@ if ($operation eq 'add') {
         }
     }
 
-    &finalize_mysql;
+    finalize_mysql();
 
 } elsif ($operation eq 'del') {
 
-    if (!&initialize_mysql) {
+    if (!initialize_mysql()) {
         print STDERR "Can't connect to MySQL database\n";
         exit(7);
     }
@@ -170,7 +170,7 @@ if ($operation eq 'add') {
         }
     }
 
-    &finalize_mysql;
+    finalize_mysql();
 } else {
     print STDERR "Action $operation not implemented yet\n";
     exit(2);
@@ -183,7 +183,7 @@ sub already_defined {
 
     my @aliases = @_;
 
-    &initialize_mysql;
+    initialize_mysql();
 
     foreach my $alias (@aliases) {
         if ($alias =~ /^\#/) {
@@ -209,12 +209,12 @@ sub already_defined {
         $enr = $sth->fetchrow_array();
         if ($enr != 0) {
             print STDERR "Alias already defined : $alias_value\n";
-            &finalize_mysql;
+            finalize_mysql();
             return 1;
         }
     }
 
-    &finalize_mysql;
+    finalize_mysql();
     return 0;
 }
 

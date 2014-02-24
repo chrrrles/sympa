@@ -181,7 +181,7 @@ sub new {
     # Instructions are built by parsing a single line of a task string.
     my $data = shift;
     my $task = shift;
-    my $self = &Sympa::Tools::dup_var($data);
+    my $self = Sympa::Tools::dup_var($data);
     bless $self, $pkg;
     $self->parse;
     if (defined $self->{'error'}) {
@@ -465,7 +465,7 @@ sub next_cmd {
     my @tab = @{$self->{'Rarguments'}};
 
     # conversion of the date argument into epoch format
-    my $date = &Sympa::Tools::epoch_conv($tab[0], $task->{'date'});
+    my $date = Sympa::Tools::epoch_conv($tab[0], $task->{'date'});
     my $label = $tab[1];
 
     Sympa::Log::Syslog::do_log('debug2',
@@ -549,7 +549,7 @@ sub next_cmd {
         return undef;
     }
 
-    my $human_date = &Sympa::Tools::adate($date);
+    my $human_date = Sympa::Tools::adate($date);
     Sympa::Log::Syslog::do_log('debug2', "--> new task $model ($human_date)");
     return 1;
 }
@@ -565,7 +565,7 @@ sub select_subs {
         "line $self->{'line_number'} : select_subs ($condition)");
     $condition =~ /(\w+)\(([^\)]*)\)/;
     if ($2) {    # conversion of the date argument into epoch format
-        my $date = &Sympa::Tools::epoch_conv($2, $task->{'date'});
+        my $date = Sympa::Tools::epoch_conv($2, $task->{'date'});
         $condition = "$1($date)";
     }
 
@@ -597,7 +597,7 @@ sub select_subs {
         # condition rewriting for older and newer
         $new_condition = "$1($user->{'update_date'}, $2)"
             if ($condition =~ /(older|newer)\((\d+)\)/);
-        if (&Sympa::Scenario::verify($verify_context, $new_condition) == 1) {
+        if (Sympa::Scenario::verify($verify_context, $new_condition) == 1) {
             $selection{$user->{'email'}} = undef;
             Sympa::Log::Syslog::do_log('notice',
                 "--> user $user->{'email'} has been selected");
@@ -1099,7 +1099,7 @@ sub expire_bounce {
                     );
                     next;
                 }
-                my $escaped_email = &Sympa::Tools::escape_chars($email);
+                my $escaped_email = Sympa::Tools::escape_chars($email);
 
                 my $bounce_dir = $list->get_bounce_dir();
 
@@ -1118,13 +1118,13 @@ sub expire_bounce {
                     'expire bounces for subscriber %s of list %s (last distribution %s, last bounce %s )',
                     $email,
                     $listname,
-                    &POSIX::strftime(
+                    POSIX::strftime(
                         "%d %b %Y",
                         localtime(
                             $list->get_latest_distribution_date() * 3600 * 24
                         )
                     ),
-                    &POSIX::strftime(
+                    POSIX::strftime(
                         "%d %b %Y", localtime($u->{'last_bounce'})
                     )
                 );
@@ -1144,7 +1144,7 @@ sub chk_cert_expiration {
     my $execution_date = $task->{'date'};
     my @tab            = @{$self->{'Rarguments'}};
     my $template       = $tab[0];
-    my $limit          = &Sympa::Tools::duration_conv($tab[1], $execution_date);
+    my $limit          = Sympa::Tools::duration_conv($tab[1], $execution_date);
 
     Sympa::Log::Syslog::do_log('notice',
         "line $self->{'line_number'} : chk_cert_expiration (@{$self->{'Rarguments'}})"
@@ -1187,7 +1187,7 @@ sub chk_cert_expiration {
         my @date = (0, 0, 0, $2, $Sympa::TaskSpool::months{$1}, $3 - 1900);
         $date =~ s/notAfter=//;
         my $expiration_date = timegm(@date);    # epoch expiration date
-        my $rep = &Sympa::Tools::adate($expiration_date);
+        my $rep = Sympa::Tools::adate($expiration_date);
 
         # no near expiration nor expiration processing
         if ($expiration_date > $limit) {
@@ -1270,7 +1270,7 @@ sub chk_cert_expiration {
 
             $id =~ s/subject= //;
             Sympa::Log::Syslog::do_log('notice', "id : $id");
-            $tpl_context{'expiration_date'} = &Sympa::Tools::adate($expiration_date);
+            $tpl_context{'expiration_date'} = Sympa::Tools::adate($expiration_date);
             $tpl_context{'certificate_id'}  = $id;
             $tpl_context{'auto_submitted'}  = 'auto-generated';
             unless (Sympa::Site->send_file($template, $_, \%tpl_context)) {
@@ -1295,7 +1295,7 @@ sub update_crl {
     my ($self, $task) = @_;
 
     my @tab = @{$self->{'Rarguments'}};
-    my $limit = &Sympa::Tools::epoch_conv($tab[1], $task->{'date'});
+    my $limit = Sympa::Tools::epoch_conv($tab[1], $task->{'date'});
     my $CA_file = Sympa::Site->home . "/$tab[0]";   # file where CA urls are stored ;
     Sympa::Log::Syslog::do_log('notice',
         "line $self->{'line_number'} : update_crl (@tab)");
@@ -1339,7 +1339,7 @@ sub update_crl {
     foreach my $url (@CA) {
 
         my $crl_file =
-            &Sympa::Tools::escape_chars($url);    # convert an URL into a file name
+            Sympa::Tools::escape_chars($url);    # convert an URL into a file name
         my $file = "$crl_dir/$crl_file";
 
         ## create $file if it doesn't exist
@@ -1369,7 +1369,7 @@ sub update_crl {
         $date =~ /nextUpdate=(\w+)\s*(\d+)\s(\d\d)\:(\d\d)\:\d\d\s(\d+).+/;
         my @date = (0, $4, $3 - 1, $2, $Sympa::TaskSpool::months{$1}, $5 - 1900);
         my $expiration_date = timegm(@date);    # epoch expiration date
-        my $rep = &Sympa::Tools::adate($expiration_date);
+        my $rep = Sympa::Tools::adate($expiration_date);
 
         ## check if the crl is soon expired or expired
         #my $file_date = $task->{'date'} - (-M $file) * 24 * 60 * 60; # last modification date
@@ -1377,7 +1377,7 @@ sub update_crl {
         my $verify_context;
         $verify_context->{'sender'} = 'nobody';
 
-        if (&Sympa::Scenario::verify($verify_context, $condition) == 1) {
+        if (Sympa::Scenario::verify($verify_context, $condition) == 1) {
             unlink($file);
             Sympa::Log::Syslog::do_log('notice',
                 "--> updating of the $file CRL file");
@@ -1440,7 +1440,7 @@ sub eval_bouncers {
             $user_ref = $list->get_next_bouncing_list_member()
             ) {
 
-            my $score = &get_score($user_ref, $list_traffic) || 0;
+            my $score = get_score($user_ref, $list_traffic) || 0;
             ## copying score into DataBase
             unless (
                 $list->update_list_member(
@@ -1491,8 +1491,8 @@ sub process_bouncers {
 
     ## possible actions
     my %actions = (
-        'remove_bouncers' => \&Sympa::List::remove_bouncers,
-        'notify_bouncers' => \&Sympa::List::notify_bouncers,
+        'remove_bouncers' => \Sympa::List::remove_bouncers,
+        'notify_bouncers' => \Sympa::List::notify_bouncers,
         'none'            => \&none
     );
 

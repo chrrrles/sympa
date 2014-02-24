@@ -231,14 +231,14 @@ sub find_notification_id_by_message {
     # the message->head method return message-id including <blabla@dom> where
     # mhonarc return blabla@dom that's why we test both of them
     unless (
-        $sth = &Sympa::DatabaseManager::do_query(
+        $sth = Sympa::DatabaseManager::do_query(
             "SELECT pk_notification FROM notification_table WHERE ( recipient_notification = %s AND list_notification = %s AND robot_notification = %s AND (message_id_notification = %s OR CONCAT('<',message_id_notification,'>') = %s OR message_id_notification = %s ))",
-            &Sympa::DatabaseManager::quote($recipient),
-            &Sympa::DatabaseManager::quote($listname),
-            &Sympa::DatabaseManager::quote($robot_id),
-            &Sympa::DatabaseManager::quote($msgid),
-            &Sympa::DatabaseManager::quote($msgid),
-            &Sympa::DatabaseManager::quote('<' . $msgid . '>')
+            Sympa::DatabaseManager::quote($recipient),
+            Sympa::DatabaseManager::quote($listname),
+            Sympa::DatabaseManager::quote($robot_id),
+            Sympa::DatabaseManager::quote($msgid),
+            Sympa::DatabaseManager::quote($msgid),
+            Sympa::DatabaseManager::quote('<' . $msgid . '>')
         )
         ) {
         Sympa::Log::Syslog::do_log(

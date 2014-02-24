@@ -281,7 +281,7 @@ sub clean_archive_directory {
     $answer->{'dir_to_rebuild'} = $arc_root . '/' . $dir_to_rebuild;
     $answer->{'cleaned_dir'}    = Sympa::Site->tmpdir . '/' . $dir_to_rebuild;
     unless (
-        my $number_of_copies = &Sympa::Tools::copy_dir(
+        my $number_of_copies = Sympa::Tools::copy_dir(
             $answer->{'dir_to_rebuild'},
             $answer->{'cleaned_dir'}
         )
@@ -314,7 +314,7 @@ sub clean_archive_directory {
             'Unable to open directory %s: %s',
             $answer->{'dir_to_rebuild'}, $!
         );
-        &Sympa::Tools::del_dir($answer->{'cleaned_dir'});
+        Sympa::Tools::del_dir($answer->{'cleaned_dir'});
         return undef;
     }
     return $answer;

@@ -61,7 +61,7 @@ my $last_stored_message_key;
 # create an empty Bulk
 #sub new {
 #    my $pkg = shift;
-#    my $packet = &Sympa::Bulk::next();;
+#    my $packet = Sympa::Bulk::next();;
 #    bless \$packet, $pkg;
 #    return $packet
 #}
@@ -75,7 +75,7 @@ sub next {
     Sympa::Log::Syslog::do_log('debug2', '()');
 
     # lock next packet
-    my $lock = &Sympa::Tools::get_lockname();
+    my $lock = Sympa::Tools::get_lockname();
 
     my $order;
     my $limit_oracle = '';
@@ -227,9 +227,9 @@ sub messageasstring {
         $messagekey);
 
     unless (
-        $sth = &Sympa::DatabaseManager::do_query(
+        $sth = Sympa::DatabaseManager::do_query(
             "SELECT message_bulkspool AS message FROM bulkspool_table WHERE messagekey_bulkspool = %s",
-            &Sympa::DatabaseManager::quote($messagekey)
+            Sympa::DatabaseManager::quote($messagekey)
         )
         ) {
         Sympa::Log::Syslog::do_log(
@@ -265,9 +265,9 @@ sub message_from_spool {
     Sympa::Log::Syslog::do_log('debug', '(messagekey : %s)', $messagekey);
 
     unless (
-        $sth = &Sympa::DatabaseManager::do_query(
+        $sth = Sympa::DatabaseManager::do_query(
             "SELECT message_bulkspool AS message, messageid_bulkspool AS messageid, dkim_d_bulkspool AS  dkim_d,  dkim_i_bulkspool AS  dkim_i, dkim_privatekey_bulkspool AS dkim_privatekey, dkim_selector_bulkspool AS dkim_selector FROM bulkspool_table WHERE messagekey_bulkspool = %s",
-            &Sympa::DatabaseManager::quote($messagekey)
+            Sympa::DatabaseManager::quote($messagekey)
         )
         ) {
         Sympa::Log::Syslog::do_log('err',
@@ -428,7 +428,7 @@ sub store {
         } else {
             $rcptasstring = $packet;
         }
-        my $packetid = &Sympa::Tools::md5_fingerprint($rcptasstring);
+        my $packetid = Sympa::Tools::md5_fingerprint($rcptasstring);
         my $packet_already_exist;
         if (ref $listname eq 'List') {
             $listname = $listname->name;
@@ -519,7 +519,7 @@ sub purge_bulkspool {
 
     my $count = 0;
     while (my $key = $sth->fetchrow_hashref('NAME_lc')) {
-        if (&remove_bulkspool_message('spool', $key->{'messagekey'})) {
+        if (remove_bulkspool_message('spool', $key->{'messagekey'})) {
             $count++;
         } else {
             Sympa::Log::Syslog::do_log('err',
@@ -539,9 +539,9 @@ sub remove_bulkspool_message {
     my $key   = 'messagekey_' . $spool;
 
     unless (
-        &Sympa::DatabaseManager::do_query(
+        Sympa::DatabaseManager::do_query(
             "DELETE FROM %s WHERE %s = %s", $table,
-            $key,                           &Sympa::DatabaseManager::quote($messagekey)
+            $key,                           Sympa::DatabaseManager::quote($messagekey)
         )
         ) {
         Sympa::Log::Syslog::do_log('err', 'Unable to delete %s %s from %s',

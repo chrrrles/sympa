@@ -103,7 +103,7 @@ sub plain_body_as_string {
     # clean up after ourselves
     $topent->purge;
 
-    return &Sympa::Tools::wrap_text($outstring, '', '');
+    return Sympa::Tools::wrap_text($outstring, '', '');
 }
 
 sub _do_toplevel {
@@ -137,7 +137,7 @@ sub _do_multipart {
             _do_text_plain($subent);
         } elsif ($subent->effective_type =~ /^multipart\/related$/i) {
             if (   $topent->effective_type =~ /^multipart\/alternative$/i
-                && &_hasTextPlain($topent)) {
+                && _hasTextPlain($topent)) {
 
                 # this is a rare case - /related nested inside /alternative.
                 # If there's also a text/plain alternative just ignore it
@@ -145,7 +145,7 @@ sub _do_multipart {
             } else {
 
                 # just treat like any other multipart
-                &_do_multipart($subent);
+                _do_multipart($subent);
             }
         } elsif ($subent->effective_type =~ /^multipart\/.*/i) {
             _do_multipart($subent);
@@ -213,7 +213,7 @@ sub _do_message {
     $headers .= sprintf(gettext("Cc: %s\n"),      $cc)      if $cc;
     $headers .= sprintf(gettext("Subject: %s\n"), $subject) if $subject;
     $headers .= "\n";
-    $outstring .= &Sympa::Tools::wrap_text($headers, '', '    ');
+    $outstring .= Sympa::Tools::wrap_text($headers, '', '    ');
 
     _do_toplevel($msgent);
 
@@ -239,7 +239,7 @@ sub _do_text_plain {
 
     ## normalise body to UTF-8
     # get charset
-    my $charset = &_getCharset($entity);
+    my $charset = _getCharset($entity);
     eval {
         $charset->encoder('utf8');
         $thispart = $charset->encode($thispart);
@@ -301,7 +301,7 @@ sub _do_text_html {
     # qp encodes them
     $body =~ s/\r\n/\n/g;
 
-    my $charset = &_getCharset($entity);
+    my $charset = _getCharset($entity);
 
     eval {
 

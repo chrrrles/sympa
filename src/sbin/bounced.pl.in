@@ -243,8 +243,8 @@ $( = $) = (getgrnam(Sympa::Constants::GROUP))[2];
 $< = $> = (getpwnam(Sympa::Constants::USER))[2];
 
 ## Required on FreeBSD to change ALL IDs(effective UID + real UID + saved UID)
-&POSIX::setuid((getpwnam(Sympa::Constants::USER))[2]);
-&POSIX::setgid((getgrnam(Sympa::Constants::GROUP))[2]);
+POSIX::setuid((getpwnam(Sympa::Constants::USER))[2]);
+POSIX::setgid((getgrnam(Sympa::Constants::GROUP))[2]);
 
 ## Check if the UID has correctly been set (useful on OS X)
 unless (($( == (getgrnam(Sympa::Constants::GROUP))[2])
@@ -306,7 +306,7 @@ while (!$end) {
             $spool->move_to_bad($bounce->{'messagekey'});
         }
         ## Free zombie sendmail processes
-        Sympa::Mail::reaper;
+        Sympa::Mail::reaper();
     }
 }
 

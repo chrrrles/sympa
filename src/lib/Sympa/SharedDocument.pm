@@ -52,9 +52,9 @@ sub new {
 
     $document->{'root_path'} = $list->dir . '/shared';
 
-    $document->{'path'} = &main::no_slash_end($path);
+    $document->{'path'} = main::no_slash_end($path);
     $document->{'escaped_path'} =
-        &Sympa::Tools::escape_chars($document->{'path'}, '/');
+        Sympa::Tools::escape_chars($document->{'path'}, '/');
 
     ### Document isn't a description file
     if ($document->{'path'} =~ /\.desc/) {
@@ -72,7 +72,7 @@ sub new {
     }
 
     ## Check access control
-    &check_access_control($document, $param);
+    check_access_control($document, $param);
 
     ###############################
     ## The path has been checked ##
@@ -99,7 +99,7 @@ sub new {
     }
 
     $document->{'visible_path'} =
-        &main::make_visible_path($document->{'path'});
+        main::make_visible_path($document->{'path'});
 
     ## Date
     my @info = stat $document->{'absolute_path'};
@@ -121,7 +121,7 @@ sub new {
     }
 
     $document->{'escaped_filename'} =
-        &Sympa::Tools::escape_chars($document->{'filename'});
+        Sympa::Tools::escape_chars($document->{'filename'});
 
     ## Father dir
     if ($document->{'path'} =~ /^(([^\/]*\/)*)([^\/]+)$/) {
@@ -130,7 +130,7 @@ sub new {
         $document->{'father_path'} = '';
     }
     $document->{'escaped_father_path'} =
-        &Sympa::Tools::escape_chars($document->{'father_path'}, '/');
+        Sympa::Tools::escape_chars($document->{'father_path'}, '/');
 
     ### File, directory or URL ?
     if (!(-d $document->{'absolute_path'})) {
@@ -171,17 +171,17 @@ sub new {
         my @info = stat $desc_file;
         $document->{'serial_desc'} = $info[9];
 
-        my %desc_hash = &main::get_desc_file($desc_file);
+        my %desc_hash = main::get_desc_file($desc_file);
         $document->{'owner'} = $desc_hash{'email'};
         $document->{'title'} = $desc_hash{'title'};
         $document->{'escaped_title'} =
-            &Sympa::Tools::escape_html($document->{'title'});
+            Sympa::Tools::escape_html($document->{'title'});
 
         # Author
         if ($desc_hash{'email'}) {
             $document->{'author'} = $desc_hash{'email'};
             $document->{'author_mailto'} =
-                &main::mailto($list, $desc_hash{'email'});
+                main::mailto($list, $desc_hash{'email'});
             $document->{'author_known'} = 1;
         }
     }
@@ -189,7 +189,7 @@ sub new {
     ### File, directory or URL ?
     if ($document->{'type'} eq 'url') {
 
-        $document->{'icon'} = &main::get_icon('url');
+        $document->{'icon'} = main::get_icon('url');
 
         open DOC, $document->{'absolute_path'};
         my $url = <DOC>;
@@ -202,7 +202,7 @@ sub new {
         }
     } elsif ($document->{'type'} eq 'file') {
 
-        if (my $type = &main::get_mime_type($document->{'file_extension'})) {
+        if (my $type = main::get_mime_type($document->{'file_extension'})) {
 
             # type of the file and apache icon
             if ($type =~ /^([\w\-]+)\/([\w\-]+)$/) {
@@ -214,25 +214,25 @@ sub new {
                     }
                     $type = "$subt file";
                 }
-                $document->{'icon'} = &main::get_icon($mimet)
-                    || &main::get_icon('unknown');
+                $document->{'icon'} = main::get_icon($mimet)
+                    || main::get_icon('unknown');
             }
         } else {
 
             # unknown file type
-            $document->{'icon'} = &main::get_icon('unknown');
+            $document->{'icon'} = main::get_icon('unknown');
         }
 
         ## HTML file
         if ($document->{'file_extension'} =~ /^html?$/i) {
             $document->{'html'} = 1;
-            $document->{'icon'} = &main::get_icon('text');
+            $document->{'icon'} = main::get_icon('text');
         }
 
         ## Directory
     } else {
 
-        $document->{'icon'} = &main::get_icon('folder');
+        $document->{'icon'} = main::get_icon('folder');
 
         # listing of all the shared documents of the directory
         unless (opendir DIR, $document->{'absolute_path'}) {
@@ -249,7 +249,7 @@ sub new {
         closedir DIR;
 
         my $dir =
-            &main::get_directory_content(\@tmpdir, $email, $list,
+            main::get_directory_content(\@tmpdir, $email, $list,
             $document->{'absolute_path'});
 
         foreach my $d (@{$dir}) {
@@ -273,7 +273,7 @@ sub dump {
     my $self = shift;
     my $fd   = shift;
 
-    &Sympa::Tools::dump_var($self, 0, $fd);
+    Sympa::Tools::dump_var($self, 0, $fd);
 
 }
 
@@ -390,7 +390,7 @@ sub check_access_control {
         }
 
         #edit = 0, 0.5 or 1
-        $may_edit = &main::find_edit_mode($action);
+        $may_edit = main::find_edit_mode($action);
         $why_not_edit = '' if ($may_edit);
     }
 
@@ -446,7 +446,7 @@ sub check_access_control {
             # a description file was found
             # loading of acces information
 
-            %desc_hash = &main::get_desc_file($desc_file);
+            %desc_hash = main::get_desc_file($desc_file);
 
             ## Author has all privileges
             if ($user eq $desc_hash{'email'}) {
@@ -498,8 +498,8 @@ sub check_access_control {
                 }
 
                 # $may_edit = 0, 0.5 or 1
-                my $may_action_edit = &main::find_edit_mode($action_edit);
-                $may_edit = &main::merge_edit($may_edit, $may_action_edit);
+                my $may_action_edit = main::find_edit_mode($action_edit);
+                $may_edit = main::merge_edit($may_edit, $may_action_edit);
                 $why_not_edit = '' if ($may_edit);
 
             }

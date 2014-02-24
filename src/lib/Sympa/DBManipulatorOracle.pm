@@ -522,7 +522,7 @@ sub get_indexes {
         }
     }
 
-    #open TMP, ">>/tmp/toto"; print TMP &Dumper(\%found_indexes); close TMP;
+    #open TMP, ">>/tmp/toto"; print TMP Dumper(\%found_indexes); close TMP;
     return \%found_indexes;
 }
 

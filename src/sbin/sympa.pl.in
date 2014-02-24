@@ -574,9 +574,9 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
             Sympa::Site->log_level);
     }
 
-    &Sympa::Tools::ciphersaber_installed();
+    Sympa::Tools::ciphersaber_installed();
 
-    if (&Sympa::Tools::cookie_changed(Sympa::Site->cookie)) {
+    if (Sympa::Tools::cookie_changed(Sympa::Site->cookie)) {
         Sympa::Log::Syslog::fatal_err(
             'sympa.conf/cookie parameter has changed. You may have severe inconsitencies into password storage. Restore previous cookie or write some tool to re-encrypt password in database and check spools contents (look at %s/cookies.history file)',
             Sympa::Site->etc
@@ -597,7 +597,7 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
     }
 
     ## Check for several files.
-    unless (&Sympa::Conf::checkfiles_as_root()) {
+    unless (Sympa::Conf::checkfiles_as_root()) {
         Sympa::Log::Syslog::fatal_err(
             "output checkfiles_as_root : Missing files. Aborting.");
         ## No return.
@@ -683,7 +683,7 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
             $options->{'stderr_to_tty'} = 1 if ($main::options{'foreground'});
             Sympa::Tools::write_pid('sympa', $$, $options);
             unless ($options->{'stderr_to_tty'}) {
-                &Sympa::Tools::direct_stderr_to_file(('pid' => $$));
+                Sympa::Tools::direct_stderr_to_file(('pid' => $$));
             }
         }
 
@@ -693,8 +693,8 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
 
         ## Required on FreeBSD to change ALL IDs
         ## (effective UID + real UID + saved UID)
-        &POSIX::setuid((getpwnam(Sympa::Constants::USER))[2]);
-        &POSIX::setgid((getgrnam(Sympa::Constants::GROUP))[2]);
+        POSIX::setuid((getpwnam(Sympa::Constants::USER))[2]);
+        POSIX::setgid((getgrnam(Sympa::Constants::GROUP))[2]);
 
         ## Check if the UID has correctly been set (useful on OS X)
         unless (($( == (getgrnam(Sympa::Constants::GROUP))[2])
@@ -716,7 +716,7 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
         $signal = '0';
     }
 
-    unless (&Sympa::Conf::checkfiles()) {
+    unless (Sympa::Conf::checkfiles()) {
         Sympa::Log::Syslog::fatal_err("Missing files. Aborting.");
     }
 
@@ -776,7 +776,7 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
 
         exit 0;
     } elsif ($main::options{'md5_digest'}) {
-        my $md5 = &Sympa::Tools::md5_fingerprint($main::options{'md5_digest'});
+        my $md5 = Sympa::Tools::md5_fingerprint($main::options{'md5_digest'});
         printf "MD5 digest : %s \n", $md5;
 
         exit 0;
@@ -837,7 +837,7 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
             );
         }
 
-        my $total = &Sympa::Upgrade::md5_encode_password();
+        my $total = Sympa::Upgrade::md5_encode_password();
         printf STDERR "Total password re-encoded using MD5: %d\n", $total;
 
         exit 0;
@@ -851,11 +851,11 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
         }
 
         print STDERR "Working on user_table...\n";
-        my $total = &Sympa::List::lowercase_field('user_table', 'email_user');
+        my $total = Sympa::List::lowercase_field('user_table', 'email_user');
 
         print STDERR "Working on subscriber_table...\n";
         $total +=
-            &Sympa::List::lowercase_field('subscriber_table', 'user_subscriber');
+            Sympa::List::lowercase_field('subscriber_table', 'user_subscriber');
 
         unless (defined $total) {
             Sympa::Log::Syslog::fatal_err("Could not work on database");
@@ -983,7 +983,7 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
         my ($new_listname, $new_robotname) =
             ($main::options{'new_listname'}, $main::options{'new_listrobot'});
 
-        my $result = &Sympa::Admin::rename_list(
+        my $result = Sympa::Admin::rename_list(
             list         => $list,
             new_listname => $new_listname,
             new_robot    => $new_robotname,
@@ -1009,7 +1009,7 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
         print
             "Sympa is going to store messages bigger and bigger to test the limit with its database. This may be very long \n";
         ## will test message until a 21 Mo message.
-        $size = &Sympa::Spool::store_test(21000);
+        $size = Sympa::Spool::store_test(21000);
         if ($size == 21000) {
             printf
                 "The maximum message size (%d Ko) testing was successful \n",
@@ -1057,7 +1057,7 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
         close INFILE;
 
         my $resul =
-            &Sympa::Admin::create_list_old($hash->{'config'}, $hash->{'type'},
+            Sympa::Admin::create_list_old($hash->{'config'}, $hash->{'type'},
             $robot_id, "command_line");
         unless (defined $resul) {
             print STDERR "Could not create list with these XML data\n";
@@ -1197,7 +1197,7 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
         ## Migration from one version to another
         Sympa::Log::Syslog::do_log('notice', "Upgrade process...");
 
-        $main::options{'from'} ||= &Sympa::Upgrade::get_previous_version();
+        $main::options{'from'} ||= Sympa::Upgrade::get_previous_version();
         $main::options{'to'}   ||= Sympa::Constants::VERSION;
 
         if ($main::options{'from'} eq $main::options{'to'}) {
@@ -1212,14 +1212,14 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
 
         Sympa::DatabaseManager::probe_db;
         unless (
-            &Sympa::Upgrade::upgrade($main::options{'from'}, $main::options{'to'})) {
+            Sympa::Upgrade::upgrade($main::options{'from'}, $main::options{'to'})) {
             Sympa::Log::Syslog::do_log('err',
                 "Migration from %s to %s failed",
                 $main::options{'from'}, $main::options{'to'});
             exit 1;
         }
         Sympa::Log::Syslog::do_log('notice', "Upgrade process finished.");
-        &Sympa::Upgrade::update_version();
+        Sympa::Upgrade::update_version();
 
         exit 0;
 
@@ -1260,10 +1260,10 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
             ## Determine default lang for this list
             ## It should tell us what character encoding was used for
             ## filenames
-            &Sympa::Language::SetLang($list->lang);
-            my $list_encoding = &Sympa::Language::GetCharset();
+            Sympa::Language::SetLang($list->lang);
+            my $list_encoding = Sympa::Language::GetCharset();
 
-            my $count = &Sympa::Tools::qencode_hierarchy($list->dir . '/shared',
+            my $count = Sympa::Tools::qencode_hierarchy($list->dir . '/shared',
                 $list_encoding);
 
             if ($count) {
@@ -1449,7 +1449,7 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
 
         Sympa::Language::SetLang($default_lang);
 
-        &Sympa::List::init_list_cache();
+        Sympa::List::init_list_cache();
 
         # Process grouped notifications
         Sympa::Site->send_notify_to_listmaster(undef, undef, 1, undef);
@@ -1457,7 +1457,7 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
         ## Scan queuedigest it should be performed by task manager !
         if ($index_queuedigest++ >= $digestsleep) {
             $index_queuedigest = 0;
-            &SendDigest();
+            SendDigest()();
         }
 
         # it should be performed by task manager !
@@ -1488,17 +1488,17 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
                 {'delay' => Sympa::Site->clean_delay_queueautomatic});
 
             # this is not a message spool
-            &Sympa::Tools::CleanDir(Sympa::Site->tmpdir, Sympa::Site->clean_delay_tmpdir);
+            Sympa::Tools::CleanDir(Sympa::Site->tmpdir, Sympa::Site->clean_delay_tmpdir);
         }
         ## Cleanup in-memory msgid table, only in a while
         if (time >
             $latest_msgid_table_cleanup + Sympa::Site->msgid_table_cleanup_frequency)
         {
-            &clean_msgid_table();
+            clean_msgid_table();
             $latest_msgid_table_cleanup = time;
         }
 
-        &Sympa::Mail::reaper;    # finish terminated process
+        Sympa::Mail::reaper();    # finish terminated process
 
         my $message_in_spool = $spool->next;
         my $message;
@@ -1709,7 +1709,7 @@ sub process_message {
     }
 
     ## Initialize command report
-    &Sympa::Report::init_report_cmd();
+    Sympa::Report::init_report_cmd();
 
     ## Maybe daemon is handling an automatic list
     my $dyn_list_family = $message->get_family;
@@ -2024,7 +2024,7 @@ sub process_message {
     }
 
     ## Mail back the result.
-    if (&Sympa::Report::is_there_any_report_cmd()) {
+    if (Sympa::Report::is_there_any_report_cmd()) {
 
         ## Loop prevention
 
@@ -2064,7 +2064,7 @@ sub process_message {
         }
 
         ## Send the reply message
-        &Sympa::Report::send_report_cmd($sender, $robot_id);
+        Sympa::Report::send_report_cmd($sender, $robot_id);
         Sympa::Log::Syslog::db_log(
             {   'robot'        => $robot_id,
                 'list'         => $listname,
@@ -2519,13 +2519,13 @@ sub DoMessage {
     if ($action =~ /^do_it/) {
         my $apply_dkim_signature = 'off';
         $apply_dkim_signature = 'on'
-            if &Sympa::Tools::is_in_array($list->dkim_signature_apply_on, 'any');
+            if Sympa::Tools::is_in_array($list->dkim_signature_apply_on, 'any');
         $apply_dkim_signature = 'on'
-            if &Sympa::Tools::is_in_array($list->dkim_signature_apply_on,
+            if Sympa::Tools::is_in_array($list->dkim_signature_apply_on,
             'smime_authenticated_messages')
             and $is_signed->{'body'};
         $apply_dkim_signature = 'on'
-            if &Sympa::Tools::is_in_array($list->dkim_signature_apply_on,
+            if Sympa::Tools::is_in_array($list->dkim_signature_apply_on,
             'dkim_authenticated_messages');
 
         ## Check TT2 syntax for merge_feature.
@@ -3004,12 +3004,12 @@ sub DoCommand {
 
     ## Make multipart singlepart
     if ($msg->is_multipart()) {
-        my $status = &Sympa::Tools::as_singlepart($msg, 'text/plain');
+        my $status = Sympa::Tools::as_singlepart($msg, 'text/plain');
 
         unless (defined $status) {
             Sympa::Log::Syslog::do_log('err',
                 'Could not change multipart to singlepart');
-            &Sympa::Report::global_report_cmd('user', 'error_content_type', {});
+            Sympa::Report::global_report_cmd('user', 'error_content_type', {});
             Sympa::Log::Syslog::db_log(
                 {   'robot'        => $robot->name,
                     'list'         => '',
@@ -3066,7 +3066,7 @@ sub DoCommand {
             Sympa::Log::Syslog::do_log('err',
                 'Ignoring message body not in text/plain, Content-type: %s',
                 $content_type);
-            &Sympa::Report::global_report_cmd('user', 'error_content_type', {});
+            Sympa::Report::global_report_cmd('user', 'error_content_type', {});
             Sympa::Log::Syslog::db_log(
                 {   'robot'        => $robot->name,
                     'list'         => '',
@@ -3105,7 +3105,7 @@ sub DoCommand {
             if ($status eq 'unknown_cmd') {
                 Sympa::Log::Syslog::do_log('notice',
                     "Unknown command found :%s", $i);
-                &Sympa::Report::reject_report_cmd('user', 'not_understood', {}, $i);
+                Sympa::Report::reject_report_cmd('user', 'not_understood', {}, $i);
                 Sympa::Log::Syslog::db_log(
                     {   'robot'        => $robot->name,
                         'list'         => '',
@@ -3134,7 +3134,7 @@ sub DoCommand {
     unless ($cmd_found) {
         Sympa::Log::Syslog::do_log('info', 'No command found in message %s',
             $message);
-        &Sympa::Report::global_report_cmd('user', 'no_cmd_found', {});
+        Sympa::Report::global_report_cmd('user', 'no_cmd_found', {});
         Sympa::Log::Syslog::db_log(
             {   'robot'        => $robot->name,
                 'list'         => '',
@@ -3204,7 +3204,7 @@ sub SendDigest {
             next;
         }
 
-        &Sympa::Language::SetLang($list->lang);
+        Sympa::Language::SetLang($list->lang);
 
         if ($list->get_nextdigest($digest->{'date'})) {
             ## Blindly send the message to all users.

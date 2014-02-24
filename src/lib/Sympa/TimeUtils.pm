@@ -72,7 +72,7 @@ sub set_date_names {
 ##	should be used.
 ##
 sub getdate {
-    &time2str('', time, $_[0]);
+    time2str('', time, $_[0]);
 }
 
 ##---------------------------------------------------------------------------
@@ -96,7 +96,7 @@ sub time2str {
     POSIXMODCHK: {
 	last  POSIXMODCHK  unless $POSIXstrftime;
 	eval { require POSIX; };
-	last  POSIXMODCHK  if ($@) || !defined(&POSIX::strftime);
+	last  POSIXMODCHK  if ($@) || !defined(POSIX::strftime);
 	return POSIX::strftime($fmt, $sec,$min,$hour,$mday,$mon,$year,
 				     $wday,$yday,$isdst);
     }
@@ -167,7 +167,7 @@ sub time2str {
 ##	If the parse fails, a null array is returned. Thus the routine
 ##	may be used as follows:
 ##
-##          if ( (@x = &parse_date($date)) ) { Success }
+##          if ( (@x = parse_date($date)) ) { Success }
 ##          else { Fail }
 ##
 ##	If success the array contents are as follows:
