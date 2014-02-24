@@ -59,7 +59,7 @@ use Sympa::Robot;
 use Task;
 use Scenario;
 use Sympa::Fetch;
-use WebAgent;
+use LWP::UserAgent;
 use Sympa::ClassicSpool;
 use Sympa::KeySpool;
 use Sympa::SubscribeSpool;
@@ -6134,15 +6134,13 @@ sub _include_users_remote_file {
     my $total = 0;
     my $id    = Sympa::Datasource::_get_datasource_id($param);
 
-    ## WebAgent package is part of Fetch.pm and inherited from LWP::UserAgent
-
-    my $fetch = WebAgent->new(agent => 'Sympa/' . Sympa::Constants::VERSION);
+    my $fetch = LWP::UserAgent->new(agent => 'Sympa/' . Sympa::Constants::VERSION);
 
     my $req = HTTP::Request->new(GET => $url);
 
     if (defined $param->{'user'} && defined $param->{'passwd'}) {
-        &WebAgent::set_basic_credentials($param->{'user'},
-            $param->{'passwd'});
+        # FIXME: set agent credentials,
+        # requiring to compute realm and net location
     }
 
     my $res = $fetch->request($req);
@@ -6233,9 +6231,6 @@ sub _include_users_remote_file {
         );
         return undef;
     }
-
-    ## Reset HTTP credentials
-    &WebAgent::set_basic_credentials('', '');
 
     Sympa::Log::Syslog::do_log('info', "include %d users from remote file %s",
         $total, $url);
