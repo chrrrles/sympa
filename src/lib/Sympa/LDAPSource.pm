@@ -34,7 +34,7 @@ use Carp;
 #use Conf; # not used
 use Sympa::Log;
 
-#use List; # not used
+#use Sympa::List; # not used
 use Data::Dumper;
 
 our @ISA    = qw(Sympa::Datasource Exporter);

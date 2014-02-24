@@ -41,7 +41,7 @@ use XML::LibXML;
 use File::Copy;
 use Term::ProgressBar;
 
-#use List; # load in admin
+#use Sympa::List; # load in admin
 #use Conf; # no longer used
 use Sympa::Language qw(gettext_strftime);
 

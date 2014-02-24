@@ -19,7 +19,7 @@ use strict;
 
 ## Sympa API
 use Sympa::Template;
-use List;
+use Sympa::List;
 use Sympa::Mail;
 use Sympa::Conf;
 use Sympa::Log;

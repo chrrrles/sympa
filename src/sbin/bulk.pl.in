@@ -102,13 +102,13 @@ use Data::Dumper;
 #use Sympa::Log; # used in Conf
 #use Commands; # no longer used
 #use Sympa::Mail; # used in List
-use List;
-use Bulk;
+use Sympa::List;
+use Sympa::Bulk;
 
 #use Sympa::Tools; # used in Conf
-#use tracking; # used in List
+#use Sympa::Tracking; # used in List
 #use Sympa::Constants; # used in confdef, in Conf
-use Sympaspool;    # used in List - Task
+use Sympa::Spool;    # used in List - Task
 
 my $daemon_name           = Sympa::Log::Syslog::set_daemon($0);
 my $date_of_last_activity = time();

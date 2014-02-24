@@ -32,7 +32,7 @@ use POSIX qw(mktime);
 use Sys::Syslog;
 use Time::HiRes;
 
-#XXXuse List; # no longer used
+#XXXuse Sympa::List; # no longer used
 #use Sympa::DatabaseManager; #FIXME: dependency loop between Log & SDM
 
 our @ISA    = qw(Exporter);

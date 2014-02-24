@@ -27,7 +27,7 @@ use lib '--modulesdir--';
 
 #use Sympa::Wwslib; # not used
 #use Sympa::Constants; # used in List - Robot - Site - Conf - confdef
-use List;
+use Sympa::List;
 
 #use Sympa::DatabaseManager; # used by Conf
 #use Sympa::Log; # used by Conf

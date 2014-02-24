@@ -94,7 +94,7 @@ use Pod::Usage;
 use Data::Dumper;
 
 #use Conf; # used in List - Robot- Site
-use List;
+use Sympa::List;
 
 #use Sympa::Log; # used by Conf
 #use Sympa::DatabaseManager; # used by Conf

@@ -39,7 +39,7 @@ use constant MAX => 100_000;
 # tentative
 use Data::Dumper;
 
-#use List;
+#use Sympa::List;
 ##The line above was removed to avoid dependency loop.
 ##"use List" MUST precede to "use Bulk".
 
@@ -49,7 +49,7 @@ use Sympa::Language qw(gettext_strftime);
 
 #use Sympa::Log; # used in Conf
 #use Sympa::DatabaseManager; # used in Conf
-use Sympaspool;
+use Sympa::Spool;
 
 ## Database and SQL statement handlers
 my $sth;

@@ -28,7 +28,7 @@ use Getopt::Long;
 
 #use Sympa::Wwslib; # no longer used
 #use Sympa::Constants; # used by Conf
-use List;
+use Sympa::List;
 
 #use Sympa::Log; # used in List - Robot - Site - Conf
 #use Sympa::DatabaseManager; # used by Conf

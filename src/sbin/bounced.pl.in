@@ -145,8 +145,8 @@ use Getopt::Long;
 use Pod::Usage;
 use POSIX;
 
-use List;
-use tracking;
+use Sympa::List;
+use Sympa::Tracking;
 use Sympa::BounceMessage;
 
 ## Check options

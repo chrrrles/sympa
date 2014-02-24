@@ -33,7 +33,7 @@ use Sympa::ClassicSpool;
 use Data::Dumper;
 
 #use Task; # this module is used by Task
-#use List; # used by Task
+#use Sympa::List; # used by Task
 
 our @ISA    = qw(Sympa::ClassicSpool Exporter);
 our @EXPORT = qw(%global_models %months);

@@ -32,10 +32,10 @@ use strict;
 # tentative
 use Data::Dumper;
 
-use Bulk;
+use Sympa::Bulk;
 
 #use Conf; # used in List - Robot - Site
-#use List; # this package is used by List
+#use Sympa::List; # this package is used by List
 #use Sympa::Log; # used by Conf
 #use Sympa::Mail; # used by List
 #use Scenario; # not used
@@ -43,7 +43,7 @@ use TaskSpool;
 use TaskInstruction;
 
 #use Sympa::Tools; # used by Conf
-#use tracking; # not used
+#use Sympa::Tracking; # not used
 #use Sympa::Template; # used by List
 
 #### Task level subs ####

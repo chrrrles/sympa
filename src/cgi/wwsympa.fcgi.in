@@ -54,7 +54,7 @@ use Time::Local;
 use Data::Dumper;
 
 ## Sympa API
-use List;
+use Sympa::List;
 
 #use Sympa::Mail; # used by List
 #use Conf; # used in List - Robot - Site
@@ -80,9 +80,9 @@ use Sympa::Wwslib;
 use Sympa::CookieLib;
 
 #use Sympa::Template;
-use tracking;
+use Sympa::Tracking;
 
-#use Sympaspool; # used in List - Task
+#use Sympa::Spool; # used in List - Task
 #use Sympa::DatabaseManager; # used by Conf
 use Sympa::MessageSpool;
 

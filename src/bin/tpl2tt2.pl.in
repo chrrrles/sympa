@@ -30,7 +30,7 @@ use Sympa::Conf;
 use Sympa::Language;
 use Sympa::Template;
 use Sympa::Constants;
-use List;
+use Sympa::List;
 use Sympa::Log;
 
 my %options;

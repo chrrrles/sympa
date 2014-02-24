@@ -28,7 +28,7 @@ use warnings;
 
 use Sympa::Message;
 use Sympa::Log;
-use tracking;
+use Sympa::Tracking;
 use Data::Dumper;
 
 our @ISA = qw(Message);

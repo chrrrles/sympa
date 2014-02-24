@@ -31,7 +31,7 @@ use HTTP::Cookies;
 my @ISA    = ('Exporter');
 my @EXPORT = ();
 
-use List;
+use Sympa::List;
 
 #use Conf; # used in List - Site
 #use Sympa::Log; # used in Conf

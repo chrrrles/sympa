@@ -29,7 +29,7 @@
 
 use lib '--modulesdir--';
 use Sympa::Conf;    # to load Sympa conf which is needed by List.pm
-use List;
+use Sympa::List;
 use Sympa::Log;     # if you want to get logs of List.pm
 use Sympa::Constants;
 

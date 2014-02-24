@@ -33,7 +33,7 @@ use Storable;
 # tentative
 use Data::Dumper;
 
-#use List; # no longer used
+#use Sympa::List; # no longer used
 use Sympa::DatabaseManager;
 use Sympa::Log;
 use Sympa::Language qw(gettext);
