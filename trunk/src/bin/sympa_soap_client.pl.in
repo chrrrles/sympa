@@ -36,7 +36,7 @@ use lib '--modulesdir--';
 use Sympa::Commands;
 use Sympa::Conf;
 use Sympa::Auth;
-use SympaSession;
+use Sympa::Session;
 use Sympa::Language;
 use Sympa::Log;
 use Sympa::Mail;

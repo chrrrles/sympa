@@ -189,10 +189,10 @@ sub login {
             ->faultdetail("Incorrect password for user $email or bad login");
     }
 
-    ## Create SympaSession object
+    ## Create Sympa::Session object
     my $session =
-        SympaSession->new($robot,
-        {'cookie' => SympaSession::encrypt_session_id($ENV{'SESSION_ID'})});
+        Sympa::Session->new($robot,
+        {'cookie' => Sympa::Session::encrypt_session_id($ENV{'SESSION_ID'})});
     $ENV{'USER_EMAIL'} = $email;
     $session->{'email'} = $email;
     $session->store();
@@ -202,7 +202,7 @@ sub login {
 
     ## Also return the cookie value
     return SOAP::Data->name('result')->type('string')
-        ->value(SympaSession::encrypt_session_id($ENV{'SESSION_ID'}));
+        ->value(Sympa::Session::encrypt_session_id($ENV{'SESSION_ID'}));
 }
 
 sub casLogin {
@@ -283,10 +283,10 @@ sub casLogin {
             ->faultdetail("Could not get email address from LDAP directory");
     }
 
-    ## Create SympaSession object
+    ## Create Sympa::Session object
     my $session =
-        SympaSession->new($robot,
-        {'cookie' => SympaSession::encrypt_session_id($ENV{'SESSION_ID'})});
+        Sympa::Session->new($robot,
+        {'cookie' => Sympa::Session::encrypt_session_id($ENV{'SESSION_ID'})});
     $ENV{'USER_EMAIL'} = $email;
     $session->{'email'} = $email;
     $session->store();
@@ -296,7 +296,7 @@ sub casLogin {
 
     ## Also return the cookie value
     return SOAP::Data->name('result')->type('string')
-        ->value(SympaSession::encrypt_session_id($ENV{'SESSION_ID'}));
+        ->value(Sympa::Session::encrypt_session_id($ENV{'SESSION_ID'}));
 }
 
 ## Used to call a service as an authenticated user without using HTTP cookies
@@ -320,7 +320,7 @@ sub authenticateAndRun {
 
     ## Provided email is not trusted, we fetch the user email from the
     ## session_table instead
-    my $session = SympaSession->new($robot, {'cookie' => $cookie});
+    my $session = Sympa::Session->new($robot, {'cookie' => $cookie});
     if (defined $session) {
         $email      = $session->{'email'};
         $session_id = $session->{'id_session'};
@@ -353,7 +353,7 @@ sub getUserEmailByCookie {
             ->faultdetail('Use : <cookie>');
     }
 
-    my $session = SympaSession->new($robot, {'cookie' => $cookie});
+    my $session = Sympa::Session->new($robot, {'cookie' => $cookie});
 
     unless (defined $session and $session->{'email'} ne 'unknown') {
         Sympa::Log::Syslog::do_log('err',

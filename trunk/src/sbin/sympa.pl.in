@@ -348,7 +348,7 @@ use Sympa::Commands;
 
 #use Conf; # load in Site - List - Commands
 use Sympa::Auth;
-use SympaSession;
+use Sympa::Session;
 
 #use Language; # load in List
 #use Sympa::Log; # load in Conf

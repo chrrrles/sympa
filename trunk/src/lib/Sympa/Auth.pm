@@ -462,7 +462,7 @@ sub create_one_time_ticket {
     my $remote_addr = shift;
     ## Value may be 'mail' if the IP address is not known
 
-    my $ticket = &SympaSession::get_random();
+    my $ticket = &Sympa::Session::get_random();
 
     my $date = time;
     my $sth;
