@@ -810,9 +810,9 @@ sub purge_session_table {
 
     my ($self, $task) = @_;
     Sympa::Log::Syslog::do_log('info', 'task_manager::purge_session_table()');
-    require SympaSession;
+    require Sympa::Session;
 
-    my $removed = SympaSession::purge_old_sessions('Site');
+    my $removed = Sympa::Session::purge_old_sessions('Site');
     unless (defined $removed) {
         $self->error(
             {   'task'    => $task,
@@ -871,9 +871,9 @@ sub purge_one_time_ticket_table {
     my ($self, $task) = @_;
     Sympa::Log::Syslog::do_log('info',
         'task_manager::purge_one_time_ticket_table()');
-    require SympaSession;
+    require Sympa::Session;
 
-    my $removed = SympaSession::purge_old_tickets('Site');
+    my $removed = Sympa::Session::purge_old_tickets('Site');
     unless (defined $removed) {
         $self->error(
             {   'task'    => $task,

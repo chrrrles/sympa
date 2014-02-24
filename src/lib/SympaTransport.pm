@@ -25,7 +25,7 @@ package SOAP::Transport::HTTP::FCGI::Sympa;
 
 use strict;
 use vars qw(@ISA);
-use SympaSession;
+use Sympa::Session;
 
 use SOAP::Transport::HTTP;
 @ISA = qw(SOAP::Transport::HTTP::FCGI);
@@ -54,15 +54,15 @@ sub request {
 
         my $session;
         ## Existing session or new one
-        if (SympaSession::get_session_cookie($ENV{'HTTP_COOKIE'})) {
-            $session = SympaSession->new(
+        if (Sympa::Session::get_session_cookie($ENV{'HTTP_COOKIE'})) {
+            $session = Sympa::Session->new(
                 $robot,
                 {   'cookie' =>
-                        SympaSession::get_session_cookie($ENV{'HTTP_COOKIE'})
+                        Sympa::Session::get_session_cookie($ENV{'HTTP_COOKIE'})
                 }
             );
         } else {
-            $session = SympaSession->new($robot, {});
+            $session = Sympa::Session->new($robot, {});
             $session->store() if defined $session;
             ## Note that id_session changes each time it is saved in the DB
             $session->renew() if defined $session;
@@ -88,7 +88,7 @@ sub response {
             my $expire = $main::param->{'user'}{'cookie_delay'}
                 || Sympa::Site->cookie_expire;
             my $cookie =
-                SympaSession::soap_cookie2($ENV{'SESSION_ID'},
+                Sympa::Session::soap_cookie2($ENV{'SESSION_ID'},
                 $ENV{'SERVER_NAME'}, $expire);
             $response->headers->push_header('Set-Cookie2' => $cookie);
         }

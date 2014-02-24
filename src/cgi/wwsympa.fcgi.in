@@ -69,7 +69,7 @@ use Sympa::Admin;
 use Sympa::SharedDocument;
 
 #use Sympa::Report;
-use SympaSession;
+use Sympa::Session;
 
 #use Sympa::Log;
 #use tools;
@@ -1279,10 +1279,10 @@ while ($query = &new_loop()) {
         $param->{'css_url'}
     ) if ($param->{'css_url'} =~ /\.css$/);
 
-    $session = SympaSession->new(
+    $session = Sympa::Session->new(
         $robot,
         {   'cookie' =>
-                &SympaSession::get_session_cookie($ENV{'HTTP_COOKIE'}),
+                &Sympa::Session::get_session_cookie($ENV{'HTTP_COOKIE'}),
             'action' => $in{'action'},
             'rss'    => $rss,
             'ajax'   => $ajax
@@ -1295,7 +1295,7 @@ while ($query = &new_loop()) {
     unless (defined $session) {
         $robot->send_notify_to_listmaster('failed_to_create_web_session');
         &wwslog('info', 'Failed to create session');
-        $session = SympaSession->new($robot);
+        $session = Sympa::Session->new($robot);
     }
 
     # Retreive oauth_token from session if it exists and if we have a (newly)
@@ -7198,7 +7198,7 @@ sub do_show_sessions {
     $in{'session_delay'} = 10 unless ($in{'session_delay'});
     my $delay = 60 * $in{'session_delay'};
     $param->{'sessions'} =
-        SympaSession::list_sessions($delay, $robot, $in{'connected_only'});
+        Sympa::Session::list_sessions($delay, $robot, $in{'connected_only'});
     return '1';
 }
 
