@@ -11154,7 +11154,7 @@ sub purge {
     return undef unless $self->robot->lists($self->name);
 
     ## Remove tasks for this list
-    my $taskspool = TaskSpool->new();
+    my $taskspool = Sympa::TaskSpool->new();
     foreach my $task_in_spool (
         $taskspool->get_content(
             {   'selector' =>

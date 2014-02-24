@@ -317,7 +317,7 @@ sub store {
 
     Sympa::Log::Syslog::do_log('debug', 'Spooling task %s',
         $self->get_description);
-    my $taskspool = new TaskSpool;
+    my $taskspool = new Sympa::TaskSpool;
     my %meta;
     $meta{'task_date'}    = $self->{'date'};
     $meta{'date'}         = $self->{'date'};
@@ -355,7 +355,7 @@ sub remove {
     Sympa::Log::Syslog::do_log('debug2', '(%s)', @_);
     my $self = shift;
 
-    my $taskspool = new TaskSpool;
+    my $taskspool = new Sympa::TaskSpool;
     unless ($taskspool->remove_message($self->{'messagekey'})) {
         Sympa::Log::Syslog::do_log('err',
             'Unable to remove task (messagekey = %s)',

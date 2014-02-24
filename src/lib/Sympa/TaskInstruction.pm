@@ -484,8 +484,8 @@ sub next_cmd {
     );
     if ($listname eq '_global') {
         $type = '_global';
-        foreach my $key (keys %TaskSpool::global_models) {
-            if ($TaskSpool::global_models{$key} eq $model) {
+        foreach my $key (keys %Sympa::TaskSpool::global_models) {
+            if ($Sympa::TaskSpool::global_models{$key} eq $model) {
                 $flavour = Sympa::Site->$key;
                 last;
             }
@@ -1184,7 +1184,7 @@ sub chk_cert_expiration {
         }
 
         $date =~ /notAfter=(\w+)\s*(\d+)\s[\d\:]+\s(\d+).+/;
-        my @date = (0, 0, 0, $2, $TaskSpool::months{$1}, $3 - 1900);
+        my @date = (0, 0, 0, $2, $Sympa::TaskSpool::months{$1}, $3 - 1900);
         $date =~ s/notAfter=//;
         my $expiration_date = timegm(@date);    # epoch expiration date
         my $rep = &tools::adate($expiration_date);
@@ -1367,7 +1367,7 @@ sub update_crl {
         }
 
         $date =~ /nextUpdate=(\w+)\s*(\d+)\s(\d\d)\:(\d\d)\:\d\d\s(\d+).+/;
-        my @date = (0, $4, $3 - 1, $2, $TaskSpool::months{$1}, $5 - 1900);
+        my @date = (0, $4, $3 - 1, $2, $Sympa::TaskSpool::months{$1}, $5 - 1900);
         my $expiration_date = timegm(@date);    # epoch expiration date
         my $rep = &tools::adate($expiration_date);
 
