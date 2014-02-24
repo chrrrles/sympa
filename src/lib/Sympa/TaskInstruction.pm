@@ -21,7 +21,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package TaskInstruction;
+package Sympa::TaskInstruction;
 
 use strict;
 
@@ -243,7 +243,7 @@ sub parse {
         # assignment
     } elsif ($self->{'line_as_string'} =~ /^\s*(@\w+)\s*=\s*(.+)/) {
 
-        my $subinstruction = new TaskInstruction(
+        my $subinstruction = new Sympa::TaskInstruction(
             {'line_as_string' => $2, 'line_number' => $self->{'line_number'}}
         );
 

@@ -554,7 +554,7 @@ sub parse {
     my $lnb = 0;                                         # line number
     foreach my $line (split('\n', $messageasstring)) {
         $lnb++;
-        my $result = new TaskInstruction(
+        my $result = new Sympa::TaskInstruction(
             {'line_as_string' => $line, 'line_number' => $lnb}, $self);
         if (defined $self->{'errors'}) {
             $self->error_report;
