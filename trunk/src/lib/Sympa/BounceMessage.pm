@@ -403,7 +403,7 @@ sub update_list {
     $self->update_robot($new_robotname);
     $self->change_listname($new_listname);
 
-    my $list = new List($self->{'listname'}, $self->{'robot'});
+    my $list = Sympa::List->new($self->{'listname'}, $self->{'robot'});
     unless ($list) {
         Sympa::Log::Syslog::do_log('err',
             'Unable to set list object for unknown list %s@%s (bounce %s)',
@@ -422,7 +422,7 @@ sub update_robot {
 
     $self->change_robotname($new_robotname);
 
-    my $robot = new Robot($self->{'robotname'});
+    my $robot = Sympa::Robot->new($self->{'robotname'});
     unless ($robot) {
         Sympa::Log::Syslog::do_log('err',
             'Unable to set robot object for unknown robot %s (bounce %s)',
@@ -858,7 +858,7 @@ sub process_email_feedback_report {
                 $self->{'listname'}  = $1;
                 $self->{'robotname'} = $2;
                 my $list =
-                    new List($self->{'listname'}, $self->{'robotname'});
+                    Sympa::List->new($self->{'listname'}, $self->{'robotname'});
                 unless ($list) {
                     Sympa::Log::Syslog::do_log(
                         'err',

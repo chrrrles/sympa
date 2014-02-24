@@ -417,7 +417,7 @@ sub _lock_nfs {
         )
         ) {
         ## Read access to prevent "Bad file number" error on Solaris
-        $FH = new FileHandle;
+        $FH = FileHandle->new();
         unless (open $FH, $open_mode, $lock_file) {
             Sympa::Log::Syslog::do_log('err', 'Cannot open %s: %s',
                 $lock_file, $!);

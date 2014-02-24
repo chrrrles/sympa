@@ -273,7 +273,7 @@ Sympa::Log::Syslog::do_log('notice', "archived %s Started",
 $SIG{'TERM'} = 'sigterm';
 my $end = 0;
 
-my $spoolarchive = new Sympa::ClassicSpool('outgoing');
+my $spoolarchive = Sympa::ClassicSpool->new()('outgoing');
 
 ## infinite loop scanning the queue (unless a sig TERM is received
 while (!$end) {
@@ -324,7 +324,7 @@ while (!$end) {
         );
 
         my $list;
-        unless ($list = new List($listadress)) {
+        unless ($list = Sympa::List->new($listadress)) {
             Sympa::Log::Syslog::do_log('err', 'remove: unknown list %s',
                 $listadress);
             $spoolarchive->move_to_bad($item->{'messagekey'});
@@ -662,7 +662,7 @@ sub rebuild {
         return undef;
     }
 
-    my $list    = new List($listname, $hostname);
+    my $list    = Sympa::List->new($listname, $hostname);
     my $robot   = $list->robot;
     my $arcpath = $robot->arc_path;
     my $tag     = Sympa::Archive::get_tag($list);

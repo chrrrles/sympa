@@ -69,7 +69,7 @@ sub new {
         $task->{'domain'}          = $task_in_spool->{'robot'};
 
         if ($task_in_spool->{'list'}) {    # list task
-            $task->{'list_object'} = new List(
+            $task->{'list_object'} = Sympa::List->new(
                 $task_in_spool->{'list'},
                 $task_in_spool->{'robot'},
                 {'skip_sync_admin' => 1}
@@ -133,7 +133,7 @@ sub create {
     } else {
         $task_in_spool->{'task_object'} = '_global';
     }
-    my $self = new Task($task_in_spool);
+    my $self = Sympa::Task->new($task_in_spool);
     unless ($self) {
         Sympa::Log::Syslog::do_log('err', 'Unable to create task object');
         return undef;
@@ -317,7 +317,7 @@ sub store {
 
     Sympa::Log::Syslog::do_log('debug', 'Spooling task %s',
         $self->get_description);
-    my $taskspool = new Sympa::TaskSpool;
+    my $taskspool = Sympa::TaskSpool->new;
     my %meta;
     $meta{'task_date'}    = $self->{'date'};
     $meta{'date'}         = $self->{'date'};
@@ -355,7 +355,7 @@ sub remove {
     Sympa::Log::Syslog::do_log('debug2', '(%s)', @_);
     my $self = shift;
 
-    my $taskspool = new Sympa::TaskSpool;
+    my $taskspool = Sympa::TaskSpool->new;
     unless ($taskspool->remove_message($self->{'messagekey'})) {
         Sympa::Log::Syslog::do_log('err',
             'Unable to remove task (messagekey = %s)',
@@ -554,7 +554,7 @@ sub parse {
     my $lnb = 0;                                         # line number
     foreach my $line (split('\n', $messageasstring)) {
         $lnb++;
-        my $result = new Sympa::TaskInstruction(
+        my $result = Sympa::TaskInstruction->new(
             {'line_as_string' => $line, 'line_number' => $lnb}, $self);
         if (defined $self->{'errors'}) {
             $self->error_report;

@@ -338,7 +338,7 @@ sub store {
     # $last_stored_message_key is a global var used in order to detect if a
     # message as been already stored
     my $message_already_on_spool;
-    my $bulkspool = new Sympa::Spool('bulk');
+    my $bulkspool = Sympa::Spool->new('bulk');
 
     if (    defined $last_stored_message_key
         and defined $message->{'messagekey'}

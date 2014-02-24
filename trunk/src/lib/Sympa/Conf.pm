@@ -1055,7 +1055,7 @@ sub _load_auth {
                         defined $current_paragraph->{'proxy_validate_path'});
 
                     $current_paragraph->{'cas_server'} =
-                        new AuthCAS(%{$cas_param});
+                        AuthCAS->new(%{$cas_param});
                     unless (defined $current_paragraph->{'cas_server'}) {
                         Sympa::Log::Syslog::do_log(
                             'err',
@@ -2326,7 +2326,7 @@ sub _replace_file_value_by_db_value {
 # Returns 1 or undef if something went wrong.
 sub _save_binary_cache {
     my $param = shift;
-    my $lock  = new Sympa::Lock($param->{'target_file'});
+    my $lock  = Sympa::Lock->new($param->{'target_file'});
     unless (defined $lock) {
         Sympa::Log::Syslog::do_log('err', 'Could not create new lock');
         return undef;
@@ -2385,7 +2385,7 @@ sub _load_binary_cache {
         unless _source_has_not_changed({'config_file' => $config_file});
     my $config_bin = $config_file . $binary_file_extension;
 
-    my $lock = new Sympa::Lock($config_bin);
+    my $lock = Sympa::Lock->new($config_bin);
     unless (defined $lock) {
         Sympa::Log::Syslog::do_log('err', 'Could not create new lock');
         return undef;

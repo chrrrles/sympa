@@ -736,7 +736,7 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
                 exit;
             }
 
-            my $list = new List($main::options{'dump'});
+            my $list = Sympa::List->new($main::options{'dump'});
             unless (defined $list) {
                 Sympa::Log::Syslog::do_log('err', 'Unknown list %s',
                     $main::options{'dump'});
@@ -793,7 +793,7 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
             exit;
         }
 
-        unless ($list = new List($main::options{'import'})) {
+        unless ($list = Sympa::List->new($main::options{'import'})) {
             Sympa::Log::Syslog::fatal_err('Unknown list name %s',
                 $main::options{'import'});
         }
@@ -867,7 +867,7 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
     } elsif ($main::options{'close_list'}) {
 
         my ($listname, $robotname) = split /\@/, $main::options{'close_list'};
-        my $list = new List($listname, $robotname);
+        my $list = Sympa::List->new($listname, $robotname);
 
         unless (defined $list) {
             print STDERR "Incorrect list name $main::options{'close_list'}\n";
@@ -930,7 +930,7 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
     } elsif ($main::options{'purge_list'}) {
 
         my ($listname, $robotname) = split /\@/, $main::options{'purge_list'};
-        my $list = new List($listname, $robotname);
+        my $list = Sympa::List->new($listname, $robotname);
 
         unless (defined $list) {
             print STDERR "Incorrect list name $main::options{'purge_list'}\n";
@@ -962,7 +962,7 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
 
         my ($listname, $robotname) = split /\@/,
             $main::options{'rename_list'};
-        my $list = new List($listname, $robotname);
+        my $list = Sympa::List->new($listname, $robotname);
 
         unless (defined $list) {
             print STDERR
@@ -1046,7 +1046,7 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
             exit 1;
         }
 
-        my $config = new Sympa::Config_XML(\*INFILE);
+        my $config = Sympa::Config_XML->new(\*INFILE);
         unless (defined $config->createHash()) {
             print STDERR "Error in representation data with these XML data\n";
             exit 1;
@@ -1082,7 +1082,7 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
             exit 1;
         }
         my $family;
-        unless ($family = new Sympa::Family($family_name, $robot_id)) {
+        unless ($family = Sympa::Family->new($family_name, $robot_id)) {
             print STDERR
                 "The family $family_name does not exist, impossible instantiation\n";
             exit 1;
@@ -1136,7 +1136,7 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
             "\n************************************************************\n";
 
         my $family;
-        unless ($family = new Sympa::Family($family_name, $robot_id)) {
+        unless ($family = Sympa::Family->new($family_name, $robot_id)) {
             print STDERR
                 "The family $family_name does not exist, impossible to add a list\n";
             exit 1;
@@ -1176,7 +1176,7 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
         exit 0;
     } elsif ($main::options{'sync_include'}) {
 
-        my $list = new List($main::options{'sync_include'});
+        my $list = Sympa::List->new($main::options{'sync_include'});
 
         unless (defined $list) {
             print STDERR
@@ -1245,7 +1245,7 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
             "Upgrading share for list=%s robot=%s",
             $listname, $robot_id);
 
-        my $list = new List($listname, $robot_id);
+        my $list = Sympa::List->new($listname, $robot_id);
 
         unless (defined $list) {
             printf STDERR "Incorrect list or domain name : %s %s\n",
@@ -1333,7 +1333,7 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
             "\n************************************************************\n";
 
         my $family;
-        unless ($family = new Sympa::Family($family_name, $robot_id)) {
+        unless ($family = Sympa::Family->new($family_name, $robot_id)) {
             print STDERR
                 "The family $family_name does not exist, impossible to modify the list.\n";
             exit 1;
@@ -1382,7 +1382,7 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
             pod2usage(-exitval => 1, -output => \*STDERR);
         }
         my $family;
-        unless ($family = new Sympa::Family($family_name, $robot_id)) {
+        unless ($family = Sympa::Family->new($family_name, $robot_id)) {
             print STDERR
                 "The family $family_name does not exist, impossible family closure\n";
             exit 1;
@@ -1465,25 +1465,25 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
         if ($index_cleanqueue++ >= 1) {
             $index_cleanqueue = 0;
             Sympa::Log::Syslog::do_log('debug', 'Cleaning spools');
-            my $msg_bad = new Sympa::ClassicSpool('msg', 'bad');
+            my $msg_bad = Sympa::ClassicSpool->new()('msg', 'bad');
             $msg_bad->clean({'delay' => Sympa::Site->clean_delay_queue});
-            my $archive_bad = new Sympa::ClassicSpool('outgoing', 'bad');
+            my $archive_bad = Sympa::ClassicSpool->new()('outgoing', 'bad');
             $archive_bad->clean({'delay' => Sympa::Site->clean_delay_queueoutgoing});
-            my $queuebounce_bad = new Sympa::ClassicSpool('bounce', 'bad');
+            my $queuebounce_bad = Sympa::ClassicSpool->new()('bounce', 'bad');
             $queuebounce_bad->clean(
                 {'delay' => Sympa::Site->clean_delay_queuebounce});
-            my $queuemod = new Sympa::ClassicSpool('mod');
+            my $queuemod = Sympa::ClassicSpool->new()('mod');
             $queuemod->clean({'delay' => Sympa::Site->clean_delay_queuemod});
-            my $queueauth = new Sympa::ClassicSpool('auth');
+            my $queueauth = Sympa::ClassicSpool->new()('auth');
             $queueauth->clean({'delay' => Sympa::Site->clean_delay_queueauth});
-            my $queuetopic = new Sympa::ClassicSpool('topic');
+            my $queuetopic = Sympa::ClassicSpool->new()('topic');
             $queuetopic->clean({'delay' => Sympa::Site->clean_delay_queuetopic});
-            my $queuesubscribe = new Sympa::ClassicSpool('subscribe');
+            my $queuesubscribe = Sympa::ClassicSpool->new()('subscribe');
             $queuesubscribe->clean(
                 {'delay' => Sympa::Site->clean_delay_queuesubscribe});
-            my $queuesignoff = new Sympa::ClassicSpool('signoff');
+            my $queuesignoff = Sympa::ClassicSpool->new()('signoff');
             $queuesignoff->clean({'delay' => Sympa::Site->clean_delay_queuesignoff});
-            my $queueautomatic = new Sympa::ClassicSpool('automatic');
+            my $queueautomatic = Sympa::ClassicSpool->new()('automatic');
             $queueautomatic->clean(
                 {'delay' => Sympa::Site->clean_delay_queueautomatic});
 
@@ -3170,14 +3170,14 @@ sub DoCommand {
 sub SendDigest {
     Sympa::Log::Syslog::do_log('debug2', '()');
 
-    my $digestspool = new Sympa::ClassicSpool('digest');
+    my $digestspool = Sympa::ClassicSpool->new()('digest');
 
     foreach my $digest (
         $digestspool->get_content(
             {'selection' => 'messagekey,list,robot,date'}
         )
         ) {
-        my $list = new List($digest->{'list'}, $digest->{'robot'});
+        my $list = Sympa::List->new($digest->{'list'}, $digest->{'robot'});
         unless ($list) {
             Sympa::Log::Syslog::do_log(
                 'info',

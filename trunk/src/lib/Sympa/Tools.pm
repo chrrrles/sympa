@@ -945,7 +945,7 @@ sub remove_invalid_dkim_signature {
         my $body_as_string =
             &Sympa::Message::get_body_from_msg_as_string($msg_as_string);
 
-        my $parser = new MIME::Parser;
+        my $parser = MIME::Parser->new();
         $parser->output_to_core(1);
         my $entity = $parser->parse_data($msg_as_string);
         unless ($entity) {
@@ -1531,7 +1531,7 @@ sub split_mail {
 
             open BODY, "$dir/$pathname.$fileExt.$encoding";
 
-            my $decoder = new MIME::Decoder $encoding;
+            my $decoder = MIME::Decoder->new($encoding);
             unless (defined $decoder) {
                 Sympa::Log::Syslog::do_log('err',
                     'Cannot create decoder for %s', $encoding);
@@ -2181,7 +2181,7 @@ sub write_pid {
     my @pids;
 
     # Lock PID file
-    my $lock = new Sympa::Lock($pidfile);
+    my $lock = Sympa::Lock->new($pidfile);
     unless (defined $lock) {
         croak sprintf('Lock could not be created. Exiting.');
     }
@@ -3299,7 +3299,7 @@ sub md5_fingerprint {
     return undef unless (defined $input_string);
     chomp $input_string;
 
-    my $digestmd5 = new Digest::MD5;
+    my $digestmd5 = Digest::MD5->new;
     $digestmd5->reset;
     $digestmd5->add($input_string);
     return (unpack("H*", $digestmd5->digest));
@@ -3689,7 +3689,7 @@ sub create_html_part_from_web_page {
     my $param = shift;
     Sympa::Log::Syslog::do_log('debug', "Creating HTML MIME part. Source: %s",
         $param->{'source'});
-    my $mailHTML = new MIME::Lite::HTML(
+    my $mailHTML = MIME::Lite::HTML->new(
         {   From         => $param->{'From'},
             To           => $param->{'To'},
             Headers      => $param->{'Headers'},

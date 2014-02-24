@@ -240,7 +240,7 @@ sub create_list_old {
     }
 
     ## Check this listname doesn't exist already.
-    if ($res || new List($param->{'listname'}, $robot, {'just_try' => 1})) {
+    if ($res || Sympa::List->new($param->{'listname'}, $robot, {'just_try' => 1})) {
         Sympa::Log::Syslog::do_log(
             'err',
             'could not create already existing list %s on %s for %s',
@@ -291,7 +291,7 @@ sub create_list_old {
         $robot->get_etc_include_path('create_list_templates/' . $template);
 
     ## Lock config before openning the config file
-    my $lock = new Sympa::Lock($list_dir . '/config');
+    my $lock = Sympa::Lock->new($list_dir . '/config');
     unless (defined $lock) {
         Sympa::Log::Syslog::do_log('err', 'Lock could not be created');
         return undef;
@@ -309,7 +309,7 @@ sub create_list_old {
     }
     ## Use an intermediate handler to encode to filesystem_encoding
     my $config = '';
-    my $fd     = new IO::Scalar \$config;
+    my $fd     = IO::Scalar->new(\$config);
     &Sympa::Template::parse_tt2($param, 'config.tt2', $fd, $tt2_include_path);
 
     #    Encode::from_to($config, 'utf8', Sympa::Site->filesystem_encoding);
@@ -339,7 +339,7 @@ sub create_list_old {
 
     ## Create list object
     my $list;
-    unless ($list = new List($param->{'listname'}, $robot)) {
+    unless ($list = Sympa::List->new($param->{'listname'}, $robot)) {
         Sympa::Log::Syslog::do_log('err',
             'unable to create list %s for robot %s',
             $param->{'listname'}, $robot);
@@ -521,7 +521,7 @@ sub create_list {
     }
 
     ## Lock config before openning the config file
-    my $lock = new Sympa::Lock($list_dir . '/config');
+    my $lock = Sympa::Lock->new($list_dir . '/config');
     unless (defined $lock) {
         Sympa::Log::Syslog::do_log('err', 'Lock could not be created');
         return undef;
@@ -589,7 +589,7 @@ sub create_list {
 
     ## Create list object
     my $list;
-    unless ($list = new List($param->{'listname'}, $robot)) {
+    unless ($list = Sympa::List->new($param->{'listname'}, $robot)) {
         Sympa::Log::Syslog::do_log('err', 'unable to create list %s',
             $param->{'listname'});
         return undef;
@@ -687,7 +687,7 @@ sub update_list {
     }
 
     ## Lock config before openning the config file
-    my $lock = new Sympa::Lock($list->dir . '/config');
+    my $lock = Sympa::Lock->new($list->dir . '/config');
     unless (defined $lock) {
         Sympa::Log::Syslog::do_log('err', 'Lock could not be created');
         return undef;
@@ -712,7 +712,7 @@ sub update_list {
     $lock->unlock();
 
     ## Create list object
-    unless ($list = new List($param->{'listname'}, $robot)) {
+    unless ($list = Sympa::List->new($param->{'listname'}, $robot)) {
         Sympa::Log::Syslog::do_log('err',
             'create_list : unable to create list %s',
             $param->{'listname'});
@@ -1000,7 +1000,7 @@ sub rename_list {
     $param{'listname'} = $param{'new_listname'};
 
     unless (
-        $list = new List(
+        $list = Sympa::List->new(
             $param{'new_listname'}, $param{'new_robot'},
             {'reload_config' => 1}
         )
@@ -1153,7 +1153,7 @@ sub clone_list_as_empty {
     my $email            = shift;
 
     my $list;
-    unless ($list = new List($source_list_name, $source_robot)) {
+    unless ($list = Sympa::List->new($source_list_name, $source_robot)) {
         Sympa::Log::Syslog::do_log('err',
             'Admin::clone_list_as_empty : new list failed %s %s',
             $source_list_name, $source_robot);
@@ -1245,7 +1245,7 @@ sub clone_list_as_empty {
 
     # now switch List object to new list, update some values
     unless ($new_list =
-        new List($new_listname, $new_robot_id, {'reload_config' => 1})) {
+        Sympa::List->new($new_listname, $new_robot_id, {'reload_config' => 1})) {
         Sympa::Log::Syslog::do_log('info',
             "Admin::clone_list_as_empty : unable to load $new_listname while renamming"
         );

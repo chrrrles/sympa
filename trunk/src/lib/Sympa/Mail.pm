@@ -1018,7 +1018,7 @@ sub reformat_message($;$$) {
     my $defcharset  = shift;
     my $msg;
 
-    my $parser = new MIME::Parser;
+    my $parser = MIME::Parser->new();
     unless (defined $parser) {
         Sympa::Log::Syslog::do_log('err',
             "Sympa::Mail::reformat_message: Failed to create MIME parser");

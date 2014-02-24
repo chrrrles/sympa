@@ -163,7 +163,7 @@ sub connect_sympa_database {
         ),
         'warn' => 1
     };
-    unless ($db_source = new Sympa::SQLSource($db_conf)) {
+    unless ($db_source = Sympa::SQLSource->new($db_conf)) {
         Sympa::Log::Syslog::do_log('err',
             'Unable to create Sympa::SQLSource object');
         return undef;

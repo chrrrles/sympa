@@ -308,7 +308,7 @@ sub upgrade {
 
             next unless $listname and $listdomain;
 
-            my $list = new List $listname;
+            my $list = Sympa::List->new($listname);
             unless (defined $list) {
                 Sympa::Log::Syslog::do_log('notice',
                     "Skipping unknown list $listname");
@@ -455,7 +455,7 @@ sub upgrade {
             next if ($dir =~ /\@/);
 
             my $listname = $dir;
-            my $list     = new List $listname;
+            my $list     = Sympa::List->new($listname);
             unless (defined $list) {
                 Sympa::Log::Syslog::do_log('notice',
                     'Skipping unknown list %s', $listname);
@@ -497,7 +497,7 @@ sub upgrade {
                 my $changed       = 0;
                 foreach my $index (0 .. $#{$include_lists}) {
                     my $incl      = $include_lists->[$index];
-                    my $incl_list = new List($incl);
+                    my $incl_list = Sympa::List->new($incl);
 
                     if (defined $incl_list
                         and $incl_list->domain ne $list->domain) {
@@ -893,7 +893,7 @@ sub upgrade {
                 my @valid_robot_candidates;
                 foreach my $robot (@robots) {
                     if (my $list =
-                        new List($data->{'list_exclusion'}, $robot)) {
+                        Sympa::List->new($data->{'list_exclusion'}, $robot)) {
                         if ($list->is_list_member($data->{'user_exclusion'}))
                         {
                             push @valid_robot_candidates, $robot;
@@ -956,7 +956,7 @@ sub upgrade {
             Sympa::Log::Syslog::do_log('notice',
                 'Performing upgrade for spool %s', $spooldir);
 
-            my $spool = new Sympa::Spool($spools_def{$spoolparameter});
+            my $spool = Sympa::Spool->new($spools_def{$spoolparameter});
             if (!opendir(DIR, $spooldir)) {
                 croak sprintf("Can't open dir %s: %s", $spooldir, "$!");
                 ## No return.
