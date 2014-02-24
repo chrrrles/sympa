@@ -62,7 +62,7 @@ use Sympa::Fetch;
 use WebAgent;
 use SympaspoolClassic;
 use Sympa::KeySpool;
-use SubscribeSpool;
+use Sympa::SubscribeSpool;
 use Sympa::Archive;
 use tt2;
 
@@ -10655,7 +10655,7 @@ sub store_subscription_request {
     Sympa::Log::Syslog::do_log('debug2', '(%s, %s, %s, %s)', @_);
     my ($self, $email, $gecos, $custom_attr) = @_;
 
-    my $subscription_request_spool = new SubscribeSpool;
+    my $subscription_request_spool = new Sympa::SubscribeSpool;
 
     return 'already_subscribed'
         if (
@@ -10687,7 +10687,7 @@ sub get_subscription_requests {
 
     my %subscriptions;
 
-    my $subscription_request_spool = new SubscribeSpool;
+    my $subscription_request_spool = new Sympa::SubscribeSpool;
     my @subrequests                = $subscription_request_spool->get_content(
         {   'selector'  => {'list' => $self->name, 'robot' => $self->domain},
             'selection' => '*'
@@ -10745,7 +10745,7 @@ sub get_subscription_requests {
 sub get_subscription_request_count {
     my ($self) = shift;
 
-    my $subscription_request_spool = new SubscribeSpool;
+    my $subscription_request_spool = new Sympa::SubscribeSpool;
     return $subscription_request_spool->get_content(
         {   'selector'  => {'list' => $self->name, 'robot' => $self->domain},
             'selection' => 'count'
@@ -10759,7 +10759,7 @@ sub delete_subscription_request {
         'Sympa::List::delete_subscription_request(%s, %s)',
         $self->name, join(',', @list_of_email));
 
-    my $subscription_request_spool = new SubscribeSpool;
+    my $subscription_request_spool = new Sympa::SubscribeSpool;
 
     my $removed = 0;
     foreach my $email (@list_of_email) {
