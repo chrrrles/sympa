@@ -39,8 +39,8 @@ use Sympa::Bulk;
 #use Sympa::Log; # used by Conf
 #use Sympa::Mail; # used by List
 #use Scenario; # not used
-use TaskSpool;
-use TaskInstruction;
+use Sympa::TaskSpool;
+use Sympa::TaskInstruction;
 
 #use Sympa::Tools; # used by Conf
 #use Sympa::Tracking; # not used
