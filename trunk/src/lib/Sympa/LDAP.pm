@@ -24,6 +24,7 @@
 package Sympa::LDAP;
 
 use strict;
+use English qw(-no_match_vars);
 use Exporter;
 
 use Sympa::Log;
@@ -64,7 +65,7 @@ sub load {
     ## Open the configuration file or return and read the lines.
     unless (open(IN, $config)) {
         Sympa::Log::Syslog::do_log('err', 'Unable to open %s: %s',
-            $config, $!);
+            $config, $ERRNO);
         return undef;
     }
 

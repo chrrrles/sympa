@@ -34,6 +34,7 @@ $ENV{'PATH'} = '';
 ## Load Sympa.conf
 use strict;
 use lib '--modulesdir--';
+use English qw(-no_match_vars);
 use DBI;
 use POSIX;
 

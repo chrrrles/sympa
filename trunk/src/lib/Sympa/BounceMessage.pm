@@ -25,6 +25,7 @@ package Sympa::BounceMessage;
 
 use strict;
 use warnings;
+use English qw(-no_match_vars);
 
 use Sympa::Message;
 use Sympa::Log;
@@ -1011,7 +1012,7 @@ sub process_ndn {
                     'err',
                     'Could not create %s: %s bounced dir, check bounce_path in wwsympa.conf',
                     $bounce_dir,
-                    $!
+                    $ERRNO
                 );
                 exit;
             }
@@ -1222,7 +1223,7 @@ sub update_subscriber_bounce_history {
 ## RFC1891 compliance check
 sub rfc1891 {
     my ($self, $result, $from) = @_;
-    local $/ = "\n";
+    local $RS = "\n";
 
     Sympa::Log::Syslog::do_log('debug2',
         'RFC 1891 compliance check for bounce %s',
@@ -1259,7 +1260,7 @@ sub rfc1891 {
             exit;
         } else {
             ## Multiline paragraph separator
-            local $/ = '';
+            local $RS = '';
 
             while (<BODY>) {
 
@@ -1283,7 +1284,7 @@ sub rfc1891 {
                     $nbrcpt++;
                 }
             }
-            local $/ = "\n";
+            local $RS = "\n";
             close BODY;
         }
     }
@@ -1356,7 +1357,7 @@ sub anabounce {
     # a temporary file is used when introducing database spool. It should be
     # rewrited! It should be rewrited! It should be rewrited! Yes, it should
     # be rewrited!
-    my $tmpfile = Sympa::Site->tmpdir . '/bounce.' . $$;
+    my $tmpfile = Sympa::Site->tmpdir . '/bounce.' . $PID;
     my $fh;
     unless (open $fh, '>', $tmpfile) {
         Sympa::Log::Syslog::do_log('err', 'Could not create %s', $tmpfile);
@@ -1384,7 +1385,7 @@ sub anabounce {
 
     ## Le champ separateur de paragraphe est un ensemble
     ## de lignes vides
-    local $/ = '';
+    local $RS = '';
 
     ## Parcour du bounce, paragraphe par paragraphe
     foreach (<BOUNCE>) {
@@ -1392,7 +1393,7 @@ sub anabounce {
             undef $entete;
             ## Parcour du paragraphe
             my @paragraphe = split /\n/, $_;
-            local $/ = "\n";
+            local $RS = "\n";
             my ($champ_courant, %champ);
             foreach (@paragraphe) {
 
@@ -1409,7 +1410,7 @@ sub anabounce {
                     $$from = $1;
                 }
             }
-            local $/ = '';
+            local $RS = '';
 
             $champ{from} =~ s/^.*<(.+)[\>]$/$1/;
             $champ{from} =~ y/[A-Z]/[a-z]/;
@@ -1440,7 +1441,7 @@ sub anabounce {
             my $adr;
             ## Parcour du paragraphe
             my @paragraphe = split /\n/, $_;
-            local $/ = "\n";
+            local $RS = "\n";
             foreach (@paragraphe) {
                 if (/^(\S[^\(]*)/) {
                     $adr = $1;
@@ -1457,12 +1458,12 @@ sub anabounce {
                     $info{$adr}{expanded} =~ s/^[\"\<](.+)[\"\>]$/$1/;
                 }
             }
-            local $/ = '';
+            local $RS = '';
         } elsif (/^\s+-+\sTranscript of session follows\s-+/m) {
             my $adr;
             ## Parcour du paragraphe
             my @paragraphe = split /\n/, $_;
-            local $/ = "\n";
+            local $RS = "\n";
             foreach (@paragraphe) {
                 if (/^(\d{3}\s)?(\S+|\".*\")\.{3}\s(.+)$/) {
                     $adr = $2;
@@ -1492,21 +1493,21 @@ sub anabounce {
                     }
                 }
             }
-            local $/ = '';
+            local $RS = '';
 
             ## Rapport Compuserve
         } elsif (/^Receiver not found:/m) {
 
             ## Parcour du paragraphe
             my @paragraphe = split /\n/, $_;
-            local $/ = "\n";
+            local $RS = "\n";
             foreach (@paragraphe) {
 
                 $info{$2}{error} = $1 if /^(.*): (\S+)/;
                 $type = 3;
 
             }
-            local $/ = '';
+            local $RS = '';
 
         } elsif (/^\s*-+ Special condition follows -+/m) {
 
@@ -1514,7 +1515,7 @@ sub anabounce {
 
             ## Parcour du paragraphe
             my @paragraphe = split /\n/, $_;
-            local $/ = "\n";
+            local $RS = "\n";
             foreach (@paragraphe) {
 
                 if (/^(Unknown QuickMail recipient\(s\)):/) {
@@ -1530,7 +1531,7 @@ sub anabounce {
 
                 }
             }
-            local $/ = '';
+            local $RS = '';
 
         } elsif (/^Your message adressed to .* couldn\'t be delivered/m) {
 
@@ -1538,7 +1539,7 @@ sub anabounce {
 
             ## Parcour du paragraphe
             my @paragraphe = split /\n/, $_;
-            local $/ = "\n";
+            local $RS = "\n";
             foreach (@paragraphe) {
 
                 if (/^Your message adressed to (.*) couldn\'t be delivered, for the following reason :/
@@ -1555,7 +1556,7 @@ sub anabounce {
 
                 }
             }
-            local $/ = '';
+            local $RS = '';
 
             ## Rapport X400
         } elsif (
@@ -1602,7 +1603,7 @@ sub anabounce {
                 $info{$1}{error} = $2;
                 $type = 8;
             }
-            local $/ = '';
+            local $RS = '';
             ## Sendmail
         } elsif (
             /^Your message was not delivered to the following recipients:/m) {
@@ -1663,7 +1664,7 @@ sub anabounce {
             my $adr;
             ## Parcour du paragraphe
             my @paragraphe = split /\n/, $_;
-            local $/ = "\n";
+            local $RS = "\n";
             foreach (@paragraphe) {
                 if (/^Rejected-For: (\S+),/) {
                     $adr               = $1;
@@ -1673,14 +1674,14 @@ sub anabounce {
                     $info{$adr}{error} = $1;
                 }
             }
-            local $/ = '';
+            local $RS = '';
         } elsif (/^\s*-+Message not delivered to the following:/) {
             $type_18 = 1;
         } elsif ($type_18) {
             undef $type_18;
             ## Parcour du paragraphe
             my @paragraphe = split /\n/, $_;
-            local $/ = "\n";
+            local $RS = "\n";
             foreach (@paragraphe) {
 
                 if (/^\s*(\S+)\s+(.*)$/) {
@@ -1690,11 +1691,11 @@ sub anabounce {
 
                 }
             }
-            local $/ = '';
+            local $RS = '';
         } elsif (/unable to deliver following mail to recipient\(s\):/m) {
             ## Parcour du paragraphe
             my @paragraphe = split /\n/, $_;
-            local $/ = "\n";
+            local $RS = "\n";
             foreach (@paragraphe) {
 
                 if (/^\d+ <(\S+)>\.{3} (.+)$/) {
@@ -1702,7 +1703,7 @@ sub anabounce {
                     $type = 19;
                 }
             }
-            local $/ = '';
+            local $RS = '';
             ## Rapport de Yahoo dans paragraphe suivant
         } elsif (/^Unable to deliver message to the following address\(es\)/m)
         {
@@ -1723,14 +1724,14 @@ sub anabounce {
 
             ## Parcour du paragraphe
             my @paragraphe = split /\n/, $_;
-            local $/ = "\n";
+            local $RS = "\n";
             foreach (@paragraphe) {
                 if (/<(\S+)>\.{3} (.*)$/) {
                     $info{$1}{error} = $2;
                     $type = 21;
                 }
             }
-            local $/ = '';
+            local $RS = '';
         } elsif (
             /^Your message has encountered delivery problems\s+to local user \S+\.\s+\(Originally addressed to (\S+)\)/m
             or
@@ -1793,7 +1794,7 @@ sub anabounce {
 
             ## Parcour du paragraphe
             my @paragraphe = split /\n/, $_;
-            local $/ = "\n";
+            local $RS = "\n";
             foreach (@paragraphe) {
 
                 if (/<(\S+)>\s+(.*)$/) {
@@ -1802,7 +1803,7 @@ sub anabounce {
                     $type = 26;
                 }
             }
-            local $/ = '';
+            local $RS = '';
 
             ## Rapport de AltaVista Mail dans paragraphe suivant
         } elsif (/unable to deliver mail to the following recipient\(s\):/m) {
@@ -1857,7 +1858,7 @@ sub anabounce {
 
             ## Parcour du paragraphe
             my @paragraphe = split /\n/, $_;
-            local $/ = "\n";
+            local $RS = "\n";
             foreach (@paragraphe) {
 
                 if (/<(\S+)>\s+(.*)$/) {
@@ -1866,7 +1867,7 @@ sub anabounce {
                     $type = 30;
                 }
             }
-            local $/ = '';
+            local $RS = '';
 
         } elsif (/^The following recipients haven\'t received this message:/m)
         {
@@ -1879,7 +1880,7 @@ sub anabounce {
 
             ## Parcour du paragraphe
             my @paragraphe = split /\n/, $_;
-            local $/ = "\n";
+            local $RS = "\n";
             foreach (@paragraphe) {
 
                 if (/(\S+)$/) {
@@ -1888,7 +1889,7 @@ sub anabounce {
                     $type = 31;
                 }
             }
-            local $/ = '';
+            local $RS = '';
 
         } elsif (/^The following destination addresses were unknown/m) {
 
@@ -1900,7 +1901,7 @@ sub anabounce {
 
             ## Parcour du paragraphe
             my @paragraphe = split /\n/, $_;
-            local $/ = "\n";
+            local $RS = "\n";
             foreach (@paragraphe) {
 
                 if (/<(\S+)>/) {
@@ -1909,13 +1910,13 @@ sub anabounce {
                     $type = 32;
                 }
             }
-            local $/ = '';
+            local $RS = '';
 
         } elsif (/^-+Transcript of session follows\s-+$/m) {
 
             ## Parcour du paragraphe
             my @paragraphe = split /\n/, $_;
-            local $/ = "\n";
+            local $RS = "\n";
             foreach (@paragraphe) {
 
                 if (/^(\S+)$/) {
@@ -1930,7 +1931,7 @@ sub anabounce {
 
                 }
             }
-            local $/ = '';
+            local $RS = '';
 
             ## Rapport Bigfoot
         } elsif (/^The message you tried to send to <(\S+)>/m) {
@@ -1964,7 +1965,7 @@ sub anabounce {
 
             ## Parcour du paragraphe
             my @paragraphe = split /\n/, $_;
-            local $/ = "\n";
+            local $RS = "\n";
             foreach (@paragraphe) {
 
                 if (/(\S+)/) {
@@ -1973,7 +1974,7 @@ sub anabounce {
                     $type = 37;
                 }
             }
-            local $/ = '';
+            local $RS = '';
 
         } elsif (
             /^This Message was undeliverable due to the following reason:/m) {
@@ -1986,7 +1987,7 @@ sub anabounce {
 
             ## Parcour du paragraphe
             my @paragraphe = split /\n/, $_;
-            local $/ = "\n";
+            local $RS = "\n";
             foreach (@paragraphe) {
 
                 if (/\s+Recipient:\s+<(\S+)>/) {
@@ -2001,7 +2002,7 @@ sub anabounce {
 
                 }
             }
-            local $/ = '';
+            local $RS = '';
 
         } elsif (/Your message could not be delivered to:/m) {
 
@@ -2059,7 +2060,7 @@ sub anabounce {
 
             ## Parcour du paragraphe
             my @paragraphe = split /\n/, $_;
-            local $/ = "\n";
+            local $RS = "\n";
             foreach (@paragraphe) {
 
                 if (/\s+Recipient address:\s+(\S+)/) {
@@ -2075,7 +2076,7 @@ sub anabounce {
 
                 }
             }
-            local $/ = '';
+            local $RS = '';
 
             ## Rapport MDaemon
         } elsif (/^(\S+) - (no such user here)\.$/m) {
@@ -2104,7 +2105,7 @@ sub anabounce {
                     $info{$addr}{error} = $error;
                 }
             }
-            local $/ = '';
+            local $RS = '';
         } elsif (
             /^The message that you sent was undeliverable to the following:/)
         {
@@ -2117,7 +2118,7 @@ sub anabounce {
 
             ## Parcour du paragraphe
             my @paragraphe = split /\n/, $_;
-            local $/ = "\n";
+            local $RS = "\n";
             foreach (@paragraphe) {
 
                 if (/^\s+(\S*) \((.+)\)/) {
@@ -2127,7 +2128,7 @@ sub anabounce {
                 }
             }
 
-            local $/ = '';
+            local $RS = '';
 
             ## Wanadoo
         } elsif (/^(\S+); Action: Failed; Status: \d.\d.\d \((.*)\)/m) {

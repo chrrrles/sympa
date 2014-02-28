@@ -25,6 +25,7 @@ package Sympa::Bulk;
 
 use strict;
 use warnings;
+use English qw(-no_match_vars);
 
 #use Carp; # currently not used
 use Encode;
@@ -345,7 +346,7 @@ sub store {
         and $message->{'messagekey'} eq $last_stored_message_key) {
         $message_already_on_spool = 1;
     } else {
-        my $lock = $$ . '@' . hostname();
+        my $lock = $PID . '@' . hostname();
         if ($message->{'messagekey'}) {
 
             # move message to spool bulk and keep it locked

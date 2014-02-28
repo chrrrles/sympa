@@ -3,6 +3,7 @@
 # vim:ft=perl:et:sw=4
 # $Id$
 
+use English qw(-no_match_vars);
 use SOAP::Lite;
 
 # Use this line for more debug facility
@@ -51,8 +52,8 @@ Sympa::Log::Syslog::do_log('info', 'SOAP server launched');
 ## We set the real UID with the effective UID value
 ## It is usefull to allow execution of scripts like alias_manager
 ## that otherwise might loose the benefit of SetUID
-$< = $>;    ## UID
-$( = $);    ## GID
+$UID = $EUID;    ## UID
+$GID = $);    ## GID
 
 unless (Sympa::DatabaseManager::check_db_connect()) {
     Sympa::Log::Syslog::do_log('err', 'SOAP server requires a RDBMS to run');

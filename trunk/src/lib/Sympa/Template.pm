@@ -25,6 +25,7 @@ package Sympa::Template;
 
 use strict;
 use warnings;
+use English; # FIXME: drop $MATCH usage
 use CGI::Util;
 use MIME::EncWords;
 use Template;
@@ -56,14 +57,14 @@ sub escape_url {
 
     my $string = shift;
 
-    $string =~ s/[\s+]/sprintf('%%%02x', ord($&))/eg;
+    $string =~ s/[\s+]/sprintf('%%%02x', ord($MATCH))/eg;
 
     # Some MUAs aren't able to decode ``%40'' (escaped ``@'') in e-mail
     # address of mailto: URL, or take ``@'' in query component for a
     # delimiter to separate URL from the rest.
     my ($body, $query) = split(/\?/, $string, 2);
     if (defined $query) {
-        $query =~ s/\@/sprintf('%%%02x', ord($&))/eg;
+        $query =~ s/\@/sprintf('%%%02x', ord($MATCH))/eg;
         $string = $body . '?' . $query;
     }
 
@@ -112,7 +113,7 @@ sub decode_utf8 {
         ## FB_CROAK is used instead of FB_WARN to pass $string intact to
         ## succeeding processes it operation fails
         eval { $string = Encode::decode('utf8', $string, Encode::FB_CROAK); };
-        $@ = '';
+        $EVAL_ERROR = '';
     }
 
     return $string;

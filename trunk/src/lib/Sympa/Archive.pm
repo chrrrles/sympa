@@ -24,6 +24,7 @@
 package Sympa::Archive;
 
 use strict;
+use English qw(-no_match_vars);
 use Carp qw(croak);
 use Cwd qw(getcwd);
 use Digest::MD5;
@@ -244,7 +245,7 @@ sub load_html_message {
     unless (open ARC, $parameters{'file_path'}) {
         Sympa::Log::Syslog::do_log(
             'err',
-            "Failed to load message '%s' : $!",
+            "Failed to load message '%s' : $ERRNO",
             $parameters{'file_path'}
         );
         return undef;
@@ -312,7 +313,7 @@ sub clean_archive_directory {
         Sympa::Log::Syslog::do_log(
             'err',
             'Unable to open directory %s: %s',
-            $answer->{'dir_to_rebuild'}, $!
+            $answer->{'dir_to_rebuild'}, $ERRNO
         );
         Sympa::Tools::del_dir($answer->{'cleaned_dir'});
         return undef;

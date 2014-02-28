@@ -24,6 +24,7 @@
 package Sympa::Conf;
 
 use strict;
+use English qw(-no_match_vars);
 
 use Exporter;
 
@@ -271,7 +272,7 @@ sub delete_binaries {
                     'notice',
                     'Could not remove file %s: %s. You should remove it manually to ensure the configuration used is valid.',
                     $binary_file,
-                    $!
+                    $ERRNO
                 );
             }
         }
@@ -549,7 +550,7 @@ sub checkfiles_as_root {
             unless (mkdir($dir, 0775)) {
                 Sympa::Log::Syslog::do_log('err',
                     'Unable to create directory %s: %s',
-                    $dir, $!);
+                    $dir, $ERRNO);
                 $config_err++;
             }
 
@@ -685,7 +686,7 @@ sub checkfiles {
                         'err',
                         'Unable to create %s/index.html as an empty file to protect directory: %s',
                         $dir,
-                        $!
+                        $ERRNO
                     );
                 }
                 close FF;
@@ -739,7 +740,7 @@ sub checkfiles {
         ## Create directory if required
         unless (-d $dir) {
             unless (Sympa::Tools::mkdir_all($dir, 0755)) {
-                my $msg = "Failed to create directory $dir: $!";
+                my $msg = "Failed to create directory $dir: $ERRNO";
                 Sympa::Log::Syslog::do_log('err', '%s', $msg);
                 $robot->send_notify_to_listmaster('cannot_mkdir', $msg);
                 return undef;
@@ -768,7 +769,7 @@ sub checkfiles {
                 rename $dir . '/' . $css, $dir . '/' . $css . '.' . time;
 
                 unless (open CSS, '>', "$dir/$css") {
-                    my $msg = "Could not open (write) file $dir/$css: $!";
+                    my $msg = "Could not open (write) file $dir/$css: $ERRNO";
                     $robot->send_notify_to_listmaster('cannot_open_file',
                         $msg);
                     Sympa::Log::Syslog::do_log('err', '%s', $msg);
@@ -965,7 +966,7 @@ sub _load_auth {
     ## Open the configuration file or return and read the lines.
     unless (open(IN, $config_file)) {
         Sympa::Log::Syslog::do_log('notice', 'Unable to open %s: %s',
-            $config_file, $!);
+            $config_file, $ERRNO);
         return undef;
     }
 
@@ -1024,7 +1025,7 @@ sub _load_auth {
                     }
 
                     eval "require AuthCAS";
-                    if ($@) {
+                    if ($EVAL_ERROR) {
                         Sympa::Log::Syslog::do_log('err',
                             'Failed to load AuthCAS perl module');
                         return undef;
@@ -1142,7 +1143,7 @@ sub load_charset {
         unless (open CONFIG, $config_file) {
             Sympa::Log::Syslog::do_log('err',
                 'Unable to read configuration file %s: %s',
-                $config_file, $!);
+                $config_file, $ERRNO);
             return {};
         }
         while (<CONFIG>) {
@@ -1189,7 +1190,7 @@ sub load_nrcpt_by_domain {
     ## Open the configuration file or return and read the lines.
     unless (open(IN, $config_file)) {
         Sympa::Log::Syslog::do_log('err', 'Unable to open %s: %s',
-            $config_file, $!);
+            $config_file, $ERRNO);
         return undef;
     }
     while (<IN>) {
@@ -1392,7 +1393,7 @@ sub load_generic_conf_file {
     my (@paragraphs);
 
     ## Just in case...
-    local $/ = "\n";
+    local $RS = "\n";
 
     ## Set defaults to 1
     foreach my $pname (keys %structure) {
@@ -1639,7 +1640,7 @@ sub _load_config_file_to_hash {
     ## Open the configuration file or return and read the lines.
     unless (open IN, '<', $config_file) {
         Sympa::Log::Syslog::do_log('err', 'Unable to open %s: %s',
-            $config_file, $!);
+            $config_file, $ERRNO);
         return undef;
     }
     while (<IN>) {
@@ -2020,7 +2021,7 @@ sub _check_cpan_modules_required_by_config {
     my $number_of_missing_modules = 0;
     if ($param->{'config_hash'}{'lock_method'} eq 'nfs') {
         eval "require File::NFSLock";
-        if ($@) {
+        if ($EVAL_ERROR) {
             Sympa::Log::Syslog::do_log('notice',
                 'Failed to load File::NFSLock perl module ; setting "lock_method" to "flock"'
             );
@@ -2032,7 +2033,7 @@ sub _check_cpan_modules_required_by_config {
     ## Some parameters require CPAN modules
     if ($param->{'config_hash'}{'dkim_feature'} eq 'on') {
         eval "require Mail::DKIM";
-        if ($@) {
+        if ($EVAL_ERROR) {
             Sympa::Log::Syslog::do_log('notice',
                 'Failed to load Mail::DKIM perl module ; setting "dkim_feature" to "off"'
             );
@@ -2339,11 +2340,11 @@ sub _save_binary_cache {
     eval {
         Storable::store($param->{'conf_to_save'}, $param->{'target_file'});
     };
-    if ($@) {
+    if ($EVAL_ERROR) {
         Sympa::Log::Syslog::do_log(
             'err',
             'Failed to save the binary config %s. error: %s',
-            $param->{'target_file'}, $@
+            $param->{'target_file'}, $EVAL_ERROR
         );
         unless ($lock->unlock()) {
             return undef;
@@ -2357,11 +2358,11 @@ sub _save_binary_cache {
             $param->{'target_file'}
         );
     };
-    if ($@) {
+    if ($EVAL_ERROR) {
         Sympa::Log::Syslog::do_log(
             'err',
             'Failed to change owner of the binary file %s. error: %s',
-            $param->{'target_file'}, $@
+            $param->{'target_file'}, $EVAL_ERROR
         );
         unless ($lock->unlock()) {
             return undef;
@@ -2396,10 +2397,10 @@ sub _load_binary_cache {
     }
 
     eval { $result = Storable::retrieve($config_bin); };
-    if ($@ or !$result) {
+    if ($EVAL_ERROR or !$result) {
         Sympa::Log::Syslog::do_log('err',
             'Failed to load the binary config %s. error: %s',
-            $config_bin, $@ || 'possible format error');
+            $config_bin, $EVAL_ERROR || 'possible format error');
         unless ($lock->unlock()) {
             return undef;
         }

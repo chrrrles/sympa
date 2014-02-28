@@ -35,6 +35,8 @@ package Sympa::ModDef;
 
 use strict;
 
+use English qw(-no_match_vars);
+
 ## This defines the modules :
 ##   required_version : Minimum version of package.
 ##            Assume required_version = 1.0 if not specified.

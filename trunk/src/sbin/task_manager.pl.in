@@ -87,6 +87,7 @@ L<sympa(8)>, L<wwsympa(8)>
 use lib '--modulesdir--';
 use strict "vars";
 use warnings;
+use English qw(-no_match_vars);
 use Getopt::Long;
 use Pod::Usage;
 
@@ -179,22 +180,22 @@ unless ($main::options{'debug'} || $main::options{'foreground'}) {
 ## If process is running in foreground, don't write STDERR to a dedicated file
 my $options;
 $options->{'stderr_to_tty'} = 1 if ($main::options{'foreground'});
-Sympa::Tools::write_pid('task_manager', $$, $options);
+Sympa::Tools::write_pid('task_manager', $PID, $options);
 unless ($options->{'stderr_to_tty'}) {
-    Sympa::Tools::direct_stderr_to_file(('pid' => $$));
+    Sympa::Tools::direct_stderr_to_file(('pid' => $PID));
 }
 
 ## Set the UserID & GroupID for the process
-$( = $) = (getgrnam(Sympa::Constants::GROUP))[2];
-$< = $> = (getpwnam(Sympa::Constants::USER))[2];
+$GID = $EGID = (getgrnam(Sympa::Constants::GROUP))[2];
+$UID = $EUID = (getpwnam(Sympa::Constants::USER))[2];
 
 ## Required on FreeBSD to change ALL IDs(effective UID + real UID + saved UID)
 POSIX::setuid((getpwnam(Sympa::Constants::USER))[2]);
 POSIX::setgid((getgrnam(Sympa::Constants::GROUP))[2]);
 
 ## Check if the UID has correctly been set (usefull on OS X)
-unless (($( == (getgrnam(Sympa::Constants::GROUP))[2])
-    && ($< == (getpwnam(Sympa::Constants::USER))[2])) {
+unless (($GID == (getgrnam(Sympa::Constants::GROUP))[2])
+    && ($UID == (getpwnam(Sympa::Constants::USER))[2])) {
     Sympa::Log::Syslog::fatal_err(
         "Failed to change process user ID and group ID. Note that on some OS Perl scripts can't change their real UID. In such circumstances Sympa should be run via sudo."
     );
@@ -269,6 +270,6 @@ Sympa::Site->send_notify_to_listmaster(undef, undef, undef, 1);
 
 Sympa::Log::Syslog::do_log('notice',
     'task_manager exited normally due to signal');
-Sympa::Tools::remove_pid('task_manager', $$);
+Sympa::Tools::remove_pid('task_manager', $PID);
 
 exit(0);

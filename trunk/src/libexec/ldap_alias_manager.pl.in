@@ -46,6 +46,7 @@ $ENV{'PATH'} = '';
 ## Load Sympa.conf
 use strict;
 use lib '--modulesdir--';
+use English qw(-no_match_vars);
 use Net::LDAP;
 use Net::LDAPS;
 use POSIX;
@@ -363,7 +364,7 @@ sub initialize_ldap {
                 )
                 ) {
                 print STDERR
-                    "Can't connect to LDAP server using SSL or unable to verify Server certificate for $ldap_host: $@\n";
+                    "Can't connect to LDAP server using SSL or unable to verify Server certificate for $ldap_host: $EVAL_ERROR\n";
                 return 0;
             }
         } else {
@@ -376,13 +377,13 @@ sub initialize_ldap {
                 )
                 ) {
                 print STDERR
-                    "Can't connect to LDAP server using SSL for $ldap_host: $@\n";
+                    "Can't connect to LDAP server using SSL for $ldap_host: $EVAL_ERROR\n";
                 return 0;
             }
         }
     } else {
         unless ($ldap_connection = Net::LDAP->new($ldap_host, version => 3)) {
-            print STDERR "Can't connect to LDAP server $ldap_host: $@\n";
+            print STDERR "Can't connect to LDAP server $ldap_host: $EVAL_ERROR\n";
             return 0;
         }
     }

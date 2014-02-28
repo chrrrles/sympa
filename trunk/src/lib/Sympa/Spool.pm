@@ -25,6 +25,8 @@ package Sympaspool;
 
 use strict;
 
+use English qw(-no_match_vars);
+
 #use Carp; # not yet used
 #require Encode; # not used
 use Exporter;
@@ -210,7 +212,7 @@ sub next {
     }
     $sql_where =~ s/^\s*AND//;
 
-    my $lock  = $$ . '@' . hostname();
+    my $lock  = $PID . '@' . hostname();
     my $epoch = time;                  # should we use milli or nano seconds ?
 
     push @sth_stack, $sth;
@@ -558,7 +560,7 @@ sub store {
         $insertpart2 .= ', ?';
         push @insertparts, $metadata->{$meta};
     }
-    my $lock = $$ . '@' . hostname();
+    my $lock = $PID . '@' . hostname();
 
     push @sth_stack, $sth;
 

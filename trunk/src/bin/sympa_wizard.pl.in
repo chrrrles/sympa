@@ -90,7 +90,7 @@ my $modfail;
 
 BEGIN {
     eval { require Sympa::Site; };
-    $modfail = 1 if $@;
+    $modfail = 1 if $EVAL_ERROR;
 }
 
 # Detect console encoding.
@@ -98,7 +98,7 @@ if (-t) {
     no warnings;
 
     eval { require Encode::Locale; };
-    unless ($@
+    unless ($EVAL_ERROR
         or Encode::resolve_alias($Encode::Locale::ENCODING_CONSOLE_IN) eq
         'ascii'
         or Encode::resolve_alias($Encode::Locale::ENCODING_CONSOLE_OUT) eq
@@ -116,7 +116,7 @@ if ($modfail) {
     *Sympa::Language::gettext = sub {shift};
 
     eval { require Text::Wrap; };
-    if ($@) {
+    if ($EVAL_ERROR) {
         *Sympa::Tools::wrap_text = sub {"$_[1]$_[0]\n"};
     } else {
         $Text::Wrap::columns = 78;
@@ -186,7 +186,7 @@ sub create_configuration {
 
     unless (open NEWF, '>', $conf) {
         die sprintf Sympa::Language::gettext('Unable to open %s: %s') . "\n",
-            $conf, "$!";
+            $conf, $ERRNO;
     }
 
     # print NEWF
@@ -376,7 +376,7 @@ sub edit_configuration {
         unless (rename $sympa_conf, $sympa_conf . '.' . $date) {
             warn sprintf
                 Sympa::Language::gettext('Unable to rename %s: %s'),
-                $sympa_conf, "$!";
+                $sympa_conf, $ERRNO;
         }
 
         ## Write new config file
@@ -385,7 +385,7 @@ sub edit_configuration {
             umask $umask;
             die sprintf
                 Sympa::Language::gettext('Unable to open %s: %s'),
-                $sympa_conf, "$!";
+                $sympa_conf, $ERRNO;
         }
         umask $umask;
         chown [getpwnam(Sympa::Constants::USER)]->[2],
@@ -489,7 +489,7 @@ sub check_modules {
         printf('%-26s %-24s ', $mod, $cpan_modules->{$mod}{package_name});
 
         eval "require $mod";
-        if ($@) {
+        if ($EVAL_ERROR) {
             ### not installed
             print Sympa::Language::gettext('not found on this system.') . "\n";
             install_module($mod, {'default' => $default}, $cpan_modules);

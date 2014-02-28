@@ -140,6 +140,7 @@ L<sympa(8)>, L<wwsympa(8)>, L<mhonarc(1)>, L<sympa.conf(5)>.
 use lib '--modulesdir--';
 use strict;
 use warnings;
+use English qw(-no_match_vars);
 use FileHandle;
 use Getopt::Long;
 use Pod::Usage;
@@ -216,9 +217,9 @@ my $options;
 $options->{'stderr_to_tty'} = 1 if ($main::options{'foreground'});
 
 ## Create and write the PID file
-Sympa::Tools::write_pid('bounced', $$, $options);
+Sympa::Tools::write_pid('bounced', $PID, $options);
 unless ($options->{'stderr_to_tty'}) {
-    Sympa::Tools::direct_stderr_to_file(('pid' => $$));
+    Sympa::Tools::direct_stderr_to_file(('pid' => $PID));
 }
 
 if ($main::options{'log_level'}) {
@@ -239,16 +240,16 @@ Sympa::Log::Syslog::do_openlog(Sympa::Site->log_facility, Sympa::Site->log_socke
     'bounced');
 
 ## Set the User ID & Group ID for the process
-$( = $) = (getgrnam(Sympa::Constants::GROUP))[2];
-$< = $> = (getpwnam(Sympa::Constants::USER))[2];
+$GID = $EGID = (getgrnam(Sympa::Constants::GROUP))[2];
+$UID = $EUID = (getpwnam(Sympa::Constants::USER))[2];
 
 ## Required on FreeBSD to change ALL IDs(effective UID + real UID + saved UID)
 POSIX::setuid((getpwnam(Sympa::Constants::USER))[2]);
 POSIX::setgid((getgrnam(Sympa::Constants::GROUP))[2]);
 
 ## Check if the UID has correctly been set (useful on OS X)
-unless (($( == (getgrnam(Sympa::Constants::GROUP))[2])
-    && ($< == (getpwnam(Sympa::Constants::USER))[2])) {
+unless (($GID == (getgrnam(Sympa::Constants::GROUP))[2])
+    && ($UID == (getpwnam(Sympa::Constants::USER))[2])) {
     Sympa::Log::Syslog::fatal_err(
         "Failed to change process user ID and group ID. Note that on some OS Perl scripts can't change their real UID. In such circumstances Sympa should be run via SUDO."
     );
@@ -314,7 +315,7 @@ while (!$end) {
 Sympa::Site->send_notify_to_listmaster(undef, undef, undef, 1);
 
 Sympa::Log::Syslog::do_log('notice', 'bounced exited normally due to signal');
-Sympa::Tools::remove_pid('bounced', $$);
+Sympa::Tools::remove_pid('bounced', $PID);
 
 exit(0);
 

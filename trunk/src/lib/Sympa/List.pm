@@ -25,6 +25,7 @@ package Sympa::List;
 
 use strict;
 use warnings;
+use English; # FIXME: drop $PREMATCH usage
 use Carp qw(croak);
 
 #use Encode; # load in Log
@@ -798,9 +799,9 @@ sub increment_msg_count {
         $count{$today} = 1;
     }
 
-    unless (open(MSG_COUNT, ">$file.$$")) {
+    unless (open(MSG_COUNT, ">$file.$PID")) {
         Sympa::Log::Syslog::do_log('err', "Unable to create '%s.%s' : %s",
-            $file, $$, $!);
+            $file, $PID, $ERRNO);
         return undef;
     }
     foreach my $key (sort { $a <=> $b } keys %count) {
@@ -808,9 +809,9 @@ sub increment_msg_count {
     }
     close MSG_COUNT;
 
-    unless (rename("$file.$$", $file)) {
+    unless (rename("$file.$PID", $file)) {
         Sympa::Log::Syslog::do_log('err', "Unable to write '%s' : %s",
-            $file, $!);
+            $file, $ERRNO);
         return undef;
     }
 
@@ -1326,7 +1327,7 @@ sub _load_config_changes_file {
     unless (open(FILE, $self->dir . '/config_changes')) {
         Sympa::Log::Syslog::do_log('err',
             'File %s/config_changes exists, but unable to open it: %s',
-            $self->dir, $!);
+            $self->dir, $ERRNO);
         return undef;
     }
 
@@ -1365,7 +1366,7 @@ sub _save_config_changes_file {
     unless (open(FILE, '>', $self->dir . '/config_changes')) {
         Sympa::Log::Syslog::do_log('err',
             'unable to create file %s/config_changes : %s',
-            $self->dir, $!);
+            $self->dir, $ERRNO);
         return undef;
     }
 
@@ -1591,7 +1592,7 @@ sub distribute_msg {
         # truncate multiple "Re:" and equivalents.
         my $re_regexp = Sympa::Tools::get_regexp('re');
         if ($subject_field =~ /^\s*($re_regexp\s*)($re_regexp\s*)*/) {
-            ($before_tag, $after_tag) = ($1, $');    #'
+            ($before_tag, $after_tag) = ($1, $POSTMATCH);    #'
         } else {
             ($before_tag, $after_tag) = ('', $subject_field);
         }
@@ -4131,7 +4132,7 @@ sub parseCustomAttribute {
     }
 
     unless (defined $tree) {
-        Sympa::Log::Syslog::do_log('err', "Failed to parse XML data: %s", $@);
+        Sympa::Log::Syslog::do_log('err', "Failed to parse XML data: %s", $EVAL_ERROR);
         return undef;
     }
 
@@ -4493,7 +4494,7 @@ sub get_info {
         Sympa::Log::Syslog::do_log(
             'err',
             'Could not open %s : %s',
-            $self->dir . '/info', $!
+            $self->dir . '/info', $ERRNO
         );
         return undef;
     }
@@ -4734,7 +4735,7 @@ sub update_list_member {
             unless (rename $path, $new_path) {
                 Sympa::Log::Syslog::do_log('err',
                     'Failed to rename %s to %s : %s',
-                    $path, $new_path, $!);
+                    $path, $new_path, $ERRNO);
                 last;
             }
         }
@@ -5485,7 +5486,7 @@ sub archive_msg {
                 ) {
                 Sympa::Log::Syslog::do_log('err',
                     'Could not store message %s in archive spool: %s',
-                    $message, $!);
+                    $message, $ERRNO);
                 return undef;
             }
         }
@@ -5708,7 +5709,7 @@ sub _load_task_title {
 
     unless (open TASK, $file) {
         Sympa::Log::Syslog::do_log('err', 'Unable to open file "%s": %s',
-            $file, $!);
+            $file, $ERRNO);
         return undef;
     }
 
@@ -5812,7 +5813,7 @@ sub _load_list_members_file {
     open(L, $file) || return undef;
 
     ## Process the lines
-    local $/;
+    local $RS;
     my $data = <L>;
 
     my @users;
@@ -7313,7 +7314,7 @@ sub _load_include_admin_user_file {
         }
 
         ## Just in case...
-        local $/ = "\n";
+        local $RS = "\n";
 
         ## Split in paragraphs
         my $i = 0;
@@ -9010,7 +9011,7 @@ sub get_lists {
                         'failed to get lists with user %s as %s from database: %s',
                         $which_user,
                         $which_role,
-                        $@
+                        $EVAL_ERROR
                     );
                     $sth = pop @sth_stack;
                     return undef;
@@ -9432,7 +9433,7 @@ sub sort_dir_to_get_mod {
     # listing of all the shared documents of the directory
     unless (opendir DIR, "$dir") {
         Sympa::Log::Syslog::do_log('err',
-            "sort_dir_to_get_mod : cannot open $dir : $!");
+            "sort_dir_to_get_mod : cannot open $dir : $ERRNO");
         return undef;
     }
 
@@ -9682,7 +9683,7 @@ sub get_cert {
     if ($format eq 'pem') {
         unless (open(CERT, $certs)) {
             Sympa::Log::Syslog::do_log('err', 'Unable to open %s: %s',
-                $certs, $!);
+                $certs, $ERRNO);
             return undef;
         }
 
@@ -9708,7 +9709,7 @@ sub get_cert {
                 Sympa::Site->openssl . " x509 -in $certs -outform DER|");
             Sympa::Log::Syslog::do_log('err',
                 'Unable to open get %s in DER format: %s',
-                $certs, $!);
+                $certs, $ERRNO);
             return undef;
         }
 
@@ -9737,7 +9738,7 @@ sub _load_list_config_file {
     my (@paragraphs);
 
     ## Just in case...
-    local $/ = "\n";
+    local $RS = "\n";
 
 ##    ## Set defaults to 1
 ##    foreach my $pname (keys %$pinfo) {
@@ -10354,7 +10355,7 @@ sub compute_topic {
                 my $body = $part->bodyhandle->as_string();
                 my $converted;
                 eval { $converted = $charset->encode($body); };
-                if ($@) {
+                if ($EVAL_ERROR) {
                     $converted = $body;
                     $converted =~ s/[^\x01-\x7F]/?/g;
                 }
@@ -11026,7 +11027,7 @@ sub remove_task {
 
     unless (opendir(DIR, Sympa::Site->queuetask)) {
         Sympa::Log::Syslog::do_log('err', "error : can't open dir %s: %s",
-            Sympa::Site->queuetask, $!);
+            Sympa::Site->queuetask, $ERRNO);
         return undef;
     }
     my @tasks = grep !/^\.\.?$/, readdir DIR;
@@ -11038,7 +11039,7 @@ sub remove_task {
             unless (unlink(Sympa::Site->queuetask . "/$task_file")) {
                 Sympa::Log::Syslog::do_log('err',
                     'Unable to remove task file %s : %s',
-                    $task_file, $!);
+                    $task_file, $ERRNO);
                 return undef;
             }
             Sympa::Log::Syslog::do_log('notice', 'Removing task file %s',
@@ -11213,11 +11214,11 @@ sub remove_aliases {
     }
 
     system(sprintf '%s del %s %s', $alias_manager, $self->name, $self->host);
-    my $status = $? >> 8;
+    my $status = $CHILD_ERROR >> 8;
     unless ($status == 0) {
         Sympa::Log::Syslog::do_log('err',
             'Failed to remove aliases ; status %d : %s',
-            $status, $!);
+            $status, $ERRNO);
         return undef;
     }
 
@@ -11302,7 +11303,7 @@ sub create_shared {
 
     unless (mkdir($dir, 0777)) {
         Sympa::Log::Syslog::do_log('err', 'unable to create %s : %s',
-            $dir, $!);
+            $dir, $ERRNO);
         return undef;
     }
 
@@ -12358,10 +12359,10 @@ sub list_cache_fetch {
         return undef unless $l;
 
         eval { $config = Storable::thaw($l->{'config'}) };
-        if ($@ or !defined $config) {
+        if ($EVAL_ERROR or !defined $config) {
             Sympa::Log::Syslog::do_log('err',
                 'Unable to deserialize binary config of %s: %s',
-                $self, $@ || 'possible format error');
+                $self, $EVAL_ERROR || 'possible format error');
             return undef;
         }
 
@@ -12388,10 +12389,10 @@ sub list_cache_fetch {
         ## Load a binary version of the data structure
         ## unless config is more recent than config.bin
         eval { $config = Storable::retrieve($self->dir . '/config.bin') };
-        if ($@ or !defined $config) {
+        if ($EVAL_ERROR or !defined $config) {
             Sympa::Log::Syslog::do_log(
-                'err', 'Unable to deserialize config.bin of %s: $@',
-                $self, $@ || 'possible format error'
+                'err', 'Unable to deserialize config.bin of %s: $EVAL_ERROR',
+                $self, $EVAL_ERROR || 'possible format error'
             );
             $lock->unlock();
             return undef;
@@ -12435,11 +12436,11 @@ sub list_cache_update_config {
         }
 
         eval { Storable::store($self->config, $self->dir . '/config.bin') };
-        if ($@) {
+        if ($EVAL_ERROR) {
             Sympa::Log::Syslog::do_log(
                 'err',
                 'Failed to save the binary config %s. error: %s',
-                $self->dir . '/config.bin', $@
+                $self->dir . '/config.bin', $EVAL_ERROR
             );
             $lock->unlock;
             return undef;
@@ -12481,9 +12482,9 @@ sub list_cache_update_config {
 ##	$self->latest_instantiation->{'email'};
 
     eval { $config = Storable::nfreeze($self->config); };
-    if ($@) {
+    if ($EVAL_ERROR) {
         Sympa::Log::Syslog::do_log('err',
-            'Failed to save the config to database. error: %s', $@);
+            'Failed to save the config to database. error: %s', $EVAL_ERROR);
         return undef;
     }
 

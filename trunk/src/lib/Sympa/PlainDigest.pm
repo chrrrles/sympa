@@ -81,6 +81,8 @@
 
 package Sympa::PlainDigest;
 
+use English qw(-no_match_vars);
+
 @ISA = qw(MIME::Entity);
 use Mail::Internet;
 use Mail::Address;
@@ -244,7 +246,7 @@ sub _do_text_plain {
         $charset->encoder('utf8');
         $thispart = $charset->encode($thispart);
     };
-    if ($@) {
+    if ($EVAL_ERROR) {
 
         # mmm, what to do if it fails?
         $outstring .= sprintf gettext(
@@ -324,7 +326,7 @@ sub _do_text_html {
         $tree->delete();
         $text = Encode::encode_utf8($text);
     };
-    if ($@) {
+    if ($EVAL_ERROR) {
         $outstring .=
             gettext("\n[** Unable to process HTML message part **]\n");
         return 1;

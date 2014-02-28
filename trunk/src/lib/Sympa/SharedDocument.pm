@@ -25,6 +25,8 @@ package Sympa::SharedDocument;
 
 use strict;
 
+use English qw(-no_match_vars);
+
 #use Carp; # currently not used
 #use POSIX; # no longer used
 
@@ -239,7 +241,7 @@ sub new {
             Sympa::Log::Syslog::do_log(
                 'err',
                 "SharedDocument::new() : cannot open %s : %s",
-                $document->{'absolute_path'}, $!
+                $document->{'absolute_path'}, $ERRNO
             );
             return undef;
         }
