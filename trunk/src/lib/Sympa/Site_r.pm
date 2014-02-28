@@ -40,7 +40,7 @@ use Cwd;
 
 use Sympa::Conf;
 use Sympa::Language qw(gettext gettext_strftime);
-use User;
+use Sympa::User;
 use Data::Dumper;
 
 =head1 NAME
