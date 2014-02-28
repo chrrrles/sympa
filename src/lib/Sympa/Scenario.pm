@@ -26,6 +26,7 @@ package Sympa::Scenario;
 use strict;
 use warnings;
 
+use English qw(-no_match_vars);
 use Carp qw(croak);
 use Cwd;
 use File::Spec;
@@ -1362,9 +1363,9 @@ sub verify {
                 }
             };
         }
-        if ($@) {
+        if ($EVAL_ERROR) {
             Sympa::Log::Syslog::do_log('err', 'cannot evaluate match: %s',
-                $@);
+                $EVAL_ERROR);
             return undef;
         }
         if ($r) {
@@ -1860,16 +1861,16 @@ sub verify_custom {
     Sympa::Log::Syslog::do_log('notice', 'Use module %s for custom condition',
         $file);
     eval { require "$file"; };
-    if ($@) {
+    if ($EVAL_ERROR) {
         Sympa::Log::Syslog::do_log('err', 'Error requiring %s : %s (%s)',
-            $condition, "$@", ref($@));
+            $condition, "$EVAL_ERROR", ref($EVAL_ERROR));
         return undef;
     }
     my $res;
     eval "\$res = CustomCondition::${condition}::verify(\@{\$args_ref});";
-    if ($@) {
+    if ($EVAL_ERROR) {
         Sympa::Log::Syslog::do_log('err', 'Error evaluating %s : %s (%s)',
-            $condition, "$@", ref($@));
+            $condition, "$EVAL_ERROR", ref($EVAL_ERROR));
         return undef;
     }
 

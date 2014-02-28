@@ -19,6 +19,7 @@
 ##---------------------------------------------------------------------------##
 package Sympa::TimeUtils;
 
+use English qw(-no_match_vars);
 ##---------------------------------------------------------------------------##
 ##      Date variables for date routines
 ##
@@ -96,7 +97,7 @@ sub time2str {
     POSIXMODCHK: {
 	last  POSIXMODCHK  unless $POSIXstrftime;
 	eval { require POSIX; };
-	last  POSIXMODCHK  if ($@) || !defined(POSIX::strftime);
+	last  POSIXMODCHK  if ($EVAL_ERROR) || !defined(POSIX::strftime);
 	return POSIX::strftime($fmt, $sec,$min,$hour,$mday,$mon,$year,
 				     $wday,$yday,$isdst);
     }

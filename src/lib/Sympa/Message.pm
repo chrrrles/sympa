@@ -44,6 +44,7 @@ package Sympa::Message;
 
 use strict;
 use warnings;
+use English qw(-no_match_vars);
 use Carp qw(croak);
 use HTML::Entities qw(encode_entities);
 use Mail::Address;
@@ -188,10 +189,10 @@ sub new {
         unless (open $fh, '<', $datas->{'file'}) {
             Sympa::Log::Syslog::do_log('err',
                 'Cannot open message file %s : %s',
-                $datas->{'file'}, $!);
+                $datas->{'file'}, $ERRNO);
             return undef;
         }
-        local $/;
+        local $RS;
         $messageasstring = <$fh>;
         close $fh;
     } elsif ($datas->{'messageasstring'}) {
@@ -962,7 +963,7 @@ sub _fix_html_part {
         my $io = $bodyh->open("w");
         unless (defined $io) {
             Sympa::Log::Syslog::do_log('err', 'Failed to save message : %s',
-                $!);
+                $ERRNO);
             return undef;
         }
         $io->print($filtered_body);
@@ -1008,8 +1009,8 @@ sub smime_decrypt {
         return undef;
     }
 
-    my $temporary_file = Sympa::Site->tmpdir . "/" . $list->get_list_id() . "." . $$;
-    my $temporary_pwd  = Sympa::Site->tmpdir . '/pass.' . $$;
+    my $temporary_file = Sympa::Site->tmpdir . "/" . $list->get_list_id() . "." . $PID;
+    my $temporary_pwd  = Sympa::Site->tmpdir . '/pass.' . $PID;
 
     ## dump the incoming message.
     if (!open(MSGDUMP, "> $temporary_file")) {
@@ -1063,7 +1064,7 @@ sub smime_decrypt {
             $self->{'decrypted_msg_as_string'} .= $_;
         }
         close NEWMSG;
-        my $status = $? >> 8;
+        my $status = $CHILD_ERROR >> 8;
         if ($status) {
             Sympa::Log::Syslog::do_log(
                 'err', 'Unable to decrypt S/MIME message: (%d) %s',
@@ -1153,7 +1154,7 @@ sub smime_encrypt {
         }
     }
     if (-r $usercert) {
-        my $temporary_file = Sympa::Site->tmpdir . "/" . $email . "." . $$;
+        my $temporary_file = Sympa::Site->tmpdir . "/" . $email . "." . $PID;
 
         ## encrypt the incoming message parse it.
         my $cmd = sprintf '%s smime -encrypt -out %s -des3 %s',
@@ -1182,7 +1183,7 @@ sub smime_encrypt {
         }
         ##$self->get_mime_message->bodyhandle->print(\*MSGDUMP);
         close MSGDUMP;
-        my $status = $? >> 8;
+        my $status = $CHILD_ERROR >> 8;
         if ($status) {
             Sympa::Log::Syslog::do_log(
                 'err', 'Unable to S/MIME encrypt message: (%d) %s',
@@ -1250,8 +1251,8 @@ sub smime_sign {
     Sympa::Log::Syslog::do_log('debug2', '(%s, list=%s)', $self, $list);
 
     my ($cert, $key) = Sympa::Tools::smime_find_keys($list->dir, 'sign');
-    my $temporary_file = Sympa::Site->tmpdir . '/' . $list->get_id . "." . $$;
-    my $temporary_pwd  = Sympa::Site->tmpdir . '/pass.' . $$;
+    my $temporary_file = Sympa::Site->tmpdir . '/' . $list->get_id . "." . $PID;
+    my $temporary_pwd  = Sympa::Site->tmpdir . '/pass.' . $PID;
 
     my ($signed_msg, $pass_option);
     $pass_option = "-passin file:$temporary_pwd" if (Sympa::Site->key_passwd ne '');
@@ -1352,10 +1353,10 @@ sub smime_sign_check {
 
     my $verify;
 
-    ## first step is the msg signing OK ; /tmp/sympa-smime.$$ is created
+    ## first step is the msg signing OK ; /tmp/sympa-smime.$PID is created
     ## to store the signer certificat for step two. I known, that's dirty.
 
-    my $temporary_file     = Sympa::Site->tmpdir . "/" . 'smime-sender.' . $$;
+    my $temporary_file     = Sympa::Site->tmpdir . "/" . 'smime-sender.' . $PID;
     my $trusted_ca_options = '';
     $trusted_ca_options = "-CAfile " . Sympa::Site->cafile . " " if Sympa::Site->cafile;
     $trusted_ca_options .= "-CApath " . Sympa::Site->capath . " " if Sympa::Site->capath;
@@ -1366,7 +1367,7 @@ sub smime_sign_check {
     unless (open MSGDUMP, "| $cmd > /dev/null") {
         Sympa::Log::Syslog::do_log('err',
             'Unable to run command %s to check signature from %s: %s',
-            $cmd, $message->{'sender'}, $!);
+            $cmd, $message->{'sender'}, $ERRNO);
         return undef;
     }
 
@@ -1374,7 +1375,7 @@ sub smime_sign_check {
     print MSGDUMP "\n";
     print MSGDUMP $message->get_message_as_string;
     close MSGDUMP;
-    my $status = $? >> 8;
+    my $status = $CHILD_ERROR >> 8;
     if ($status) {
         Sympa::Log::Syslog::do_log(
             'err', 'Unable to check S/MIME signature: (%d) %s',
@@ -1421,8 +1422,8 @@ sub smime_sign_check {
     ## are also included), and look at the purpose:
     ## "S/MIME signing : Yes/No"
     ## "S/MIME encryption : Yes/No"
-    my $certbundle = Sympa::Site->tmpdir . "/certbundle.$$";
-    my $tmpcert    = Sympa::Site->tmpdir . "/cert.$$";
+    my $certbundle = Sympa::Site->tmpdir . "/certbundle.$PID";
+    my $tmpcert    = Sympa::Site->tmpdir . "/cert.$PID";
     my $nparts     = $message->get_mime_message->parts;
     my $extracted  = 0;
     Sympa::Log::Syslog::do_log('debug3', 'smime_sign_check: parsing %d parts',
@@ -1446,7 +1447,7 @@ sub smime_sign_check {
 
     unless (open(BUNDLE, $certbundle)) {
         Sympa::Log::Syslog::do_log('err', "Can't open cert bundle %s: %s",
-            $certbundle, $!);
+            $certbundle, $ERRNO);
         return undef;
     }
 
@@ -1460,7 +1461,7 @@ sub smime_sign_check {
             $cert = '';
             unless (open(CERT, ">$tmpcert")) {
                 Sympa::Log::Syslog::do_log('err', "Can't create %s: %s",
-                    $tmpcert, $!);
+                    $tmpcert, $ERRNO);
                 return undef;
             }
             print CERT $workcert;
@@ -1528,7 +1529,7 @@ sub smime_sign_check {
         unless (open(CERT, ">$fn")) {
             Sympa::Log::Syslog::do_log('err',
                 'Unable to create certificate file %s: %s',
-                $fn, $!);
+                $fn, $ERRNO);
             return undef;
         }
         print CERT $certs{$c};
@@ -1832,7 +1833,7 @@ sub add_parts {
             if ($header =~ /\.mime$/) {
                 my $header_part;
                 eval { $header_part = $parser->parse_in($header); };
-                if ($@) {
+                if ($EVAL_ERROR) {
                     Sympa::Log::Syslog::do_log('err',
                         'Failed to parse MIME data %s: %s',
                         $header, $parser->last_error);
@@ -1857,7 +1858,7 @@ sub add_parts {
             if ($footer =~ /\.mime$/) {
                 my $footer_part;
                 eval { $footer_part = $parser->parse_in($footer); };
-                if ($@) {
+                if ($EVAL_ERROR) {
                     Sympa::Log::Syslog::do_log('err',
                         'Failed to parse MIME data %s: %s',
                         $footer, $parser->last_error);
@@ -1939,7 +1940,7 @@ sub _append_parts {
             $io = $bodyh->open('w');
             unless (defined $io) {
                 Sympa::Log::Syslog::do_log('err',
-                    'Failed to save message: %s', "$!");
+                    'Failed to save message: %s', $ERRNO);
                 return undef;
             }
             $io->print($body);
@@ -2016,7 +2017,7 @@ sub _append_footer_header_to_part {
         $header_msg = Encode::decode_utf8($header_msg, 1);
         $footer_msg = Encode::decode_utf8($footer_msg, 1);
     };
-    return undef if $@;
+    return undef if $EVAL_ERROR;
 
     my $new_body;
     if ($eff_type eq 'text/plain') {
@@ -2070,7 +2071,7 @@ sub _append_footer_header_to_part {
 
     ## Only encodable footer/header are allowed.
     eval { $new_body = $cset->encode($new_body, 1); };
-    return undef if $@;
+    return undef if $EVAL_ERROR;
 
     return $new_body;
 }
@@ -2176,7 +2177,7 @@ sub _personalize_entity {
 
         ## Only decodable bodies are allowed.
         eval { $utf8_body = Encode::encode_utf8($in_cset->decode($body, 1)); };
-        if ($@) {
+        if ($EVAL_ERROR) {
             Sympa::Log::Syslog::do_log('err', 'Cannot decode by charset "%s"',
                 $charset);
             return undef;
@@ -2219,7 +2220,7 @@ sub _personalize_entity {
             and $io->print($body)
             and $io->close) {
             Sympa::Log::Syslog::do_log('err', 'Can\'t write in Entity: %s',
-                $!);
+                $ERRNO);
             return undef;
         }
         $entity->sync_headers(Length => 'COMPUTE')

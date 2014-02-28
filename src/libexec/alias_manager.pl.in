@@ -131,6 +131,7 @@ $ENV{'PATH'} = '';
 use strict;
 use warnings;
 use lib '--modulesdir--';
+use English qw(-no_match_vars);
 use Getopt::Long;
 use Pod::Usage;
 use POSIX;
@@ -243,7 +244,7 @@ if ($operation eq 'add') {
     ## Newaliases
     unless ($file) {
         unless (system($alias_wrapper) == 0) {
-            print STDERR "Failed to execute newaliases: $!\n";
+            print STDERR "Failed to execute newaliases: $ERRNO\n";
             exit(6);
         }
     }
@@ -314,7 +315,7 @@ if ($operation eq 'add') {
     ## Newaliases
     unless ($file) {
         unless (system($alias_wrapper) == 0) {
-            print STDERR "Failed to execute newaliases: $!\n";
+            print STDERR "Failed to execute newaliases: $ERRNO\n";
             exit(6);
         }
     }

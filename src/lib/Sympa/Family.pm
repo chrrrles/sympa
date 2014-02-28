@@ -36,6 +36,7 @@ Sympa allows lists creation and management by sets. These are the families, sets
 package Sympa::Family;
 
 use strict;
+use English qw(-no_match_vars);
 
 use XML::LibXML;
 use File::Copy;
@@ -120,7 +121,7 @@ sub get_families {
 
         unless (opendir FAMILIES, $dir) {
             Sympa::Log::Syslog::do_log('err', "error : can't open dir %s: %s",
-                $dir, $!);
+                $dir, $ERRNO);
             next;
         }
 
@@ -379,7 +380,7 @@ sub add_list {
         unless (open(FIC, '>', $self->dir . '/_new_list.xml')) {
             Sympa::Log::Syslog::do_log('err',
                 'impossible to create the temp file %s/_new_list.xml : %s',
-                $self->dir, $!);
+                $self->dir, $ERRNO);
         }
         while (<$data>) {
             print FIC ($_);
@@ -432,7 +433,7 @@ sub add_list {
         push @{$return->{'string_info'}},
             sprintf(
             'Impossible to create file %s/config_changes : %s, the list is set in status error_config',
-            $list->dir, $!);
+            $list->dir, $ERRNO);
     }
     close FILE;
 
@@ -583,7 +584,7 @@ sub modify_list {
     unless (open(FIC, '>', $self->dir . '/_mod_list.xml')) {
         Sympa::Log::Syslog::do_log('err',
             'impossible to create the temp file %s/_mod_list.xml : %s',
-            $self->dir, $!);
+            $self->dir, $ERRNO);
     }
     while (<$fh>) {
         print FIC ($_);
@@ -668,7 +669,7 @@ sub modify_list {
         unless (open INFO, '>', $list->dir . '/info') {
             push @{$return->{'string_info'}},
                 sprintf('Impossible to create new %s/info file : %s',
-                $list->dir, $!);
+                $list->dir, $ERRNO);
         }
         print INFO $hash_list->{'config'}{'description'};
         close INFO;
@@ -752,7 +753,7 @@ sub modify_list {
         push @{$return->{'string_info'}},
             sprintf(
             'Impossible to create file %s/config_changes : %s, the list is set in status error_config.',
-            $list->dir, $!);
+            $list->dir, $ERRNO);
     }
     close FILE;
 
@@ -1020,8 +1021,8 @@ sub instantiate {
     $progress->max_update_rate(1);
     my $next_update = 0;
     my $aliasmanager_output_file =
-        Sympa::Site->tmpdir . '/aliasmanager.stdout.' . $$;
-    my $output_file = Sympa::Site->tmpdir . '/instantiate_family.stdout.' . $$;
+        Sympa::Site->tmpdir . '/aliasmanager.stdout.' . $PID;
+    my $output_file = Sympa::Site->tmpdir . '/instantiate_family.stdout.' . $PID;
     my $output      = '';
 
     ## EACH FAMILY LIST
@@ -1125,7 +1126,7 @@ sub instantiate {
                     'err',
                     'Sympa::Family::instantiate : impossible to create file %s/config_changes : %s',
                     $list->dir,
-                    $!
+                    $ERRNO
                 );
                 push(@{$self->{'generated_lists'}{'file_error'}},
                     $list->name);
@@ -2411,7 +2412,7 @@ sub _update_existing_list {
         unless (open INFO, '>', $list->dir . '/info') {
             Sympa::Log::Syslog::do_log('err',
                 'Impossible to open %s/info : %s',
-                $list->dir, $!);
+                $list->dir, $ERRNO);
         }
         print INFO $hash_list->{'config'}{'description'};
         close INFO;
@@ -2489,7 +2490,7 @@ sub _update_existing_list {
     unless (open FILE, '>', $list->dir . '/config_changes') {
         Sympa::Log::Syslog::do_log('err',
             'impossible to open file %s/config_changes : %s',
-            $list->dir, $!);
+            $list->dir, $ERRNO);
         push(@{$self->{'generated_lists'}{'file_error'}}, $list->name);
         $list->set_status_error_config('error_copy_file', $self->name);
     }
@@ -2949,7 +2950,7 @@ sub _copy_files {
         unless (File::Copy::copy("$dir/$file", "$list_dir/instance.xml")) {
             Sympa::Log::Syslog::do_log('err',
                 'impossible to copy %s/%s into %s/instance.xml : %s',
-                $dir, $file, $list_dir, $!);
+                $dir, $file, $list_dir, $ERRNO);
             return undef;
         }
     }
@@ -3019,14 +3020,14 @@ sub _load_param_constraint_conf {
     unless (open(FILE, $file)) {
         Sympa::Log::Syslog::do_log('err',
             'File %s exists, but unable to open it: %s',
-            $file, $!);
+            $file, $ERRNO);
         return undef;
     }
 
     my $error = 0;
 
     ## Just in case...
-    local $/ = "\n";
+    local $RS = "\n";
 
     while (<FILE>) {
         next if /^\s*(\#.*|\s*)$/;

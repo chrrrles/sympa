@@ -25,6 +25,7 @@ package Sympa::Lock;
 
 use strict;
 use warnings;
+use English qw(-no_match_vars);
 use Carp qw(croak);
 use Fcntl qw(LOCK_SH LOCK_EX LOCK_NB LOCK_UN);
 use FileHandle;
@@ -48,7 +49,7 @@ sub new {
     unless (-f $lock_filename) {
         unless (open $fh, ">>$lock_filename") {
             Sympa::Log::Syslog::do_log('err', 'Cannot open %s: %s',
-                $lock_filename, $!);
+                $lock_filename, $ERRNO);
             return undef;
         }
         close $fh;
@@ -306,7 +307,7 @@ sub _lock_file {
     my $fh;
     unless (open $fh, $open_mode, $lock_file) {
         Sympa::Log::Syslog::do_log('err', 'Cannot open %s: %s',
-            $lock_file, $!);
+            $lock_file, $ERRNO);
         return undef;
     }
 
@@ -327,13 +328,13 @@ sub _lock_file {
                 $lock_file);
             unless (unlink $lock_file) {
                 Sympa::Log::Syslog::do_log('err', 'Cannot remove %s: %s',
-                    $lock_file, $!);
+                    $lock_file, $ERRNO);
                 return undef;
             }
 
             unless (open $fh, '>', $lock_file) {
                 Sympa::Log::Syslog::do_log('err', 'Cannot open %s: %s',
-                    $lock_file, $!);
+                    $lock_file, $ERRNO);
                 return undef;
             }
         }
@@ -358,11 +359,11 @@ sub _lock_file {
 
         ## Keep track of the locking PID
         if ($mode eq 'write') {
-            print $fh "$$\n";
+            print $fh "$PID\n";
         }
     } else {
         Sympa::Log::Syslog::do_log('err', 'Failed locking %s: %s',
-            $lock_file, $!);
+            $lock_file, $ERRNO);
         return undef;
     }
 
@@ -377,7 +378,7 @@ sub _unlock_file {
 
     unless (flock($fh, LOCK_UN)) {
         Sympa::Log::Syslog::do_log('err', 'Failed UNlocking %s: %s',
-            $lock_file, $!);
+            $lock_file, $ERRNO);
         return undef;
     }
     close $fh;
@@ -420,7 +421,7 @@ sub _lock_nfs {
         $FH = FileHandle->new();
         unless (open $FH, $open_mode, $lock_file) {
             Sympa::Log::Syslog::do_log('err', 'Cannot open %s: %s',
-                $lock_file, $!);
+                $lock_file, $ERRNO);
             return undef;
         }
 
@@ -429,7 +430,7 @@ sub _lock_nfs {
         return ($FH, $nfs_lock);
     } else {
         Sympa::Log::Syslog::do_log('err', 'Failed locking %s: %s',
-            $lock_file, $!);
+            $lock_file, $ERRNO);
         return undef;
     }
 
@@ -445,7 +446,7 @@ sub _unlock_nfs {
 
     unless (defined $nfs_lock and $nfs_lock->unlock()) {
         Sympa::Log::Syslog::do_log('err', 'Failed UNlocking %s: %s',
-            $lock_file, $!);
+            $lock_file, $ERRNO);
         return undef;
     }
     close $fh;

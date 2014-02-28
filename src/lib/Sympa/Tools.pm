@@ -24,6 +24,7 @@
 package Sympa::Tools;
 
 use strict;
+use English; # FIXME: drop $MATCH usage
 use Carp qw(croak);
 use Time::Local;
 use File::Find;
@@ -125,14 +126,14 @@ sub set_file_rights {
     unless (chown($uid, $gid, $param{'file'})) {
         Sympa::Log::Syslog::do_log('err',
             "Can't give ownership of file %s to %s.%s: %s",
-            $param{'file'}, $param{'user'}, $param{'group'}, "$!");
+            $param{'file'}, $param{'user'}, $param{'group'}, $ERRNO);
         return undef;
     }
     if ($param{'mode'}) {
         unless (chmod($param{'mode'}, $param{'file'})) {
             Sympa::Log::Syslog::do_log('err',
                 "Can't change rights of file %s to %o: %s",
-                $param{'file'}, $param{'mode'}, "$!");
+                $param{'file'}, $param{'mode'}, $ERRNO);
             return undef;
         }
     }
@@ -347,7 +348,7 @@ sub safefork {
         my ($pid) = fork;
         return $pid if (defined($pid));
 
-        $err = "$!";
+        $err = $ERRNO;
         Sympa::Log::Syslog::do_log('warn',
             'Cannot create new process in safefork: %s', $err);
         ## FIXME:should send a mail to the listmaster
@@ -588,14 +589,14 @@ sub del_dir {
         unless (rmdir $dir) {
             Sympa::Log::Syslog::do_log('err',
                 'Unable to delete directory %s: %s',
-                $dir, "$!");
+                $dir, $ERRNO);
         }
     } else {
         Sympa::Log::Syslog::do_log(
             'err',
             'Unable to open directory %s to delete the files it contains: %s',
             $dir,
-            "$!"
+            $ERRNO
         );
     }
 }
@@ -887,7 +888,7 @@ sub dkim_verifier {
         return undef;
     }
 
-    my $temporary_file = Sympa::Site->tmpdir . "/dkim." . $$;
+    my $temporary_file = Sympa::Site->tmpdir . "/dkim." . $PID;
     if (!open(MSGDUMP, "> $temporary_file")) {
         Sympa::Log::Syslog::do_log('err', 'Can\'t store message in file %s',
             $temporary_file);
@@ -999,7 +1000,7 @@ sub dkim_sign {
         return $msg_as_string;
     }
 
-    my $temporary_keyfile = Sympa::Site->tmpdir . "/dkimkey." . $$;
+    my $temporary_keyfile = Sympa::Site->tmpdir . "/dkimkey." . $PID;
     if (!open(MSGDUMP, "> $temporary_keyfile")) {
         Sympa::Log::Syslog::do_log('err', 'Can\'t store key in file %s',
             $temporary_keyfile);
@@ -1044,7 +1045,7 @@ sub dkim_sign {
         Sympa::Log::Syslog::do_log('err', 'Can\'t create Mail::DKIM::Signer');
         return ($msg_as_string);
     }
-    my $temporary_file = Sympa::Site->tmpdir . "/dkim." . $$;
+    my $temporary_file = Sympa::Site->tmpdir . "/dkim." . $PID;
     if (!open(MSGDUMP, "> $temporary_file")) {
         Sympa::Log::Syslog::do_log('err', 'Can\'t store message in file %s',
             $temporary_file);
@@ -1361,7 +1362,7 @@ sub ciphersaber_installed {
     return $cipher if defined $cipher;
 
     eval { require Crypt::CipherSaber; };
-    unless ($@) {
+    unless ($EVAL_ERROR) {
         $cipher = Crypt::CipherSaber->new(Sympa::Site->cookie);
     } else {
         $cipher = '';
@@ -1518,7 +1519,7 @@ sub split_mail {
         ## Store body in file
         unless (open OFILE, ">$dir/$pathname.$fileExt") {
             Sympa::Log::Syslog::do_log('err', 'Unable to create %s/%s.%s: %s',
-                $dir, $pathname, $fileExt, "$!");
+                $dir, $pathname, $fileExt, $ERRNO);
             return undef;
         }
 
@@ -1620,7 +1621,7 @@ sub virus_infected {
         }
         close ANTIVIR;
 
-        my $status = $? >> 8;
+        my $status = $CHILD_ERROR >> 8;
 
         ## uvscan status =12 or 13 (*256) => virus
         if (($status == 13) || ($status == 12)) {
@@ -1655,7 +1656,7 @@ sub virus_infected {
         }
         close ANTIVIR;
 
-        my $status = $? >> 8;
+        my $status = $CHILD_ERROR >> 8;
 
         ## uvscan status = 1 | 2 (*256) => virus
         if ((($status == 1) or ($status == 2)) and not($virusfound)) {
@@ -1664,7 +1665,7 @@ sub virus_infected {
 
         ## F-Secure
     } elsif (Sympa::Site->antivirus_path =~ /\/fsav$/) {
-        my $dbdir = $`;
+        my $dbdir = $PREMATCH;
 
         # impossible to look for viruses with no option set
         unless (Sympa::Site->antivirus_args) {
@@ -1685,7 +1686,7 @@ sub virus_infected {
 
         close ANTIVIR;
 
-        my $status = $? >> 8;
+        my $status = $CHILD_ERROR >> 8;
 
         ## fsecure status =3 (*256) => virus
         if (($status == 3) and not($virusfound)) {
@@ -1706,7 +1707,7 @@ sub virus_infected {
 
         close ANTIVIR;
 
-        my $status = $? >> 8;
+        my $status = $CHILD_ERROR >> 8;
 
         Sympa::Log::Syslog::do_log('debug2', 'Status: ' . $status);
 
@@ -1735,7 +1736,7 @@ sub virus_infected {
         }
         close ANTIVIR;
 
-        my $status = $? >> 8;
+        my $status = $CHILD_ERROR >> 8;
 
         ## uvscan status =3 (*256) => virus
         if (($status >= 3) and not($virusfound)) {
@@ -1762,7 +1763,7 @@ sub virus_infected {
         }
         close ANTIVIR;
 
-        my $status = $? >> 8;
+        my $status = $CHILD_ERROR >> 8;
 
         ## sweep status =3 (*256) => virus
         if (($status == 3) and not($virusfound)) {
@@ -1785,7 +1786,7 @@ sub virus_infected {
         }
         close ANTIVIR;
 
-        my $status = $? >> 8;
+        my $status = $CHILD_ERROR >> 8;
 
         ## Clamscan status =1 (*256) => virus
         if (($status == 1) and not($virusfound)) {
@@ -2064,7 +2065,7 @@ sub qencode_hierarchy {
         unless (rename $orig_f, $new_f) {
             Sympa::Log::Syslog::do_log('err',
                 'Failed to rename %s to %s : %s',
-                $orig_f, $new_f, "$!");
+                $orig_f, $new_f, $ERRNO);
             next;
         }
         $count++;
@@ -2077,7 +2078,7 @@ sub qencode_hierarchy {
 sub dump_encoding {
     my $out = shift;
 
-    $out =~ s/./sprintf('%02x', ord($&)).' '/eg;
+    $out =~ s/./sprintf('%02x', ord($MATCH)).' '/eg;
     return $out;
 }
 
@@ -2111,14 +2112,14 @@ sub remove_pid {
             ## Release the lock
             unless (unlink $pidfile) {
                 Sympa::Log::Syslog::do_log('err', 'Failed to remove %s: %s',
-                    $pidfile, "$!");
+                    $pidfile, $ERRNO);
                 return undef;
             }
         } else {
             if (-f $pidfile) {
                 unless (open(PFILE, '> ' . $pidfile)) {
                     Sympa::Log::Syslog::do_log('err', 'Failed to open %s: %s',
-                        $pidfile, "$!");
+                        $pidfile, $ERRNO);
                     return undef;
                 }
                 print PFILE join(' ', @pids) . "\n";
@@ -2131,14 +2132,14 @@ sub remove_pid {
     } else {
         unless (unlink $pidfile) {
             Sympa::Log::Syslog::do_log('err', 'Failed to remove %s: %s',
-                $pidfile, "$!");
+                $pidfile, $ERRNO);
             return undef;
         }
         my $err_file = Sympa::Site->tmpdir . '/' . $pid . '.stderr';
         if (-f $err_file) {
             unless (unlink $err_file) {
                 Sympa::Log::Syslog::do_log('err', 'Failed to remove %s: %s',
-                    $err_file, "$!");
+                    $err_file, $ERRNO);
                 return undef;
             }
         }
@@ -2204,7 +2205,7 @@ sub write_pid {
     ## Print other PIDs + this one
     if ($options->{'multiple_process'}) {
         unless (open(PIDFILE, '> ' . $pidfile)) {
-            my $err = "$!";
+            my $err = $ERRNO;
             ## Unlock PID file
             $lock->unlock();
             croak sprintf('Could not open %s, exiting: %s', $pidfile, $err);
@@ -2216,7 +2217,7 @@ sub write_pid {
     } else {
         ## Create and write the PID file
         unless (open(PIDFILE, '+>> ' . $pidfile)) {
-            my $err = "$!";
+            my $err = $ERRNO;
             ## Unlock PID file
             $lock->unlock();
             croak sprintf('Could not open %s, exiting: %s', $pidfile, $err);
@@ -2234,13 +2235,13 @@ sub write_pid {
         }
 
         unless (open(PIDFILE, '> ' . $pidfile)) {
-            my $err = "$!";
+            my $err = $ERRNO;
             ## Unlock PID file
             $lock->unlock();
             croak sprintf('Could not open %s, exiting: %s', $pidfile, $err);
         }
         unless (truncate(PIDFILE, 0)) {
-            my $err = "$!";
+            my $err = $ERRNO;
             ## Unlock PID file
             $lock->unlock();
             croak
@@ -2326,7 +2327,7 @@ sub get_message_id {
     } else {
         $domain = $robot;
     }
-    my $id = sprintf '<sympa.%d.%d.%d@%s>', time, $$, int(rand(999)), $domain;
+    my $id = sprintf '<sympa.%d.%d.%d@%s>', time, $PID, int(rand(999)), $domain;
 
     return $id;
 }
@@ -2447,7 +2448,7 @@ sub smime_find_keys {
     my $ext = ($oper eq 'sign' ? 'sign' : 'enc');
 
     unless (opendir(D, $dir)) {
-        Sympa::Log::Syslog::do_log('err', "unable to opendir $dir: $!");
+        Sympa::Log::Syslog::do_log('err', "unable to opendir $dir: $ERRNO");
         return undef;
     }
 
@@ -2528,7 +2529,7 @@ sub smime_parse_cert {
         @cert = ($arg->{'text'});
     } elsif ($arg->{file}) {
         unless (open(PSC, "$arg->{file}")) {
-            Sympa::Log::Syslog::do_log('err', "smime_parse_cert: open %s: $!",
+            Sympa::Log::Syslog::do_log('err', "smime_parse_cert: open %s: $ERRNO",
                 $arg->{file});
             return undef;
         }
@@ -2541,24 +2542,24 @@ sub smime_parse_cert {
     }
 
     ## Extract information from cert
-    my ($tmpfile) = Sympa::Site->tmpdir . "/parse_cert.$$";
+    my ($tmpfile) = Sympa::Site->tmpdir . "/parse_cert.$PID";
     my $cmd = sprintf '%s x509 -email -subject -purpose -noout',
         Sympa::Site->openssl;
     unless (open(PSC, "| $cmd > $tmpfile")) {
-        Sympa::Log::Syslog::do_log('err', 'open |openssl: %s', $!);
+        Sympa::Log::Syslog::do_log('err', 'open |openssl: %s', $ERRNO);
         return undef;
     }
     print PSC join('', @cert);
 
     unless (close(PSC)) {
         Sympa::Log::Syslog::do_log('err',
-            "smime_parse_cert: close openssl: $!, $@");
+            "smime_parse_cert: close openssl: $ERRNO, $EVAL_ERROR");
         return undef;
     }
 
     unless (open(PSC, "$tmpfile")) {
         Sympa::Log::Syslog::do_log('err',
-            "smime_parse_cert: open $tmpfile: $!");
+            "smime_parse_cert: open $tmpfile: $ERRNO");
         return undef;
     }
 
@@ -2608,15 +2609,15 @@ sub smime_extract_certs {
         my $cmd = sprintf '%s pkcs7 -print_certs -inform der', Sympa::Site->openssl;
         unless (open(MSGDUMP, "| $cmd > $outfile")) {
             Sympa::Log::Syslog::do_log('err',
-                'unable to run openssl pkcs7: %s', $!);
+                'unable to run openssl pkcs7: %s', $ERRNO);
             return 0;
         }
         print MSGDUMP $mime->bodyhandle->as_string();
         close(MSGDUMP);
-        if ($?) {
+        if ($CHILD_ERROR) {
             Sympa::Log::Syslog::do_log('err',
                 "openssl pkcs7 returned an error: ",
-                $? / 256);
+                $CHILD_ERROR / 256);
             return 0;
         }
         return 1;
@@ -2977,7 +2978,7 @@ sub change_x_sympa_to {
     ## Change X-Sympa-To
     unless (open FILE, $file) {
         Sympa::Log::Syslog::do_log('err', "Unable to open '%s' : %s",
-            $file, $!);
+            $file, $ERRNO);
         next;
     }
     my @content = <FILE>;
@@ -2985,7 +2986,7 @@ sub change_x_sympa_to {
 
     unless (open FILE, ">$file") {
         Sympa::Log::Syslog::do_log('err', "Unable to open '%s' : %s",
-            "$file", $!);
+            "$file", $ERRNO);
         next;
     }
     foreach (@content) {
@@ -3157,7 +3158,7 @@ sub lock {
     ## Read access to prevent "Bad file number" error on Solaris
     unless (open FH, $open_mode . $lock_file) {
         Sympa::Log::Syslog::do_log('err', 'Cannot open %s: %s',
-            $lock_file, $!);
+            $lock_file, $ERRNO);
         return undef;
     }
 
@@ -3172,13 +3173,13 @@ sub lock {
                 $lock_file);
             unless (unlink $lock_file) {
                 Sympa::Log::Syslog::do_log('err', 'Cannot remove %s: %s',
-                    $lock_file, $!);
+                    $lock_file, $ERRNO);
                 return undef;
             }
 
             unless (open FH, ">$lock_file") {
                 Sympa::Log::Syslog::do_log('err', 'Cannot open %s: %s',
-                    $lock_file, $!);
+                    $lock_file, $ERRNO);
                 return undef;
             }
         }
@@ -3203,11 +3204,11 @@ sub lock {
 
         ## Keep track of the locking PID
         if ($mode eq 'write') {
-            print FH "$$\n";
+            print FH "$PID\n";
         }
     } else {
         Sympa::Log::Syslog::do_log('err', 'Failed locking %s: %s',
-            $lock_file, $!);
+            $lock_file, $ERRNO);
         return undef;
     }
 
@@ -3221,7 +3222,7 @@ sub unlock {
 
     unless (flock($fh, LOCK_UN)) {
         Sympa::Log::Syslog::do_log('err', 'Failed UNlocking %s: %s',
-            $lock_file, $!);
+            $lock_file, $ERRNO);
         return undef;
     }
     close $fh;
@@ -3486,7 +3487,7 @@ sub save_to_bad {
             'notice',
             'Could not rename %s to %s: %s',
             $queue . '/' . $file,
-            $queue . '/bad/' . $file, $!
+            $queue . '/bad/' . $file, $ERRNO
         );
         return undef;
     }
@@ -3548,7 +3549,7 @@ sub CleanDir {
 
     unless (opendir(DIR, $dir)) {
         Sympa::Log::Syslog::do_log('err', "Unable to open '%s' spool : %s",
-            $dir, $!);
+            $dir, $ERRNO);
         return undef;
     }
 
@@ -3567,7 +3568,7 @@ sub CleanDir {
                 unless (Sympa::Tools::remove_dir("$dir/$f")) {
                     Sympa::Log::Syslog::do_log('err',
                         'Cannot remove old directory %s : %s',
-                        "$dir/$f", $!);
+                        "$dir/$f", $ERRNO);
                     next;
                 }
                 Sympa::Log::Syslog::do_log('notice',
@@ -3582,7 +3583,7 @@ sub CleanDir {
 # hostname (20) and pid(10) are truncated in order to store lockname in
 # database varchar(30)
 sub get_lockname () {
-    return substr(substr(hostname(), 0, 20) . $$, 0, 30);
+    return substr(substr(hostname(), 0, 20) . $PID, 0, 30);
 }
 
 ## compare 2 scalars, string/numeric independent
@@ -3592,13 +3593,13 @@ sub smart_lessthan {
     $stra =~ s/\s+$//;
     $strb =~ s/^\s+//;
     $strb =~ s/\s+$//;
-    $! = 0;
+    $ERRNO = 0;
     my ($numa, $unparsed) = strtod($stra);
     my $numb;
     $numb = strtod($strb)
-        unless ($! || $unparsed != 0);
+        unless ($ERRNO || $unparsed != 0);
 
-    if (($stra eq '') || ($strb eq '') || ($unparsed != 0) || $!) {
+    if (($stra eq '') || ($strb eq '') || ($unparsed != 0) || $ERRNO) {
         return $stra lt $strb;
     } else {
         return $stra < $strb;
@@ -3614,7 +3615,7 @@ sub get_pids_in_pid_file {
 
     unless (open(PFILE, $pidfile)) {
         Sympa::Log::Syslog::do_log('err', "unable to open PID file %s:%s",
-            $pidfile, $!);
+            $pidfile, $ERRNO);
         return undef;
     }
     my $l = <PFILE>;
@@ -3717,7 +3718,7 @@ sub get_children_processes_list {
     Sympa::Log::Syslog::do_log('debug3', '');
     my @children;
     for my $p (@{new Proc::ProcessTable->table}) {
-        if ($p->ppid == $$) {
+        if ($p->ppid == $PID) {
             push @children, $p->pid;
         }
     }

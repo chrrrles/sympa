@@ -25,6 +25,7 @@ package Sympa::KeySpool;
 
 use strict;
 use warnings;
+use English qw(-no_match_vars);
 
 use Sympa::ClassicSpool;
 use Sympa::Log;
@@ -111,13 +112,13 @@ sub validate_message {
         )
         ) {
         Sympa::Log::Syslog::do_log('err', 'Could not rename file %s/%s: %s',
-            $self->{'dir'}, $key, $!);
+            $self->{'dir'}, $key, $ERRNO);
         return undef;
     }
     unless (unlink($self->{'dir'} . '/' . $key)) {
         Sympa::Log::Syslog::do_log('err',
             'Could not unlink message %s/%s: %s',
-            $self->{'dir'}, $key, $!);
+            $self->{'dir'}, $key, $ERRNO);
     }
     return 1;
 }

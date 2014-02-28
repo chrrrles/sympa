@@ -35,7 +35,7 @@ use Sympa::Log;
 
 my %options;
 
-$| = 1;
+$OUTPUT_AUTOFLUSH = 1;
 
 ## Check UID
 #unless (getlogin() eq Sympa::Constants::USER) {
@@ -139,7 +139,7 @@ foreach my $robot (@{Sympa::Robot::get_robots()}) {
 ## List .tpl files
 foreach my $d (@directories) {
     unless (opendir DIR, $d) {
-        printf STDERR "Error: Cannot read %s directory : %s\n", $d, $!;
+        printf STDERR "Error: Cannot read %s directory : %s\n", $d, $ERRNO;
         next;
     }
 
@@ -209,7 +209,7 @@ foreach my $tpl (@templates) {
     unless (-d $dest_path) {
         print "Creating $dest_path directory\n";
         unless (my_mkdir($dest_path)) {
-            print STDERR "Error : Cannot create $dest_path directory : $!\n";
+            print STDERR "Error : Cannot create $dest_path directory : $ERRNO\n";
             next;
         }
         unless (
@@ -234,7 +234,7 @@ foreach my $tpl (@templates) {
     ## Rename old files to .converted
     unless (rename $tpl, "$tpl.converted") {
         printf STDERR "Error : failed to rename %s to %s.converted : %s\n",
-            $tpl, $tpl, $!;
+            $tpl, $tpl, $ERRNO;
         next;
     }
 }
@@ -247,12 +247,12 @@ sub convert {
 
     ## Convert tpl file
     unless (open TPL, $in_file) {
-        print STDERR "Cannot open $in_file : $!\n";
+        print STDERR "Cannot open $in_file : $ERRNO\n";
         return undef;
     }
     if ($out_file) {
         unless (open TT2, ">$out_file") {
-            print STDERR "Cannot create $out_file : $!\n";
+            print STDERR "Cannot create $out_file : $ERRNO\n";
             return undef;
         }
     }
@@ -297,14 +297,14 @@ sub my_mkdir {
         unless (-d $root_path) {
             unless (mkdir($root_path, 0777)) {
                 printf STDERR "Error : Cannot create directory %s : %s\n",
-                    $root_path, $!;
+                    $root_path, $ERRNO;
                 return undef;
             }
         }
 
         unless (mkdir($path, 0777)) {
             printf STDERR "Error : Cannot create directory %s : %s\n", $path,
-                $!;
+                $ERRNO;
             return undef;
         }
     } else {

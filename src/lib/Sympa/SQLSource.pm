@@ -25,6 +25,7 @@ package Sympa::SQLSource;
 
 use strict;
 
+use English qw(-no_match_vars);
 use Carp;
 use Sympa::Log;
 
@@ -60,7 +61,7 @@ sub new {
     if ($param->{'db_type'} =~ /^mysql$/i) {
         unless (eval "require Sympa::DBManipulatorMySQL") {
             Sympa::Log::Syslog::do_log('err',
-                "Unable to use Sympa::DBManipulatorMySQL module: $@");
+                "Unable to use Sympa::DBManipulatorMySQL module: $EVAL_ERROR");
             return undef;
         }
         require Sympa::DBManipulatorMySQL;
@@ -654,11 +655,11 @@ sub fetch {
         alarm 0;
         return $status;
     };
-    if ($@ eq "TIMEOUT\n") {
+    if ($EVAL_ERROR eq "TIMEOUT\n") {
         Sympa::Log::Syslog::do_log('err',
             'Fetch timeout on remote SQL database');
         return undef;
-    } elsif ($@) {
+    } elsif ($EVAL_ERROR) {
         Sympa::Log::Syslog::do_log('err',
             'Fetch failed on remote SQL database');
         return undef;

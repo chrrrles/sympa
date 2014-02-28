@@ -255,7 +255,7 @@ sub full_db_struct {
                 },
                 'messagelock_spool' => {
                     'struct' => 'varchar(90)',
-                    'doc' => 'a unique string for each process : $$@hostname',
+                    'doc' => 'a unique string for each process : PID@hostname',
                     'order' => 8,
                 },
                 'lockdate_spool' => {

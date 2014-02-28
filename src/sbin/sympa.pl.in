@@ -333,6 +333,7 @@ L<wwsympa(8)>, L<sympa_soap_server(8)>.
 use lib '--modulesdir--';
 use strict;
 use warnings;
+use English qw(-no_match_vars);
 use Carp qw(croak);
 use File::Copy;
 use File::Path;
@@ -515,7 +516,7 @@ if ($main::options{'help'}) {
 
     ## Change working directory.
     if (!chdir(Sympa::Site->home)) {
-        printf STDERR "Can't chdir to %s: %s\n", Sympa::Site->home, $!;
+        printf STDERR "Can't chdir to %s: %s\n", Sympa::Site->home, $ERRNO;
         exit 1;
     }
 
@@ -607,7 +608,7 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
         unless (eval "require OAuthProvider") {
             Sympa::Log::Syslog::fatal_err(
                 'VOOT feature is on, but Sympa was Unable to load OAuthProvider module: %s',
-                $@
+                $EVAL_ERROR
             );
             return undef;
         }
@@ -615,7 +616,7 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
         unless (eval "require OAuthConsumer") {
             Sympa::Log::Syslog::fatal_err(
                 'VOOT feature is on, but Sympa was Unable to load OAuthConsumer module: %s',
-                $@
+                $EVAL_ERROR
             );
             return undef;
         }
@@ -623,7 +624,7 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
         unless (eval "require VOOTProvider") {
             Sympa::Log::Syslog::fatal_err(
                 'VOOT feature is on, but Sympa was Unable to load VOOTProvider module: %s',
-                $@
+                $EVAL_ERROR
             );
             return undef;
         }
@@ -631,7 +632,7 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
         unless (eval "require VOOTConsumer") {
             Sympa::Log::Syslog::fatal_err(
                 'VOOT feature is on, but Sympa was Unable to load module: %s',
-                $@
+                $EVAL_ERROR
             );
             return undef;
         }
@@ -673,7 +674,7 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
         Sympa::Log::Syslog::do_openlog(Sympa::Site->syslog, Sympa::Site->log_socket_type,
             'sympa');
 
-        Sympa::Log::Syslog::do_log('debug', 'Running server %d', $$);
+        Sympa::Log::Syslog::do_log('debug', 'Running server %d', $PID);
         unless ($main::options{'batch'}) {
 
             ## Create and write the PID file
@@ -681,15 +682,15 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
             ## dedicated file
             my $options;
             $options->{'stderr_to_tty'} = 1 if ($main::options{'foreground'});
-            Sympa::Tools::write_pid('sympa', $$, $options);
+            Sympa::Tools::write_pid('sympa', $PID, $options);
             unless ($options->{'stderr_to_tty'}) {
-                Sympa::Tools::direct_stderr_to_file(('pid' => $$));
+                Sympa::Tools::direct_stderr_to_file(('pid' => $PID));
             }
         }
 
         # Set the User ID & Group ID for the process
-        $( = $) = (getgrnam(Sympa::Constants::GROUP))[2];
-        $< = $> = (getpwnam(Sympa::Constants::USER))[2];
+        $GID = $EGID = (getgrnam(Sympa::Constants::GROUP))[2];
+        $UID = $EUID = (getpwnam(Sympa::Constants::USER))[2];
 
         ## Required on FreeBSD to change ALL IDs
         ## (effective UID + real UID + saved UID)
@@ -697,8 +698,8 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
         POSIX::setgid((getgrnam(Sympa::Constants::GROUP))[2]);
 
         ## Check if the UID has correctly been set (useful on OS X)
-        unless (($( == (getgrnam(Sympa::Constants::GROUP))[2])
-            && ($< == (getpwnam(Sympa::Constants::USER))[2])) {
+        unless (($GID == (getgrnam(Sympa::Constants::GROUP))[2])
+            && ($UID == (getpwnam(Sympa::Constants::USER))[2])) {
             Sympa::Log::Syslog::fatal_err(
                 "Failed to change process user ID and group ID. Note that on some OS Perl scripts can't change their real UID. In such circumstances Sympa should be run via sudo."
             );
@@ -756,7 +757,7 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
     } elsif ($main::options{'make_alias_file'}) {
         my $all_lists = Sympa::List::get_lists();
 
-        my $aliases_file = Sympa::Site->tmpdir . '/sympa_aliases' . $$;
+        my $aliases_file = Sympa::Site->tmpdir . '/sympa_aliases' . $PID;
         unless (open TMP, '>', $aliases_file) {
             printf STDERR "Unable to create %s, exiting\n", $aliases_file;
             exit;
@@ -1148,7 +1149,7 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
         }
 
         unless (open INFILE, $main::options{'input_file'}) {
-            print STDERR "\n Impossible to open input file  : $! \n";
+            print STDERR "\n Impossible to open input file  : $ERRNO \n";
             exit 1;
         }
 
@@ -1573,7 +1574,7 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
 }    #end of block while ($signal ne 'term'){
 
 Sympa::Log::Syslog::do_log('notice', 'Sympa exited normally due to signal');
-Sympa::Tools::remove_pid('sympa', $$);
+Sympa::Tools::remove_pid('sympa', $PID);
 
 exit(0);
 
@@ -2547,9 +2548,9 @@ sub DoMessage {
                 'apply_dkim_signature' => $apply_dkim_signature
             );
         };
-        if ($@) {
+        if ($EVAL_ERROR) {
             Sympa::Log::Syslog::do_log('err',
-                'FATAL: Failed to distribute message: %s', $@);
+                'FATAL: Failed to distribute message: %s', $EVAL_ERROR);
         }
         ## Keep track of known message IDs...if any
         $msgid_table{$list->get_id}{$messageid} = time if $messageid;

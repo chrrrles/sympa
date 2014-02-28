@@ -24,6 +24,7 @@
 package Sympa::DatabaseManager;
 
 use strict;
+use English qw(-no_match_vars);
 
 use Carp;
 use Exporter;
@@ -665,7 +666,7 @@ sub data_structure_uptodate {
     if (-f $version_file) {
         unless (open VFILE, $version_file) {
             Sympa::Log::Syslog::do_log('err', "Unable to open %s : %s",
-                $version_file, $!);
+                $version_file, $ERRNO);
             return undef;
         }
         while (<VFILE>) {

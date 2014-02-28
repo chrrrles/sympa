@@ -25,6 +25,7 @@ package Sympa::TaskInstruction;
 
 use strict;
 
+use English qw(-no_match_vars);
 #use Carp; # not yet used
 #use Digest::MD5; # no longer used
 #use Exporter; # not used
@@ -719,15 +720,15 @@ sub exec_cmd {
 
     system($file);
 
-    if ($? != 0) {
+    if ($CHILD_ERROR != 0) {
         my $message;
-        if ($? == -1) {
-            $message = "Failed to execute: $!";
-        } elsif ($? & 127) {
+        if ($CHILD_ERROR == -1) {
+            $message = "Failed to execute: $ERRNO";
+        } elsif ($CHILD_ERROR & 127) {
             $message = sprintf 'Child died with signal %d, %s coredump',
-                ($? & 127), ($? & 128) ? 'with' : 'without';
+                ($CHILD_ERROR & 127), ($CHILD_ERROR & 128) ? 'with' : 'without';
         } else {
-            $message = sprintf 'Child exited with value %d', $? >> 8;
+            $message = sprintf 'Child exited with value %d', $CHILD_ERROR >> 8;
         }
         $self->error(
             {'task' => $task, 'type' => 'execution', 'message' => $message});

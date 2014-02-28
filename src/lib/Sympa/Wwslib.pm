@@ -23,6 +23,8 @@
 
 package Sympa::Wwslib;
 
+use English qw(-no_match_vars);
+
 use Sympa::Log;
 use Sympa::Conf;
 use Sympa::Constants;
@@ -333,7 +335,7 @@ sub upload_file_to_server {
 
     unless (open FILE, ">:bytes", $param->{'destination'}) {
         Sympa::Log::Syslog::do_log('debug',
-            "Cannot open file $param->{'destination'} : $!");
+            "Cannot open file $param->{'destination'} : $ERRNO");
         return undef;
     }
     while (<$fh>) {

@@ -25,6 +25,7 @@ package Sympa::Mail;
 
 use strict;
 use warnings;
+use English qw(-no_match_vars);
 require Exporter;
 use Carp qw(carp croak);
 use POSIX;
@@ -51,7 +52,7 @@ my $opensmtp = 0;
 my $fh       = 'fh0000000000';    ## File handle for the stream.
 
 my $max_arg = eval { POSIX::_SC_ARG_MAX; };
-if ($@) {
+if ($EVAL_ERROR) {
     $max_arg = 4096;
     printf STDERR gettext(
         "Your system does not conform to the POSIX P1003.1 standard, or\nyour Perl system does not define the _SC_ARG_MAX constant in its POSIX\nlibrary. You must modify the smtp.pm module in order to set a value\nfor variable %s.\n"
@@ -905,7 +906,7 @@ sub smtpto {
     *OUT = ++$fh;
 
     if (!pipe(IN, OUT)) {
-        croak sprintf('Unable to create a channel in smtpto: %s', "$!");
+        croak sprintf('Unable to create a channel in smtpto: %s', $ERRNO);
         ## No return
     }
     $pid = Sympa::Tools::safefork();
@@ -1030,7 +1031,7 @@ sub reformat_message($;$$) {
         $msg = $message;
     } else {
         eval { $msg = $parser->parse_data($message); };
-        if ($@) {
+        if ($EVAL_ERROR) {
             Sympa::Log::Syslog::do_log('err',
                 "Sympa::Mail::reformat_message: Failed to parse MIME data");
             return undef;
@@ -1067,7 +1068,7 @@ sub fix_part($$$$) {
         my $data = shift @{$attachments};
         if (ref($data) ne 'MIME::Entity') {
             eval { $data = $parser->parse_data($data); };
-            if ($@) {
+            if ($EVAL_ERROR) {
                 Sympa::Log::Syslog::do_log('notice',
                     "Failed to parse MIME data");
                 $data = $parser->parse_data('');
@@ -1128,7 +1129,7 @@ sub fix_part($$$$) {
 
         unless (defined $io) {
             Sympa::Log::Syslog::do_log('err',
-                "Sympa::Mail::reformat_message: Failed to save message : $!");
+                "Sympa::Mail::reformat_message: Failed to save message : $ERRNO");
             return undef;
         }
 

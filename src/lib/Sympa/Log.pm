@@ -24,6 +24,7 @@
 package Sympa::Log;
 
 use strict;
+use English qw(-no_match_vars);
 
 #use Carp; # currently not used
 #use Encode; # not used
@@ -71,15 +72,15 @@ our $last_date_aggregation;
 ##
 sub fatal_err {
     my $m     = shift;
-    my $errno = $!;
+    my $errno = $ERRNO;
 
     eval {
         syslog('err', $m, @_);
         syslog('err', "Exiting.");
     };
-    if ($@ && ($warning_date < time - $warning_timeout)) {
+    if ($EVAL_ERROR && ($warning_date < time - $warning_timeout)) {
         $warning_date = time + $warning_timeout;
-        unless (Sympa::Site->send_notify_to_listmaster('logs_failed', [$@])) {
+        unless (Sympa::Site->send_notify_to_listmaster('logs_failed', [$EVAL_ERROR])) {
             print STDERR "No logs available, can't send warning message";
         }
     }
@@ -113,7 +114,7 @@ sub do_log {
     my $message = shift;
     my @param   = ();
 
-    my $errno = $!;
+    my $errno = $ERRNO;
 
     ## Do not display variables which are references.
     my @n = ($message =~ /(%[^%])/g);
@@ -206,9 +207,9 @@ sub do_log {
         }
     };
 
-    if ($@ && ($warning_date < time - $warning_timeout)) {
+    if ($EVAL_ERROR && ($warning_date < time - $warning_timeout)) {
         $warning_date = time + $warning_timeout;
-        Sympa::Site->send_notify_to_listmaster('logs_failed', [$@]);
+        Sympa::Site->send_notify_to_listmaster('logs_failed', [$EVAL_ERROR]);
     }
 }
 
@@ -234,10 +235,10 @@ sub do_connect {
     # close log may be usefull : if parent processus did open log child
     # process inherit the openlog with parameters from parent process
     closelog;
-    eval { openlog("$log_service\[$$\]", 'ndelay,nofatal', $log_facility) };
-    if ($@ && ($warning_date < time - $warning_timeout)) {
+    eval { openlog("$log_service\[$PID\]", 'ndelay,nofatal', $log_facility) };
+    if ($EVAL_ERROR && ($warning_date < time - $warning_timeout)) {
         $warning_date = time + $warning_timeout;
-        unless (Sympa::Site->send_notify_to_listmaster('logs_failed', [$@])) {
+        unless (Sympa::Site->send_notify_to_listmaster('logs_failed', [$EVAL_ERROR])) {
             print STDERR "No logs available, can't send warning message";
         }
     }
