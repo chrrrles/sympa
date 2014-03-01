@@ -165,8 +165,8 @@ our %cpan_modules = (
     },
     'File::NFSLock' => {
         package_name => 'File-NFSLock',
-        'gettext_id' =>
-            'required to perform NFS lock ; see also lock_method sympa.conf parameter'
+        mandatory    => 1,
+        'gettext_id' => 'required to perform NFS-safe file locking',
     },
     'HTML::FormatText' => {
         package_name => 'HTML-Format',
@@ -183,6 +183,12 @@ our %cpan_modules = (
         package_name => 'HTML-Tree',
         mandatory    => 1,
         'gettext_id' => 'used to compute plaindigest messages from HTML',
+    },
+    'IO::File' => {
+        required_version => '1.10',
+        package_name     => 'IO',
+        mandatory        => 1,
+        'gettext_id'     => 'internal use for filehandle processing',
     },
     'IO::Scalar' => {
         package_name => 'IO-stringy',

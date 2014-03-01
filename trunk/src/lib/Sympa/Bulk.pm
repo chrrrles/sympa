@@ -203,14 +203,15 @@ sub remove {
     my $messagekey = shift;
     my $packetid   = shift;
 
-    Sympa::Log::Syslog::do_log('debug', "Sympa::Bulk::remove(%s,%s)", $messagekey,
-        $packetid);
+    Sympa::Log::Syslog::do_log('debug', "Sympa::Bulk::remove(%s,%s)",
+        $messagekey, $packetid);
 
     unless (
         $sth = Sympa::DatabaseManager::do_query(
             q{DELETE FROM bulkpacket_table
 	  WHERE packetid_bulkpacket = %s AND messagekey_bulkpacket = %s},
-            Sympa::DatabaseManager::quote($packetid), Sympa::DatabaseManager::quote($messagekey)
+            Sympa::DatabaseManager::quote($packetid),
+            Sympa::DatabaseManager::quote($messagekey)
         )
         ) {
         Sympa::Log::Syslog::do_log('err',
@@ -303,12 +304,12 @@ sub message_from_spool {
 sub store {
     my %data = @_;
 
-    my $message          = $data{'message'};
-    my $msg_id           = $message->get_header('Message-Id');
-    my $rcpts            = $data{'rcpts'};
-    my $from             = $data{'from'};
-    my $robot            = Sympa::Robot::clean_robot($data{'robot'}, 1); # maybe Site
-    my $listname         = $data{'listname'};
+    my $message  = $data{'message'};
+    my $msg_id   = $message->get_header('Message-Id');
+    my $rcpts    = $data{'rcpts'};
+    my $from     = $data{'from'};
+    my $robot    = Sympa::Robot::clean_robot($data{'robot'}, 1);  # maybe Site
+    my $listname = $data{'listname'};
     my $priority_message = $data{'priority_message'};
     my $priority_packet  = $data{'priority_packet'};
     my $delivery_date    = $data{'delivery_date'};
@@ -541,8 +542,8 @@ sub remove_bulkspool_message {
 
     unless (
         Sympa::DatabaseManager::do_query(
-            "DELETE FROM %s WHERE %s = %s", $table,
-            $key,                           Sympa::DatabaseManager::quote($messagekey)
+            "DELETE FROM %s WHERE %s = %s",
+            $table, $key, Sympa::DatabaseManager::quote($messagekey)
         )
         ) {
         Sympa::Log::Syslog::do_log('err', 'Unable to delete %s %s from %s',

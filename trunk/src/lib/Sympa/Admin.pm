@@ -185,8 +185,8 @@ sub create_list_old {
     }
 
     # owner.email || owner_include.source
-    unless (
-        check_owner_defined($param->{'owner'}, $param->{'owner_include'})) {
+    unless (check_owner_defined($param->{'owner'}, $param->{'owner_include'}))
+    {
         Sympa::Log::Syslog::do_log('err',
             'create_list_old : problem in owner definition in this list creation'
         );
@@ -241,7 +241,9 @@ sub create_list_old {
     }
 
     ## Check this listname doesn't exist already.
-    if ($res || Sympa::List->new($param->{'listname'}, $robot, {'just_try' => 1})) {
+    if ($res
+        || Sympa::List->new($param->{'listname'}, $robot, {'just_try' => 1}))
+    {
         Sympa::Log::Syslog::do_log(
             'err',
             'could not create already existing list %s on %s for %s',
@@ -292,20 +294,11 @@ sub create_list_old {
         $robot->get_etc_include_path('create_list_templates/' . $template);
 
     ## Lock config before openning the config file
-    my $lock = Sympa::Lock->new($list_dir . '/config');
-    unless (defined $lock) {
-        Sympa::Log::Syslog::do_log('err', 'Lock could not be created');
-        return undef;
-    }
-    $lock->set_timeout(5);
-    unless ($lock->lock('write')) {
-        return undef;
-    }
-    unless (open CONFIG, '>', "$list_dir/config") {
+    my $lock_fh = Sympa::LockedFile->new($list_dir . '/config', 5, '>');
+    unless ($lock_fh) {
         Sympa::Log::Syslog::do_log('err',
             'Impossible to create %s/config : %s',
             $list_dir, $ERRNO);
-        $lock->unlock();
         return undef;
     }
     ## Use an intermediate handler to encode to filesystem_encoding
@@ -314,12 +307,10 @@ sub create_list_old {
     Sympa::Template::parse_tt2($param, 'config.tt2', $fd, $tt2_include_path);
 
     #    Encode::from_to($config, 'utf8', Sympa::Site->filesystem_encoding);
-    print CONFIG $config;
-
-    close CONFIG;
+    print $lock_fh $config;
 
     ## Unlock config file
-    $lock->unlock();
+    $lock_fh->close;
 
     ## Creation of the info file
     # remove DOS linefeeds (^M) that cause problems with Outlook 98, AOL, and
@@ -495,7 +486,8 @@ sub create_list {
     $param->{'family_config'} = $family_config->{$family->name};
     my $conf;
     my $tt_result =
-        Sympa::Template::parse_tt2($param, 'config.tt2', \$conf, [$family->dir]);
+        Sympa::Template::parse_tt2($param, 'config.tt2', \$conf,
+        [$family->dir]);
     unless (defined $tt_result || !$abort_on_error) {
         Sympa::Log::Syslog::do_log('err',
             'abort on tt2 error. List %s from family %s',
@@ -522,31 +514,16 @@ sub create_list {
     }
 
     ## Lock config before openning the config file
-    my $lock = Sympa::Lock->new($list_dir . '/config');
-    unless (defined $lock) {
-        Sympa::Log::Syslog::do_log('err', 'Lock could not be created');
+    my $lock_fh = Sympa::LockedFile->new($list_dir . '/config', 5, '>');
+    unless ($lock_fh) {
+        Sympa::Log::do_log('err', 'Impossible to create %s/config : %s',
+            $list_dir, $!);
         return undef;
     }
-    $lock->set_timeout(5);
-    unless ($lock->lock('write')) {
-        return undef;
-    }
-
-    ## Creation of the config file
-    unless (open CONFIG, '>', "$list_dir/config") {
-        Sympa::Log::Syslog::do_log('err',
-            'Impossible to create %s/config : %s',
-            $list_dir, $ERRNO);
-        $lock->unlock();
-        return undef;
-    }
-
-    #Sympa::Template::parse_tt2($param, 'config.tt2', \*CONFIG, [$family->dir]);
-    print CONFIG $conf;
-    close CONFIG;
+    print $lock_fh $conf;
 
     ## Unlock config file
-    $lock->unlock();
+    $lock_fh->close;
 
     ## Creation of the info file
     # remove DOS linefeeds (^M) that cause problems with Outlook 98, AOL, and
@@ -673,8 +650,7 @@ sub update_list {
     my $template_file = $family->get_etc_filename('config.tt2');
     unless (defined $template_file) {
         Sympa::Log::Syslog::do_log('err',
-            'update_list : no config template from family %s',
-            $family);
+            'update_list : no config template from family %s', $family);
         return undef;
     }
 
@@ -688,29 +664,16 @@ sub update_list {
     }
 
     ## Lock config before openning the config file
-    my $lock = Sympa::Lock->new($list->dir . '/config');
-    unless (defined $lock) {
-        Sympa::Log::Syslog::do_log('err', 'Lock could not be created');
+    my $lock_fh = Sympa::LockedFile->new($list->{'dir'} . '/config', 5, '>');
+    unless ($lock_fh) {
+        Sympa::Log::do_log('err', 'Impossible to create %s/config : %s',
+            $list->{'dir'}, $!);
         return undef;
     }
-    $lock->set_timeout(5);
-    unless ($lock->lock('write')) {
-        return undef;
-    }
-
-    ## Creation of the config file
-    unless (open CONFIG, '>', $list->dir . '/config') {
-        Sympa::Log::Syslog::do_log('err',
-            'Impossible to create %s/config : %s',
-            $list->dir, $ERRNO);
-        $lock->unlock();
-        return undef;
-    }
-    Sympa::Template::parse_tt2($param, 'config.tt2', \*CONFIG, [$family->dir]);
-    close CONFIG;
-
+    Sympa::Template::parse_tt2($param, 'config.tt2', $lock_fh,
+        [$family->{'dir'}]);
     ## Unlock config file
-    $lock->unlock();
+    $lock_fh->close;
 
     ## Create list object
     unless ($list = Sympa::List->new($param->{'listname'}, $robot)) {
@@ -1071,19 +1034,24 @@ sub rename_list {
 
                 ## Rename file
                 unless (
-                    move(Sympa::Site->$spool . "/$file", Sympa::Site->$spool . "/$newfile"))
-                {
+                    move(
+                        Sympa::Site->$spool . "/$file",
+                        Sympa::Site->$spool . "/$newfile"
+                    )
+                    ) {
                     Sympa::Log::Syslog::do_log(
                         'err',
                         "Unable to rename %s to %s : %s",
                         Sympa::Site->$spool . "/$file",
-                        Sympa::Site->$spool . "/$newfile", $ERRNO
+                        Sympa::Site->$spool . "/$newfile",
+                        $ERRNO
                     );
                     next;
                 }
 
                 ## Change X-Sympa-To
-                Sympa::Tools::change_x_sympa_to(Sympa::Site->$spool . "/$newfile",
+                Sympa::Tools::change_x_sympa_to(
+                    Sympa::Site->$spool . "/$newfile",
                     "$param{'new_listname'}\@$param{'new_robot'}");
             }
 
@@ -1167,7 +1135,8 @@ sub clone_list_as_empty {
 
     my $new_dir;
     if (-d Sympa::Site->home . '/' . $new_robot_id) {
-        $new_dir = Sympa::Site->home . '/' . $new_robot_id . '/' . $new_listname;
+        $new_dir =
+            Sympa::Site->home . '/' . $new_robot_id . '/' . $new_listname;
     } elsif ($new_robot_id eq Sympa::Site->domain) {
         $new_dir = Sympa::Site->home . '/' . $new_listname;
     } else {
@@ -1209,8 +1178,7 @@ sub clone_list_as_empty {
     foreach my $file ('config') {
         unless (
             File::Copy::copy(
-                $list->dir . '/' . $file,
-                $new_dir . '/' . $file
+                $list->dir . '/' . $file, $new_dir . '/' . $file
             )
             ) {
             Sympa::Log::Syslog::do_log(
@@ -1245,8 +1213,11 @@ sub clone_list_as_empty {
     my $new_list;
 
     # now switch List object to new list, update some values
-    unless ($new_list =
-        Sympa::List->new($new_listname, $new_robot_id, {'reload_config' => 1})) {
+    unless (
+        $new_list = Sympa::List->new(
+            $new_listname, $new_robot_id, {'reload_config' => 1}
+        )
+        ) {
         Sympa::Log::Syslog::do_log('info',
             "Admin::clone_list_as_empty : unable to load $new_listname while renamming"
         );
@@ -1444,9 +1415,10 @@ sub install_aliases {
     return 1
         if Sympa::Site->sendmail_aliases =~ /^none$/i;
 
-    my $alias_manager     = Sympa::Site->alias_manager;
-    my $output_file       = Sympa::Site->tmpdir . '/aliasmanager.stdout.' . $PID;
-    my $error_output_file = Sympa::Site->tmpdir . '/aliasmanager.stderr.' . $PID;
+    my $alias_manager = Sympa::Site->alias_manager;
+    my $output_file   = Sympa::Site->tmpdir . '/aliasmanager.stdout.' . $PID;
+    my $error_output_file =
+        Sympa::Site->tmpdir . '/aliasmanager.stderr.' . $PID;
     Sympa::Log::Syslog::do_log('debug3', '%s add alias %s@%s for list %s',
         $alias_manager, $list->name, $list->host, $list);
 
@@ -1478,9 +1450,12 @@ sub install_aliases {
     unlink $error_output_file;
 
     if ($status == 1) {
-        Sympa::Log::Syslog::do_log('err',
+        Sympa::Log::Syslog::do_log(
+            'err',
             'Configuration file %s has errors : %s',
-            Sympa::Conf::get_sympa_conf(), $error_output);
+            Sympa::Conf::get_sympa_conf(),
+            $error_output
+        );
     } elsif ($status == 2) {
         Sympa::Log::Syslog::do_log('err',
             'Internal error : Incorrect call to alias_manager : %s',
@@ -1619,8 +1594,8 @@ sub change_user_email {
     my $robot = Sympa::Robot::clean_robot($in{'robot'});
 
     ## Change email as list MEMBER
-    foreach
-        my $list (Sympa::List::get_which($in{'current_email'}, $robot, 'member')) {
+    foreach my $list (
+        Sympa::List::get_which($in{'current_email'}, $robot, 'member')) {
 
         my $l = $list->name;
 
@@ -1692,8 +1667,8 @@ sub change_user_email {
     ## Change email as list OWNER/MODERATOR
     my %updated_lists;
     foreach my $role ('owner', 'editor') {
-        foreach
-            my $list (Sympa::List::get_which($in{'current_email'}, $robot, $role)) {
+        foreach my $list (
+            Sympa::List::get_which($in{'current_email'}, $robot, $role)) {
 
             ## Check if admin is include via an external datasource
             my $admin_user =

@@ -25,38 +25,30 @@ package Sympa::List;
 
 use strict;
 use warnings;
-use English; # FIXME: drop $PREMATCH usage
+use English;    # FIXME: drop $PREMATCH usage
 use Carp qw(croak);
-
-#use Encode; # load in Log
+##use Encode; # load in Log
 use Exporter;
-
-#use Fcntl qw(LOCK_SH LOCK_EX LOCK_NB LOCK_UN); # no longer used
+##use Fcntl qw(LOCK_SH LOCK_EX LOCK_NB LOCK_UN); # no longer used
 use IO::Scalar;
-
-#use Mail::Header; # not used
-#use MIME::Entity; # not used
+##use Mail::Header; # not used
+##use MIME::Entity; # not used
 use MIME::EncWords;
-
-#use MIME::Parser; # no longer used
+##use MIME::Parser; # no longer used
 use POSIX;
-
-#use Scalar::Util qw(refaddr); # not used
+##use Scalar::Util qw(refaddr); # not used
 use Storable qw(dclone);
 use Time::Local qw(timelocal);
-
-# tentative
+## tentative
 use Data::Dumper;
 
-#use Sympa::SQLSource; # used in SDM
-#use Datasource; # used in Sympa::SQLSource
+##use Sympa::SQLSource; # used in SDM
+##use Datasource; # used in Sympa::SQLSource
 use Sympa::LDAPSource;
-
-#use Sympa::DatabaseManager; # used in Conf
+##use Sympa::DatabaseManager; # used in Conf
 use Sympa::Robot;
-
-#use Upgrade; # no longer used
-#use Sympa::Lock;
+##use Upgrade; # no longer used
+use Sympa::LockedFile;
 use Task;
 use Scenario;
 use Sympa::Fetch;
@@ -66,20 +58,17 @@ use Sympa::KeySpool;
 use Sympa::SubscribeSpool;
 use Sympa::Archive;
 use Sympa::Template;
-
-#use Sympa::Constants; # used in Conf - confdef
+##use Sympa::Constants; # used in Conf - confdef
 use Sympa::Language qw(gettext gettext_strftime);
-
-#use Sympa::Log; # used in Conf
-#use Conf; # used in Robot - Site
+##use Sympa::Log; # used in Conf
+##use Conf; # used in Robot - Site
 use Sympa::Mail;
 use Sympa::LDAP;
 use Sympa::Message;
 use Sympa::Family;    #FIXME: dependency loop between List and Family
 use Sympa::PlainDigest;
 use Sympa::Tracking;
-
-#use Sympa::ListDef; used in Robot
+##use Sympa::ListDef; used in Robot
 
 our @ISA = qw(Sympa::Site_r);    # not fully inherit Robot
 
@@ -750,20 +739,18 @@ sub savestats {
     return undef unless $self->robot->lists($name);
 
     ## Lock file
-    my $lock = Sympa::Lock->new($dir . '/stats');
-    unless (defined $lock) {
-        Sympa::Log::Syslog::do_log('err', 'Could not create new lock');
-        return undef;
-    }
-    $lock->set_timeout(2);
-    unless ($lock->lock('write')) {
+    my $lock_fh = Sympa::LockedFile->new($dir . '/stats', 2, '>');
+    unless ($lock_fh) {
+        Sympa::Log::do_log('err', 'Could not create new lock');
         return undef;
     }
 
-    $self->_save_stats_file();
+    printf $lock_fh "%d %.0f %.0f %.0f %d %d %d\n",
+        @{$self->{'stats'}}, $self->{'total'}, $self->{'last_sync'},
+        $self->{'last_sync_admin_user'};
 
     ## Release the lock
-    unless ($lock->unlock()) {
+    unless ($lock_fh->close) {
         return undef;
     }
 
@@ -964,24 +951,23 @@ sub save_config {
     return undef unless $self;
 
     ## Lock file
-    my $lock = Sympa::Lock->new($self->dir . '/config');
-    unless (defined $lock) {
-        Sympa::Log::Syslog::do_log('err', 'Could not create new lock');
-        return undef;
-    }
-    $lock->set_timeout(5);
-    unless ($lock->lock('write')) {
+    my $lock_fh = Sympa::LockedFile->new($config_file_name, 5, '+<');
+    unless ($lock_fh) {
+        Syumpa::Log::do_log('err', 'Could not create new lock');
         return undef;
     }
 
     unless ($self->_save_list_config_file($email)) {
         Sympa::Log::Syslog::do_log('info',
             'unable to save config file %s/config', $self->dir);
-        $lock->unlock();
+        $lock_fh->close();
         return undef;
     }
 
-    $lock->unlock();
+    ## Release the lock
+    unless ($lock_fh->close()) {
+        return undef;
+    }
 
     ## Also update the binary version of the data structure
     $self->list_cache_update_config;
@@ -1525,7 +1511,7 @@ sub distribute_msg {
 
         # rename update topic content id of the message
         if ($info_msg_topic) {
-            my $topicspool = Sympa::ClassicSpool->new()('topic');
+            my $topicspool = Sympa::ClassicSpool->new() ('topic');
             rename(
                 "$topicspool->{'dir'}/$info_msg_topic->{'filename'}",
                 "$topicspool->{'dir'}/$self->->get_id.$new_id"
@@ -1893,7 +1879,8 @@ sub prepare_messages_for_digest {
             Sympa::Tools::clean_msg_id($mail->get_header('Message-Id'));
 
         ## Clean up Message-ID
-        $msg->{'message_id'} = Sympa::Tools::escape_chars($msg->{'message_id'});
+        $msg->{'message_id'} =
+            Sympa::Tools::escape_chars($msg->{'message_id'});
 
         #push @{$param->{'msg_list'}}, $msg ;
         push @{$self->{'digest'}{'all_msg'}}, $msg;
@@ -1918,8 +1905,10 @@ sub prepare_digest_parameters {
         'replyto'          => $self->get_list_address('owner'),
         'to'               => $self->get_list_address(),
         'table_of_content' => gettext("Table of contents:"),
-        'boundary1' => '----------=_' . Sympa::Tools::get_message_id($self->domain),
-        'boundary2' => '----------=_' . Sympa::Tools::get_message_id($self->domain),
+        'boundary1'        => '----------=_'
+            . Sympa::Tools::get_message_id($self->domain),
+        'boundary2' => '----------=_'
+            . Sympa::Tools::get_message_id($self->domain),
     };
     if ($self->get_reply_to() =~ /^list$/io) {
         $self->{'digest'}{'template_params'}{'replyto'} = "$param->{'to'}";
@@ -2556,7 +2545,9 @@ sub send_to_editor {
 
         # prepare html view of this message
         my $destination_dir =
-            Sympa::Site->viewmail_dir . '/mod/' . $self->get_id() . '/' . $modkey;
+              Sympa::Site->viewmail_dir . '/mod/'
+            . $self->get_id() . '/'
+            . $modkey;
         Sympa::Archive::convert_single_message(
             $self, $message,
             'destination_dir' => $destination_dir,
@@ -2790,7 +2781,7 @@ sub archive_send {
 
     $param->{'boundary1'} = Sympa::Tools::get_message_id($self->robot);
     $param->{'boundary2'} = Sympa::Tools::get_message_id($self->robot);
-    $param->{'from'}      = $self->robot->get_address();            #FIXME
+    $param->{'from'}      = $self->robot->get_address();                #FIXME
 
     $param->{'auto_submitted'} = 'auto-replied';
     unless ($self->send_file('get_archive', $who, $param)) {
@@ -2843,9 +2834,9 @@ sub archive_send_last {
         'filename' => 'last_message'
     };
 
-    $param->{'boundary1'}      = Sympa::Tools::get_message_id($self->robot);
-    $param->{'boundary2'}      = Sympa::Tools::get_message_id($self->robot);
-    $param->{'from'}           = $self->robot->get_address();           #FIXME
+    $param->{'boundary1'} = Sympa::Tools::get_message_id($self->robot);
+    $param->{'boundary2'} = Sympa::Tools::get_message_id($self->robot);
+    $param->{'from'}      = $self->robot->get_address();                #FIXME
     $param->{'auto_submitted'} = 'auto-replied';
 
     unless ($self->send_file('get_archive', $who, $param)) {
@@ -3408,7 +3399,9 @@ sub delete_all_list_admin {
     my $total = 0;
 
     ## Delete record in ADMIN
-    unless ($sth = Sympa::DatabaseManager::do_prepared_query(q{DELETE FROM admin_table})) {
+    unless ($sth =
+        Sympa::DatabaseManager::do_prepared_query(q{DELETE FROM admin_table}))
+    {
         Sympa::Log::Syslog::do_log('err',
             'Unable to remove all admin from database');
         return undef;
@@ -3908,9 +3901,10 @@ sub get_resembling_list_members_no_object {
 ######################################################################
 
 sub find_list_member_by_pattern_no_object {
-    my $options       = shift;
-    my $name          = $options->{'name'};
-    my $email_pattern = Sympa::Tools::clean_email($options->{'email_pattern'});
+    my $options = shift;
+    my $name    = $options->{'name'};
+    my $email_pattern =
+        Sympa::Tools::clean_email($options->{'email_pattern'});
     my @resembling_users;
 
     push @sth_stack, $sth;
@@ -3943,7 +3937,8 @@ sub find_list_member_by_pattern_no_object {
         if (defined $user) {
 
             $user->{'reception'} ||= 'mail';
-            $user->{'escaped_email'} = Sympa::Tools::escape_chars($user->{'email'});
+            $user->{'escaped_email'} =
+                Sympa::Tools::escape_chars($user->{'email'});
             $user->{'update_date'} ||= $user->{'date'};
             if (defined $user->{custom_attribute}) {
                 $user->{'custom_attribute'} =
@@ -3990,6 +3985,7 @@ sub _list_admin_cols {
 }
 
 ## Returns the first user for the list.
+
 sub get_first_list_member {
     my ($self, $data) = @_;
 
@@ -4001,21 +3997,9 @@ sub get_first_list_member {
     $rows       = $data->{'rows'};
     $sql_regexp = $data->{'sql_regexp'};
 
-    my $lock = Sympa::Lock->new($self->dir . '/include');
-    unless (defined $lock) {
-        Sympa::Log::Syslog::do_log('err', 'Could not create new lock');
-        return undef;
-    }
-    $lock->set_timeout(10 * 60);
-
     Sympa::Log::Syslog::do_log('debug3',
         '(%s, sortby=%s, offset=%s, rows=%s)',
         $self, $sortby, $offset, $rows);
-
-    ## Get an Shared lock
-    unless ($lock->lock('read')) {
-        return undef;
-    }
 
     my $name = $self->name;
     my $statement;
@@ -4026,7 +4010,8 @@ sub get_first_list_member {
         $selection =
             sprintf
             " AND (user_subscriber LIKE %s OR comment_subscriber LIKE %s)",
-            Sympa::DatabaseManager::quote($sql_regexp), Sympa::DatabaseManager::quote($sql_regexp);
+            Sympa::DatabaseManager::quote($sql_regexp),
+            Sympa::DatabaseManager::quote($sql_regexp);
     }
 
     ## Additional subscriber fields
@@ -4034,7 +4019,8 @@ sub get_first_list_member {
 	  FROM subscriber_table
 	  WHERE list_subscriber = %s AND robot_subscriber = %s%s},
         _list_member_cols(),
-        Sympa::DatabaseManager::quote($name), Sympa::DatabaseManager::quote($self->domain), $selection;
+        Sympa::DatabaseManager::quote($name),
+        Sympa::DatabaseManager::quote($self->domain), $selection;
 
     ## SORT BY
     if ($sortby eq 'domain') {
@@ -4049,7 +4035,8 @@ sub get_first_list_member {
                 'substring_length' => '50',
             }
             ),
-            Sympa::DatabaseManager::quote($name), Sympa::DatabaseManager::quote($self->domain);
+            Sympa::DatabaseManager::quote($name),
+            Sympa::DatabaseManager::quote($self->domain);
 
     } elsif ($sortby eq 'email') {
         ## Default SORT
@@ -4098,11 +4085,6 @@ sub get_first_list_member {
     } else {
         $sth->finish;
         $sth = pop @sth_stack;
-
-        ## Release the Shared lock
-        unless ($lock->unlock()) {
-            return undef;
-        }
     }
 
     ## If no offset (for LIMIT) was used, update total of subscribers
@@ -4132,7 +4114,8 @@ sub parseCustomAttribute {
     }
 
     unless (defined $tree) {
-        Sympa::Log::Syslog::do_log('err', "Failed to parse XML data: %s", $EVAL_ERROR);
+        Sympa::Log::Syslog::do_log('err', "Failed to parse XML data: %s",
+            $EVAL_ERROR);
         return undef;
     }
 
@@ -4169,6 +4152,7 @@ sub createXMLCustomAttribute {
 }
 
 ## Returns the first admin_user with $role for the list.
+
 sub get_first_list_admin {
     my ($self, $role, $data) = @_;
 
@@ -4185,18 +4169,6 @@ sub get_first_list_admin {
         '(%s, %s, sortby=%s, offset=%s, rows=%s)',
         $self, $role, $sortby, $offset, $rows);
 
-    my $lock = Sympa::Lock->new($self->dir . '/include_admin_user');
-    unless (defined $lock) {
-        Sympa::Log::Syslog::do_log('err', 'Could not create new lock');
-        return undef;
-    }
-    $lock->set_timeout(20);
-
-    ## Get a shared lock
-    unless ($fh = $lock->lock('read')) {
-        return undef;
-    }
-
     my $name = $self->name;
     my $statement;
 
@@ -4205,7 +4177,8 @@ sub get_first_list_admin {
     if ($sql_regexp) {
         $selection =
             sprintf " AND (user_admin LIKE %s OR comment_admin LIKE %s)",
-            Sympa::DatabaseManager::quote($sql_regexp), Sympa::DatabaseManager::quote($sql_regexp);
+            Sympa::DatabaseManager::quote($sql_regexp),
+            Sympa::DatabaseManager::quote($sql_regexp);
     }
 
     $statement = sprintf q{SELECT %s
@@ -4270,17 +4243,6 @@ sub get_first_list_admin {
     } else {
         $sth->finish;
         $sth = pop @sth_stack;
-
-        ## Release the Shared lock
-        my $lock = Sympa::Lock->new($self->dir . '/include_admin_user');
-        unless (defined $lock) {
-            Sympa::Log::Syslog::do_log('err', 'Could not create new lock');
-            return undef;
-        }
-
-        unless ($lock->unlock()) {
-            return undef;
-        }
     }
 
     return $admin_user;
@@ -4328,16 +4290,6 @@ sub get_next_list_member {
     } else {
         $sth->finish;
         $sth = pop @sth_stack;
-
-        ## Release lock
-        my $lock = Sympa::Lock->new($self->dir . '/include');
-        unless (defined $lock) {
-            Sympa::Log::Syslog::do_log('err', 'Could not create new lock');
-            return undef;
-        }
-        unless ($lock->unlock()) {
-            return undef;
-        }
     }
 
     return $user;
@@ -4369,37 +4321,15 @@ sub get_next_list_admin {
     } else {
         $sth->finish;
         $sth = pop @sth_stack;
-
-        ## Release the Shared lock
-        my $lock = Sympa::Lock->new($self->dir . '/include_admin_user');
-        unless (defined $lock) {
-            Sympa::Log::Syslog::do_log('err', 'Could not create new lock');
-            return undef;
-        }
-
-        unless ($lock->unlock()) {
-            return undef;
-        }
     }
     return $admin_user;
 }
 
 ## Returns the first bouncing user
+
 sub get_first_bouncing_list_member {
     my $self = shift;
     Sympa::Log::Syslog::do_log('debug2', '');
-
-    my $lock = Sympa::Lock->new($self->dir . '/include');
-    unless (defined $lock) {
-        Sympa::Log::Syslog::do_log('err', 'Could not create new lock');
-        return undef;
-    }
-    $lock->set_timeout(10 * 60);
-
-    ## Get an Shared lock
-    unless ($lock->lock('read')) {
-        return undef;
-    }
 
     my $name = $self->name;
 
@@ -4432,11 +4362,6 @@ sub get_first_bouncing_list_member {
         Sympa::Log::Syslog::do_log('err',
             'Warning: entry with empty email address in list %s', $self)
             unless $user->{'email'};
-    } else {
-        ## Release the Shared lock
-        unless ($lock->unlock()) {
-            return undef;
-        }
     }
     return $user;
 }
@@ -4470,16 +4395,6 @@ sub get_next_bouncing_list_member {
     } else {
         $sth->finish;
         $sth = pop @sth_stack;
-
-        ## Release the Shared lock
-        my $lock = Sympa::Lock->new($self->dir . '/include');
-        unless (defined $lock) {
-            Sympa::Log::Syslog::do_log('err', 'Could not create new lock');
-            return undef;
-        }
-        unless ($lock->unlock()) {
-            return undef;
-        }
     }
 
     return $user;
@@ -4609,7 +4524,8 @@ sub update_list_member {
 
     ## additional DB fields
     if (defined Sympa::Site->db_additional_subscriber_fields) {
-        foreach my $f (split ',', Sympa::Site->db_additional_subscriber_fields) {
+        foreach
+            my $f (split ',', Sympa::Site->db_additional_subscriber_fields) {
             $map_table{$f} = 'subscriber_table';
             $map_field{$f} = $f;
         }
@@ -4649,7 +4565,8 @@ sub update_list_member {
 
             if ($map_table{$field} eq $table) {
                 if ($field eq 'date' || $field eq 'update_date') {
-                    $value = Sympa::DatabaseManager::get_canonical_write_date($value);
+                    $value = Sympa::DatabaseManager::get_canonical_write_date(
+                        $value);
                 } elsif ($value eq 'NULL') {    ## get_null_value?
                     if (Sympa::Site->db_type eq 'mysql') {
                         $value = '\N';
@@ -4672,7 +4589,8 @@ sub update_list_member {
             unless (
                 Sympa::DatabaseManager::do_query(
                     "UPDATE %s SET %s WHERE (email_user=%s)",
-                    $table, join(',', @set_list),
+                    $table,
+                    join(',', @set_list),
                     Sympa::DatabaseManager::quote($who)
                 )
                 ) {
@@ -4815,7 +4733,8 @@ sub update_list_admin {
 
             if ($map_table{$field} eq $table) {
                 if ($field eq 'date' || $field eq 'update_date') {
-                    $value = Sympa::DatabaseManager::get_canonical_write_date($value);
+                    $value = Sympa::DatabaseManager::get_canonical_write_date(
+                        $value);
                 } elsif ($value eq 'NULL') {    #get_null_value?
                     if (Sympa::Site->db_type eq 'mysql') {
                         $value = '\N';
@@ -4839,7 +4758,8 @@ sub update_list_admin {
             unless (
                 $sth = Sympa::DatabaseManager::do_query(
                     "UPDATE %s SET %s WHERE (email_user=%s)",
-                    $table, join(',', @set_list),
+                    $table,
+                    join(',', @set_list),
                     Sympa::DatabaseManager::quote($who)
                 )
                 ) {
@@ -5027,19 +4947,28 @@ sub add_list_member {
 		   suspend_start_date_subscriber, suspend_end_date_subscriber)
 		  VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %d,
 			  %d, %s, %s, %d, %d, %d)},
-                Sympa::DatabaseManager::quote($who),  Sympa::DatabaseManager::quote($new_user->{'gecos'}),
-                Sympa::DatabaseManager::quote($name), Sympa::DatabaseManager::quote($self->domain),
-                Sympa::DatabaseManager::get_canonical_write_date($new_user->{'date'}),
-                Sympa::DatabaseManager::get_canonical_write_date($new_user->{'update_date'}),
+                Sympa::DatabaseManager::quote($who),
+                Sympa::DatabaseManager::quote($new_user->{'gecos'}),
+                Sympa::DatabaseManager::quote($name),
+                Sympa::DatabaseManager::quote($self->domain),
+                Sympa::DatabaseManager::get_canonical_write_date(
+                    $new_user->{'date'}
+                ),
+                Sympa::DatabaseManager::get_canonical_write_date(
+                    $new_user->{'update_date'}
+                ),
                 Sympa::DatabaseManager::quote($new_user->{'reception'}),
                 Sympa::DatabaseManager::quote($new_user->{'topics'}),
                 Sympa::DatabaseManager::quote($new_user->{'visibility'}),
                 ($new_user->{'subscribed'} ? 1 : 0),
                 ($new_user->{'included'}   ? 1 : 0),
                 Sympa::DatabaseManager::quote($new_user->{'id'}),
-                Sympa::DatabaseManager::quote($new_user->{'custom_attribute'}),
+                Sympa::DatabaseManager::quote(
+                    $new_user->{'custom_attribute'}
+                ),
                 ($new_user->{'suspend'} ? 1 : 0),
-                $new_user->{'startdate'}, $new_user->{'enddate'}
+                $new_user->{'startdate'},
+                $new_user->{'enddate'}
             )
             ) {
             Sympa::Log::Syslog::do_log(
@@ -5138,12 +5067,16 @@ sub add_list_admin {
                 Sympa::DatabaseManager::quote($new_admin_user->{'gecos'}),
                 Sympa::DatabaseManager::quote($name),
                 Sympa::DatabaseManager::quote($self->domain),
-                Sympa::DatabaseManager::get_canonical_write_date($new_admin_user->{'date'}),
+                Sympa::DatabaseManager::get_canonical_write_date(
+                    $new_admin_user->{'date'}
+                ),
                 Sympa::DatabaseManager::get_canonical_write_date(
                     $new_admin_user->{'update_date'}
                 ),
                 Sympa::DatabaseManager::quote($new_admin_user->{'reception'}),
-                Sympa::DatabaseManager::quote($new_admin_user->{'visibility'}),
+                Sympa::DatabaseManager::quote(
+                    $new_admin_user->{'visibility'}
+                ),
                 ($new_admin_user->{'subscribed'} ? 1 : 0),
                 ($new_admin_user->{'included'}   ? 1 : 0),
                 Sympa::DatabaseManager::quote($new_admin_user->{'id'}),
@@ -5428,7 +5361,8 @@ sub is_digest {
 ## Does the file exist?
 sub archive_exist {
     my ($self, $file) = @_;
-    Sympa::Log::Syslog::do_log('debug', 'Sympa::List::archive_exist (%s)', $file);
+    Sympa::Log::Syslog::do_log('debug', 'Sympa::List::archive_exist (%s)',
+        $file);
 
     return undef unless ($self->is_archived());
     my $dir = $self->robot->arc_path . '/' . $self->get_id;
@@ -5477,7 +5411,7 @@ sub archive_msg {
                 'Do not archive message with no-archive flag for list %s',
                 $self);
         } else {
-            my $spoolarchive = Sympa::ClassicSpool->new()('outgoing');
+            my $spoolarchive = Sympa::ClassicSpool->new() ('outgoing');
             unless (
                 $spoolarchive->store(
                     $msgtostore,
@@ -5521,8 +5455,8 @@ sub get_nextdigest {
     my $self = shift;
     my $date = shift;    # the date epoch as stored in the spool database
 
-    Sympa::Log::Syslog::do_log('debug3', 'Sympa::List::get_nextdigest (list = %s)',
-        $self);
+    Sympa::Log::Syslog::do_log('debug3',
+        'Sympa::List::get_nextdigest (list = %s)', $self);
 
     my $digest = $self->digest;
 
@@ -6034,8 +5968,8 @@ sub _include_users_list {
 
 sub _include_users_file {
     my ($users, $filename, $default_user_options, $tied) = @_;
-    Sympa::Log::Syslog::do_log('debug3', 'Sympa::List::_include_users_file(%s)',
-        $filename);
+    Sympa::Log::Syslog::do_log('debug3',
+        'Sympa::List::_include_users_file(%s)', $filename);
 
     my $total = 0;
 
@@ -6135,11 +6069,13 @@ sub _include_users_remote_file {
     my $total = 0;
     my $id    = Sympa::Datasource::_get_datasource_id($param);
 
-    my $fetch = LWP::UserAgent->new(agent => 'Sympa/' . Sympa::Constants::VERSION);
+    my $fetch =
+        LWP::UserAgent->new(agent => 'Sympa/' . Sympa::Constants::VERSION);
 
     my $req = HTTP::Request->new(GET => $url);
 
     if (defined $param->{'user'} && defined $param->{'passwd'}) {
+
         # FIXME: set agent credentials,
         # requiring to compute realm and net location
     }
@@ -6474,7 +6410,8 @@ sub _include_users_ldap {
 ## Directory using a two-level query
 sub _include_users_ldap_2level {
     my ($users, $id, $source, $default_user_options, $tied) = @_;
-    Sympa::Log::Syslog::do_log('debug2', 'Sympa::List::_include_users_ldap_2level');
+    Sympa::Log::Syslog::do_log('debug2',
+        'Sympa::List::_include_users_ldap_2level');
 
     my $user         = $source->{'user'};
     my $passwd       = $source->{'passwd'};
@@ -6941,8 +6878,8 @@ sub _load_list_members_from_include {
 
             # Work with a copy of admin hash branch to avoid including
             # temporary variables into the actual admin hash.[bug #3182]
-            my $incl          = Sympa::Tools::dup_var($tmp_incl);
-            my $source_id     = Sympa::Datasource::_get_datasource_id($tmp_incl);
+            my $incl      = Sympa::Tools::dup_var($tmp_incl);
+            my $source_id = Sympa::Datasource::_get_datasource_id($tmp_incl);
             my $source_is_new = defined $old_subs->{$source_id};
 
             # Get the list of users.
@@ -7765,13 +7702,10 @@ sub sync_include {
     my $users_updated = 0;
 
     ## Get an Exclusive lock
-    my $lock = Sympa::Lock->new($self->dir . '/include');
-    unless (defined $lock) {
-        Sympa::Log::Syslog::do_log('err', 'Could not create new lock');
-        return undef;
-    }
-    $lock->set_timeout(10 * 60);
-    unless ($lock->lock('write')) {
+    my $lock_fh =
+        Sympa::LockedFile->new($self->dir . '/include', 10 * 60, '+');
+    unless ($lock_fh) {
+        Sympa::Log::do_log('err', 'Could not create new lock');
         return undef;
     }
 
@@ -7947,7 +7881,7 @@ sub sync_include {
     Sympa::Log::Syslog::do_log('notice', '%d users updated', $users_updated);
 
     ## Release lock
-    unless ($lock->unlock()) {
+    unless ($lock_fh->close()) {
         return undef;
     }
 
@@ -7972,7 +7906,8 @@ sub on_the_fly_sync_include {
     my %options = @_;
 
     my $pertinent_ttl = $self->distribution_ttl || $self->ttl;
-    Sympa::Log::Syslog::do_log('debug2', 'Sympa::List::on_the_fly_sync_include(%s)',
+    Sympa::Log::Syslog::do_log('debug2',
+        'Sympa::List::on_the_fly_sync_include(%s)',
         $pertinent_ttl);
     if (   $options{'use_ttl'} != 1
         || $self->{'last_sync'} < time - $pertinent_ttl) {
@@ -8044,13 +7979,11 @@ sub sync_include_admin {
         my $admin_users_updated = 0;
 
         ## Get an Exclusive lock
-        my $lock = Sympa::Lock->new($self->dir . '/include_admin_user');
-        unless (defined $lock) {
-            Sympa::Log::Syslog::do_log('err', 'Could not create new lock');
-            return undef;
-        }
-        $lock->set_timeout(20);
-        unless ($lock->lock('write')) {
+        my $lock_fh =
+            Sympa::LockedFile->new($self->dir . '/include_admin_user',
+            20, '+');
+        unless ($lock_fh) {
+            Sympa::Log::do_log('err', 'Could not create new lock');
             return undef;
         }
 
@@ -8300,7 +8233,7 @@ sub sync_include_admin {
         }
 
         ## Release lock
-        unless ($lock->unlock()) {
+        unless ($lock_fh->close()) {
             return undef;
         }
     }
@@ -8435,6 +8368,7 @@ sub _create_stats_file {
     close STATS;
     return 1;
 }
+
 ## Writes the user list to disk
 sub _save_list_members_file {
     my ($self, $file) = @_;
@@ -8505,7 +8439,8 @@ sub store_digest {
             POSIX::strftime("%a %b %e %H:%M:%S %Y", @now);
         $message_as_string .= sprintf
             "------- THIS IS A RFC934 COMPLIANT DIGEST, YOU CAN BURST IT -------\n\n";
-        $message_as_string .= sprintf "\n%s\n\n", Sympa::Tools::get_separator();
+        $message_as_string .= sprintf "\n%s\n\n",
+            Sympa::Tools::get_separator();
     }
     $message_as_string .= $message->as_string();    #without metadata
     $message_as_string .= sprintf "\n%s\n\n", Sympa::Tools::get_separator();
@@ -8725,7 +8660,8 @@ sub get_lists {
             sprintf('$list->family_name and $list->family_name eq "%s"',
             quotemeta $family_name);
         push @clause_sql,
-            sprintf('family_list = %s', Sympa::DatabaseManager::quote($family_name));
+            sprintf('family_list = %s',
+            Sympa::DatabaseManager::quote($family_name));
     }
 
     while (1 < scalar @query) {
@@ -8803,7 +8739,8 @@ sub get_lists {
                         sprintf("%s LIKE '%s'", $key_sql, "$b$ve$a");
                 } else {
                     push @expr_sql,
-                        sprintf('%s = %s', $key_sql, Sympa::DatabaseManager::quote($vl));
+                        sprintf('%s = %s',
+                        $key_sql, Sympa::DatabaseManager::quote($vl));
                 }
 
                 next;
@@ -8851,7 +8788,8 @@ sub get_lists {
 ##			 sprintf('web_archive_list = %d', ($v+0 ? 1 : 0));
                 } elsif ($k eq 'status') {
                     push @expr_sql,
-                        sprintf('%s_list = %s', $k, Sympa::DatabaseManager::quote($v));
+                        sprintf('%s_list = %s',
+                        $k, Sympa::DatabaseManager::quote($v));
                 } elsif ($k eq 'topics') {
                     my $ve = lc $v;
                     if ($ve eq 'others' or $ve eq 'topicsless') {
@@ -9144,7 +9082,8 @@ sub get_lists {
             $cond  = sprintf q{robot_list = robot_admin AND
 		  name_list = list_admin AND
 		  role_admin = %s AND
-		  user_admin = %s AND }, Sympa::DatabaseManager::quote($which_role), Sympa::DatabaseManager::quote($which_user);
+		  user_admin = %s AND }, Sympa::DatabaseManager::quote($which_role),
+                Sympa::DatabaseManager::quote($which_user);
             $cols = ', ' . _list_admin_cols();
         }
 
@@ -9158,7 +9097,8 @@ sub get_lists {
 		  ORDER BY %s},
                 $cols,
                 $table,
-                $cond, Sympa::DatabaseManager::quote($robot->domain), $cond_sql,
+                $cond, Sympa::DatabaseManager::quote($robot->domain),
+                $cond_sql,
                 $order_sql
             );
         } else {
@@ -9241,7 +9181,8 @@ sub get_netidtoemail_db {
     my $robot_id = shift;
     my $netid    = shift;
     my $idpname  = shift;
-    Sympa::Log::Syslog::do_log('debug', 'Sympa::List::get_netidtoemail_db(%s, %s)',
+    Sympa::Log::Syslog::do_log('debug',
+        'Sympa::List::get_netidtoemail_db(%s, %s)',
         $netid, $idpname);
 
     my ($l, %which, $email);
@@ -9473,7 +9414,8 @@ sub get_db_field_type {
     my ($table, $field) = @_;
 ## TODO: Won't work with anything apart from MySQL. should use SDM framework
 ## subs.
-    unless ($sth = Sympa::DatabaseManager::do_query("SHOW FIELDS FROM $table")) {
+    unless ($sth =
+        Sympa::DatabaseManager::do_query("SHOW FIELDS FROM $table")) {
         Sympa::Log::Syslog::do_log('err',
             'get the list of fields for table %s', $table);
         return undef;
@@ -9494,7 +9436,10 @@ sub lowercase_field {
 
     my $total = 0;
 
-    unless ($sth = Sympa::DatabaseManager::do_prepared_query("SELECT $field from $table")) {
+    unless (
+        $sth = Sympa::DatabaseManager::do_prepared_query(
+            "SELECT $field from $table")
+        ) {
         Sympa::Log::Syslog::do_log('err',
             'Unable to get values of field %s for table %s',
             $field, $table);
@@ -9540,8 +9485,8 @@ sub load_topics {
 
 ## Sort function for writing config files
 sub by_order {
-    ($Sympa::ListDef::pinfo{$main::a}{'order'} <=> $Sympa::ListDef::pinfo{$main::b}
-            {'order'})
+    ($Sympa::ListDef::pinfo{$main::a}
+            {'order'} <=> $Sympa::ListDef::pinfo{$main::b}{'order'})
         || ($main::a cmp $main::b);
 }
 
@@ -9704,7 +9649,8 @@ sub get_cert {
         }
         close CERT;
     } elsif ($format eq 'der') {
-        unless (open CERT, Sympa::Site->openssl . " x509 -in $certs -outform DER|") {
+        unless (open CERT,
+            Sympa::Site->openssl . " x509 -in $certs -outform DER|") {
             Sympa::Log::Syslog::do_log('err',
                 Sympa::Site->openssl . " x509 -in $certs -outform DER|");
             Sympa::Log::Syslog::do_log('err',
@@ -9746,26 +9692,16 @@ sub _load_list_config_file {
 ##    }
 
     ## Lock file
-    my $lock = Sympa::Lock->new($config_file);
-    unless (defined $lock) {
-        Sympa::Log::Syslog::do_log('err', 'Could not create new lock on %s',
+    my $lock_fh = Sympa::LockedFile->new($config_file, 5, '<');
+    unless ($lock_fh) {
+        Sympa::Log::do_log('err', 'Could not create new lock on %s',
             $config_file);
         return undef;
-    }
-    $lock->set_timeout(5);
-    unless ($lock->lock('read')) {
-        Sympa::Log::Syslog::do_log('err',
-            'Could not put a read lock on the config file %s', $config_file);
-        return undef;
-    }
-
-    unless (open CONFIG, "<", $config_file) {
-        Sympa::Log::Syslog::do_log('info', 'Cannot open %s', $config_file);
     }
 
     ## Split in paragraphs
     my $i = 0;
-    while (<CONFIG>) {
+    while (<$lock_fh>) {
         if (/^\s*$/) {
             $i++ if $paragraphs[$i];
         } else {
@@ -9949,12 +9885,10 @@ sub _load_list_config_file {
         }
     }
 
-    close CONFIG;
-
     ## Release the lock
-    unless ($lock->unlock()) {
-        Sympa::Log::Syslog::do_log('err',
-            'Could not remove the read lock on file %s', $config_file);
+    unless ($lock_fh->close) {
+        Sympa::Log::do_log('err', 'Could not remove the read lock on file %s',
+            $config_file);
         return undef;
     }
 
@@ -10322,8 +10256,8 @@ sub compute_topic {
     ## TAGGING BY KEYWORDS
     # getting keywords
     foreach my $topic (@{$self->msg_topic}) {
-        my $list_keyw =
-            Sympa::Tools::get_array_from_splitted_string($topic->{'keywords'});
+        my $list_keyw = Sympa::Tools::get_array_from_splitted_string(
+            $topic->{'keywords'});
 
         foreach my $keyw (@{$list_keyw}) {
             $keywords{$keyw} = $topic->{'name'};
@@ -10407,7 +10341,7 @@ sub tag_topic {
 
     my $topic_item = sprintf "TOPIC   %s\n", $topic_list;
     $topic_item .= sprintf "METHOD  %s\n", $method;
-    my $topicspool = Sympa::ClassicSpool->new()('topic');
+    my $topicspool = Sympa::ClassicSpool->new() ('topic');
 
     return (
         $topicspool->store(
@@ -10442,7 +10376,7 @@ sub load_msg_topic {
     Sympa::Log::Syslog::do_log('debug2', '(%s, %s)', @_);
     my ($self, $msg_id, $robot) = @_;
 
-    my $topicspool = Sympa::ClassicSpool->new()('topic');
+    my $topicspool = Sympa::ClassicSpool->new() ('topic');
 
     my $topics_from_spool = $topicspool->get_message(
         {   'list'      => $self->name,
@@ -10522,8 +10456,8 @@ sub modifying_msg_topic_for_list_members() {
         push @new_msg_topic_name, $msg_topic->{'name'};
     }
 
-    my $msg_topic_changes =
-        Sympa::Tools::diff_on_arrays(\@old_msg_topic_name, \@new_msg_topic_name);
+    my $msg_topic_changes = Sympa::Tools::diff_on_arrays(\@old_msg_topic_name,
+        \@new_msg_topic_name);
 
     if ($#{$msg_topic_changes->{'deleted'}} >= 0) {
 
@@ -10607,7 +10541,8 @@ sub select_list_members_for_topic {
     my $msg_topics;
 
     if ($string_topic) {
-        $msg_topics = Sympa::Tools::get_array_from_splitted_string($string_topic);
+        $msg_topics =
+            Sympa::Tools::get_array_from_splitted_string($string_topic);
     }
 
     foreach my $user (@$subscribers) {
@@ -10624,16 +10559,18 @@ sub select_list_members_for_topic {
             push @selected_users, $user;
             next;
         }
-        my $user_topics =
-            Sympa::Tools::get_array_from_splitted_string($info_user->{'topics'});
+        my $user_topics = Sympa::Tools::get_array_from_splitted_string(
+            $info_user->{'topics'});
 
         if ($string_topic) {
-            my $result = Sympa::Tools::diff_on_arrays($msg_topics, $user_topics);
+            my $result =
+                Sympa::Tools::diff_on_arrays($msg_topics, $user_topics);
             if ($#{$result->{'intersection'}} >= 0) {
                 push @selected_users, $user;
             }
         } else {
-            my $result = Sympa::Tools::diff_on_arrays(['other'], $user_topics);
+            my $result =
+                Sympa::Tools::diff_on_arrays(['other'], $user_topics);
             if ($#{$result->{'intersection'}} >= 0) {
                 push @selected_users, $user;
             }
@@ -11403,7 +11340,8 @@ sub get_bounce_address {
     $escwho =~ s/\@/==a==/;
 
     return sprintf('%s+%s@%s',
-        Sympa::Site->bounce_email_prefix, join('==', $escwho, $self->name, @opts),
+        Sympa::Site->bounce_email_prefix,
+        join('==', $escwho, $self->name, @opts),
         $self->domain);
 }
 
@@ -12360,9 +12298,10 @@ sub list_cache_fetch {
 
         eval { $config = Storable::thaw($l->{'config'}) };
         if ($EVAL_ERROR or !defined $config) {
-            Sympa::Log::Syslog::do_log('err',
-                'Unable to deserialize binary config of %s: %s',
-                $self, $EVAL_ERROR || 'possible format error');
+            Sympa::Log::Syslog::do_log(
+                'err', 'Unable to deserialize binary config of %s: %s',
+                $self, $EVAL_ERROR || 'possible format error'
+            );
             return undef;
         }
 
@@ -12375,13 +12314,8 @@ sub list_cache_fetch {
         and ($time_config_bin = (stat($self->dir . '/config.bin'))[9]) > $m1
         and $time_config <= $time_config_bin) {
         ## Get a shared lock on config file first
-        my $lock = Sympa::Lock->new($self->dir . '/config');
-        unless (defined $lock) {
-            Sympa::Log::Syslog::do_log('err', 'Could not create new lock');
-            return undef;
-        }
-        $lock->set_timeout(5);
-        unless ($lock->lock('read')) {
+        my $lock_fh = Sympa::LockedFile->new($self->dir . '/config', 5, '<');
+        unless ($lock_fh) {
             Sympa::Log::Syslog::do_log('err', 'Could not create new lock');
             return undef;
         }
@@ -12390,15 +12324,14 @@ sub list_cache_fetch {
         ## unless config is more recent than config.bin
         eval { $config = Storable::retrieve($self->dir . '/config.bin') };
         if ($EVAL_ERROR or !defined $config) {
-            Sympa::Log::Syslog::do_log(
-                'err', 'Unable to deserialize config.bin of %s: $EVAL_ERROR',
-                $self, $EVAL_ERROR || 'possible format error'
-            );
-            $lock->unlock();
+            Sympa::Log::Syslog::do_log('err',
+                'Unable to deserialize config.bin of %s: $EVAL_ERROR',
+                $self, $EVAL_ERROR || 'possible format error');
+            $lock_fh->close();
             return undef;
         }
 
-        $lock->unlock();
+        $lock_fh->close();
 
         $self->get_real_total;
         return {
@@ -12425,13 +12358,9 @@ sub list_cache_update_config {
 
     if ($cache_list_config eq 'binary_file') {
         ## Get a shared lock on config file first
-        my $lock = Sympa::Lock->new($self->dir . '/config');
-        unless (defined $lock) {
+        my $lock_fh = Sympa::LockedFile->new($self->dir . '/config', 5, '+');
+        unless ($lock_fh) {
             Sympa::Log::Syslog::do_log('err', 'Could not create new lock');
-            return undef;
-        }
-        $lock->set_timeout(5);
-        unless ($lock->lock('write')) {
             return undef;
         }
 
@@ -12442,11 +12371,11 @@ sub list_cache_update_config {
                 'Failed to save the binary config %s. error: %s',
                 $self->dir . '/config.bin', $EVAL_ERROR
             );
-            $lock->unlock;
+            $lock_fh->close;
             return undef;
         }
 
-        $lock->unlock;
+        $lock_fh->close;
 
         return 1;
     }
@@ -12569,19 +12498,15 @@ sub list_cache_purge {
     if ($cache_list_config eq 'binary_file' and -e $self->dir . '/config.bin')
     {
         ## Get a shared lock on config file first
-        my $lock = Sympa::Lock->new($self->dir . '/config');
-        unless (defined $lock) {
+        my $lock_fh = Sympa::LockedFile->new($self->dir . '/config', 5, '+');
+        unless ($lock_fh) {
             Sympa::Log::Syslog::do_log('err', 'Could not create new lock');
-            return undef;
-        }
-        $lock->set_timeout(5);
-        unless ($lock->lock('write')) {
             return undef;
         }
 
         unlink($self->dir . '/config.bin');
 
-        $lock->unlock;
+        $lock_fh->close;
     }
 
     return 1 unless $cache_list_config eq 'database';
