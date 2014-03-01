@@ -134,7 +134,8 @@ if ($modfail) {
 my $sympa_conf = Sympa::Constants::CONFIG;
 
 ## version string.
-my $version_string = sprintf Sympa::Language::gettext('Sympa version is %s.') . "\n",
+my $version_string =
+    sprintf Sympa::Language::gettext('Sympa version is %s.') . "\n",
     Sympa::Constants::VERSION;
 
 my %options;
@@ -172,7 +173,8 @@ sub create_configuration {
     if ($options{create} eq '' or $options{create} eq 'sympa.conf') {
         $conf = $options{target} ? $options{target} : $sympa_conf;
     } else {
-        pod2usage(sprintf Sympa::Language::gettext('%s is not a valid argument.'),
+        pod2usage(
+            sprintf Sympa::Language::gettext('%s is not a valid argument.'),
             $options{'create'});
         exit 1;
     }
@@ -205,12 +207,14 @@ sub create_configuration {
         next unless defined $param->{'default'} or defined $param->{'sample'};
 
         if ($title) {
-            printf NEWF Sympa::Language::gettext('###\\\\\\\\ %s ////###') . "\n\n",
+            printf NEWF Sympa::Language::gettext('###\\\\\\\\ %s ////###')
+                . "\n\n",
                 $title;
             undef $title;
         }
 
-        print NEWF Sympa::Tools::wrap_text(Sympa::Language::gettext($param->{'gettext_id'}),
+        print NEWF Sympa::Tools::wrap_text(
+            Sympa::Language::gettext($param->{'gettext_id'}),
             '## ', '## ')
             if (defined $param->{'gettext_id'});
 
@@ -227,7 +231,8 @@ sub create_configuration {
     }
 
     close NEWF;
-    printf STDERR Sympa::Language::gettext('%s file has been created.') . "\n",
+    printf STDERR Sympa::Language::gettext('%s file has been created.')
+        . "\n",
         $conf;
 }
 
@@ -254,8 +259,8 @@ sub edit_configuration {
 
     ## Load sympa config (but not using database)
     unless (
-        defined Sympa::Robot::get_robots('config_file' => $sympa_conf, 'no_db' => 1))
-    {
+        defined Sympa::Robot::get_robots('config_file' => $sympa_conf,
+            'no_db' => 1)) {
         Sympa::Log::Syslog::fatal_err(
             Sympa::Language::gettext(
                 'Unable to load sympa configuration.  File %s or one of the virtual host robot.conf files contain errors.'
@@ -315,7 +320,8 @@ sub edit_configuration {
             print "\n";
             print Sympa::Tools::wrap_text($query || '', '* ', '  ');
             print Sympa::Tools::wrap_text($advice, '  ... ', '  ') if $advice;
-            printf(Sympa::Language::gettext('%s [%s] : '), $name, $current_value);
+            printf(Sympa::Language::gettext('%s [%s] : '),
+                $name, $current_value);
             $new_value = <STDIN>;
             chomp $new_value;
         }
@@ -343,22 +349,27 @@ sub edit_configuration {
         if ($new_value eq '') {
             next unless $sample;
 
-            push @new_sympa_conf, Sympa::Tools::wrap_text($query, '## ', '## ');
+            push @new_sympa_conf,
+                Sympa::Tools::wrap_text($query, '## ', '## ');
 
             if (defined $advice and length $advice) {
-                push @new_sympa_conf, Sympa::Tools::wrap_text($advice, '## ', '## ');
+                push @new_sympa_conf,
+                    Sympa::Tools::wrap_text($advice, '## ', '## ');
             }
 
             push @new_sympa_conf, "# $name\t$sample\n\n";
         } else {
-            push @new_sympa_conf, Sympa::Tools::wrap_text($query, '## ', '## ');
+            push @new_sympa_conf,
+                Sympa::Tools::wrap_text($query, '## ', '## ');
             if (defined $advice and length $advice) {
-                push @new_sympa_conf, Sympa::Tools::wrap_text($advice, '## ', '## ');
+                push @new_sympa_conf,
+                    Sympa::Tools::wrap_text($advice, '## ', '## ');
             }
 
             if ($current_value ne $new_value) {
                 push @new_sympa_conf,
-                    sprintf('# ' . Sympa::Language::gettext('was %s %s') . "\n",
+                    sprintf(
+                    '# ' . Sympa::Language::gettext('was %s %s') . "\n",
                     $name, $current_value);
                 $somechange = 1;
             }
@@ -370,7 +381,8 @@ sub edit_configuration {
     if ($somechange) {
 
         my $date =
-            Sympa::Language::gettext_strftime("%d.%b.%Y-%H.%M.%S", localtime(time));
+            Sympa::Language::gettext_strftime("%d.%b.%Y-%H.%M.%S",
+            localtime(time));
 
         ## Keep old config file
         unless (rename $sympa_conf, $sympa_conf . '.' . $date) {
@@ -415,12 +427,14 @@ sub check_cpan {
         '# ', '# '
     );
     print '#' x 78 . "\n";
-    print Sympa::Language::gettext('Strike the Enter key to continue...') . "\n";
+    print Sympa::Language::gettext('Strike the Enter key to continue...')
+        . "\n";
 
     my $rep = <STDIN>;
 
     ### main:
-    print Sympa::Language::gettext('******* Check Perl for Sympa ********') . "\n";
+    print Sympa::Language::gettext('******* Check Perl for Sympa ********')
+        . "\n";
     ### REQ perl version
     print "\n";
     print Sympa::Language::gettext(
@@ -428,7 +442,8 @@ sub check_cpan {
         . "\n";
     my $rpv = $Sympa::ModDef::cpan_modules{"perl"}{'required_version'};
     if ($] >= $rpv) {
-        printf Sympa::Language::gettext('Your version of Perl is OK (%s >= %s).')
+        printf Sympa::Language::gettext(
+            'Your version of Perl is OK (%s >= %s).')
             . "\n",
             $], $rpv;
     } else {
@@ -491,7 +506,8 @@ sub check_modules {
         eval "require $mod";
         if ($EVAL_ERROR) {
             ### not installed
-            print Sympa::Language::gettext('not found on this system.') . "\n";
+            print Sympa::Language::gettext('not found on this system.')
+                . "\n";
             install_module($mod, {'default' => $default}, $cpan_modules);
         } else {
 
@@ -512,7 +528,8 @@ sub check_modules {
             my $rv = $cpan_modules->{$mod}{required_version} || '1.0';
             ### OK: check version
             if ($v ge $rv) {
-                printf Sympa::Language::gettext('OK (%-6s >= %s).') . "\n", $v, $rv;
+                printf Sympa::Language::gettext('OK (%-6s >= %s).') . "\n",
+                    $v, $rv;
                 next;
             } else {
                 printf
@@ -556,8 +573,11 @@ sub install_module {
     unless ($options->{'force'}) {
         print Sympa::Tools::wrap_text(
             sprintf(
-                Sympa::Language::gettext('-> Usage of this module: %s') . "\n",
-                Sympa::Language::gettext($cpan_modules->{$module}{'gettext_id'})
+                Sympa::Language::gettext('-> Usage of this module: %s')
+                    . "\n",
+                Sympa::Language::gettext(
+                    $cpan_modules->{$module}{'gettext_id'}
+                )
             ),
             '', '   '
         ) if $cpan_modules->{$module}{'gettext_id'};

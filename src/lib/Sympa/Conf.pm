@@ -104,6 +104,7 @@ my %old_params = (
     'archived_pidfile'               => '',             # ,,
     'bounced_pidfile'                => '',             # ,,
     'task_manager_pidfile'           => '',             # ,,
+    'lock_method'                    => '',             # 5.3b.3 - 6.2a.33
 );
 
 ## These parameters now have a hard-coded value
@@ -480,7 +481,8 @@ sub conf_2_db {
 
     ## Load configuration file. Ignoring database config and get result
     my $global_conf;
-    unless ($global_conf = Sympa::Site->load('no_db' => 1, 'return_result' => 1)) {
+    unless ($global_conf =
+        Sympa::Site->load('no_db' => 1, 'return_result' => 1)) {
         Sympa::Log::Syslog::do_log('err', 'Configuration file %s has errors.',
             get_sympa_conf());
         return undef;
@@ -2019,16 +2021,6 @@ sub _detect_missing_mandatory_parameters {
 sub _check_cpan_modules_required_by_config {
     my $param                     = shift;
     my $number_of_missing_modules = 0;
-    if ($param->{'config_hash'}{'lock_method'} eq 'nfs') {
-        eval "require File::NFSLock";
-        if ($EVAL_ERROR) {
-            Sympa::Log::Syslog::do_log('notice',
-                'Failed to load File::NFSLock perl module ; setting "lock_method" to "flock"'
-            );
-            $param->{'config_hash'}{'lock_method'} = 'flock';
-            $number_of_missing_modules++;
-        }
-    }
 
     ## Some parameters require CPAN modules
     if ($param->{'config_hash'}{'dkim_feature'} eq 'on') {
@@ -2163,8 +2155,7 @@ sub load_robot_conf {
 
             # Some parameters need special treatments to get their final
             # values.
-            _infer_server_specific_parameter_values(
-                {'config_hash' => $conf});
+            _infer_server_specific_parameter_values({'config_hash' => $conf});
         }
 
         _infer_robot_parameter_values({'config_hash' => $conf});
@@ -2327,26 +2318,18 @@ sub _replace_file_value_by_db_value {
 # Returns 1 or undef if something went wrong.
 sub _save_binary_cache {
     my $param = shift;
-    my $lock  = Sympa::Lock->new($param->{'target_file'});
-    unless (defined $lock) {
-        Sympa::Log::Syslog::do_log('err', 'Could not create new lock');
-        return undef;
-    }
-    $lock->set_timeout(2);
-    unless ($lock->lock('write')) {
+    my $lock_fh = Sympa::LockedFile->new($param->{'target_file'}, 2, '>');
+    unless ($lock_fh) {
+        Sympa::Log::do_log('err', 'Could not create new lock');
         return undef;
     }
 
-    eval {
-        Storable::store($param->{'conf_to_save'}, $param->{'target_file'});
-    };
-    if ($EVAL_ERROR) {
-        Sympa::Log::Syslog::do_log(
-            'err',
-            'Failed to save the binary config %s. error: %s',
-            $param->{'target_file'}, $EVAL_ERROR
-        );
-        unless ($lock->unlock()) {
+    eval { Storable::store_fd($param->{'conf_to_save'}, $lock_fh); };
+    if ($@) {
+        printf STDERR
+            'Conf::_save_binary_cache(): Failed to save the binary config %s. error: %s\n',
+            $param->{'target_file'}, $@;
+        unless ($lock_fh->close()) {
             return undef;
         }
         return undef;
@@ -2364,12 +2347,12 @@ sub _save_binary_cache {
             'Failed to change owner of the binary file %s. error: %s',
             $param->{'target_file'}, $EVAL_ERROR
         );
-        unless ($lock->unlock()) {
+        unless ($lock_fh->close()) {
             return undef;
         }
         return undef;
     }
-    unless ($lock->unlock()) {
+    unless ($lock_fh->close()) {
         return undef;
     }
     return 1;
@@ -2381,33 +2364,24 @@ sub _load_binary_cache {
     my $param  = shift;
     my $result = undef;
 
-    my $config_file = $param->{'config_file'};
-    return undef
-        unless _source_has_not_changed({'config_file' => $config_file});
-    my $config_bin = $config_file . $binary_file_extension;
-
-    my $lock = Sympa::Lock->new($config_bin);
-    unless (defined $lock) {
-        Sympa::Log::Syslog::do_log('err', 'Could not create new lock');
-        return undef;
-    }
-    $lock->set_timeout(2);
-    unless ($lock->lock('read')) {
+    my $lock_fh = Sympa::LockedFile->new($param->{'config_file'}, 2, '<');
+    unless ($lock_fh) {
+        Sympa::Log::do_log('err', 'Could not create new lock');
         return undef;
     }
 
-    eval { $result = Storable::retrieve($config_bin); };
-    if ($EVAL_ERROR or !$result) {
-        Sympa::Log::Syslog::do_log('err',
-            'Failed to load the binary config %s. error: %s',
-            $config_bin, $EVAL_ERROR || 'possible format error');
-        unless ($lock->unlock()) {
+    eval { $result = Storable::fd_retrieve($lock_fh); };
+    if ($@) {
+        printf STDERR
+            "Conf::_load_binary_cache(): Failed to load the binary config %s. error: %s\n",
+            $param->{'config_file'}, $@;
+        unless ($lock_fh->close()) {
             return undef;
         }
         return undef;
     }
     ## Release the lock
-    unless ($lock->unlock()) {
+    unless ($lock_fh->close()) {
         return undef;
     }
     return $result;
@@ -2462,7 +2436,9 @@ sub _get_config_file_name {
 }
 
 sub _create_robot_like_config_for_main_robot {
-    return if (defined $Sympa::Conf::Conf{'robots'}{$Sympa::Conf::Conf{'domain'}});
+    return
+        if (
+        defined $Sympa::Conf::Conf{'robots'}{$Sympa::Conf::Conf{'domain'}});
     my $main_conf_no_robots = Sympa::Tools::dup_var(\%Conf);
     delete $main_conf_no_robots->{'robots'};
     _remove_unvalid_robot_entry(
