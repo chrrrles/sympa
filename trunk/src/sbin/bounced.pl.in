@@ -270,7 +270,7 @@ Sympa::Log::Syslog::do_log('notice', "bounced Started");
 $SIG{'TERM'} = 'sigterm';
 my $end = 0;
 
-my $spool = Sympa::ClassicSpool->new()('bounce');
+my $spool = Sympa::ClassicSpool->new('bounce');
 
 Sympa::Log::Syslog::do_log('debug', 'starting infinite loop');
 ## infinite loop scanning the queue (unless a sig TERM is received

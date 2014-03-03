@@ -1466,25 +1466,25 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
         if ($index_cleanqueue++ >= 1) {
             $index_cleanqueue = 0;
             Sympa::Log::Syslog::do_log('debug', 'Cleaning spools');
-            my $msg_bad = Sympa::ClassicSpool->new()('msg', 'bad');
+            my $msg_bad = Sympa::ClassicSpool->new('msg', 'bad');
             $msg_bad->clean({'delay' => Sympa::Site->clean_delay_queue});
-            my $archive_bad = Sympa::ClassicSpool->new()('outgoing', 'bad');
+            my $archive_bad = Sympa::ClassicSpool->new('outgoing', 'bad');
             $archive_bad->clean({'delay' => Sympa::Site->clean_delay_queueoutgoing});
-            my $queuebounce_bad = Sympa::ClassicSpool->new()('bounce', 'bad');
+            my $queuebounce_bad = Sympa::ClassicSpool->new('bounce', 'bad');
             $queuebounce_bad->clean(
                 {'delay' => Sympa::Site->clean_delay_queuebounce});
-            my $queuemod = Sympa::ClassicSpool->new()('mod');
+            my $queuemod = Sympa::ClassicSpool->new('mod');
             $queuemod->clean({'delay' => Sympa::Site->clean_delay_queuemod});
-            my $queueauth = Sympa::ClassicSpool->new()('auth');
+            my $queueauth = Sympa::ClassicSpool->new('auth');
             $queueauth->clean({'delay' => Sympa::Site->clean_delay_queueauth});
-            my $queuetopic = Sympa::ClassicSpool->new()('topic');
+            my $queuetopic = Sympa::ClassicSpool->new('topic');
             $queuetopic->clean({'delay' => Sympa::Site->clean_delay_queuetopic});
-            my $queuesubscribe = Sympa::ClassicSpool->new()('subscribe');
+            my $queuesubscribe = Sympa::ClassicSpool->new('subscribe');
             $queuesubscribe->clean(
                 {'delay' => Sympa::Site->clean_delay_queuesubscribe});
-            my $queuesignoff = Sympa::ClassicSpool->new()('signoff');
+            my $queuesignoff = Sympa::ClassicSpool->new('signoff');
             $queuesignoff->clean({'delay' => Sympa::Site->clean_delay_queuesignoff});
-            my $queueautomatic = Sympa::ClassicSpool->new()('automatic');
+            my $queueautomatic = Sympa::ClassicSpool->new('automatic');
             $queueautomatic->clean(
                 {'delay' => Sympa::Site->clean_delay_queueautomatic});
 
@@ -3171,7 +3171,7 @@ sub DoCommand {
 sub SendDigest {
     Sympa::Log::Syslog::do_log('debug2', '()');
 
-    my $digestspool = Sympa::ClassicSpool->new()('digest');
+    my $digestspool = Sympa::ClassicSpool->new('digest');
 
     foreach my $digest (
         $digestspool->get_content(
