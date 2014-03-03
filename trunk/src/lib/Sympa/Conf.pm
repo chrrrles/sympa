@@ -44,7 +44,7 @@ use Sympa::ConfDef;
 use Sympa::Tools;
 
 #use Sympa::Constants; # already load in confdef.
-use Sympa::Lock;
+use Sympa::LockedFile;
 
 our @ISA    = qw(Exporter);
 our @EXPORT = qw(%params %Conf);
