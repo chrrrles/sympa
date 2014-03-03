@@ -1294,7 +1294,7 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
                 print STDERR "Error : incorrect robot name '$robot_id'\n";
                 exit 1;
             }
-            unless (List->new($listname, $robot, {'reload_config' => 1})) {
+            unless (Sympa::List->new($listname, $robot, {'reload_config' => 1})) {
                 print STDERR "Error : incorrect list name '$listname'\n";
                 exit 1;
             }

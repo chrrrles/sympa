@@ -131,13 +131,13 @@ sub analyze_file_name {
         $data->{'robot_object'}->split_listname($data->{'list'});
     if (defined $listname) {
         $data->{'list_object'} =
-            List->new($listname, $data->{'robot_object'}, {'just_try' => 1});
+            Sympa::List->new($listname, $data->{'robot_object'}, {'just_try' => 1});
     }
 
     return $data;
 }
 
-# Initialize Sympaspool global object.
+# Initialize Sympa::Spool global object.
 #NO LONGER USED.
 #sub set_spool {
 #    $taskspool = Sympa::TaskSpool->new;

@@ -9262,7 +9262,7 @@ sub do_add_frommod {
         unless ($message) {
             ## if the message has been accepted via WWSympa, it's in spool
             ## 'validated'
-            my $validatedspool = Sympaspool->new('validated');
+            my $validatedspool = Sympa::Spool->new('validated');
             $message_in_spool = $validatedspool->get_message(
                 {   'list'    => $list->name,
                     'robot'   => $robot_id,
@@ -11254,7 +11254,7 @@ sub do_create_list {
     }
 
     ## notify listmaster
-    my $list = List->new($in{'listname'}, $robot);
+    my $list = Sympa::List->new($in{'listname'}, $robot);
     unless (defined $list) {
         wwslog('info', "failed to create list object for list '%s'",
             $in{'listname'});

@@ -21,7 +21,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package Sympaspool;
+package Sympa::Spool;
 
 use strict;
 
@@ -309,7 +309,7 @@ sub next {
     }
     if ($robot) {
         if ($listname and length $listname) {
-            $message->{'list_object'} = List->new($listname, $robot);
+            $message->{'list_object'} = Sympa::List->new($listname, $robot);
         }
         $message->{'robot_object'} = $robot;
     }
@@ -390,7 +390,7 @@ sub get_message {
     if ($message->{'list'} && $message->{'robot'}) {
         my $robot = Sympa::Robot->new($message->{'robot'});
         if ($robot) {
-            my $list = List->new($message->{'list'}, $robot);
+            my $list = Sympa::List->new($message->{'list'}, $robot);
             if ($list) {
                 $message->{'list_object'} = $list;
             }

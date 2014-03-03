@@ -99,7 +99,7 @@ if ($main::options{'help'} or !-r $p12input or ($listname and $robot_id)) {
     pod2usage(0);
 } else {
     if ($listname) {
-        my $list = List->new($listname);
+        my $list = Sympa::List->new($listname);
         unless ($list) {
             printf "unknown list %s\n", $listname;
             die;

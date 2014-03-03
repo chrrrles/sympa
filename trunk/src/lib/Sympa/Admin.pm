@@ -792,7 +792,7 @@ sub rename_list {
     if ($res
         || ($list->name ne $param{'new_listname'})
         &&    ## Do not test if listname did not change
-        (List->new($param{'new_listname'}, $new_robot, {'just_try' => 1}))
+        (Sympa::List->new($param{'new_listname'}, $new_robot, {'just_try' => 1}))
         ) {
         Sympa::Log::Syslog::do_log(
             'err',

@@ -188,7 +188,7 @@ sub next {
     }
     if ($robot) {
         if ($listname and length $listname) {
-            $result->{'list_object'} = List->new($listname, $robot);
+            $result->{'list_object'} = Sympa::List->new($listname, $robot);
         }
         $result->{'robot_object'} = $robot;
     }

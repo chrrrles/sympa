@@ -808,7 +808,7 @@ sub verify {
     my $robot    = shift;
     my $sign_mod = shift;
 
-    my $list = List->new($listname, $robot);
+    my $list = Sympa::List->new($listname, $robot);
     unless ($list) {
         Sympa::Report::reject_report_cmd('user', 'no_existing_list',
             {'listname' => $listname}, $cmd_line);
@@ -2810,7 +2810,7 @@ sub confirm {
     chomp $key;
     my $start_time = time;    # get the time at the beginning
 
-    my $spool = Sympaspool->new('auth');
+    my $spool = Sympa::Spool->new('auth');
 
     my $message_in_spool = $spool->get_message({'authkey' => $key});
     my $message = undef;
