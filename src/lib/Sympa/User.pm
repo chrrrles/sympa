@@ -27,6 +27,8 @@ use strict;
 use warnings;
 use Carp qw(carp croak);
 
+use Sympa::DatabaseDescription;
+
 #use Sympa::Site; # this module is used in Site
 
 ## Database and SQL statement handlers
