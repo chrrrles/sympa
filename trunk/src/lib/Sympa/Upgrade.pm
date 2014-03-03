@@ -349,7 +349,7 @@ sub upgrade {
     ## DB fields of enum type have been changed to int
     if (Sympa::Tools::lower_version($previous_version, '5.2a.1')) {
 
-        if (Sympa::DatabaseManager::use_db && Sympa::Site->db_type eq 'mysql') {
+        if ($Sympa::DatabaseManager::use_db && Sympa::Site->db_type eq 'mysql') {
             my %check = (
                 'subscribed_subscriber' => 'subscriber_table',
                 'included_subscriber'   => 'subscriber_table',
