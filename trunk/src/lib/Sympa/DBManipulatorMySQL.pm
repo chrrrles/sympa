@@ -27,7 +27,7 @@ use strict;
 use Data::Dumper;
 
 use Carp;
-use Sympa::Log;
+use Sympa::Log::Syslog;
 
 use Sympa::DBManipulatorDefault;
 

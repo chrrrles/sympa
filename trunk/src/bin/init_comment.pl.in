@@ -30,7 +30,7 @@ use lib '--modulesdir--';
 use Sympa::List;
 
 #use Sympa::DatabaseManager; # used by Conf
-#use Sympa::Log; # used by Conf
+#use Sympa::Log::Syslog; # used by Conf
 
 ## Load sympa config
 Sympa::Site->load or die 'config_error';

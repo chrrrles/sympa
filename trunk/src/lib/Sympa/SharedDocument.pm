@@ -34,7 +34,7 @@ use Sympa::Tools;
 use Sympa::Language qw(gettext_strftime);
 
 #use Sympa::List; # not used
-use Sympa::Log;
+use Sympa::Log::Syslog;
 
 ## Creates a new object
 sub new {

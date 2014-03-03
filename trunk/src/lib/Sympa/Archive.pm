@@ -31,7 +31,7 @@ use Digest::MD5;
 use Encode qw(decode_utf8 encode_utf8);
 use HTML::Entities qw(decode_entities);
 
-use Sympa::Log;
+use Sympa::Log::Syslog;
 
 my $serial_number = 0;    # incremented on each archived mail
 

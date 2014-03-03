@@ -796,7 +796,7 @@ sub purge_logs_table {
     }
 
     for (my $j = 1; $j <= scalar(@slots); $j++) {
-        Sympa::Log::Syslog::aggregate_data($slots[$j - 1],
+        Sympa::Log::Database::aggregate_data($slots[$j - 1],
             ($slots[$j] || $date_end));
     }
 

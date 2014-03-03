@@ -28,7 +28,7 @@ use warnings;
 use English qw(-no_match_vars);
 
 use Sympa::Message;
-use Sympa::Log;
+use Sympa::Log::Syslog;
 use Sympa::Tracking;
 use Data::Dumper;
 

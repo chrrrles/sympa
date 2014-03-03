@@ -47,7 +47,7 @@ use Sympa::List;
 #use Conf; # already load in List - Site.
 use Sympa::Language qw(gettext_strftime);
 
-#use Sympa::Log; # used in Conf
+#use Sympa::Log::Syslog; # used in Conf
 #use Sympa::Tools; # used in Conf
 #use Sympa::Constants; # load in Conf - confdef
 
@@ -516,7 +516,7 @@ sub create_list {
     ## Lock config before openning the config file
     my $lock_fh = Sympa::LockedFile->new($list_dir . '/config', 5, '>');
     unless ($lock_fh) {
-        Sympa::Log::do_log('err', 'Impossible to create %s/config : %s',
+        Sympa::Log::Syslog::do_log('err', 'Impossible to create %s/config : %s',
             $list_dir, $!);
         return undef;
     }
@@ -666,7 +666,7 @@ sub update_list {
     ## Lock config before openning the config file
     my $lock_fh = Sympa::LockedFile->new($list->{'dir'} . '/config', 5, '>');
     unless ($lock_fh) {
-        Sympa::Log::do_log('err', 'Impossible to create %s/config : %s',
+        Sympa::Log::Syslog::do_log('err', 'Impossible to create %s/config : %s',
             $list->{'dir'}, $!);
         return undef;
     }

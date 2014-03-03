@@ -27,7 +27,7 @@ use strict;
 use English qw(-no_match_vars);
 use Exporter;
 
-use Sympa::Log;
+use Sympa::Log::Syslog;
 
 our @ISA    = qw(Exporter);
 our @EXPORT = qw(%Ldap);

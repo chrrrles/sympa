@@ -21,7 +21,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package Sympa::Log;
+package Sympa::Log::Database;
 
 use strict;
 use English qw(-no_match_vars);
@@ -30,37 +30,12 @@ use English qw(-no_match_vars);
 #use Encode; # not used
 use Exporter;
 use POSIX qw(mktime);
-use Sys::Syslog;
 use Time::HiRes;
 
 #XXXuse Sympa::List; # no longer used
 #use Sympa::DatabaseManager; #FIXME: dependency loop between Log & SDM
 
-our @ISA    = qw(Exporter);
-our @EXPORT = qw($log_level %levels);
-
-my ($log_facility, $log_socket_type, $log_service, $sth, @sth_stack,
-    $rows_nb);
-
-# When logs are not available, period of time to wait before sending another
-# warning to listmaster.
-my $warning_timeout = 600;
-
-# Date of the last time a message was sent to warn the listmaster that the
-# logs are unavailable.
-my $warning_date = 0;
-
-our $log_level = undef;
-
-our %levels = (
-    err    => 0,
-    info   => 0,
-    notice => 0,
-    trace  => 0,
-    debug  => 1,
-    debug2 => 2,
-    debug3 => 3,
-);
+my ($sth, @sth_stack, $rows_nb);
 
 our $last_date_aggregation;
 
@@ -70,188 +45,7 @@ our $last_date_aggregation;
 ##Log->export_to_level(1, @_);
 ##}
 ##
-sub fatal_err {
-    my $m     = shift;
-    my $errno = $ERRNO;
 
-    eval {
-        syslog('err', $m, @_);
-        syslog('err', "Exiting.");
-    };
-    if ($EVAL_ERROR && ($warning_date < time - $warning_timeout)) {
-        $warning_date = time + $warning_timeout;
-        unless (Sympa::Site->send_notify_to_listmaster('logs_failed', [$EVAL_ERROR])) {
-            print STDERR "No logs available, can't send warning message";
-        }
-    }
-    $m =~ s/%m/$errno/g;
-
-    my $full_msg = sprintf $m, @_;
-
-    ## Notify listmaster
-    Sympa::Site->send_notify_to_listmaster('sympa_died', [$full_msg]);
-
-    eval { Sympa::Site->send_notify_to_listmaster(undef, undef, undef, 1); };
-    eval { Sympa::DatabaseManager::db_disconnect(); };    # unlock database
-    Sys::Syslog::closelog();           # flush log
-
-    printf STDERR "$m\n", @_;
-    exit(1);
-}
-
-sub do_log {
-    my $level = shift;
-
-    unless (defined $levels{$level}) {
-        do_log('err', 'Invalid $level: "%s"', $level);
-        $level = 'info';
-    }
-
-    # do not log if log level is too high regarding the log requested by user
-    return if defined $log_level  and $levels{$level} > $log_level;
-    return if !defined $log_level and $levels{$level} > 0;
-
-    my $message = shift;
-    my @param   = ();
-
-    my $errno = $ERRNO;
-
-    ## Do not display variables which are references.
-    my @n = ($message =~ /(%[^%])/g);
-    for (my $i = 0; $i < scalar @n; $i++) {
-        my $p = $_[$i];
-        unless (defined $p) {
-
-            # prevent 'Use of uninitialized value' warning
-            push @param, '';
-        } elsif (ref $p) {
-            if (ref $p eq 'ARRAY') {
-                push @param, '[...]';
-            } elsif (ref $p eq 'HASH') {
-                push @param, sprintf('{%s}', join('/', keys %{$p}));
-            } elsif (ref $p eq 'Regexp' or ref $p eq uc ref $p) {
-
-                # other unblessed references
-                push @param, ref $p;
-            } elsif ($p->can('get_id')) {
-                push @param, sprintf('%s <%s>', ref $p, $p->get_id);
-            } else {
-                push @param, ref $p;
-            }
-        } else {
-            push @param, $p;
-        }
-    }
-
-    ## Determine calling function
-    my $caller_string;
-
-    ## If in 'err' level, build a stack trace,
-    ## except if syslog has not been setup yet.
-    if (defined $log_level and $level eq 'err') {
-        my $go_back = 1;
-        my @calls;
-
-        my @f = caller($go_back);
-        if ($f[3] =~ /wwslog$/) {   ## If called via wwslog, go one step ahead
-            @f = caller(++$go_back);
-        }
-        @calls = ('#' . $f[2]);
-        while (@f = caller(++$go_back)) {
-            $calls[0] = $f[3] . $calls[0];
-            unshift @calls, '#' . $f[2];
-        }
-        $calls[0] = '(top-level)' . $calls[0];
-
-        $caller_string = join(' > ', @calls);
-    } else {
-        my @call = caller(1);
-
-        ## If called via wwslog, go one step ahead
-        if ($call[3] and $call[3] =~ /wwslog$/) {
-            @call = caller(2);
-        }
-
-        $caller_string = ($call[3] || '') . '()';
-    }
-
-    $message = $caller_string . ' ' . $message if ($caller_string);
-
-    ## Add facility to log entry
-    $message = $level . ' ' . $message;
-
-    # map to standard syslog facility if needed
-    if ($level eq 'trace') {
-        $message = "###### TRACE MESSAGE ######:  " . $message;
-        $level   = 'notice';
-    } elsif ($level eq 'debug2' || $level eq 'debug3') {
-        $level = 'debug';
-    }
-
-    ## Output to STDERR if needed
-    if (   !defined $log_level
-        or ($main::options{'foreground'} and $main::options{'log_to_stderr'})
-        or (    $main::options{'foreground'}
-            and $main::options{'batch'}
-            and $level eq 'err')
-        ) {
-        $message =~ s/%m/$errno/g;
-        printf STDERR "$message\n", @param;
-    }
-
-    return unless defined $log_level;
-    eval {
-        unless (syslog($level, $message, @param)) {
-            do_connect();
-            syslog($level, $message, @param);
-        }
-    };
-
-    if ($EVAL_ERROR && ($warning_date < time - $warning_timeout)) {
-        $warning_date = time + $warning_timeout;
-        Sympa::Site->send_notify_to_listmaster('logs_failed', [$EVAL_ERROR]);
-    }
-}
-
-sub do_openlog {
-    my ($fac, $socket_type, $service) = @_;
-    $service ||= 'sympa';
-
-    ($log_facility, $log_socket_type, $log_service) =
-        ($fac, $socket_type, $service);
-
-    #   foreach my $k (keys %options) {
-    #       printf "%s = %s\n", $k, $options{$k};
-    #   }
-
-    do_connect();
-}
-
-sub do_connect {
-    if ($log_socket_type =~ /^(unix|inet)$/i) {
-        Sys::Syslog::setlogsock(lc($log_socket_type));
-    }
-
-    # close log may be usefull : if parent processus did open log child
-    # process inherit the openlog with parameters from parent process
-    closelog;
-    eval { openlog("$log_service\[$PID\]", 'ndelay,nofatal', $log_facility) };
-    if ($EVAL_ERROR && ($warning_date < time - $warning_timeout)) {
-        $warning_date = time + $warning_timeout;
-        unless (Sympa::Site->send_notify_to_listmaster('logs_failed', [$EVAL_ERROR])) {
-            print STDERR "No logs available, can't send warning message";
-        }
-    }
-}
-
-# return the name of the used daemon
-sub set_daemon {
-    my $daemon_tmp = shift;
-    my @path       = split(/\//, $daemon_tmp);
-    my $daemon     = $path[$#path];
-    $daemon =~ s/(\.[^\.]+)$//;
-    return $daemon;
-}
 
 sub get_log_date {
     my $date_from, my $date_to;
@@ -660,14 +454,6 @@ sub get_next_db_log {
     $log->{date} = $log->{date_logs} if defined($log->{date_logs});
 
     return $log;
-}
-
-sub set_log_level {
-    $log_level = shift;
-}
-
-sub get_log_level {
-    return $log_level;
 }
 
 #aggregate date from stat_table to stat_counter_table

@@ -35,7 +35,7 @@ unless (require Crypt::CipherSaber) {
 use Sympa::List;
 
 #use Sympa::DatabaseManager; # used by conf
-#use Sympa::Log; # used by conf
+#use Sympa::Log::Syslog; # used by conf
 
 ## Load sympa config
 Sympa::Site->load or die 'config_error';

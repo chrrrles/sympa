@@ -70,7 +70,7 @@ use Sympa::Language qw(gettext_strftime);
 #use Sympa::Tools; # loaded in Conf
 #use Sympa::Template; # loaded by List
 #use Conf; # loaded in Site
-#use Sympa::Log; # loaded in Conf
+#use Sympa::Log::Syslog; # loaded in Conf
 
 my %openssl_errors = (
     1 => 'an error occurred parsing the command options',

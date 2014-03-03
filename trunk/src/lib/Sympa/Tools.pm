@@ -44,7 +44,7 @@ use Proc::ProcessTable;
 use Sympa::Conf;
 use Sympa::Language qw(gettext_strftime);
 use Sympa::LockedFile;
-##use Sympa::Log;
+##use Sympa::Log::Syslog;
 ##use Sympa::Constants;
 use Sympa::Message;
 ##use Sympa::DatabaseManager;
@@ -2129,7 +2129,7 @@ sub remove_pid {
         unless (@pids) {
             ## Release the lock
             unless (unlink $pidfile) {
-                Sympa::Log::do_log('err', "Failed to remove %s: %s",
+                Sympa::Log::Syslog::do_log('err', "Failed to remove %s: %s",
                     $pidfile, $!);
                 $lock_fh->close;
                 return undef;
@@ -2141,7 +2141,7 @@ sub remove_pid {
         }
     } else {
         unless (unlink $pidfile) {
-            Sympa::Log::do_log('err', "Failed to remove %s: %s", $pidfile,
+            Sympa::Log::Syslog::do_log('err', "Failed to remove %s: %s", $pidfile,
                 $!);
             $lock_fh->close;
             return undef;
@@ -2149,7 +2149,7 @@ sub remove_pid {
         my $err_file = Site->tmpdir . '/' . $pid . '.stderr';
         if (-f $err_file) {
             unless (unlink $err_file) {
-                Sympa::Log::do_log('err', "Failed to remove %s: %s",
+                Sympa::Log::Syslog::do_log('err', "Failed to remove %s: %s",
                     $err_file, $!);
                 $lock_fh->close;
                 return undef;
@@ -2224,7 +2224,7 @@ sub write_pid {
         ## Send a notice to listmaster with STDERR of the previous process
         if (@pids) {
             my $other_pid = $pids[0];
-            Sympa::Log::do_log('notice',
+            Sympa::Log::Syslog::do_log('notice',
                 "Previous process %s died suddenly ; notifying listmaster",
                 $other_pid);
             my $pname = $0;
@@ -3622,7 +3622,7 @@ sub get_pids_in_pid_file {
 
     my $lock_fh = Sympa::LockedFile->new($pidfile, 5, '<');
     unless ($lock_fh) {
-        Sympa::Log::do_log('err', "unable to open pidfile %s:%s",
+        Sympa::Log::Syslog::do_log('err', "unable to open pidfile %s:%s",
             $pidfile, $!);
         return undef;
     }

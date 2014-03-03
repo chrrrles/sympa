@@ -25,7 +25,7 @@ package Sympa::Wwslib;
 
 use English qw(-no_match_vars);
 
-use Sympa::Log;
+use Sympa::Log::Syslog;
 use Sympa::Conf;
 use Sympa::Constants;
 

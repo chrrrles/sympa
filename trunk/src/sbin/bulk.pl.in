@@ -100,7 +100,7 @@ use Pod::Usage;
 use Data::Dumper;
 
 #use Conf; # used in List
-#use Sympa::Log; # used in Conf
+#use Sympa::Log::Syslog; # used in Conf
 #use Commands; # no longer used
 #use Sympa::Mail; # used in List
 use Sympa::List;

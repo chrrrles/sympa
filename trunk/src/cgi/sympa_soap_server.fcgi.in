@@ -23,7 +23,7 @@ use Sympa::Template;
 use Sympa::List;
 use Sympa::Mail;
 use Sympa::Conf;
-use Sympa::Log;
+use Sympa::Log::Syslog;
 use Sympa::Language;
 use Sympa::SOAP;
 
