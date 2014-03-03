@@ -50,7 +50,7 @@ use Sympa::Robot;
 ##use Upgrade; # no longer used
 use Sympa::LockedFile;
 use Sympa::Task;
-use Scenario;
+use Sympa::Scenario;
 use Sympa::Fetch;
 use LWP::UserAgent;
 use Sympa::ClassicSpool;
