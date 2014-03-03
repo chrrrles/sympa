@@ -1063,7 +1063,7 @@ sub subscribe {
             }
         }
 
-        if ($Site::use_db) {
+        if ($Sympa::Site::use_db) {
             my $u = Sympa::User->new($sender);
             $u->lang($list->lang) unless $u->lang;
             $u->password(Sympa::Tools::tmp_passwd($sender)) unless $u->password;
@@ -1691,7 +1691,7 @@ sub add {
                 {'email' => $email, 'listname' => $which}, $cmd_line);
         }
 
-        if ($Site::use_db) {
+        if ($Sympa::Site::use_db) {
             my $u = Sympa::User->new($email);
             $u->lang($list->lang) unless $u->lang;
             $u->password(Sympa::Tools::tmp_passwd($email)) unless $u->password;

@@ -161,7 +161,7 @@ sub AUTOLOAD {
         } elsif ($self eq 'Site') {
             ## getter for internal config parameters.
             croak "Can't call method \"$attr\" on uninitialized $self class"
-                unless $Site::is_initialized;
+                unless $is_initialized;
             croak "Can't modify \"$attr\" attribute"
                 if scalar @_ > 1;
 
@@ -257,7 +257,7 @@ sub lang {
     } elsif (ref $self and ref $self eq 'Sympa::Robot'
         or !ref $self and $self eq 'Site') {
         croak "Can't call method \"lang\" on uninitialized $self class"
-            unless $Site::is_initialized;
+            unless $is_initialized;
         $lang = $Sympa::Conf::Conf{'lang'};
     } else {
         croak 'bug in loginc.  Ask developer';
@@ -304,7 +304,7 @@ sub listmasters {
         }
     } elsif ($self eq 'Site') {
         croak "Can't call method \"listmasters\" on uninitialized $self class"
-            unless $Site::is_initialized;
+            unless $is_initialized;
 
         if (wantarray) {
             @{$Sympa::Conf::Conf{'listmasters'} || []};

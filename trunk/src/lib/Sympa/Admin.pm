@@ -129,13 +129,13 @@ Creates a list. Used by the create_list() sub in sympa.pl and the do_create_list
 
 =item * Sympa::List::sync_include
 
-=item * Site::get_etc_filename
+=item * Sympa::Site::get_etc_filename
 
 =item * Sympa::Log::Syslog::do_log
 
 =item * Sympa::Tools::get_regexp
 
-=item * Site::get_etc_include_path
+=item * Sympa::Site::get_etc_include_path
 
 =item * Sympa::Template::parse_tt2 
 
