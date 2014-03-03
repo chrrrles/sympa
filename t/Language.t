@@ -13,7 +13,7 @@ use Sympa::Language;
 
 plan tests => 77;
 
-Sympa::Log::set_log_level(-1);
+Sympa::Log::Syslog::set_log_level(-1);
 
 ## Unknown language
 is(Sympa::Language::SetLang('C'),     undef);

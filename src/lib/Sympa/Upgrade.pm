@@ -284,7 +284,7 @@ sub upgrade {
 
                 ## Force Sync_admin
                 $list =
-                    List->new($list->name, $list->robot,
+                    Sympa::List->new($list->name, $list->robot,
                     {'force_sync_admin' => 1});
             }
         }

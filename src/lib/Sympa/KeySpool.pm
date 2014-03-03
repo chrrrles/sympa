@@ -80,7 +80,7 @@ sub analyze_file_name {
     return undef
         unless defined $listname
             and $data->{'list_object'} =
-            List->new($listname, $data->{'robot_object'});
+            Sympa::List->new($listname, $data->{'robot_object'});
 
     ## Get priority
 

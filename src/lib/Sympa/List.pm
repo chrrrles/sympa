@@ -100,7 +100,7 @@ my %config_in_admin_user_file = map +($_ => 1),
 
 =item new( NAME, [ ROBOT, [ OPTIONS ] ] )
 
- List->new();
+ Sympa::List->new();
 
 Creates a new object which will be used for a list and
 eventually loads the list if a name is given. Returns
@@ -1757,7 +1757,7 @@ sub send_msg_digest {
     return 0 unless ($self->get_lists_of_digest_recipients());
 
     my $digestspool =
-        Sympaspool->new('digest', undef,
+        Sympa::Spool->new('digest', undef,
         'selector' => {'messagekey' => $messagekey});
     $self->split_spooled_digest_to_messages(
         {'message_in_spool' => $digestspool->next});
@@ -8425,7 +8425,7 @@ sub store_digest {
     my @now = localtime(time);
 
     my $digestspool =
-        Sympaspool->new('digest', undef,
+        Sympa::Spool->new('digest', undef,
         'selector' => {'list' => $self->name, 'robot' => $self->domain});
 
     # remember that spool->next lock the selected message if any
@@ -8496,7 +8496,7 @@ Robot object, Sympa::Family object or Site class (default).
 
 =item OPTIONS
 
-A hashref including options passed to List->new() (see load()) and any of
+A hashref including options passed to Sympa::List->new() (see load()) and any of
 following pairs:
 
 =over 4
