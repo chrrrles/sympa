@@ -1492,8 +1492,8 @@ sub process_bouncers {
 
     ## possible actions
     my %actions = (
-        'remove_bouncers' => \Sympa::List::remove_bouncers,
-        'notify_bouncers' => \Sympa::List::notify_bouncers,
+        'remove_bouncers' => \&Sympa::List::remove_bouncers,
+        'notify_bouncers' => \&Sympa::List::notify_bouncers,
         'none'            => \&none
     );
 
