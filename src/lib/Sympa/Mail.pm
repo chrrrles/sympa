@@ -1044,7 +1044,7 @@ sub reformat_message($;$$) {
     return $msg->as_string();
 }
 
-sub fix_part($$$$) {
+sub fix_part {
     my $part        = shift;
     my $parser      = shift;
     my $attachments = shift || [];
