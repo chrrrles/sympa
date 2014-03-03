@@ -99,7 +99,7 @@ sub new {
                 "Unable to use Sympa::DBManipulatorSybase module");
             return undef;
         }
-        require DBManipulatorSybase;
+        require Sympa::DBManipulatorSybase;
 
         $actualclass = "Sympa::DBManipulatorSybase";
     } else {
