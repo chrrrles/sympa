@@ -369,7 +369,7 @@ use Sympa::Family;
 use Sympa::MessageSpool;
 
 #use Sympa::DatabaseManager; # load in Conf
-use Upgrade;
+use Sympa::Upgrade;
 
 # dirty global variables
 my $is_signed = {};

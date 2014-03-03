@@ -29,14 +29,14 @@ use Fcntl qw(LOCK_EX LOCK_NB LOCK_SH);
 use File::NFSLock;
 $File::NFSLock::LOCK_EXTENSION = '.lock';
 
-use Log;
+use Sympa::Log;
 
 our %lock_of;
 my $default_timeout    = 30;
 my $stale_lock_timeout = 20 * 60;    # TODO should become a config parameter
 
 sub open {
-    Log::do_log('debug2', '(%s, %s, %s, %s)', @_);
+    Sympa::Log::do_log('debug2', '(%s, %s, %s, %s)', @_);
     my $self             = shift;
     my $file             = shift;
     my $blocking_timeout = shift || $default_timeout;
@@ -60,12 +60,12 @@ sub open {
         }
     );
     unless ($lock) {
-        Log::do_log('err', 'Failed locking %s: %s', $file, $!);
+        Sympa::Log::do_log('err', 'Failed locking %s: %s', $file, $!);
         return undef;
     }
 
     unless ($self->SUPER::open($file, $mode)) {
-        Log::do_log('err', 'Failed opening %s: %s', $file, $!);
+        Sympa::Log::do_log('err', 'Failed opening %s: %s', $file, $!);
         $lock->unlock;    # make sure unlock to occur immediately.
         return undef;
     }
@@ -75,7 +75,7 @@ sub open {
 }
 
 sub close {
-    Log::do_log('debug2', '(%s)', @_);
+    Sympa::Log::do_log('debug2', '(%s)', @_);
     my $self = shift;
 
     my $ret = $self->SUPER::close;

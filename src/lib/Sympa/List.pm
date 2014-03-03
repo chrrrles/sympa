@@ -49,7 +49,7 @@ use Sympa::LDAPSource;
 use Sympa::Robot;
 ##use Upgrade; # no longer used
 use Sympa::LockedFile;
-use Task;
+use Sympa::Task;
 use Scenario;
 use Sympa::Fetch;
 use LWP::UserAgent;
