@@ -24,7 +24,7 @@
 package Sympa::MessageSpool;
 
 use Sympa::ClassicSpool;
-use Sympa::Log;
+use Sympa::Log::Syslog;
 
 our @ISA = qw(Sympa::ClassicSpool);
 

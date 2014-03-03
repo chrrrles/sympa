@@ -60,7 +60,7 @@ use Sympa::Archive;
 use Sympa::Template;
 ##use Sympa::Constants; # used in Conf - confdef
 use Sympa::Language qw(gettext gettext_strftime);
-##use Sympa::Log; # used in Conf
+##use Sympa::Log::Syslog; # used in Conf
 ##use Conf; # used in Robot - Site
 use Sympa::Mail;
 use Sympa::LDAP;
@@ -741,7 +741,7 @@ sub savestats {
     ## Lock file
     my $lock_fh = Sympa::LockedFile->new($dir . '/stats', 2, '>');
     unless ($lock_fh) {
-        Sympa::Log::do_log('err', 'Could not create new lock');
+        Sympa::Log::Syslog::do_log('err', 'Could not create new lock');
         return undef;
     }
 
@@ -953,7 +953,7 @@ sub save_config {
     ## Lock file
     my $lock_fh = Sympa::LockedFile->new($config_file_name, 5, '+<');
     unless ($lock_fh) {
-        Syumpa::Log::do_log('err', 'Could not create new lock');
+        Syumpa::Log::Syslog::do_log('err', 'Could not create new lock');
         return undef;
     }
 
@@ -7705,7 +7705,7 @@ sub sync_include {
     my $lock_fh =
         Sympa::LockedFile->new($self->dir . '/include', 10 * 60, '+');
     unless ($lock_fh) {
-        Sympa::Log::do_log('err', 'Could not create new lock');
+        Sympa::Log::Syslog::do_log('err', 'Could not create new lock');
         return undef;
     }
 
@@ -7983,7 +7983,7 @@ sub sync_include_admin {
             Sympa::LockedFile->new($self->dir . '/include_admin_user',
             20, '+');
         unless ($lock_fh) {
-            Sympa::Log::do_log('err', 'Could not create new lock');
+            Sympa::Log::Syslog::do_log('err', 'Could not create new lock');
             return undef;
         }
 
@@ -9694,7 +9694,7 @@ sub _load_list_config_file {
     ## Lock file
     my $lock_fh = Sympa::LockedFile->new($config_file, 5, '<');
     unless ($lock_fh) {
-        Sympa::Log::do_log('err', 'Could not create new lock on %s',
+        Sympa::Log::Syslog::do_log('err', 'Could not create new lock on %s',
             $config_file);
         return undef;
     }
@@ -9887,7 +9887,7 @@ sub _load_list_config_file {
 
     ## Release the lock
     unless ($lock_fh->close) {
-        Sympa::Log::do_log('err', 'Could not remove the read lock on file %s',
+        Sympa::Log::Syslog::do_log('err', 'Could not remove the read lock on file %s',
             $config_file);
         return undef;
     }

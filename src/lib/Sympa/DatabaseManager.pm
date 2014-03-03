@@ -30,7 +30,7 @@ use Carp;
 use Exporter;
 
 #use Conf; # SDM is used in Conf
-use Sympa::Log;
+use Sympa::Log::Syslog;
 
 #use Sympa::List; # no longer used
 use Sympa::Constants;

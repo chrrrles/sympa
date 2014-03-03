@@ -38,7 +38,7 @@ use Data::Dumper;
 
 #use Sympa::Bulk;
 #use Conf; # used in List - Site
-#use Sympa::Log; # load in Conf
+#use Sympa::Log::Syslog; # load in Conf
 use Sympa::Language qw(gettext);
 
 #use Sympa::List; # this package is loaded via List

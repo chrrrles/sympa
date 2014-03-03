@@ -36,7 +36,7 @@ use MIME::EncWords;
 #use Conf; # used in List - Site
 use Sympa::Language qw(gettext gettext_strftime);
 
-#use Sympa::Log; # used in List - Site - Conf
+#use Sympa::Log::Syslog; # used in List - Site - Conf
 use Sympa::List;
 use Sympa::Message;
 use Sympa::Report;

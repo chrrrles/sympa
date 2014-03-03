@@ -29,7 +29,7 @@ use strict;
 # tentative
 use Data::Dumper;
 
-use Sympa::Log;
+use Sympa::Log::Syslog;
 use Sympa::DBManipulatorDefault;
 
 our @ISA = qw(Sympa::DBManipulatorDefault);

@@ -34,7 +34,7 @@ my @EXPORT = ();
 use Sympa::List;
 
 #use Conf; # used in List - Site
-#use Sympa::Log; # used in Conf
+#use Sympa::Log::Syslog; # used in Conf
 use Sympa::Auth;
 
 #use Language; # no longer used

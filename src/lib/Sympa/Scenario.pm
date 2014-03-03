@@ -39,7 +39,7 @@ use Data::Dumper;
 #use Conf; # used in List - Site
 #use Language; # used in List
 #use Sympa::List; # this package is used by List
-#use Sympa::Log; # used in Conf
+#use Sympa::Log::Syslog; # used in Conf
 #use Sympa::Constants; # used in Conf - confdef
 #use Sympa::Tools; # used in Conf
 

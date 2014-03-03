@@ -26,7 +26,7 @@ package Sympa::Report;
 use strict;
 
 use Sympa::Language;
-use Sympa::Log;
+use Sympa::Log::Syslog;
 use Sympa::List;
 
 ### MESSAGE DIFFUSION REPORT ###

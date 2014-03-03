@@ -28,7 +28,7 @@ use warnings;
 use Data::Dumper;
 
 use Sympa::ClassicSpool;
-use Sympa::Log;
+use Sympa::Log::Syslog;
 
 our @ISA = qw(Sympa::ClassicSpool);
 

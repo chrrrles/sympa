@@ -29,7 +29,7 @@ use Digest::MD5;
 use POSIX;
 use CGI::Cookie;
 
-use Sympa::Log;
+use Sympa::Log::Syslog;
 
 ## Generic subroutine to set a cookie
 sub generic_set_cookie {

@@ -30,7 +30,7 @@ use Carp qw(croak);
 use Fcntl qw(LOCK_SH LOCK_EX LOCK_NB LOCK_UN);
 use FileHandle;
 
-use Sympa::Log;
+use Sympa::Log::Syslog;
 use Sympa::Constants;
 
 my %list_of_locks;

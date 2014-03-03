@@ -36,7 +36,7 @@ use Data::Dumper;
 
 #use Sympa::List; # no longer used
 use Sympa::DatabaseManager;
-use Sympa::Log;
+use Sympa::Log::Syslog;
 use Sympa::Language qw(gettext);
 
 #use Sympa::Wwslib; # no longer used
@@ -2320,7 +2320,7 @@ sub _save_binary_cache {
     my $param = shift;
     my $lock_fh = Sympa::LockedFile->new($param->{'target_file'}, 2, '>');
     unless ($lock_fh) {
-        Sympa::Log::do_log('err', 'Could not create new lock');
+        Sympa::Log::Syslog::do_log('err', 'Could not create new lock');
         return undef;
     }
 
@@ -2366,7 +2366,7 @@ sub _load_binary_cache {
 
     my $lock_fh = Sympa::LockedFile->new($param->{'config_file'}, 2, '<');
     unless ($lock_fh) {
-        Sympa::Log::do_log('err', 'Could not create new lock');
+        Sympa::Log::Syslog::do_log('err', 'Could not create new lock');
         return undef;
     }
 

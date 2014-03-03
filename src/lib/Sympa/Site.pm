@@ -425,7 +425,7 @@ sub _crash_handler {
     Sympa::Log::Syslog::do_log('err', 'DIED: %s', $msg);
     eval { Sympa::Site->send_notify_to_listmaster(undef, undef, undef, 1); };
     eval { Sympa::DatabaseManager::db_disconnect(); };    # unlock database
-    Sys::Syslog::closelog();           # flush log
+    Sympa::Log::Syslog::closelog();           # flush log
 
     ## gather traceback information
     my @calls;

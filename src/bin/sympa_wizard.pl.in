@@ -245,7 +245,7 @@ sub edit_configuration {
         . "\n"
         if $modfail;
 
-    require Robot;
+    require Sympa::Robot;
 
     # complement required fields.
     foreach my $param (@Sympa::ConfDef::params) {

@@ -36,7 +36,7 @@ use Data::Dumper;
 use Sympa::Site;
 
 #use Conf; # used in Site
-#use Sympa::Log; # used in Conf
+#use Sympa::Log::Syslog; # used in Conf
 #use Sympa::Constants; # used in Conf - confdef
 #use Sympa::DatabaseManager; # used in Conf
 
@@ -103,7 +103,7 @@ sub upgrade {
 
     ## Check database connectivity and probe database
     unless (Sympa::DatabaseManager::check_db_connect('just_try') and Sympa::DatabaseManager::probe_db()) {
-        Sympa::Log::do_log(
+        Sympa::Log::Syslog::do_log(
             'err',
             'Database %s defined in sympa.conf has not the right structure or is unreachable. verify db_xxx parameters in sympa.conf',
             Sympa::Site->db_name

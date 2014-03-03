@@ -27,7 +27,7 @@ use Digest::MD5;
 
 use Sympa::Language qw(gettext_strftime);
 
-#use Sympa::Log;
+#use Sympa::Log::Syslog;
 #use Conf;
 #use Sympa::List; # not used
 use Sympa::Report;

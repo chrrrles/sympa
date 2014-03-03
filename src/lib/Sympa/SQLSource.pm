@@ -27,7 +27,7 @@ use strict;
 
 use English qw(-no_match_vars);
 use Carp;
-use Sympa::Log;
+use Sympa::Log::Syslog;
 
 #use Conf; # not used
 #use Sympa::List; # not used
