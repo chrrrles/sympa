@@ -76,9 +76,9 @@ sub new {
 
     ## load global config if needed
     Sympa::Site->load(%options)
-        if !$Site::is_initialized
+        if !$Sympa::Site::is_initialized
             or $options{'force_reload'};
-    return undef unless $Site::is_initialized;
+    return undef unless $Sympa::Site::is_initialized;
 
     my $robot;
     ## If robot already in memory
@@ -138,9 +138,9 @@ sub load {
 
     ## load global config if needed
     Sympa::Site->load(%options)
-        if !$Site::is_initialized
+        if !$Sympa::Site::is_initialized
             or $options{'force_reload'};
-    return undef unless $Site::is_initialized;
+    return undef unless $Sympa::Site::is_initialized;
 
     unless ($self->{'name'} and $self->{'etc'}) {
         my $vhost_etc = Sympa::Site->etc . '/' . $name;
@@ -889,9 +889,9 @@ sub get_robots {
 
     ## load global config if needed
     Sympa::Site->load(%options)
-        if !$Site::is_initialized
+        if !$Sympa::Site::is_initialized
             or $options{'force_reload'};
-    return undef unless $Site::is_initialized;
+    return undef unless $Sympa::Site::is_initialized;
 
     ## Check memory cache first.
     if (Sympa::Site->robots_ok) {

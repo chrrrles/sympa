@@ -477,7 +477,7 @@ sub SetLang {
     my $locale;
 
     ## Use default lang if an empty parameter
-    $lang ||= Sympa::Site->lang if $Site::is_initialized;
+    $lang ||= Sympa::Site->lang if $Sympa::Site::is_initialized;
 
     unless ($lang) {
         Sympa::Log::Syslog::do_log('err', 'missing lang parameter');
@@ -628,7 +628,7 @@ If it is not known, returns default language tag.
 sub GetLang {
     return $current_lang if $current_lang;
 
-    if ($Site::is_initialized) {
+    if ($Sympa::Site::is_initialized) {
         SetLang(Sympa::Site->lang);
     }
     return $current_lang || 'en';    # the last resort
@@ -649,7 +649,7 @@ If it is not known, returns default charset.
 sub GetCharset {
     return $current_charset if $current_charset;
 
-    if ($Site::is_initialized) {
+    if ($Sympa::Site::is_initialized) {
         unless ($current_lang) {
             SetLang(Sympa::Site->lang);
         }

@@ -348,7 +348,7 @@ sub probe_db {
     }
 
     ## Used by List subroutines to check that the DB is available
-    $Site::use_db = 1;
+    $Sympa::Site::use_db = 1;
 
     ## Notify listmaster
     Sympa::Site->send_notify_to_listmaster('db_struct_updated',
