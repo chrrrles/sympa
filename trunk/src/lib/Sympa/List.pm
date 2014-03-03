@@ -951,6 +951,7 @@ sub save_config {
     return undef unless $self;
 
     ## Lock file
+    my $config_file_name = $self->dir . '/config';
     my $lock_fh = Sympa::LockedFile->new($config_file_name, 5, '+<');
     unless ($lock_fh) {
         Syumpa::Log::Syslog::do_log('err', 'Could not create new lock');
