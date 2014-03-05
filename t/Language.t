@@ -5,7 +5,9 @@
 
 use strict;
 use warnings;
-#use lib "...";
+
+use FindBin qw($Bin);
+use lib "$Bin/../src/lib";
 
 use Test::More;
 
