@@ -20,7 +20,7 @@
 
 SUBDIRS = src default doc po www
 
-check_SCRIPTS = t/LockedFile.t
+check_SCRIPTS = t/LockedFile.t t/Language.t t/compile_modules.t
 
 EXTRA_DIST = important_changes.pl \
 	     sympa.spec.in \
