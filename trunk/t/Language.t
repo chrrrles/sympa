@@ -1,6 +1,6 @@
-#-*- perl -*-
+#!/usr/bin/perl
 # -*- indent-tabs-mode: t; -*-
-# vim:ft=perl:noet:sw=8
+# vim:ft=perl:et:sw=4
 # $Id$
 
 use strict;
