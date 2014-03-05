@@ -1,4 +1,7 @@
-#-*- perl -*-
+#!/usr/bin/perl
+# -*- indent-tabs-mode: t; -*-
+# vim:ft=perl:et:sw=4
+# $Id$
 
 use File::Temp;
 use Test::More;
