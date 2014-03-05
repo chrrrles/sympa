@@ -28,8 +28,7 @@ EXTRA_DIST = important_changes.pl \
 	     $(check_SCRIPTS)
 
 check-local:
-	@PERL5LIB=src/lib:wwsympa:soap; export PERL5LIB; \
-        $(PERL) -Mstrict -Mwarnings -MTest::Harness -e 'runtests(@ARGV)' \
+	$(PERL) -I src/lib -MTest::Harness -e 'runtests(@ARGV)' \
 	$(check_SCRIPTS)
 
 install-data-hook: installdir installconfig nextstep importantchanges
