@@ -1872,7 +1872,7 @@ sub prepare_messages_for_digest {
         $msg->{'full_msg'} = $mail->as_string();
         $msg->{'body'}     = $mail->as_entity()->body_as_string();
         $msg->{'plain_body'} =
-            $mail->as_entity()->PlainDigest::plain_body_as_string();
+            $mail->as_entity()->Sympa::PlainDigest::plain_body_as_string();
 
         ## Should be extracted from Date:
         $msg->{'month'} = POSIX::strftime("%Y-%m", localtime(time));
