@@ -3,6 +3,9 @@
 # vim:ft=perl:et:sw=4
 # $Id$
 
+use FindBin qw($Bin);
+use lib "$Bin/../src/lib";
+
 use File::Temp;
 use Test::More;
 
@@ -76,6 +79,7 @@ exit \$lock + 0;
 EOF
 	my @command = (
 		$^X,
+                "-I$Bin/../src/lib",
 		"-MSympa::LockedFile",
 		"-e", $code
 	);
