@@ -1035,7 +1035,7 @@ sub send_file {
     my $dkim_feature          = $robot->dkim_feature;
     my $dkim_add_signature_to = $robot->dkim_add_signature_to;
     if ($dkim_feature eq 'on' and $dkim_add_signature_to =~ /robot/) {
-        $data->{'dkim'} = Sympa::Tools::get_dkim_parameters($robot);
+        $data->{'dkim'} = $robot->get_dkim_parameters();
     }
 
     # use verp excepted for alarms. We should make this configurable in

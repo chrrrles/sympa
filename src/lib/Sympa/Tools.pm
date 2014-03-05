@@ -829,48 +829,6 @@ sub get_template_path {
     return $dir . '/' . $tpl;
 }
 
-##NOTE: This might be moved to Site module as mutative method.
-sub get_dkim_parameters {
-    Sympa::Log::Syslog::do_log('debug2', '(%s)', @_);
-    my $self = shift;
-
-    my $data;
-    my $keyfile;
-    if (ref $self and ref $self eq 'List') {
-        $data->{'d'} = $self->dkim_parameters->{'signer_domain'};
-        if ($self->dkim_parameters->{'signer_identity'}) {
-            $data->{'i'} = $self->dkim_parameters->{'signer_identity'};
-        } else {
-
-            # RFC 4871 (page 21)
-            $data->{'i'} = $self->get_address('owner');
-        }
-
-        $data->{'selector'} = $self->dkim_parameters->{'selector'};
-        $keyfile = $self->dkim_parameters->{'private_key_path'};
-    } elsif (ref $self and ref $self eq 'Sympa::Robot' or $self eq 'Site') {
-
-        # in robot context
-        $data->{'d'}        = $self->dkim_signer_domain;
-        $data->{'i'}        = $self->dkim_signer_identity;
-        $data->{'selector'} = $self->dkim_selector;
-        $keyfile            = $self->dkim_private_key_path;
-    } else {
-        croak 'bug in logic.  Ask developer';
-    }
-    unless (open(KEY, $keyfile)) {
-        Sympa::Log::Syslog::do_log('err',
-            "Could not read DKIM private key %s", $keyfile);
-        return undef;
-    }
-    while (<KEY>) {
-        $data->{'private_key'} .= $_;
-    }
-    close(KEY);
-
-    return $data;
-}
-
 # input a msg as string, output the dkim status
 sub dkim_verifier {
     my $msg_as_string = shift;
