@@ -9,6 +9,7 @@ use warnings;
 use FindBin qw($Bin);
 use lib "$Bin/../src/lib";
 
+use English qw(-no_match_vars);
 use File::Temp;
 use Test::More;
 
@@ -81,11 +82,11 @@ my \$lock = Sympa::LockedFile->new("$file", -1, "$mode");
 exit \$lock + 0;
 EOF
     my @command = (
-        $^X,
+        $EXECUTABLE_NAME,
         "-I$Bin/../src/lib",
         "-MSympa::LockedFile",
         "-e", $code
     );
     system(@command);
-    return $? >> 8;
+    return $CHILD_ERROR >> 8;
 }
