@@ -13,127 +13,165 @@ use Test::More;
 
 use Sympa::Language;
 
-plan tests => 77;
+my @setlang_tests = (
+    [ 'C'     , undef ],
+    [ 'POSIX' , undef ]
+);
+
+my @lang2locale_tests = (
+    [ 'ca',    'ca'    ],
+    [ 'cs',    'cs'    ],
+    [ 'en',    'en'    ],
+    [ 'en-US', 'en_US' ],
+    [ 'ja-JP', 'ja_JP' ],
+    [ 'nb',    'nb'    ],
+    [ 'nb-NO', 'nb_NO' ], # not recommended but possible'
+    [ 'pt',    'pt'    ],
+    [ 'pt-BR', 'pt_BR' ],
+    [ 'zh',    'zh'    ],
+    [ 'zh-CN', 'zh_CN' ],
+    [ 'cz',    'cs'    ],
+    [ 'us',    'en_US' ],
+    [ 'cn',    'zh_CN' ],
+    [ 'en_US', 'en_US' ],
+    [ 'ja_JP', 'ja'    ],
+    [ 'nb_NO', 'nb'    ],
+    [ 'pt_BR', 'pt_BR' ],
+    [ 'zh_CN', 'zh_CN' ],
+    # Complex locales
+    [ 'ca-ES-valencia', 'ca_ES@valencia' ],
+    [ 'be-Latn',        'be@latin'       ],
+    [ 'tyv-Latn-MN',    'tyv_MN@latin'   ],
+);
+
+my @lang2locale_old_tests = (
+    [ 'ca',    'ca_ES' ],
+    [ 'cs',    'cs_CZ' ],
+    [ 'en',    undef   ],
+    [ 'en-US', 'en_US' ],
+    [ 'ja-JP', 'ja_JP' ],
+    [ 'nb',    'nb_NO' ],
+    [ 'nb-NO', 'nb_NO' ],
+    [ 'pt',    'pt_PT' ],
+    [ 'pt-BR', 'pt_BR' ],
+    [ 'zh',    undef   ],
+    [ 'zh-CN', 'zh_CN' ],
+    [ 'cz',    'cs_CZ' ],
+    [ 'us',    'en_US' ],
+    [ 'cn',    'zh_CN' ],
+    [ 'en_US', 'en_US' ],
+    [ 'ja_JP', 'ja_JP' ],
+    [ 'nb_NO', 'nb_NO' ],
+    [ 'pt_BR', 'pt_BR' ],
+    [ 'zh_CN', 'zh_CN' ],
+);
+
+my @canoniclang_tests = (
+    [ 'C',     undef   ],
+    [ 'POSIX', undef   ],
+    [ 'ca',    'ca'    ],
+    [ 'cs',    'cs'    ],
+    [ 'en',    'en'    ],
+    [ 'en-US', 'en-US' ],
+    [ 'ja-JP', 'ja-JP' ],
+    [ 'nb',     'nb'   ],
+    [ 'nb-NO', 'nb-NO' ], # not recommended but possible
+    [ 'pt',    'pt'    ],
+    [ 'pt-BR', 'pt-BR' ],
+    [ 'zh',    'zh'    ],
+    [ 'zh-CN', 'zh-CN' ],
+    [ 'cz',    'cs'    ],
+    [ 'us',    'en-US' ],
+    [ 'cn',    'zh-CN' ],
+    [ 'en_US', 'en-US' ],
+    [ 'ja_JP', 'ja'    ],
+    [ 'nb_NO', 'nb'    ],
+    [ 'pt_BR', 'pt-BR' ],
+    [ 'zh_CN', 'zh-CN' ],
+);
+
+my @implicatedlangs_tests = (
+    [ 'ca',               [ qw/ca/                          ] ],
+    [ 'en-US',            [ qw/en-US en/                    ] ],
+    [ 'ca-ES-valencia',   [ qw/ca-ES-valencia ca-ES ca/     ] ],
+    [ 'be-Latn',          [ qw/be-Latn be/                  ] ],
+    [ 'tyv-Latn-MN',      [ qw/tyv-Latn-MN tyv-Latn tyv/    ] ],
+    [ 'cn',               [ qw/zh-CN zh/                    ] ],
+    [ 'en_US',            [ qw/en-US en/                    ] ],
+    [ 'nb_NO',            [ qw/nb/                          ] ],
+    # zh-Hans-*/zh-Hant-* workaround
+    [ 'zh-Hans-CN',       [ qw/zh-Hans-CN zh-CN zh-Hans zh/ ] ],
+    [ 'zh-Hant-HK-xxxxx', [ qw/zh-Hant-HK-xxxxx zh-HK-xxxxx
+        zh-Hant-HK zh-HK zh-Hant zh/ ] ],
+);
+
+my @negotiatelang_tests = (
+    [ [ 'DE,en,fr;Q=0.5,es;q=0.1', 'es,fr,de,en'    ], 'de'    ],
+    [ [ 'en',                      'EN-CA,en'       ], 'en-CA' ],
+    [ [ 'en-US',                   'en,en-CA,en-US' ], 'en-US' ],
+);
+
+plan tests =>
+    scalar @setlang_tests         +
+    scalar @lang2locale_tests     +
+    scalar @lang2locale_old_tests +
+    scalar @canoniclang_tests     +
+    scalar @implicatedlangs_tests +
+    scalar @negotiatelang_tests;
 
 Sympa::Log::Syslog::set_log_level(-1);
 
 ## Unknown language
-is(Sympa::Language::SetLang('C'),     undef);
-is(Sympa::Language::SetLang('POSIX'), undef);
+foreach my $test (@setlang_tests) {
+    is(
+        Sympa::Language::SetLang($test->[0]),
+        $test->[1],
+        "SetLang test for $test->[0]"
+    );
+}
 
 ## Lang 2 locale
-is(Sympa::Language::Lang2Locale('ca'),    'ca');
-is(Sympa::Language::Lang2Locale('cs'),    'cs');
-is(Sympa::Language::Lang2Locale('en'),    'en');
-is(Sympa::Language::Lang2Locale('en-US'), 'en_US');
-is(Sympa::Language::Lang2Locale('ja-JP'), 'ja_JP');
-is(Sympa::Language::Lang2Locale('nb'),    'nb');
-is(Sympa::Language::Lang2Locale('nb-NO'),
-	'nb_NO', '"nb-NO": not recommended but possible');
-is(Sympa::Language::Lang2Locale('pt'),    'pt');
-is(Sympa::Language::Lang2Locale('pt-BR'), 'pt_BR');
-is(Sympa::Language::Lang2Locale('zh'),    'zh');
-is(Sympa::Language::Lang2Locale('zh-CN'), 'zh_CN');
-
-is(Sympa::Language::Lang2Locale('cz'), 'cs');
-is(Sympa::Language::Lang2Locale('us'), 'en_US');
-is(Sympa::Language::Lang2Locale('cn'), 'zh_CN');
-
-is(Sympa::Language::Lang2Locale('en_US'), 'en_US');
-is(Sympa::Language::Lang2Locale('ja_JP'), 'ja');
-is(Sympa::Language::Lang2Locale('nb_NO'), 'nb');
-is(Sympa::Language::Lang2Locale('pt_BR'), 'pt_BR');
-is(Sympa::Language::Lang2Locale('zh_CN'), 'zh_CN');
-
-## Complex locales
-is(Sympa::Language::Lang2Locale('ca-ES-valencia'), 'ca_ES@valencia');
-is(Sympa::Language::Lang2Locale('be-Latn'),        'be@latin');
-is(Sympa::Language::Lang2Locale('tyv-Latn-MN'),    'tyv_MN@latin');
+foreach my $test (@lang2locale_tests) {
+    is(
+        Sympa::Language::Lang2Locale($test->[0]),
+        $test->[1],
+        "Lang2Locale test for $test->[0]"
+    );
+}
 
 ## Old style locale
-is(Sympa::Language::Lang2Locale_old('ca'),    'ca_ES');
-is(Sympa::Language::Lang2Locale_old('cs'),    'cs_CZ');
-is(Sympa::Language::Lang2Locale_old('en'),    undef);
-is(Sympa::Language::Lang2Locale_old('en-US'), 'en_US');
-is(Sympa::Language::Lang2Locale_old('ja-JP'), 'ja_JP');
-is(Sympa::Language::Lang2Locale_old('nb'),    'nb_NO');
-is(Sympa::Language::Lang2Locale_old('nb-NO'), 'nb_NO');
-is(Sympa::Language::Lang2Locale_old('pt'),    'pt_PT');
-is(Sympa::Language::Lang2Locale_old('pt-BR'), 'pt_BR');
-is(Sympa::Language::Lang2Locale_old('zh'),    undef);
-is(Sympa::Language::Lang2Locale_old('zh-CN'), 'zh_CN');
-
-is(Sympa::Language::Lang2Locale_old('cz'), 'cs_CZ');
-is(Sympa::Language::Lang2Locale_old('us'), 'en_US');
-is(Sympa::Language::Lang2Locale_old('cn'), 'zh_CN');
-
-is(Sympa::Language::Lang2Locale_old('en_US'), 'en_US');
-is(Sympa::Language::Lang2Locale_old('ja_JP'), 'ja_JP');
-is(Sympa::Language::Lang2Locale_old('nb_NO'), 'nb_NO');
-is(Sympa::Language::Lang2Locale_old('pt_BR'), 'pt_BR');
-is(Sympa::Language::Lang2Locale_old('zh_CN'), 'zh_CN');
+foreach my $test (@lang2locale_old_tests) {
+    is(
+        Sympa::Language::Lang2Locale_old($test->[0]),
+        $test->[1],
+        "Lang2Locale_old test for $test->[0]"
+    );
+}
 
 ## Canonical names
 # not language tag
-is(Sympa::Language::CanonicLang('C'),     undef);
-is(Sympa::Language::CanonicLang('POSIX'), undef);
-
-is(Sympa::Language::CanonicLang('ca'),    'ca');
-is(Sympa::Language::CanonicLang('cs'),    'cs');
-is(Sympa::Language::CanonicLang('en'),    'en');
-is(Sympa::Language::CanonicLang('en-US'), 'en-US');
-is(Sympa::Language::CanonicLang('ja-JP'), 'ja-JP');
-is(Sympa::Language::CanonicLang('nb'),    'nb');
-is(Sympa::Language::CanonicLang('nb-NO'),
-	'nb-NO', '"nb-NO": not recommended but possible');
-is(Sympa::Language::CanonicLang('pt'),    'pt');
-is(Sympa::Language::CanonicLang('pt-BR'), 'pt-BR');
-is(Sympa::Language::CanonicLang('zh'),    'zh');
-is(Sympa::Language::CanonicLang('zh-CN'), 'zh-CN');
-
-is(Sympa::Language::CanonicLang('cz'), 'cs');
-is(Sympa::Language::CanonicLang('us'), 'en-US');
-is(Sympa::Language::CanonicLang('cn'), 'zh-CN');
-
-is(Sympa::Language::CanonicLang('en_US'), 'en-US');
-is(Sympa::Language::CanonicLang('ja_JP'), 'ja');
-is(Sympa::Language::CanonicLang('nb_NO'), 'nb');
-is(Sympa::Language::CanonicLang('pt_BR'), 'pt-BR');
-is(Sympa::Language::CanonicLang('zh_CN'), 'zh-CN');
+foreach my $test (@canoniclang_tests) {
+    is(
+        Sympa::Language::CanonicLang($test->[0]),
+        $test->[1],
+        "CanonicLang test for $test->[0]"
+    );
+}
 
 ## Implicated langs
-is_deeply([Sympa::Language::ImplicatedLangs('ca')], ['ca']);
-is_deeply([Sympa::Language::ImplicatedLangs('en-US')], ['en-US', 'en']);
-is_deeply([Sympa::Language::ImplicatedLangs('ca-ES-valencia')],
-	['ca-ES-valencia', 'ca-ES', 'ca']);
-is_deeply([Sympa::Language::ImplicatedLangs('be-Latn')], ['be-Latn', 'be']);
-is_deeply(
-	[Sympa::Language::ImplicatedLangs('tyv-Latn-MN')],
-	['tyv-Latn-MN', 'tyv-Latn', 'tyv']
-);
-
-# zh-Hans-*/zh-Hant-* workaround
-is_deeply(
-	[Sympa::Language::ImplicatedLangs('zh-Hans-CN')],
-	['zh-Hans-CN', 'zh-CN', 'zh-Hans', 'zh'],
-	'workaround for "zh-Hans-CN"'
-);
-is_deeply(
-	[Sympa::Language::ImplicatedLangs('zh-Hant-HK-xxxxx')],
-	[       'zh-Hant-HK-xxxxx', 'zh-HK-xxxxx',
-		'zh-Hant-HK',       'zh-HK',
-		'zh-Hant',          'zh'
-	],
-	'workaround for "zh-Hant-HK"'
-);
-
-is_deeply([Sympa::Language::ImplicatedLangs('cn')], ['zh-CN', 'zh']);
-
-is_deeply([Sympa::Language::ImplicatedLangs('en_US')], ['en-US', 'en']);
-is_deeply([Sympa::Language::ImplicatedLangs('nb_NO')], ['nb']);
+foreach my $test (@implicatedlangs_tests) {
+    is_deeply(
+        [Sympa::Language::ImplicatedLangs($test->[0])],
+        $test->[1],
+        "ImplicatedLangs test for $test->[0]"
+    );
+}
 
 ## Content negotiation
-is(Sympa::Language::NegotiateLang('DE,en,fr;Q=0.5,es;q=0.1', 'es,fr,de,en'), 'de');
-is(Sympa::Language::NegotiateLang('en',    'EN-CA,en'),       'en-CA');
-is(Sympa::Language::NegotiateLang('en-US', 'en,en-CA,en-US'), 'en-US');
-
+foreach my $test (@negotiatelang_tests) {
+    is(
+        Sympa::Language::NegotiateLang(@{$test->[0]}),
+        $test->[1],
+        "NegociateLang test for ". join(' ', @{$test->[0]})
+    );
+}
