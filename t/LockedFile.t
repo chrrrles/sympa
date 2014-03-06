@@ -3,6 +3,9 @@
 # vim:ft=perl:et:sw=4
 # $Id$
 
+use strict;
+use warnings;
+
 use FindBin qw($Bin);
 use lib "$Bin/../src/lib";
 
