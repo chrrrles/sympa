@@ -25,7 +25,6 @@ package Sympa::LDAPSource;
 
 use strict;
 
-use Exporter;
 use Sympa::Datasource;
 use Carp;
 
@@ -37,10 +36,7 @@ use Sympa::Log::Syslog;
 #use Sympa::List; # not used
 use Data::Dumper;
 
-our @ISA    = qw(Sympa::Datasource Exporter);
-our @EXPORT = qw(%date_format);
-our @EXPORT_OK =
-    qw(connect query disconnect fetch ping quote set_fetch_timeout);
+our @ISA    = qw(Sympa::Datasource);
 
 sub new {
     my $pkg   = shift;

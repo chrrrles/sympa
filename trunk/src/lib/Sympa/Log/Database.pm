@@ -28,7 +28,6 @@ use English qw(-no_match_vars);
 
 #use Carp; # currently not used
 #use Encode; # not used
-use Exporter;
 use POSIX qw(mktime);
 use Time::HiRes;
 

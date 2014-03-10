@@ -28,7 +28,6 @@ use strict;
 use English qw(-no_match_vars);
 #use Carp; # not yet used
 #use Digest::MD5; # no longer used
-#use Exporter; # not used
 use Time::Local qw(timegm timelocal);
 
 # tentative

@@ -29,7 +29,6 @@ use English qw(-no_match_vars);
 
 #use Carp; # not yet used
 #require Encode; # not used
-use Exporter;
 
 #use Fcntl qw(LOCK_SH LOCK_EX LOCK_NB LOCK_UN); # no longer used
 use Mail::Address;
@@ -43,8 +42,6 @@ use Data::Dumper;
 
 use Sympa::Message;
 use Sympa::DatabaseManager;
-
-our @ISA = qw(Exporter);
 
 ## Database and SQL statement handlers
 my ($sth, @sth_stack);

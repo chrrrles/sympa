@@ -25,12 +25,8 @@ package Sympa::LDAP;
 
 use strict;
 use English qw(-no_match_vars);
-use Exporter;
 
 use Sympa::Log::Syslog;
-
-our @ISA    = qw(Exporter);
-our @EXPORT = qw(%Ldap);
 
 my @valid_options    = qw(host suffix filter scope bind_dn bind_password);
 my @required_options = qw(host suffix filter);

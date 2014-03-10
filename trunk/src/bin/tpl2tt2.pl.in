@@ -277,7 +277,7 @@ sub convert {
         )
         ) {
         Sympa::Log::Syslog::do_log('err', 'Unable to set rights on %s',
-            $Conf{'db_name'});
+            $Sympa::Conf::Conf{'db_name'});
         return undef;
     }
 }

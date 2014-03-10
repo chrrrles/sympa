@@ -28,7 +28,6 @@ use warnings;
 use English;    # FIXME: drop $PREMATCH usage
 use Carp qw(croak);
 ##use Encode; # load in Log
-use Exporter;
 ##use Fcntl qw(LOCK_SH LOCK_EX LOCK_NB LOCK_UN); # no longer used
 use IO::Scalar;
 ##use Mail::Header; # not used
@@ -59,7 +58,7 @@ use Sympa::SubscribeSpool;
 use Sympa::Archive;
 use Sympa::Template;
 ##use Sympa::Constants; # used in Conf - confdef
-use Sympa::Language qw(gettext gettext_strftime);
+use Sympa::Language;
 ##use Sympa::Log::Syslog; # used in Conf
 ##use Conf; # used in Robot - Site
 use Sympa::Mail;
@@ -1905,7 +1904,7 @@ sub prepare_digest_parameters {
     $self->{'digest'}{'template_params'} = {
         'replyto'          => $self->get_list_address('owner'),
         'to'               => $self->get_list_address(),
-        'table_of_content' => gettext("Table of contents:"),
+        'table_of_content' => Sympa::Language::gettext("Table of contents:"),
         'boundary1'        => '----------=_'
             . Sympa::Tools::get_message_id($self->domain),
         'boundary2' => '----------=_'
@@ -1916,9 +1915,9 @@ sub prepare_digest_parameters {
     }
     my @now = localtime(time);
     $self->{'digest'}{'template_params'}{'datetime'} =
-        gettext_strftime "%a, %d %b %Y %H:%M:%S", @now;
+        Sympa::Language::gettext_strftime "%a, %d %b %Y %H:%M:%S", @now;
     $self->{'digest'}{'template_params'}{'date'} =
-        gettext_strftime "%a, %d %b %Y", @now;
+        Sympa::Language::gettext_strftime "%a, %d %b %Y", @now;
     $self->{'digest'}{'template_params'}{'current_group'} = 0;
     $self->{'digest'}{'template_params'}{'total_group'} =
         $#{$self->{'digest'}{'group_of_msg'}} + 1;
@@ -4995,16 +4994,16 @@ sub _create_add_error_string {
     my $self = shift;
     $self->{'add_outcome'}{'errors'}{'error_message'} = '';
     if ($self->{'add_outcome'}{'errors'}{'max_list_members_exceeded'}) {
-        $self->{'add_outcome'}{'errors'}{'error_message'} .= sprintf gettext(
+        $self->{'add_outcome'}{'errors'}{'error_message'} .= sprintf Sympa::Language::gettext(
             'Attempt to exceed the max number of members (%s) for this list.'
         ), $self->max_list_members;
     }
     if ($self->{'add_outcome'}{'errors'}{'unable_to_add_to_database'}) {
         $self->{'add_outcome'}{'error_message'} .=
-            ' ' . gettext('Attempts to add some users in database failed.');
+            ' ' . Sympa::Language::gettext('Attempts to add some users in database failed.');
     }
     $self->{'add_outcome'}{'errors'}{'error_message'} .=
-        ' ' . sprintf gettext('Added %s users out of %s required.'),
+        ' ' . sprintf Sympa::Language::gettext('Added %s users out of %s required.'),
         $self->{'add_outcome'}{'added_members'},
         $self->{'add_outcome'}{'expected_number_of_added_users'};
 }
@@ -5624,7 +5623,7 @@ sub load_task_list {
             }
             next if defined $list_of_task{$name}{'title'};
             if (defined $titles->{'gettext'}) {
-                $list_of_task{$name}{'title'} = gettext($titles->{'gettext'});
+                $list_of_task{$name}{'title'} = Sympa::Language::gettext($titles->{'gettext'});
             } elsif (defined $titles->{'us'}) {
                 $list_of_task{$name}{'title'} = $titles->{'us'};
             } else {
@@ -10018,7 +10017,7 @@ sub _save_list_config_file {
         {   'email'      => $email,
             'date_epoch' => $time,
             'date' =>
-                (gettext_strftime "%d %b %Y at %H:%M:%S", localtime $time),
+                (Sympa::Language::gettext_strftime "%d %b %Y at %H:%M:%S", localtime $time),
         }
     );
     ## Get updated config
@@ -12201,7 +12200,7 @@ sub get_option_title {
         || \%list_option;
     my $t = $map->{$option} || {};
     if ($t->{'gettext_id'}) {
-        my $ret = gettext($t->{'gettext_id'});
+        my $ret = Sympa::Language::gettext($t->{'gettext_id'});
         $ret =~ s/^\s+//;
         $ret =~ s/\s+$//;
         return sprintf '%s (%s)', $ret, $option if $withval;

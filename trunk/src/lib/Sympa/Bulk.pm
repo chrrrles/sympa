@@ -46,7 +46,7 @@ use Data::Dumper;
 
 #use Sympa::Tools; # used in List - Site - Conf
 #use Sympa::Template; # used in List
-use Sympa::Language qw(gettext_strftime);
+use Sympa::Language;
 
 #use Sympa::Log::Syslog; # used in Conf
 #use Sympa::DatabaseManager; # used in Conf

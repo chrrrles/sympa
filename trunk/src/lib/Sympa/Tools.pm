@@ -42,7 +42,7 @@ use Proc::ProcessTable;
 ##use if (5.008 < $] && $] < 5.016), qw(Unicode::CaseFold fc);
 
 use Sympa::Conf;
-use Sympa::Language qw(gettext_strftime);
+use Sympa::Language;
 use Sympa::LockedFile;
 ##use Sympa::Log::Syslog;
 ##use Sympa::Constants;
@@ -2251,7 +2251,7 @@ sub send_crash_report {
         open ERR, '<', $err_file;
         @err_output = map { chomp $_; $_; } <ERR>;
         close ERR;
-        $err_date = gettext_strftime "%d %b %Y  %H:%M",
+        $err_date = Sympa::Language::gettext_strftime "%d %b %Y  %H:%M",
             localtime((stat($err_file))[9]);
     }
     Sympa::Site->send_notify_to_listmaster(

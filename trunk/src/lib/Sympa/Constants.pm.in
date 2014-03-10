@@ -24,9 +24,6 @@
 package Sympa::Constants;
 use strict;
 
-use Exporter;
-our @ISA = qw(Exporter);
-
 use constant VERSION => '--VERSION--';
 use constant USER    => '--USER--';
 use constant GROUP   => '--GROUP--';

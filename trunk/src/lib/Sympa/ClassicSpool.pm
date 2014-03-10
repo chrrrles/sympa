@@ -35,7 +35,6 @@ use strict;
 use warnings;
 use English qw(-no_match_vars);
 use Carp qw(croak);
-use Exporter;
 use File::Path qw(make_path remove_tree);
 
 # tentative

@@ -153,11 +153,11 @@ sub locdatetime {
     if ($arg !~
         /^(\d{4})\D(\d\d?)(?:\D(\d\d?)(?:\D(\d\d?)\D(\d\d?)(?:\D(\d\d?))?)?)?/
         ) {
-        return sub { gettext("(unknown date)"); };
+        return sub { Sympa::Language::gettext("(unknown date)"); };
     } else {
         my @arg =
             ($6 + 0, $5 + 0, $4 + 0, $3 + 0 || 1, $2 - 1, $1 - 1900, 0, 0, 0);
-        return sub { gettext_strftime($_[0], @arg); };
+        return sub { Sympa::Language::gettext_strftime($_[0], @arg); };
     }
 }
 

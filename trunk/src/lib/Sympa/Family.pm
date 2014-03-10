@@ -44,7 +44,7 @@ use Term::ProgressBar;
 
 #use Sympa::List; # load in admin
 #use Conf; # no longer used
-use Sympa::Language qw(gettext_strftime);
+use Sympa::Language;
 
 #use Sympa::Log::Syslog; # load in dmin - List - Robot - Site - Conf
 use Sympa::Admin;
@@ -443,7 +443,7 @@ sub add_list {
     $list->latest_instantiation(
         {   'email' => "listmaster\@$host",
             'date' =>
-                (gettext_strftime "%d %b %Y at %H:%M:%S", localtime time),
+                (Sympa::Language::gettext_strftime "%d %b %Y at %H:%M:%S", localtime time),
             'date_epoch' => time
         }
     );
@@ -767,7 +767,7 @@ sub modify_list {
     $list->latest_instantiation(
         {   'email' => "listmaster\@$host",
             'date' =>
-                (gettext_strftime "%d %b %Y at %H:%M:%S", localtime time),
+                (Sympa::Language::gettext_strftime "%d %b %Y at %H:%M:%S", localtime time),
             'date_epoch' => time
         }
     );
@@ -2848,7 +2848,7 @@ sub _end_update_list {
     $list->latest_instantiation(
         {   'email' => "listmaster\@$host",
             'date' =>
-                (gettext_strftime "%d %b %Y at %H:%M:%S", localtime time),
+                (Sympa::Language::gettext_strftime "%d %b %Y at %H:%M:%S", localtime time),
             'date_epoch' => time
         }
     );
