@@ -24,14 +24,12 @@
 package Sympa::DBManipulatorMySQL;
 
 use strict;
+use base qw(Sympa::DBManipulatorDefault);
+
 use Data::Dumper;
 
 use Carp;
 use Sympa::Log::Syslog;
-
-use Sympa::DBManipulatorDefault;
-
-our @ISA = qw(Sympa::DBManipulatorDefault);
 
 # Builds the string to be used by the DBI to connect to the database.
 #

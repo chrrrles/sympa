@@ -24,8 +24,7 @@
 package Sympa::TaskSpool;
 
 use strict;
-
-use Sympa::ClassicSpool;
+use base qw(Sympa::ClassicSpool);
 
 #use Time::Local; # no longer used
 # tentative
@@ -33,8 +32,6 @@ use Data::Dumper;
 
 #use Task; # this module is used by Task
 #use Sympa::List; # used by Task
-
-our @ISA    = qw(Sympa::ClassicSpool);
 
 my @task_list;
 my %task_by_list;

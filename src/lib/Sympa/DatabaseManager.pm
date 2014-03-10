@@ -35,7 +35,6 @@ use Sympa::Constants;
 use Sympa::SQLSource;
 use Data::Dumper;
 
-our @ISA;
 our $AUTOLOAD;
 
 use Sympa::DatabaseDescription;

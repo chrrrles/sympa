@@ -25,6 +25,8 @@ package Sympa::List;
 
 use strict;
 use warnings;
+use base qw(Sympa::Site_r);
+
 use English;    # FIXME: drop $PREMATCH usage
 use Carp qw(croak);
 ##use Encode; # load in Log
@@ -68,8 +70,6 @@ use Sympa::Family;    #FIXME: dependency loop between List and Family
 use Sympa::PlainDigest;
 use Sympa::Tracking;
 ##use Sympa::ListDef; used in Robot
-
-our @ISA = qw(Sympa::Site_r);    # not fully inherit Robot
 
 my @sources_providing_listmembers = qw/
     include_file

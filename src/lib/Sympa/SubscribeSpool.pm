@@ -25,12 +25,11 @@ package Sympa::SubscribeSpool;
 
 use strict;
 use warnings;
+use base qw(Sympa::ClassicSpool);
+
 use Data::Dumper;
 
-use Sympa::ClassicSpool;
 use Sympa::Log::Syslog;
-
-our @ISA = qw(Sympa::ClassicSpool);
 
 sub new {
     Sympa::Log::Syslog::do_log('debug2', '(%s, %s)', @_);

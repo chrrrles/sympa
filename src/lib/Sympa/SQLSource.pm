@@ -24,6 +24,7 @@
 package Sympa::SQLSource;
 
 use strict;
+use base qw(Sympa::Datasource);
 
 use English qw(-no_match_vars);
 use Carp;
@@ -34,7 +35,6 @@ use Sympa::Log::Syslog;
 #use Sympa::Tools; # not used
 #use Sympa::Template; # not used
 use Data::Dumper;
-use Sympa::Datasource;
 
 ## Structure to keep track of active connections/connection status
 ## Key : connect_string (includes server+port+dbname+DB type)
@@ -51,7 +51,6 @@ sub new {
         "Creating new SQLSource object for RDBMS '%s'",
         $param->{'db_type'});
     my $actualclass;
-    our @ISA = qw(Sympa::Datasource);
     if ($param->{'db_type'} =~ /^mysql$/i) {
         unless (eval "require Sympa::DBManipulatorMySQL") {
             Sympa::Log::Syslog::do_log('err',

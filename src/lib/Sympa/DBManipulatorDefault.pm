@@ -24,14 +24,12 @@
 package Sympa::DBManipulatorDefault;
 
 use strict;
+use base qw(Sympa::SQLSource);
 
 use Carp;
 use Sympa::Log::Syslog;
 
-use Sympa::SQLSource;
 use Data::Dumper;
-
-our @ISA = qw(Sympa::SQLSource);
 
 ############################
 #### Section containing generic functions          #
