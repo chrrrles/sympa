@@ -110,6 +110,7 @@ use Sympa::Bulk;
 #use Sympa::Tracking; # used in List
 #use Sympa::Constants; # used in confdef, in Conf
 use Sympa::Spool;    # used in List - Task
+use Sympa::Spool::DKIM;
 
 my $daemon_name           = Sympa::Log::Syslog::set_daemon($0);
 my $date_of_last_activity = time();
@@ -509,14 +510,14 @@ while (!$end) {
 
                 if ($robot->dkim_feature eq 'on') {
                     $messageasstring =
-                        Sympa::Tools::remove_invalid_dkim_signature(
+                        Sympa::Tools::DKIM::remove_invalid_signature(
                         $messageasstring);
                 }
                 if ($message_from_spool->{'dkim_d'}) {
 
                     # apply dkim signature AFTER any other message
                     # transformation.
-                    $messageasstring = Sympa::Tools::dkim_sign(
+                    $messageasstring = Sympa::Tools::DKIM::sign(
                         $messageasstring,
                         {   'dkim_d' => $message_from_spool->{'dkim_d'},
                             'dkim_i' => $message_from_spool->{'dkim_i'},
@@ -542,13 +543,13 @@ while (!$end) {
             # message doesn't need personalization, so can be sent by packet.
             if ($robot->dkim_feature eq 'on') {
                 $messageasstring_init =
-                    Sympa::Tools::remove_invalid_dkim_signature(
+                    Sympa::Tools::DKIM::remove_invalid_signature(
                     $messageasstring_init);
             }
 
             # Initial message
             if ($message_from_spool->{'dkim_d'}) {
-                $messageasstring_init = Sympa::Tools::dkim_sign(
+                $messageasstring_init = Sympa::Tools::DKIM::sign(
                     $messageasstring_init,
                     {   'dkim_d' => $message_from_spool->{'dkim_d'},
                         'dkim_i' => $message_from_spool->{'dkim_i'},

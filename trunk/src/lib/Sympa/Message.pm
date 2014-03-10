@@ -72,6 +72,7 @@ use Sympa::Language;
 #use Conf; # loaded in Site
 #use Sympa::Log::Syslog; # loaded in Conf
 use Sympa::Tools::SMIME;
+use Sympa::Tools::DKIM;
 
 my %openssl_errors = (
     1 => 'an error occurred parsing the command options',
@@ -689,7 +690,7 @@ sub check_dkim_signature {
     if (ref($self->robot) eq 'Sympa::Robot'
         and $self->robot->dkim_feature eq 'on') {
         $self->{'dkim_pass'} =
-            Sympa::Tools::dkim_verifier($self->{'msg_as_string'});
+            Sympa::Tools::DKIM::verifier($self->{'msg_as_string'});
     }
     return 1;
 }
