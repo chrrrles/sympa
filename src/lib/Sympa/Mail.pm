@@ -26,7 +26,6 @@ package Sympa::Mail;
 use strict;
 use warnings;
 use English qw(-no_match_vars);
-require Exporter;
 use Carp qw(carp croak);
 use POSIX;
 use Time::Local;
@@ -39,14 +38,11 @@ use Data::Dumper;
 #use Sympa::Bulk;
 #use Conf; # used in List - Site
 #use Sympa::Log::Syslog; # load in Conf
-use Sympa::Language qw(gettext);
+use Sympa::Language;
 
 #use Sympa::List; # this package is loaded via List
 #use Sympa::Constants; # load in confdef - Conf
 #use Sympa::Tools; # load in Conf
-
-our @ISA    = qw(Exporter);
-our @EXPORT = qw(mail_file mail_message mail_forward set_send_spool);
 
 my $opensmtp = 0;
 my $fh       = 'fh0000000000';    ## File handle for the stream.
@@ -54,7 +50,7 @@ my $fh       = 'fh0000000000';    ## File handle for the stream.
 my $max_arg = eval { POSIX::_SC_ARG_MAX; };
 if ($EVAL_ERROR) {
     $max_arg = 4096;
-    printf STDERR gettext(
+    printf STDERR Sympa::Language::gettext(
         "Your system does not conform to the POSIX P1003.1 standard, or\nyour Perl system does not define the _SC_ARG_MAX constant in its POSIX\nlibrary. You must modify the smtp.pm module in order to set a value\nfor variable %s.\n"
     ), $max_arg;
 } else {

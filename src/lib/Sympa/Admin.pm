@@ -45,7 +45,7 @@ use Data::Dumper;
 use Sympa::List;
 
 #use Conf; # already load in List - Site.
-use Sympa::Language qw(gettext_strftime);
+use Sympa::Language;
 
 #use Sympa::Log::Syslog; # used in Conf
 #use Sympa::Tools; # used in Conf
@@ -284,7 +284,7 @@ sub create_list_old {
 
     ## Creation of the config file
     my $time = time;
-    $param->{'creation'}{'date'} = gettext_strftime "%d %b %Y at %H:%M:%S",
+    $param->{'creation'}{'date'} = Sympa::Language::gettext_strftime "%d %b %Y at %H:%M:%S",
         localtime $time;
     $param->{'creation'}{'date_epoch'} = $time;
     $param->{'creation_email'} ||= $robot->get_address('listmaster');
@@ -582,7 +582,7 @@ sub create_list {
     my $time = time;
     $list->creation(
         {   'date' =>
-                (gettext_strftime "%d %b %Y at %H:%M:%S", localtime $time),
+                (Sympa::Language::gettext_strftime "%d %b %Y at %H:%M:%S", localtime $time),
             'date_epoch' => $time,
             'email'      => (
                        $param->{'creation_email'}
@@ -686,7 +686,7 @@ sub update_list {
     my $time = time;
     $list->creation(
         {   'date' =>
-                (gettext_strftime "%d %b %Y at %H:%M:%S", localtime $time),
+                (Sympa::Language::gettext_strftime "%d %b %Y at %H:%M:%S", localtime $time),
             'date_epoch' => $time,
             'email'      => (
                        $param->{'creation_email'}
@@ -1227,7 +1227,7 @@ sub clone_list_as_empty {
     my $time     = time;
     my $creation = {
         'date_epoch' => $time,
-        'date' => (gettext_strftime "%d %b %y at %H:%M:%S", localtime $time)
+        'date' => (Sympa::Language::gettext_strftime "%d %b %y at %H:%M:%S", localtime $time)
     };
     ##FIXME: creation.email may be empty
     $creation->{'email'} = $email if $email;

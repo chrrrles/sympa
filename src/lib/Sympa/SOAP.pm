@@ -25,11 +25,7 @@ package Sympa::SOAP;
 
 use strict;
 
-use Exporter;
 use HTTP::Cookies;
-
-my @ISA    = ('Exporter');
-my @EXPORT = ();
 
 use Sympa::List;
 

@@ -39,7 +39,7 @@ use Carp qw(croak);
 use Cwd;
 
 use Sympa::Conf;
-use Sympa::Language qw(gettext gettext_strftime);
+use Sympa::Language;
 use Sympa::User;
 use Data::Dumper;
 
@@ -906,17 +906,17 @@ sub send_file {
             $data->{'subscriber'} = $self->get_list_member($who);
 
             if ($data->{'subscriber'}) {
-                $data->{'subscriber'}{'date'} = gettext_strftime "%d %b %Y",
+                $data->{'subscriber'}{'date'} = Sympa::Language::gettext_strftime "%d %b %Y",
                     localtime($data->{'subscriber'}{'date'});
                 $data->{'subscriber'}{'update_date'} =
-                    gettext_strftime "%d %b %Y",
+                    Sympa::Language::gettext_strftime "%d %b %Y",
                     localtime($data->{'subscriber'}{'update_date'});
                 if ($data->{'subscriber'}{'bounce'}) {
                     $data->{'subscriber'}{'bounce'} =~
                         /^(\d+)\s+(\d+)\s+(\d+)(\s+(.*))?$/;
 
                     $data->{'subscriber'}{'first_bounce'} =
-                        gettext_strftime "%d %b %Y", localtime($1);
+                        Sympa::Language::gettext_strftime "%d %b %Y", localtime($1);
                 }
             }
         }

@@ -28,11 +28,7 @@ use English qw(-no_match_vars);
 
 #use Carp; # currently not used
 #use Encode; # not used
-use Exporter;
 use Sys::Syslog;
-
-our @ISA    = qw(Exporter);
-our @EXPORT = qw($log_level %levels);
 
 my ($log_facility, $log_socket_type, $log_service, $sth, @sth_stack,
     $rows_nb);

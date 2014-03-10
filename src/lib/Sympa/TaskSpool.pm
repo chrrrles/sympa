@@ -25,7 +25,6 @@ package Sympa::TaskSpool;
 
 use strict;
 
-use Exporter;
 use Sympa::ClassicSpool;
 
 #use Time::Local; # no longer used
@@ -35,8 +34,7 @@ use Data::Dumper;
 #use Task; # this module is used by Task
 #use Sympa::List; # used by Task
 
-our @ISA    = qw(Sympa::ClassicSpool Exporter);
-our @EXPORT = qw(%global_models %months);
+our @ISA    = qw(Sympa::ClassicSpool);
 
 my @task_list;
 my %task_by_list;

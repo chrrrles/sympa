@@ -61,7 +61,7 @@ use Sympa::List;
 #use Conf; # used in List - Robot - Site
 #use confdef; # used by Conf
 use Sympa::Commands;
-use Sympa::Language qw(gettext gettext_strftime);
+use Sympa::Language;
 
 #use Sympa::Log::Syslog; # used by Conf
 #use Message: # used by List
@@ -1207,9 +1207,9 @@ while ($query = new_loop()) {
     ## Replace '//' with '/' because it would break navigation
     $param->{'path_cgi'} =~ s/\/\//\//g;
     $param->{'version'} = Sympa::Constants::VERSION;
-    $param->{'date'}    = gettext_strftime "%d %b %Y at %H:%M:%S",
+    $param->{'date'}    = Sympa::Language::gettext_strftime "%d %b %Y at %H:%M:%S",
         localtime(time);
-    $param->{'time'} = gettext_strftime "%H:%M:%S", localtime(time);
+    $param->{'time'} = Sympa::Language::gettext_strftime "%H:%M:%S", localtime(time);
 
     ## Hash defining the parameters where no control is performed (because
     ## they are supposed to contain html and/or javascript).
@@ -1632,9 +1632,9 @@ while ($query = new_loop()) {
 
                         $blacklist->{$action} = {
                             'title' => sprintf(
-                                gettext("%s - %s"),
-                                gettext($pinfo->{$op[0]}{'gettext_id'}),
-                                gettext(
+                                Sympa::Language::gettext("%s - %s"),
+                                Sympa::Language::gettext($pinfo->{$op[0]}{'gettext_id'}),
+                                Sympa::Language::gettext(
                                     $pinfo->{$op[0]}{'format'}{$op[1]}
                                         {'gettext_id'}
                                 )
@@ -1647,7 +1647,7 @@ while ($query = new_loop()) {
 
                         $blacklist->{$action} =
                             {'title' =>
-                                gettext($pinfo->{$action}{'gettext_id'})};
+                                Sympa::Language::gettext($pinfo->{$action}{'gettext_id'})};
                     }
                 }
             }
@@ -2176,7 +2176,7 @@ sub crash_handler {
         $calls[0]->{'subroutine'} = $f[3];
         unshift @calls, {'filename' => $f[1], 'line' => $f[2]};
     }
-    $calls[0]->{'subroutine'} = gettext("(top-level)");
+    $calls[0]->{'subroutine'} = Sympa::Language::gettext("(top-level)");
 
     $param->{'traceback'}     = \@calls;
     $param->{'error_message'} = $msg;
@@ -3315,7 +3315,7 @@ sub check_param_out {
     wwslog('debug2', 'check_param_out');
 
     $param->{'loop_count'} = $loop_count;
-    $param->{'start_time'} = gettext_strftime "%d %b %Y at %H:%M:%S",
+    $param->{'start_time'} = Sympa::Language::gettext_strftime "%d %b %Y at %H:%M:%S",
         localtime($start_time);
     $param->{'process_id'} = $PID;
 
@@ -3657,7 +3657,7 @@ sub do_ticket {
     $param->{'ticket_context'} =
         Sympa::Auth::get_one_time_ticket($robot, $in{'ticket'}, $ip);
     $param->{'ticket_context'}{'printable_date'} =
-        gettext_strftime "%d %b %Y at %H:%M:%S",
+        Sympa::Language::gettext_strftime "%d %b %Y at %H:%M:%S",
         localtime($param->{'ticket_context'}{'date'});
 
     return 1
@@ -3680,7 +3680,7 @@ sub do_ticket {
         $param->{'user'}    = Sympa::User::get_global_user($session->{'email'});
         $param->{'user'}{'email'} = $session->{'email'};
         $param->{'last_login _host'} = $param->{'user'}{'last_login_host'};
-        $param->{'last_login_date'} = gettext_strftime "%d %b %Y at %H:%M:%S",
+        $param->{'last_login_date'} = Sympa::Language::gettext_strftime "%d %b %Y at %H:%M:%S",
             localtime($param->{'user'}{'last_login_date'})
             if ($param->{'user'}{'last_login_date'});
         Sympa::User::update_global_user($param->{'user'}{'email'},
@@ -3845,7 +3845,7 @@ sub do_login {
     }
     $param->{'user'}            = $data->{'user'};
     $param->{'last_login_host'} = $data->{'user'}{'last_login_host'};
-    $param->{'last_login_date'} = gettext_strftime "%d %b %Y at %H:%M:%S",
+    $param->{'last_login_date'} = Sympa::Language::gettext_strftime "%d %b %Y at %H:%M:%S",
         localtime($data->{'user'}{'last_login_date'})
         if ($data->{'user'}{'last_login_date'});
     $session->{'auth'} = $data->{'auth'};
@@ -4599,13 +4599,13 @@ sub do_help {
 
                 if ($pinfo->{$pname}{'gettext_id'}) {
                     $param->{'param'}{$pname}{'title'} =
-                        gettext($pinfo->{$pname}{'gettext_id'});
+                        Sympa::Language::gettext($pinfo->{$pname}{'gettext_id'});
                 } else {
                     $param->{'param'}{$pname}{'title'} = $pname;
                 }
                 if ($pinfo->{$pname}{'gettext_comment'}) {
                     $param->{'param'}{$pname}{'comment'} =
-                        gettext($pinfo->{$pname}{'gettext_comment'});
+                        Sympa::Language::gettext($pinfo->{$pname}{'gettext_comment'});
                 }
             }
         }
@@ -5000,14 +5000,14 @@ sub do_lists {
         foreach my $l (sort keys %lists) {
             push @$all_lists, $lists{$l};
         }
-        $param->{'subtitle'} = gettext('Your lists');
+        $param->{'subtitle'} = Sympa::Language::gettext('Your lists');
     } elsif ($in{'topic'}) {
         my $topics = $robot->topics;
 
         $param->{'topic'} = $in{'topic'};
         if ($in{'subtopic'}) {
             $param->{'subtopic'} = $in{'subtopic'};
-            $param->{'subtitle'} = sprintf gettext("%s / %s"),
+            $param->{'subtitle'} = sprintf Sympa::Language::gettext("%s / %s"),
                 ($topics->{$in{'topic'}}{'current_title'} || $in{'topic'}),
                 ($topics->{$in{'topic'}}{'sub'}{$in{'subtopic'}}
                     {'current_title'} || $in{'subtopic'});
@@ -5496,7 +5496,7 @@ sub do_show_exclude {
     my $key = 0;
     while (($data_exclu->{emails}->[$key]) && ($data_exclu->{date}->[$key])) {
         my $email = $data_exclu->{'emails'}->[$key];
-        my $date  = gettext_strftime "%d %b %Y",
+        my $date  = Sympa::Language::gettext_strftime "%d %b %Y",
             localtime($data_exclu->{'date'}->[$key]);
 
         $excluded = {
@@ -5561,7 +5561,7 @@ sub do_search {
     ## Exclude users are searched too
     while (($data_exclu->{emails}->[$key]) && ($data_exclu->{date}->[$key])) {
         my $email = $data_exclu->{'emails'}->[$key];
-        my $date  = gettext_strftime "%d %b %Y",
+        my $date  = Sympa::Language::gettext_strftime "%d %b %Y",
             localtime($data_exclu->{'date'}->[$key]);
         $key = $key + 1;
 
@@ -5623,7 +5623,7 @@ sub do_pref {
         my $entry = {'value' => $p};
 
         ## Set description from NLS
-        $entry->{'desc'} = gettext($Sympa::Wwslib::cookie_period{$p}{'gettext_id'});
+        $entry->{'desc'} = Sympa::Language::gettext($Sympa::Wwslib::cookie_period{$p}{'gettext_id'});
 
         ## Choose nearest delay
         if ((!$selected) && $param->{'user'}{'cookie_delay'} >= $p) {
@@ -6231,7 +6231,7 @@ sub do_subscribe {
 
                 $list->add_list_member($u);
                 if (defined $list->{'add_outcome'}{'errors'}) {
-                    my $error = sprintf gettext(
+                    my $error = sprintf Sympa::Language::gettext(
                         "Unable to add user %s in list %s : %s"),
                         $u->{'email'}, $list->name,
                         $list->{'add_outcome'}{'errors'}{'error_message'};
@@ -6383,8 +6383,8 @@ sub do_suboptions {
 
     $s->{'reception'}  ||= 'mail';
     $s->{'visibility'} ||= 'noconceal';
-    $s->{'date'} = gettext_strftime "%d %b %Y", localtime($s->{'date'});
-    $s->{'update_date'} = gettext_strftime "%d %b %Y",
+    $s->{'date'} = Sympa::Language::gettext_strftime "%d %b %Y", localtime($s->{'date'});
+    $s->{'update_date'} = Sympa::Language::gettext_strftime "%d %b %Y",
         localtime($s->{'update_date'});
 
     foreach $m ($list->available_reception_mode) {
@@ -7022,7 +7022,7 @@ sub do_admin {
             $list->may_edit($f, $param->{'user'}{'email'}) eq 'write');
         if ($Sympa::Wwslib::filenames{$f}{'gettext_id'}) {
             $param->{'files'}{$f}{'complete'} =
-                gettext($Sympa::Wwslib::filenames{$f}{'gettext_id'});
+                Sympa::Language::gettext($Sympa::Wwslib::filenames{$f}{'gettext_id'});
         } else {
             $param->{'files'}{$f}{'complete'} = $f;
         }
@@ -7053,7 +7053,7 @@ sub do_serveradmin {
         ) {
         if ($Sympa::Wwslib::filenames{$f}{'gettext_id'}) {
             $param->{'lists_default_files'}{$f}{'complete'} =
-                gettext($Sympa::Wwslib::filenames{$f}{'gettext_id'});
+                Sympa::Language::gettext($Sympa::Wwslib::filenames{$f}{'gettext_id'});
         } else {
             $param->{'lists_default_files'}{$f}{'complete'} = $f;
         }
@@ -7071,7 +7071,7 @@ sub do_serveradmin {
         'list_aliases.tt2'
         ) {
         $param->{'server_files'}{$f}{'complete'} =
-            gettext($Sympa::Wwslib::filenames{$f}{'gettext_id'});
+            Sympa::Language::gettext($Sympa::Wwslib::filenames{$f}{'gettext_id'});
         $param->{'server_files'}{$f}{'selected'} = '';
     }
     $param->{'server_files'}{'helpfile.tt2'}{'selected'} =
@@ -7105,12 +7105,12 @@ sub do_edit_config {
             } else {
                 $p->{'current_value'} = $v;
             }
-            $p->{'query'} = gettext($p->{'gettext_id'})
+            $p->{'query'} = Sympa::Language::gettext($p->{'gettext_id'})
                 if $p->{'gettext_id'};
-            $p->{'advice'} = gettext($p->{'gettext_comment'})
+            $p->{'advice'} = Sympa::Language::gettext($p->{'gettext_comment'})
                 if $p->{'gettext_comment'};
         } elsif ($p->{'gettext_id'}) {
-            $p->{'title'} = gettext($p->{'gettext_id'});
+            $p->{'title'} = Sympa::Language::gettext($p->{'gettext_id'});
             unless ($p->{'group'}) {
                 my $g = $p->{'gettext_id'};
                 $g =~ s/([^-\w])/sprintf ".%02X", ord($1)/eg;
@@ -8250,7 +8250,7 @@ sub do_add {
     $list->add_list_member(@new_users);
     $total = $list->{'add_outcome'}{'added_members'};
     if (defined $list->{'add_outcome'}{'errors'}) {
-        my $error = sprintf gettext("Unable to add users in list %s : %s"),
+        my $error = sprintf Sympa::Language::gettext("Unable to add users in list %s : %s"),
             $list->name, $list->{'add_outcome'}{'errors'}{'error_message'};
         my $error_type = 'intern';
         $error_type = 'user'
@@ -8593,7 +8593,7 @@ sub do_modindex {
         $doc->{'escaped_path'}  = Sympa::Tools::escape_docname($path, '/');
         $doc->{'fname'}         = $fname;
         $doc->{'size'}          = (-s $d) / 1000;
-        $doc->{'date'}   = gettext_strftime "%d %b %Y", localtime($info[9]);
+        $doc->{'date'}   = Sympa::Language::gettext_strftime "%d %b %Y", localtime($info[9]);
         $doc->{'author'} = $desc_hash{'email'};
         $doc->{'path'}   = $path;
 
@@ -9413,7 +9413,7 @@ sub do_editfile {
                 );
             if ($Sympa::Wwslib::filenames{$f}{'gettext_id'}) {
                 $param->{'files'}{$f}{'complete'} =
-                    gettext($Sympa::Wwslib::filenames{$f}{'gettext_id'});
+                    Sympa::Language::gettext($Sympa::Wwslib::filenames{$f}{'gettext_id'});
             } else {
                 $param->{'files'}{$f}{'complete'} = $f;
             }
@@ -9438,7 +9438,7 @@ sub do_editfile {
 
     $param->{'file'} = $in{'file'};
     $param->{'complete'} =
-        gettext($Sympa::Wwslib::filenames{$in{'file'}}{'gettext_id'});
+        Sympa::Language::gettext($Sympa::Wwslib::filenames{$in{'file'}}{'gettext_id'});
 
     my $subdir = '';
     if ($in{'file'} =~ /\.tt2$/) {
@@ -10098,7 +10098,7 @@ sub do_latest_arc {
                 $msg_info{'date_epoch'} =
                     get_timelocal_from_date(@array_date[1 .. $#array_date]);
 
-                $msg_info{'date'} = gettext_strftime "%d %b %Y",
+                $msg_info{'date'} = Sympa::Language::gettext_strftime "%d %b %Y",
                     localtime($msg_info{'date_epoch'});
                 if ($msg_info{'date_epoch'} < $oldest_day) {
                     $stop_search = 1;
@@ -10768,7 +10768,7 @@ sub do_get_pending_lists {
         $param->{'pending'}{$list->name}{'subject'} = $list->subject;
         $param->{'pending'}{$list->name}{'by'} = $list->creation->{'email'};
         $param->{'pending'}{$list->name}{'date'} =
-            gettext_strftime "%d %b %y  %H:%M",
+            Sympa::Language::gettext_strftime "%d %b %y  %H:%M",
             localtime($list->creation->{'date_epoch'});
     }
 
@@ -10809,7 +10809,7 @@ sub do_get_latest_lists {
             {
             'name'          => $list->name,
             'subject'       => $list->subject,
-            'creation_date' => (gettext_strftime "%d %b %Y", localtime $epoch)
+            'creation_date' => (Sympa::Language::gettext_strftime "%d %b %Y", localtime $epoch)
             };
     }
 
@@ -10857,12 +10857,12 @@ sub do_get_inactive_lists {
             'msg_count'          => $list->get_msg_count(),
             'last_message_epoch' => $last_message,
             'last_message_date'  => (
-                gettext_strftime "%d %b %Y",
+                Sympa::Language::gettext_strftime "%d %b %Y",
                 localtime($last_message * 86400)
             ),
             'creation_date_epoch' => $list->creation->{'date_epoch'},
             'creation_date'       => (
-                gettext_strftime "%d %b %Y",
+                Sympa::Language::gettext_strftime "%d %b %Y",
                 localtime($list->creation->{'date_epoch'})
             ),
             };
@@ -10890,7 +10890,7 @@ sub do_get_biggest_lists {
             {   'name'          => $_->name,
                 'subject'       => $_->subject,
                 'creation_date' => (
-                    gettext_strftime "%d %b %Y",
+                    Sympa::Language::gettext_strftime "%d %b %Y",
                     localtime $_->creation->{'date_epoch'}
                 ),
                 'subscribers' => $_->total
@@ -11503,10 +11503,10 @@ sub do_editsubscriber {
         Sympa::Tools::escape_html($param->{'current_subscriber'}{'email'});
     $param->{'current_subscriber'}{'escaped_bounce_address'} =
         Sympa::Tools::escape_html($param->{'current_subscriber'}{'bounce_address'});
-    $param->{'current_subscriber'}{'date'} = gettext_strftime "%d %b %Y",
+    $param->{'current_subscriber'}{'date'} = Sympa::Language::gettext_strftime "%d %b %Y",
         localtime($subscriber->{'date'});
     $param->{'current_subscriber'}{'update_date'} =
-        gettext_strftime "%d %b %Y", localtime($subscriber->{'update_date'});
+        Sympa::Language::gettext_strftime "%d %b %Y", localtime($subscriber->{'update_date'});
     $param->{'current_subscriber'}{'pictures_url'} =
         $list->find_picture_url($subscriber->{'email'});
 
@@ -11543,9 +11543,9 @@ sub do_editsubscriber {
     if ($subscriber->{'bounce'} =~ /^(\d+)\s+(\d+)\s+(\d+)(\s+(.*))?$/) {
         my @bounce = ($1, $2, $3, $5);
         $param->{'current_subscriber'}{'first_bounce'} =
-            gettext_strftime "%d %b %Y", localtime($bounce[0]);
+            Sympa::Language::gettext_strftime "%d %b %Y", localtime($bounce[0]);
         $param->{'current_subscriber'}{'last_bounce'} =
-            gettext_strftime "%d %b %Y", localtime($bounce[1]);
+            Sympa::Language::gettext_strftime "%d %b %Y", localtime($bounce[1]);
         $param->{'current_subscriber'}{'bounce_count'} = $bounce[2];
         if ($bounce[3] =~ /^(\d+\.(\d+\.\d+))$/) {
             $subscriber->{'bounce_code'}   = $1;
@@ -11766,9 +11766,9 @@ sub do_reviewbouncing {
             if (($size ne 'all')
             && ($record <= (($param->{'page'} - 1) * $size)));
 
-        $i->{'first_bounce'} = gettext_strftime "%d %b %Y",
+        $i->{'first_bounce'} = Sympa::Language::gettext_strftime "%d %b %Y",
             localtime($i->{'first_bounce'});
-        $i->{'last_bounce'} = gettext_strftime "%d %b %Y",
+        $i->{'last_bounce'} = Sympa::Language::gettext_strftime "%d %b %Y",
             localtime($i->{'last_bounce'});
 
         ## Escape some weird chars
@@ -13092,7 +13092,7 @@ sub _prepare_edit_form {
                         keys %{$list_of_topics->{$topic}{'sub'}}) {
                         $p->{'value'}{"$topic/$subtopic"}{'selected'} = 0;
                         $p->{'value'}{"$topic/$subtopic"}{'title'} =
-                            sprintf gettext("%s / %s"),
+                            sprintf Sympa::Language::gettext("%s / %s"),
                             $list_of_topics->{$topic}{'current_title'},
                             $list_of_topics->{$topic}{'sub'}{$subtopic}
                             {'current_title'};
@@ -13103,7 +13103,7 @@ sub _prepare_edit_form {
                 next unless (defined $selected_topic);
                 $p->{'value'}{$selected_topic}{'selected'} = 1;
                 $p->{'value'}{$selected_topic}{'title'} =
-                    sprintf gettext("Unknown (%s)"), $selected_topic
+                    sprintf Sympa::Language::gettext("Unknown (%s)"), $selected_topic
                     unless (defined $p->{'value'}{$selected_topic}{'title'});
             }
         } elsif ($pname eq 'digest') {
@@ -13116,7 +13116,7 @@ sub _prepare_edit_form {
                     $v->{'type'}  = 'enum';
                 } else {
                     foreach my $day (keys %{$v->{'value'}}) {
-                        my $t = gettext_strftime "%A",
+                        my $t = Sympa::Language::gettext_strftime "%A",
                             gmtime(0 + ($day + 3) * (3600 * 24));
                         $t = sprintf '%s (%s)', $t, $day
                             if $robot->is_listmaster(
@@ -13275,12 +13275,12 @@ sub _prepare_data {
 
     ## Naming the parameter.
     if ($struct->{'gettext_id'}) {
-        $p_glob->{'title'} = gettext($struct->{'gettext_id'});
+        $p_glob->{'title'} = Sympa::Language::gettext($struct->{'gettext_id'});
     } else {
         $p_glob->{'title'} = $name;
     }
     if ($struct->{'gettext_comment'}) {
-        $p_glob->{'comment'} = gettext($struct->{'gettext_comment'});
+        $p_glob->{'comment'} = Sympa::Language::gettext($struct->{'gettext_comment'});
     }
 
     ## Occurrences : if the parameter can have multiple occurrences,
@@ -13457,7 +13457,7 @@ sub _prepare_data {
 
                 $p->{'value'}{Sympa::Tools::escape_html($d)}{'selected'} = 1;
                 $p->{'length'} = $struct->{'length'};
-                $p->{'unit'}   = gettext($struct->{'gettext_unit'});
+                $p->{'unit'}   = Sympa::Language::gettext($struct->{'gettext_unit'});
 
             } else {
 
@@ -13467,7 +13467,7 @@ sub _prepare_data {
                 $p->{'field_type'} = $struct->{'field_type'};
                 my $l = length($p->{'value'});
                 $p->{'hidden_field'} = '*' x $l;
-                $p->{'unit'}         = gettext($struct->{'gettext_unit'});
+                $p->{'unit'}         = Sympa::Language::gettext($struct->{'gettext_unit'});
                 if ($restrict) {    # for topics
                     $p_glob->{'constraint'} = $constraint;
                 }
@@ -14578,7 +14578,7 @@ sub do_d_read {
             $param->{'doc_title'} = $desc_hash{'title'};
         }
         my @info = stat $doc;
-        $param->{'doc_date'} = gettext_strftime "%d %b %Y",
+        $param->{'doc_date'} = Sympa::Language::gettext_strftime "%d %b %Y",
             localtime($info[9]);
 
         # listing of all the shared documents of the directory
@@ -14660,7 +14660,7 @@ sub do_d_read {
                         || ($action =~ /do_it/i)) {
 
                         $subdirs{$d}{'date_epoch'} = $info[9];
-                        $subdirs{$d}{'date'} = gettext_strftime "%d %b %Y",
+                        $subdirs{$d}{'date'} = Sympa::Language::gettext_strftime "%d %b %Y",
                             localtime($info[9]);
 
                         # Case read authorized : fill the hash
@@ -14914,7 +14914,7 @@ sub do_d_read {
                         # last update
                         my @info = stat $path_doc;
                         $files{$d}{'date_epoch'} = $info[9];
-                        $files{$d}{'date'} = gettext_strftime "%d %b %Y",
+                        $files{$d}{'date'} = Sympa::Language::gettext_strftime "%d %b %Y",
                             localtime($info[9]);
 
                         # size
@@ -15308,7 +15308,7 @@ sub directory_browsing {
                 next;
             }
 
-            $file_info{'last_update'} = gettext_strftime "%d %b %Y",
+            $file_info{'last_update'} = Sympa::Language::gettext_strftime "%d %b %Y",
                 localtime($info[9]);
 
             ## exception of index.html
@@ -15586,7 +15586,7 @@ sub do_d_editfile {
     my @info = stat "$shareddir/$path";
     $param->{'serial_file'} = $info[9];
     ## parameters of the current directory
-    $param->{'doc_date'} = gettext_strftime "%d %b %y  %H:%M",
+    $param->{'doc_date'} = Sympa::Language::gettext_strftime "%d %b %y  %H:%M",
         localtime($info[9]);
 
     Sympa::Template::allow_absolute_path();
@@ -15748,7 +15748,7 @@ sub do_d_properties {
     my @info = stat "$shareddir/$path";
     $param->{'serial_file'} = $info[9];
     ## parameters of the current directory
-    $param->{'doc_date'} = gettext_strftime "%d %b %y  %H:%M",
+    $param->{'doc_date'} = Sympa::Language::gettext_strftime "%d %b %y  %H:%M",
         localtime($info[9]);
 
     Sympa::Template::allow_absolute_path();
@@ -20506,8 +20506,8 @@ sub do_d_control {
 
     ## other info
     my @info = stat "$shareddir/$path";
-    $param->{'doc_date'} = gettext_strftime "%d %b %y  %H:%M",
-        localtime($info[9]);
+    $param->{'doc_date'} = Sympa::Language::gettext_strftime("%d %b %y  %H:%M",
+        localtime($info[9]));
 
     # template parameters
     $param->{'list'}         = $list_name;
@@ -21588,7 +21588,7 @@ sub do_suspend_request {
             ## suspending's data
             $list->restore_suspended_subscription($param->{'user'}{'email'});
         }
-        my $final_start_date = gettext_strftime "%d %b %Y",
+        my $final_start_date = Sympa::Language::gettext_strftime "%d %b %Y",
             localtime($member_info->{'startdate'});
         my $final_end_date;
 
@@ -21596,7 +21596,7 @@ sub do_suspend_request {
             $display_resume = 1;
         }
         if ($member_info->{'enddate'}) {
-            $final_end_date = gettext_strftime "%d %b %Y",
+            $final_end_date = Sympa::Language::gettext_strftime "%d %b %Y",
                 localtime($member_info->{'enddate'});
         } else {
             $final_end_date = undef;
@@ -21829,14 +21829,14 @@ sub do_suspend_request_action {
             if ($result{'success'} == 1) {
                 if ($result{'details'} eq 'sent_to_owner') {
                     $report .= sprintf(
-                        gettext(
+                        Sympa::Language::gettext(
                             "Your unsubscription request to list %s was sent to the list owner."
                         ),
                         $unsub_list->name
                     );
                 } else {
                     $report .= sprintf(
-                        gettext(
+                        Sympa::Language::gettext(
                             "You were successfully unsubscribed from list %s."
                         ),
                         $unsub_list->name
@@ -21845,14 +21845,14 @@ sub do_suspend_request_action {
             } else {
                 if ($result{'category_error'} eq 'auth') {
                     $report .= sprintf(
-                        gettext(
+                        Sympa::Language::gettext(
                             "Unsubscription from list %s denied: Unsubscription from this list is closed."
                         ),
                         $unsub_list->name
                     );
                 } else {
                     $report .= sprintf(
-                        gettext("Unsubscription from list %s failed."),
+                        Sympa::Language::gettext("Unsubscription from list %s failed."),
                         $unsub_list->name
                     );
                 }
@@ -22742,7 +22742,7 @@ sub do_subindex {
 
     my $subscriptions = $list->get_subscription_requests();
     foreach my $sub (keys %{$subscriptions}) {
-        $subscriptions->{$sub}{'date'} = gettext_strftime "%d %b %Y",
+        $subscriptions->{$sub}{'date'} = Sympa::Language::gettext_strftime "%d %b %Y",
             localtime($subscriptions->{$sub}{'date'});
     }
 
@@ -22822,7 +22822,7 @@ sub do_sigindex {
 
     my $signoffs = $list->get_signoff_requests();
     foreach my $sig (keys %{$signoffs}) {
-        $signoffs->{$sig}{'date'} = gettext_strftime "%d %b %Y",
+        $signoffs->{$sig}{'date'} = Sympa::Language::gettext_strftime "%d %b %Y",
             localtime($signoffs->{$sig}{'date'});
         my $gecos = ($list->user('member', $sig) || {})->{'gecos'};
         $signoffs->{$sig}{'gecos'} = $gecos if $gecos;
@@ -22902,10 +22902,10 @@ sub do_stats {
 
     my $stats;
     my @stats_to_display;
-    $stats->{'send_mail'}{'title'}        = gettext("Mail sending");
-    $stats->{'add_subscriber'}{'title'}   = gettext("Subscription additions");
-    $stats->{'unsubscription'}{'title'}   = gettext("Unsubscription");
-    $stats->{'deleted by admin'}{'title'} = gettext("Users deleted by admin");
+    $stats->{'send_mail'}{'title'}        = Sympa::Language::gettext("Mail sending");
+    $stats->{'add_subscriber'}{'title'}   = Sympa::Language::gettext("Subscription additions");
+    $stats->{'unsubscription'}{'title'}   = Sympa::Language::gettext("Unsubscription");
+    $stats->{'deleted by admin'}{'title'} = Sympa::Language::gettext("Users deleted by admin");
     foreach my $operation (
         (   'send_mail', 'add_subscriber', 'unsubscription',
             'deleted by admin'
@@ -22918,7 +22918,7 @@ sub do_stats {
         if ($#key_counter > -1) {
             $stats->{$operation}{'stats_values'} = "[";
             foreach my $date (sort keys %{$data}) {
-                my $formatted_date = gettext_strftime "%d %b %Y",
+                my $formatted_date = Sympa::Language::gettext_strftime "%d %b %Y",
                     localtime($date);
                 $stats->{$operation}{'stats_values'} .=
                     "['$formatted_date'," . $data->{$date} . "],";
@@ -23450,9 +23450,9 @@ sub do_viewlogs {
     $param->{'size'} = int($in{'size'}) || Sympa::Site->viewlogs_page_size;
 
     my @date = Sympa::Log::Database::get_log_date();
-    $param->{'date_from_formated'} = gettext_strftime "%Y-%m-%d-%H-%M-%S",
+    $param->{'date_from_formated'} = Sympa::Language::gettext_strftime "%Y-%m-%d-%H-%M-%S",
         localtime($date[0]);
-    $param->{'date_to_formated'} = gettext_strftime "%Y-%m-%d-%H-%M-%S",
+    $param->{'date_to_formated'} = Sympa::Language::gettext_strftime "%Y-%m-%d-%H-%M-%S",
         localtime($date[1]);
 
     #display and search parameters preparation
@@ -23545,7 +23545,7 @@ sub do_viewlogs {
         my $i;
         for ($i = 0; $i <= $last; $i++) {
             if ($offset <= $i) {
-                $line->{'date'} = gettext_strftime "%d %b %Y %H:%M:%S",
+                $line->{'date'} = Sympa::Language::gettext_strftime "%d %b %Y %H:%M:%S",
                     localtime $line->{'date'};
                 push @{$param->{'log_entries'}}, $line;
             }
@@ -23570,7 +23570,7 @@ sub do_viewspools {
     my $spool_status = 'ok';
     $spool_status = $in{'spool_status'} if ($in{'spool_status'});
     $param->{'spool_status'}       = $spool_status;
-    $param->{'spool_status_title'} = gettext($spool_status);
+    $param->{'spool_status_title'} = Sympa::Language::gettext($spool_status);
 
     # force sortby to a correct value
     $in{'sortby'} = 'index'
@@ -23690,17 +23690,17 @@ sub do_viewspools {
         if (defined $message->{'task_flavour'}
             and $flavour = $Sympa::Wwslib::task_flavours{$message->{'task_flavour'}})
         {
-            $message->{'task_flavour'} = gettext($flavour->{'gettext_id'});
+            $message->{'task_flavour'} = Sympa::Language::gettext($flavour->{'gettext_id'});
         }
 
         if ($message->{'date'}) {
             $message->{'date_asstring'} =
-                gettext_strftime('%Y-%m-%d  %H:%M:%S',
+                Sympa::Language::gettext_strftime('%Y-%m-%d  %H:%M:%S',
                 localtime $message->{'date'});
         }
         if ($message->{'lockdate'}) {
             $message->{'lockdate_asstring'} =
-                gettext_strftime('%Y-%m-%d  %H:%M:%S',
+                Sympa::Language::gettext_strftime('%Y-%m-%d  %H:%M:%S',
                 localtime $message->{'lockdate'});
         }
     }
@@ -24481,7 +24481,7 @@ sub do_review_family {
             'name'               => $flist->name,
             'status'             => $flist->status,
             'instantiation_date' => (
-                gettext_strftime "%d %b %Y at %H:%M:%S",
+                Sympa::Language::gettext_strftime "%d %b %Y at %H:%M:%S",
                 localtime $flist->latest_instantiation->{'date_epoch'}
             ),
             'subject' => $flist->subject,
@@ -24730,14 +24730,14 @@ sub _prepare_subscriber {
     my $sources           = shift;
 
     ## Add user
-    $user->{'date'} = gettext_strftime "%d %b %Y", localtime($user->{'date'});
-    $user->{'update_date'} = gettext_strftime "%d %b %Y",
+    $user->{'date'} = Sympa::Language::gettext_strftime "%d %b %Y", localtime($user->{'date'});
+    $user->{'update_date'} = Sympa::Language::gettext_strftime "%d %b %Y",
         localtime($user->{'update_date'});
 
     ## Reception mode and topics
     $user->{'reception'} ||= 'mail';
     if (($user->{'reception'} eq 'mail') && $user->{'topics'}) {
-        $user->{'reception'} = sprintf gettext("topic (%s)"),
+        $user->{'reception'} = sprintf Sympa::Language::gettext("topic (%s)"),
             $user->{'topics'};
     }
 

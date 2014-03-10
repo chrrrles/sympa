@@ -26,8 +26,6 @@ package Sympa::Conf;
 use strict;
 use English qw(-no_match_vars);
 
-use Exporter;
-
 #use Carp; # currently not used.
 use Storable;
 
@@ -37,7 +35,7 @@ use Data::Dumper;
 #use Sympa::List; # no longer used
 use Sympa::DatabaseManager;
 use Sympa::Log::Syslog;
-use Sympa::Language qw(gettext);
+use Sympa::Language;
 
 #use Sympa::Wwslib; # no longer used
 use Sympa::ConfDef;
@@ -45,9 +43,6 @@ use Sympa::Tools;
 
 #use Sympa::Constants; # already load in confdef.
 use Sympa::LockedFile;
-
-our @ISA    = qw(Exporter);
-our @EXPORT = qw(%params %Conf);
 
 =head1 NAME
 
@@ -1206,7 +1201,7 @@ sub load_nrcpt_by_domain {
             $valid_dom += 1;
         } else {
             Sympa::Log::Syslog::do_log('notice',
-                gettext('Error at line %d: %s'),
+                Sympa::Language::gettext('Error at line %d: %s'),
                 $line_num, $config_file, $_);
             $config_err++;
         }
@@ -1681,7 +1676,7 @@ sub _load_config_file_to_hash {
             }
         } else {
             Sympa::Log::Syslog::do_log('err',
-                gettext('Error at %s line %d: %s'),
+                Sympa::Language::gettext('Error at %s line %d: %s'),
                 $config_file, $line_num, $_);
             $result->{'errors'}++;
         }

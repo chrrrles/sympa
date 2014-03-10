@@ -27,8 +27,6 @@ use strict;
 use English qw(-no_match_vars);
 
 use Carp;
-use Exporter;
-
 #use Conf; # SDM is used in Conf
 use Sympa::Log::Syslog;
 

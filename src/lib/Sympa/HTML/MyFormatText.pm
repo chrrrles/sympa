@@ -36,8 +36,8 @@ sub img_start {
     my $alt = $node->attr('alt');
     $self->out(
         defined($alt)
-        ? sprintf(gettext("[ Image%s ]"), ": " . $alt)
-        : sprintf(gettext("[Image%s]"),   "")
+        ? sprintf(Sympa::Language::gettext("[ Image%s ]"), ": " . $alt)
+        : sprintf(Sympa::Language::gettext("[Image%s]"),   "")
     );
 }
 

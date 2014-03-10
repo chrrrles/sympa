@@ -114,7 +114,7 @@ sub reject_report_msg {
         chomp $param->{'msg_id'} if $param->{'msg_id'};
 
         $param ||= {};
-        $param->{'error'}  = gettext($error);
+        $param->{'error'}  = Sympa::Language::gettext($error);
         $param->{'who'}    = $user;
         $param->{'action'} = 'message diffusion';
         $param->{'msg_id'} = $param->{'msg_id'};
@@ -413,7 +413,7 @@ sub global_report_cmd {
         if ($robot) {
             my $param = $data;
             $param ||= {};
-            $param->{'error'}  = gettext($error);
+            $param->{'error'}  = Sympa::Language::gettext($error);
             $param->{'who'}    = $sender;
             $param->{'action'} = 'Command process';
 
@@ -499,7 +499,7 @@ sub reject_report_cmd {
 
             my $param = $data;
             $param ||= {};
-            $param->{'error'}    = gettext($error);
+            $param->{'error'}    = Sympa::Language::gettext($error);
             $param->{'cmd'}      = $cmd;
             $param->{'listname'} = $listname;
             $param->{'who'}      = $sender;
@@ -804,7 +804,7 @@ sub reject_report_web {
         if ($robot) {
             my $param = $data;
             $param ||= {};
-            $param->{'error'} = gettext($error);
+            $param->{'error'} = Sympa::Language::gettext($error);
             $param->{'list'}  = $list if (defined $list);
             $param->{'who'}   = $user;
             $param->{'action'} ||= 'Command process';

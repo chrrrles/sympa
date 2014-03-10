@@ -60,7 +60,7 @@ use URI::Escape;
 # tentative
 use Data::Dumper;
 
-use Sympa::Language qw(gettext_strftime);
+use Sympa::Language;
 
 #use Sympa::List;
 ##The line above was removed to avoid dependency loop.
@@ -2314,7 +2314,7 @@ sub personalize_text {
     if ($user) {
         $user->{'escaped_email'} = URI::Escape::uri_escape($rcpt);
         $user->{'friendly_date'} =
-            gettext_strftime("%d %b %Y  %H:%M", localtime($user->{'date'}));
+            Sympa::Language::gettext_strftime("%d %b %Y  %H:%M", localtime($user->{'date'}));
     }
 
     # this method as been removed because some users may forward

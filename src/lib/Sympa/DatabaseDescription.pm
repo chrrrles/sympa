@@ -24,11 +24,6 @@
 package Sympa::DatabaseDescription;
 use strict;
 
-use Exporter;
-our @ISA = qw(Exporter);
-our @EXPORT =
-    qw(db_struct not_null %not_null primary %primary autoincrement %autoincrement %indexes %former_indexes);
-
 our %not_null      = not_null();
 our %primary       = primary();
 our %autoincrement = autoincrement();

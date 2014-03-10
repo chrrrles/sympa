@@ -25,7 +25,7 @@ package Sympa::Auth;
 
 use Digest::MD5;
 
-use Sympa::Language qw(gettext_strftime);
+use Sympa::Language;
 
 #use Sympa::Log::Syslog;
 #use Conf;
@@ -529,7 +529,7 @@ sub get_one_time_ticket {
     }
 
     my $result;
-    my $printable_date = gettext_strftime "%d %b %Y at %H:%M:%S",
+    my $printable_date = Sympa::Language::gettext_strftime "%d %b %Y at %H:%M:%S",
         localtime($ticket->{'date'});
     my $lockout = $robot->one_time_ticket_lockout || 'open';
     my $lifetime =

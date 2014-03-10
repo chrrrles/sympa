@@ -26,7 +26,6 @@ package Sympa::Commands;
 use strict;
 use warnings;
 use Carp qw(carp);
-use Exporter;
 use Digest::MD5;
 use Fcntl;
 use DB_File;
@@ -34,7 +33,7 @@ use Time::Local;
 use MIME::EncWords;
 
 #use Conf; # used in List - Site
-use Sympa::Language qw(gettext gettext_strftime);
+use Sympa::Language;
 
 #use Sympa::Log::Syslog; # used in List - Site - Conf
 use Sympa::List;
@@ -44,9 +43,6 @@ use Data::Dumper;
 
 #use Sympa::Tools; # used in List - Site - Conf
 #use Sympa::Constants; # used in confdef - Conf
-
-our @ISA       = qw(Exporter);
-our @EXPORT_OK = qw($sender);
 
 my %comms = (
     'add'                               => 'add',
@@ -203,7 +199,7 @@ sub help {
     $data->{'user'}      = Sympa::User->new($sender);
     Sympa::Language::SetLang($data->{'user'}->lang)
         if $data->{'user'}->lang;
-    $data->{'subject'}        = gettext("User guide");
+    $data->{'subject'}        = Sympa::Language::gettext("User guide");
     $data->{'auto_submitted'} = 'auto-replied';
 
     unless ($robot->send_file("helpfile", $sender, $data)) {
@@ -1216,7 +1212,7 @@ sub info {
             foreach my $d (@{$list->digest->{'days'}}) {
                 push @days,
                     (
-                    gettext_strftime "%A",
+                    Sympa::Language::gettext_strftime "%A",
                     localtime(0 + ($d + 3) * (3600 * 24))
                     );
             }
@@ -2186,7 +2182,7 @@ sub remind {
             my %global_info;
             my $count = 0;
 
-            $context{'subject'} = gettext("Subscription summary");
+            $context{'subject'} = Sympa::Language::gettext("Subscription summary");
 
             # this remind is a global remind.
 

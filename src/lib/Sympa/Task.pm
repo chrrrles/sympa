@@ -27,7 +27,6 @@ use strict;
 
 #use Carp; # not yet used
 #use Digest::MD5; # not used
-#use Exporter; # not used
 #use Time::Local; # no longer used
 # tentative
 use Data::Dumper;
