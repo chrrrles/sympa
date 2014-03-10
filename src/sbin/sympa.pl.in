@@ -1458,7 +1458,7 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
         ## Scan queuedigest it should be performed by task manager !
         if ($index_queuedigest++ >= $digestsleep) {
             $index_queuedigest = 0;
-            SendDigest()();
+            SendDigest();
         }
 
         # it should be performed by task manager !
