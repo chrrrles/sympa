@@ -462,7 +462,7 @@ sub delete_bouncer {
                 $self->{'who'},
                 $self->{'list'}
             );
-            Sympa::Log::Syslog::db_log(
+            Sympa::Log::Database::db_log(
                 {   'robot'        => $self->{'list'}->domain,
                     'list'         => $self->{'list'}->name,
                     'action'       => 'del',
@@ -1188,7 +1188,7 @@ sub update_subscriber_bounce_history {
                 'bounce_address' => $rcpt
             }
         );
-        Sympa::Log::Syslog::db_log(
+        Sympa::Log::Database::db_log(
             {   'robot'        => $list->domain,
                 'list'         => $list->name,
                 'action'       => 'get_bounce',
@@ -1206,7 +1206,7 @@ sub update_subscriber_bounce_history {
         Sympa::Log::Syslog::do_log('notice',
             'Received bounce for email address %s, list %s',
             $bouncefor, $list);
-        Sympa::Log::Syslog::db_log(
+        Sympa::Log::Database::db_log(
             {   'robot'        => $list->domain,
                 'list'         => $list->name,
                 'action'       => 'get_bounce',

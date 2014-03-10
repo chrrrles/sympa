@@ -745,7 +745,7 @@ sub purge_logs_table {
     my @slots          = ();
 
     Sympa::Log::Syslog::do_log('debug2', 'purge_logs_table()');
-    unless (Sympa::Log::Syslog::db_log_del()) {
+    unless (Sympa::Log::Database::db_log_del()) {
         $self->error(
             {   'task'    => $task,
                 'type'    => 'execution',

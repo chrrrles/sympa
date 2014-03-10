@@ -535,7 +535,7 @@ Removes the message having the identifier $msgid from the list named $adrlist.
 
 =over 
 
-=item * Sympa::Log::Syslog::db_log
+=item * Sympa::Log::Database::db_log
 
 =item * Sympa::Log::Syslog::do_log
 
@@ -571,7 +571,7 @@ sub remove {
     );
 
     unless (
-        Sympa::Log::Syslog::db_log(
+        Sympa::Log::Database::db_log(
             {   'robot'        => $robot,
                 'list'         => $adrlist,
                 'action'       => 'remove',
