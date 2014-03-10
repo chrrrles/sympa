@@ -165,4 +165,3 @@ sympa.conf you will also be prompted for the password used by sympa to access
 to the list private key)
 EOF
 }
-}

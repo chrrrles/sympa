@@ -25,6 +25,8 @@
 use strict;
 use lib '--modulesdir--';
 
+use English qw(-no_match_vars);
+
 #use Sympa::Wwslib; # no longer used
 use Sympa::Conf;
 use Sympa::Language;
