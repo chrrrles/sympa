@@ -1209,11 +1209,9 @@ sub info {
         if (defined $list->digest) {
 
             foreach my $d (@{$list->digest->{'days'}}) {
-                push @days,
-                    (
-                    Sympa::Language::gettext_strftime "%A",
-                    localtime(0 + ($d + 3) * (3600 * 24))
-                    );
+                push @days, Sympa::Language::gettext_strftime(
+                    "%A", localtime(0 + ($d + 3) * (3600 * 24))
+                );
             }
             $data->{'digest'} =
                   join(',', @days) . ' '
