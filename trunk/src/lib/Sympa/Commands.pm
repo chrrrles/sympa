@@ -28,7 +28,6 @@ use warnings;
 use Carp qw(carp);
 use Digest::MD5;
 use Fcntl;
-use DB_File;
 use Time::Local;
 use MIME::EncWords;
 
