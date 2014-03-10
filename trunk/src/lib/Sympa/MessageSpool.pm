@@ -23,10 +23,9 @@
 
 package Sympa::MessageSpool;
 
-use Sympa::ClassicSpool;
-use Sympa::Log::Syslog;
+use base  qw(Sympa::ClassicSpool);
 
-our @ISA = qw(Sympa::ClassicSpool);
+use Sympa::Log::Syslog;
 
 sub new {
     Sympa::Log::Syslog::do_log('debug2', '(%s, %s)', @_);

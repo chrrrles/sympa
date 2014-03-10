@@ -36,6 +36,8 @@ Sympa allows lists creation and management by sets. These are the families, sets
 package Sympa::Family;
 
 use strict;
+use base qw(Sympa::Site_r);
+
 use English qw(-no_match_vars);
 
 use XML::LibXML;
@@ -51,8 +53,6 @@ use Sympa::Admin;
 use Sympa::Config_XML;
 
 #use Sympa::Constants; # load in Conf - confdef
-
-our @ISA = qw(Sympa::Site_r);    # not fully inherit Robot.
 
 my @uncompellable_param = (
     'msg_topic.keywords',

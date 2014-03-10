@@ -30,12 +30,12 @@ package Sympa::Robot;
 
 use strict;
 use warnings;
+use base qw(Sympa::Site);
+
 use Carp qw(carp croak);
 
 use Sympa::ListDef;
 use Sympa::Site;
-
-our @ISA = qw(Site);
 
 ## Croak if Robot object is used where robot name shall be used.
 ## It may be removed when refactoring has finished.

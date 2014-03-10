@@ -25,12 +25,11 @@ package Sympa::KeySpool;
 
 use strict;
 use warnings;
+use base qw(Sympa::ClassicSpool);
+
 use English qw(-no_match_vars);
 
-use Sympa::ClassicSpool;
 use Sympa::Log::Syslog;
-
-our @ISA = qw(Sympa::ClassicSpool);
 
 our $filename_regexp = '^(\S+)_(\w+)(\.distribute)?$';
 

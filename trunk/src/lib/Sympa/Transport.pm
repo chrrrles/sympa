@@ -24,11 +24,10 @@
 package Sympa::Transport;
 
 use strict;
-use vars qw(@ISA);
 use Sympa::Session;
 
 use SOAP::Transport::HTTP;
-@ISA = qw(SOAP::Transport::HTTP::FCGI);
+our @ISA = qw(SOAP::Transport::HTTP::FCGI);
 
 sub request {
     my $self = shift;

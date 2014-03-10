@@ -26,10 +26,9 @@ package Sympa::HTML::MyFormatText;
 # This is a subclass of the HTML::FormatText object.
 # This subclassing is done to allow internationalisation of some strings
 
-our @ISA = qw(HTML::FormatText);
-
 use Sympa::Language;
 use strict;
+use base qw(HTML::FormatText);
 
 sub img_start {
     my ($self, $node) = @_;

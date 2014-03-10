@@ -25,14 +25,13 @@ package Sympa::BounceMessage;
 
 use strict;
 use warnings;
+use base qw(Sympa::Message);
+
 use English qw(-no_match_vars);
 
-use Sympa::Message;
 use Sympa::Log::Syslog;
 use Sympa::Tracking;
 use Data::Dumper;
-
-our @ISA = qw(Message);
 
 ## Equivalents relative to RFC 1893
 our %equiv = (

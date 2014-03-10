@@ -24,14 +24,12 @@
 package DBManipulatorSybase;
 
 use strict;
+use base qw(Sympa::DBManipulatorDefault);
+
 use Data::Dumper;
 
 use Carp;
 use Sympa::Log::Syslog;
-
-use Sympa::DBManipulatorDefault;
-
-our @ISA = qw(Sympa::DBManipulatorDefault);
 
 #######################################################
 ####### Beginning the RDBMS-specific code. ############

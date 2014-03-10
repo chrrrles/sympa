@@ -24,15 +24,13 @@
 package Sympa::DBManipulatorPostgres;
 
 use strict;
+use base qw(Sympa::DBManipulatorDefault);
 
 #use Carp; # not used
 # tentative
 use Data::Dumper;
 
 use Sympa::Log::Syslog;
-use Sympa::DBManipulatorDefault;
-
-our @ISA = qw(Sympa::DBManipulatorDefault);
 
 #######################################################
 ####### Beginning the RDBMS-specific code. ############

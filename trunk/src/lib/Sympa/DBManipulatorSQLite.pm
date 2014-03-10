@@ -24,16 +24,14 @@
 package Sympa::DBManipulatorSQLite;
 
 use strict;
+use base qw(Sympa::DBManipulatorDefault);
+
 use English qw(-no_match_vars);
 use Data::Dumper;
 
 use version;
 use Carp;
 use Sympa::Log::Syslog;
-
-use Sympa::DBManipulatorDefault;
-
-our @ISA = qw(Sympa::DBManipulatorDefault);
 
 #######################################################
 ####### Beginning the RDBMS-specific code. ############

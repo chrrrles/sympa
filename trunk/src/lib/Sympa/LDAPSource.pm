@@ -24,8 +24,8 @@
 package Sympa::LDAPSource;
 
 use strict;
+use base qw(Sympa::Datasource);
 
-use Sympa::Datasource;
 use Carp;
 
 #use Sympa::Tools; # not used
@@ -35,8 +35,6 @@ use Sympa::Log::Syslog;
 
 #use Sympa::List; # not used
 use Data::Dumper;
-
-our @ISA    = qw(Sympa::Datasource);
 
 sub new {
     my $pkg   = shift;

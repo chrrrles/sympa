@@ -30,10 +30,9 @@ package Sympa::Site;
 
 use strict;
 use warnings;
-use Carp qw(croak carp);
-use Sympa::Site_r;
+use base qw(Sympa::Site_r);
 
-our @ISA = qw(Sympa::Site_r);
+use Carp qw(croak carp);
 
 ####
 #### global variables
