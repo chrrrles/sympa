@@ -78,12 +78,6 @@ our %cpan_modules = (
         'gettext_id' =>
             'required to prevent Mail::DKIM from crashing Sympa processes.',
     },
-    'DB_File' => {
-        required_version => '1.75',
-        package_name     => 'DB_File',
-        mandatory        => 1,
-        'gettext_id'     => ' used for maintaining snapshots of list members',
-    },
     'DBD::Oracle' => {
         required_version => '0.90',
         package_name     => 'DBD-Oracle',

@@ -555,9 +555,6 @@ my %edit_list_conf = ();
 my %mtime;
 
 #use Fcntl; # duplicated
-use DB_File;
-
-$DB_BTREE->{compare} = \&_compare_addresses;
 
 ## Creates an object.
 sub new {
@@ -8397,20 +8394,6 @@ sub _save_list_members_file {
     }
     close SUB;
     return 1;
-}
-
-sub _compare_addresses {
-    my ($a, $b) = @_;
-
-    my ($ra, $rb);
-
-    $a =~ tr/A-Z/a-z/;
-    $b =~ tr/A-Z/a-z/;
-
-    $ra = reverse $a;
-    $rb = reverse $b;
-
-    return ($ra cmp $rb);
 }
 
 ## Store the message in spool digest  by creating a new entry for it or
