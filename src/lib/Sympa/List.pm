@@ -70,6 +70,7 @@ use Sympa::Family;    #FIXME: dependency loop between List and Family
 use Sympa::PlainDigest;
 use Sympa::Tracking;
 ##use Sympa::ListDef; used in Robot
+use Sympa::Tools::SMIME;
 
 my @sources_providing_listmembers = qw/
     include_file
@@ -9605,7 +9606,7 @@ sub get_cert {
     # it will have the respective cert attached anyways.
     # (the problem is that netscape, opera and IE can't only
     # read the first cert in a file)
-    my ($certs, $keys) = Sympa::Tools::smime_find_keys($self->dir, 'encrypt');
+    my ($certs, $keys) = Sympa::Tools::SMIME::find_keys($self->dir, 'encrypt');
 
     my @cert;
     if ($format eq 'pem') {
