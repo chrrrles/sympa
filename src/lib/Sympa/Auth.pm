@@ -529,8 +529,9 @@ sub get_one_time_ticket {
     }
 
     my $result;
-    my $printable_date = Sympa::Language::gettext_strftime "%d %b %Y at %H:%M:%S",
-        localtime($ticket->{'date'});
+    my $printable_date = Sympa::Language::gettext_strftime(
+        "%d %b %Y at %H:%M:%S", localtime($ticket->{'date'})
+    );
     my $lockout = $robot->one_time_ticket_lockout || 'open';
     my $lifetime =
         Sympa::Tools::duration_conv($robot->one_time_ticket_lifetime || 0);

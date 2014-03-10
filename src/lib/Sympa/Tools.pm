@@ -2251,8 +2251,9 @@ sub send_crash_report {
         open ERR, '<', $err_file;
         @err_output = map { chomp $_; $_; } <ERR>;
         close ERR;
-        $err_date = Sympa::Language::gettext_strftime "%d %b %Y  %H:%M",
-            localtime((stat($err_file))[9]);
+        $err_date = Sympa::Language::gettext_strftime(
+            "%d %b %Y  %H:%M", localtime((stat($err_file))[9])
+        );
     }
     Sympa::Site->send_notify_to_listmaster(
         'crash',

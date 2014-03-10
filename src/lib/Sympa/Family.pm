@@ -442,8 +442,9 @@ sub add_list {
     # info parameters
     $list->latest_instantiation(
         {   'email' => "listmaster\@$host",
-            'date' =>
-                (Sympa::Language::gettext_strftime "%d %b %Y at %H:%M:%S", localtime time),
+            'date' => Sympa::Language::gettext_strftime(
+                "%d %b %Y at %H:%M:%S", localtime(time)
+            ),
             'date_epoch' => time
         }
     );
@@ -766,8 +767,9 @@ sub modify_list {
 
     $list->latest_instantiation(
         {   'email' => "listmaster\@$host",
-            'date' =>
-                (Sympa::Language::gettext_strftime "%d %b %Y at %H:%M:%S", localtime time),
+            'date' => Sympa::Language::gettext_strftime(
+                "%d %b %Y at %H:%M:%S", localtime(time)
+            ),
             'date_epoch' => time
         }
     );
@@ -2847,8 +2849,9 @@ sub _end_update_list {
     my $host = $self->robot->host;
     $list->latest_instantiation(
         {   'email' => "listmaster\@$host",
-            'date' =>
-                (Sympa::Language::gettext_strftime "%d %b %Y at %H:%M:%S", localtime time),
+            'date' => Sympa::Language::gettext_strftime(
+                "%d %b %Y at %H:%M:%S", localtime(time)
+            ),
             'date_epoch' => time
         }
     );

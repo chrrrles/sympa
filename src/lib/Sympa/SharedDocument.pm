@@ -105,7 +105,9 @@ sub new {
 
     ## Date
     my @info = stat $document->{'absolute_path'};
-    $document->{'date'} = Sympa::Language::gettext_strftime "%d %b %Y", localtime $info[9];
+    $document->{'date'} = Sympa::Language::gettext_strftime(
+        "%d %b %Y", localtime($info[9])
+    );
     $document->{'date_epoch'} = $info[9];
 
     # Size of the doc

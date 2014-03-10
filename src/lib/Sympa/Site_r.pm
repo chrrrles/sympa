@@ -906,17 +906,25 @@ sub send_file {
             $data->{'subscriber'} = $self->get_list_member($who);
 
             if ($data->{'subscriber'}) {
-                $data->{'subscriber'}{'date'} = Sympa::Language::gettext_strftime "%d %b %Y",
-                    localtime($data->{'subscriber'}{'date'});
+                $data->{'subscriber'}{'date'} =
+                    Sympa::Language::gettext_strftime(
+                        "%d %b %Y",
+                        localtime($data->{'subscriber'}{'date'})
+                    );
                 $data->{'subscriber'}{'update_date'} =
-                    Sympa::Language::gettext_strftime "%d %b %Y",
-                    localtime($data->{'subscriber'}{'update_date'});
+                    Sympa::Language::gettext_strftime(
+                        "%d %b %Y",
+                        localtime($data->{'subscriber'}{'update_date'})
+                    );
                 if ($data->{'subscriber'}{'bounce'}) {
                     $data->{'subscriber'}{'bounce'} =~
                         /^(\d+)\s+(\d+)\s+(\d+)(\s+(.*))?$/;
 
                     $data->{'subscriber'}{'first_bounce'} =
-                        Sympa::Language::gettext_strftime "%d %b %Y", localtime($1);
+                        Sympa::Language::gettext_strftime(
+                            "%d %b %Y",
+                            localtime($1)
+                        );
                 }
             }
         }

@@ -1912,9 +1912,9 @@ sub prepare_digest_parameters {
     }
     my @now = localtime(time);
     $self->{'digest'}{'template_params'}{'datetime'} =
-        Sympa::Language::gettext_strftime "%a, %d %b %Y %H:%M:%S", @now;
+        Sympa::Language::gettext_strftime( "%a, %d %b %Y %H:%M:%S", @now);
     $self->{'digest'}{'template_params'}{'date'} =
-        Sympa::Language::gettext_strftime "%a, %d %b %Y", @now;
+        Sympa::Language::gettext_strftime("%a, %d %b %Y", @now);
     $self->{'digest'}{'template_params'}{'current_group'} = 0;
     $self->{'digest'}{'template_params'}{'total_group'} =
         $#{$self->{'digest'}{'group_of_msg'}} + 1;
@@ -9999,8 +9999,9 @@ sub _save_list_config_file {
     $self->update(
         {   'email'      => $email,
             'date_epoch' => $time,
-            'date' =>
-                (Sympa::Language::gettext_strftime "%d %b %Y at %H:%M:%S", localtime $time),
+            'date'       => Sympa::Language::gettext_strftime(
+                "%d %b %Y at %H:%M:%S", localtime($time)
+            ),
         }
     );
     ## Get updated config
