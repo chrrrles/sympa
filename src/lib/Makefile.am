@@ -77,6 +77,7 @@ nobase_modules_DATA = Sympa/Admin.pm \
 		      Sympa/TimeUtils.pm \
 		      Sympa/Tools.pm \
 		      Sympa/Tools/SMIME.pm \
+		      Sympa/Tools/DKIM.pm \
 		      Sympa/Tracking.pm \
 		      Sympa/Template.pm \
 		      Sympa/Upgrade.pm \
