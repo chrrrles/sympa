@@ -157,34 +157,6 @@ sub _create_xss_parser {
     return $hss;
 }
 
-#*******************************************
-# Function : pictures_filename
-# Description : return the type of a pictures
-#               according to the user
-## IN : email, list
-#*******************************************
-# OBSOLETED: use $list->find_picture_filenames().
-sub pictures_filename {
-    my %parameters = @_;
-    my $email      = $parameters{'email'};
-    my $list       = $parameters{'list'};
-
-    my $ret = $list->find_picture_filenames($email);
-    return $ret;
-}
-
-## Creation of pictures url
-## IN : email, list
-# OBSOLETED: Use $list->find_picture_url().
-sub make_pictures_url {
-    my %parameters = @_;
-    my $email      = $parameters{'email'};
-    my $list       = $parameters{'list'};
-
-    my $ret = $list->find_picture_url($email);
-    return $ret;
-}
-
 ## Returns sanitized version (using StripScripts) of the string provided as
 ## argument.
 sub sanitize_html {
@@ -308,18 +280,6 @@ sub sanitize_var {
         return undef;
     }
     return 1;
-}
-
-## Sorts the list of adresses by domain name
-## Input : users hash
-## Sort by domain.
-sub sortbydomain {
-    my ($x, $y) = @_;
-    $x = join('.', reverse(split(/[@\.]/, $x)));
-    $y = join('.', reverse(split(/[@\.]/, $y)));
-
-    #print "$x $y\n";
-    $x cmp $y;
 }
 
 ## Sort subroutine to order files in sympa spool by date
@@ -1080,17 +1040,6 @@ sub tmp_passwd {
     );
 }
 
-# Check sum used to authenticate communication from WWSympa to Sympa
-sub sympa_checksum {
-    my $rcpt     = shift;
-    my $checksum = (
-        substr(
-            Digest::MD5::md5_hex(join('/', Sympa::Site->cookie, $rcpt)), -10
-        )
-    );
-    return $checksum;
-}
-
 # create a cipher
 sub ciphersaber_installed {
     return $cipher if defined $cipher;
@@ -1817,14 +1766,6 @@ sub qencode_hierarchy {
     return $count;
 }
 
-## Dumps the value of each character of the input string
-sub dump_encoding {
-    my $out = shift;
-
-    $out =~ s/./sprintf('%02x', ord($MATCH)).' '/eg;
-    return $out;
-}
-
 ## Remove PID file and STDERR output
 sub remove_pid {
     my ($name, $pid, $options) = @_;
@@ -2219,73 +2160,6 @@ sub dump_html_var {
     return $html;
 }
 
-## Dump a variable's content
-sub dump_html_var2 {
-    my ($var) = shift;
-
-    my $html = '';
-
-    if (ref($var)) {
-        if (ref($var) eq 'ARRAY') {
-            $html .= 'ARRAY <ul>';
-            foreach my $index (0 .. $#{$var}) {
-                $html .= '<li> ' . $index;
-                $html .= dump_html_var($var->[$index]);
-                $html .= '</li>';
-            }
-            $html .= '</ul>';
-        } elsif (ref($var) eq 'HASH'
-            || ref($var) eq 'Sympa::Scenario'
-            || ref($var) eq 'List') {
-
-            #$html .= " (".ref($var).') <ul>';
-            $html .= '<ul>';
-            foreach my $key (sort keys %{$var}) {
-                $html .= '<li>' . $key . '=';
-                $html .= dump_html_var($var->{$key});
-                $html .= '</li>';
-            }
-            $html .= '</ul>';
-        } else {
-            $html .= sprintf "<li>'%s'</li>", ref($var);
-        }
-    } else {
-        if (defined $var) {
-            $html .= '<li>' . $var . '</li>';
-        } else {
-            $html .= '<li>UNDEF</li>';
-        }
-    }
-    return $html;
-}
-
-sub remove_empty_entries {
-    my ($var) = @_;
-    my $not_empty = 0;
-
-    if (ref($var)) {
-        if (ref($var) eq 'ARRAY') {
-            foreach my $index (0 .. $#{$var}) {
-                my $status = remove_empty_entries($var->[$index]);
-                $var->[$index] = undef unless ($status);
-                $not_empty ||= $status;
-            }
-        } elsif (ref($var) eq 'HASH') {
-            foreach my $key (sort keys %{$var}) {
-                my $status = remove_empty_entries($var->{$key});
-                $var->{$key} = undef unless ($status);
-                $not_empty ||= $status;
-            }
-        }
-    } else {
-        if (defined $var && $var) {
-            $not_empty = 1;
-        }
-    }
-
-    return $not_empty;
-}
-
 ## Duplicate a complex variable
 sub dup_var {
     my ($var) = @_;
@@ -2526,43 +2400,6 @@ sub change_x_sympa_to {
 }
 
 ## Compare 2 versions of Sympa
-sub higher_version {
-    my ($v1, $v2) = @_;
-
-    my @tab1 = split /\./, $v1;
-    my @tab2 = split /\./, $v2;
-
-    my $max = $#tab1;
-    $max = $#tab2 if ($#tab2 > $#tab1);
-
-    for my $i (0 .. $max) {
-
-        if ($tab1[0] =~ /^(\d*)a$/) {
-            $tab1[0] = $1 - 0.5;
-        } elsif ($tab1[0] =~ /^(\d*)b$/) {
-            $tab1[0] = $1 - 0.25;
-        }
-
-        if ($tab2[0] =~ /^(\d*)a$/) {
-            $tab2[0] = $1 - 0.5;
-        } elsif ($tab2[0] =~ /^(\d*)b$/) {
-            $tab2[0] = $1 - 0.25;
-        }
-
-        if ($tab1[0] eq $tab2[0]) {
-
-            #printf "\t%s = %s\n",$tab1[0],$tab2[0];
-            shift @tab1;
-            shift @tab2;
-            next;
-        }
-        return ($tab1[0] > $tab2[0]);
-    }
-
-    return 0;
-}
-
-## Compare 2 versions of Sympa
 sub lower_version {
     my ($v1, $v2) = @_;
 
@@ -2661,152 +2498,6 @@ sub add_in_blacklist {
 
 }
 
-sub LOCK_SH {1}
-sub LOCK_EX {2}
-sub LOCK_NB {4}
-sub LOCK_UN {8}
-
-## lock a file
-sub lock {
-    my $lock_file = shift;
-    my $mode      = shift;    ## read or write
-
-    my $operation;            #
-    my $open_mode;
-
-    if ($mode eq 'read') {
-        $operation = LOCK_SH;
-    } else {
-        $operation = LOCK_EX;
-        $open_mode = '>>';
-    }
-
-    ## Read access to prevent "Bad file number" error on Solaris
-    unless (open FH, $open_mode . $lock_file) {
-        Sympa::Log::Syslog::do_log('err', 'Cannot open %s: %s',
-            $lock_file, $ERRNO);
-        return undef;
-    }
-
-    my $got_lock = 1;
-    unless (flock(FH, $operation | LOCK_NB)) {
-        Sympa::Log::Syslog::do_log('notice', 'Waiting for %s lock on %s',
-            $mode, $lock_file);
-
-        ## If lock was obtained more than 20 minutes ago, then force the lock
-        if ((time - (stat($lock_file))[9]) >= 60 * 20) {
-            Sympa::Log::Syslog::do_log('notice', 'Removing lock file %s',
-                $lock_file);
-            unless (unlink $lock_file) {
-                Sympa::Log::Syslog::do_log('err', 'Cannot remove %s: %s',
-                    $lock_file, $ERRNO);
-                return undef;
-            }
-
-            unless (open FH, ">$lock_file") {
-                Sympa::Log::Syslog::do_log('err', 'Cannot open %s: %s',
-                    $lock_file, $ERRNO);
-                return undef;
-            }
-        }
-
-        $got_lock = undef;
-        my $max = 10;
-        $max = 2 if ($ENV{'HTTP_HOST'});    ## Web context
-        for (my $i = 1; $i < $max; $i++) {
-            sleep(10 * $i);
-            if (flock(FH, $operation | LOCK_NB)) {
-                $got_lock = 1;
-                last;
-            }
-            Sympa::Log::Syslog::do_log('notice', 'Waiting for %s lock on %s',
-                $mode, $lock_file);
-        }
-    }
-
-    if ($got_lock) {
-        Sympa::Log::Syslog::do_log('debug2', 'Got lock for %s on %s',
-            $mode, $lock_file);
-
-        ## Keep track of the locking PID
-        if ($mode eq 'write') {
-            print FH "$PID\n";
-        }
-    } else {
-        Sympa::Log::Syslog::do_log('err', 'Failed locking %s: %s',
-            $lock_file, $ERRNO);
-        return undef;
-    }
-
-    return \*FH;
-}
-
-## unlock a file
-sub unlock {
-    my $lock_file = shift;
-    my $fh        = shift;
-
-    unless (flock($fh, LOCK_UN)) {
-        Sympa::Log::Syslog::do_log('err', 'Failed UNlocking %s: %s',
-            $lock_file, $ERRNO);
-        return undef;
-    }
-    close $fh;
-    Sympa::Log::Syslog::do_log('debug2', 'Release lock on %s', $lock_file);
-
-    return 1;
-}
-
-############################################################
-#  get_fingerprint                                         #
-############################################################
-#  Used in 2 cases :                                       #
-#  - check the MD5 in the URL                              #
-#  - create an MD5 to put in a URL                         #
-#                                                          #
-#  Use : get_db_random()                                   #
-#        init_db_random()                                  #
-#        md5_fingerprint()                                 #
-#                                                          #
-# IN : $email : email of the subscriber                    #
-#      $fingerprint : the fingerprint in the URL (1st case)#
-#                                                          #
-# OUT : $fingerprint : a MD5 for create an URL             #
-#     | 1 : if the MD5 in the URL is true                  #
-#     | undef                                              #
-#                                                          #
-############################################################
-sub get_fingerprint {
-
-    my $email       = shift;
-    my $fingerprint = shift;
-    my $random;
-    my $random_email;
-
-    unless ($random = get_db_random()) {
-
-        # si un random existe : get_db_random
-        $random = init_db_random();    # sinon init_db_random
-    }
-
-    $random_email = ($random . $email);
-
-    if ($fingerprint) {    #si on veut vérifier le fingerprint dans l'url
-
-        if ($fingerprint eq md5_fingerprint($random_email)) {
-            return 1;
-        } else {
-            return undef;
-        }
-
-    } else { #si on veut créer une url de type http://.../sympa/unsub/$list/$email/&get_fingerprint($email)
-
-        $fingerprint = md5_fingerprint($random_email);
-        return $fingerprint;
-
-    }
-}
-
 ############################################################
 #  md5_fingerprint                                         #
 ############################################################
@@ -2830,66 +2521,6 @@ sub md5_fingerprint {
     $digestmd5->reset;
     $digestmd5->add($input_string);
     return (unpack("H*", $digestmd5->digest));
-}
-
-############################################################
-#  get_db_random                                           #
-############################################################
-#  This function returns $random                           #
-#  which is stored in the database                         #
-#                                                          #
-# IN : -                                                   #
-#                                                          #
-# OUT : $random : the random stored in the database        #
-#     | undef                                              #
-#                                                          #
-############################################################
-sub get_db_random {
-
-    my $sth;
-    unless (
-        $sth = Sympa::DatabaseManager::do_query(
-            "SELECT random FROM fingerprint_table")
-        ) {
-        Sympa::Log::Syslog::do_log('err',
-            'Unable to retrieve random value from fingerprint_table');
-        return undef;
-    }
-    my $random = $sth->fetchrow_hashref('NAME_lc');
-
-    return $random;
-
-}
-
-############################################################
-#  init_db_random                                          #
-############################################################
-#  This function initializes $random used in               #
-#  get_fingerprint if there is no value in the database    #
-#                                                          #
-# IN : -                                                   #
-#                                                          #
-# OUT : $random : the random initialized in the database   #
-#     | undef                                              #
-#                                                          #
-############################################################
-sub init_db_random {
-
-    my $range   = 89999999999999999999;
-    my $minimum = 10000000000000000000;
-
-    my $random = int(rand($range)) + $minimum;
-
-    unless (
-        Sympa::DatabaseManager::do_query(
-            'INSERT INTO fingerprint_table VALUES (%d)', $random
-        )
-        ) {
-        Sympa::Log::Syslog::do_log('err',
-            'Unable to set random value in fingerprint_table');
-        return undef;
-    }
-    return $random;
 }
 
 sub get_separator {
@@ -2942,88 +2573,6 @@ sub hash_2_string {
         $data_string .= ';' . $var . '="' . $val . '"';
     }
     return ($data_string);
-}
-
-=pod 
-
-=head2 sub save_to_bad(HASH $param)
-
-Saves a message file to the "bad/" spool of a given queue. Creates this directory if not found.
-
-=head3 Arguments 
-
-=over 
-
-=item * I<param> : a hash containing all the arguments, which means:
-
-=over 4
-
-=item * I<file> : the characters string of the path to the file to copy to bad;
-
-=item * I<hostname> : the characters string of the name of the virtual host concerned;
-
-=item * I<queue> : the characters string of the name of the queue.
-
-=back
-
-=back 
-
-=head3 Return 
-
-=over
-
-=item * 1 if the file was correctly saved to the "bad/" directory;
-
-=item * undef if something went wrong.
-
-=back 
-
-=head3 Calls 
-
-=over 
-
-=item * Sympa::List::send_notify_to_listmaster
-
-=back 
-
-=cut 
-
-sub save_to_bad {
-
-    my $param = shift;
-
-    my $file     = $param->{'file'};
-    my $hostname = $param->{'hostname'};
-    my $queue    = $param->{'queue'};
-
-    if (!-d $queue . '/bad') {
-        unless (mkdir $queue . '/bad', 0775) {
-            Sympa::Log::Syslog::do_log('notice',
-                'Unable to create %s/bad/ directory.', $queue);
-            Sympa::Robot->new($hostname)
-                ->send_notify_to_listmaster('unable_to_create_dir',
-                {'dir' => "$queue/bad"});
-            return undef;
-        }
-        Sympa::Log::Syslog::do_log('debug', "mkdir $queue/bad");
-    }
-    Sympa::Log::Syslog::do_log(
-        'notice',
-        "Saving file %s to %s",
-        $queue . '/' . $file,
-        $queue . '/bad/' . $file
-    );
-    unless (rename($queue . '/' . $file, $queue . '/bad/' . $file)) {
-        Sympa::Log::Syslog::do_log(
-            'notice',
-            'Could not rename %s to %s: %s',
-            $queue . '/' . $file,
-            $queue . '/bad/' . $file, $ERRNO
-        );
-        return undef;
-    }
-
-    return 1;
 }
 
 =pod 
@@ -3154,14 +2703,6 @@ sub get_pids_in_pid_file {
     my @pids = grep {/^[0-9]+$/} split(/\s+/, $l);
     $lock_fh->close;
     return \@pids;
-}
-
-## Returns the counf of numbers found in the string given as argument.
-sub count_numbers_in_string {
-    my $str   = shift;
-    my $count = 0;
-    $count++ while $str =~ /(\d+\s+)/g;
-    return $count;
 }
 
 #*******************************************
