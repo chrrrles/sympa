@@ -36,6 +36,7 @@ use Carp qw(carp croak);
 
 use Sympa::ListDef;
 use Sympa::Site;
+use Sympa::Tools::Data;
 
 ## Croak if Robot object is used where robot name shall be used.
 ## It may be removed when refactoring has finished.
@@ -578,7 +579,7 @@ sub list_params {
 
     return $self->{'list_params'} if $self->{'list_params'};
 
-    my $pinfo = Sympa::Tools::dup_var(\%Sympa::ListDef::pinfo);
+    my $pinfo = Sympa::Tools::Data::dup_var(\%Sympa::ListDef::pinfo);
     $pinfo->{'lang'}{'format'} = [$self->supported_languages];
 
     return $self->{'list_params'} = $pinfo;
@@ -703,7 +704,7 @@ sub topics {
         $self->{'topics'} = $list_of_topics;
     }
 
-    $list_of_topics = Sympa::Tools::dup_var($self->{'topics'});
+    $list_of_topics = Sympa::Tools::Data::dup_var($self->{'topics'});
 
     ## Set the title in the current language
     foreach my $top (keys %{$list_of_topics}) {

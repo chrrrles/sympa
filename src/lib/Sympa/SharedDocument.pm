@@ -31,6 +31,7 @@ use English qw(-no_match_vars);
 #use POSIX; # no longer used
 
 use Sympa::Tools;
+use Sympa::Tools::Data;
 use Sympa::Language;
 
 #use Sympa::List; # not used
@@ -277,7 +278,7 @@ sub dump {
     my $self = shift;
     my $fd   = shift;
 
-    Sympa::Tools::dump_var($self, 0, $fd);
+    Sympa::Tools::Data::dump_var($self, 0, $fd);
 
 }
 

@@ -362,6 +362,7 @@ use Sympa::Family;
 
 #use Sympa::Report; # load in Auth
 #use Sympa::Tools; # load in Conf
+use Sympa::Tools::Data;
 #use Sympa::Template; # load in List
 #use Sympa::Constants;
 #use Sympa::Tracking; # not used
@@ -2520,13 +2521,13 @@ sub DoMessage {
     if ($action =~ /^do_it/) {
         my $apply_dkim_signature = 'off';
         $apply_dkim_signature = 'on'
-            if Sympa::Tools::is_in_array($list->dkim_signature_apply_on, 'any');
+            if Sympa::Tools::Data::is_in_array($list->dkim_signature_apply_on, 'any');
         $apply_dkim_signature = 'on'
-            if Sympa::Tools::is_in_array($list->dkim_signature_apply_on,
+            if Sympa::Tools::Data::is_in_array($list->dkim_signature_apply_on,
             'smime_authenticated_messages')
             and $is_signed->{'body'};
         $apply_dkim_signature = 'on'
-            if Sympa::Tools::is_in_array($list->dkim_signature_apply_on,
+            if Sympa::Tools::Data::is_in_array($list->dkim_signature_apply_on,
             'dkim_authenticated_messages');
 
         ## Check TT2 syntax for merge_feature.

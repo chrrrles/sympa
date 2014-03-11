@@ -28,6 +28,7 @@ use warnings;
 use Carp qw(carp croak);
 
 use Sympa::DatabaseDescription;
+use Sympa::Tools::Data;
 
 #use Sympa::Site; # this module is used in Site
 
@@ -388,7 +389,7 @@ sub get_global_user {
         }
         ## Turn data_user into a hash
         if ($user->{'data'}) {
-            my %prefs = Sympa::Tools::string_2_hash($user->{'data'});
+            my %prefs = Sympa::Tools::Data::string_2_hash($user->{'data'});
             $user->{'prefs'} = \%prefs;
         }
     }

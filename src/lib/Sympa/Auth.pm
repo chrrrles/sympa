@@ -31,6 +31,7 @@ use Sympa::Language;
 #use Conf;
 #use Sympa::List; # not used
 use Sympa::Report;
+use Sympa::Tools::Data;
 
 #use Sympa::DatabaseManager;
 
@@ -233,7 +234,7 @@ sub ldap_authentication {
     $filter =~ s/\[sender\]/$auth/ig;
 
     ## bind in order to have the user's DN
-    my $param = Sympa::Tools::dup_var($ldap);
+    my $param = Sympa::Tools::Data::dup_var($ldap);
     my $ds    = Sympa::LDAPSource->new($param);
 
     unless (defined $ds && ($ldap_anonymous = $ds->connect())) {
@@ -266,7 +267,7 @@ sub ldap_authentication {
 
     ## Duplicate structure first
     ## Then set the bind_dn and password according to the current user
-    $param                         = Sympa::Tools::dup_var($ldap);
+    $param                         = Sympa::Tools::Data::dup_var($ldap);
     $param->{'ldap_bind_dn'}       = $DN[0];
     $param->{'ldap_bind_password'} = $pwd;
 
@@ -363,7 +364,7 @@ sub get_email_by_net_id {
 
     my $ldap = @{Sympa::Site->auth_services->{$robot->domain}}[$auth_id];
 
-    my $param = Sympa::Tools::dup_var($ldap);
+    my $param = Sympa::Tools::Data::dup_var($ldap);
     my $ds    = Sympa::LDAPSource->new($param);
     my $ldap_anonymous;
 

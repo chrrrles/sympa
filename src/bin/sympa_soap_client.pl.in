@@ -49,6 +49,7 @@ use Sympa::Family;
 use Sympa::Report;
 use File::Copy;
 use Sympa::Tools;
+use Sympa::Tools::Data;
 use Sympa::Template;
 use Sympa::Constants;
 
@@ -338,7 +339,7 @@ sub print_result {
         } else {
             @ret = $r->result;
         }
-        Sympa::Tools::dump_var(\@ret, 0, \*STDOUT);
+        Sympa::Tools::Data::dump_var(\@ret, 0, \*STDOUT);
     }
 
     return 1;
