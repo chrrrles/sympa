@@ -34,6 +34,7 @@ use CGI::Cookie;
 #use Conf; # no longer used
 #use Sympa::Log::Syslog; # used by SDM
 use Sympa::DatabaseManager;
+use Sympa::Tools::Data;
 
 # this structure is used to define which session attributes are stored in a
 # dedicated database col where others are compiled in col 'data_session'
@@ -213,7 +214,7 @@ sub load {
         );
     }
 
-    my %datas = Sympa::Tools::string_2_hash($session->{'data'});
+    my %datas = Sympa::Tools::Data::string_2_hash($session->{'data'});
 
     ## canonicalize lang if possible.
     $datas{'lang'} = Sympa::Language::CanonicLang($datas{'lang'}) || $datas{'lang'}
@@ -254,7 +255,7 @@ sub store {
         next unless ($var);
         $hash{$var} = $self->{$var};
     }
-    my $data_string = Sympa::Tools::hash_2_string(\%hash);
+    my $data_string = Sympa::Tools::Data::hash_2_string(\%hash);
     my $time        = time;
 
     ## If this is a new session, then perform an INSERT
@@ -357,7 +358,7 @@ sub renew {
         next unless ($var);
         $hash{$var} = $self->{$var};
     }
-    my $data_string = Sympa::Tools::hash_2_string(\%hash);
+    my $data_string = Sympa::Tools::Data::hash_2_string(\%hash);
 
     my $sth;
     ## Cookie may contain previous session ID.

@@ -40,6 +40,7 @@ use Sympa::Language;
 #use Sympa::Wwslib; # no longer used
 use Sympa::ConfDef;
 use Sympa::Tools;
+use Sympa::Tools::Data;
 
 #use Sympa::Constants; # already load in confdef.
 use Sympa::LockedFile;
@@ -2434,7 +2435,7 @@ sub _create_robot_like_config_for_main_robot {
     return
         if (
         defined $Sympa::Conf::Conf{'robots'}{$Sympa::Conf::Conf{'domain'}});
-    my $main_conf_no_robots = Sympa::Tools::dup_var(\%Conf);
+    my $main_conf_no_robots = Sympa::Tools::Data::dup_var(\%Conf);
     delete $main_conf_no_robots->{'robots'};
     _remove_unvalid_robot_entry(
         {'config_hash' => $main_conf_no_robots, 'quiet' => 1});

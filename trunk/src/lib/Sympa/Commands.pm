@@ -41,6 +41,7 @@ use Sympa::Report;
 use Data::Dumper;
 
 #use Sympa::Tools; # used in List - Site - Conf
+use Sympa::Tools::Data;
 #use Sympa::Constants; # used in confdef - Conf
 
 my %comms = (
@@ -2720,9 +2721,9 @@ sub distribute {
     my $numsmtp;
     my $apply_dkim_signature = 'off';
     $apply_dkim_signature = 'on'
-        if Sympa::Tools::is_in_array($list->dkim_signature_apply_on, 'any');
+        if Sympa::Tools::Data::is_in_array($list->dkim_signature_apply_on, 'any');
     $apply_dkim_signature = 'on'
-        if Sympa::Tools::is_in_array($list->dkim_signature_apply_on,
+        if Sympa::Tools::Data::is_in_array($list->dkim_signature_apply_on,
         'editor_validated_messages');
 
     $numsmtp = $list->distribute_msg(
@@ -2983,9 +2984,9 @@ sub confirm {
         my $numsmtp;
         my $apply_dkim_signature = 'off';
         $apply_dkim_signature = 'on'
-            if Sympa::Tools::is_in_array($list->dkim_signature_apply_on, 'any');
+            if Sympa::Tools::Data::is_in_array($list->dkim_signature_apply_on, 'any');
         $apply_dkim_signature = 'on'
-            if Sympa::Tools::is_in_array($list->dkim_signature_apply_on,
+            if Sympa::Tools::Data::is_in_array($list->dkim_signature_apply_on,
             'md5_authenticated_messages');
 
         $numsmtp = $list->distribute_msg(

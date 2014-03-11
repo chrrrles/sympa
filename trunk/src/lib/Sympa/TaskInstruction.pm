@@ -35,6 +35,7 @@ use Data::Dumper;
 
 #use Sympa::List; # this package is used by Task which is used by List.
 #use Sympa::Tools; # load in Conf - Site - List
+use Sympa::Tools::Data;
 #use Task; # this package is used by Task
 
 ###### DEFINITION OF AVAILABLE COMMANDS FOR TASKS ######
@@ -181,7 +182,7 @@ sub new {
     # Instructions are built by parsing a single line of a task string.
     my $data = shift;
     my $task = shift;
-    my $self = Sympa::Tools::dup_var($data);
+    my $self = Sympa::Tools::Data::dup_var($data);
     bless $self, $pkg;
     $self->parse;
     if (defined $self->{'error'}) {

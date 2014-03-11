@@ -3076,11 +3076,6 @@ sub _load_param_constraint_conf {
         }
     }
 
-###########################"
-    #   open TMP, ">/tmp/dump1";
-    #   Sympa::Tools::dump_var ($constraint, 0, \*TMP);
-    #    close TMP;
-
     return $constraint;
 }
 

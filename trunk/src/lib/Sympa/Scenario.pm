@@ -42,6 +42,7 @@ use Data::Dumper;
 #use Sympa::Log::Syslog; # used in Conf
 #use Sympa::Constants; # used in Conf - confdef
 #use Sympa::Tools; # used in Conf
+use Sympa::Tools::Data;
 
 my %all_scenarios;
 my %persistent_cache;
@@ -1501,7 +1502,7 @@ sub verify {
         if (ref($args[0])) {
             foreach my $arg (@{$args[0]}) {
                 Sympa::Log::Syslog::do_log('debug3', 'ARG: %s', $arg);
-                if (Sympa::Tools::smart_lessthan($arg, $args[1])) {
+                if (Sympa::Tools::Data::smart_lessthan($arg, $args[1])) {
                     if ($log_it) {
                         Sympa::Log::Syslog::do_log('info',
                             "'%s' is less than '%s' (rule %s)",
@@ -1511,7 +1512,7 @@ sub verify {
                 }
             }
         } else {
-            if (Sympa::Tools::smart_lessthan($args[0], $args[1])) {
+            if (Sympa::Tools::Data::smart_lessthan($args[0], $args[1])) {
                 if ($log_it) {
                     Sympa::Log::Syslog::do_log('info',
                         "'%s' is less than '%s' (rule %s)",
@@ -1721,7 +1722,7 @@ sub search {
         }
 
         my $ldap;
-        my $param = Sympa::Tools::dup_var(\%ldap_conf);
+        my $param = Sympa::Tools::Data::dup_var(\%ldap_conf);
         my $ds    = Sympa::LDAPSource->new($param);
 
         unless (defined $ds && ($ldap = $ds->connect())) {
@@ -1888,7 +1889,7 @@ sub verify_custom {
 
 sub dump_all_scenarios {
     open TMP, ">/tmp/all_scenarios";
-    Sympa::Tools::dump_var(\%all_scenarios, 0, \*TMP);
+    Sympa::Tools::Data::dump_var(\%all_scenarios, 0, \*TMP);
     close TMP;
 }
 

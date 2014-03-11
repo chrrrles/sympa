@@ -71,6 +71,7 @@ use Sympa::PlainDigest;
 use Sympa::Tracking;
 ##use Sympa::ListDef; used in Robot
 use Sympa::Tools::SMIME;
+use Sympa::Tools::Data;
 
 my @sources_providing_listmembers = qw/
     include_file
@@ -5546,7 +5547,7 @@ sub load_scenario_list {
 
     ## Return a copy of the data to prevent unwanted changes in the central
     ## scenario data structure
-    return Sympa::Tools::dup_var(\%list_of_scenario);
+    return Sympa::Tools::Data::dup_var(\%list_of_scenario);
 }
 
 =over 4
@@ -6876,7 +6877,7 @@ sub _load_list_members_from_include {
 
             # Work with a copy of admin hash branch to avoid including
             # temporary variables into the actual admin hash.[bug #3182]
-            my $incl      = Sympa::Tools::dup_var($tmp_incl);
+            my $incl      = Sympa::Tools::Data::dup_var($tmp_incl);
             my $source_id = Sympa::Datasource::_get_datasource_id($tmp_incl);
             my $source_is_new = defined $old_subs->{$source_id};
 
@@ -7116,7 +7117,7 @@ sub _load_list_admin_from_include {
 
                 # Work with a copy of admin hash branch to avoid including
                 # temporary variables into the actual admin hash. [bug #3182]
-                my $incl = Sympa::Tools::dup_var($tmp_incl);
+                my $incl = Sympa::Tools::Data::dup_var($tmp_incl);
 
                 # get the list of admin users
                 # does it need to define a 'default_admin_user_option'?
@@ -7466,7 +7467,7 @@ sub sync_include_ca {
         foreach my $tmp_incl (@{$self->$type}) {
             ## Work with a copy of admin hash branch to avoid including
             ## temporary variables into the actual admin hash.[bug #3182]
-            my $incl   = Sympa::Tools::dup_var($tmp_incl);
+            my $incl   = Sympa::Tools::Data::dup_var($tmp_incl);
             my $source = undef;
             my $srcca  = undef;
             if ($type eq 'include_sql_ca') {
@@ -10241,7 +10242,7 @@ sub compute_topic {
     ## TAGGING BY KEYWORDS
     # getting keywords
     foreach my $topic (@{$self->msg_topic}) {
-        my $list_keyw = Sympa::Tools::get_array_from_splitted_string(
+        my $list_keyw = Sympa::Tools::Data::get_array_from_splitted_string(
             $topic->{'keywords'});
 
         foreach my $keyw (@{$list_keyw}) {
@@ -10441,7 +10442,7 @@ sub modifying_msg_topic_for_list_members() {
         push @new_msg_topic_name, $msg_topic->{'name'};
     }
 
-    my $msg_topic_changes = Sympa::Tools::diff_on_arrays(\@old_msg_topic_name,
+    my $msg_topic_changes = Sympa::Tools::Data::diff_on_arrays(\@old_msg_topic_name,
         \@new_msg_topic_name);
 
     if ($#{$msg_topic_changes->{'deleted'}} >= 0) {
@@ -10453,9 +10454,9 @@ sub modifying_msg_topic_for_list_members() {
             ) {
 
             if ($subscriber->{'reception'} eq 'mail') {
-                my $topics = Sympa::Tools::diff_on_arrays(
+                my $topics = Sympa::Tools::Data::diff_on_arrays(
                     $msg_topic_changes->{'deleted'},
-                    Sympa::Tools::get_array_from_splitted_string(
+                    Sympa::Tools::Data::get_array_from_splitted_string(
                         $subscriber->{'topics'}
                     )
                 );
@@ -10527,7 +10528,7 @@ sub select_list_members_for_topic {
 
     if ($string_topic) {
         $msg_topics =
-            Sympa::Tools::get_array_from_splitted_string($string_topic);
+            Sympa::Tools::Data::get_array_from_splitted_string($string_topic);
     }
 
     foreach my $user (@$subscribers) {
@@ -10544,18 +10545,18 @@ sub select_list_members_for_topic {
             push @selected_users, $user;
             next;
         }
-        my $user_topics = Sympa::Tools::get_array_from_splitted_string(
+        my $user_topics = Sympa::Tools::Data::get_array_from_splitted_string(
             $info_user->{'topics'});
 
         if ($string_topic) {
             my $result =
-                Sympa::Tools::diff_on_arrays($msg_topics, $user_topics);
+                Sympa::Tools::Data::diff_on_arrays($msg_topics, $user_topics);
             if ($#{$result->{'intersection'}} >= 0) {
                 push @selected_users, $user;
             }
         } else {
             my $result =
-                Sympa::Tools::diff_on_arrays(['other'], $user_topics);
+                Sympa::Tools::Data::diff_on_arrays(['other'], $user_topics);
             if ($#{$result->{'intersection'}} >= 0) {
                 push @selected_users, $user;
             }
@@ -11825,7 +11826,7 @@ sub _set_list_param {
         } else {
             $config_hash->{$config_attr} = $val;
         }
-        $admin_hash->{$config_attr} = Sympa::Tools::dup_var($val);
+        $admin_hash->{$config_attr} = Sympa::Tools::Data::dup_var($val);
     } else {
         delete $config_hash->{$config_attr};
         delete $admin_hash->{$config_attr};
@@ -11864,7 +11865,7 @@ sub admin {
         $self->$p;
     }
     ## get copy to prevent breaking cache
-    return Sympa::Tools::dup_var($self->{'admin'});
+    return Sympa::Tools::Data::dup_var($self->{'admin'});
 }
 
 =over 4
@@ -11895,7 +11896,7 @@ sub config {
         $self->$p;
     }
     ## Get copy to prevent breaking config
-    return Sympa::Tools::dup_var($self->{'config'});
+    return Sympa::Tools::Data::dup_var($self->{'config'});
 }
 
 =over 4
