@@ -110,7 +110,7 @@ use Sympa::Bulk;
 #use Sympa::Tracking; # used in List
 #use Sympa::Constants; # used in confdef, in Conf
 use Sympa::Spool;    # used in List - Task
-use Sympa::Spool::DKIM;
+use Sympa::Tools::DKIM;
 
 my $daemon_name           = Sympa::Log::Syslog::set_daemon($0);
 my $date_of_last_activity = time();
