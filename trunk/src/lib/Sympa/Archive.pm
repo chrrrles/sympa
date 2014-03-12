@@ -32,6 +32,7 @@ use Encode qw(decode_utf8 encode_utf8);
 use HTML::Entities qw(decode_entities);
 
 use Sympa::Log::Syslog;
+use Sympa::Tools::File;
 
 my $serial_number = 0;    # incremented on each archived mail
 
@@ -315,7 +316,7 @@ sub clean_archive_directory {
             'Unable to open directory %s: %s',
             $answer->{'dir_to_rebuild'}, $ERRNO
         );
-        Sympa::Tools::del_dir($answer->{'cleaned_dir'});
+        Sympa::Tools::File::del_dir($answer->{'cleaned_dir'});
         return undef;
     }
     return $answer;
@@ -395,7 +396,7 @@ sub convert_single_message {
     }
 
     unless (-d $destination_dir) {
-        unless (Sympa::Tools::mkdir_all($destination_dir, 0755)) {
+        unless (Sympa::Tools::File::mkdir_all($destination_dir, 0755)) {
             Sympa::Log::Syslog::do_log('err', 'Unable to create %s',
                 $destination_dir);
             return undef;

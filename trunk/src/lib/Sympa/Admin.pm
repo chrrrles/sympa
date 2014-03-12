@@ -49,6 +49,7 @@ use Sympa::Language;
 
 #use Sympa::Log::Syslog; # used in Conf
 #use Sympa::Tools; # used in Conf
+use Sympa::Tools::File;
 #use Sympa::Constants; # load in Conf - confdef
 
 =pod 
@@ -1161,7 +1162,7 @@ sub clone_list_as_empty {
     foreach my $subdir ('etc', 'web_tt2', 'mail_tt2', 'data_sources') {
         if (-d $new_dir . '/' . $subdir) {
             unless (
-                Sympa::Tools::copy_dir(
+                Sympa::Tools::File::copy_dir(
                     $list->dir . '/' . $subdir,
                     $new_dir . '/' . $subdir
                 )

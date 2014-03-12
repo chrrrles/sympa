@@ -42,6 +42,7 @@ use Data::Dumper;
 
 #use Sympa::Tools; # used in List - Site - Conf
 use Sympa::Tools::Data;
+use Sympa::Tools::File;
 #use Sympa::Constants; # used in confdef - Conf
 
 my %comms = (
@@ -3132,7 +3133,7 @@ sub reject {
     Sympa::Log::Syslog::do_log('info',
         'REJECT %s %s from %s accepted (%d seconds)',
         $name, $sender, $key, time - $time_command);
-    Sympa::Tools::remove_dir(
+    Sympa::Tools::File::remove_dir(
         Sympa::Site->viewmail_dir . '/mod/' . $list->get_list_id() . '/' . $key);
 
     $modspool->remove_message({'list' => $list, 'authkey' => $key});

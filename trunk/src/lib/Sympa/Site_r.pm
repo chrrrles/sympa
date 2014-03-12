@@ -42,6 +42,7 @@ use Sympa::Conf;
 use Sympa::Language;
 use Sympa::User;
 use Sympa::Tools::Data;
+use Sympa::Tools::File;
 use Data::Dumper;
 
 =head1 NAME
@@ -980,7 +981,7 @@ sub send_file {
     }
 
     my @path = Sympa::Template::get_include_path();
-    my $filename = Sympa::Tools::find_file($tpl . '.tt2', @path);
+    my $filename = Sympa::Tools::File::find_file($tpl . '.tt2', @path);
 
     unless (defined $filename) {
         Sympa::Log::Syslog::do_log('err',

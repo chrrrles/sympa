@@ -363,6 +363,7 @@ use Sympa::Family;
 #use Sympa::Report; # load in Auth
 #use Sympa::Tools; # load in Conf
 use Sympa::Tools::Data;
+use Sympa::Tools::File;
 #use Sympa::Template; # load in List
 #use Sympa::Constants;
 #use Sympa::Tracking; # not used
@@ -1490,7 +1491,7 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
                 {'delay' => Sympa::Site->clean_delay_queueautomatic});
 
             # this is not a message spool
-            Sympa::Tools::CleanDir(Sympa::Site->tmpdir, Sympa::Site->clean_delay_tmpdir);
+            Sympa::Tools::File::CleanDir(Sympa::Site->tmpdir, Sympa::Site->clean_delay_tmpdir);
         }
         ## Cleanup in-memory msgid table, only in a while
         if (time >

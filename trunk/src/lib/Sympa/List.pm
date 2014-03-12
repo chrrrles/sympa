@@ -72,6 +72,7 @@ use Sympa::Tracking;
 ##use Sympa::ListDef; used in Robot
 use Sympa::Tools::SMIME;
 use Sympa::Tools::Data;
+use Sympa::Tools::File;
 
 my @sources_providing_listmembers = qw/
     include_file
@@ -10843,14 +10844,14 @@ sub delete_signoff_request {
 sub get_shared_size {
     my $self = shift;
 
-    return Sympa::Tools::get_dir_size($self->dir . '/shared');
+    return Sympa::Tools::File::get_dir_size($self->dir . '/shared');
 }
 
 sub get_arc_size {
     my $self = shift;
     my $dir  = shift;
 
-    return Sympa::Tools::get_dir_size($dir . '/' . $self->get_list_id());
+    return Sympa::Tools::File::get_dir_size($dir . '/' . $self->get_list_id());
 }
 
 # return the date epoch for next delivery planified for a list
@@ -11092,8 +11093,8 @@ sub purge {
 
     if ($self->name) {
         my $arc_dir = $self->robot->arc_path;
-        Sympa::Tools::remove_dir($arc_dir . '/' . $self->get_id);
-        Sympa::Tools::remove_dir($self->get_bounce_dir());
+        Sympa::Tools::File::remove_dir($arc_dir . '/' . $self->get_id);
+        Sympa::Tools::File::remove_dir($self->get_bounce_dir());
     }
 
     ## Clean list table if needed
@@ -11106,7 +11107,7 @@ sub purge {
     ## Clean memory cache
     $self->robot->lists($self->name, undef);
 
-    Sympa::Tools::remove_dir($self->dir);
+    Sympa::Tools::File::remove_dir($self->dir);
 
     #log ind stat table to make statistics
     Sympa::Log::Syslog::db_stat_log(
