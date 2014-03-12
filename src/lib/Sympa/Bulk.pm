@@ -51,6 +51,7 @@ use Sympa::Language;
 #use Sympa::Log::Syslog; # used in Conf
 #use Sympa::DatabaseManager; # used in Conf
 use Sympa::Spool;
+use Sympa::Tools::Daemon;
 
 ## Database and SQL statement handlers
 my $sth;
@@ -76,7 +77,7 @@ sub next {
     Sympa::Log::Syslog::do_log('debug2', '()');
 
     # lock next packet
-    my $lock = Sympa::Tools::get_lockname();
+    my $lock = Sympa::Tools::Daemon::get_lockname();
 
     my $order;
     my $limit_oracle = '';

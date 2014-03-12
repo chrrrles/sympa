@@ -149,6 +149,7 @@ use POSIX;
 use Sympa::List;
 use Sympa::Tracking;
 use Sympa::BounceMessage;
+use Sympa::Tools::Daemon;
 
 ## Check options
 my %options;
@@ -217,9 +218,9 @@ my $options;
 $options->{'stderr_to_tty'} = 1 if ($main::options{'foreground'});
 
 ## Create and write the PID file
-Sympa::Tools::write_pid('bounced', $PID, $options);
+Sympa::Tools::Daemon::write_pid('bounced', $PID, $options);
 unless ($options->{'stderr_to_tty'}) {
-    Sympa::Tools::direct_stderr_to_file(('pid' => $PID));
+    Sympa::Tools::Daemon::direct_stderr_to_file(('pid' => $PID));
 }
 
 if ($main::options{'log_level'}) {
@@ -315,7 +316,7 @@ while (!$end) {
 Sympa::Site->send_notify_to_listmaster(undef, undef, undef, 1);
 
 Sympa::Log::Syslog::do_log('notice', 'bounced exited normally due to signal');
-Sympa::Tools::remove_pid('bounced', $PID);
+Sympa::Tools::Daemon::remove_pid('bounced', $PID);
 
 exit(0);
 

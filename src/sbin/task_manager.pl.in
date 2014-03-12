@@ -96,6 +96,7 @@ use Data::Dumper;
 
 #use Conf; # used in List - Robot- Site
 use Sympa::List;
+use Sympa::Tools::Daemon;
 
 #use Sympa::Log::Syslog; # used by Conf
 #use Sympa::DatabaseManager; # used by Conf
@@ -180,9 +181,9 @@ unless ($main::options{'debug'} || $main::options{'foreground'}) {
 ## If process is running in foreground, don't write STDERR to a dedicated file
 my $options;
 $options->{'stderr_to_tty'} = 1 if ($main::options{'foreground'});
-Sympa::Tools::write_pid('task_manager', $PID, $options);
+Sympa::Tools::Daemon::write_pid('task_manager', $PID, $options);
 unless ($options->{'stderr_to_tty'}) {
-    Sympa::Tools::direct_stderr_to_file(('pid' => $PID));
+    Sympa::Tools::Daemon::direct_stderr_to_file(('pid' => $PID));
 }
 
 ## Set the UserID & GroupID for the process
@@ -270,6 +271,6 @@ Sympa::Site->send_notify_to_listmaster(undef, undef, undef, 1);
 
 Sympa::Log::Syslog::do_log('notice',
     'task_manager exited normally due to signal');
-Sympa::Tools::remove_pid('task_manager', $PID);
+Sympa::Tools::Daemon::remove_pid('task_manager', $PID);
 
 exit(0);
