@@ -111,6 +111,7 @@ use Sympa::Bulk;
 #use Sympa::Constants; # used in confdef, in Conf
 use Sympa::Spool;    # used in List - Task
 use Sympa::Tools::DKIM;
+use Sympa::Tools::Daemon;
 
 my $daemon_name           = Sympa::Log::Syslog::set_daemon($0);
 my $date_of_last_activity = time();
@@ -194,9 +195,9 @@ $options->{'stderr_to_tty'} = 1 if ($main::options{'foreground'});
 $options->{'multiple_process'} = 0;
 
 # Save the PID number
-Sympa::Tools::write_pid('bulk', $PID, $options);
+Sympa::Tools::Daemon::write_pid('bulk', $PID, $options);
 unless ($options->{'stderr_to_tty'}) {
-    Sympa::Tools::direct_stderr_to_file(('pid' => $PID));
+    Sympa::Tools::Daemon::direct_stderr_to_file(('pid' => $PID));
 }
 ## Set the User ID & Group ID for the process
 $GID = $EGID = (getgrnam(Sympa::Constants::GROUP))[2];
@@ -266,7 +267,7 @@ while (!$end) {
         if (   ($main::daemon_usage eq 'DAEMON_MASTER')
             && (time() - $last_check_date > $timeout)) {
             ## Clean up PID file (in case some child bulks would have died)
-            my @actual_children = Sympa::Tools::get_children_processes_list();
+            my @actual_children = Sympa::Tools::Daemon::get_children_processes_list();
             my @remaining_children;
             my %dead_children = %created_children;
             foreach my $apid (@actual_children) {
@@ -281,7 +282,7 @@ while (!$end) {
                 Sympa::Log::Syslog::do_log('debug2',
                     'Some childs of current process disappeared. Checking whether they shut down cleanly or not.'
                 );
-                my $pids_in_pfile = Sympa::Tools::get_pids_in_pid_file('bulk');
+                my $pids_in_pfile = Sympa::Tools::Daemon::get_pids_in_pid_file('bulk');
                 foreach my $fpid (@{$pids_in_pfile}) {
                     if (defined $dead_children{$fpid}) {
                         Sympa::Log::Syslog::do_log(
@@ -291,19 +292,19 @@ while (!$end) {
                         );
                         my $pname = $0;
                         $pname =~ s/.*\/(\w+)/$1/;
-                        Sympa::Tools::send_crash_report(
+                        Sympa::Tools::Daemon::send_crash_report(
                             ('pid' => $fpid, 'pname' => $pname));
-                        Sympa::Tools::remove_pid('bulk', $fpid, $options);
+                        Sympa::Tools::Daemon::remove_pid('bulk', $fpid, $options);
                         delete $dead_children{$fpid};
                         push @dc, $fpid;
                     }
                 }
             }
-            my $pids_in_pfile = Sympa::Tools::get_pids_in_pid_file('bulk');
+            my $pids_in_pfile = Sympa::Tools::Daemon::get_pids_in_pid_file('bulk');
             unless (defined($pids_in_pfile)) {
-                Sympa::Tools::write_pid('bulk', $PID, $options);
+                Sympa::Tools::Daemon::write_pid('bulk', $PID, $options);
                 close STDERR;
-                Sympa::Tools::direct_stderr_to_file(('pid' => $PID));
+                Sympa::Tools::Daemon::direct_stderr_to_file(('pid' => $PID));
                 $pids_in_pfile = [$PID];
             }
             ## Start new processes if there remain at least
@@ -339,13 +340,13 @@ while (!$end) {
                                 $child_pid);
 
                             # Saves the pid number
-                            Sympa::Tools::write_pid('bulk', $child_pid, $options);
+                            Sympa::Tools::Daemon::write_pid('bulk', $child_pid, $options);
                             $created_children{$child_pid} = 1;
                             sleep 1;
                         } else {
                             ## We're in a child bulk process
                             close STDERR;
-                            Sympa::Tools::direct_stderr_to_file(('pid' => $PID));
+                            Sympa::Tools::Daemon::direct_stderr_to_file(('pid' => $PID));
                             $date_of_last_activity = time();
                             $main::daemon_usage =
                                 'DAEMON_SLAVE';    # automatic lists creation
@@ -600,7 +601,7 @@ while (!$end) {
 Sympa::Site->send_notify_to_listmaster(undef, undef, undef, 1);
 
 Sympa::Log::Syslog::do_log('notice', 'bulk.pl exited normally due to signal');
-Sympa::Tools::remove_pid('bulk', $PID, $options);
+Sympa::Tools::Daemon::remove_pid('bulk', $PID, $options);
 
 exit(0);
 

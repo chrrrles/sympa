@@ -364,6 +364,7 @@ use Sympa::Family;
 #use Sympa::Tools; # load in Conf
 use Sympa::Tools::Data;
 use Sympa::Tools::File;
+use Sympa::Tools::Daemon;
 #use Sympa::Template; # load in List
 #use Sympa::Constants;
 #use Sympa::Tracking; # not used
@@ -649,9 +650,9 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
             ## dedicated file
             my $options;
             $options->{'stderr_to_tty'} = 1 if ($main::options{'foreground'});
-            Sympa::Tools::write_pid('sympa', $PID, $options);
+            Sympa::Tools::Daemon::write_pid('sympa', $PID, $options);
             unless ($options->{'stderr_to_tty'}) {
-                Sympa::Tools::direct_stderr_to_file(('pid' => $PID));
+                Sympa::Tools::Daemon::direct_stderr_to_file(('pid' => $PID));
             }
         }
 
@@ -1541,7 +1542,7 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
 }    #end of block while ($signal ne 'term'){
 
 Sympa::Log::Syslog::do_log('notice', 'Sympa exited normally due to signal');
-Sympa::Tools::remove_pid('sympa', $PID);
+Sympa::Tools::Daemon::remove_pid('sympa', $PID);
 
 exit(0);
 

@@ -145,6 +145,7 @@ use Sympa::List;
 use Sympa::Message;
 use Sympa::Commands;
 use Sympa::Tools::File;
+use Sympa::Tools::Daemon;
 
 my $daemon_name = Sympa::Log::Syslog::set_daemon($0);
 my $ip          = $ENV{'REMOTE_HOST'};
@@ -203,9 +204,9 @@ my $options;
 $options->{'stderr_to_tty'} = 1 if ($main::options{'foreground'});
 
 ## Create and write the PID file
-Sympa::Tools::write_pid('archived', $PID, $options);
+Sympa::Tools::Daemon::write_pid('archived', $PID, $options);
 unless ($options->{'stderr_to_tty'}) {
-    Sympa::Tools::direct_stderr_to_file(('pid' => $PID));
+    Sympa::Tools::Daemon::direct_stderr_to_file(('pid' => $PID));
 }
 
 # setting log_level using conf unless it is set by calling option
@@ -464,7 +465,7 @@ Sympa::Mail::reaper();
 
 Sympa::Log::Syslog::do_log('notice',
     'archived exited normally due to signal');
-Sympa::Tools::remove_pid('archived', $PID);
+Sympa::Tools::Daemon::remove_pid('archived', $PID);
 
 exit(0);
 
