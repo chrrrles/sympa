@@ -89,11 +89,6 @@ use Sympa::Tracking;
 #use Sympa::DatabaseManager; # used by Conf
 use Sympa::MessageSpool;
 
-use OAuthProvider;
-use OAuthConsumer;
-use VOOTProvider;
-use VOOTConsumer;
-
 my $crypt_openssl_x509_ok;
 
 BEGIN {
