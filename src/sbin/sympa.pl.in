@@ -606,41 +606,6 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
         ## No return.
     }
 
-    if (Sympa::Site->voot_feature eq 'on') {
-        unless (eval "require OAuthProvider") {
-            Sympa::Log::Syslog::fatal_err(
-                'VOOT feature is on, but Sympa was Unable to load OAuthProvider module: %s',
-                $EVAL_ERROR
-            );
-            return undef;
-        }
-        require OAuthProvider;
-        unless (eval "require OAuthConsumer") {
-            Sympa::Log::Syslog::fatal_err(
-                'VOOT feature is on, but Sympa was Unable to load OAuthConsumer module: %s',
-                $EVAL_ERROR
-            );
-            return undef;
-        }
-        require OAuthConsumer;
-        unless (eval "require VOOTProvider") {
-            Sympa::Log::Syslog::fatal_err(
-                'VOOT feature is on, but Sympa was Unable to load VOOTProvider module: %s',
-                $EVAL_ERROR
-            );
-            return undef;
-        }
-        require VOOTProvider;
-        unless (eval "require VOOTConsumer") {
-            Sympa::Log::Syslog::fatal_err(
-                'VOOT feature is on, but Sympa was Unable to load module: %s',
-                $EVAL_ERROR
-            );
-            return undef;
-        }
-        require VOOTConsumer;
-    }
-
     if ($signal ne 'hup') {
         ## Put ourselves in background if we're not in debug mode. That method
         ## works on many systems, although, it seems that Unix conceptors have

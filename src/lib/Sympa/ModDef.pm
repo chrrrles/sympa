@@ -285,12 +285,6 @@ our %cpan_modules = (
         'gettext_id' =>
             'this is required if you set "list_check_smtp" sympa.conf parameter, used to check existing aliases before mailing list creation.',
     },
-    'OAuth::Lite' => {
-        package_name     => 'OAuth-Lite',
-        required_version => '1.31',
-        'gettext_id' =>
-            'This is required if you want to use the VOOT protocol.',
-    },
     'perl'               => {required_version => '5.008',},
     'Proc::ProcessTable' => {
         package_name     => 'Proc-ProcessTable',
