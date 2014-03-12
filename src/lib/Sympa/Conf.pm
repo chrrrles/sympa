@@ -41,6 +41,7 @@ use Sympa::Language;
 use Sympa::ConfDef;
 use Sympa::Tools;
 use Sympa::Tools::Data;
+use Sympa::Tools::File;
 
 #use Sympa::Constants; # already load in confdef.
 use Sympa::LockedFile;
@@ -524,7 +525,7 @@ sub checkfiles_as_root {
             $Conf{'sendmail_aliases'}
         );
         unless (
-            Sympa::Tools::set_file_rights(
+            Sympa::Tools::File::set_file_rights(
                 file  => $Conf{'sendmail_aliases'},
                 user  => Sympa::Constants::USER,
                 group => Sympa::Constants::GROUP,
@@ -553,7 +554,7 @@ sub checkfiles_as_root {
             }
 
             unless (
-                Sympa::Tools::set_file_rights(
+                Sympa::Tools::File::set_file_rights(
                     file  => $dir,
                     user  => Sympa::Constants::USER,
                     group => Sympa::Constants::GROUP,
@@ -601,7 +602,7 @@ sub checkfiles {
                 $config_err++;
             }
             unless (
-                Sympa::Tools::set_file_rights(
+                Sympa::Tools::File::set_file_rights(
                     file  => $Conf{$qdir},
                     user  => Sympa::Constants::USER,
                     group => Sympa::Constants::GROUP,
@@ -626,7 +627,7 @@ sub checkfiles {
                 $config_err++;
             }
             unless (
-                Sympa::Tools::set_file_rights(
+                Sympa::Tools::File::set_file_rights(
                     file  => $subdir,
                     user  => Sympa::Constants::USER,
                     group => Sympa::Constants::GROUP,
@@ -737,7 +738,7 @@ sub checkfiles {
 
         ## Create directory if required
         unless (-d $dir) {
-            unless (Sympa::Tools::mkdir_all($dir, 0755)) {
+            unless (Sympa::Tools::File::mkdir_all($dir, 0755)) {
                 my $msg = "Failed to create directory $dir: $ERRNO";
                 Sympa::Log::Syslog::do_log('err', '%s', $msg);
                 $robot->send_notify_to_listmaster('cannot_mkdir', $msg);
@@ -2403,7 +2404,7 @@ sub _save_config_hash_to_binary {
 
 sub _source_has_not_changed {
     my $param    = shift;
-    my $is_older = Sympa::Tools::a_is_older_than_b(
+    my $is_older = Sympa::Tools::File::a_is_older_than_b(
         {   'a_file' => $param->{'config_file'},
             'b_file' => $param->{'config_file'} . $binary_file_extension,
         }

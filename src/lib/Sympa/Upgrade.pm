@@ -34,6 +34,7 @@ use POSIX qw(strftime);
 use Data::Dumper;
 
 use Sympa::Site;
+use Sympa::Tools::File;
 
 #use Conf; # used in Site
 #use Sympa::Log::Syslog; # used in Conf
@@ -789,7 +790,7 @@ sub upgrade {
             foreach my $subdir (sort grep (!/^\.+$/, readdir(BOUNCEDIR))) {
                 my $other_dir = Sympa::Site->bounce_path . '/' . $subdir . '/OTHER';
                 if (-d $other_dir) {
-                    Sympa::Tools::remove_dir($other_dir);
+                    Sympa::Tools::File::remove_dir($other_dir);
                     Sympa::Log::Syslog::do_log('notice',
                         "Directory $other_dir removed");
                 }
@@ -819,7 +820,7 @@ sub upgrade {
                     '  Processing list %s...', $list);
 
                 my @all_files;
-                Sympa::Tools::list_dir($list->dir, \@all_files, 'utf-8');
+                Sympa::Tools::File::list_dir($list->dir, \@all_files, 'utf-8');
 
                 my $count;
                 foreach my $f_struct (reverse @all_files) {
@@ -1124,7 +1125,7 @@ sub upgrade {
                         . $robot_id;
                     my $new_html_view_dir =
                         $list_html_view_dir . '/' . $meta{'authkey'};
-                    unless (Sympa::Tools::mkdir_all($list_html_view_dir, 0755)) {
+                    unless (Sympa::Tools::File::mkdir_all($list_html_view_dir, 0755)) {
                         Sympa::Log::Syslog::do_log(
                             'err',
                             'Could not create list html view directory %s: %s',
@@ -1548,7 +1549,7 @@ sub to_utf8 {
         print TEMPLATE $text;
         close TEMPLATE;
         unless (
-            Sympa::Tools::set_file_rights(
+            Sympa::Tools::File::set_file_rights(
                 file  => $file,
                 user  => Sympa::Constants::USER,
                 group => Sympa::Constants::GROUP,

@@ -75,6 +75,7 @@ use Sympa::Session;
 #use Sympa::Log::Syslog;
 #use Sympa::Tools;
 use Sympa::Tools::Data;
+use Sympa::Tools::File;
 use Sympa::TimeUtils;
 
 #use Sympa::Constants;
@@ -7332,7 +7333,7 @@ sub do_remove_template {
         Sympa::Tools::get_template_path($in{'webormail'}, $robot, $in{'scope'},
         $in{'template_name'}, $in{'tpl_lang'}, $list);
 
-    my $template_old_path = Sympa::Tools::shift_file($template_path, 10);
+    my $template_old_path = Sympa::Tools::File::shift_file($template_path, 10);
     unless ($template_old_path) {
         Sympa::Report::reject_report_web('intern', 'remove_failed',
             {'path' => $template_path},
@@ -7466,7 +7467,7 @@ sub do_copy_template {
             $in{'tpl_lang_out'});
     }
 
-    unless (Sympa::Tools::mk_parent_dir($param->{'template_path_out'})) {
+    unless (Sympa::Tools::File::mk_parent_dir($param->{'template_path_out'})) {
         Sympa::Report::reject_report_web(
             'intern',
             'cannot_open_file',
@@ -7554,7 +7555,7 @@ sub do_manage_template {
 
     if ($in{'subaction'} eq 'save') {
         ## create the parent directory if it doesn't already exist
-        unless (Sympa::Tools::mk_parent_dir($param->{'template_path'})) {
+        unless (Sympa::Tools::File::mk_parent_dir($param->{'template_path'})) {
             Sympa::Report::reject_report_web(
                 'intern',
                 'cannot_open_file',
@@ -7636,7 +7637,7 @@ sub do_manage_template {
             return undef;
         }
         ## create the parent directory if it doesn't already exist
-        unless (Sympa::Tools::mk_parent_dir($new_template_path)) {
+        unless (Sympa::Tools::File::mk_parent_dir($new_template_path)) {
 
             Sympa::Report::reject_report_web(
                 'intern',
@@ -9076,7 +9077,7 @@ sub do_reject {
         }
 
         # clean html view of the message
-        Sympa::Tools::remove_dir(
+        Sympa::Tools::File::remove_dir(
             Sympa::Site->viewmail_dir . '/mod/' . $list->get_list_id() . '/' . $id);
 
     }
@@ -9204,7 +9205,7 @@ sub do_distribute {
         }
 
         # clean html view of the message
-        Sympa::Tools::remove_dir(
+        Sympa::Tools::File::remove_dir(
             Sympa::Site->viewmail_dir . '/mod/' . $list->get_list_id() . '/' . $id);
     }
 
@@ -17795,7 +17796,7 @@ sub creation_picture_file {
 
     unless (-d $path) {
         wwslog('notice', 'Create dir %s', $path);
-        unless (Sympa::Tools::mkdir_all($path, 0755)) {
+        unless (Sympa::Tools::File::mkdir_all($path, 0755)) {
             wwslog('err', 'Unable to create dir %s', $path);
             return undef;
         }
@@ -18272,7 +18273,7 @@ sub do_d_unzip {
     }
 
     ## remove tmp directories and files
-    #     Sympa::Tools::remove_dir($zip_abs_dir);
+    #     Sympa::Tools::File::remove_dir($zip_abs_dir);
 
     $in{'list'} = $listname;
 
@@ -23935,7 +23936,7 @@ sub do_viewspool_message_remove {
     # clean html view of the message
     #FIXME: inconsistent removal.
     my $dir = Sympa::Site->viewmail_dir . '/spool/viewmail/' . $messagekey;
-    Sympa::Tools::remove_dir($dir) if -d $dir;
+    Sympa::Tools::File::remove_dir($dir) if -d $dir;
 
     $param->{'removed'} = 1;
     return 1;
@@ -24342,8 +24343,8 @@ sub do_arc_delete {
             $robot->arc_path . '/' . $list->get_list_id() . '/' . $dir);
     }
 
-    unless (Sympa::Tools::remove_dir(@abs_dirs)) {
-        wwslog('info', 'Error while Calling Sympa::Tools::remove_dir');
+    unless (Sympa::Tools::File::remove_dir(@abs_dirs)) {
+        wwslog('info', 'Error while Calling Sympa::Tools::File::remove_dir');
     }
 
     Sympa::Report::notice_report_web('performed', {}, $param->{'action'});
