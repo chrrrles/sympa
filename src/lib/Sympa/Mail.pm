@@ -39,6 +39,7 @@ use Data::Dumper;
 #use Conf; # used in List - Site
 #use Sympa::Log::Syslog; # load in Conf
 use Sympa::Language;
+use Sympa::Tools::Text;
 
 #use Sympa::List; # this package is loaded via List
 #use Sympa::Constants; # load in confdef - Conf
@@ -1096,7 +1097,7 @@ sub fix_part {
         } elsif ($eff_type eq 'text/plain'
             and lc($head->mime_attr('Content-type.Format') || '') ne 'flowed')
         {
-            $wrap = Sympa::Tools::wrap_text($body);
+            $wrap = Sympa::Tools::Text::wrap_text($body);
         }
         my $charset = $head->mime_attr("Content-Type.Charset") || $defcharset;
 

@@ -35,6 +35,7 @@ use Data::Dumper;
 
 use Sympa::Site;
 use Sympa::Tools::File;
+use Sympa::Tools::Text;
 
 #use Conf; # used in Site
 #use Sympa::Log::Syslog; # used in Conf
@@ -1337,7 +1338,7 @@ sub upgrade {
                 next unless scalar keys %newconf;
 
                 push @newconf,
-                    Sympa::Tools::wrap_text(
+                    Sympa::Tools::Text::wrap_text(
                     Sympa::Language::gettext(
                         "Migrated Parameters\nFollowing parameters were migrated from wwsympa.conf."
                     ),
@@ -1346,7 +1347,7 @@ sub upgrade {
                     . "\n"
                     if $type eq 'add';
                 push @newconf,
-                    Sympa::Tools::wrap_text(
+                    Sympa::Tools::Text::wrap_text(
                     Sympa::Language::gettext(
                         "Overriding Parameters\nFollowing parameters existed both in sympa.conf and wwsympa.conf.  Previous release of Sympa used those in wwsympa.conf.  Comment-out ones you wish to be disabled."
                     ),
@@ -1355,7 +1356,7 @@ sub upgrade {
                     . "\n"
                     if $type eq 'override';
                 push @newconf,
-                    Sympa::Tools::wrap_text(
+                    Sympa::Tools::Text::wrap_text(
                     Sympa::Language::gettext(
                         "Duplicate of sympa.conf\nThese parameters were found in both sympa.conf and wwsympa.conf.  Previous release of Sympa used those in sympa.conf.  Uncomment ones you wish to be enabled."
                     ),
@@ -1364,7 +1365,7 @@ sub upgrade {
                     . "\n"
                     if $type eq 'duplicate';
                 push @newconf,
-                    Sympa::Tools::wrap_text(
+                    Sympa::Tools::Text::wrap_text(
                     Sympa::Language::gettext(
                         "Old Parameters\nThese parameters are no longer used."
                     ),
@@ -1373,7 +1374,7 @@ sub upgrade {
                     . "\n"
                     if $type eq 'obsolete';
                 push @newconf,
-                    Sympa::Tools::wrap_text(
+                    Sympa::Tools::Text::wrap_text(
                     Sympa::Language::gettext(
                         "Unknown Parameters\nThough these parameters were found in wwsympa.conf, they were ignored.  You may simply remove them."
                     ),
@@ -1386,12 +1387,12 @@ sub upgrade {
                     my ($param, $v) = @{$newconf{$k}};
 
                     push @newconf,
-                        Sympa::Tools::wrap_text(
+                        Sympa::Tools::Text::wrap_text(
                         Sympa::Language::gettext($param->{'gettext_id'}),
                         '## ', '## ')
                         if defined $param->{'gettext_id'};
                     push @newconf,
-                        Sympa::Tools::wrap_text(
+                        Sympa::Tools::Text::wrap_text(
                         Sympa::Language::gettext($param->{'gettext_comment'}),
                         '## ', '## ')
                         if defined $param->{'gettext_comment'};
