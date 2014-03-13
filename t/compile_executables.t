@@ -28,6 +28,7 @@ $ENV{PERL5LIB} = $ENV{PERL5LIB} ? "$ENV{PERL5LIB}:src/lib" : "src/lib";
 all_pl_files_ok(
 	<src/sbin/*.pl>,
 	<src/bin/*.pl>,
+	<src/libexec/*.pl>,
 	'src/cgi/wwsympa.fcgi',
 	'src/cgi/sympa_soap_server.fcgi',
 );
