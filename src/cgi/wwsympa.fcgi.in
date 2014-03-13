@@ -77,7 +77,7 @@ use Sympa::Tools;
 use Sympa::Tools::Data;
 use Sympa::Tools::File;
 use Sympa::Tools::Text;
-use Sympa::TimeUtils;
+use Sympa::Tools::Time;
 
 #use Sympa::Constants;
 use Sympa::Wwslib;
@@ -10104,7 +10104,7 @@ sub do_latest_arc {
                     next;
                 }
 
-                my @array_date = Sympa::TimeUtils::parse_date($date);
+                my @array_date = Sympa::Tools::Time::parse_date($date);
 
                 $msg_info{'date_smtp'} = $date;
                 $msg_info{'date_epoch'} =
