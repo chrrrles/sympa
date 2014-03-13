@@ -32,6 +32,7 @@ use Sympa::Language;
 #use Sympa::List; # not used
 use Sympa::Report;
 use Sympa::Tools::Data;
+use Sympa::Tools::Time;
 
 #use Sympa::DatabaseManager;
 
@@ -535,7 +536,7 @@ sub get_one_time_ticket {
     );
     my $lockout = $robot->one_time_ticket_lockout || 'open';
     my $lifetime =
-        Sympa::Tools::duration_conv($robot->one_time_ticket_lifetime || 0);
+        Sympa::Tools::Time::duration_conv($robot->one_time_ticket_lifetime || 0);
 
     if ($lockout eq 'one_time' and $ticket->{'status'} ne 'open') {
         $result = 'closed';

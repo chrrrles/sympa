@@ -35,6 +35,7 @@ use CGI::Cookie;
 #use Sympa::Log::Syslog; # used by SDM
 use Sympa::DatabaseManager;
 use Sympa::Tools::Data;
+use Sympa::Tools::Time;
 
 # this structure is used to define which session attributes are stored in a
 # dedicated database col where others are compiled in col 'data_session'
@@ -474,9 +475,9 @@ sub purge_old_sessions {
     Sympa::Log::Syslog::do_log('debug2', '(%s)', @_);
     my $robot = Sympa::Robot::clean_robot(shift, 1);
 
-    my $delay = Sympa::Tools::duration_conv(Sympa::Site->session_table_ttl);
+    my $delay = Sympa::Tools::Time::duration_conv(Sympa::Site->session_table_ttl);
     my $anonymous_delay =
-        Sympa::Tools::duration_conv(Sympa::Site->anonymous_session_table_ttl);
+        Sympa::Tools::Time::duration_conv(Sympa::Site->anonymous_session_table_ttl);
 
     unless ($delay) {
         Sympa::Log::Syslog::do_log('debug3', 'exit with delay null');
@@ -560,7 +561,7 @@ sub purge_old_tickets {
     Sympa::Log::Syslog::do_log('debug2', '(%s)', @_);
     my $robot = Sympa::Robot::clean_robot(shift, 1);
 
-    my $delay = Sympa::Tools::duration_conv(Sympa::Site->one_time_ticket_table_ttl);
+    my $delay = Sympa::Tools::Time::duration_conv(Sympa::Site->one_time_ticket_table_ttl);
     unless ($delay) {
         Sympa::Log::Syslog::do_log('debug3', 'exit with delay null');
         return;
