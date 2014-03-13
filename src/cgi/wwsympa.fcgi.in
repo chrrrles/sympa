@@ -73,7 +73,7 @@ use Sympa::SharedDocument;
 use Sympa::Session;
 
 #use Sympa::Log::Syslog;
-#use Sympa::Tools;
+use Sympa::Tools;
 use Sympa::Tools::Data;
 use Sympa::Tools::File;
 use Sympa::Tools::Text;
@@ -147,7 +147,7 @@ if (Sympa::Site->use_fast_cgi) {
 } else {
     require CGI;
 }
-my $mime_types = Sympa::Wwslib::load_mime_types();
+my $mime_types = Sympa::Tools::load_mime_types();
 
 # hash of all the description files already loaded
 # format :
