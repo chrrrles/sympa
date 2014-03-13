@@ -29,20 +29,6 @@ use Sympa::Log::Syslog;
 use Sympa::Conf;
 use Sympa::Constants;
 
-## No longer used: Use List->get_option_title().
-%reception_mode = (
-    'mail'        => {'gettext_id' => 'standard (direct reception)'},
-    'digest'      => {'gettext_id' => 'digest MIME format'},
-    'digestplain' => {'gettext_id' => 'digest plain text format'},
-    'summary'     => {'gettext_id' => 'summary mode'},
-    'notice'      => {'gettext_id' => 'notice mode'},
-    'txt'         => {'gettext_id' => 'text-only mode'},
-    'html'        => {'gettext_id' => 'html-only mode'},
-    'urlize'      => {'gettext_id' => 'urlize mode'},
-    'nomail'      => {'gettext_id' => 'no mail (useful for vacations)'},
-    'not_me'      => {'gettext_id' => 'you do not receive your own posts'}
-);
-
 ## Cookie expiration periods with corresponding entry in NLS
 %cookie_period = (
     0     => {'gettext_id' => "session"},
@@ -53,12 +39,6 @@ use Sympa::Constants;
     1440  => {'gettext_id' => "1 day"},
     10800 => {'gettext_id' => "1 week"},
     43200 => {'gettext_id' => "30 days"}
-);
-
-## No longer used: Use List->get_option_title().
-%visibility_mode = (
-    'noconceal' => {'gettext_id' => "listed in the list review page"},
-    'conceal'   => {'gettext_id' => "concealed"}
 );
 
 ## Filenames with corresponding entry in NLS set 15
@@ -142,50 +122,6 @@ use Sympa::Constants;
     '7.7' => 'Message integrity failure'
 );
 
-## if Crypt::CipherSaber installed store the cipher object
-my $cipher;
-
-## Load WWSympa configuration file
-##sub load_config
-## MOVED: use Sympa::Conf::load_wwsconf().
-
-## Returns user information extracted from the cookie
-sub get_email_from_cookie {
-
-    #    Sympa::Log::Syslog::do_log('debug', 'get_email_from_cookie');
-    my $cookie = shift;
-    my $secret = shift;
-
-    my ($email, $auth);
-
-    # Sympa::Log::Syslog::do_log('info',
-    # "get_email_from_cookie($cookie,$secret)");
-
-    unless (defined $secret) {
-        Sympa::Report::reject_report_web('intern', 'cookie_error', {}, '', '', '',
-            $robot);
-        Sympa::Log::Syslog::do_log('info',
-            'parameter cookie undefined, authentication failure');
-    }
-
-    unless ($cookie) {
-        Sympa::Report::reject_report_web('intern', 'cookie_error', $cookie,
-            'get_email_from_cookie', '', '', $robot);
-        Sympa::Log::Syslog::do_log('info',
-            ' cookie undefined, authentication failure');
-    }
-
-    ($email, $auth) = Sympa::CookieLib::check_cookie($cookie, $secret);
-    unless ($email) {
-        Sympa::Report::reject_report_web('user', 'auth_failed', {}, '');
-        Sympa::Log::Syslog::do_log('info',
-            'get_email_from_cookie: auth failed for user %s', $email);
-        return undef;
-    }
-
-    return ($email, $auth);
-}
-
 sub new_passwd {
 
     my $passwd;
@@ -195,13 +131,6 @@ sub new_passwd {
     }
 
     return 'init' . $passwd;
-}
-
-## Basic check of an email address
-sub valid_email {
-    my $email = shift;
-
-    $email =~ /^([\w\-\_\.\/\+\=]+|\".*\")\@[\w\-]+(\.[\w\-]+)+$/;
 }
 
 sub init_passwd {
