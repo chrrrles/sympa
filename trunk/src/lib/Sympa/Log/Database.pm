@@ -31,6 +31,8 @@ use English qw(-no_match_vars);
 use POSIX qw(mktime);
 use Time::HiRes;
 
+use Sympa::Tools::Time;
+
 #XXXuse Sympa::List; # no longer used
 #use Sympa::DatabaseManager; #FIXME: dependency loop between Log & SDM
 
@@ -1158,7 +1160,7 @@ sub agregate_daily_data {
     my $first_date = $param->{'first_date'} || time;
     my $last_date  = $param->{'last_date'}  || time;
     foreach my $begin_date (sort keys %{$param->{'hourly_data'}}) {
-        my $reftime = Sympa::Tools::get_midnight_time($begin_date);
+        my $reftime = Sympa::Tools::Time::get_midnight_time($begin_date);
         unless (defined $param->{'first_date'}) {
             $first_date = $reftime if ($reftime < $first_date);
         }

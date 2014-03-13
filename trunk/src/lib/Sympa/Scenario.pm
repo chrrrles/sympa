@@ -43,6 +43,7 @@ use Data::Dumper;
 #use Sympa::Constants; # used in Conf - confdef
 #use Sympa::Tools; # used in Conf
 use Sympa::Tools::Data;
+use Sympa::Tools::Time;
 
 my %all_scenarios;
 my %persistent_cache;
@@ -1192,8 +1193,8 @@ sub verify {
     if ($condition_key =~ /^(older|newer)$/) {
 
         $negation *= -1 if ($condition_key eq 'newer');
-        my $arg0 = Sympa::Tools::epoch_conv($args[0]);
-        my $arg1 = Sympa::Tools::epoch_conv($args[1]);
+        my $arg0 = Sympa::Tools::Time::epoch_conv($args[0]);
+        my $arg1 = Sympa::Tools::Time::epoch_conv($args[1]);
 
         Sympa::Log::Syslog::do_log('debug3', '%s(%d, %d)', $condition_key,
             $arg0, $arg1);

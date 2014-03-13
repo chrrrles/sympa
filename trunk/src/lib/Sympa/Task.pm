@@ -42,6 +42,7 @@ use Sympa::TaskSpool;
 use Sympa::TaskInstruction;
 
 #use Sympa::Tools; # used by Conf
+use Sympa::Tools::Time;
 #use Sympa::Tracking; # not used
 #use Sympa::Template; # used by List
 
@@ -711,7 +712,7 @@ sub error_report {
     if (defined $self->{'list_object'}) {
         $data->{'list'} = $self->{'list_object'};
     }
-    $self->{'human_date'} = Sympa::Tools::adate($self->{'date'});
+    $self->{'human_date'} = Sympa::Tools::Time::adate($self->{'date'});
     $data->{'task'}       = $self;
     Sympa::Log::Syslog::do_log(
         'err',

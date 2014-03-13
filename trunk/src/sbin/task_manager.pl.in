@@ -97,6 +97,7 @@ use Data::Dumper;
 #use Conf; # used in List - Robot- Site
 use Sympa::List;
 use Sympa::Tools::Daemon;
+use Sympa::Tools::Time;
 
 #use Sympa::Log::Syslog; # used by Conf
 #use Sympa::DatabaseManager; # used by Conf
@@ -227,7 +228,7 @@ undef my $log;
 ###### INFINITE LOOP SCANING THE SPOOL (unless a sig TERM is received) ######
 while (!$end) {
     my $current_date = time;                           # current epoch date
-    my $rep          = Sympa::Tools::adate($current_date);
+    my $rep          = Sympa::Tools::Time::adate($current_date);
 
     ## Empty cache of the List.pm module
     Sympa::List::init_list_cache();
