@@ -30,6 +30,30 @@ use Time::Local;
 
 use Sympa::Log::Syslog;
 
+my %Month2Num = (
+    'jan', 0, 'feb', 1, 'mar', 2, 'apr', 3, 'may', 4, 'jun', 5, 'jul', 6,
+    'aug', 7, 'sep', 8, 'oct', 9, 'nov', 10, 'dec', 11,
+    'january', 0, 'february', 1, 'march', 2, 'april', 3,
+    'may', 4, 'june', 5, 'july', 6, 'august', 7,
+    'september', 8, 'october', 9, 'november', 10, 'december', 11,
+);
+my %WDay2Num = (
+    'sun', 0, 'mon', 1, 'tue', 2, 'wed', 3, 'thu', 4, 'fri', 5, 'sat', 6,
+    'sunday', 0, 'monday', 1, 'tuesday', 2, 'wednesday', 3, 'thursday', 4,
+    'friday', 5, 'saturday', 6,
+);
+
+## The following used in parse_date() regexes
+my $p_weekdays = 'Mon|Tue|Wed|Thu|Fri|Sat|Sun';
+my $p_Weekdays = 'Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday';
+my $p_months   = 'Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec';
+my $p_Months   = 'January|February|March|April|May|June|July|August'.
+		 '|September|October|November|December';
+my $p_hrminsec = '\d{1,2}:\d\d:\d\d';
+my $p_hrmin    = '\d{1,2}:\d\d';
+my $p_day      = '\d{1,2}';
+my $p_year     = '\d\d\d\d|\d\d';
+
 ## convert an epoch date into a readable date scalar
 sub epoch2yyyymmjj_hhmmss {
 
@@ -160,6 +184,103 @@ sub duration_conv {
     }
 
     return $duration;
+}
+
+## parse_date takes a string date specified like the output of
+## date(1) into its components.  Parsing a string for a date is
+## ugly since we have to watch out for differing formats.
+##
+## The following date formats are looked for:
+##
+##     Wdy DD Mon YY HH:MM:SS Zone
+##     DD Mon YY HH:MM:SS Zone
+##     Wdy Mon DD HH:MM:SS Zone YYYY
+##     Wdy Mon DD HH:MM:SS YYYY
+##
+## The routine keys off of the day of time field "HH:MM:SS" and
+## scans realtive to its location.
+##
+## If the parse fails, a null array is returned. Thus the routine
+## may be used as follows:
+##
+##          if ( (@x = parse_date($date)) ) { Success }
+##          else { Fail }
+##
+## If success the array contents are as follows:
+##
+##     (Weekday (0-6), Day of the month (1-31), Month (0-11),
+##      Year, Hour, Minutes, Seconds, Time Zone)
+##
+## Copyright (C) 1996-1999 Earl Hood, mhonarc@mhonarc.org
+## Contributer(s): Frank J. Manion <FJ_Manion@fccc.edu>
+##
+sub parse_date {
+    my($date) = $_[0];
+    my($wday, $mday, $mon, $yr, $time, $hr, $min, $sec, $zone);
+    my(@array);
+    my($start, $rest);
+
+    # Try to find the date by focusing on the "\d\d:\d\d" field.
+    # All parsing is then done relative to this location.
+    #
+    $date =~ s/^\s+//;  $time = "";  $rest = "";
+    # Don't use $p_hrmin(sec) vars in split due to bug in perl 5.003.
+    ($start, $time, $rest) = split(/(\b\d{1,2}:\d\d:\d\d)/o, $date, 2);
+    ($start, $time, $rest) = split(/(\b\d{1,2}:\d\d)/o, $date, 2)
+        if !defined($time) or $time eq "";
+    return ()
+        unless defined($time) and $time ne "";
+
+    ($hr, $min, $sec) = split(/:/, $time);
+    $sec = 0  unless $sec;          # Sometimes seconds not defined
+
+    # Strip $start of all but the last 4 tokens,
+    # and stuff all tokens in $rest into @array
+    #
+    @array = split(' ', $start);
+    $start = join(' ', ($#array-3 < 0) ? @array[0..$#array] :
+                                         @array[$#array-3..$#array]);
+    @array = split(' ', $rest);
+    $rest  = join(' ', ($#array  >= 1) ? @array[0..1] :
+                                         $array[0]);
+    # Wdy DD Mon YY HH:MM:SS Zone
+    if ( $start =~
+        /($p_weekdays),*\s+($p_day)\s+($p_months)\s+($p_year)$/io ) {
+
+        ($wday, $mday, $mon, $yr, $zone) = ($1, $2, $3, $4, $array[0]);
+
+    # DD Mon YY HH:MM:SS Zone
+    } elsif ( $start =~ /($p_day)\s+($p_months)\s+($p_year)$/io ) {
+        ($mday, $mon, $yr, $zone) = ($1, $2, $3, $array[0]);
+
+    # Wdy Mon DD HH:MM:SS Zone YYYY
+    # Wdy Mon DD HH:MM:SS YYYY
+    } elsif ( $start =~ /($p_weekdays),?\s+($p_months)\s+($p_day)$/io ) {
+        ($wday, $mon, $mday) = ($1, $2, $3);
+        if ( $rest =~ /^(\S+)\s+($p_year)/o ) { # Zone YYYY
+            ($zone, $yr) = ($1, $2);
+        } elsif ( $rest =~ /^($p_year)/o ) {    # YYYY
+            ($yr) = ($1);
+        } else {                                # zilch, use current year
+            warn "Warning: No year in date ($date), using current\n";
+            $yr = (localtime(time))[5];
+        }
+
+    # Weekday Month DD YYYY HH:MM Zone
+    } elsif ( $start =~
+        /($p_Weekdays),?\s+($p_Months)\s+($p_day),?\s+($p_year)$/ ) {
+        ($wday, $mon, $mday, $yr, $zone) = ($1, $2, $3, $4, $array[0]);
+
+    # All else fails!
+    } else {
+        return ();
+    }
+
+    # Modify month and weekday for lookup
+    $mon  = $Month2Num{lc $mon}  if defined($mon);
+    $wday = $WDay2Num{lc $wday}  if defined($wday);
+
+    ($wday, $mday, $mon, $yr, $hr, $min, $sec, $zone);
 }
 
 1;
