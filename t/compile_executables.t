@@ -1,6 +1,6 @@
 #!/usr/bin/perl
-# -*- indent-tabs-mode: t; -*-
-# vim:ft=perl:noet:sw=8:textwidth=78
+# -*- indent-tabs-mode: nil; -*-
+# vim:ft=perl:et:sw=4
 # $Id: compile_executables.t 8606 2013-02-06 08:44:02Z rousse $
 
 use strict;
