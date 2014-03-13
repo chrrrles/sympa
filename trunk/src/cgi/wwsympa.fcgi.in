@@ -76,6 +76,7 @@ use Sympa::Session;
 #use Sympa::Tools;
 use Sympa::Tools::Data;
 use Sympa::Tools::File;
+use Sympa::Tools::Text;
 use Sympa::TimeUtils;
 
 #use Sympa::Constants;
@@ -5528,7 +5529,7 @@ sub do_search {
     ## Search key
     $param->{'filter'} = $in{'filter'};
     my $searchkey = undef;
-    $searchkey = Sympa::Tools::foldcase($param->{'filter'})
+    $searchkey = Sympa::Tools::Text::foldcase($param->{'filter'})
         if defined $param->{'filter'} and length $param->{'filter'};
 
     my $record = 0;
@@ -5547,7 +5548,7 @@ sub do_search {
 
         if (defined $searchkey) {
             my $gecos = undef;
-            $gecos = Sympa::Tools::foldcase($i->{'gecos'}) if defined $i->{'gecos'};
+            $gecos = Sympa::Tools::Text::foldcase($i->{'gecos'}) if defined $i->{'gecos'};
             next
                 unless index($i->{'email'}, $searchkey) >= 0
                     or (defined $gecos and index($gecos, $searchkey) >= 0);

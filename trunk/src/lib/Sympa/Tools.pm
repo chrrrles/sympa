@@ -1636,29 +1636,6 @@ sub get_regexp {
 }
 
 #*******************************************
-# Function : wrap_text
-# Description : return line-wrapped text.
-## IN : text, init, subs, cols
-#*******************************************
-sub wrap_text {
-    my $text = shift;
-    my $init = shift;
-    my $subs = shift;
-    my $cols = shift;
-    $cols = 78 unless defined $cols;
-    return $text unless $cols;
-
-    $text = Text::LineFold->new(
-        Language      => Sympa::Language::GetLang(),
-        OutputCharset => (Encode::is_utf8($text) ? '_UNICODE_' : 'utf8'),
-        Prep          => 'NONBREAKURI',
-        ColumnsMax    => $cols
-    )->fold($init, $subs, $text);
-
-    return $text;
-}
-
-#*******************************************
 # Function : addrencode
 # Description : return formatted (and encoded) name-addr as RFC5322 3.4.
 ## IN : addr, [phrase, [charset]]
@@ -1760,27 +1737,6 @@ sub decode_header {
         $val =~ s/\0|\r\n|\r|\n//g;                # remove newline & nul
 
         return $val;
-    }
-}
-
-#*******************************************
-## Function : foldcase
-## Description : returns "fold-case" string suitable for case-insensitive
-## match.
-### IN : str
-##*******************************************
-sub foldcase {
-    my $str = shift;
-    return '' unless defined $str and length $str;
-
-    if ($] <= 5.008) {
-
-        # Perl 5.8.0 does not support Unicode::CaseFold. Use lc() instead.
-        return Encode::encode_utf8(lc(Encode::decode_utf8($str)));
-    } else {
-
-        # later supports it. Perl 5.16.0 and later have built-in fc().
-        return Encode::encode_utf8(fc(Encode::decode_utf8($str)));
     }
 }
 

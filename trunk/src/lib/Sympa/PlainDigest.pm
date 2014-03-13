@@ -74,7 +74,7 @@
 # - moved repeated code to get charset into sub _getCharset
 # - added use of MIME::Charset to check charset aliases
 # 20100810 - S. Ikeda
-# - Remove dependency on Text::Wrap: use common utility Sympa::Tools::wrap_text().
+# - Remove dependency on Text::Wrap: use common utility Sympa::Tools::Text::wrap_text().
 # - Use MIME::Charset OO to handle vendor-defined encodings.
 # - Use MIME::EncWords instead of MIME::WordDecoder.
 # - Now HTML::FormatText is mandatory.  Remove Lynx support.
@@ -94,6 +94,7 @@ use HTML::TreeBuilder;
 use Sympa::HTML::MyFormatText;
 use Sympa::Language;
 use Sympa::Tools;
+use Sympa::Tools::Text;
 
 sub plain_body_as_string {
 
@@ -106,7 +107,7 @@ sub plain_body_as_string {
     # clean up after ourselves
     $topent->purge;
 
-    return Sympa::Tools::wrap_text($outstring, '', '');
+    return Sympa::Tools::Text::wrap_text($outstring, '', '');
 }
 
 sub _do_toplevel {
@@ -221,7 +222,7 @@ sub _do_message {
     $headers .= sprintf(Sympa::Language::gettext("Subject: %s\n"), $subject)
         if $subject;
     $headers .= "\n";
-    $outstring .= Sympa::Tools::wrap_text($headers, '', '    ');
+    $outstring .= Sympa::Tools::Text::wrap_text($headers, '', '    ');
 
     _do_toplevel($msgent);
 

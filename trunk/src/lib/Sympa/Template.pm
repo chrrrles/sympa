@@ -34,6 +34,7 @@ use Sympa::Log::Syslog;
 use Sympa::Language;
 use Sympa::Constants;
 use Sympa::Template::Compat;
+use Sympa::Tools::Text;
 
 my $current_lang;
 my $last_error;
@@ -178,7 +179,7 @@ sub wrap {
     return sub {
         my $text = shift;
         my $nl   = $text =~ /\n$/;
-        my $ret  = Sympa::Tools::wrap_text($text, $init, $subs, $cols);
+        my $ret  = Sympa::Tools::Text::wrap_text($text, $init, $subs, $cols);
         $ret =~ s/\n$// unless $nl;
         $ret;
     };

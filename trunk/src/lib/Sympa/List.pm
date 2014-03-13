@@ -73,6 +73,7 @@ use Sympa::Tracking;
 use Sympa::Tools::SMIME;
 use Sympa::Tools::Data;
 use Sympa::Tools::File;
+use Sympa::Tools::Text;
 
 my @sources_providing_listmembers = qw/
     include_file
@@ -8705,9 +8706,9 @@ sub get_lists {
                     $key_sql  = 'name_list';
                     $vl       = lc $vals;
                 } else {
-                    $key_perl = 'Sympa::Tools::foldcase($list->subject)';
+                    $key_perl = 'Sympa::Tools::Text::foldcase($list->subject)';
                     $key_sql  = 'searchkey_list';
-                    $vl       = Sympa::Tools::foldcase($vals);
+                    $vl       = Sympa::Tools::Text::foldcase($vals);
                 }
 
                 ## Perl expression
@@ -10286,11 +10287,11 @@ sub compute_topic {
     }
 
     # foldcase string
-    $mail_string = Sympa::Tools::foldcase($mail_string);
+    $mail_string = Sympa::Tools::Text::foldcase($mail_string);
 
     # parsing
     foreach my $keyw (keys %keywords) {
-        if (index($mail_string, Sympa::Tools::foldcase($keyw)) >= 0) {
+        if (index($mail_string, Sympa::Tools::Text::foldcase($keyw)) >= 0) {
             $topic_hash{$keywords{$keyw}} = 1;
         }
     }
@@ -12372,7 +12373,7 @@ sub list_cache_update_config {
     my $config;
 
     my $name      = $self->name;
-    my $searchkey = Sympa::Tools::foldcase($self->subject);
+    my $searchkey = Sympa::Tools::Text::foldcase($self->subject);
     my $status    = $self->status;
     my $robot     = $self->domain;
 
