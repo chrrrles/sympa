@@ -74,6 +74,7 @@ use Sympa::Tools::SMIME;
 use Sympa::Tools::Data;
 use Sympa::Tools::File;
 use Sympa::Tools::Text;
+use Sympa::Tools::Password;
 
 my @sources_providing_listmembers = qw/
     include_file
@@ -4884,7 +4885,7 @@ sub add_list_member {
         unless ($new_user->{'password'}
             and $new_user->{'password'} =~ /^crypt/) {
             $new_user->{'password'} =
-                Sympa::Tools::crypt_password($new_user->{'password'});
+                Sympa::Tools::Password::crypt_password($new_user->{'password'});
         }
 
         $self->user('member', $who, undef);

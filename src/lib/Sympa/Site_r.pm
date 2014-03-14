@@ -43,6 +43,7 @@ use Sympa::Language;
 use Sympa::User;
 use Sympa::Tools::Data;
 use Sympa::Tools::File;
+use Sympa::Tools::Password;
 use Data::Dumper;
 
 =head1 NAME
@@ -932,7 +933,7 @@ sub send_file {
         }
 
         unless ($data->{'user'}->password) {
-            $data->{'user'}->password(Sympa::Tools::tmp_passwd($who));
+            $data->{'user'}->password(Sympa::Tools::Password::tmp_passwd($who));
         }
 
         if (ref $self eq 'List') {

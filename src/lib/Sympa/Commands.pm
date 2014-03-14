@@ -43,6 +43,7 @@ use Data::Dumper;
 #use Sympa::Tools; # used in List - Site - Conf
 use Sympa::Tools::Data;
 use Sympa::Tools::File;
+use Sympa::Tools::Password;
 #use Sympa::Constants; # used in confdef - Conf
 
 my %comms = (
@@ -1063,7 +1064,7 @@ sub subscribe {
         if ($Sympa::Site::use_db) {
             my $u = Sympa::User->new($sender);
             $u->lang($list->lang) unless $u->lang;
-            $u->password(Sympa::Tools::tmp_passwd($sender)) unless $u->password;
+            $u->password(Sympa::Tools::Password::tmp_passwd($sender)) unless $u->password;
             $u->save;
         }
 
@@ -1689,7 +1690,7 @@ sub add {
         if ($Sympa::Site::use_db) {
             my $u = Sympa::User->new($email);
             $u->lang($list->lang) unless $u->lang;
-            $u->password(Sympa::Tools::tmp_passwd($email)) unless $u->password;
+            $u->password(Sympa::Tools::Password::tmp_passwd($email)) unless $u->password;
             $u->save;
         }
 

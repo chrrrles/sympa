@@ -36,6 +36,7 @@ use CGI::Cookie;
 use Sympa::DatabaseManager;
 use Sympa::Tools::Data;
 use Sympa::Tools::Time;
+use Sympa::Tools::Password;
 
 # this structure is used to define which session attributes are stored in a
 # dedicated database col where others are compiled in col 'data_session'
@@ -800,7 +801,7 @@ sub encrypt_session_id {
     my $id_session = shift;
 
     return $id_session unless Sympa::Site->cookie;
-    my $cipher = Sympa::Tools::ciphersaber_installed();
+    my $cipher = Sympa::Tools::Password::ciphersaber_installed();
     return $id_session unless $cipher;
 
     my $id_session_bin = pack 'nN', ($id_session >> 32),
@@ -814,7 +815,7 @@ sub decrypt_session_id {
     my $cookie = shift;
 
     return $cookie unless Sympa::Site->cookie;
-    my $cipher = Sympa::Tools::ciphersaber_installed();
+    my $cipher = Sympa::Tools::Password::ciphersaber_installed();
     return $cookie unless $cipher;
 
     return undef unless $cookie =~ /\A[0-9a-f]+\z/;
