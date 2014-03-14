@@ -71,13 +71,13 @@ foreach $msg (sort grep(!/^\./, readdir SPOOL)) {
     print "Creating HTML version for $Sympa::Conf::Conf{'queuemod'}/$msg\n";
 
     my ($listname, $listrobot) = split /\@/, $listaddress;
-    my $self = Sympa::List->new($listname, $listrobot);
+    my $list = Sympa::List->new($listname, $listrobot);
 
     my (@rcpt);
-    my $admin    = $self->{'admin'};
-    my $name     = $self->{'name'};
+    my $admin    = $list->{'admin'};
+    my $name     = $list->{'name'};
     my $host     = $admin->{'host'};
-    my $robot    = $self->{'domain'};
+    my $robot    = $list->{'domain'};
     my $modqueue = $Sympa::Conf::Conf{'queuemod'};
     unless ($name && $admin) {
         print STDERR "Unknown list $listaddress, skipping\n";
@@ -90,8 +90,7 @@ foreach $msg (sort grep(!/^\./, readdir SPOOL)) {
             die "May not create $tmp_dir";
         }
         my $mhonarc_ressources =
-            Sympa::Tools::get_filename('etc', {}, 'mhonarc-ressources.tt2', $robot,
-            $self);
+            $list->get_filename('mhonarc-ressources.tt2', {});
         unless ($mhonarc_ressources) {
             die "Cannot find any templates of MHonArc resource file";
         }
