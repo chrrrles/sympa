@@ -80,7 +80,7 @@ use Sympa::Tools::Text;
 use Sympa::Tools::Time;
 
 #use Sympa::Constants;
-use Sympa::Wwslib;
+use Sympa::Tools::WWW;
 use Sympa::CookieLib;
 
 #use Sympa::Template;
@@ -1413,7 +1413,7 @@ while ($query = new_loop()) {
                 my $cas_server =
                     Sympa::Site->auth_services->{$robot_id}[$cas_id]{'cas_server'};
 
-                my $service_url = Sympa::Wwslib::get_my_url();
+                my $service_url = Sympa::Tools::WWW::get_my_url();
                 $service_url =~ s/(\?|&)ticket\=.+$//;
 
                 my $net_id = $cas_server->validateST($service_url, $ticket);
@@ -1476,7 +1476,7 @@ while ($query = new_loop()) {
                     # before redirect update the list of already checked cas
                     # server to prevent loop
                     my $cas_server = $auth_service->{'cas_server'};
-                    my $return_url = Sympa::Wwslib::get_my_url();
+                    my $return_url = Sympa::Tools::WWW::get_my_url();
 
                     ## Append the current CAS server ID to the list of checked
                     ## CAS servers
@@ -3520,7 +3520,7 @@ sub check_param_out {
             if ($ENV{'REQUEST_METHOD'} eq 'GET'
                 && !$auth_action{$in{'action'}}) {
                 $param->{'referer'} =
-                    Sympa::Tools::escape_chars(Sympa::Wwslib::get_my_url());
+                    Sympa::Tools::escape_chars(Sympa::Tools::WWW::get_my_url());
             } else {
                 ## Keep the previous value of the referer
                 $param->{'referer'} = $in{'referer'};
@@ -4661,7 +4661,7 @@ sub do_logout {
             {'cas_server'};
 
         $in{'action'} = 'redirect';
-        my $return_url = Sympa::Wwslib::get_my_url();
+        my $return_url = Sympa::Tools::WWW::get_my_url();
         $return_url =~ s/\/logout//;
 
         $param->{'redirect_to'} =
@@ -5626,11 +5626,11 @@ sub do_pref {
 
     ## Find nearest expiration period
     my $selected = 0;
-    foreach my $p (sort { $b <=> $a } keys %Sympa::Wwslib::cookie_period) {
+    foreach my $p (sort { $b <=> $a } keys %Sympa::Tools::WWW::cookie_period) {
         my $entry = {'value' => $p};
 
         ## Set description from NLS
-        $entry->{'desc'} = Sympa::Language::gettext($Sympa::Wwslib::cookie_period{$p}{'gettext_id'});
+        $entry->{'desc'} = Sympa::Language::gettext($Sympa::Tools::WWW::cookie_period{$p}{'gettext_id'});
 
         ## Choose nearest delay
         if ((!$selected) && $param->{'user'}{'cookie_delay'} >= $p) {
@@ -6033,7 +6033,7 @@ sub do_setpref {
 sub do_viewfile {
     wwslog('info', 'do_viewfile');
 
-    unless (defined $Sympa::Wwslib::filenames{$in{'file'}}) {
+    unless (defined $Sympa::Tools::WWW::filenames{$in{'file'}}) {
         Sympa::Report::reject_report_web('user', 'file_not_editable',
             {'file' => $in{'file'}},
             $param->{'action'});
@@ -7030,9 +7030,9 @@ sub do_admin {
         next
             unless (
             $list->may_edit($f, $param->{'user'}{'email'}) eq 'write');
-        if ($Sympa::Wwslib::filenames{$f}{'gettext_id'}) {
+        if ($Sympa::Tools::WWW::filenames{$f}{'gettext_id'}) {
             $param->{'files'}{$f}{'complete'} =
-                Sympa::Language::gettext($Sympa::Wwslib::filenames{$f}{'gettext_id'});
+                Sympa::Language::gettext($Sympa::Tools::WWW::filenames{$f}{'gettext_id'});
         } else {
             $param->{'files'}{$f}{'complete'} = $f;
         }
@@ -7061,9 +7061,9 @@ sub do_serveradmin {
         'invite.tt2',     'reject.tt2',
         'your_infected_msg.tt2'
         ) {
-        if ($Sympa::Wwslib::filenames{$f}{'gettext_id'}) {
+        if ($Sympa::Tools::WWW::filenames{$f}{'gettext_id'}) {
             $param->{'lists_default_files'}{$f}{'complete'} =
-                Sympa::Language::gettext($Sympa::Wwslib::filenames{$f}{'gettext_id'});
+                Sympa::Language::gettext($Sympa::Tools::WWW::filenames{$f}{'gettext_id'});
         } else {
             $param->{'lists_default_files'}{$f}{'complete'} = $f;
         }
@@ -7081,7 +7081,7 @@ sub do_serveradmin {
         'list_aliases.tt2'
         ) {
         $param->{'server_files'}{$f}{'complete'} =
-            Sympa::Language::gettext($Sympa::Wwslib::filenames{$f}{'gettext_id'});
+            Sympa::Language::gettext($Sympa::Tools::WWW::filenames{$f}{'gettext_id'});
         $param->{'server_files'}{$f}{'selected'} = '';
     }
     $param->{'server_files'}{'helpfile.tt2'}{'selected'} =
@@ -9423,9 +9423,9 @@ sub do_editfile {
                     $filename_for_auth, $param->{'user'}{'email'}
                 ) eq 'write'
                 );
-            if ($Sympa::Wwslib::filenames{$f}{'gettext_id'}) {
+            if ($Sympa::Tools::WWW::filenames{$f}{'gettext_id'}) {
                 $param->{'files'}{$f}{'complete'} =
-                    Sympa::Language::gettext($Sympa::Wwslib::filenames{$f}{'gettext_id'});
+                    Sympa::Language::gettext($Sympa::Tools::WWW::filenames{$f}{'gettext_id'});
             } else {
                 $param->{'files'}{$f}{'complete'} = $f;
             }
@@ -9434,7 +9434,7 @@ sub do_editfile {
         return 1;
     }
 
-    unless (defined $Sympa::Wwslib::filenames{$in{'file'}}) {
+    unless (defined $Sympa::Tools::WWW::filenames{$in{'file'}}) {
         Sympa::Report::reject_report_web('user', 'file_not_editable',
             {'file' => $in{'file'}},
             $param->{'action'});
@@ -9450,7 +9450,7 @@ sub do_editfile {
 
     $param->{'file'} = $in{'file'};
     $param->{'complete'} =
-        Sympa::Language::gettext($Sympa::Wwslib::filenames{$in{'file'}}{'gettext_id'});
+        Sympa::Language::gettext($Sympa::Tools::WWW::filenames{$in{'file'}}{'gettext_id'});
 
     my $subdir = '';
     if ($in{'file'} =~ /\.tt2$/) {
@@ -11570,7 +11570,7 @@ sub do_editsubscriber {
         $param->{'current_subscriber'}{'bounce_count'} = $bounce[2];
         if ($bounce[3] =~ /^(\d+\.(\d+\.\d+))$/) {
             $subscriber->{'bounce_code'}   = $1;
-            $subscriber->{'bounce_status'} = $Sympa::Wwslib::bounce_status{$2};
+            $subscriber->{'bounce_status'} = $Sympa::Tools::WWW::bounce_status{$2};
         }
 
         $param->{'previous_action'} = $in{'previous_action'};
@@ -17836,7 +17836,7 @@ sub creation_shared_file {
 
     }
     unless (
-        Sympa::Wwslib::upload_file_to_server(
+        Sympa::Tools::WWW::upload_file_to_server(
             {   'query'       => $query,
                 'file_field'  => 'uploaded_file',
                 'destination' => "$shareddir/$path/$fname",
@@ -22145,7 +22145,7 @@ sub do_send_mail {
         if ($in{'uploaded_file'} =~ /\S/) {
             $page_source = $robot->tmpdir . '/' . $in{'uploaded_file'};
             unless (
-                Sympa::Wwslib::upload_file_to_server(
+                Sympa::Tools::WWW::upload_file_to_server(
                     {   'query'       => $query,
                         'file_field'  => 'uploaded_file',
                         'destination' => $page_source,
@@ -23727,7 +23727,7 @@ sub do_viewspools {
 
         my $flavour;
         if (defined $message->{'task_flavour'}
-            and $flavour = $Sympa::Wwslib::task_flavours{$message->{'task_flavour'}})
+            and $flavour = $Sympa::Tools::WWW::task_flavours{$message->{'task_flavour'}})
         {
             $message->{'task_flavour'} = Sympa::Language::gettext($flavour->{'gettext_id'});
         }
