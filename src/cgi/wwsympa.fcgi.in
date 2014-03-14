@@ -81,7 +81,7 @@ use Sympa::Tools::Time;
 
 #use Sympa::Constants;
 use Sympa::Tools::WWW;
-use Sympa::CookieLib;
+use Sympa::Tools::Cookie;
 
 #use Sympa::Template;
 use Sympa::Tracking;
@@ -1511,7 +1511,7 @@ while ($query = new_loop()) {
         ##Cookie extern : sympa_altemails
         ## !!
         $param->{'alt_emails'} =
-            Sympa::CookieLib::check_cookie_extern($ENV{'HTTP_COOKIE'}, Sympa::Site->cookie,
+            Sympa::Tools::Cookie::check_cookie_extern($ENV{'HTTP_COOKIE'}, Sympa::Site->cookie,
             $param->{'user'}{'email'});
 
         if ($param->{'user'}{'email'}) {
@@ -1878,7 +1878,7 @@ while ($query = new_loop()) {
 
                 unless ($number == 0) {
                     unless (
-                        Sympa::CookieLib::set_cookie_extern(
+                        Sympa::Tools::Cookie::set_cookie_extern(
                             Sympa::Site->cookie,
                             $param->{'cookie_domain'},
                             %{$param->{'alt_emails'}}
@@ -1890,7 +1890,7 @@ while ($query = new_loop()) {
                 }
             }
         }    #elsif ($ENV{'HTTP_COOKIE'} =~ /sympauser\=/){
-         #   Sympa::CookieLib::set_cookie('unknown', Sympa::Site->cookie, $param->{'cookie_domain'}, 'now');
+         #   Sympa::Tools::Cookie::set_cookie('unknown', Sympa::Site->cookie, $param->{'cookie_domain'}, 'now');
          #}
     }
 
@@ -3875,7 +3875,7 @@ sub do_login {
 
     unless ($param->{'alt_emails'}{$email}) {
         unless (
-            Sympa::CookieLib::set_cookie_extern(
+            Sympa::Tools::Cookie::set_cookie_extern(
                 Sympa::Site->cookie, $param->{'cookie_domain'},
                 %{$param->{'alt_emails'}}
             )
@@ -4649,7 +4649,7 @@ sub do_logout {
     $session->{'email'} = 'nobody';
 
     # no reason to alter the lang because user perform logout
-    # $param->{'lang'} = $param->{'cookie_lang'} = Sympa::CookieLib::check_lang_cookie($ENV{'HTTP_COOKIE'}) || ($list || $robot)->lang;
+    # $param->{'lang'} = $param->{'cookie_lang'} = Sympa::Tools::Cookie::check_lang_cookie($ENV{'HTTP_COOKIE'}) || ($list || $robot)->lang;
 
     if (defined $session->{'cas_server'}
         && (defined Sympa::Site->auth_services->{$robot_id}[$session->{'cas_server'}]
