@@ -27,7 +27,6 @@ nobase_modules_DATA = Sympa/Admin.pm \
 		      Sympa/Conf.pm \
 		      Sympa/ConfDef.pm \
 		      Sympa/Config_XML.pm \
-		      Sympa/CookieLib.pm \
 		      Sympa/DatabaseManager.pm \
 		      Sympa/Datasource.pm \
 		      Sympa/DBManipulatorDefault.pm \
@@ -75,6 +74,7 @@ nobase_modules_DATA = Sympa/Admin.pm \
 		      Sympa/TaskInstruction.pm \
 		      Sympa/TaskSpool.pm \
 		      Sympa/Tools.pm \
+		      Sympa/Tools/Cookie.pm \
 		      Sympa/Tools/SMIME.pm \
 		      Sympa/Tools/DKIM.pm \
 		      Sympa/Tools/Data.pm \
