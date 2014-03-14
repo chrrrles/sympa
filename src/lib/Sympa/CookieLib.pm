@@ -31,55 +31,6 @@ use CGI::Cookie;
 
 use Sympa::Log::Syslog;
 
-## Generic subroutine to set a cookie
-sub generic_set_cookie {
-    my %param = @_;
-
-    my %cookie_param;
-    foreach my $p ('name', 'value', 'expires', 'domain', 'path') {
-        $cookie_param{'-' . $p} =
-            $param{$p};    ## CGI::Cookie expects -param => value
-    }
-
-    if ($cookie_param{'-domain'} eq 'localhost') {
-        $cookie_param{'-domain'} = '';
-    }
-
-    my $cookie = CGI::Cookie->new(%cookie_param);
-
-    ## Send cookie to the client
-    printf "Set-Cookie:  %s\n", $cookie->as_string;
-
-    return 1;
-}
-
-# Sets an HTTP cookie to be sent to a SOAP client
-# OBSOLETED: Use Sympa::Session::soap_cookie2().
-sub set_cookie_soap {
-    my ($session_id, $http_domain, $expire) = @_;
-    my $cookie;
-    my $value;
-
-    # WARNING : to check the cookie the SOAP services does not gives
-    # all the cookie, only it's value so we need ':'
-    $value = $session_id;
-
-    ## With set-cookie2 max-age of 0 means removing the cookie
-    ## Maximum cookie lifetime is the session
-    $expire ||= 600;    ## 10 minutes
-
-    if ($http_domain eq 'localhost') {
-        $cookie = sprintf "%s=%s; Path=/; Max-Age=%s", 'sympa_session',
-            $value, $expire;
-    } else {
-        $cookie = sprintf "%s=%s; Domain=%s; Path=/; Max-Age=%s",
-            'sympa_session', $value, $http_domain, $expire;
-    }
-
-    ## Return the cookie value
-    return $cookie;
-}
-
 ## returns Message Authentication Check code
 sub get_mac {
     my $email  = shift;
@@ -157,27 +108,6 @@ sub generic_get_cookie {
         }
     }
     return (undef);
-}
-
-## Returns user information extracted from the cookie
-sub check_cookie {
-    my $http_cookie = shift;
-    my $secret      = shift;
-
-    my $user = generic_get_cookie($http_cookie, 'sympauser');
-
-    my @values = split /:/, $user;
-    if ($#values >= 1) {
-        my ($email, $mac, $auth) = @values;
-        $auth ||= 'classic';
-
-        ## Check the MAC
-        if (get_mac($email, $secret) eq $mac) {
-            return ($email, $auth);
-        }
-    }
-
-    return undef;
 }
 
 sub check_cookie_extern {
