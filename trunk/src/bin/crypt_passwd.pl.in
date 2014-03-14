@@ -29,7 +29,7 @@ unless (require Crypt::CipherSaber) {
     die "Crypt::CipherSaber not installed ; cannot crypt passwords";
 }
 
-#use Sympa::Wwslib; # not used
+#use Sympa::Tools::WWW; # not used
 #use Sympa::Constants; # used in List - Robot - Site - Conf - confdef
 #require Sympa::Tools; # used by Conf
 use Sympa::List;

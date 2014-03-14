@@ -37,7 +37,7 @@ use Sympa::DatabaseManager;
 use Sympa::Log::Syslog;
 use Sympa::Language;
 
-#use Sympa::Wwslib; # no longer used
+#use Sympa::Tools::WWW; # no longer used
 use Sympa::ConfDef;
 use Sympa::Tools;
 use Sympa::Tools::Data;
