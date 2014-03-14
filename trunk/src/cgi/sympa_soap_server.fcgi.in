@@ -30,7 +30,7 @@ use Sympa::SOAP;
 #XXXuse Sympa::Constants;
 
 ## WWSympa librairies
-use Sympa::CookieLib;
+use Sympa::Tools::Cookie;
 
 my $birthday = time;
 
