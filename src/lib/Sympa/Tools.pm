@@ -1302,28 +1302,6 @@ sub virus_infected {
 
 }
 
-## Look for a file in the list > robot > server > default locations
-## Possible values for $options : order=all
-## OBSOLETED: use $list->get_etc_filename(), $family->get_etc_filename(),
-##   $robot->get_etc_filaname() or Sympa::Site->get_etc_filename().
-sub get_filename {
-    my ($type, $options, $name, $robot, $object) = @_;
-
-    if (ref $object) {
-        return $object->get_etc_filename($name, $options);
-    } elsif (ref $robot) {
-        return $robot->get_etc_filename($name, $options);
-    } elsif ($robot and $robot ne '*') {
-        return Sympa::Robot->new($robot)->get_etc_filename($name, $options);
-    } else {
-        return Sympa::Site->get_etc_filename($name, $options);
-    }
-}
-
-## sub make_tt2_include_path
-## DEPRECATED: use $list->get_etc_include_path(),
-##    $robot->get_etc_include_path() or Sympa::Site->get_etc_include_path().
-
 ## Q-encode a complete file hierarchy
 ## Useful to Q-encode subshared documents
 sub qencode_hierarchy {
