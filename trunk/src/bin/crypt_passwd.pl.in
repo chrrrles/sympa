@@ -33,6 +33,7 @@ unless (require Crypt::CipherSaber) {
 #use Sympa::Constants; # used in List - Robot - Site - Conf - confdef
 #require Sympa::Tools; # used by Conf
 use Sympa::List;
+use Sympa::Tools::Password;
 
 #use Sympa::DatabaseManager; # used by conf
 #use Sympa::Log::Syslog; # used by conf
@@ -61,7 +62,7 @@ while ($user = $sth->fetchrow_hashref('NAME_lc')) {
 
     printf "\n%s", $user->{'email_user'};
 
-    my $crypted_password = Sympa::Tools::crypt_password($user->{'password_user'});
+    my $crypted_password = Sympa::Tools::Password::crypt_password($user->{'password_user'});
 
     printf " => %s", $crypted_password;
 

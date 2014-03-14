@@ -78,6 +78,7 @@ use Sympa::Tools::Data;
 use Sympa::Tools::File;
 use Sympa::Tools::Text;
 use Sympa::Tools::Time;
+use Sympa::Tools::Password;
 
 #use Sympa::Constants;
 use Sympa::Tools::WWW;
@@ -1030,7 +1031,7 @@ unless (Sympa::DatabaseManager::data_structure_uptodate()) {
     );
 }
 
-Sympa::Tools::ciphersaber_installed();
+Sympa::Tools::Password::ciphersaber_installed();
 
 our %changed_params;
 
@@ -4767,7 +4768,7 @@ sub sendssopasswd {
         unless ($param->{'newuser'}{'password'}) {
             unless (
                 Sympa::User::update_global_user(
-                    $email, {'password' => Sympa::Tools::tmp_passwd($email)}
+                    $email, {'password' => Sympa::Tools::Password::tmp_passwd($email)}
                 )
                 ) {
                 Sympa::Report::reject_report_web('intern', 'db_update_failed', {},
@@ -4783,7 +4784,7 @@ sub sendssopasswd {
                 );
                 return undef;
             }
-            $param->{'newuser'}{'password'} = Sympa::Tools::tmp_passwd($email);
+            $param->{'newuser'}{'password'} = Sympa::Tools::Password::tmp_passwd($email);
         }
 
         $param->{'newuser'}{'escaped_email'} =
@@ -4794,7 +4795,7 @@ sub sendssopasswd {
         $param->{'newuser'} = {
             'email'         => $email,
             'escaped_email' => Sympa::Tools::escape_chars($email),
-            'password'      => Sympa::Tools::tmp_passwd($email)
+            'password'      => Sympa::Tools::Password::tmp_passwd($email)
         };
 
     }
@@ -8236,7 +8237,7 @@ sub do_add {
         $u->{'email'}    = $email;
         $u->{'gecos'}    = $user{$email} || $u2->{'gecos'};
         $u->{'date'}     = $u->{'update_date'} = time;
-        $u->{'password'} = $u2->{'password'} || Sympa::Tools::tmp_passwd($email);
+        $u->{'password'} = $u2->{'password'} || Sympa::Tools::Password::tmp_passwd($email);
         $u->{'lang'}     = $u2->{'lang'} || $list->lang;
         if ($comma_emails) {
             $comma_emails = $comma_emails . ',' . $email;

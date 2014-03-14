@@ -29,6 +29,7 @@ use Carp qw(carp croak);
 
 use Sympa::DatabaseDescription;
 use Sympa::Tools::Data;
+use Sympa::Tools::Password;
 
 #use Sympa::Site; # this module is used in Site
 
@@ -365,7 +366,7 @@ sub get_global_user {
         ## decrypt password
         if ($user->{'password'}) {
             $user->{'password'} =
-                Sympa::Tools::decrypt_password($user->{'password'});
+                Sympa::Tools::Password::decrypt_password($user->{'password'});
         }
 
         ## Canonicalize lang if possible

@@ -365,6 +365,7 @@ use Sympa::Family;
 use Sympa::Tools::Data;
 use Sympa::Tools::File;
 use Sympa::Tools::Daemon;
+use Sympa::Tools::Password;
 #use Sympa::Template; # load in List
 #use Sympa::Constants;
 #use Sympa::Tracking; # not used
@@ -578,7 +579,7 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
             Sympa::Site->log_level);
     }
 
-    Sympa::Tools::ciphersaber_installed();
+    Sympa::Tools::Password::ciphersaber_installed();
 
     if (Sympa::Tools::cookie_changed(Sympa::Site->cookie)) {
         Sympa::Log::Syslog::fatal_err(

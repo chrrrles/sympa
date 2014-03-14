@@ -36,6 +36,7 @@ use Data::Dumper;
 use Sympa::Site;
 use Sympa::Tools::File;
 use Sympa::Tools::Text;
+use Sympa::Tools::Password;
 
 #use Conf; # used in Site
 #use Sympa::Log::Syslog; # used in Conf
@@ -1612,7 +1613,7 @@ sub md5_encode_password {
 
         if ($user->{'password_user'} =~ /^crypt.(.*)$/) {
             $clear_password =
-                Sympa::Tools::decrypt_password($user->{'password_user'});
+                Sympa::Tools::Password::decrypt_password($user->{'password_user'});
         } else {    ## Old style cleartext passwords
             $clear_password = $user->{'password_user'};
         }

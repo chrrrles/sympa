@@ -820,30 +820,6 @@ sub unescape_html {
     return $s;
 }
 
-sub tmp_passwd {
-    my $email = shift;
-
-    return (
-        'init'
-            . substr(
-            Digest::MD5::md5_hex(join('/', Sympa::Site->cookie, $email)), -8
-            )
-    );
-}
-
-# create a cipher
-sub ciphersaber_installed {
-    return $cipher if defined $cipher;
-
-    eval { require Crypt::CipherSaber; };
-    unless ($EVAL_ERROR) {
-        $cipher = Crypt::CipherSaber->new(Sympa::Site->cookie);
-    } else {
-        $cipher = '';
-    }
-    return $cipher;
-}
-
 # create a cipher
 sub cookie_changed {
     my $current = shift;
@@ -893,33 +869,6 @@ sub cookie_changed {
         close COOK;
         return (0);
     }
-}
-
-## encrypt a password
-sub crypt_password {
-    my $inpasswd = shift;
-
-    ciphersaber_installed();
-    return $inpasswd unless $cipher;
-    return ("crypt." . MIME::Base64::encode($cipher->encrypt($inpasswd)));
-}
-
-## decrypt a password
-sub decrypt_password {
-    my $inpasswd = shift;
-    Sympa::Log::Syslog::do_log('debug2',
-        'Sympa::Tools::decrypt_password (%s)', $inpasswd);
-
-    return $inpasswd unless ($inpasswd =~ /^crypt\.(.*)$/);
-    $inpasswd = $1;
-
-    ciphersaber_installed();
-    unless ($cipher) {
-        Sympa::Log::Syslog::do_log('info',
-            'password seems encrypted while CipherSaber is not installed !');
-        return $inpasswd;
-    }
-    return ($cipher->decrypt(MIME::Base64::decode($inpasswd)));
 }
 
 sub load_mime_types {
