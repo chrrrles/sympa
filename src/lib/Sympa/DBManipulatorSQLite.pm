@@ -25,12 +25,10 @@ package Sympa::DBManipulatorSQLite;
 
 use strict;
 use base qw(Sympa::DBManipulatorDefault);
+use version;
 
 use English qw(-no_match_vars);
-use Data::Dumper;
 
-use version;
-use Carp;
 use Sympa::Log::Syslog;
 
 #######################################################

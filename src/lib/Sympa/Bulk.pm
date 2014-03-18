@@ -25,31 +25,16 @@ package Sympa::Bulk;
 
 use strict;
 use warnings;
-use English qw(-no_match_vars);
-
-#use Carp; # currently not used
-use Encode;
-
-#use Time::HiRes qw(time); # For more precise date; currently not used
-use MIME::Base64;
-use MIME::Charset;
-use Sys::Hostname;
-use URI::Escape;
 use constant MAX => 100_000;
 
-# tentative
-use Data::Dumper;
+use English qw(-no_match_vars);
+use MIME::Base64;
+use Sys::Hostname;
 
-#use Sympa::List;
-##The line above was removed to avoid dependency loop.
-##"use List" MUST precede to "use Bulk".
-
-#use Sympa::Tools; # used in List - Site - Conf
-#use Sympa::Template; # used in List
-use Sympa::Language;
-
-#use Sympa::Log::Syslog; # used in Conf
-#use Sympa::DatabaseManager; # used in Conf
+use Sympa::DatabaseManager;
+use Sympa::List;
+use Sympa::Log::Syslog;
+use Sympa::Robot;
 use Sympa::Spool;
 use Sympa::Tools::Daemon;
 

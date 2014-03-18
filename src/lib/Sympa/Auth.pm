@@ -27,16 +27,17 @@ use strict;
 
 use Digest::MD5;
 
+use Sympa::DatabaseManager;
 use Sympa::Language;
-
-#use Sympa::Log::Syslog;
-#use Conf;
-#use Sympa::List; # not used
+use Sympa::LDAPSource;
+use Sympa::Log::Syslog;
 use Sympa::Report;
+use Sympa::Robot;
+use Sympa::Session;
+use Sympa::Site;
+use Sympa::Tools;
 use Sympa::Tools::Data;
 use Sympa::Tools::Time;
-
-#use Sympa::DatabaseManager;
 
 ## return the password finger print (this proc allow futur replacement of md5
 ## by sha1 or ....)

@@ -26,12 +26,10 @@ package Sympa::TaskSpool;
 use strict;
 use base qw(Sympa::ClassicSpool);
 
-#use Time::Local; # no longer used
-# tentative
-use Data::Dumper;
-
-#use Task; # this module is used by Task
-#use Sympa::List; # used by Task
+use Sympa::List; # FIXME: circular dependency
+use Sympa::Log::Syslog;
+use Sympa::Robot;
+use Sympa::Task;
 
 my @task_list;
 my %task_by_list;

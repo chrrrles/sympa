@@ -133,19 +133,21 @@ L<sympa(8)>, L<bounced(8)>, L<mhonarc(1)>, L<sympa.conf(5)>.
 
 =cut 
 
-use lib '--modulesdir--';
 use strict;
 use warnings;
+use lib '--modulesdir--';
+
+use Digest::MD5;
 use English qw(-no_match_vars);
 use Getopt::Long;
-use Digest::MD5;
 use Pod::Usage;
 
 use Sympa::List;
+use Sympa::Log::Database;
+use Sympa::Log::Syslog;
 use Sympa::Message;
-use Sympa::Commands;
-use Sympa::Tools::File;
 use Sympa::Tools::Daemon;
+use Sympa::Tools::File;
 use Sympa::Tools::Time;
 
 my $daemon_name = Sympa::Log::Syslog::set_daemon($0);

@@ -26,22 +26,19 @@ package Sympa::Scenario;
 use strict;
 use warnings;
 
-use English qw(-no_match_vars);
 use Carp qw(croak);
-use Cwd;
+use English qw(-no_match_vars);
 use File::Spec;
 use Mail::Address;
 use Net::Netmask;
 
-# tentative
-use Data::Dumper;
-
-#use Conf; # used in List - Site
-#use Language; # used in List
-#use Sympa::List; # this package is used by List
-#use Sympa::Log::Syslog; # used in Conf
-#use Sympa::Constants; # used in Conf - confdef
-#use Sympa::Tools; # used in Conf
+use Sympa::ConfDef;
+use Sympa::Language;
+use Sympa::LDAPSource;
+use Sympa::List; # FIXME: circular dependency
+use Sympa::Log::Syslog;
+use Sympa::Robot;
+use Sympa::Scenario;
 use Sympa::Tools::Data;
 use Sympa::Tools::Time;
 

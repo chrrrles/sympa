@@ -25,6 +25,7 @@ package Sympa::Language;
 
 use strict;
 use warnings;
+
 use POSIX qw(setlocale strftime);
 use Locale::Messages qw (:locale_h :libintl_h !gettext);
 

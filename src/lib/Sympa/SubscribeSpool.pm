@@ -27,8 +27,6 @@ use strict;
 use warnings;
 use base qw(Sympa::ClassicSpool);
 
-use Data::Dumper;
-
 use Sympa::Log::Syslog;
 
 sub new {

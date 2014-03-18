@@ -27,16 +27,15 @@ use strict;
 
 use CGI::Cookie;
 
-#use Digest::MD5; # no longer used
-#use POSIX; # no longer used
-#use Time::Local; # not used
-
-#use Conf; # no longer used
-#use Sympa::Log::Syslog; # used by SDM
 use Sympa::DatabaseManager;
+use Sympa::Language;
+use Sympa::Log::Syslog;
+use Sympa::Robot;
+use Sympa::Site;
+use Sympa::Tools;
 use Sympa::Tools::Data;
-use Sympa::Tools::Time;
 use Sympa::Tools::Password;
+use Sympa::Tools::Time;
 
 # this structure is used to define which session attributes are stored in a
 # dedicated database col where others are compiled in col 'data_session'

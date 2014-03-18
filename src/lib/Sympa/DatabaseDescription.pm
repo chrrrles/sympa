@@ -22,6 +22,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package Sympa::DatabaseDescription;
+
 use strict;
 
 our %not_null      = not_null();

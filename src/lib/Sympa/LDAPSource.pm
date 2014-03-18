@@ -28,13 +28,7 @@ use base qw(Sympa::Datasource);
 
 use Carp;
 
-#use Sympa::Tools; # not used
-#use Sympa::Template; # not used
-#use Conf; # not used
 use Sympa::Log::Syslog;
-
-#use Sympa::List; # not used
-use Data::Dumper;
 
 sub new {
     my $pkg   = shift;

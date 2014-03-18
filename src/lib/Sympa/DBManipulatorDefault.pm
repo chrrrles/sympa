@@ -27,9 +27,8 @@ use strict;
 use base qw(Sympa::SQLSource);
 
 use Carp;
-use Sympa::Log::Syslog;
 
-use Data::Dumper;
+use Sympa::Log::Syslog;
 
 ############################
 #### Section containing generic functions          #

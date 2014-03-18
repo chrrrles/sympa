@@ -26,8 +26,10 @@ package Sympa::Datasource;
 use strict;
 
 use Carp;
+use Digest::MD5;
+
 use Sympa::Log::Syslog;
-use Data::Dumper;
+use Sympa::Tools;
 
 ############################################################
 #  constructor

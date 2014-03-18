@@ -24,31 +24,21 @@
 package Sympa::Tools;
 
 use strict;
-use English qw(-no_match_vars);
+
 use Carp qw(croak);
-use Time::Local;
-use File::Find;
 use Digest::MD5;
+use Encode;
+use English qw(-no_match_vars);
 use HTML::StripScripts::Parser;
-use File::Copy::Recursive;
-use POSIX qw(strftime mkfifo strtod);
-use Sys::Hostname;
-use Mail::Header;
-use Encode::Guess;    ## Useful when encoding should be guessed
-use Encode::MIME::Header;
-use Text::LineFold;
 use MIME::Lite::HTML;
-use Proc::ProcessTable;
+
 ##use if (5.008 < $] && $] < 5.016), qw(Unicode::CaseFold fc);
 
-use Sympa::Conf;
+use Sympa::Constants;
 use Sympa::Language;
 use Sympa::LockedFile;
-##use Sympa::Log::Syslog;
-##use Sympa::Constants;
-use Sympa::Message;
+use Sympa::Log::Syslog;
 use Sympa::Tools::File;
-##use Sympa::DatabaseManager;
 
 ## global var to store a CipherSaber object
 my $cipher;

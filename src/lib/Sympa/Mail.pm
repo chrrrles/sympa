@@ -25,25 +25,26 @@ package Sympa::Mail;
 
 use strict;
 use warnings;
-use English qw(-no_match_vars);
+
 use Carp qw(carp croak);
+use Encode;
+use English qw(-no_match_vars);
+use MIME::Charset;
+use MIME::EncWords;
+use MIME::Parser;
+use MIME::Tools;
 use POSIX;
 use Time::Local;
-use MIME::EncWords;
-use MIME::Tools;
 
-# tentative
-use Data::Dumper;
-
-#use Sympa::Bulk;
-#use Conf; # used in List - Site
-#use Sympa::Log::Syslog; # load in Conf
+use Sympa::Bulk;
+use Sympa::Constants;
 use Sympa::Language;
+use Sympa::Log::Syslog;
+use Sympa::Site;
+use Sympa::Template;
+use Sympa::Tools;
 use Sympa::Tools::Text;
 
-#use Sympa::List; # this package is loaded via List
-#use Sympa::Constants; # load in confdef - Conf
-#use Sympa::Tools; # load in Conf
 
 my $opensmtp = 0;
 my $fh       = 'fh0000000000';    ## File handle for the stream.

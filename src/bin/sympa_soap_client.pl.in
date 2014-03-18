@@ -23,35 +23,13 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 use strict;
-
-#use SOAP::Lite +trace;
-use SOAP::Lite;
-use HTTP::Cookies;
-use URI;
-use Getopt::Long;
-
 use lib '--modulesdir--';
 
-# use Conf;
-use Sympa::Commands;
-use Sympa::Conf;
-use Sympa::Auth;
-use Sympa::Session;
-use Sympa::Language;
-use Sympa::Log::Syslog;
-use Sympa::Mail;
-use MIME::QuotedPrint;
-use Sympa::List;
-use Sympa::Message;
-use Sympa::Admin;
-use Sympa::Config_XML;
-use Sympa::Family;
-use Sympa::Report;
-use File::Copy;
-use Sympa::Tools;
+use Getopt::Long;
+use HTTP::Cookies;
+use SOAP::Lite;
+
 use Sympa::Tools::Data;
-use Sympa::Template;
-use Sympa::Constants;
 
 my ($reponse, @ret, $val, %fault);
 

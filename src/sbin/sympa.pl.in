@@ -330,50 +330,40 @@ L<wwsympa(8)>, L<sympa_soap_server(8)>.
 
 =cut
 
-use lib '--modulesdir--';
 use strict;
 use warnings;
-use English qw(-no_match_vars);
+use lib '--modulesdir--';
+
 use Carp qw(croak);
-use File::Copy;
-use File::Path;
+use English qw(-no_match_vars);
 use Getopt::Long;
-use Mail::Address;
-use MIME::QuotedPrint;
+use MIME::Charset;
 use Pod::Usage;
 
-# tentative
-use Data::Dumper;
-
-use Sympa::Commands;
-
-#use Conf; # load in Site - List - Commands
-use Sympa::Auth;
-use Sympa::Session;
-
-#use Language; # load in List
-#use Sympa::Log; # load in Conf
-#use Sympa::Mail; # load in List - Auth
-#use Sympa::List; #load in Auth
-use Sympa::Message;
 use Sympa::Admin;
+use Sympa::ClassicSpool;
+use Sympa::Commands;
+use Sympa::Conf;
 use Sympa::Config_XML;
+use Sympa::Constants;
+use Sympa::DatabaseManager;
 use Sympa::Family;
-
-#use Sympa::Report; # load in Auth
-#use Sympa::Tools; # load in Conf
+use Sympa::Language;
+use Sympa::List;
+use Sympa::Log::Database;
+use Sympa::Log::Syslog;
+use Sympa::Mail;
+use Sympa::Message;
+use Sympa::MessageSpool;
+use Sympa::Report;
+use Sympa::Robot;
+use Sympa::Spool;
+use Sympa::Tools;
 use Sympa::Tools::Data;
-use Sympa::Tools::File;
 use Sympa::Tools::Daemon;
+use Sympa::Tools::File;
 use Sympa::Tools::Message;
 use Sympa::Tools::Password;
-#use Sympa::Template; # load in List
-#use Sympa::Constants;
-#use Sympa::Tracking; # not used
-#use Sympa::Spool; # load in List
-use Sympa::MessageSpool;
-
-#use Sympa::DatabaseManager; # load in Conf
 use Sympa::Upgrade;
 
 # dirty global variables

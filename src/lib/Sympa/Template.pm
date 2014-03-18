@@ -25,15 +25,17 @@ package Sympa::Template;
 
 use strict;
 use warnings;
-use English; # FIXME: drop $MATCH usage
+
 use CGI::Util;
+use Encode qw();
+use English; # FIXME: drop $MATCH usage
 use MIME::EncWords;
 use Template;
 
-use Sympa::Log::Syslog;
-use Sympa::Language;
 use Sympa::Constants;
-use Sympa::Template::Compat;
+use Sympa::Language;
+use Sympa::List; # FIXME: circular dependency
+use Sympa::Log::Syslog;
 use Sympa::Tools::Text;
 
 my $current_lang;
@@ -201,7 +203,7 @@ sub optdesc {
         return undef unless $x =~ /\S/;
         $x =~ s/^\s+//;
         $x =~ s/\s+$//;
-        return List->get_option_title($x, $type, $withval);
+        return Sympa::List->get_option_title($x, $type, $withval);
     };
 }
 

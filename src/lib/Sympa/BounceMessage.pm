@@ -30,8 +30,8 @@ use base qw(Sympa::Message);
 use English qw(-no_match_vars);
 
 use Sympa::Log::Syslog;
+use Sympa::Site;
 use Sympa::Tracking;
-use Data::Dumper;
 
 ## Equivalents relative to RFC 1893
 our %equiv = (

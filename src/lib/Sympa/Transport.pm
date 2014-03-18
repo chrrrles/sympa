@@ -24,9 +24,14 @@
 package Sympa::Transport;
 
 use strict;
-use Sympa::Session;
 
 use SOAP::Transport::HTTP;
+
+use Sympa::Log::Syslog;
+use Sympa::Robot;
+use Sympa::Session;
+use Sympa::Site;
+
 our @ISA = qw(SOAP::Transport::HTTP::FCGI);
 
 sub request {
