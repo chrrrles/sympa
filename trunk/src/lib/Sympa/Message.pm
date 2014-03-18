@@ -44,8 +44,10 @@ package Sympa::Message;
 
 use strict;
 use warnings;
-use English qw(-no_match_vars);
+
 use Carp qw(croak);
+use English qw(-no_match_vars);
+
 use HTML::Entities qw(encode_entities);
 use Mail::Address;
 use MIME::Charset;
@@ -57,23 +59,15 @@ use POSIX qw(mkfifo);
 use Storable qw(dclone);
 use URI::Escape;
 
-# tentative
-use Data::Dumper;
-
 use Sympa::Language;
-
-#use Sympa::List;
-##The line above was removed to avoid dependency loop.
-##"use List" MUST precede to "use Message".
-
-#use Sympa::Site; # loaded in List - Robot
-#use Sympa::Tools; # loaded in Conf
-#use Sympa::Template; # loaded by List
-#use Conf; # loaded in Site
-#use Sympa::Log::Syslog; # loaded in Conf
-use Sympa::Tools::SMIME;
+#use Sympa::List; # FIXME: circular dependency
+use Sympa::Log::Syslog;
+use Sympa::Site;
+use Sympa::Template;
+use Sympa::Tools;
 use Sympa::Tools::DKIM;
 use Sympa::Tools::Message;
+use Sympa::Tools::SMIME;
 
 my %openssl_errors = (
     1 => 'an error occurred parsing the command options',
@@ -994,7 +988,6 @@ sub smime_decrypt {
     my $from = $self->get_header('From');
     my $list = $self->{'list'};
 
-    use Data::Dumper;
     Sympa::Log::Syslog::do_log('debug2', 'Decrypting message from %s, %s',
         $from, $list);
 
