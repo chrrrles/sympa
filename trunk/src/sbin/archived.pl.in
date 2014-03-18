@@ -496,14 +496,6 @@ Switches the loop control variable $end value to 1 when SIGTERM signal is caught
 
 =back 
 
-=head3 Calls 
-
-=over 
-
-=item * none
-
-=back 
-
 =cut 
 
 ## When we catch SIGTERM, just change the value of the loop
@@ -531,16 +523,6 @@ Removes the message having the identifier $msgid from the list named $adrlist.
 =over 
 
 =item * I<none> 
-
-=back 
-
-=head3 Calls 
-
-=over 
-
-=item * Sympa::Log::Database::db_log
-
-=item * Sympa::Log::Syslog::do_log
 
 =back 
 
@@ -619,26 +601,6 @@ Rebuilds archives for the list the name of which is given in the argument $adrli
 =over 
 
 =item * I<undef> if something goes wrong.
-
-=back 
-
-=head3 Calls 
-
-=over 
-
-=item * Sympa::Archive::get_tag
-
-=item * set_hidden_mode
-
-=item * unset_hidden_mode
-
-=item * Sympa::List::new
-
-=item * Sympa::Log::Syslog::do_log
-
-=item * Sympa::Tools::get_filename
-
-=item * Sympa::Tools::File::remove_dir
 
 =back 
 
@@ -886,34 +848,6 @@ Archives one message into one list archives directory.
 =over 
 
 =item * I<undef> if something goes wrong.
-
-=back 
-
-=head3 Calls 
-
-=over 
-
-=item * Sympa::Archive::get_tag
-
-=item * save_idx
-
-=item * set_hidden_mode
-
-=item * unset_hidden_mode
-
-=item * Sympa::List::get_arc_size
-
-=item * Sympa::List::get_list_id
-
-=item * Sympa::List::new
-
-=item * Sympa::List::send_notify_to_owner
-
-=item * Sympa::Log::Syslog::do_log
-
-=item * Sympa::Tools::get_filename
-
-=item * Sympa::Tools::File::remove_dir
 
 =back 
 
@@ -1170,14 +1104,6 @@ Sets the value of $ENV{'M2H_ADDRESSMODIFYCODE'} and $ENV{'M2H_MODIFYBODYADDRESSE
 
 =back 
 
-=head3 Calls 
-
-=over 
-
-=item * none
-
-=back 
-
 =cut 
 
 sub set_hidden_mode {
@@ -1212,14 +1138,6 @@ Empties $ENV{'M2H_ADDRESSMODIFYCODE'}.
 
 =back 
 
-=head3 Calls 
-
-=over 
-
-=item * none
-
-=back 
-
 =cut 
 
 sub unset_hidden_mode {
@@ -1247,14 +1165,6 @@ Saves the archives index file
 =over 
 
 =item * I<none> 
-
-=back 
-
-=head3 Calls 
-
-=over 
-
-=item * none
 
 =back 
 

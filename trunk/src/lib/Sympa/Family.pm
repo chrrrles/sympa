@@ -99,16 +99,6 @@ Returns the list of existing families in the Sympa installation.
 
 =back 
 
-=head3 Calls 
-
-=over 
-
-=item * Sympa::Log::Syslog::do_log
-
-=item * Sympa::Family::new
-
-=back 
-
 =cut
 
 sub get_families {
@@ -186,20 +176,6 @@ Creates a new Sympa::Family object of name $name, belonging to the robot $robot.
 =over 
 
 =item * I<$self>, the Sympa::Family object 
-
-=back 
-
-=head3 Calls 
-
-=over 
-
-=item * Sympa::Family::_check_obligatory_files
-
-=item * Sympa::Family::_get_directory
-
-=item * Sympa::Log::Syslog::do_log
-
-=item * Sympa::Tools::get_regexp
 
 =back 
 
@@ -320,28 +296,6 @@ Adds a list to the family. List description can be passed either through a hash 
 =over 
 
 =item * I<$return>, a hash containing the execution state of the method. If everything went well, the "ok" key must be associated to the value "1".
-
-=back 
-
-=head3 Calls
-
-=over 
-
-=item * Sympa::Admin::create_list
-
-=item * Sympa::Family::_copy_files
-
-=item * Sympa::Family::check_param_constraint
-
-=item * Sympa::List::has_include_data_sources
-
-=item * Sympa::List::save_config
-
-=item * Sympa::List::set_status_error_config
-
-=item * Sympa::List::sync_include
-
-=item * Sympa::Log::Syslog::do_log
 
 =back 
 
@@ -514,44 +468,6 @@ Adds a list to the family.
 =over 
 
 =item * I<$return>, a ref to a hash containing the execution state of the method. If everything went well, the "ok" key must be associated to the value "1".
-
-=back 
-
-=head3 Calls
-
-=over 
-
-=item * Sympa::Admin::update_list
-
-=item * Config_XML::new
-
-=item * Config_XML::createHash
-
-=item * Config_XML::getHash
-
-=item * Sympa::Family::_copy_files
-
-=item * Sympa::Family::_get_customizing
-
-=item * Sympa::Family::_set_status_changes
-
-=item * Sympa::Family::check_param_constraint
-
-=item * Sympa::List::has_include_data_sources
-
-=item * Sympa::List::new
-
-=item * Sympa::List::save_config
-
-=item * Sympa::List::send_notify_to_owner
-
-=item * Sympa::List::set_status_error_config
-
-=item * Sympa::List::sync_include
-
-=item * Sympa::List::update_config_changes
-
-=item * Sympa::Log::Syslog::do_log
 
 =back 
 
@@ -839,18 +755,6 @@ Closes every list family.
 
 =back 
 
-=head3 Calls
-
-=over 
-
-=item * Sympa::Family::get_family_lists
-
-=item * Sympa::List::set_status_family_closed
-
-=item * Sympa::Log::Syslog::do_log
-
-=back 
-
 =cut
 
 #########################################
@@ -937,38 +841,6 @@ Creates family lists or updates them if they exist already.
 =item * I<$fh>, a file handle on the B<family> XML file,
 
 =item * I<$close_unknown>: if true, the function will close old lists undefined in the new instantiation.
-
-=back 
-
-=head3 Calls
-
-=over 
-
-=item * Sympa::Admin::create_list
-
-=item * Config_XML::createHash
-
-=item * Config_XML::getHash
-
-=item * Config_XML::new
-
-=item * Sympa::Family::_end_update_list
-
-=item * Sympa::Family::_initialize_instantiation
-
-=item * Sympa::Family::_split_xml_file
-
-=item * Sympa::Family::_update_existing_list
-
-=item * Sympa::List::get_lists
-
-=item * Sympa::List::new
-
-=item * Sympa::List::set_status_error_config
-
-=item * Sympa::List::set_status_family_closed
-
-=item * Sympa::Log::Syslog::do_log
 
 =back 
 
@@ -1271,14 +1143,6 @@ Returns a string with informations summarizing the instantiation results.
 
 =back 
 
-=head3 Calls
-
-=over 
-
-=item * Sympa::Log::Syslog::do_log
-
-=back 
-
 =cut
 
 #########################################
@@ -1486,20 +1350,6 @@ Checks the parameter constraints taken from param_constraint.conf file for the L
 
 =back 
 
-=head3 Calls
-
-=over 
-
-=item * Sympa::Family::check_values
-
-=item * Sympa::Family::get_constraints
-
-=item * Sympa::List::get_param_value
-
-=item * Sympa::Log::Syslog::do_log
-
-=back 
-
 =cut
 
 #########################################
@@ -1602,16 +1452,6 @@ Returns a hash containing the values found in the param_constraint.conf file.
 
 =back 
 
-=head3 Calls
-
-=over 
-
-=item * Sympa::Family::_load_param_constraint_conf
-
-=item * Sympa::Log::Syslog::do_log
-
-=back 
-
 =cut
 
 #########################################
@@ -1667,14 +1507,6 @@ Returns 0 if all the value(s) found in $param_value appear also in $constraint_v
 =over 
 
 =item * I<\@error>, a ref to an array containing the values in $param_value which don't match those in $constraint_value.
-
-=back 
-
-=head3 Calls
-
-=over 
-
-=item * Sympa::Log::Syslog::do_log
 
 =back 
 
@@ -1779,14 +1611,6 @@ Gets the constraints on parameter $param from the 'param_constraint.conf' file.
 
 =back 
 
-=head3 Calls
-
-=over 
-
-=item * Sympa::Log::Syslog::do_log
-
-=back 
-
 =cut
 
 #########################################
@@ -1887,14 +1711,6 @@ Returns a reference to hash whose keys are the uncompellable parameters.
 
 =back 
 
-=head3 Calls
-
-=over 
-
-=item * Sympa::Log::Syslog::do_log
-
-=back 
-
 =cut
 
 #########################################
@@ -1955,14 +1771,6 @@ Gets the family directory, look for it in the robot, then in the site and finall
 
 =back 
 
-=head3 Calls
-
-=over 
-
-=item * Sympa::Log::Syslog::do_log
-
-=back 
-
 =cut
 
 #####################################################
@@ -2018,14 +1826,6 @@ Checks the existence of the mandatory files (param_constraint.conf and config.tt
 
 =back 
 
-=head3 Calls
-
-=over 
-
-=item * Sympa::Log::Syslog::do_log
-
-=back 
-
 =cut
 
 #####################################################
@@ -2078,14 +1878,6 @@ Initializes all the values used for instantiation and results description to emp
 =over 
 
 =item * I<1>
-
-=back 
-
-=head3 Calls
-
-=over 
-
-=item * I<none>
 
 =back 
 
@@ -2177,44 +1969,6 @@ Splits the XML family file into XML list files. New list names are put in the ar
 =item * I<1> if everything goes well
 
 =item * I<0> if something goes wrong
-
-=back 
-
-=head3 Calls
-
-=over 
-
-=item * Sympa::Log::Syslog::do_log
-
-=item * XML::LibXML::new
-
-=item * XML::LibXML::Document::createDocument
-
-=item * XML::LibXML::Document::documentElement
-
-=item * XML::LibXML::Document::encoding
-
-=item * XML::LibXML::Document::setDocumentElement
-
-=item * XML::LibXML::Document::toFile
-
-=item * XML::LibXML::Document::version
-
-=item * XML::LibXML::Node::childNodes
-
-=item * XML::LibXML::Node::getChildrenByTagName
-
-=item * XML::LibXML::Node::line_number
-
-=item * XML::LibXML::Node::nodeName
-
-=item * XML::LibXML::Node::nodeType
-
-=item * XML::LibXML::Node::textContent
-
-=item * XML::LibXML::Parser::line_numbers
-
-=item * XML::LibXML::Parser::parse_file
 
 =back 
 
@@ -2353,12 +2107,6 @@ Updates an already existing list in the new family context
 =item * I<$list>, the updated List object, if everything goes well
 
 =item * I<undef>, if something goes wrong.
-
-=back 
-
-=head3 Calls
-
-=over 
 
 =back 
 
@@ -2542,22 +2290,6 @@ Gets list customizations from the config_changes file and keeps on changes allow
 
 =back 
 
-=head3 Calls
-
-=over 
-
-=item * Sympa::Family::check_values
-
-=item * Sympa::Family::get_constraints
-
-=item * Sympa::List::get_config_changes
-
-=item * Sympa::List::get_param_value
-
-=item * Sympa::Log::Syslog::do_log
-
-=back 
-
 =cut
 
 #####################################################
@@ -2694,22 +2426,6 @@ Sets changes (loads the users, installs or removes the aliases); deals with the 
 
 =back 
 
-=head3 Calls
-
-=over 
-
-=item * Sympa::Admin::install_aliases
-
-=item * Sympa::Admin::remove_aliases
-
-=item * Sympa::List::add_list_member
-
-=item * Sympa::List::_load_list_members_file
-
-=item * Sympa::Log::Syslog::do_log
-
-=back 
-
 =cut
 
 #####################################################
@@ -2811,22 +2527,6 @@ Finishes to generate a list in a family context (for a new or an already existin
 
 =back 
 
-=head3 Calls
-
-=over 
-
-=item * Sympa::Family::_copy_files
-
-=item * Sympa::Family::check_param_constraint
-
-=item * Sympa::List::save_config
-
-=item * Sympa::List::set_status_error_config
-
-=item * Sympa::Log::Syslog::do_log
-
-=back 
-
 =cut
 
 #####################################################
@@ -2918,16 +2618,6 @@ Copies the instance.xml file into the list directory. This file contains the cur
 
 =back 
 
-=head3 Calls
-
-=over 
-
-=item * Sympa::Log::Syslog::do_log
-
-=item * File::Copy::copy
-
-=back 
-
 =cut
 
 #####################################################
@@ -2982,16 +2672,6 @@ Loads the param_constraint.conf file into a hash
 =item * I<$constraint>, a ref to a hash containing the data found in param_constraint.conf
 
 =item * I<undef> if something went wrong
-
-=back 
-
-=head3 Calls
-
-=over 
-
-=item * Sympa::Log::Syslog::do_log
-
-=item * Sympa::List::send_notify_to_listmaster
 
 =back 
 

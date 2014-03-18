@@ -3059,46 +3059,6 @@ Use it to create a List object and initialize output parameters.
 
 =back 
 
-=head3 Calls 
-
-=over 
-
-=item * d_access_control
-
-=item * Sympa::List::find_picture_url
-
-=item * wwslog
-
-=item * Sympa::Language::SetLang
-
-=item * Sympa::List::am_i
-
-=item * Sympa::List::get_mod_spool_size
-
-=item * Sympa::List::get_shared_moderated
-
-=item * Sympa::List::get_list_member
-
-=item * Sympa::List::get_subscription_request_count
-
-=item * Sympa::List::get_real_total
-
-=item * Sympa::List::get_total_bouncing
-
-=item * Sympa::List::is_listmaster
-
-=item * Sympa::List::is_moderated
-
-=item * Sympa::List::is_list_member
-
-=item * Sympa::List::new
-
-=item * Sympa::Scenario::request_action
-
-=item * Sympa::Report::reject_report_web
-
-=back 
-
 =cut 
 
 ## Analysis of incoming parameters
@@ -11091,24 +11051,6 @@ Creates a list using a list template
 
 =back 
 
-=head3 Calls 
-
-=over 
-
-=item * web_db_log
-
-=item * wwslog
-
-=item * Sympa::Admin::create_list_old
-
-=item * check_param_in
-
-=item * Sympa::List::send_notify_to_listmaster
-
-=item * Sympa::Report::reject_report_web
-
-=back 
-
 =cut 
 
 ## create a liste using a list template.
@@ -11331,24 +11273,6 @@ Sends back the list creation edition form.
 =item * I<undef>, if anything goes wrong
 
 =item * I<'loginrequest'> if no user is logged in at the time the function is called.
-
-=back 
-
-=head3 Calls 
-
-=over 
-
-=item * wwslog
-
-=item * _prepare_edit_form
-
-=item * Sympa::Scenario::request_action
-
-=item * Sympa::Tools::get_list_list_tpl
-
-=item * Sympa::Template::allow_absolute_path
-
-=item * Sympa::Report::reject_report_web
 
 =back 
 
@@ -12839,18 +12763,6 @@ Sends back the list config edition form.
 
 =back 
 
-=head3 Calls 
-
-=over 
-
-=item * wwslog
-
-=item * _prepare_edit_form
-
-=item * Sympa::Report::reject_report_web
-
-=back 
-
 =cut 
 
 ## Send back the list config edition form
@@ -13002,32 +12914,6 @@ Prepares config data to be sent in the edition form. Adds to the parameters arra
 =item * I<1>, if no problem is encountered
 
 =item * I<undef>, if anything goes wrong
-
-=back 
-
-=head3 Calls 
-
-=over 
-
-=item * _prepare_data
-
-=item * _restrict_values
-
-=item * wwslog
-
-=item * Sympa::List::by_order
-
-=item * Sympa::List::family
-
-=item * Sympa::List::may_edit
-
-=item * Sympa::Language::GetLang
-
-=item * Sympa::Language::SetLang
-
-=item * Sympa::Report::reject_report_web
-
-=item * Sympa::Tools::Data::dup_var
 
 =back 
 
@@ -13224,28 +13110,6 @@ Returns a reference to a hash containing the data used to edit the parameter (of
 =over 
 
 =item * I<$p_glob>, a reference to a hash containing the data used to edit the parameter.
-
-=back 
-
-=head3 Calls 
-
-=over 
-
-=item * _restrict_values
-
-=item * _prepare_data
-
-=item * load_data_sources_list
-
-=item * Sympa::Family::get_param_constraint
-
-=item * Sympa::List::load_scenario_list
-
-=item * Sympa::List::load_task_list
-
-=item * Sympa::List::may_edit
-
-=item * Sympa::Tools::escape_html
 
 =back 
 
