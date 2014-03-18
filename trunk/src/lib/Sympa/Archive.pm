@@ -24,19 +24,15 @@
 package Sympa::Archive;
 
 use strict;
-
+use English qw(-no_match_vars);
 use Carp qw(croak);
 use Cwd qw(getcwd);
 use Digest::MD5;
 use Encode qw(decode_utf8 encode_utf8);
-use English qw(-no_match_vars);
 use HTML::Entities qw(decode_entities);
 
-use Sympa::Site;
 use Sympa::Log::Syslog;
-use Sympa::Message;
 use Sympa::Tools::File;
-use Sympa::Tools::Message;
 
 my $serial_number = 0;    # incremented on each archived mail
 
@@ -287,7 +283,7 @@ sub clean_archive_directory {
     $answer->{'dir_to_rebuild'} = $arc_root . '/' . $dir_to_rebuild;
     $answer->{'cleaned_dir'}    = Sympa::Site->tmpdir . '/' . $dir_to_rebuild;
     unless (
-        my $number_of_copies = Sympa::Tools::File::copy_dir(
+        my $number_of_copies = Sympa::Tools::copy_dir(
             $answer->{'dir_to_rebuild'},
             $answer->{'cleaned_dir'}
         )
