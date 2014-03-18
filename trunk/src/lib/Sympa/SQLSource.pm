@@ -26,15 +26,10 @@ package Sympa::SQLSource;
 use strict;
 use base qw(Sympa::Datasource);
 
-use English qw(-no_match_vars);
 use Carp;
-use Sympa::Log::Syslog;
+use English qw(-no_match_vars);
 
-#use Conf; # not used
-#use Sympa::List; # not used
-#use Sympa::Tools; # not used
-#use Sympa::Template; # not used
-use Data::Dumper;
+use Sympa::Log::Syslog;
 
 ## Structure to keep track of active connections/connection status
 ## Key : connect_string (includes server+port+dbname+DB type)

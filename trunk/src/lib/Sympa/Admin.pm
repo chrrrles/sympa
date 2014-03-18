@@ -36,21 +36,17 @@ Central module for creating and editing lists.
 package Sympa::Admin;
 
 use strict;
+
 use English qw(-no_match_vars);
 use File::Copy;
 
-# tentative
-use Data::Dumper;
-
-use Sympa::List;
-
-#use Conf; # already load in List - Site.
+use Sympa::Conf;
+use Sympa::Constants;
 use Sympa::Language;
-
-#use Sympa::Log::Syslog; # used in Conf
-#use Sympa::Tools; # used in Conf
+use Sympa::List;
+use Sympa::Log::Syslog;
+use Sympa::Tools;
 use Sympa::Tools::File;
-#use Sympa::Constants; # load in Conf - confdef
 
 =pod 
 

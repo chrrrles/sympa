@@ -26,9 +26,6 @@ package Sympa::DBManipulatorOracle;
 use strict;
 use base qw(Sympa::DBManipulatorDefault);
 
-use Data::Dumper;
-
-use Carp;
 use Sympa::Log::Syslog;
 
 #######################################################

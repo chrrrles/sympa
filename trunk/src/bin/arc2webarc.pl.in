@@ -28,12 +28,12 @@ use lib '--modulesdir--';
 use English qw(-no_match_vars);
 use Getopt::Long;
 
-#use Sympa::Tools::WWW; # no longer used
-#use Sympa::Constants; # used by Conf
+use Sympa::Constants;
+use Sympa::Conf;
+use Sympa::DatabaseManager;
 use Sympa::List;
-
-#use Sympa::Log::Syslog; # used in List - Robot - Site - Conf
-#use Sympa::DatabaseManager; # used by Conf
+use Sympa::Robot;
+use Sympa::Site;
 
 my %month_idx = qw(jan 1
     fev 2

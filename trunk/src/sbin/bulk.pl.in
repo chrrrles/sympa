@@ -89,29 +89,26 @@ L<sympa(8)>, L<sendmail(8)>
 
 =cut 
 
-use lib '--modulesdir--';
 use strict;
 use warnings;
+use lib '--modulesdir--';
+
 use English qw(-no_match_vars);
 use Getopt::Long;
 use Pod::Usage;
+use POSIX qw();
 
-# tentative
-use Data::Dumper;
-
-#use Conf; # used in List
-#use Sympa::Log::Syslog; # used in Conf
-#use Commands; # no longer used
-#use Sympa::Mail; # used in List
-use Sympa::List;
 use Sympa::Bulk;
-
-#use Sympa::Tools; # used in Conf
-#use Sympa::Tracking; # used in List
-#use Sympa::Constants; # used in confdef, in Conf
-use Sympa::Spool;    # used in List - Task
+use Sympa::Conf;
+use Sympa::Constants;
+use Sympa::List;
+use Sympa::Mail;
+use Sympa::Log::Syslog;
+use Sympa::Site;
+use Sympa::Spool;
 use Sympa::Tools::DKIM;
 use Sympa::Tools::Daemon;
+use Sympa::Tracking;
 
 my $daemon_name           = Sympa::Log::Syslog::set_daemon($0);
 my $date_of_last_activity = time();

@@ -24,20 +24,17 @@
 package Sympa::DatabaseManager;
 
 use strict;
+
 use English qw(-no_match_vars);
 
 use Carp;
-#use Conf; # SDM is used in Conf
-use Sympa::Log::Syslog;
 
-#use Sympa::List; # no longer used
+use Sympa::Conf;
 use Sympa::Constants;
-use Sympa::SQLSource;
-use Data::Dumper;
-
-our $AUTOLOAD;
-
 use Sympa::DatabaseDescription;
+use Sympa::Log::Syslog;
+use Sympa::SQLSource;
+use Sympa::Site;
 
 # db structure description has moved in Sympa/Constant.pm
 my %db_struct = Sympa::DatabaseDescription::db_struct();

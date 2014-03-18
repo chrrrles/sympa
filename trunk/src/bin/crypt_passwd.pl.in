@@ -25,18 +25,13 @@
 use strict;
 use lib '--modulesdir--';
 
+use Sympa::DatabaseManager;
+use Sympa::Site;
+use Sympa::Tools::Password;
+
 unless (require Crypt::CipherSaber) {
     die "Crypt::CipherSaber not installed ; cannot crypt passwords";
 }
-
-#use Sympa::Tools::WWW; # not used
-#use Sympa::Constants; # used in List - Robot - Site - Conf - confdef
-#require Sympa::Tools; # used by Conf
-use Sympa::List;
-use Sympa::Tools::Password;
-
-#use Sympa::DatabaseManager; # used by conf
-#use Sympa::Log::Syslog; # used by conf
 
 ## Load sympa config
 Sympa::Site->load or die 'config_error';

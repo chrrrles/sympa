@@ -33,14 +33,15 @@ package Sympa::ClassicSpool;
 
 use strict;
 use warnings;
-use English qw(-no_match_vars);
+
 use Carp qw(croak);
-use File::Path qw(make_path remove_tree);
+use English qw(-no_match_vars);
+use File::Path qw(make_path);
 
-# tentative
-use Data::Dumper;
-
-use Sympa::List;
+use Sympa::Constants;
+use Sympa::Robot;
+use Sympa::Site;
+use Sympa::List; # FIXME: circular dependency
 use Sympa::Tools::File;
 
 our $filename_regexp = '^(\S+)\.(\d+)\.\w+$';

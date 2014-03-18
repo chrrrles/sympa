@@ -23,7 +23,7 @@
 
 package Sympa::MessageSpool;
 
-use base  qw(Sympa::ClassicSpool);
+use base qw(Sympa::ClassicSpool);
 
 use Sympa::Log::Syslog;
 

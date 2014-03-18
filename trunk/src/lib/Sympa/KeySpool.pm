@@ -29,7 +29,9 @@ use base qw(Sympa::ClassicSpool);
 
 use English qw(-no_match_vars);
 
+use Sympa::List; # FIXME: circular dependency
 use Sympa::Log::Syslog;
+use Sympa::Robot;
 
 our $filename_regexp = '^(\S+)_(\w+)(\.distribute)?$';
 

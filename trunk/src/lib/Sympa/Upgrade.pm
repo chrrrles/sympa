@@ -25,23 +25,22 @@ package Sympa::Upgrade;
 
 use strict;
 
-use English qw(-no_match_vars);
 use Carp qw(croak);
+use English qw(-no_match_vars);
 use File::Copy::Recursive;
 use POSIX qw(strftime);
 
-# tentative
-use Data::Dumper;
-
+use Sympa::Conf;
+use Sympa::Constants;
+use Sympa::DatabaseManager;
+use Sympa::Language;
+use Sympa::List;
+use Sympa::Log::Syslog;
+use Sympa::Robot;
 use Sympa::Site;
 use Sympa::Tools::File;
 use Sympa::Tools::Text;
 use Sympa::Tools::Password;
-
-#use Conf; # used in Site
-#use Sympa::Log::Syslog; # used in Conf
-#use Sympa::Constants; # used in Conf - confdef
-#use Sympa::DatabaseManager; # used in Conf
 
 ## Return the previous Sympa version, ie the one listed in
 ## data_structure.version

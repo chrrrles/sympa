@@ -38,59 +38,49 @@ This FastCGI script completely handles all aspects of the Sympa web interface
 
 =cut 
 
+use strict;
 use lib '--modulesdir--';
 
 # XXX MO: during development, where modules are not installed
 do '/home/sympa/ext/DEVEL.pm';
 
-use strict;
 
-#use warnings; #temporarily disabled
 use English; # FIXME: drop $MATCH usage
-use Getopt::Long;
 use Archive::Zip qw(:ERROR_CODES);
 use Time::Local;
 
-# tentative
-use Data::Dumper;
-
-## Sympa API
-use Sympa::List;
-
-#use Sympa::Mail; # used by List
-#use Conf; # used in List - Robot - Site
-#use confdef; # used by Conf
-use Sympa::Commands;
-use Sympa::Language;
-
-#use Sympa::Log::Syslog; # used by Conf
-#use Message: # used by List
 use Sympa::Auth;
 use Sympa::Admin;
-use Sympa::SharedDocument;
-
-#use Sympa::Report;
+use Sympa::ClassicSpool;
+use Sympa::Conf;
+use Sympa::Constants;
+use Sympa::DatabaseManager;
+use Sympa::Family;
+use Sympa::Language;
+use Sympa::List;
+use Sympa::Log::Database;
+use Sympa::Log::Syslog;
+use Sympa::Mail;
+use Sympa::Message;
+use Sympa::MessageSpool;
+use Sympa::Report;
+use Sympa::Robot;
+use Sympa::Scenario;
 use Sympa::Session;
-
-#use Sympa::Log::Syslog;
+use Sympa::SharedDocument;
+use Sympa::Spool;
+use Sympa::Site;
+use Sympa::Template;
 use Sympa::Tools;
+use Sympa::Tools::Cookie;
 use Sympa::Tools::Data;
 use Sympa::Tools::File;
-use Sympa::Tools::Text;
-use Sympa::Tools::Time;
 use Sympa::Tools::Message;
 use Sympa::Tools::Password;
-
-#use Sympa::Constants;
+use Sympa::Tools::Text;
+use Sympa::Tools::Time;
 use Sympa::Tools::WWW;
-use Sympa::Tools::Cookie;
-
-#use Sympa::Template;
 use Sympa::Tracking;
-
-#use Sympa::Spool; # used in List - Task
-#use Sympa::DatabaseManager; # used by Conf
-use Sympa::MessageSpool;
 
 my $crypt_openssl_x509_ok;
 

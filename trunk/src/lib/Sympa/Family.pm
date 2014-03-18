@@ -44,15 +44,14 @@ use XML::LibXML;
 use File::Copy;
 use Term::ProgressBar;
 
-#use Sympa::List; # load in admin
-#use Conf; # no longer used
-use Sympa::Language;
-
-#use Sympa::Log::Syslog; # load in dmin - List - Robot - Site - Conf
 use Sympa::Admin;
+use Sympa::Constants;
 use Sympa::Config_XML;
-
-#use Sympa::Constants; # load in Conf - confdef
+use Sympa::Language;
+use Sympa::List; # FIXME: circular dependency
+use Sympa::Log::Syslog;
+use Sympa::Robot;
+use Sympa::Site;
 
 my @uncompellable_param = (
     'msg_topic.keywords',

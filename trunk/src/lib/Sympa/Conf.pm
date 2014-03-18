@@ -24,27 +24,19 @@
 package Sympa::Conf;
 
 use strict;
-use English qw(-no_match_vars);
 
-#use Carp; # currently not used.
+use English qw(-no_match_vars);
 use Storable;
 
-# tentative
-use Data::Dumper;
-
-#use Sympa::List; # no longer used
-use Sympa::DatabaseManager;
-use Sympa::Log::Syslog;
-use Sympa::Language;
-
-#use Sympa::Tools::WWW; # no longer used
 use Sympa::ConfDef;
+use Sympa::Constants;
+use Sympa::DatabaseManager;
+use Sympa::Language;
+use Sympa::LockedFile;
+use Sympa::Log::Syslog;
 use Sympa::Tools;
 use Sympa::Tools::Data;
 use Sympa::Tools::File;
-
-#use Sympa::Constants; # already load in confdef.
-use Sympa::LockedFile;
 
 =head1 NAME
 

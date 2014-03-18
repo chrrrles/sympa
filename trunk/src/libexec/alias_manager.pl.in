@@ -131,17 +131,18 @@ $ENV{'PATH'} = '';
 use strict;
 use warnings;
 use lib '--modulesdir--';
+
 use English qw(-no_match_vars);
 use Getopt::Long;
 use Pod::Usage;
-use POSIX;
+use POSIX qw();
 
-#use Conf; # load in Site - Robot
-#use Sympa::Tools; # load in Conf - Robot
-use Sympa::Template;
-
-#use Sympa::Constants; # load in confdef - Conf
+use Sympa::Conf;
+use Sympa::Constants;
+use Sympa::Log::Syslog;
 use Sympa::Robot;
+use Sympa::Site;
+use Sympa::Template;
 
 my %options;
 GetOptions(\%main::options, 'help|h');

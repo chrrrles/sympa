@@ -25,26 +25,21 @@ package Sympa::Commands;
 
 use strict;
 use warnings;
+
 use Carp qw(carp);
-use Digest::MD5;
-use Fcntl;
 use Time::Local;
-use MIME::EncWords;
 
-#use Conf; # used in List - Site
 use Sympa::Language;
-
-#use Sympa::Log::Syslog; # used in List - Site - Conf
 use Sympa::List;
+use Sympa::Log::Syslog;
 use Sympa::Message;
 use Sympa::Report;
-use Data::Dumper;
-
-#use Sympa::Tools; # used in List - Site - Conf
+use Sympa::Scenario;
+use Sympa::Site;
+use Sympa::Tools;
 use Sympa::Tools::Data;
 use Sympa::Tools::File;
 use Sympa::Tools::Password;
-#use Sympa::Constants; # used in confdef - Conf
 
 my %comms = (
     'add'                               => 'add',

@@ -25,8 +25,6 @@ package Sympa::Tracking;
 
 use strict;
 
-#use CGI; # no longer used
-#use Email::Simple; # no longer used
 use MIME::Base64;
 
 use Sympa::Log::Syslog;

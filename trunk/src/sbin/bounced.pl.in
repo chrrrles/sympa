@@ -137,18 +137,21 @@ L<sympa(8)>, L<wwsympa(8)>, L<mhonarc(1)>, L<sympa.conf(5)>.
 ##         :  d		-> debug -d is equiv to -dF
 ## Now, it is impossible to use -dF but you have to write it -d -F
 
-use lib '--modulesdir--';
 use strict;
 use warnings;
+use lib '--modulesdir--';
+
 use English qw(-no_match_vars);
-use FileHandle;
 use Getopt::Long;
 use Pod::Usage;
 use POSIX;
 
-use Sympa::List;
-use Sympa::Tracking;
 use Sympa::BounceMessage;
+use Sympa::ClassicSpool;
+use Sympa::DatabaseManager;
+use Sympa::List;
+use Sympa::Robot;
+use Sympa::Site;
 use Sympa::Tools::Daemon;
 
 ## Check options
@@ -286,7 +289,7 @@ while (!$end) {
     my $spooled_bounce;
     while ($spooled_bounce = $spool->next) {
         my $bounce = undef;
-        $bounce = Sympa::BounceSympa::Message->new($spooled_bounce)
+        $bounce = Sympa::BounceMessage->new($spooled_bounce)
             if $spooled_bounce;
         unless ($bounce) {
             Sympa::Log::Syslog::do_log(

@@ -34,8 +34,9 @@ use base qw(Sympa::Site);
 
 use Carp qw(carp croak);
 
+use Sympa::List; # FIXME: circular dependency
 use Sympa::ListDef;
-use Sympa::Site;
+use Sympa::Log::Syslog;
 use Sympa::Tools::Data;
 
 ## Croak if Robot object is used where robot name shall be used.

@@ -26,14 +26,12 @@ package Sympa::SOAP;
 use strict;
 
 use HTTP::Cookies;
+use SOAP::Lite;
 
-use Sympa::List;
-
-#use Conf; # used in List - Site
-#use Sympa::Log::Syslog; # used in Conf
 use Sympa::Auth;
-
-#use Language; # no longer used
+use Sympa::List;
+use Sympa::Log::Syslog;
+use Sympa::Template;
 
 ## Define types of SOAP type listType
 my %types = (

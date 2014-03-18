@@ -24,6 +24,7 @@
 package Sympa::LDAP;
 
 use strict;
+
 use English qw(-no_match_vars);
 
 use Sympa::Log::Syslog;

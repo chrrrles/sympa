@@ -26,10 +26,6 @@ package Sympa::DBManipulatorPostgres;
 use strict;
 use base qw(Sympa::DBManipulatorDefault);
 
-#use Carp; # not used
-# tentative
-use Data::Dumper;
-
 use Sympa::Log::Syslog;
 
 #######################################################

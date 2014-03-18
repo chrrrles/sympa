@@ -25,26 +25,14 @@ package Sympa::Task;
 
 use strict;
 
-#use Carp; # not yet used
-#use Digest::MD5; # not used
-#use Time::Local; # no longer used
-# tentative
-use Data::Dumper;
+use Template;
 
-use Sympa::Bulk;
-
-#use Conf; # used in List - Robot - Site
-#use Sympa::List; # this package is used by List
-#use Sympa::Log::Syslog; # used by Conf
-#use Sympa::Mail; # used by List
-#use Scenario; # not used
-use Sympa::TaskSpool;
+use Sympa::List; # FIXME: circular dependency
+use Sympa::Log::Syslog;
+use Sympa::Site;
 use Sympa::TaskInstruction;
-
-#use Sympa::Tools; # used by Conf
+use Sympa::TaskSpool;
 use Sympa::Tools::Time;
-#use Sympa::Tracking; # not used
-#use Sympa::Template; # used by List
 
 #### Task level subs ####
 ##########################

@@ -28,10 +28,12 @@
 ## This script will create all missing HTML files in the moderation spool
 
 use lib '--modulesdir--';
-use Sympa::Conf;    # to load Sympa conf which is needed by List.pm
-use Sympa::List;
-use Sympa::Log::Syslog;     # if you want to get logs of List.pm
+
+use Sympa::Conf;
 use Sympa::Constants;
+use Sympa::DatabaseManager;
+use Sympa::List;
+use Sympa::Log::Syslog;
 
 unless (Sympa::Conf::load(Sympa::Constants::CONFIG)) {
     die "Can't load Sympa configuration file";

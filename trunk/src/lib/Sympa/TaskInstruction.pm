@@ -26,18 +26,18 @@ package Sympa::TaskInstruction;
 use strict;
 
 use English qw(-no_match_vars);
-#use Carp; # not yet used
-#use Digest::MD5; # no longer used
 use Time::Local qw(timegm timelocal);
 
-# tentative
-use Data::Dumper;
-
-#use Sympa::List; # this package is used by Task which is used by List.
-#use Sympa::Tools; # load in Conf - Site - List
+use Sympa::List;
+use Sympa::Log::Syslog;
+use Sympa::Robot;
+use Sympa::Site;
+use Sympa::Task;
+use Sympa::TaskSpool;
+use Sympa::Tools;
 use Sympa::Tools::Data;
 use Sympa::Tools::Time;
-#use Task; # this package is used by Task
+use Sympa::Tracking;
 
 ###### DEFINITION OF AVAILABLE COMMANDS FOR TASKS ######
 

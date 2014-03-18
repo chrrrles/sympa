@@ -35,16 +35,17 @@ package Sympa::Site_r;
 
 use strict;
 use warnings;
+
 use Carp qw(croak);
-use Cwd;
 
 use Sympa::Conf;
 use Sympa::Language;
-use Sympa::User;
+use Sympa::Log::Syslog;
+use Sympa::Tools;
 use Sympa::Tools::Data;
 use Sympa::Tools::File;
 use Sympa::Tools::Password;
-use Data::Dumper;
+use Sympa::User;
 
 =head1 NAME
 

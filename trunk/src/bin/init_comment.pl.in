@@ -25,12 +25,8 @@
 use strict;
 use lib '--modulesdir--';
 
-#use Sympa::Tools::WWW; # not used
-#use Sympa::Constants; # used in List - Robot - Site - Conf - confdef
-use Sympa::List;
-
-#use Sympa::DatabaseManager; # used by Conf
-#use Sympa::Log::Syslog; # used by Conf
+use Sympa::DatabaseManager;
+use Sympa::Site;
 
 ## Load sympa config
 Sympa::Site->load or die 'config_error';

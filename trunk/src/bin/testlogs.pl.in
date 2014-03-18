@@ -24,10 +24,11 @@
 
 use strict;
 use lib '--modulesdir--';
+
 use Getopt::Long;
 
-#use Conf; # used by Site
-#use Sympa::Log::Syslog; # used by Conf
+use Sympa::Constants;
+use Sympa::Log::Syslog;
 use Sympa::Site;
 
 my %options;

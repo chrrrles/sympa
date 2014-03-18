@@ -27,15 +27,11 @@ use strict;
 
 use English qw(-no_match_vars);
 
-#use Carp; # currently not used
-#use POSIX; # no longer used
-
+use Sympa::Language;
+use Sympa::Log::Syslog;
+use Sympa::Scenario;
 use Sympa::Tools;
 use Sympa::Tools::Data;
-use Sympa::Language;
-
-#use Sympa::List; # not used
-use Sympa::Log::Syslog;
 
 ## Creates a new object
 sub new {

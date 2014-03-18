@@ -27,54 +27,48 @@ use strict;
 use warnings;
 use base qw(Sympa::Site_r);
 
-use English;    # FIXME: drop $PREMATCH usage
 use Carp qw(croak);
-##use Encode; # load in Log
-##use Fcntl qw(LOCK_SH LOCK_EX LOCK_NB LOCK_UN); # no longer used
+use Data::Dumper;
+use Encode;
+use English;    # FIXME: drop $PREMATCH usage
 use IO::Scalar;
-##use Mail::Header; # not used
-##use MIME::Entity; # not used
+use LWP::UserAgent;
 use MIME::EncWords;
-##use MIME::Parser; # no longer used
 use POSIX;
-##use Scalar::Util qw(refaddr); # not used
 use Storable qw(dclone);
 use Time::Local qw(timelocal);
-## tentative
-use Data::Dumper;
 
-##use Sympa::SQLSource; # used in SDM
-##use Datasource; # used in Sympa::SQLSource
-use Sympa::LDAPSource;
-##use Sympa::DatabaseManager; # used in Conf
-use Sympa::Robot;
-##use Upgrade; # no longer used
-use Sympa::LockedFile;
-use Sympa::Task;
-use Sympa::Scenario;
-use Sympa::Fetch;
-use LWP::UserAgent;
-use Sympa::ClassicSpool;
-use Sympa::KeySpool;
-use Sympa::SubscribeSpool;
+
 use Sympa::Archive;
-use Sympa::Template;
-##use Sympa::Constants; # used in Conf - confdef
+use Sympa::ClassicSpool; # FIXME: circular dependency
+use Sympa::Constants;
+use Sympa::DatabaseManager;
+use Sympa::Datasource;
+use Sympa::Family; # FIXME: circular dependency
+use Sympa::Fetch;
+use Sympa::KeySpool; # FIXME: circular dependency
 use Sympa::Language;
-##use Sympa::Log::Syslog; # used in Conf
-##use Conf; # used in Robot - Site
+use Sympa::ListDef;
+use Sympa::Log::Syslog;
+use Sympa::LDAPSource;
+use Sympa::LockedFile;
 use Sympa::Mail;
-use Sympa::LDAP;
-use Sympa::Message;
-use Sympa::Family;    #FIXME: dependency loop between List and Family
-use Sympa::Tracking;
-##use Sympa::ListDef; used in Robot
-use Sympa::Tools::SMIME;
+use Sympa::Message; # FIXME: circular dependency
+use Sympa::Robot; # FIXME: circular dependency
+use Sympa::Scenario; # FIXME: circular dependency
+use Sympa::SQLSource;
+use Sympa::SubscribeSpool;
+use Sympa::Task; # FIXME: circular dependency
+use Sympa::TaskSpool; # FIXME: circular dependency
+use Sympa::Template; # FIXME: circular dependency
 use Sympa::Tools::Data;
 use Sympa::Tools::File;
-use Sympa::Tools::Text;
-use Sympa::Tools::Password;
 use Sympa::Tools::Message;
+use Sympa::Tools::Password;
+use Sympa::Tools::SMIME;
+use Sympa::Tools::Text;
+use Sympa::Tracking;
+use Sympa::User;
 
 my @sources_providing_listmembers = qw/
     include_file
@@ -7044,7 +7038,6 @@ sub _load_list_members_from_include {
     $result->{'users'}      = \%users;
     $result->{'errors'}     = \@errors;
     $result->{'exclusions'} = \@ex_sources;
-    use Data::Dumper;
     if (open OUT, '>/tmp/result') { print OUT Dumper $result; close OUT }
     return $result;
 }
@@ -10010,7 +10003,6 @@ sub _save_list_config_file {
     );
     ## Get updated config
     my $config = $self->config;
-    use Data::Dumper;
     open OUT, '>/tmp/list-config';
     print OUT Dumper $config, $pinfo;
 

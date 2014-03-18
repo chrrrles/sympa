@@ -27,21 +27,15 @@ use strict;
 
 use English qw(-no_match_vars);
 
-#use Carp; # not yet used
-#require Encode; # not used
-
-#use Fcntl qw(LOCK_SH LOCK_EX LOCK_NB LOCK_UN); # no longer used
 use Mail::Address;
 use MIME::Base64;
-
-#use POSIX; # not used
 use Sys::Hostname qw(hostname);
 
-# tentative
-use Data::Dumper;
-
-use Sympa::Message;
 use Sympa::DatabaseManager;
+use Sympa::List;
+use Sympa::Log::Syslog;
+use Sympa::Message;
+use Sympa::Robot;
 
 ## Database and SQL statement handlers
 my ($sth, @sth_stack);

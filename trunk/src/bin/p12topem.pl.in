@@ -57,14 +57,14 @@ PKCS#12 file).
 
 use strict;
 use lib '--modulesdir--';
+
 use Getopt::Long;
 use Pod::Usage;
 
-#use Sympa::Constants; # used by Conf
-#use Conf; # used in List - Robot - Site
+use Sympa::DatabaseManager;
 use Sympa::List;
-
-#use Sympa::DatabaseManager; # used by Conf
+use Sympa::Robot;
+use Sympa::Site;
 
 ## Load sympa config
 Sympa::Site->load or die 'config_error';

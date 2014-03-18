@@ -3,34 +3,20 @@
 # vim:ft=perl:et:sw=4
 # $Id$
 
-use English qw(-no_match_vars);
-use SOAP::Lite;
-
-# Use this line for more debug facility
-#use SOAP::Lite +trace;
-use SOAP::Transport::HTTP;
+use strict;
 
 use lib '--modulesdir--';
 
-## Defines SOAP::Transport::HTTP::FCGI::Sympa with a modified handle()
-use Sympa::Transport;
+use English qw(-no_match_vars);
 
-use Getopt::Long;
-use strict;
-
-## Sympa API
-use Sympa::Template;
+use Sympa::Conf;
+use Sympa::DatabaseManager;
+use Sympa::Robot;
+use Sympa::Log::Syslog;
 use Sympa::List;
 use Sympa::Mail;
-use Sympa::Conf;
-use Sympa::Log::Syslog;
-use Sympa::Language;
 use Sympa::SOAP;
-
-#XXXuse Sympa::Constants;
-
-## WWSympa librairies
-use Sympa::Tools::Cookie;
+use Sympa::Transport;
 
 my $birthday = time;
 
@@ -70,7 +56,7 @@ Sympa::List::get_lists('Site');
 #    Soap part
 ##############################################################################
 
-my $server = SOAP::Transport::HTTP::FCGI::Sympa->new();
+my $server = Sympa::Transport->new();
 
 #$server->dispatch_with({'urn:Sympa' => 'Sympa::SOAP'});
 $server->dispatch_to('--modulesdir--', 'Sympa::SOAP');
