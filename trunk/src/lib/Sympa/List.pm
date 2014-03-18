@@ -1860,9 +1860,9 @@ sub prepare_messages_for_digest {
     return undef unless ($self->{'digest'}{'list_of_mail'});
     foreach my $i (0 .. $#{$self->{'digest'}{'list_of_mail'}}) {
         my $mail    = ${$self->{'digest'}{'list_of_mail'}}[$i];
-        my $subject = Sympa::Tools::decode_header($mail, 'Subject');
-        my $from    = Sympa::Tools::decode_header($mail, 'From');
-        my $date    = Sympa::Tools::decode_header($mail, 'Date');
+        my $subject = Sympa::Tools::Message::decode_header($mail, 'Subject');
+        my $from    = Sympa::Tools::Message::decode_header($mail, 'From');
+        my $date    = Sympa::Tools::Message::decode_header($mail, 'Date');
 
         my $msg = {};
         $msg->{'id'}      = $i + 1;
@@ -2593,7 +2593,7 @@ sub send_to_editor {
         }
     }
 
-    my $subject = Sympa::Tools::decode_header($hdr, 'Subject');
+    my $subject = Sympa::Tools::Message::decode_header($hdr, 'Subject');
     my $param = {
         'modkey'         => $modkey,
         'boundary'       => $boundary,
@@ -2822,9 +2822,9 @@ sub archive_send_last {
     my $msg = {};
     $msg->{'id'} = 1;
 
-    $msg->{'subject'} = Sympa::Tools::decode_header($message, 'Subject');
-    $msg->{'from'}    = Sympa::Tools::decode_header($message, 'From');
-    $msg->{'date'}    = Sympa::Tools::decode_header($message, 'Date');
+    $msg->{'subject'} = Sympa::Tools::Message::decode_header($message, 'Subject');
+    $msg->{'from'}    = Sympa::Tools::Message::decode_header($message, 'From');
+    $msg->{'date'}    = Sympa::Tools::Message::decode_header($message, 'Date');
 
     $msg->{'full_msg'} = $message->as_string();    # raw message
 
