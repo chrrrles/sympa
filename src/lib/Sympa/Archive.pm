@@ -139,9 +139,9 @@ sub scan_dir_archive {
         my $msg = {};
         $msg->{'id'} = $i;
 
-        $msg->{'subject'} = Sympa::Tools::decode_header($message, 'Subject');
-        $msg->{'from'}    = Sympa::Tools::decode_header($message, 'From');
-        $msg->{'date'}    = Sympa::Tools::decode_header($message, 'Date');
+        $msg->{'subject'} = Sympa::Tools::Message::decode_header($message, 'Subject');
+        $msg->{'from'}    = Sympa::Tools::Message::decode_header($message, 'From');
+        $msg->{'date'}    = Sympa::Tools::Message::decode_header($message, 'Date');
 
         $msg->{'full_msg'} = $message->as_string();    # raw message
 

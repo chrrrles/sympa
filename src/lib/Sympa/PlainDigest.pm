@@ -186,15 +186,15 @@ sub _do_message {
         return undef;
     }
 
-    my $from = Sympa::Tools::decode_header($msgent, 'From');
+    my $from = Sympa::Tools::Message::decode_header($msgent, 'From');
     $from = Sympa::Language::gettext("[Unknown]") unless defined $from and length $from;
-    my $subject = Sympa::Tools::decode_header($msgent, 'Subject');
+    my $subject = Sympa::Tools::Message::decode_header($msgent, 'Subject');
     $subject = '' unless defined $subject;
-    my $date = Sympa::Tools::decode_header($msgent, 'Date');
+    my $date = Sympa::Tools::Message::decode_header($msgent, 'Date');
     $date = '' unless defined $date;
-    my $to = Sympa::Tools::decode_header($msgent, 'To', ', ');
+    my $to = Sympa::Tools::Message::decode_header($msgent, 'To', ', ');
     $to = '' unless defined $to;
-    my $cc = Sympa::Tools::decode_header($msgent, 'Cc', ', ');
+    my $cc = Sympa::Tools::Message::decode_header($msgent, 'Cc', ', ');
     $cc = '' unless defined $cc;
 
     my @fromline = Mail::Address->parse($msgent->head->get('From'));

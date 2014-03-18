@@ -3097,7 +3097,7 @@ sub reject {
     unless (@sender_hdr) {
         my $rejected_sender = $sender_hdr[0]->address;
         my %context;
-        $context{'subject'} = Sympa::Tools::decode_header($message, 'Subject');
+        $context{'subject'} = Sympa::Tools::Message::decode_header($message, 'Subject');
         $context{'rejected_by'} = $sender;
         $context{'editor_msg_body'} = $editor_msg->as_entity()->body_as_string
             if ($editor_msg);

@@ -78,6 +78,7 @@ use Sympa::Tools::Data;
 use Sympa::Tools::File;
 use Sympa::Tools::Text;
 use Sympa::Tools::Time;
+use Sympa::Tools::Message;
 use Sympa::Tools::Password;
 
 #use Sympa::Constants;
@@ -8441,9 +8442,9 @@ sub do_modindex {
 
         $param->{'spool'}{$id}{'size'} = int($message->{'size'} / 1024 + 0.5);
         $param->{'spool'}{$id}{'subject'} =
-            Sympa::Tools::decode_header($message, 'Subject') || 'no_subject';
+            Sympa::Tools::Message::decode_header($message, 'Subject') || 'no_subject';
         $param->{'spool'}{$id}{'date'} =
-            Sympa::Tools::decode_header($message, 'Date');    #FIXME:
+            Sympa::Tools::Message::decode_header($message, 'Date');    #FIXME:
         $param->{'spool'}{$id}{'from'}  = $message->get_sender_email;
         $param->{'spool'}{$id}{'gecos'} = $message->get_sender_gecos
             if defined $message->get_sender_gecos;
@@ -8936,7 +8937,7 @@ sub do_reject {
                 unless ($in{'message_template'} eq 'reject_quiet') {
                     my %context;
                     $context{'subject'} =
-                        Sympa::Tools::decode_header($message, 'Subject');
+                        Sympa::Tools::Message::decode_header($message, 'Subject');
                     $context{'rejected_by'}   = $param->{'user'}{'email'};
                     $context{'template_used'} = $in{'message_template'};
                     unless (
@@ -22261,11 +22262,11 @@ sub do_request_topic {
     }
 
     # headers will be encoded later.
-    $param->{'subject'} = Sympa::Tools::decode_header($message, 'Subject');
+    $param->{'subject'} = Sympa::Tools::Message::decode_header($message, 'Subject');
     $param->{'subject'} = Sympa::Tools::escape_html($param->{'subject'});     #FIXME
-    $param->{'from'}    = Sympa::Tools::decode_header($message, 'From');
+    $param->{'from'}    = Sympa::Tools::Message::decode_header($message, 'From');
     $param->{'from'}    = Sympa::Tools::escape_html($param->{'from'});        #FIXME
-    $param->{'date'}    = Sympa::Tools::decode_header($message, 'Date');
+    $param->{'date'}    = Sympa::Tools::Message::decode_header($message, 'Date');
     $param->{'date'}    = Sympa::Tools::escape_html($param->{'date'});        #FIXME
     $param->{'message_id'} =
         Sympa::Tools::clean_msg_id($message->get_header('Message-Id'));

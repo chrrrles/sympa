@@ -365,6 +365,7 @@ use Sympa::Family;
 use Sympa::Tools::Data;
 use Sympa::Tools::File;
 use Sympa::Tools::Daemon;
+use Sympa::Tools::Message;
 use Sympa::Tools::Password;
 #use Sympa::Template; # load in List
 #use Sympa::Constants;
@@ -1841,7 +1842,7 @@ sub process_message {
     }
 
     # anti-virus
-    my $rc = Sympa::Tools::virus_infected($message->as_entity());
+    my $rc = Sympa::Tools::Message::virus_infected($message->as_entity());
     if ($rc) {
         if ($robot->antivirus_notify eq 'sender') {
             unless (
@@ -2974,7 +2975,7 @@ sub DoCommand {
 
     ## Make multipart singlepart
     if ($msg->is_multipart()) {
-        my $status = Sympa::Tools::as_singlepart($msg, 'text/plain');
+        my $status = Sympa::Tools::Message::as_singlepart($msg, 'text/plain');
 
         unless (defined $status) {
             Sympa::Log::Syslog::do_log('err',

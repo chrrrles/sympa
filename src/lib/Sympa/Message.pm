@@ -73,6 +73,7 @@ use Sympa::Language;
 #use Sympa::Log::Syslog; # loaded in Conf
 use Sympa::Tools::SMIME;
 use Sympa::Tools::DKIM;
+use Sympa::Tools::Message;
 
 my %openssl_errors = (
     1 => 'an error occurred parsing the command options',
@@ -562,7 +563,7 @@ sub get_subject {
         }
         if ($self->{'subject_charset'}) {
             $self->{'decoded_subject'} =
-                Sympa::Tools::decode_header($self, 'Subject');
+                Sympa::Tools::Message::decode_header($self, 'Subject');
         } else {
             if ($subject) {
                 chomp $subject;
@@ -2424,7 +2425,7 @@ sub prepare_reception_txt {
     Sympa::Log::Syslog::do_log('debug3',
         'preparing message for txt reception mode');
     return 0 if ($self->is_signed);
-    if (Sympa::Tools::as_singlepart($self->get_mime_message, 'text/plain')) {
+    if (Sympa::Tools::Message::as_singlepart($self->get_mime_message, 'text/plain')) {
         Sympa::Log::Syslog::do_log('notice',
             'Multipart message changed to text singlepart');
     }
@@ -2438,7 +2439,7 @@ sub prepare_reception_html {
     Sympa::Log::Syslog::do_log('debug3',
         'preparing message for html reception mode');
     return 0 if ($self->is_signed);
-    if (Sympa::Tools::as_singlepart($self->get_mime_message, 'text/html')) {
+    if (Sympa::Tools::Message::as_singlepart($self->get_mime_message, 'text/html')) {
         Sympa::Log::Syslog::do_log('notice',
             'Multipart message changed to html singlepart');
     }
