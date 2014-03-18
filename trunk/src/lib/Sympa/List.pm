@@ -67,7 +67,6 @@ use Sympa::Mail;
 use Sympa::LDAP;
 use Sympa::Message;
 use Sympa::Family;    #FIXME: dependency loop between List and Family
-use Sympa::PlainDigest;
 use Sympa::Tracking;
 ##use Sympa::ListDef; used in Robot
 use Sympa::Tools::SMIME;
@@ -75,6 +74,7 @@ use Sympa::Tools::Data;
 use Sympa::Tools::File;
 use Sympa::Tools::Text;
 use Sympa::Tools::Password;
+use Sympa::Tools::Message;
 
 my @sources_providing_listmembers = qw/
     include_file
@@ -1872,8 +1872,7 @@ sub prepare_messages_for_digest {
 
         $msg->{'full_msg'} = $mail->as_string();
         $msg->{'body'}     = $mail->as_entity()->body_as_string();
-        $msg->{'plain_body'} =
-            $mail->as_entity()->Sympa::PlainDigest::plain_body_as_string();
+        $msg->{'plain_body'} = Sympa::Tools::Message::plain_body_as_string($mail->as_entity());
 
         ## Should be extracted from Date:
         $msg->{'month'} = POSIX::strftime("%Y-%m", localtime(time));

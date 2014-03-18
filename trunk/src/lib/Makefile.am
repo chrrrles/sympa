@@ -53,7 +53,6 @@ nobase_modules_DATA = Sympa/Admin.pm \
 		      Sympa/Message.pm \
 		      Sympa/MessageSpool.pm \
 		      Sympa/ModDef.pm \
-		      Sympa/PlainDigest.pm \
 		      Sympa/Report.pm \
 		      Sympa/Robot.pm \
 		      Sympa/Scenario.pm \
