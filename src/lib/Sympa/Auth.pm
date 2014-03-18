@@ -23,8 +23,6 @@
 
 package Sympa::Auth;
 
-use strict;
-
 use Digest::MD5;
 
 use Sympa::Language;
@@ -197,7 +195,6 @@ sub authentication {
     Sympa::Log::Syslog::do_log('err',
         'authentication: incorrect password for user %s', $email);
 
-    my $param;
     $param->{'init_email'}         = $email;
     $param->{'escaped_init_email'} = Sympa::Tools::escape_chars($email);
     return undef;
@@ -359,7 +356,7 @@ sub get_email_by_net_id {
 
         $netid_cookie =~ s/(\w+)/$attributes->{$1}/ig;
 
-        my $email =
+        $email =
             $robot->get_netidtoemail_db($netid_cookie,
             Sympa::Site->auth_services->{$robot->domain}[$auth_id]{'service_id'});
 
@@ -395,7 +392,7 @@ sub get_email_by_net_id {
 
     if ($emails->count() == 0) {
         Sympa::Log::Syslog::do_log('notice',
-            "No entry in the LDAP Directory Tree of %s", $ldap->{'ldap_host'});
+            "No entry in the LDAP Directory Tree of %s", $host);
         $ds->disconnect();
         return undef;
     }
