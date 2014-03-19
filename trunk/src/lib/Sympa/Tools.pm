@@ -27,7 +27,7 @@ use strict;
 
 use Carp qw(croak);
 use Digest::MD5;
-use Encode;
+use Encode qw();
 use English qw(-no_match_vars);
 use HTML::StripScripts::Parser;
 use MIME::Lite::HTML;

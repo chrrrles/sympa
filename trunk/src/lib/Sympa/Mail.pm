@@ -27,14 +27,14 @@ use strict;
 use warnings;
 
 use Carp qw(carp croak);
-use Encode;
+use Encode qw();
 use English qw(-no_match_vars);
 use MIME::Charset;
 use MIME::EncWords;
 use MIME::Parser;
 use MIME::Tools;
-use POSIX;
-use Time::Local;
+use POSIX qw();
+use Time::Local qw();
 
 use Sympa::Bulk;
 use Sympa::Constants;
@@ -198,7 +198,7 @@ sub parse_tt2_messageasstring {
 
     unless ($header_ok{'date'}) {
         my $now   = time;
-        my $tzoff = timegm(localtime $now) - $now;
+        my $tzoff = Time::Local::timegm(localtime $now) - $now;
         my $sign;
         if ($tzoff < 0) {
             ($sign, $tzoff) = ('-', -$tzoff);

@@ -26,14 +26,13 @@ package Sympa::Tools::Message;
 use strict;
 
 use Carp qw(croak);
+use Encode qw();
 use English;
-
-use Encode;
+use HTML::TreeBuilder;
 use Mail::Address;
 use MIME::EncWords;
 use MIME::Charset;
 use MIME::Decoder;
-use HTML::TreeBuilder;
 
 use Sympa::HTML::MyFormatText;
 use Sympa::Language;

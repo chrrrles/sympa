@@ -26,7 +26,7 @@ package Sympa::TaskInstruction;
 use strict;
 
 use English qw(-no_match_vars);
-use Time::Local qw(timegm timelocal);
+use Time::Local qw();
 
 use Sympa::List;
 use Sympa::Log::Syslog;
@@ -763,7 +763,7 @@ sub purge_logs_table {
     $min = 0;
     $sec = 0;
     my $date_end =
-        timelocal($sec, $min, $hour, $mday, $mon, $year, $wday, $yday,
+        Time::Local::timelocal($sec, $min, $hour, $mday, $mon, $year, $wday, $yday,
         $isdst);
 
     my $sth;
@@ -1188,7 +1188,7 @@ sub chk_cert_expiration {
         $date =~ /notAfter=(\w+)\s*(\d+)\s[\d\:]+\s(\d+).+/;
         my @date = (0, 0, 0, $2, $Sympa::TaskSpool::months{$1}, $3 - 1900);
         $date =~ s/notAfter=//;
-        my $expiration_date = timegm(@date);    # epoch expiration date
+        my $expiration_date = Time::Local::timegm(@date);
         my $rep = Sympa::Tools::Time::adate($expiration_date);
 
         # no near expiration nor expiration processing
@@ -1370,7 +1370,7 @@ sub update_crl {
 
         $date =~ /nextUpdate=(\w+)\s*(\d+)\s(\d\d)\:(\d\d)\:\d\d\s(\d+).+/;
         my @date = (0, $4, $3 - 1, $2, $Sympa::TaskSpool::months{$1}, $5 - 1900);
-        my $expiration_date = timegm(@date);    # epoch expiration date
+        my $expiration_date = Time::Local::timegm(@date);
         my $rep = Sympa::Tools::Time::adate($expiration_date);
 
         ## check if the crl is soon expired or expired

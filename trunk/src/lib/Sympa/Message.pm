@@ -55,7 +55,7 @@ use MIME::EncWords;
 use MIME::Entity;
 use MIME::Parser;
 use MIME::Tools;
-use POSIX qw(mkfifo);
+use POSIX qw();
 use Storable qw(dclone);
 use URI::Escape;
 
@@ -1031,7 +1031,7 @@ sub smime_decrypt {
         Sympa::Log::Syslog::do_log('debug', 'Trying decrypt with %s, %s',
             $certfile, $keyfile);
         if (Sympa::Site->key_passwd ne '') {
-            unless (mkfifo($temporary_pwd, 0600)) {
+            unless (POSIX::mkfifo($temporary_pwd, 0600)) {
                 Sympa::Log::Syslog::do_log('err',
                     'Unable to make fifo for %s',
                     $temporary_pwd);
@@ -1272,7 +1272,7 @@ sub smime_sign {
     close(MSGDUMP);
 
     if (Sympa::Site->key_passwd ne '') {
-        unless (mkfifo($temporary_pwd, 0600)) {
+        unless (POSIX::mkfifo($temporary_pwd, 0600)) {
             Sympa::Log::Syslog::do_log('notice', 'Unable to make fifo for %s',
                 $temporary_pwd);
         }

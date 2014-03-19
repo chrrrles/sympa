@@ -144,7 +144,7 @@ use lib '--modulesdir--';
 use English qw(-no_match_vars);
 use Getopt::Long;
 use Pod::Usage;
-use POSIX;
+use POSIX qw();
 
 use Sympa::BounceMessage;
 use Sympa::ClassicSpool;

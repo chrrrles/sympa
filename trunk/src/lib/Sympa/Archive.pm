@@ -28,7 +28,7 @@ use strict;
 use Carp qw(croak);
 use Cwd qw(getcwd);
 use Digest::MD5;
-use Encode qw(decode_utf8 encode_utf8);
+use Encode qw();
 use English qw(-no_match_vars);
 use HTML::Entities qw(decode_entities);
 
@@ -261,7 +261,9 @@ sub load_html_message {
 
         if (/^<!--(\S+): (.*) -->$/) {
             my ($key, $value) = ($1, $2);
-            $value = encode_utf8(decode_entities(decode_utf8($value)));
+            $value = Encode::encode_utf8(
+                decode_entities(Encode::decode_utf8($value))
+            );
             if ($key eq 'X-From-R13') {
                 $metadata{'X-From'} = $value;
                 ## Mhonarc protection of email addresses

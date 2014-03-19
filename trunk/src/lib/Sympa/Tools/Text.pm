@@ -26,7 +26,7 @@ package Sympa::Tools::Text;
 use strict;
 use warnings;
 
-use Encode;
+use Encode qw();
 use Text::LineFold;
 
 use Sympa::Language;
