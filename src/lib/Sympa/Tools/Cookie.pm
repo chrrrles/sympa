@@ -26,7 +26,6 @@ package Sympa::Tools::Cookie;
 use strict "vars";
 
 use Digest::MD5;
-use POSIX;
 use CGI::Cookie;
 
 use Sympa::Log::Syslog;

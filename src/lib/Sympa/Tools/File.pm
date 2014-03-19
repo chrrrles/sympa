@@ -30,7 +30,7 @@ use Encode::Guess;
 use English qw(-no_match_vars);
 use File::Copy::Recursive;
 use File::Find;
-use POSIX qw(strftime);
+use POSIX qw();
 
 use Sympa::Log::Syslog;
 
@@ -182,7 +182,7 @@ sub shift_file {
     }
 
     my @date = localtime(time);
-    my $file_extention = strftime("%Y:%m:%d:%H:%M:%S", @date);
+    my $file_extention = POSIX::strftime("%Y:%m:%d:%H:%M:%S", @date);
 
     unless (rename($file, $file . '.' . $file_extention)) {
         Sympa::Log::Syslog::do_log('err',

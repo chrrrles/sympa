@@ -27,7 +27,6 @@ use strict;
 use warnings;
 
 use Carp qw(carp);
-use Time::Local;
 
 use Sympa::Language;
 use Sympa::List;

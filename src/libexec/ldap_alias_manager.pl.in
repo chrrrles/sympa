@@ -49,7 +49,7 @@ use lib '--modulesdir--';
 use English qw(-no_match_vars);
 use Net::LDAP;
 use Net::LDAPS;
-use POSIX;
+use POSIX qw();
 
 #use Conf; # load in Site - Robot
 #use Sympa::Tools; # load in Conf - Robot

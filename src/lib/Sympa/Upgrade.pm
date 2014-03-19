@@ -28,7 +28,7 @@ use strict;
 use Carp qw(croak);
 use English qw(-no_match_vars);
 use File::Copy::Recursive;
-use POSIX qw(strftime);
+use POSIX qw();
 
 use Sympa::Conf;
 use Sympa::Constants;
@@ -1536,7 +1536,7 @@ sub to_utf8 {
 
         next unless $modified;
 
-        my $date = strftime("%Y.%m.%d-%H.%M.%S", localtime(time));
+        my $date = POSIX::strftime("%Y.%m.%d-%H.%M.%S", localtime(time));
         unless (rename $file, $file . '@' . $date) {
             Sympa::Log::Syslog::do_log('err', "Cannot rename old template %s",
                 $file);

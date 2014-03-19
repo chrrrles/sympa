@@ -25,7 +25,6 @@ package Sympa::Template::Compat;
 
 use strict;
 use base 'Template::Provider';
-use Encode;
 
 sub _load {
     my ($self, $name, $alias) = @_;

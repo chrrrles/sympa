@@ -47,7 +47,8 @@ do '/home/sympa/ext/DEVEL.pm';
 
 use English; # FIXME: drop $MATCH usage
 use Archive::Zip qw(:ERROR_CODES);
-use Time::Local;
+use POSIX qw();
+use Time::Local qw();
 
 use Sympa::Auth;
 use Sympa::Admin;
@@ -10099,7 +10100,7 @@ sub get_timelocal_from_date {
         $yr = (localtime(time))[5];
     }
 
-    $time = timelocal($sec, $min, $hr, $mday, $mon, $yr);
+    $time = Time::Local::timelocal($sec, $min, $hr, $mday, $mon, $yr);
     return $time
 
 }
@@ -21587,7 +21588,7 @@ sub do_suspend_request_action {
                 and 1900 <= $year1) {
                 ## Return an epoch date
                 $data->{'startdate'} =
-                    timelocal(0, 0, 0, $day1, $month1 - 1, $year1);
+                    Time::Local::timelocal(0, 0, 0, $day1, $month1 - 1, $year1);
             } else {
                 Sympa::Report::reject_report_web('user', 'missing_arg',
                     {'argument' => 'Start Date doesn\'t exist.'},
@@ -21613,7 +21614,7 @@ sub do_suspend_request_action {
                     and 1900 <= $year2) {
                     ## Return an epoch date
                     $data->{'enddate'} =
-                        timelocal(0, 0, 0, $day2, $month2 - 1, $year2);
+                        Time::Local::timelocal(0, 0, 0, $day2, $month2 - 1, $year2);
                 } else {
                     Sympa::Report::reject_report_web('user', 'missing_arg',
                         {'argument' => 'End Date doesn\'t exist.'},

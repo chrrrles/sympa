@@ -29,14 +29,14 @@ use base qw(Sympa::Site_r);
 
 use Carp qw(croak);
 use Data::Dumper;
-use Encode;
+use Encode qw();
 use English;    # FIXME: drop $PREMATCH usage
 use IO::Scalar;
 use LWP::UserAgent;
 use MIME::EncWords;
-use POSIX;
+use POSIX qw();
 use Storable qw(dclone);
-use Time::Local qw(timelocal);
+use Time::Local qw();
 
 
 use Sympa::Archive;
@@ -5479,7 +5479,8 @@ sub get_nextdigest {
 
     if (($now[2] * 60 + $now[1]) >= ($hh * 60 + $mm)
         and (
-            timelocal(0, $mm, $hh, $now[3], $now[4], $now[5]) > timelocal(
+            Time::Local::timelocal(0, $mm, $hh, $now[3], $now[4], $now[5]) >
+            Time::Local::timelocal(
                 0,              $timedigest[1], $timedigest[2],
                 $timedigest[3], $timedigest[4], $timedigest[5]
             )

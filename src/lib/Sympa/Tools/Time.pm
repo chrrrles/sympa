@@ -25,8 +25,8 @@ package Sympa::Tools::Time;
 
 use strict;
 
-use POSIX qw(strftime);
-use Time::Local;
+use POSIX qw();
+use Time::Local qw();
 
 use Sympa::Log::Syslog;
 
@@ -59,7 +59,7 @@ sub epoch2yyyymmjj_hhmmss {
 
     my $epoch = $_[0];
     my @date  = localtime($epoch);
-    my $date  = strftime("%Y-%m-%d  %H:%M:%S", @date);
+    my $date  = POSIX::strftime("%Y-%m-%d  %H:%M:%S", @date);
 
     return $date;
 }
@@ -69,7 +69,7 @@ sub adate {
 
     my $epoch = $_[0];
     my @date  = localtime($epoch);
-    my $date  = strftime("%e %a %b %Y  %H h %M min %S s", @date);
+    my $date  = POSIX::strftime("%e %a %b %Y  %H h %M min %S s", @date);
 
     return $date;
 }
@@ -148,7 +148,7 @@ sub date_conv {
         $date[4]-- if ($date[4] != 0);
         $date[5] -= 1900;
 
-        return timelocal(@date);
+        return Time::Local::timelocal(@date);
     }
 
     return time;

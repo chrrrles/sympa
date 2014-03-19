@@ -27,7 +27,6 @@ use strict;
 use English qw(-no_match_vars);
 
 #use Carp; # currently not used
-#use Encode; # not used
 use Sys::Syslog;
 
 my ($log_facility, $log_socket_type, $log_service, $sth, @sth_stack,

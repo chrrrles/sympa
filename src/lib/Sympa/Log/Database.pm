@@ -27,8 +27,7 @@ use strict;
 use English qw(-no_match_vars);
 
 #use Carp; # currently not used
-#use Encode; # not used
-use POSIX qw(mktime);
+use POSIX qw();
 use Time::HiRes;
 
 use Sympa::Tools::Time;
@@ -328,13 +327,13 @@ sub get_first_db_log {
     #if the search is between two date
     if ($select->{'date_from'}) {
         my @tab_date_from = split /[-\/.]/, $select->{'date_from'};
-        my $date_from = mktime(
+        my $date_from = POSIX::mktime(
             0, 0, -1, $tab_date_from[0],
             $tab_date_from[1] - 1,
             $tab_date_from[2] - 1900
         );
         unless ($select->{'date_to'}) {
-            my $date_from2 = mktime(
+            my $date_from2 = POSIX::mktime(
                 0, 0, 25, $tab_date_from[0],
                 $tab_date_from[1] - 1,
                 $tab_date_from[2] - 1900
@@ -344,7 +343,7 @@ sub get_first_db_log {
         }
         if ($select->{'date_to'}) {
             my @tab_date_to = split /[-\/.]/, $select->{'date_to'};
-            my $date_to = mktime(
+            my $date_to = POSIX::mktime(
                 0, 0, 25, $tab_date_to[0],
                 $tab_date_to[1] - 1,
                 $tab_date_to[2] - 1900

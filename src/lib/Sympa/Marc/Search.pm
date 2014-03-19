@@ -7,10 +7,10 @@ package Sympa::Marc::Search;
 use strict;
 use base qw(Sympa::Marc);
 
+use Encode qw();
 use English qw(-no_match_vars);
 use File::Find;
 use HTML::Entities qw(decode_entities encode_entities);
-use Encode qw(decode_utf8 encode_utf8 is_utf8);
 
 our $VERSION = "4.3";
 our ($AUTOLOAD, @MSGFILES);
@@ -97,7 +97,8 @@ sub key_word {
     if (scalar @_) {
         my $key_word = shift;
         if (defined $key_word) {
-            $key_word = decode_utf8($key_word) unless is_utf8($key_word);
+            $key_word = Encode::decode_utf8($key_word)
+                unless Encode::is_utf8($key_word);
             $self->{'key_word'} = $key_word;
         } else {
             $self->{'key_word'} = undef;
@@ -220,9 +221,13 @@ sub _find_match {
                 if ($s =~ /\n/) {
                     push @rich, {'text' => '', 'format' => 'br'};
                 } elsif ($s =~ /\001(.*)\002/) {
-                    push @rich, {'text' => encode_utf8($1), 'format' => 'b'};
+                    push @rich, {
+                        'text' => Encode::encode_utf8($1), 'format' => 'b'
+                    };
                 } else {
-                    push @rich, {'text' => encode_utf8($s), 'format' => ''};
+                    push @rich, {
+                        'text' => Encode::encode_utf8($s), 'format' => ''
+                    };
                 }
             }
             $res->{'rich'}->{$k} = \@rich;
@@ -230,7 +235,7 @@ sub _find_match {
             $res->{$k} =~ s,\001,<B>,g;
             $res->{$k} =~ s,\002,</B>,g;
             $res->{$k} =~ s,\n,<BR/>,g;
-            $res->{$k} = encode_utf8($res->{$k});
+            $res->{$k} = Encode::encode_utf8($res->{$k});
         }
         push @{$self->{'res'}}, $res;
     }
