@@ -60,7 +60,6 @@ use Storable qw(dclone);
 use URI::Escape;
 
 use Sympa::Language;
-use Sympa::List; # FIXME: circular dependency
 use Sympa::Log::Syslog;
 use Sympa::Site;
 use Sympa::Template;
@@ -1081,22 +1080,17 @@ sub smime_encrypt {
     Sympa::Log::Syslog::do_log('debug2', '(%s, %s, %s)', @_);
     my $self  = shift;
     my $email = shift;
-    my $list  = shift;
 
     my $usercert;
     my $dummy;
 
-    if ($list eq 'list') {
-        my $self = Sympa::List->new($email);
-        ($usercert, $dummy) = Sympa::Tools::SMIME::find_keys($self->{dir}, 'encrypt');
+    my $base = Sympa::Site->ssl_cert_dir . '/' . Sympa::Tools::escape_chars($email);
+    if (-f "$base\@enc") {
+        $usercert = "$base\@enc";
     } else {
-        my $base = Sympa::Site->ssl_cert_dir . '/' . Sympa::Tools::escape_chars($email);
-        if (-f "$base\@enc") {
-            $usercert = "$base\@enc";
-        } else {
-            $usercert = "$base";
-        }
+        $usercert = "$base";
     }
+
     if (-r $usercert) {
         my $temporary_file = Sympa::Site->tmpdir . "/" . $email . "." . $PID;
 

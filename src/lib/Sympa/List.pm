@@ -54,7 +54,7 @@ use Sympa::Log::Syslog;
 use Sympa::LDAPSource;
 use Sympa::LockedFile;
 use Sympa::Mail;
-use Sympa::Message; # FIXME: circular dependency
+use Sympa::Message;
 use Sympa::Robot; # FIXME: circular dependency
 use Sympa::Scenario; # FIXME: circular dependency
 use Sympa::SQLSource;
