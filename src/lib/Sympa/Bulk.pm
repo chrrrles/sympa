@@ -27,6 +27,7 @@ use strict;
 use warnings;
 use constant MAX => 100_000;
 
+use Digest::MD5;
 use English qw(-no_match_vars);
 use MIME::Base64;
 use Sys::Hostname;
@@ -416,7 +417,7 @@ sub store {
         } else {
             $rcptasstring = $packet;
         }
-        my $packetid = Sympa::Tools::md5_fingerprint($rcptasstring);
+        my $packetid = Digest::MD5::md5_hex($rcptasstring);
         my $packet_already_exist;
         if (ref $listname eq 'List') {
             $listname = $listname->name;
