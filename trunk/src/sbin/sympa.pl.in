@@ -335,6 +335,7 @@ use warnings;
 use lib '--modulesdir--';
 
 use Carp qw(croak);
+use Digest::MD5;
 use English qw(-no_match_vars);
 use Getopt::Long;
 use MIME::Charset;
@@ -738,7 +739,7 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
 
         exit 0;
     } elsif ($main::options{'md5_digest'}) {
-        my $md5 = Sympa::Tools::md5_fingerprint($main::options{'md5_digest'});
+        my $md5 = Digest::MD5::md5_hex($main::options{'md5_digest'});
         printf "MD5 digest : %s \n", $md5;
 
         exit 0;

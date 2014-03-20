@@ -47,13 +47,7 @@ sub get_mac {
         return undef;
     }
 
-    my $md5 = Digest::MD5->new;
-
-    $md5->reset;
-    $md5->add($email . $secret);
-
-    return substr(unpack("H*", $md5->digest), -8);
-
+    return substr(Digest::MD5::md5_hex($email . $secret), -8);
 }
 
 sub set_cookie_extern {

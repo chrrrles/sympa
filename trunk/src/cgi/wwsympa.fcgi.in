@@ -44,7 +44,7 @@ use lib '--modulesdir--';
 # XXX MO: during development, where modules are not installed
 do '/home/sympa/ext/DEVEL.pm';
 
-
+use Digest::MD5;
 use English; # FIXME: drop $MATCH usage
 use Archive::Zip qw(:ERROR_CODES);
 use POSIX qw();
@@ -21168,7 +21168,7 @@ sub do_upload_pictures {
         return 'suboptions';
     }
 
-    my $filename     = Sympa::Tools::md5_fingerprint($param->{'user'}{'email'});
+    my $filename     = Digest::MD5::md5_hex($param->{'user'}{'email'});
     my $fullfilename = $filename . '.' . $filetype;
 
     my @filetmp;

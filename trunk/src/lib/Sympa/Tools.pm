@@ -26,7 +26,6 @@ package Sympa::Tools;
 use strict;
 
 use Carp qw(croak);
-use Digest::MD5;
 use Encode qw();
 use English qw(-no_match_vars);
 use HTML::StripScripts::Parser;
@@ -1108,32 +1107,6 @@ sub add_in_blacklist {
     }
     print BLACKLIST "$entry\n";
     close BLACKLIST;
-
-}
-
-############################################################
-#  md5_fingerprint                                         #
-############################################################
-#  The algorithm MD5 (Message Digest 5) is a cryptographic #
-#  hash function which permit to obtain                    #
-#  the fingerprint of a file/data                          #
-#                                                          #
-# IN : a string                                            #
-#                                                          #
-# OUT : MD5 digest                                         #
-#     | undef                                              #
-#                                                          #
-############################################################
-sub md5_fingerprint {
-
-    my $input_string = shift;
-    return undef unless (defined $input_string);
-    chomp $input_string;
-
-    my $digestmd5 = Digest::MD5->new;
-    $digestmd5->reset;
-    $digestmd5->add($input_string);
-    return (unpack("H*", $digestmd5->digest));
 }
 
 sub get_separator {
