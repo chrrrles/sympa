@@ -907,7 +907,7 @@ sub smtpto {
         croak sprintf('Unable to create a channel in smtpto: %s', $ERRNO);
         ## No return
     }
-    $pid = Sympa::Tools::safefork();
+    $pid = safefork();
     $pid{$pid} = 0;
 
     my $sendmail = $robot->sendmail;
@@ -1142,6 +1142,29 @@ sub fix_part {
         $part->sync_headers(Length => 'COMPUTE');
     }
     return $part;
+}
+
+## Safefork does several tries before it gives up.
+## Do 3 trials and wait 10 seconds * $i between each.
+## Exit with a fatal error is fork failed after all
+## tests have been exhausted.
+sub safefork {
+    my ($i, $pid);
+
+    my $err;
+    for ($i = 1; $i < 4; $i++) {
+        my ($pid) = fork;
+        return $pid if (defined($pid));
+
+        $err = $ERRNO;
+        Sympa::Log::Syslog::do_log('warn',
+            'Cannot create new process in safefork: %s', $err);
+        ## FIXME:should send a mail to the listmaster
+        sleep(10 * $i);
+    }
+    croak sprintf('Exiting because cannot create new process in safefork: %s',
+        $err);
+    ## No return.
 }
 
 1;
