@@ -47,56 +47,56 @@ sub new {
         $param->{'db_type'});
     my $actualclass;
     if ($param->{'db_type'} =~ /^mysql$/i) {
-        unless (eval "require Sympa::DBManipulatorMySQL") {
+        unless (eval "require Sympa::DBManipulator::MySQL") {
             Sympa::Log::Syslog::do_log('err',
-                "Unable to use Sympa::DBManipulatorMySQL module: $EVAL_ERROR");
+                "Unable to use Sympa::DBManipulator::MySQL module: $EVAL_ERROR");
             return undef;
         }
-        require Sympa::DBManipulatorMySQL;
-        $actualclass = "Sympa::DBManipulatorMySQL";
+        require Sympa::DBManipulator::MySQL;
+        $actualclass = "Sympa::DBManipulator::MySQL";
     } elsif ($param->{'db_type'} =~ /^sqlite$/i) {
-        unless (eval "require Sympa::DBManipulatorSQLite") {
+        unless (eval "require Sympa::DBManipulator::SQLite") {
             Sympa::Log::Syslog::do_log('err',
-                "Unable to use Sympa::DBManipulatorSQLite module");
+                "Unable to use Sympa::DBManipulator::SQLite module");
             return undef;
         }
-        require Sympa::DBManipulatorSQLite;
+        require Sympa::DBManipulator::SQLite;
 
-        $actualclass = "Sympa::DBManipulatorSQLite";
+        $actualclass = "Sympa::DBManipulator::SQLite";
     } elsif ($param->{'db_type'} =~ /^pg$/i) {
-        unless (eval "require Sympa::DBManipulatorPostgres") {
+        unless (eval "require Sympa::DBManipulator::Postgres") {
             Sympa::Log::Syslog::do_log('err',
-                "Unable to use Sympa::DBManipulatorPostgres module");
+                "Unable to use Sympa::DBManipulator::Postgres module");
             return undef;
         }
-        require Sympa::DBManipulatorPostgres;
+        require Sympa::DBManipulator::Postgres;
 
-        $actualclass = "Sympa::DBManipulatorPostgres";
+        $actualclass = "Sympa::DBManipulator::Postgres";
     } elsif ($param->{'db_type'} =~ /^oracle$/i) {
-        unless (eval "require Sympa::DBManipulatorOracle") {
+        unless (eval "require Sympa::DBManipulator::Oracle") {
             Sympa::Log::Syslog::do_log('err',
-                "Unable to use Sympa::DBManipulatorOracle module");
+                "Unable to use Sympa::DBManipulator::Oracle module");
             return undef;
         }
-        require Sympa::DBManipulatorOracle;
+        require Sympa::DBManipulator::Oracle;
 
-        $actualclass = "Sympa::DBManipulatorOracle";
+        $actualclass = "Sympa::DBManipulator::Oracle";
     } elsif ($param->{'db_type'} =~ /^sybase$/i) {
-        unless (eval "require Sympa::DBManipulatorSybase") {
+        unless (eval "require Sympa::DBManipulator::Sybase") {
             Sympa::Log::Syslog::do_log('err',
-                "Unable to use Sympa::DBManipulatorSybase module");
+                "Unable to use Sympa::DBManipulator::Sybase module");
             return undef;
         }
-        require Sympa::DBManipulatorSybase;
+        require Sympa::DBManipulator::Sybase;
 
-        $actualclass = "Sympa::DBManipulatorSybase";
+        $actualclass = "Sympa::DBManipulator::Sybase";
     } else {
         ## We don't have a DB Manipulator for this RDBMS
         ## It might be an SQL source used to include list members/owners
         ## like CSV
-        require Sympa::DBManipulatorDefault;
+        require Sympa::DBManipulator;
 
-        $actualclass = "Sympa::DBManipulatorDefault";
+        $actualclass = "Sympa::DBManipulator";
     }
     $self = $pkg->SUPER::new($param);
 
