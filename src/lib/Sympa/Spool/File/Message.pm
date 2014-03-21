@@ -21,9 +21,9 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package Sympa::MessageSpool;
+package Sympa::Spool::File::Message;
 
-use base qw(Sympa::ClassicSpool);
+use base qw(Sympa::Spool::File);
 
 use Sympa::Log::Syslog;
 

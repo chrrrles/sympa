@@ -21,10 +21,10 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package Sympa::TaskSpool;
+package Sympa::Spool::File::Task;
 
 use strict;
-use base qw(Sympa::ClassicSpool);
+use base qw(Sympa::Spool::File);
 
 use Sympa::List; # FIXME: circular dependency
 use Sympa::Log::Syslog;
@@ -133,7 +133,7 @@ sub analyze_file_name {
 # Initialize Sympa::Spool global object.
 #NO LONGER USED.
 #sub set_spool {
-#    $taskspool = Sympa::TaskSpool->new;
+#    $taskspool = Sympa::Spool::File::Task->new;
 #}
 
 ## Build all Task objects
@@ -214,7 +214,7 @@ sub create_required_tasks {
     Sympa::Log::Syslog::do_log('debug2', '(%s)', @_);
     my $current_date = shift;
 
-    my $taskspool = Sympa::TaskSpool->new();
+    my $taskspool = Sympa::Spool::File::Task->new();
     $taskspool->list_tasks();
 
     my %default_data = (

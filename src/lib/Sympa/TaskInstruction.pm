@@ -32,8 +32,8 @@ use Sympa::List;
 use Sympa::Log::Syslog;
 use Sympa::Robot;
 use Sympa::Site;
+use Sympa::Spool::File::Task;
 use Sympa::Task;
-use Sympa::TaskSpool;
 use Sympa::Tools;
 use Sympa::Tools::Data;
 use Sympa::Tools::Time;
@@ -486,8 +486,8 @@ sub next_cmd {
     );
     if ($listname eq '_global') {
         $type = '_global';
-        foreach my $key (keys %Sympa::TaskSpool::global_models) {
-            if ($Sympa::TaskSpool::global_models{$key} eq $model) {
+        foreach my $key (keys %Sympa::Spool::File::Task::global_models) {
+            if ($Sympa::Spool::File::Task::global_models{$key} eq $model) {
                 $flavour = Sympa::Site->$key;
                 last;
             }
@@ -1186,7 +1186,7 @@ sub chk_cert_expiration {
         }
 
         $date =~ /notAfter=(\w+)\s*(\d+)\s[\d\:]+\s(\d+).+/;
-        my @date = (0, 0, 0, $2, $Sympa::TaskSpool::months{$1}, $3 - 1900);
+        my @date = (0, 0, 0, $2, $Sympa::Spool::File::Task::months{$1}, $3 - 1900);
         $date =~ s/notAfter=//;
         my $expiration_date = Time::Local::timegm(@date);
         my $rep = Sympa::Tools::Time::adate($expiration_date);
@@ -1369,7 +1369,7 @@ sub update_crl {
         }
 
         $date =~ /nextUpdate=(\w+)\s*(\d+)\s(\d\d)\:(\d\d)\:\d\d\s(\d+).+/;
-        my @date = (0, $4, $3 - 1, $2, $Sympa::TaskSpool::months{$1}, $5 - 1900);
+        my @date = (0, $4, $3 - 1, $2, $Sympa::Spool::File::Task::months{$1}, $5 - 1900);
         my $expiration_date = Time::Local::timegm(@date);
         my $rep = Sympa::Tools::Time::adate($expiration_date);
 

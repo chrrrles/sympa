@@ -38,7 +38,6 @@ nobase_modules_DATA = Sympa/Admin.pm \
 		      Sympa/Family.pm \
 		      Sympa/Fetch.pm \
 		      Sympa/HTML/MyFormatText.pm \
-		      Sympa/KeySpool.pm \
 		      Sympa/Language.pm \
 		      Sympa/LDAP.pm \
 		      Sympa/LDAPSource.pm \
@@ -51,7 +50,6 @@ nobase_modules_DATA = Sympa/Admin.pm \
 		      Sympa/Marc.pm \
 		      Sympa/Marc/Search.pm \
 		      Sympa/Message.pm \
-		      Sympa/MessageSpool.pm \
 		      Sympa/ModDef.pm \
 		      Sympa/Report.pm \
 		      Sympa/Robot.pm \
@@ -59,19 +57,21 @@ nobase_modules_DATA = Sympa/Admin.pm \
 		      Sympa/SharedDocument.pm \
 		      Sympa/Site.pm \
 		      Sympa/Site_r.pm \
+		      Sympa/Spool/File.pm \
+		      Sympa/Spool/File/Key.pm \
+		      Sympa/Spool/File/Message.pm \
+		      Sympa/Spool/File/Subscribe.pm \
+		      Sympa/Spool/File/Task.pm \
+		      Sympa/Spool/SQL.pm \
 		      Sympa/SQLSource.pm \
-		      Sympa/SubscribeSpool.pm \
 		      Sympa/Constants.pm \
 		      Sympa/DatabaseDescription.pm \
 		      Sympa/Template/Compat.pm \
 		      Sympa/Session.pm \
 		      Sympa/SOAP.pm \
-		      Sympa/Spool.pm \
-		      Sympa/ClassicSpool.pm \
 		      Sympa/Transport.pm \
 		      Sympa/Task.pm \
 		      Sympa/TaskInstruction.pm \
-		      Sympa/TaskSpool.pm \
 		      Sympa/Tools.pm \
 		      Sympa/Tools/Cookie.pm \
 		      Sympa/Tools/SMIME.pm \

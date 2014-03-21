@@ -105,7 +105,7 @@ use Sympa::List;
 use Sympa::Mail;
 use Sympa::Log::Syslog;
 use Sympa::Site;
-use Sympa::Spool;
+use Sympa::Spool::SQL;
 use Sympa::Tools::DKIM;
 use Sympa::Tools::Daemon;
 use Sympa::Tracking;
@@ -242,7 +242,7 @@ my %created_children;
 $options->{'multiple_process'} = 1;
 $Sympa::Conf::Conf{'maxsmtp'} = int(Sympa::Site->maxsmtp / Sympa::Site->bulk_max_count);    #FIXME
 
-my $spool = Sympa::Spool->new('bulk');
+my $spool = Sympa::Spool::SQL->new('bulk');
 
 while (!$end) {
     Sympa::List::init_list_cache();

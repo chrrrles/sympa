@@ -52,7 +52,6 @@ use Time::Local qw();
 
 use Sympa::Auth;
 use Sympa::Admin;
-use Sympa::ClassicSpool;
 use Sympa::Conf;
 use Sympa::Constants;
 use Sympa::DatabaseManager;
@@ -63,14 +62,15 @@ use Sympa::Log::Database;
 use Sympa::Log::Syslog;
 use Sympa::Mail;
 use Sympa::Message;
-use Sympa::MessageSpool;
 use Sympa::Report;
 use Sympa::Robot;
 use Sympa::Scenario;
 use Sympa::Session;
 use Sympa::SharedDocument;
-use Sympa::Spool;
 use Sympa::Site;
+use Sympa::Spool::File;
+use Sympa::Spool::File::Message;
+use Sympa::Spool::SQL;
 use Sympa::Template;
 use Sympa::Tools;
 use Sympa::Tools::Cookie;
@@ -8421,7 +8421,7 @@ sub do_modindex {
     my $doc;
 
     my $list_name = $list->name;
-    my $modspool  = Sympa::KeySpool->new();
+    my $modspool  = Sympa::Spool::File::Key->new();
     my @messages  = $modspool->get_awaiting_messages(
         {'selector' => {'list' => $list_name, 'robot' => $robot_id}});
     foreach my $message_in_spool (@messages) {
@@ -8888,7 +8888,7 @@ sub do_reject {
     }
 
     wwslog('info', 'do_reject(%s)', $in{'id'});
-    my $modspool = Sympa::KeySpool->new();
+    my $modspool = Sympa::Spool::File::Key->new();
     my ($msg, $file);
 
     $param->{'blacklist_added'}   = 0;
@@ -9072,7 +9072,7 @@ sub do_distribute {
 
     wwslog('info', 'do_distribute(%s)', $in{'id'});
 
-    my $modspool = Sympa::KeySpool->new();
+    my $modspool = Sympa::Spool::File::Key->new();
     my ($msg, $file);
 
     my @mail_command = ();
@@ -9158,7 +9158,7 @@ sub do_distribute {
             Sympa::Site->viewmail_dir . '/mod/' . $list->get_list_id() . '/' . $id);
     }
 
-    my $incomingspool = Sympa::MessageSpool->new();
+    my $incomingspool = Sympa::Spool::File::Message->new();
     unless (
         $incomingspool->store(
             sprintf(
@@ -9217,7 +9217,7 @@ sub do_add_frommod {
 
     ## messages
     $in{'dump'} = '';
-    my $modspool = Sympa::KeySpool->new();
+    my $modspool = Sympa::Spool::File::Key->new();
     foreach my $id (split /,/, $in{'id'}) {
         my $message_in_spool = $modspool->get_message(
             {'list' => $list->name, 'robot' => $robot_id, 'authkey' => $id});
@@ -9227,7 +9227,7 @@ sub do_add_frommod {
         unless ($message) {
             ## if the message has been accepted via WWSympa, it's in spool
             ## 'validated'
-            my $validatedspool = Sympa::Spool->new('validated');
+            my $validatedspool = Sympa::Spool::SQL->new('validated');
             $message_in_spool = $validatedspool->get_message(
                 {   'list'    => $list->name,
                     'robot'   => $robot_id,
@@ -10159,7 +10159,7 @@ sub do_remove_arc {
         # Removing tracking should be done by archived.
         Sympa::Tracking::remove_message_by_id($list, $msgid);
     }
-    my $spoolarchive = Sympa::ClassicSpool->new('outgoing');
+    my $spoolarchive = Sympa::Spool::File->new('outgoing');
     $spoolarchive->store($removeorder,
         {'list' => $in{'list'}, 'robot' => $robot_id});
 
@@ -11799,7 +11799,7 @@ sub do_resetbounce {
 sub do_rebuildarc {
     wwslog('info', 'do_rebuildarc(%s, %s)', $param->{'list'}, $in{'month'});
 
-    my $spoolarchive = Sympa::ClassicSpool->new('outgoing');
+    my $spoolarchive = Sympa::Spool::File->new('outgoing');
 
     unless (
         $spoolarchive->store(
@@ -11837,11 +11837,11 @@ sub do_rebuildallarc {
     #FIXME: past archives should be rebuilt even if archiving is disabled.
     my $errors = 0;
     my $spoolarchive;
-    unless ($spoolarchive = Sympa::ClassicSpool->new('outgoing')) {
+    unless ($spoolarchive = Sympa::Spool::File->new('outgoing')) {
         Sympa::Report::reject_report_web('intern', 'cannot fetch archive spool',
             {}, $param->{'action'}, $list, $param->{'user'}{'email'},
             $robot_id);
-        wwslog('err', 'error in  Sympa::Spool->new(archive) ');
+        wwslog('err', 'error in  Sympa::Spool::SQL->new(archive) ');
     }
     my $all_lists = Sympa::List::get_lists($robot);
     foreach my $list (@$all_lists) {
@@ -21032,7 +21032,7 @@ sub do_remind {
         $mail_command = sprintf 'REMIND %s', $param->{'list'};
     }
 
-    my $incomingspool = Sympa::MessageSpool->new();
+    my $incomingspool = Sympa::Spool::File::Message->new();
     unless (
         $incomingspool->store(
             sprintf(
@@ -22121,7 +22121,7 @@ sub do_send_mail {
         Sympa::Mail::parse_tt2_messageasstring($robot, '', $to, $data);
     my $result;
     if ($in{'sub_action'} eq 'sendmailtolist') {
-        my $incomingspool = Sympa::MessageSpool->new();
+        my $incomingspool = Sympa::Spool::File::Message->new();
         $result = $incomingspool->store(
             sprintf(
                 "X-Sympa-To: %s\n" .    # FIXME
@@ -22233,7 +22233,7 @@ sub do_request_topic {
 
     my $listname = $list->name;
 
-    my $spoolauth = Sympa::Spool->new('auth');
+    my $spoolauth = Sympa::Spool::SQL->new('auth');
 
     my $message_in_spool = $spoolauth->get_message(
         {   'list'    => $list->name,
@@ -22292,7 +22292,7 @@ sub do_tag_topic_by_sender {
 
     my $message;
 
-    my $authspool        = Sympa::Spool->new('auth');
+    my $authspool        = Sympa::Spool::SQL->new('auth');
     my $message_in_spool = $authspool->get_message(
         {   'list'    => $listname,
             'robot'   => $robot_id,
@@ -22352,7 +22352,7 @@ sub do_tag_topic_by_sender {
     ## CONFIRM
     my $mail_command = sprintf 'QUIET CONFIRM %s', $in{'authkey'};
 
-    my $incomingspool = Sympa::MessageSpool->new();
+    my $incomingspool = Sympa::Spool::File::Message->new();
     unless (
         $incomingspool->store(
             sprintf(
@@ -23489,8 +23489,8 @@ sub do_viewspools {
         }
     }
 
-    $param->{'global_count_ok'}  = Sympa::Spool::global_count('ok');
-    $param->{'global_count_bad'} = Sympa::Spool::global_count('bad');
+    $param->{'global_count_ok'}  = Sympa::Spool::SQL::global_count('ok');
+    $param->{'global_count_bad'} = Sympa::Spool::SQL::global_count('bad');
 
     my $spool_page_size;
     if ($in{'spool_page_size'}) {
@@ -23501,7 +23501,7 @@ sub do_viewspools {
     }
     $param->{'spool_page_size'} = $spool_page_size;
 
-    my $spool = Sympa::Spool->new($spoolname, $spool_status);
+    my $spool = Sympa::Spool::SQL->new($spoolname, $spool_status);
     unless ($spool) {
         Sympa::Report::reject_report_web('intern', 'unknown_spool', {},
             $param->{'action'}, $list);
@@ -23619,7 +23619,7 @@ sub do_viewspool_message {
         'do_viewspool_message(spoolname = %s,messagekey = %s, status =%s)',
         $spoolname, $messagekey, $status);
 
-    my $spool = Sympa::Spool->new($spoolname, $status);
+    my $spool = Sympa::Spool::SQL->new($spoolname, $status);
     unless ($spool) {
         Sympa::Report::reject_report_web('intern', 'unknown_spool', {},
             $param->{'action'}, $list);
@@ -23709,7 +23709,7 @@ sub do_viewspool_message_dump {
         wwslog('info', 'authorization failed, insufficient privileges');
     }
 
-    my $spool = Sympa::Spool->new($spoolname, $status);
+    my $spool = Sympa::Spool::SQL->new($spoolname, $status);
     unless ($spool) {
         Sympa::Report::reject_report_web('intern', 'unknown_spool', {},
             $param->{'action'}, $list);
@@ -23767,7 +23767,7 @@ sub do_viewspool_message_remove {
         wwslog('info', 'authorization failed, insufficient privileges');
     }
 
-    my $spool = Sympa::Spool->new($spoolname, $status);
+    my $spool = Sympa::Spool::SQL->new($spoolname, $status);
     unless ($spool) {
         Sympa::Report::reject_report_web('intern', 'unknown_spool', {},
             $param->{'action'}, $list);
@@ -23834,7 +23834,7 @@ sub do_viewspool_message_mv {
         wwslog('info', 'authorization failed, insufficient privileges');
     }
 
-    my $spool = Sympa::Spool->new($spoolname, $status);
+    my $spool = Sympa::Spool::SQL->new($spoolname, $status);
     unless ($spool) {
         Sympa::Report::reject_report_web('intern', 'unknown_spool', {},
             $param->{'action'}, $list);
@@ -23842,7 +23842,7 @@ sub do_viewspool_message_mv {
         return undef;
     }
 
-    unless (Sympa::Spool->new($newspool, $newstatus)) {
+    unless (Sympa::Spool::SQL->new($newspool, $newstatus)) {
         Sympa::Report::reject_report_web('user', 'unknown_spool', {},
             $param->{'action'}, $list);
         wwslog('info', 'could not move message to unknown spool %s/%s',
