@@ -41,13 +41,11 @@ use Time::Local qw();
 
 
 use Sympa::Archive;
-use Sympa::ClassicSpool; # FIXME: circular dependency
 use Sympa::Constants;
 use Sympa::DatabaseManager;
 use Sympa::Datasource;
 use Sympa::Family; # FIXME: circular dependency
 use Sympa::Fetch;
-use Sympa::KeySpool; # FIXME: circular dependency
 use Sympa::Language;
 use Sympa::ListDef;
 use Sympa::Log::Syslog;
@@ -58,9 +56,12 @@ use Sympa::Message;
 use Sympa::Robot; # FIXME: circular dependency
 use Sympa::Scenario; # FIXME: circular dependency
 use Sympa::SQLSource;
-use Sympa::SubscribeSpool;
 use Sympa::Task; # FIXME: circular dependency
-use Sympa::TaskSpool; # FIXME: circular dependency
+use Sympa::Spool::File; # FIXME: circular dependency
+use Sympa::Spool::File::Key; # FIXME: circular dependency
+use Sympa::Spool::File::Subscribe;
+use Sympa::Spool::File::Task; # FIXME: circular dependency
+use Sympa::Spool::SQL;
 use Sympa::Template; # FIXME: circular dependency
 use Sympa::Tools::Data;
 use Sympa::Tools::File;
@@ -1508,7 +1509,7 @@ sub distribute_msg {
 
         # rename update topic content id of the message
         if ($info_msg_topic) {
-            my $topicspool = Sympa::ClassicSpool->new('topic');
+            my $topicspool = Sympa::Spool::File->new('topic');
             rename(
                 "$topicspool->{'dir'}/$info_msg_topic->{'filename'}",
                 "$topicspool->{'dir'}/$self->->get_id.$new_id"
@@ -1753,7 +1754,7 @@ sub send_msg_digest {
     return 0 unless ($self->get_lists_of_digest_recipients());
 
     my $digestspool =
-        Sympa::Spool->new('digest', undef,
+        Sympa::Spool::SQL->new('digest', undef,
         'selector' => {'messagekey' => $messagekey});
     $self->split_spooled_digest_to_messages(
         {'message_in_spool' => $digestspool->next});
@@ -2530,7 +2531,7 @@ sub send_to_editor {
     if ($method eq 'md5') {
 
         # move message to spool  mod
-        my $modspool = Sympa::KeySpool->new();
+        my $modspool = Sympa::Spool::File::Key->new();
         $modspool->store(
             $message->to_string,    #FIXME: maybe encrypted
             {   'list'    => $message->list->name,
@@ -2692,7 +2693,7 @@ sub send_auth {
     my $authkey = Digest::MD5::md5_hex(join('/', $self->cookie, $messageid));
     chomp $authkey;
 
-    my $spool = Sympa::Spool->new('auth');
+    my $spool = Sympa::Spool::SQL->new('auth');
     $spool->update(
         {'messagekey' => $message->{'messagekey'}},
         {   "spoolname"   => 'auth',
@@ -5407,7 +5408,7 @@ sub archive_msg {
                 'Do not archive message with no-archive flag for list %s',
                 $self);
         } else {
-            my $spoolarchive = Sympa::ClassicSpool->new('outgoing');
+            my $spoolarchive = Sympa::Spool::File->new('outgoing');
             unless (
                 $spoolarchive->store(
                     $msgtostore,
@@ -8406,7 +8407,7 @@ sub store_digest {
     my @now = localtime(time);
 
     my $digestspool =
-        Sympa::Spool->new('digest', undef,
+        Sympa::Spool::SQL->new('digest', undef,
         'selector' => {'list' => $self->name, 'robot' => $self->domain});
 
     # remember that spool->next lock the selected message if any
@@ -9307,7 +9308,7 @@ sub get_mod_spool_size {
     my $self = shift;
     Sympa::Log::Syslog::do_log('debug3', 'Sympa::List::get_mod_spool_size()');
 
-    my $modspool = Sympa::KeySpool->new();
+    my $modspool = Sympa::Spool::File::Key->new();
     my @messages = $modspool->get_awaiting_messages(
         {'selector' => {'list' => $self->name, 'robot' => $self->domain}});
 
@@ -10323,7 +10324,7 @@ sub tag_topic {
 
     my $topic_item = sprintf "TOPIC   %s\n", $topic_list;
     $topic_item .= sprintf "METHOD  %s\n", $method;
-    my $topicspool = Sympa::ClassicSpool->new('topic');
+    my $topicspool = Sympa::Spool::File->new('topic');
 
     return (
         $topicspool->store(
@@ -10358,7 +10359,7 @@ sub load_msg_topic {
     Sympa::Log::Syslog::do_log('debug2', '(%s, %s)', @_);
     my ($self, $msg_id, $robot) = @_;
 
-    my $topicspool = Sympa::ClassicSpool->new('topic');
+    my $topicspool = Sympa::Spool::File->new('topic');
 
     my $topics_from_spool = $topicspool->get_message(
         {   'list'      => $self->name,
@@ -10570,7 +10571,7 @@ sub store_subscription_request {
     Sympa::Log::Syslog::do_log('debug2', '(%s, %s, %s, %s)', @_);
     my ($self, $email, $gecos, $custom_attr) = @_;
 
-    my $subscription_request_spool = Sympa::SubscribeSpool->new;
+    my $subscription_request_spool = Sympa::Spool::File::Subscribe->new;
 
     return 'already_subscribed'
         if (
@@ -10602,7 +10603,7 @@ sub get_subscription_requests {
 
     my %subscriptions;
 
-    my $subscription_request_spool = Sympa::SubscribeSpool->new;
+    my $subscription_request_spool = Sympa::Spool::File::Subscribe->new;
     my @subrequests                = $subscription_request_spool->get_content(
         {   'selector'  => {'list' => $self->name, 'robot' => $self->domain},
             'selection' => '*'
@@ -10660,7 +10661,7 @@ sub get_subscription_requests {
 sub get_subscription_request_count {
     my ($self) = shift;
 
-    my $subscription_request_spool = Sympa::SubscribeSpool->new;
+    my $subscription_request_spool = Sympa::Spool::File::Subscribe->new;
     return $subscription_request_spool->get_content(
         {   'selector'  => {'list' => $self->name, 'robot' => $self->domain},
             'selection' => 'count'
@@ -10674,7 +10675,7 @@ sub delete_subscription_request {
         'Sympa::List::delete_subscription_request(%s, %s)',
         $self->name, join(',', @list_of_email));
 
-    my $subscription_request_spool = Sympa::SubscribeSpool->new;
+    my $subscription_request_spool = Sympa::Spool::File::Subscribe->new;
 
     my $removed = 0;
     foreach my $email (@list_of_email) {
@@ -10710,7 +10711,7 @@ sub store_signoff_request {
     Sympa::Log::Syslog::do_log('debug2', '(%s, %s)', @_);
     my ($self, $email) = @_;
 
-    my $signoff_request_spool = Sympa::Spool->new('signoff');
+    my $signoff_request_spool = Sympa::Spool::SQL->new('signoff');
 
     if ($signoff_request_spool->get_content(
             {   'selector' => {
@@ -10745,7 +10746,7 @@ sub get_signoff_requests {
 
     my %signoffs;
 
-    my $signoff_request_spool = Sympa::Spool->new('signoff');
+    my $signoff_request_spool = Sympa::Spool::SQL->new('signoff');
     my @sigrequests           = $signoff_request_spool->get_content(
         {   'selector'  => {'list' => $self->name, 'robot' => $self->domain},
             'selection' => '*'
@@ -10803,7 +10804,7 @@ sub get_signoff_requests {
 sub get_signoff_request_count {
     my $self = shift;
 
-    my $signoff_request_spool = Sympa::Spool->new('signoff');
+    my $signoff_request_spool = Sympa::Spool::SQL->new('signoff');
     return $signoff_request_spool->get_content(
         {   'selector'  => {'list' => $self->name, 'robot' => $self->domain},
             'selection' => 'count'
@@ -10816,7 +10817,7 @@ sub delete_signoff_request {
     Sympa::Log::Syslog::do_log('debug2', '(%s, %s)', $self,
         join(',', @list_of_email));
 
-    my $signoff_request_spool = Sympa::Spool->new('signoff');
+    my $signoff_request_spool = Sympa::Spool::SQL->new('signoff');
 
     my $removed = 0;
     foreach my $email (@list_of_email) {
@@ -11069,7 +11070,7 @@ sub purge {
     return undef unless $self->robot->lists($self->name);
 
     ## Remove tasks for this list
-    my $taskspool = Sympa::TaskSpool->new();
+    my $taskspool = Sympa::Spool::File::Task->new();
     foreach my $task_in_spool (
         $taskspool->get_content(
             {   'selector' =>

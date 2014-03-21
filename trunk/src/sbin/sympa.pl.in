@@ -343,7 +343,6 @@ use Pod::Usage;
 use POSIX qw();
 
 use Sympa::Admin;
-use Sympa::ClassicSpool;
 use Sympa::Commands;
 use Sympa::Conf;
 use Sympa::Config_XML;
@@ -356,10 +355,11 @@ use Sympa::Log::Database;
 use Sympa::Log::Syslog;
 use Sympa::Mail;
 use Sympa::Message;
-use Sympa::MessageSpool;
 use Sympa::Report;
 use Sympa::Robot;
-use Sympa::Spool;
+use Sympa::Spool::File;
+use Sympa::Spool::File::Message;
+use Sympa::Spool::SQL;
 use Sympa::Tools;
 use Sympa::Tools::Data;
 use Sympa::Tools::Daemon;
@@ -1405,7 +1405,7 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
     my $index_cleanqueue  = 0;
     my @qfile;
 
-    my $spool = Sympa::MessageSpool->new();
+    my $spool = Sympa::Spool::File::Message->new();
     ## This is the main loop : look for files in the directory, handles
     ## them, sleeps a while and continues the good job.
     while (!$signal) {
@@ -1428,25 +1428,25 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
         if ($index_cleanqueue++ >= 1) {
             $index_cleanqueue = 0;
             Sympa::Log::Syslog::do_log('debug', 'Cleaning spools');
-            my $msg_bad = Sympa::ClassicSpool->new('msg', 'bad');
+            my $msg_bad = Sympa::Spool::File->new('msg', 'bad');
             $msg_bad->clean({'delay' => Sympa::Site->clean_delay_queue});
-            my $archive_bad = Sympa::ClassicSpool->new('outgoing', 'bad');
+            my $archive_bad = Sympa::Spool::File->new('outgoing', 'bad');
             $archive_bad->clean({'delay' => Sympa::Site->clean_delay_queueoutgoing});
-            my $queuebounce_bad = Sympa::ClassicSpool->new('bounce', 'bad');
+            my $queuebounce_bad = Sympa::Spool::File->new('bounce', 'bad');
             $queuebounce_bad->clean(
                 {'delay' => Sympa::Site->clean_delay_queuebounce});
-            my $queuemod = Sympa::ClassicSpool->new('mod');
+            my $queuemod = Sympa::Spool::File->new('mod');
             $queuemod->clean({'delay' => Sympa::Site->clean_delay_queuemod});
-            my $queueauth = Sympa::ClassicSpool->new('auth');
+            my $queueauth = Sympa::Spool::File->new('auth');
             $queueauth->clean({'delay' => Sympa::Site->clean_delay_queueauth});
-            my $queuetopic = Sympa::ClassicSpool->new('topic');
+            my $queuetopic = Sympa::Spool::File->new('topic');
             $queuetopic->clean({'delay' => Sympa::Site->clean_delay_queuetopic});
-            my $queuesubscribe = Sympa::ClassicSpool->new('subscribe');
+            my $queuesubscribe = Sympa::Spool::File->new('subscribe');
             $queuesubscribe->clean(
                 {'delay' => Sympa::Site->clean_delay_queuesubscribe});
-            my $queuesignoff = Sympa::ClassicSpool->new('signoff');
+            my $queuesignoff = Sympa::Spool::File->new('signoff');
             $queuesignoff->clean({'delay' => Sympa::Site->clean_delay_queuesignoff});
-            my $queueautomatic = Sympa::ClassicSpool->new('automatic');
+            my $queueautomatic = Sympa::Spool::File->new('automatic');
             $queueautomatic->clean(
                 {'delay' => Sympa::Site->clean_delay_queueautomatic});
 
@@ -3133,7 +3133,7 @@ sub DoCommand {
 sub SendDigest {
     Sympa::Log::Syslog::do_log('debug2', '()');
 
-    my $digestspool = Sympa::ClassicSpool->new('digest');
+    my $digestspool = Sympa::Spool::File->new('digest');
 
     foreach my $digest (
         $digestspool->get_content(

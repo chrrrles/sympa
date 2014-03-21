@@ -21,7 +21,7 @@
 
 =head1 NAME
 
-Sympa::ClassicSpool - Classic spool
+Sympa::Spool::File - File-based spool
 
 =head1 DESCRIPTION
 
@@ -29,7 +29,7 @@ This class implements a spool based on filesystem.
 
 =cut
 
-package Sympa::ClassicSpool;
+package Sympa::Spool::File;
 
 use strict;
 use warnings;
@@ -47,9 +47,9 @@ use Sympa::Tools::File;
 our $filename_regexp = '^(\S+)\.(\d+)\.\w+$';
 
 our %classes = (
-    'msg'  => 'Sympa::MessageSpool',
-    'task' => 'Sympa::TaskSpool',
-    'mod'  => 'Sympa::KeySpool',
+    'msg'  => 'Sympa::Spool::File::Message',
+    'task' => 'Sympa::Spool::File::Task',
+    'mod'  => 'Sympa::Spool::File::Key',
 );
 
 =head1 CLASS METHODS
@@ -59,7 +59,7 @@ our %classes = (
 =item new ( NAME, STATUS, OPTIONS... )
 
 I<Constructor>.
-Creates a new L<Sympa::ClassicSpool> object.
+Creates a new L<Sympa::Spool::File> object.
 
 XXX @todo doc
 
@@ -656,7 +656,7 @@ sub move_to {
     my $param        = shift;
     my $target       = shift;
     my $file_to_move = $self->get_message($param);
-    my $new_spool    = Sympa::ClassicSpool->new($target);
+    my $new_spool    = Sympa::Spool::File->new($target);
     if ($classes{$target}) {
         bless $new_spool, $target;
     }

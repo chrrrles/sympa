@@ -98,8 +98,8 @@ use Sympa::Constants;
 use Sympa::List;
 use Sympa::Log::Syslog;
 use Sympa::Site;
+use Sympa::Spool::File::Task;
 use Sympa::Task;
-use Sympa::TaskSpool;
 use Sympa::Tools::Daemon;
 use Sympa::Tools::Time;
 
@@ -210,7 +210,7 @@ unless (chdir(Sympa::Site->home)) {
     exit(-1);
 }
 
-my $taskspool = Sympa::TaskSpool->new();
+my $taskspool = Sympa::Spool::File::Task->new();
 
 ## Catch SIGTERM, in order to exit cleanly, whenever possible.
 $SIG{'TERM'} = 'sigterm';
@@ -233,7 +233,7 @@ while (!$end) {
     # Process grouped notifications
     Sympa::Site->send_notify_to_listmaster(undef, undef, 1, undef);
 
-    Sympa::TaskSpool::create_required_tasks($current_date);
+    Sympa::Spool::File::Task::create_required_tasks($current_date);
 
     ## Execute existing tasks
     ## processing of tasks anterior to the current date

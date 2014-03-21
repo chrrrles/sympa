@@ -36,7 +36,7 @@ use Sympa::DatabaseManager;
 use Sympa::List;
 use Sympa::Log::Syslog;
 use Sympa::Robot;
-use Sympa::Spool;
+use Sympa::Spool::SQL;
 use Sympa::Tools::Daemon;
 
 ## Database and SQL statement handlers
@@ -327,7 +327,7 @@ sub store {
     # $last_stored_message_key is a global var used in order to detect if a
     # message as been already stored
     my $message_already_on_spool;
-    my $bulkspool = Sympa::Spool->new('bulk');
+    my $bulkspool = Sympa::Spool::SQL->new('bulk');
 
     if (    defined $last_stored_message_key
         and defined $message->{'messagekey'}

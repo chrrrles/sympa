@@ -30,8 +30,8 @@ use Template;
 use Sympa::List; # FIXME: circular dependency
 use Sympa::Log::Syslog;
 use Sympa::Site;
+use Sympa::Spool::File::Task;
 use Sympa::TaskInstruction;
-use Sympa::TaskSpool;
 use Sympa::Tools::Time;
 
 #### Task level subs ####
@@ -305,7 +305,7 @@ sub store {
 
     Sympa::Log::Syslog::do_log('debug', 'Spooling task %s',
         $self->get_description);
-    my $taskspool = Sympa::TaskSpool->new;
+    my $taskspool = Sympa::Spool::File::Task->new;
     my %meta;
     $meta{'task_date'}    = $self->{'date'};
     $meta{'date'}         = $self->{'date'};
@@ -343,7 +343,7 @@ sub remove {
     Sympa::Log::Syslog::do_log('debug2', '(%s)', @_);
     my $self = shift;
 
-    my $taskspool = Sympa::TaskSpool->new;
+    my $taskspool = Sympa::Spool::File::Task->new;
     unless ($taskspool->remove_message($self->{'messagekey'})) {
         Sympa::Log::Syslog::do_log('err',
             'Unable to remove task (messagekey = %s)',

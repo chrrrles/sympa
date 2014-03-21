@@ -2686,7 +2686,7 @@ sub distribute {
 
     #read the moderation queue and purge it
 
-    my $modspool = Sympa::KeySpool->new();
+    my $modspool = Sympa::Spool::File::Key->new();
     my $name     = $list->name;
 
     my $message_in_spool = $modspool->get_message(
@@ -2800,7 +2800,7 @@ sub confirm {
     chomp $key;
     my $start_time = time;    # get the time at the beginning
 
-    my $spool = Sympa::Spool->new('auth');
+    my $spool = Sympa::Spool::SQL->new('auth');
 
     my $message_in_spool = $spool->get_message({'authkey' => $key});
     my $message = undef;
@@ -3065,7 +3065,7 @@ sub reject {
 
     my $name = $list->name;
 
-    my $modspool         = Sympa::KeySpool->new();
+    my $modspool         = Sympa::Spool::File::Key->new();
     my $message_in_spool = $modspool->get_message(
         {'list' => $list->name, 'robot' => $robot->domain, 'authkey' => $key}
     );
@@ -3177,7 +3177,7 @@ sub modindex {
         return 'not_allowed';
     }
 
-    my $modspool = Sympa::KeySpool->new();
+    my $modspool = Sympa::Spool::File::Key->new();
 
     my $n;
     my @now = localtime(time);
