@@ -597,21 +597,6 @@ sub get_template_path {
     return $dir . '/' . $tpl;
 }
 
-## Escape characters before using a string within a regexp parameter
-## Escaped characters are : @ $ [ ] ( ) ' ! '\' * . + ?
-sub escape_regexp {
-    my $s = shift;
-    my @escaped =
-        ("\\", '@', '$', '[', ']', '(', ')', "'", '!', '*', '.', '+', '?');
-    my $backslash = "\\";    ## required in regexp
-
-    foreach my $escaped_char (@escaped) {
-        $s =~ s/$backslash$escaped_char/\\$escaped_char/g;
-    }
-
-    return $s;
-}
-
 ## Escape weird characters
 sub escape_chars {
     my $s          = shift;
