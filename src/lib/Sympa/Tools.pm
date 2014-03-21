@@ -238,29 +238,6 @@ sub by_date {
 
 }
 
-## Safefork does several tries before it gives up.
-## Do 3 trials and wait 10 seconds * $i between each.
-## Exit with a fatal error is fork failed after all
-## tests have been exhausted.
-sub safefork {
-    my ($i, $pid);
-
-    my $err;
-    for ($i = 1; $i < 4; $i++) {
-        my ($pid) = fork;
-        return $pid if (defined($pid));
-
-        $err = $ERRNO;
-        Sympa::Log::Syslog::do_log('warn',
-            'Cannot create new process in safefork: %s', $err);
-        ## FIXME:should send a mail to the listmaster
-        sleep(10 * $i);
-    }
-    croak sprintf('Exiting because cannot create new process in safefork: %s',
-        $err);
-    ## No return.
-}
-
 ####################################################
 # checkcommand
 ####################################################
