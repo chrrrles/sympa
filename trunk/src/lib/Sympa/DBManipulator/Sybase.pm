@@ -21,10 +21,10 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package Sympa::DBManipulatorOracle;
+package Sympa::DBManipulator::Sybase;
 
 use strict;
-use base qw(Sympa::DBManipulatorDefault);
+use base qw(Sympa::DBManipulator);
 
 use Sympa::Log::Syslog;
 
@@ -33,14 +33,8 @@ use Sympa::Log::Syslog;
 #######################################################
 
 our %date_format = (
-    'read' => {
-        'Oracle' =>
-            '((to_number(to_char(%s,\'J\')) - to_number(to_char(to_date(\'01/01/1970\',\'dd/mm/yyyy\'), \'J\'))) * 86400) +to_number(to_char(%s,\'SSSSS\'))',
-    },
-    'write' => {
-        'Oracle' =>
-            'to_date(to_char(floor(%s/86400) + to_number(to_char(to_date(\'01/01/1970\',\'dd/mm/yyyy\'), \'J\'))) || \':\' ||to_char(mod(%s,86400)), \'J:SSSSS\')',
-    }
+    'read'  => {'Sybase' => 'datediff(second, \'01/01/1970\',%s)',},
+    'write' => {'Sybase' => 'dateadd(second,%s,\'01/01/1970\')',}
 );
 
 # Builds the string to be used by the DBI to connect to the database.
@@ -50,11 +44,8 @@ our %date_format = (
 # OUT: Nothing
 sub build_connect_string {
     my $self = shift;
-    $self->{'connect_string'} = "DBI:Oracle:";
-    if ($self->{'db_host'} && $self->{'db_name'}) {
-        $self->{'connect_string'} .=
-            "host=$self->{'db_host'};sid=$self->{'db_name'}";
-    }
+    $self->{'connect_string'} =
+        "DBI:Sybase:database=$self->{'db_name'};server=$self->{'db_host'}";
 }
 
 ## Returns an SQL clause to be inserted in a query.
@@ -65,11 +56,12 @@ sub get_substring_clause {
     my $self  = shift;
     my $param = shift;
     return
-          "substr("
+          "substring("
         . $param->{'source_field'}
-        . ",instr("
-        . $param->{'source_field'} . ",'"
-        . $param->{'separator'} . "')+1)";
+        . ",charindex('"
+        . $param->{'separator'} . "',"
+        . $param->{'source_field'} . ")+1,"
+        . $param->{'substring_length'} . ")";
 }
 
 ## Returns an SQL clause to be inserted in a query.
@@ -171,12 +163,14 @@ sub set_autoinc {
 # database, undef if something went wrong
 sub get_tables {
     my $self = shift;
-    Sympa::Log::Syslog::do_log('debug3',
-        'Retrieving all tables in database %s',
-        $self->{'db_name'});
     my @raw_tables;
     my $sth;
-    unless ($sth = $self->do_query("SELECT table_name FROM user_tables")) {
+    unless (
+        $sth = $self->do_query(
+            "SELECT name FROM %s..sysobjects WHERE type='U'",
+            $self->{'db_name'}
+        )
+        ) {
         Sympa::Log::Syslog::do_log('err',
             'Unable to retrieve the list of tables from database %s',
             $self->{'db_name'});
@@ -596,13 +590,6 @@ sub set_index {
         'Table %s, index %s set using fields %s',
         $param->{'table'}, $param->{'index_name'}, $fields);
     return $report;
-}
-
-## For BLOB types.
-sub AS_BLOB {
-    return ({'ora_type' => DBD::Oracle::ORA_BLOB()} => $_[1])
-        if scalar @_ > 1;
-    return ();
 }
 
 1;
