@@ -10562,7 +10562,7 @@ sub do_arcsearch {
     my @clean_words = split(/\s+/, $in{'key_word'});
     my @words = @clean_words;
     foreach my $w (@words) {
-        $w = Sympa::Tools::escape_regexp($w);
+        $w = quotemeta($w);
         $w =~ s,/,\\/,g;
         $w = '\b' . $w . '\b'
             if $in{'match'} eq 'exact';
@@ -10685,7 +10685,7 @@ sub do_arcsearch_id {
     $search->clean_words($in{'msgid'});
     my @words = split(/\s+/, $in{'msgid'});
     foreach my $w (@words) {
-        $w = Sympa::Tools::escape_regexp($w);
+        $w = quotemeta($w);
         $w =~ s,/,\\/,g;
     }
     $search->words(\@words);
