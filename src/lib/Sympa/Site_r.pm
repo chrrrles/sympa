@@ -903,7 +903,10 @@ sub send_file {
                 $data->{'user'} = Sympa::User->new($who, 'lang' => $lang);
             }
         } else {
-            $data->{'user'} = Sympa::User::clean_user($data->{'user'});
+            $data->{'user'} = Sympa::User->new(
+                $data->{user}->{email},
+                %{$data->{'user'}}
+            );
         }
 
         if (ref $self eq 'List') {
