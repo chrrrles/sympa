@@ -67,7 +67,7 @@ $0 --soap_url=<SOAP Sympa server URL> --cookie=sympauser=someone\@cru.fr
 my %options;
 unless (
     GetOptions(
-        \%main::options,                  'soap_url=s',
+        \%options,                  'soap_url=s',
         'service=s',                      'trusted_application=s',
         'trusted_application_password=s', 'user_email=s',
         'user_password=s',                'cookie=s',
@@ -78,23 +78,23 @@ unless (
     print "";
 }
 
-my $soap_url = $main::options{'soap_url'};
+my $soap_url = $options{'soap_url'};
 unless (defined $soap_url) {
     print "error : missing soap_url parameter\n";
     print $usage;
     exit;
 }
 
-my $user_email          = $main::options{'user_email'};
-my $user_password       = $main::options{'user_password'};
-my $session_id          = $main::options{'session_id'};
-my $trusted_application = $main::options{'trusted_application'};
+my $user_email          = $options{'user_email'};
+my $user_password       = $options{'user_password'};
+my $session_id          = $options{'session_id'};
+my $trusted_application = $options{'trusted_application'};
 my $trusted_application_password =
-    $main::options{'trusted_application_password'};
-my $proxy_vars         = $main::options{'proxy_vars'};
-my $service            = $main::options{'service'};
-my $service_parameters = $main::options{'service_parameters'};
-my $cookie             = $main::options{'cookie'};
+    $options{'trusted_application_password'};
+my $proxy_vars         = $options{'proxy_vars'};
+my $service            = $options{'service'};
+my $service_parameters = $options{'service_parameters'};
+my $cookie             = $options{'cookie'};
 
 if (defined $trusted_application) {
     unless (defined $trusted_application_password) {

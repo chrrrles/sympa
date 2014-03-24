@@ -112,7 +112,7 @@ use Sympa::Tracking;
 
 my $daemon_name           = Sympa::Log::Syslog::set_daemon($0);
 my $date_of_last_activity = time();
-local $main::daemon_usage =
+my $daemon_usage =
     'DAEMON_MASTER';    ## Default is to launch bulk as master daemon.
 
 ## Check options
@@ -122,22 +122,22 @@ local $main::daemon_usage =
 my %options;
 unless (
     GetOptions(
-        \%main::options, 'debug|d', 'foreground|F', 'help|h',
+        \%options, 'debug|d', 'foreground|F', 'help|h',
         'log_level=s',   'mail|m'
     )
     ) {
     pod2usage(-exitval => 1, -output => \*STDERR);
 }
 
-if ($main::options{'debug'}) {
-    $main::options{'log_level'} = 2 unless ($main::options{'log_level'});
+if ($options{'debug'}) {
+    $options{'log_level'} = 2 unless ($options{'log_level'});
 }
 
-$main::options{'foreground'} = 1 if ($main::options{'debug'});
-$main::options{'log_to_stderr'} = 1
-    if ($main::options{'debug'} || $main::options{'foreground'});
+$options{'foreground'} = 1 if ($options{'debug'});
+$options{'log_to_stderr'} = 1
+    if ($options{'debug'} || $options{'foreground'});
 
-if ($main::options{'help'}) {
+if ($options{'help'}) {
     pod2usage(0);
 }
 
@@ -152,12 +152,12 @@ unless (Sympa::Robot::get_robots()) {
 Sympa::Log::Syslog::do_openlog(Sympa::Site->syslog, Sympa::Site->log_socket_type, 'bulk');
 
 # setting log_level using conf unless it is set by calling option
-if ($main::options{'log_level'}) {
-    Sympa::Log::Syslog::set_log_level($main::options{'log_level'});
+if ($options{'log_level'}) {
+    Sympa::Log::Syslog::set_log_level($options{'log_level'});
     Sympa::Log::Syslog::do_log(
         'info',
         'Configuration file read, log level set using options : %s',
-        $main::options{'log_level'}
+        $options{'log_level'}
     );
 } else {
     Sympa::Log::Syslog::set_log_level(Sympa::Site->log_level);
@@ -170,7 +170,7 @@ if ($main::options{'log_level'}) {
 my $is_main_bulk = 0;
 
 ## Put ourselves in background if not in debug mode.
-unless ($main::options{'debug'} || $main::options{'foreground'}) {
+unless ($options{'debug'} || $options{'foreground'}) {
     open(STDERR, ">> /dev/null");
     open(STDOUT, ">> /dev/null");
     if (open(TTY, "/dev/tty")) {
@@ -188,7 +188,7 @@ unless ($main::options{'debug'} || $main::options{'foreground'}) {
 Sympa::Log::Syslog::do_openlog(Sympa::Site->syslog, Sympa::Site->log_socket_type, 'bulk');
 ## If process is running in foreground, don't write STDERR to a dedicated file
 my $options;
-$options->{'stderr_to_tty'} = 1 if ($main::options{'foreground'});
+$options->{'stderr_to_tty'} = 1 if ($options{'foreground'});
 $options->{'multiple_process'} = 0;
 
 # Save the PID number
@@ -253,7 +253,7 @@ while (!$end) {
     my $bulk;
     my $message_from_spool;
 
-    unless ($main::options{'foreground'}) {
+    unless ($options{'foreground'}) {
         ##
         ## Create child bulks if too much packets are waiting to be sent in
         ## the bulk_mailer table.
@@ -261,7 +261,7 @@ while (!$end) {
         ## processes
         ## Check if we need to run new child processes every
         ## 'bulk_wait_to_fork' (sympa.conf parameter) seconds
-        if (   ($main::daemon_usage eq 'DAEMON_MASTER')
+        if (   ($daemon_usage eq 'DAEMON_MASTER')
             && (time() - $last_check_date > $timeout)) {
             ## Clean up PID file (in case some child bulks would have died)
             my @actual_children = Sympa::Tools::Daemon::get_children_processes_list();
@@ -345,7 +345,7 @@ while (!$end) {
                             close STDERR;
                             Sympa::Tools::Daemon::direct_stderr_to_file(('pid' => $PID));
                             $date_of_last_activity = time();
-                            $main::daemon_usage =
+                            $daemon_usage =
                                 'DAEMON_SLAVE';    # automatic lists creation
                             Sympa::Log::Syslog::do_openlog(Sympa::Site->syslog,
                                 Sympa::Site->log_socket_type, 'bulk');
@@ -361,7 +361,7 @@ while (!$end) {
     }
     ## If a child bulk process is running for long enough, stop it (if the
     ## number of remaining packets to send is reasonnable).
-    if (   ($main::daemon_usage eq 'DAEMON_SLAVE')
+    if (   ($daemon_usage eq 'DAEMON_SLAVE')
         && (time() - $date_of_last_activity > Sympa::Site->bulk_lazytime)
         && !(my $r_packets = Sympa::Bulk::there_is_too_much_remaining_packets())) {
         Sympa::Log::Syslog::do_log('info',

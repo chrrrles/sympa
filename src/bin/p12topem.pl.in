@@ -86,16 +86,16 @@ my $etc_dir    = Sympa::Site->etc;
 
 ## Check option
 my %options;
-GetOptions(\%main::options, 'pkcs12=s', 'listname=s', 'robot=s', 'help|h');
+GetOptions(\%options, 'pkcs12=s', 'listname=s', 'robot=s', 'help|h');
 
-$main::options{'foreground'} = 1;
-my $listname = $main::options{'listname'};
-my $robot_id = $main::options{'robot'};
-my $p12input = $main::options{'pkcs12'};
+$options{'foreground'} = 1;
+my $listname = $options{'listname'};
+my $robot_id = $options{'robot'};
+my $p12input = $options{'pkcs12'};
 
 my ($cert, $privatekey, $inpass, $key);
 
-if ($main::options{'help'} or !-r $p12input or ($listname and $robot_id)) {
+if ($options{'help'} or !-r $p12input or ($listname and $robot_id)) {
     pod2usage(0);
 } else {
     if ($listname) {

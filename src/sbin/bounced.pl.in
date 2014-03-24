@@ -158,24 +158,24 @@ use Sympa::Tools::Daemon;
 my %options;
 unless (
     GetOptions(
-        \%main::options, 'debug|d', 'help|h', 'log_level=s',
+        \%options, 'debug|d', 'help|h', 'log_level=s',
         'foreground|F'
     )
     ) {
     pod2usage(-exitval => 1, -output => \*STDERR);
 }
 
-if ($main::options{'help'}) {
+if ($options{'help'}) {
     pod2usage(0);
 }
 
-if ($main::options{'debug'}) {
-    $main::options{'log_level'} = 2 unless ($main::options{'log_level'});
+if ($options{'debug'}) {
+    $options{'log_level'} = 2 unless ($options{'log_level'});
 }
 
-$main::options{'foreground'} = 1 if ($main::options{'debug'});
-$main::options{'log_to_stderr'} = 1
-    if ($main::options{'debug'} || $main::options{'foreground'});
+$options{'foreground'} = 1 if ($options{'debug'});
+$options{'log_to_stderr'} = 1
+    if ($options{'debug'} || $options{'foreground'});
 
 my $daemon_name = Sympa::Log::Syslog::set_daemon($0);
 my $ip          = $ENV{'REMOTE_HOST'};
@@ -198,7 +198,7 @@ unless (Sympa::DatabaseManager::check_db_connect()) {
 }
 
 ## Put ourselves in background if not in debug mode.
-unless ($main::options{'debug'} || $main::options{'foreground'}) {
+unless ($options{'debug'} || $options{'foreground'}) {
 
     open(STDERR, ">> /dev/null");
     open(STDOUT, ">> /dev/null");
@@ -218,7 +218,7 @@ unless ($main::options{'debug'} || $main::options{'foreground'}) {
 
 ## If process is running in foreground, don't write STDERR to a dedicated file
 my $options;
-$options->{'stderr_to_tty'} = 1 if ($main::options{'foreground'});
+$options->{'stderr_to_tty'} = 1 if ($options{'foreground'});
 
 ## Create and write the PID file
 Sympa::Tools::Daemon::write_pid('bounced', $PID, $options);
@@ -226,12 +226,12 @@ unless ($options->{'stderr_to_tty'}) {
     Sympa::Tools::Daemon::direct_stderr_to_file(('pid' => $PID));
 }
 
-if ($main::options{'log_level'}) {
-    Sympa::Log::Syslog::set_log_level($main::options{'log_level'});
+if ($options{'log_level'}) {
+    Sympa::Log::Syslog::set_log_level($options{'log_level'});
     Sympa::Log::Syslog::do_log(
         'info',
         'Configuration file read, log level set using options : %s',
-        $main::options{'log_level'}
+        $options{'log_level'}
     );
 } else {
     Sympa::Log::Syslog::set_log_level(Sympa::Site->log_level);

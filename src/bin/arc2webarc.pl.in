@@ -57,8 +57,8 @@ my %month_idx = qw(jan 1
 my $msg_count = 0;
 
 # load options ?
-#$main::options{'debug'} = 1;
-#$main::options{'debug2'} = 1 if ($main::options{'debug'});
+#$options{'debug'} = 1;
+#$options{'debug2'} = 1 if ($options{'debug'});
 
 $OUTPUT_AUTOFLUSH = 1;
 

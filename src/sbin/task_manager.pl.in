@@ -107,25 +107,25 @@ my %options;
 
 unless (
     GetOptions(
-        \%main::options, 'debug|d', 'help|h', 'log_level=s',
+        \%options, 'debug|d', 'help|h', 'log_level=s',
         'foreground|F'
     )
     ) {
     pod2usage(-exitval => 1, -output => \*STDERR);
 }
 
-if ($main::options{'help'}) {
+if ($options{'help'}) {
     pod2usage(0);
 }
 
-if ($main::options{'debug'}) {
-    $main::options{'log_level'} = 2 unless ($main::options{'log_level'});
+if ($options{'debug'}) {
+    $options{'log_level'} = 2 unless ($options{'log_level'});
 }
 
 # Some option force foreground mode
-$main::options{'foreground'} = 1 if ($main::options{'debug'});
-$main::options{'log_to_stderr'} = 1
-    if ($main::options{'debug'} || $main::options{'foreground'});
+$options{'foreground'} = 1 if ($options{'debug'});
+$options{'log_to_stderr'} = 1
+    if ($options{'debug'} || $options{'foreground'});
 
 my $Version = '0.1';
 
@@ -143,12 +143,12 @@ Sympa::Log::Syslog::do_openlog(Sympa::Site->log_facility, Sympa::Site->log_socke
     'task_manager');
 
 # setting log_level using conf unless it is set by calling option
-if ($main::options{'log_level'}) {
-    Sympa::Log::Syslog::set_log_level($main::options{'log_level'});
+if ($options{'log_level'}) {
+    Sympa::Log::Syslog::set_log_level($options{'log_level'});
     Sympa::Log::Syslog::do_log(
         'info',
         'Configuration file read, log level set using options : %s',
-        $main::options{'log_level'}
+        $options{'log_level'}
     );
 } else {
     Sympa::Log::Syslog::set_log_level(Sympa::Site->log_level);
@@ -159,7 +159,7 @@ if ($main::options{'log_level'}) {
 
 ## Put ourselves in background if not in debug mode.
 
-unless ($main::options{'debug'} || $main::options{'foreground'}) {
+unless ($options{'debug'} || $options{'foreground'}) {
     open(STDERR, ">> /dev/null");
     open(STDOUT, ">> /dev/null");
     if (open(TTY, "/dev/tty")) {
@@ -178,7 +178,7 @@ unless ($main::options{'debug'} || $main::options{'foreground'}) {
 
 ## If process is running in foreground, don't write STDERR to a dedicated file
 my $options;
-$options->{'stderr_to_tty'} = 1 if ($main::options{'foreground'});
+$options->{'stderr_to_tty'} = 1 if ($options{'foreground'});
 Sympa::Tools::Daemon::write_pid('task_manager', $PID, $options);
 unless ($options->{'stderr_to_tty'}) {
     Sympa::Tools::Daemon::direct_stderr_to_file(('pid' => $PID));
