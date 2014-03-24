@@ -51,7 +51,7 @@ sub new {
 
     $document->{'root_path'} = $list->dir . '/shared';
 
-    $document->{'path'} = main::no_slash_end($path);
+    $document->{'path'} = Sympa::Tools::WWW::no_slash_end($path);
     $document->{'escaped_path'} =
         Sympa::Tools::escape_chars($document->{'path'}, '/');
 
@@ -98,7 +98,7 @@ sub new {
     }
 
     $document->{'visible_path'} =
-        main::make_visible_path($document->{'path'});
+        Sympa::Tools::WWW::make_visible_path($document->{'path'});
 
     ## Date
     my @info = stat $document->{'absolute_path'};
@@ -172,7 +172,7 @@ sub new {
         my @info = stat $desc_file;
         $document->{'serial_desc'} = $info[9];
 
-        my %desc_hash = main::get_desc_file($desc_file);
+        my %desc_hash = Sympa::Tools::WWW::get_desc_file($desc_file);
         $document->{'owner'} = $desc_hash{'email'};
         $document->{'title'} = $desc_hash{'title'};
         $document->{'escaped_title'} =
@@ -182,7 +182,7 @@ sub new {
         if ($desc_hash{'email'}) {
             $document->{'author'} = $desc_hash{'email'};
             $document->{'author_mailto'} =
-                main::mailto($list, $desc_hash{'email'});
+                Sympa::Tools::WWW::mailto($list, $desc_hash{'email'});
             $document->{'author_known'} = 1;
         }
     }
@@ -250,7 +250,7 @@ sub new {
         closedir DIR;
 
         my $dir =
-            main::get_directory_content(\@tmpdir, $email, $list,
+            Sympa::Tools::WWW::get_directory_content(\@tmpdir, $email, $list,
             $document->{'absolute_path'});
 
         foreach my $d (@{$dir}) {
@@ -391,7 +391,7 @@ sub check_access_control {
         }
 
         #edit = 0, 0.5 or 1
-        $may_edit = main::find_edit_mode($action);
+        $may_edit = Sympa::Tools::WWW::find_edit_mode($action);
         $why_not_edit = '' if ($may_edit);
     }
 
@@ -447,7 +447,7 @@ sub check_access_control {
             # a description file was found
             # loading of acces information
 
-            %desc_hash = main::get_desc_file($desc_file);
+            %desc_hash = Sympa::Tools::WWW::get_desc_file($desc_file);
 
             ## Author has all privileges
             if ($user eq $desc_hash{'email'}) {
@@ -499,8 +499,8 @@ sub check_access_control {
                 }
 
                 # $may_edit = 0, 0.5 or 1
-                my $may_action_edit = main::find_edit_mode($action_edit);
-                $may_edit = main::merge_edit($may_edit, $may_action_edit);
+                my $may_action_edit = Sympa::Tools::WWW::find_edit_mode($action_edit);
+                $may_edit = Sympa::Tools::WWW::merge_edit($may_edit, $may_action_edit);
                 $why_not_edit = '' if ($may_edit);
 
             }
