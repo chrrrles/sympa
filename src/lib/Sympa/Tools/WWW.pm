@@ -29,6 +29,27 @@ use Sympa::Log::Syslog;
 use Sympa::Conf;
 use Sympa::Constants;
 
+# hash of the icons linked with a type of file
+my %icons = (
+    'unknown'        => 'unknown.png',
+    'folder'         => 'folder.png',
+    'current_folder' => 'folder.open.png',
+    'application'    => 'unknown.png',
+    'octet-stream'   => 'binary.png',
+    'audio'          => 'sound1.png',
+    'image'          => 'image2.png',
+    'text'           => 'text.png',
+    'video'          => 'movie.png',
+    'father'         => 'back.png',
+    'sort'           => 'down.png',
+    'url'            => 'link.png',
+    'left'           => 'left.png',
+    'right'          => 'right.png',
+);
+
+# lazy loading on demand
+my %mime_types;
+
 ## Cookie expiration periods with corresponding entry in NLS
 %cookie_period = (
     0     => {'gettext_id' => "session"},
@@ -460,6 +481,63 @@ sub select_my_files {
         }
     }
     return @new_dir;
+}
+
+sub get_icon {
+    my $type = shift;
+
+    return '/icons.' . $icons{$type};
+}
+
+sub get_mime_type {
+    my $type = shift;
+
+    %mime_types = _load_mime_types() unless %mime_types;
+
+    return $mime_types{$type};
+}
+
+sub _load_mime_types {
+    my @localisation = (
+        '/etc/mime.types',
+        '/usr/local/apache/conf/mime.types',
+        '/etc/httpd/conf/mime.types',
+        'mime.types'
+    );
+
+    foreach my $loc (@localisation) {
+        next unless (-r $loc);
+
+        unless (open(CONF, $loc)) {
+            print STDERR "load_mime_types: unable to open $loc\n";
+            return undef;
+        }
+    }
+
+    my %types;
+
+    while (<CONF>) {
+        next if /^\s*\#/;
+
+        if (/^(\S+)\s+(.+)\s*$/i) {
+            my ($k, $v) = ($1, $2);
+
+            my @extensions = split / /, $v;
+
+            ## provides file extension, given the content-type
+            if ($#extensions >= 0) {
+                $types->{$k} = $extensions[0];
+            }
+
+            foreach my $ext (@extensions) {
+                $types->{$ext} = $k;
+            }
+            next;
+        }
+    }
+
+    close FILE;
+    return %types;
 }
 
 1;

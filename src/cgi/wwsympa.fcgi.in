@@ -140,7 +140,6 @@ if (Sympa::Site->use_fast_cgi) {
 } else {
     require CGI;
 }
-my $mime_types = Sympa::Tools::load_mime_types();
 
 # hash of all the description files already loaded
 # format :
@@ -150,25 +149,6 @@ my $mime_types = Sympa::Tools::load_mime_types();
 
 #%desc_files_map; NOT USED ANYMORE
 
-# hash of the icons linked with a type of file
-my %icon_table;
-
-# application file
-$icon_table{'unknown'} = Sympa::Site->static_content_url . '/icons/unknown.png';
-$icon_table{'folder'}  = Sympa::Site->static_content_url . '/icons/folder.png';
-$icon_table{'current_folder'} =
-    Sympa::Site->static_content_url . '/icons/folder.open.png';
-$icon_table{'application'}  = Sympa::Site->static_content_url . '/icons/unknown.png';
-$icon_table{'octet-stream'} = Sympa::Site->static_content_url . '/icons/binary.png';
-$icon_table{'audio'}        = Sympa::Site->static_content_url . '/icons/sound1.png';
-$icon_table{'image'}        = Sympa::Site->static_content_url . '/icons/image2.png';
-$icon_table{'text'}         = Sympa::Site->static_content_url . '/icons/text.png';
-$icon_table{'video'}        = Sympa::Site->static_content_url . '/icons/movie.png';
-$icon_table{'father'}       = Sympa::Site->static_content_url . '/icons/back.png';
-$icon_table{'sort'}         = Sympa::Site->static_content_url . '/icons/down.png';
-$icon_table{'url'}          = Sympa::Site->static_content_url . '/icons/link.png';
-$icon_table{'left'}         = Sympa::Site->static_content_url . '/icons/left.png';
-$icon_table{'right'}        = Sympa::Site->static_content_url . '/icons/right.png';
 ## Shared directory and description file
 
 #$shared = 'shared';
@@ -1919,7 +1899,7 @@ while ($query = new_loop()) {
             unless ($param->{'bypass'} eq 'asis') {
                 my $type =
                        $param->{'content_type'}
-                    || $mime_types->{$param->{'file_extension'}}
+                    || Sympa::Tools::WWW::get_mime_type($param->{'file_extension'})
                     || 'application/octet-stream';
                 printf "Content-Type: %s\n\n", $type;
             }
@@ -14328,6 +14308,7 @@ sub do_d_read {
     my $may_control = $access{'may'}{'control'};
 
     ### File or directory ?
+    my $icon_base = Sympa::Site->static_content_url();
 
     if (!(-d $doc)) {
         my @tokens = split /\//, $doc;
@@ -14458,7 +14439,8 @@ sub do_d_read {
                             );
 
                         # Case read authorized : fill the hash
-                        $subdirs{$d}{'icon'} = $icon_table{'folder'};
+                        $subdirs{$d}{'icon'} = 
+                            $icon_base . Sympa::Tools::WWW::get_icon('folder');
 
                         $subdirs{$d}{'doc'} = Sympa::Tools::WWW::make_visible_path($d);
                         $subdirs{$d}{'escaped_doc'} =
@@ -14593,10 +14575,11 @@ sub do_d_read {
                         chomp $url;
                         $files{$d}{'url'}    = $url;
                         $files{$d}{'anchor'} = Sympa::Tools::WWW::make_visible_path($d);
-                        $files{$d}{'icon'}   = $icon_table{'url'};
+                        $files{$d}{'icon'}   =
+                            $icon_base . Sympa::Tools::WWW::get_icon('url');
 
                         ## MIME - TYPES : icons for template
-                    } elsif (my $type = $mime_types->{$3}) {
+                    } elsif (my $type = Sympa::Tools::WWW::get_mime_type($3)) {
 
                         # type of the file and apache icon
                         $type =~ /^([\w\-]+)\/([\w\-]+)$/;
@@ -14609,19 +14592,22 @@ sub do_d_read {
                             }
                             $files{$d}{'type'} = "$subt file";
                         }
-                        $files{$d}{'icon'} = $icon_table{$mimet}
-                            || $icon_table{'unknown'};
+                        $files{$d}{'icon'} =
+                            $icon_base . Sympa::Tools::WWW::get_icon($mimet) ||
+                            $icon_base . Sympa::Tools::WWW::get_icon('unknown');
                     } else {
 
                         # unknown file type
-                        $files{$d}{'icon'} = $icon_table{'unknown'};
+                        $files{$d}{'icon'} =
+                            $icon_base . Sympa::Tools::WWW::get_icon('unknown');
                     }
 
                     ## case html
                     if ($3 =~ /^html?$/i) {
                         $files{$d}{'html'} = 1;
                         $files{$d}{'type'} = 'html file';
-                        $files{$d}{'icon'} = $icon_table{'text'};
+                        $files{$d}{'icon'} =
+                            $icon_base . Sympa::Tools::WWW::get_icon('text');
                     }
                     ## exception of index.html
                     if ($d =~ /^(index\.html?)$/i) {
@@ -14781,8 +14767,10 @@ sub do_d_read {
             $param->{'sort_files'} = \@sort_files;
         }
     }
-    $param->{'father_icon'} = $icon_table{'father'};
-    $param->{'sort_icon'}   = $icon_table{'sort'};
+    $param->{'father_icon'} =
+        $icon_base . Sympa::Tools::WWW::get_icon('father');
+    $param->{'sort_icon'}   =
+        $icon_base . Sympa::Tools::WWW::get_icon('sort');
 
     ## Show expert commands / user page
 
@@ -14971,6 +14959,7 @@ sub directory_browsing {
 
     my $user = $param->{'user'}{'email'} || 'nobody';
 
+    my $icon_base = Sympa::Site->static_content_url();
     ## browsing
     foreach my $d (@directory) {
         my $path_d = "$path_dir/$d";
@@ -15076,10 +15065,11 @@ sub directory_browsing {
                     chomp $url;
                     $file_info{'url'}    = $url;
                     $file_info{'anchor'} = Sympa::Tools::WWW::make_visible_path($d);
-                    $file_info{'icon'}   = $icon_table{'url'};
+                    $file_info{'icon'}   =
+                        $icon_base . Sympa::Tools::WWW::get_icon('url');
 
                     ## MIME - TYPES : icons for template
-                } elsif (my $type = $mime_types->{$3}) {
+                } elsif (my $type = Sympa::Tools::WWW::get_mime_type($3)) {
 
                     # type of the file and apache icon
                     $type =~ /^([\w\-]+)\/([\w\-]+)$/;
@@ -15091,18 +15081,21 @@ sub directory_browsing {
                             $subt  = 'binary';
                         }
                     }
-                    $file_info{'icon'} = $icon_table{$mimet}
-                        || $icon_table{'unknown'};
+                    $file_info{'icon'} =
+                        $icon_base . Sympa::Tools::WWW::get_icon($mimet) ||
+                        $icon_base . Sympa::Tools::WWW::get_icon('unknown');
 
                     ## UNKNOWN FILE TYPE
                 } else {
-                    $file_info{'icon'} = $icon_table{'unknown'};
+                    $file_info{'icon'} =
+                        $icon_base . Sympa::Tools::WWW::get_icon('unknown');
                 }
 
                 ## case html
                 if ($3 =~ /^html?$/i) {
                     $file_info{'html'} = 1;
-                    $file_info{'icon'} = $icon_table{'text'};
+                    $file_info{'icon'} =
+                        $icon_base . Sympa::Tools::WWW::get_icon('text');
                 }
 
                 ## name of the file
@@ -15309,7 +15302,9 @@ sub do_d_editfile {
 
     Sympa::Template::allow_absolute_path();
 
-    $param->{'father_icon'} = $icon_table{'father'};
+    $param->{'father_icon'} =
+        Sympa::Site->static_content_url() .
+        Sympa::Tools::WWW::get_icon('father');
 
     web_db_log(
         {   'parameters' => $in{'path'},
@@ -15472,7 +15467,9 @@ sub do_d_properties {
 
     Sympa::Template::allow_absolute_path();
 
-    $param->{'father_icon'} = $icon_table{'father'};
+    $param->{'father_icon'} = 
+        Sympa::Site->static_content_url() .
+        Sympa::Tools::WWW::get_icon('father');
 
     web_db_log(
         {   'parameters' => $in{'path'},
@@ -20273,7 +20270,9 @@ sub do_d_control {
 
     $param->{'set_owner'} = 1;
 
-    $param->{'father_icon'} = $icon_table{'father'};
+    $param->{'father_icon'} =
+        Sympa::Site->static_content_url() .
+        Sympa::Tools::WWW::get_icon('father');
     web_db_log(
         {   'robot'        => $robot_id,
             'list'         => $list->name,
@@ -24732,8 +24731,11 @@ sub new_d_read {
             $param->{'sort_files'} = \@sort_files;
         }
     }
-    $param->{'father_icon'} = $icon_table{'father'};
-    $param->{'sort_icon'}   = $icon_table{'sort'};
+    my $icon_base = Sympa::Site->static_content_url();
+    $param->{'father_icon'} =
+        $icon_base . Sympa::Tools::WWW::get_icon('father');
+    $param->{'sort_icon'}   =
+        $icon_base . Sympa::Tools::WWW::get_icon('sort');
 
     ## Show expert commands / user page
 
@@ -24878,17 +24880,6 @@ sub get_safe_robot_conf {
     $param->{'conf'}{'request'} = $robot->get_address('owner');    # <=6.1
 }
 
-sub get_icon {
-    my $type = shift;
-
-    return $icon_table{$type};
-}
-
-sub get_mime_type {
-    my $type = shift;
-
-    return $mime_types->{$type};
-}
 
 sub do_maintenance {
     wwslog('notice', 'do_maintenance()');
