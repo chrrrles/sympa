@@ -761,47 +761,6 @@ sub cookie_changed {
     }
 }
 
-sub load_mime_types {
-    my $types = {};
-
-    my @localisation = (
-        '/etc/mime.types',            '/usr/local/apache/conf/mime.types',
-        '/etc/httpd/conf/mime.types', 'mime.types'
-    );
-
-    foreach my $loc (@localisation) {
-        next unless (-r $loc);
-
-        unless (open(CONF, $loc)) {
-            print STDERR "load_mime_types: unable to open $loc\n";
-            return undef;
-        }
-    }
-
-    while (<CONF>) {
-        next if /^\s*\#/;
-
-        if (/^(\S+)\s+(.+)\s*$/i) {
-            my ($k, $v) = ($1, $2);
-
-            my @extensions = split / /, $v;
-
-            ## provides file extension, given the content-type
-            if ($#extensions >= 0) {
-                $types->{$k} = $extensions[0];
-            }
-
-            foreach my $ext (@extensions) {
-                $types->{$ext} = $k;
-            }
-            next;
-        }
-    }
-
-    close FILE;
-    return $types;
-}
-
 ## Q-encode a complete file hierarchy
 ## Useful to Q-encode subshared documents
 sub qencode_hierarchy {

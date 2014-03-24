@@ -30,6 +30,7 @@ use English qw(-no_match_vars);
 use Sympa::Language;
 use Sympa::Log::Syslog;
 use Sympa::Scenario;
+use Sympa::Site;
 use Sympa::Tools;
 use Sympa::Tools::Data;
 
@@ -187,10 +188,11 @@ sub new {
         }
     }
 
+    my $icon_base = Sympa::Site->static_content_url();
     ### File, directory or URL ?
     if ($document->{'type'} eq 'url') {
 
-        $document->{'icon'} = main::get_icon('url');
+        $document->{'icon'} = $icon_base . Sympa::Tools::WWW::get_icon('url');
 
         open DOC, $document->{'absolute_path'};
         my $url = <DOC>;
@@ -203,7 +205,7 @@ sub new {
         }
     } elsif ($document->{'type'} eq 'file') {
 
-        if (my $type = main::get_mime_type($document->{'file_extension'})) {
+        if (my $type = Sympa::Tools::WWW::get_mime_type($document->{'file_extension'})) {
 
             # type of the file and apache icon
             if ($type =~ /^([\w\-]+)\/([\w\-]+)$/) {
@@ -215,25 +217,29 @@ sub new {
                     }
                     $type = "$subt file";
                 }
-                $document->{'icon'} = main::get_icon($mimet)
-                    || main::get_icon('unknown');
+                $document->{'icon'} =
+                    $icon_base . Sympa::Tools::WWW::get_icon($mimet) ||
+                    $icon_base . Sympa::Tools::WWW::get_icon('unknown');
             }
         } else {
 
             # unknown file type
-            $document->{'icon'} = main::get_icon('unknown');
+            $document->{'icon'} =
+                $icon_base . Sympa::Tools::WWW::get_icon('unknown');
         }
 
         ## HTML file
         if ($document->{'file_extension'} =~ /^html?$/i) {
             $document->{'html'} = 1;
-            $document->{'icon'} = main::get_icon('text');
+            $document->{'icon'} =
+                $icon_base . Sympa::Tools::WWW::get_icon('text');
         }
 
         ## Directory
     } else {
 
-        $document->{'icon'} = main::get_icon('folder');
+        $document->{'icon'} = 
+            $icon_base . Sympa::Tools::WWW::get_icon('folder');
 
         # listing of all the shared documents of the directory
         unless (opendir DIR, $document->{'absolute_path'}) {

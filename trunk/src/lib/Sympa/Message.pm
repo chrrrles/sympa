@@ -67,6 +67,7 @@ use Sympa::Tools;
 use Sympa::Tools::DKIM;
 use Sympa::Tools::Message;
 use Sympa::Tools::SMIME;
+use Sympa::Tools::WWW;
 
 my %openssl_errors = (
     1 => 'an error occurred parsing the command options',
@@ -2418,12 +2419,11 @@ sub prepare_reception_urlize {
         printf "Unable to create urlized directory %s/%s\n", $expl, $dir1;
         return 0;
     }
-    my $mime_types = Sympa::Tools::load_mime_types();
     my @parts      = ();
     my $i          = 0;
     foreach my $part ($self->get_mime_message->parts()) {
         my $entity =
-            _urlize_part($part, $self->{'list'}, $dir1, $i, $mime_types,
+            _urlize_part($part, $self->{'list'}, $dir1, $i,
             $self->{'list'}->robot->wwsympa_url);
         if (defined $entity) {
             push @parts, $entity;
@@ -2448,7 +2448,6 @@ sub _urlize_part {
     my $robot       = $list->domain;
     my $dir         = shift;
     my $i           = shift;
-    my $mime_types  = shift;
     my $listname    = $list->name;
     my $wwsympa_url = shift;
 
@@ -2459,7 +2458,7 @@ sub _urlize_part {
         if $eff_type =~ /multipart\/alternative/gi
             or $eff_type =~ /text\//gi;
     ##  name of the linked file
-    my $fileExt = $mime_types->{$head->mime_type};
+    my $fileExt = Sympa::Tools::WWW::get_mime_type($head->mime_type);
     if ($fileExt) {
         $fileExt = '.' . $fileExt;
     }
@@ -2476,7 +2475,7 @@ sub _urlize_part {
             foreach my $i (0 .. $#parts) {
                 my $entity =
                     _urlize_part($message->parts($i), $list, $dir, $i,
-                    $mime_types, $list->robot->wwsympa_url);
+                    $list->robot->wwsympa_url);
                 if (defined $entity) {
                     $parts[$i] = $entity;
                 }
