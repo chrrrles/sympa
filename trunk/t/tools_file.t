@@ -10,6 +10,7 @@ use FindBin qw($Bin);
 use lib "$Bin/../src/lib";
 
 use Test::More;
+use Test::Exception;
 use English qw(-no_match_vars);
 use File::Temp;
 use File::stat;
@@ -17,11 +18,11 @@ use Fcntl qw(:mode);
 
 use Sympa::Tools::File;
 
-plan tests => 21;
+plan tests => 24;
 
 my $user  = getpwuid($UID);
 my $group = getgrgid($GID);
-my $file  = File::Temp->new();
+my $file  = File::Temp->new(CLEANUP => $ENV{TEST_DEBUG} ? 0 : 1);
 
 ok(
     Sympa::Tools::File::set_file_rights(file => $file),
@@ -64,6 +65,29 @@ ok(
 );
 
 is(get_perms($file), "0666", "expected mode");
+
+POSIX::setlocale( &POSIX::LC_ALL, "C" );
+my $text = "Sympa rulez!";
+my $filename;
+{
+    my $new_file = File::Temp->new(CLEANUP => $ENV{TEST_DEBUG} ? 0 : 1);
+    print $new_file $text;
+    $new_file->flush();
+    $filename = $new_file->filename();
+
+    is(Sympa::Tools::File::slurp_file($filename), $text, "slurp_file()");
+
+    chmod 0000, $new_file;
+    throws_ok {
+        my $content = Sympa::Tools::File::slurp_file($filename);
+    } qr/^Cannot open file \S+: Permission denied/,
+    'slurp_file(), unreadable file';
+}
+
+throws_ok {
+    my $content = Sympa::Tools::File::slurp_file($filename);
+} qr/^Cannot open file \S+: No such file or directory/,
+'slurp_file(), non-existing file';
 
 my $dir;
 
