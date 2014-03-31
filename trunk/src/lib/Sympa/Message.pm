@@ -181,7 +181,7 @@ sub new {
     return $self;
 }
 
-=over
+=back
 
 =head1 INSTANCE METHODS
 

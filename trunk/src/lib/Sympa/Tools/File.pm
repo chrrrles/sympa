@@ -35,6 +35,12 @@ use POSIX qw();
 
 use Sympa::Log::Syslog;
 
+=head1 FUNCTIONS
+
+=over
+
+=cut
+
 ## Sets owner and/or access rights on a file.
 sub set_file_rights {
     my %param = @_;
@@ -366,13 +372,11 @@ sub a_is_older_than_b {
     return $answer;
 }
 
-=pod 
-
-=head2 sub CleanSpool(STRING $spool_dir, INT $clean_delay)
+=item CleanSpool(STRING $spool_dir, INT $clean_delay)
 
 Clean all messages in spool $spool_dir older than $clean_delay.
 
-=head3 Arguments 
+Parameters:
 
 =over 
 
@@ -382,15 +386,9 @@ Clean all messages in spool $spool_dir older than $clean_delay.
 
 =back
 
-=head3 Return 
+Returns:
 
-=over
-
-=item * 1 if the spool was cleaned withou troubles.
-
-=item * undef if something went wrong.
-
-=back 
+A true value if the spool was cleaned without troubles, I<undef> otherwise.
 
 =cut 
 
@@ -472,5 +470,7 @@ sub slurp_file {
 
     return $content;
 }
+
+=back
 
 1;
