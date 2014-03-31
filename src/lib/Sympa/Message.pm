@@ -29,7 +29,7 @@ Message - mail message embedding for internal use in Sympa
 
 =head1 DESCRIPTION 
 
-While processing a message in Sympa, we need to link information to the
+While processing a message in Sympa, we need to link informations to the
 message, modify headers and such.  This was quite a problem when a message was
 signed, as modifying anything in the message body would alter its MD5
 footprint.  And probably make the message to be rejected by clients verifying
@@ -93,7 +93,7 @@ Parameters:
 
 =item * I<file>: the message, as a file
 
-=item * I<string>: the message, as a string
+=item * I<messageasstring>: the message, as a string
 
 =item * I<noxsympato>: FIXME
 
@@ -158,26 +158,26 @@ sub new {
 
     ## Load content
 
-    my $string;
+    my $messageasstring;
     if ($params{'file'}) {
         eval {
-            $string = Sympa::Tools::File::slurp_file($params{'file'});
+            $messageasstring = Sympa::Tools::File::slurp_file($params{'file'});
         };
         if ($EVAL_ERROR) {
             Sympa::Log::Syslog::do_log('err', $EVAL_ERROR);
             return undef;
         }
-    } elsif ($params{'string'}) {
-        $string = $params{'string'};
+    } elsif ($params{'messageasstring'}) {
+        $messageasstring = $params{'messageasstring'};
     }
 
-    unless (defined $string) {
+    unless (defined $messageasstring) {
         Sympa::Log::Syslog::do_log('warn', 'no content.  load() is required');
         return $self;
     }
 
     return undef
-        unless $self->load($string);
+        unless $self->load($messageasstring);
     return $self;
 }
 
@@ -249,20 +249,20 @@ Return:
 
 sub load {
     my $self            = shift;
-    my $string = shift;
+    my $messageasstring = shift;
 
-    if (ref $string) {
+    if (ref $messageasstring) {
         Sympa::Log::Syslog::do_log('err',
-            'deprecated: $string must be string, not %s',
-            $string);
+            'deprecated: $messageasstring must be string, not %s',
+            $messageasstring);
         return undef;
     }
 
     # Get metadata
 
     unless ($self->{'noxsympato'}) {
-        pos($string) = 0;
-        while ($string =~ /\G(X-Sympa-\w+): (.*?)\n(?![ \t])/cgs) {
+        pos($messageasstring) = 0;
+        while ($messageasstring =~ /\G(X-Sympa-\w+): (.*?)\n(?![ \t])/cgs) {
             my ($k, $v) = ($1, $2);
             next unless length $v;
 
@@ -290,15 +290,15 @@ sub load {
         }
 
         # Strip meta information
-        substr($string, 0, pos $string) = '';
+        substr($messageasstring, 0, pos $messageasstring) = '';
     }
 
-    $self->{'msg_as_string'} = $string;
-    $self->{'size'}          = length $string;
+    $self->{'msg_as_string'} = $messageasstring;
+    $self->{'size'}          = length $messageasstring;
 
     my $parser = MIME::Parser->new();
     $parser->output_to_core(1);
-    my $msg = $parser->parse_data(\$string);
+    my $msg = $parser->parse_data(\$messageasstring);
     $self->{'msg'} = $msg;
 
     # Get envelope sender, actual sender according to sender_headers site

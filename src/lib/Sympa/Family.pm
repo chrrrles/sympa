@@ -1124,7 +1124,7 @@ sub instantiate {
 
 =head2 sub get_instantiation_results()
 
-Returns a string with information summarizing the instantiation results.
+Returns a string with informations summarizing the instantiation results.
 
 =head3 Arguments 
 
