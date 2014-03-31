@@ -156,16 +156,13 @@ sub new {
 
     my $messageasstring;
     if ($datas->{'file'}) {
-        my $fh;
-        unless (open $fh, '<', $datas->{'file'}) {
-            Sympa::Log::Syslog::do_log('err',
-                'Cannot open message file %s : %s',
-                $datas->{'file'}, $ERRNO);
+        eval {
+            $messageasstring = Sympa::Tools::File::slurp_file($datas->{'file'});
+        };
+        if ($EVAL_ERROR) {
+            Sympa::Log::Syslog::do_log('err', $EVAL_ERROR);
             return undef;
         }
-        local $RS;
-        $messageasstring = <$fh>;
-        close $fh;
     } elsif ($datas->{'messageasstring'}) {
         $messageasstring = $datas->{'messageasstring'};
     }
