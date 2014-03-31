@@ -2523,8 +2523,8 @@ sub send_to_editor {
         my $modspool = Sympa::Spool::File::Key->new();
         $modspool->store(
             $message->to_string,    #FIXME: maybe encrypted
-            {   'list'    => $message->list->name,
-                'robot'   => $message->robot->name,
+            {   'list'    => $message->get_list()->name,
+                'robot'   => $message->get_robot()->name,
                 'authkey' => $modkey,
             }
         );
