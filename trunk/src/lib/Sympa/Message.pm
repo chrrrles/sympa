@@ -287,7 +287,7 @@ sub _load {
         $self->check_smime_signature;
     }
     ## TOPICS
-    $self->set_topic;
+    $self->_set_topic;
 
     return $self;
 }
@@ -689,8 +689,7 @@ sub add_topic {
     return 1;
 }
 
-# Internal use.
-sub set_topic {
+sub _set_topic {
     my $self = shift;
     my $topics;
     if ($topics = $self->get_mime_message->head->get('X-Sympa-Topic')) {
@@ -1420,8 +1419,7 @@ sub set_message_as_string {
     $self->{'msg_as_string'} = shift;
 }
 
-# Internal use.
-sub reset_message_from_entity {
+sub _reset_message_from_entity {
     my $self   = shift;
     my $entity = shift;
 
@@ -2224,7 +2222,7 @@ sub prepare_reception_notice {
             'text/plain; charset="US-ASCII"');
         $notice_msg->head->replace('Content-Transfer-Encoding', '7BIT');
     }
-    $self->reset_message_from_entity($notice_msg);
+    $self->_reset_message_from_entity($notice_msg);
     undef $self->{'smime_crypted'};
     return 1;
 }
@@ -2239,7 +2237,7 @@ sub prepare_reception_txt {
             'Multipart message changed to text singlepart');
     }
     ## Add a footer
-    $self->reset_message_from_entity($self->add_parts);
+    $self->_reset_message_from_entity($self->add_parts);
     return 1;
 }
 
@@ -2253,7 +2251,7 @@ sub prepare_reception_html {
             'Multipart message changed to html singlepart');
     }
     ## Add a footer
-    $self->reset_message_from_entity($self->add_parts);
+    $self->_reset_message_from_entity($self->add_parts);
     return 1;
 }
 
@@ -2310,7 +2308,7 @@ sub prepare_reception_urlize {
     $self->get_mime_message->parts(\@parts);
 
     ## Add a footer
-    $self->reset_message_from_entity($self->add_parts);
+    $self->_reset_message_from_entity($self->add_parts);
     return 1;
 }
 
