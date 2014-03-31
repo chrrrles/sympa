@@ -440,4 +440,36 @@ sub CleanDir {
     return 1;
 }
 
+=item slurp_file($file)
+
+Read the whole content of a file.
+
+Parameters:
+
+=over
+
+=item $file
+
+The file to read.
+
+=back
+
+Return value:
+
+The file content as a string on success, I<undef> otherwise.
+
+=cut
+
+sub slurp_file {
+    my ($file) = @_;
+
+    open(my $handle, '<', $file)
+        or return undef;
+    local $RS; # enable localized slurp mode
+    my $content = <$handle>;
+    close($handle);
+
+    return $content;
+}
+
 1;
