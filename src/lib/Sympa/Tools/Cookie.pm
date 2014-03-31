@@ -23,7 +23,7 @@
 
 package Sympa::Tools::Cookie;
 
-use strict "vars";
+use strict;
 
 use Digest::MD5;
 use CGI::Cookie;

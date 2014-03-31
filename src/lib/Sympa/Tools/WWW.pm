@@ -23,6 +23,8 @@
 
 package Sympa::Tools::WWW;
 
+use strict;
+
 use English qw(-no_match_vars);
 
 use Sympa::Log::Syslog;
@@ -51,7 +53,7 @@ my %icons = (
 my %mime_types;
 
 ## Cookie expiration periods with corresponding entry in NLS
-%cookie_period = (
+my %cookie_period = (
     0     => {'gettext_id' => "session"},
     10    => {'gettext_id' => "10 minutes"},
     30    => {'gettext_id' => "30 minutes"},
@@ -63,7 +65,7 @@ my %mime_types;
 );
 
 ## Filenames with corresponding entry in NLS set 15
-%filenames = (
+my %filenames = (
     'welcome.tt2'       => {'gettext_id' => "welcome message"},
     'bye.tt2'           => {'gettext_id' => "unsubscribe message"},
     'removed.tt2'       => {'gettext_id' => "deletion message"},
@@ -86,14 +88,14 @@ my %mime_types;
     'list_aliases.tt2'      => {'gettext_id' => "list aliases template"}
 );
 
-%task_flavours = (
+my %task_flavours = (
     'daily'   => {'gettext_id' => 'daily'},
     'monthly' => {'gettext_id' => 'monthly'},
     'weekly'  => {'gettext_id' => 'weekly'},
 );
 
 ## Defined in RFC 1893
-%bounce_status = (
+my %bounce_status = (
     '1.0' => 'Other address status',
     '1.1' => 'Bad destination mailbox address',
     '1.2' => 'Bad destination system address',
@@ -177,7 +179,7 @@ sub init_passwd {
                 ) {
                 Sympa::Report::reject_report_web('intern', 'update_user_db_failed',
                     {'user' => $email},
-                    '', '', $email, $robot);
+                    '', '', $email, undef);
                 Sympa::Log::Syslog::do_log('info',
                     'init_passwd: update failed');
                 return undef;
@@ -196,7 +198,7 @@ sub init_passwd {
             ) {
             Sympa::Report::reject_report_web('intern', 'add_user_db_failed',
                 {'user' => $email},
-                '', '', $email, $robot);
+                '', '', $email, undef);
             Sympa::Log::Syslog::do_log('info', 'init_passwd: add failed');
             return undef;
         }
@@ -526,11 +528,11 @@ sub _load_mime_types {
 
             ## provides file extension, given the content-type
             if ($#extensions >= 0) {
-                $types->{$k} = $extensions[0];
+                $types{$k} = $extensions[0];
             }
 
             foreach my $ext (@extensions) {
-                $types->{$ext} = $k;
+                $types{$ext} = $k;
             }
             next;
         }
