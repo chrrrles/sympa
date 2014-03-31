@@ -735,7 +735,6 @@ Convert language tag to old-style "locale".
 
 sub Lang2Locale_old {
     my $lang = shift;
-    my $old_lang;
     my @subtags;
 
     ## unknown format.

@@ -105,8 +105,6 @@ sub new {
 
 # total spool_table count : not object oriented, just a subroutine
 sub global_count {
-
-    my $message_status = shift;
     my @files          = <Sympa::Constants::SPOOLDIR/*>;
     my $count          = @files;
 

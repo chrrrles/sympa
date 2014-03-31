@@ -76,7 +76,6 @@ sub get_storage_name {
     my $self = shift;
     my $filename;
     my $param  = shift;
-    my $object = "_global";
     my $date   = $param->{'task_date'};
     $date ||= time;
     $filename =

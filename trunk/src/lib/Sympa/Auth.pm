@@ -211,7 +211,7 @@ sub ldap_authentication {
     my $auth        = shift;
     my $pwd         = shift;
     my $whichfilter = shift;
-    my ($mesg, $host, $ldap_passwd, $ldap_anonymous);
+    my ($mesg, $ldap_passwd, $ldap_anonymous);
 
     unless ($robot->get_etc_filename('auth.conf')) {
         return undef;
@@ -392,7 +392,6 @@ sub get_email_by_net_id {
         timeout => $ldap->{'ldap_timeout'},
         attrs   => [$ldap->{'ldap_email_attribute'}],
     );
-    my $count = $emails->count();
 
     if ($emails->count() == 0) {
         Sympa::Log::Syslog::do_log('notice',
@@ -421,8 +420,6 @@ sub remote_app_check_password {
         $trusted_application_name, $robot);
 
     my $md5 = Digest::MD5::md5_hex($password);
-
-    my $vars;
 
     # seach entry for trusted_application in Conf
     my @trusted_apps;

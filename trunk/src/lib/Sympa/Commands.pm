@@ -182,9 +182,6 @@ sub help {
     shift;
     my $robot = shift;
 
-    my $sympa = $robot->get_address();
-    my $etc   = $robot->etc;
-
     my $data = {};
 
     my @owner  = Sympa::List::get_which($sender, $robot, 'owner');
@@ -228,9 +225,6 @@ sub lists {
     my $robot    = shift;
     my $sign_mod = shift;
     my $message  = shift;
-
-    my $sympa = $robot->get_address();
-    my $host  = $robot->host;
 
     my $data  = {};
     my $lists = {};
@@ -498,8 +492,6 @@ sub last {
     my $which = shift;
     my $robot = shift;
 
-    my $sympa = $robot->get_address();
-
     my $list = Sympa::List->new($which, $robot);
     unless ($list) {
         Sympa::Report::reject_report_cmd('user', 'no_existing_list',
@@ -640,8 +632,6 @@ sub review {
     my $robot    = shift;
     my $sign_mod = shift;
     my $message  = shift;
-
-    my $sympa = $robot->get_address();
 
     my $user;
     my $list = Sympa::List->new($listname, $robot);
@@ -809,8 +799,6 @@ sub verify {
             $sender, $robot);
         return 'unknown_list';
     }
-
-    my $user;
 
     Sympa::Language::SetLang($list->lang);
 
@@ -1126,8 +1114,6 @@ sub info {
     my $robot    = shift;
     my $sign_mod = shift;
     my $message  = shift;
-
-    my $sympa = $robot->get_address();
 
     my $list = Sympa::List->new($listname, $robot);
     unless ($list) {
@@ -2397,9 +2383,6 @@ sub del {
             return 'not_allowed';
         }
 
-        ## Get gecos before deletion
-        my $gecos = $user_entry->{'gecos'};
-
         ## Really delete and rewrite to disk.
         my $u;
         unless (
@@ -2798,7 +2781,6 @@ sub confirm {
     $what =~ /^\s*(\S+)\s*$/;
     my $key = $1;
     chomp $key;
-    my $start_time = time;    # get the time at the beginning
 
     my $spool = Sympa::Spool::SQL->new('auth');
 
@@ -2821,7 +2803,6 @@ sub confirm {
     Sympa::Language::SetLang($list->lang);
 
     my $name  = $list->name;
-    my $bytes = $message->{'size'};
     my $hdr   = $msg->head;
 
     my $msgid      = $message->get_msg_id;
@@ -3046,7 +3027,6 @@ sub reject {
     $what =~ /^(\S+)\s+(.+)\s*$/;
     my ($which, $key) = ($1, $2);
     $which =~ y/A-Z/a-z/;
-    my $modqueue = $robot->queuemod;
     ## Load the list if not already done, and reject the
     ## subscription if this list is unknown to us.
     my $list = Sympa::List->new($which, $robot);
@@ -3083,8 +3063,6 @@ sub reject {
     }
 
     my $msg          = $message->as_entity();
-    my $bytes        = $message->{'size'};
-    my $customheader = $list->custom_header;
 
     #FIXME: use get_sender_email() ?
     my @sender_hdr = Mail::Address->parse($message->get_header('From'));

@@ -1560,8 +1560,7 @@ sub search {
         my $file = $that->get_etc_filename("search_filters/$filter_file");
 
         my $timeout = 3600;
-        my ($sql_conf, $tsth);
-        my $time = time;
+        my $sql_conf;
 
         unless ($sql_conf = Sympa::Conf::load_sql_filter($file)) {
             $that->send_notify_to_owner('named_filter',
@@ -1670,8 +1669,6 @@ sub search {
             return undef;
         }
         my $timeout = 3600;
-        my $var;
-        my $time = time;
         my %ldap_conf;
 
         return undef unless (%ldap_conf = Sympa::LDAP::load($file));

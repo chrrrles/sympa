@@ -451,7 +451,7 @@ sub delete_bouncer {
 
     if ($action =~ /do_it/i) {
         if ($self->{'list'}->is_list_member($self->{'who'})) {
-            my $u = $self->{'list'}->delete_list_member(
+            $self->{'list'}->delete_list_member(
                 'users'   => [$self->{'who'}],
                 'exclude' => ' 1'
             );
@@ -517,10 +517,7 @@ sub process_dsn {
     my @parts = $self->get_mime_message->parts();
     my $original_rcpt;
     my $final_rcpt;
-    my $user_agent;
-    my $version;
     my $msg_id;
-    my $orig_msg_id;
     my $arrival_date;
 
     $msg_id = $self->get_mime_message->head->get('Message-Id');
@@ -896,7 +893,7 @@ sub process_email_feedback_report {
                             $self->{'efr'}{'original_rcpt'}
                         )
                         ) {
-                        my $u = $list->delete_list_member(
+                        $list->delete_list_member(
                             'users'   => [$self->{'efr'}{'original_rcpt'}],
                             'exclude' => ' 1'
                         );
@@ -1076,7 +1073,6 @@ sub process_ndn {
                     return undef;
                 }
             } else {    # no VERP and no rcpt recognized
-                my $escaped_from = Sympa::Tools::escape_chars($from);
                 Sympa::Log::Syslog::do_log(
                     'info',
                     'error: no address found in message from %s for list %s',
@@ -1099,8 +1095,6 @@ sub store_bounce {
 
     Sympa::Log::Syslog::do_log('debug', 'store_bounce(%s,%s,%s)', $self,
         $bounce_dir, $rcpt);
-
-    my $queue = Sympa::Site->queuebounce;
 
     my $filename = Sympa::Tools::escape_chars($rcpt);
 
@@ -1221,7 +1215,7 @@ sub update_subscriber_bounce_history {
 
 ## RFC1891 compliance check
 sub rfc1891 {
-    my ($self, $result, $from) = @_;
+    my ($self, $result) = @_;
     local $RS = "\n";
 
     Sympa::Log::Syslog::do_log('debug2',
@@ -1315,7 +1309,7 @@ sub corrige {
 
         $newadr = $x400{PN} || "$x400{s}";
         $newadr = "$x400{g}." . $newadr if $x400{g};
-        my ($l, $d) = split /\@/, $from;
+        my (undef, $d) = split /\@/, $from;
 
         $newadr .= "\@$d";
 
@@ -1332,7 +1326,7 @@ sub corrige {
 
     } else {
 
-        my ($l, $d) = split /\@/, $from;
+        my (undef, $d) = split /\@/, $from;
         my $newadr = "$adr\@$d";
 
         return $newadr;
@@ -1413,7 +1407,6 @@ sub anabounce {
 
             $champ{from} =~ s/^.*<(.+)[\>]$/$1/;
             $champ{from} =~ y/[A-Z]/[a-z]/;
-            my ($local, $domaine) = split /\@/, $champ{from};
 
             if ($champ{subject} =~
                 /^Returned mail: (Quota exceeded for user (\S+))$/) {

@@ -478,8 +478,6 @@ sub update_global_user {
 
     my ($field, $value);
 
-    my ($user, $statement, $table);
-
     ## Update each table
     my @set_list;
 
@@ -538,7 +536,6 @@ sub add_global_user {
     }
 
     my ($field, $value);
-    my ($user, $statement, $table);
 
     ## encrypt password
     $values->{'password'} = Sympa::Auth::password_fingerprint($values->{'password'})

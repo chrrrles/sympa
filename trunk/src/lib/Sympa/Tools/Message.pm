@@ -106,7 +106,6 @@ sub split_mail {
     my $dir      = shift;
 
     my $head     = $message->head;
-    my $body     = $message->body;
     my $encoding = $head->mime_encoding;
 
     if ($message->is_multipart
@@ -126,7 +125,6 @@ sub split_mail {
             my $mime_types = load_mime_types();
 
             $fileExt = $mime_types->{$head->mime_type};
-            my $var = $head->mime_type;
         }
 
         ## Store body in file
@@ -430,7 +428,7 @@ sub virus_infected {
         my @list = readdir(DIR);
         closedir(DIR);
         foreach (@list) {
-            my $nbre = unlink("$work_dir/$_");
+            unlink("$work_dir/$_");
         }
         rmdir($work_dir);
     }
@@ -707,7 +705,6 @@ sub _do_text_html {
     my $entity = shift;
     my $string;
     my $text;
-    my $have_mods = 1;
 
     unless (defined $entity->bodyhandle) {
         return 

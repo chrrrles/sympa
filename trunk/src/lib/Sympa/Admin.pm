@@ -179,7 +179,7 @@ sub create_list_old {
         return undef;
     }
 
-    my ($name, $type) = $robot->split_listname($param->{'listname'});
+    my (undef, $type) = $robot->split_listname($param->{'listname'});
     if ($type) {
         Sympa::Log::Syslog::do_log('err',
             'incorrect listname %s matches one of service aliases',
@@ -770,7 +770,7 @@ sub rename_list {
         return 'list_already_exists';
     }
 
-    my ($name, $type) = $new_robot->split_listname($param{'new_listname'});
+    my (undef, $type) = $new_robot->split_listname($param{'new_listname'});
     if ($type) {
         Sympa::Log::Syslog::do_log('err',
             'Incorrect listname %s matches one of service aliases',

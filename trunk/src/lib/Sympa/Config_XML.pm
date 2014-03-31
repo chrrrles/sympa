@@ -146,7 +146,6 @@ sub _getRequiredElements {
     my $self = shift;
     Sympa::Log::Syslog::do_log('debug3',
         'Config_XML::_getRequiredElements()');
-    my $error = 0;
 
     # listname element is obligatory
     unless ($self->_getRequiredSingle('listname')) {
@@ -304,7 +303,6 @@ sub _getChildren {
     Sympa::Log::Syslog::do_log('debug3', 'Config_XML::_getChildren(%s)',
         $node->nodeName);
 
-    my %error_nodes;
     ## return value
     my $hash   = {};
     my $string = "";

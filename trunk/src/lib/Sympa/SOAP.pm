@@ -310,7 +310,6 @@ sub authenticateAndRun {
             ->faultstring('Incorrect number of parameters')
             ->faultdetail('Use : <email> <cookie> <service>');
     }
-    my $auth;
 
     ## Provided email is not trusted, we fetch the user email from the
     ## session_table instead
@@ -475,8 +474,6 @@ sub info {
             ->faultdetail('You should login first');
     }
 
-    my @resultSoap;
-
     unless ($listname) {
         die SOAP::Fault->faultcode('Client')
             ->faultstring('Incorrect number of parameters')
@@ -493,8 +490,6 @@ sub info {
         die SOAP::Fault->faultcode('Server')->faultstring('Unknown list')
             ->faultdetail("List $listname unknown");
     }
-
-    my $sympa = $list->robot->get_address();
 
     my $result = Sympa::Scenario::request_action(
         $list, 'info', 'md5',
@@ -593,8 +588,6 @@ sub createList {
             ->faultstring('User not specified')
             ->faultdetail('Use a trusted proxy or login first ');
     }
-
-    my @resultSoap;
 
     unless ($listname) {
         die SOAP::Fault->faultcode('Client')
@@ -734,8 +727,6 @@ sub closeList {
             ->faultstring('User not specified')
             ->faultdetail('Use a trusted proxy or login first ');
     }
-
-    my @resultSoap;
 
     unless ($listname) {
         die SOAP::Fault->faultcode('Client')
@@ -1036,8 +1027,6 @@ sub del {
             ->faultdetail('Not member of list or not subscribed');
     }
 
-    my $gecos = $user_entry->{'gecos'};
-
     ## Really delete and rewrite to disk.
     my $u;
     unless ($u =
@@ -1119,8 +1108,6 @@ sub review {
         die SOAP::Fault->faultcode('Server')->faultstring('Unknown list')
             ->faultdetail("List $listname unknown");
     }
-
-    my $sympa = $list->robot->get_address();
 
     my $user;
 
@@ -1230,10 +1217,6 @@ sub fullReview {
             ->faultdetail('Listmaster or listowner required');
     }
 
-    my $sympa = $list->robot->get_address();
-
-    my $is_owner = $list->am_i('owner', $sender);
-
     ## Members list synchronization if include is in use
     if ($list->has_include_data_sources()) {
         unless ($list->on_the_fly_sync_include('use_ttl' => 1)) {
@@ -1330,7 +1313,6 @@ sub signoff {
             ->faultdetail('Use : <list> ');
     }
 
-    my $l;
     my $list = Sympa::List->new($listname, $robot);    #FIXME: $listname may be '*'
 
     ## Is this list defined
@@ -1385,7 +1367,6 @@ sub signoff {
     }
     if ($action =~ /owner/i) {
         ## Send a notice to the owners.
-        my $keyauth = $list->compute_auth($sender, 'add');
         unless (
             $list->send_notify_to_owner(
                 'sigrequest',
@@ -1548,7 +1529,6 @@ sub subscribe {
     if ($action =~ /owner/i) {
 
         ## Send a notice to the owners.
-        my $keyauth = $list->compute_auth($sender, 'add');
         unless (
             $list->send_notify_to_owner(
                 'subrequest',
@@ -1671,7 +1651,6 @@ sub subscribe {
 ## TODO (pour listmaster, toutes les listes)
 sub complexWhich {
     my $self = shift;
-    my @result;
     my $sender = $ENV{'USER_EMAIL'};
     Sympa::Log::Syslog::do_log('notice', 'xx complexWhich(%s)', $sender);
 
@@ -1682,7 +1661,6 @@ sub complexLists {
     my $self     = shift;
     my $topic    = shift || '';
     my $subtopic = shift || '';
-    my @result;
     my $sender = $ENV{'USER_EMAIL'};
     Sympa::Log::Syslog::do_log('notice', 'complexLists(%s)', $sender);
 
@@ -1720,7 +1698,6 @@ sub which {
     foreach my $name (keys %listnames) {
         my $list = $listnames{$name};
 
-        my $list_address;
         my $result_item;
 
         my $result = Sympa::Scenario::request_action(
