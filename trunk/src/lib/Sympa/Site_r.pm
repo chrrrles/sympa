@@ -355,7 +355,7 @@ sub compute_auth {
     # To send auth request specific to a list
     $list->request_auth('user@dom.ain', 'subscribe'):
 
-Sends an authentification request for a requested
+Sends an authentication request for a requested
 command.
 
 IN : 
