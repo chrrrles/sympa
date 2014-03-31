@@ -40,9 +40,9 @@ my $warning_timeout = 600;
 # logs are unavailable.
 my $warning_date = 0;
 
-our $log_level = undef;
+my $log_level = undef;
 
-our %levels = (
+my %levels = (
     err    => 0,
     info   => 0,
     notice => 0,
