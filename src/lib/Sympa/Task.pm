@@ -390,7 +390,7 @@ sub stringify_parsed_instructions {
         return undef;
     } else {
         $self->{'messageasstring'} = $new_string;
-        if ($Sympa::Log::Syslog::get_log_level > 1) {
+        if (Sympa::Log::Syslog::get_log_level() > 1) {
             Sympa::Log::Syslog::do_log('debug2',
                 'task %s content recreated. Content:',
                 $self->get_description);
