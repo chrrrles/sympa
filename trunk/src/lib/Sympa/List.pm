@@ -2420,11 +2420,15 @@ sub filter_recipients_by_topics {
     my @possible_verptabrcpt;
     if ($self->is_there_msg_topic()) {
         @selected_tabrcpt =
-            $self->select_list_members_for_topic($message->get_topic(),
-            $message->{'rcpts_by_mode'}{$mode}{'noverp'});
+            $self->select_list_members_for_topic(
+                $message->get_topic() || '',
+                $message->{'rcpts_by_mode'}{$mode}{'noverp'}
+            );
         @possible_verptabrcpt =
-            $self->select_list_members_for_topic($message->get_topic(),
-            $message->{'rcpts_by_mode'}{$mode}{'verp'});
+            $self->select_list_members_for_topic(
+                $message->get_topic() || '',
+            $message->{'rcpts_by_mode'}{$mode}{'verp'}
+        );
     } else {
         @selected_tabrcpt = @{$message->{'rcpts_by_mode'}{$mode}{'noverp'}};
         @possible_verptabrcpt = @{$message->{'rcpts_by_mode'}{$mode}{'verp'}};
