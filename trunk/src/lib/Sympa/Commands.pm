@@ -2676,7 +2676,7 @@ sub distribute {
         {'list' => $list->name, 'robot' => $robot->domain, 'authkey' => $key}
     );
     my $message = undef;
-    $message = Sympa::Message->new($message_in_spool)
+    $message = Sympa::Message->new(%$message_in_spool)
         if $message_in_spool;
     unless (defined $message) {
         Sympa::Log::Syslog::do_log('err',
@@ -2786,7 +2786,7 @@ sub confirm {
 
     my $message_in_spool = $spool->get_message({'authkey' => $key});
     my $message = undef;
-    $message = Sympa::Message->new($message_in_spool)
+    $message = Sympa::Message->new(%$message_in_spool)
         if $message_in_spool;
     unless ($message) {
         Sympa::Log::Syslog::do_log('err',
@@ -3050,7 +3050,7 @@ sub reject {
         {'list' => $list->name, 'robot' => $robot->domain, 'authkey' => $key}
     );
     my $message = undef;
-    $message = Sympa::Message->new($message_in_spool)
+    $message = Sympa::Message->new(%$message_in_spool)
         if $message_in_spool;
     unless ($message) {
         Sympa::Log::Syslog::do_log('info',
@@ -3173,7 +3173,7 @@ sub modindex {
         )
         ) {
         my $message = undef;
-        $message = Sympa::Message->new($message_in_spool)
+        $message = Sympa::Message->new(%$message_in_spool)
             if $message_in_spool;
         next unless $message;
         push @spool, $message->as_entity();

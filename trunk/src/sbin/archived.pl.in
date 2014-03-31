@@ -373,14 +373,12 @@ while (!$end) {
                 # if not list owner or list editor or listmaster,n check if
                 # sender of remove order is sender of the message to remove
 
-                my $new_message;
-                unless (
-                    $new_message = Sympa::Message->new(
-                        {   'file'       => "$arcpath/arctxt/$file",
-                            'noxsympato' => 'noxsympato'
-                        }
-                    )
-                    ) {
+                my $new_message = Sympa::Message->new(
+                    'file'       => "$arcpath/arctxt/$file",
+                    'noxsympato' => 'noxsympato'
+                );
+
+                unless ($new_message) {
                     Sympa::Log::Syslog::do_log('err',
                         'Unable to load new message %s/arctxt/%s',
                         $arcpath, $file);

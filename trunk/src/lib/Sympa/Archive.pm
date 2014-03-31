@@ -125,9 +125,8 @@ sub scan_dir_archive {
         );
 
         my $message = Sympa::Message->new(
-            {   'file'       => "$dir/$month/arctxt/$file",
-                'noxsympato' => 'noxsympato'
-            }
+            'file'       => "$dir/$month/arctxt/$file",
+            'noxsympato' => 'noxsympato'
         );
         unless ($message) {
             Sympa::Log::Syslog::do_log('err',
@@ -330,7 +329,7 @@ sub clean_archived_message {
     my $robot   = shift;
     my $input   = shift;
     my $output  = shift;
-    my $message = Sympa::Message->new({'file' => $input, 'noxsympato' => 1});
+    my $message = Sympa::Message->new('file' => $input, 'noxsympato' => 1);
 
     if ($message->clean_html($robot)) {
         if (open TMP, '>', $output) {

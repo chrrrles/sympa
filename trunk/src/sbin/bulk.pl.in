@@ -383,7 +383,7 @@ while (!$end) {
             $message_from_spool =
                 $spool->get_message({'messagekey' => $messagekey});
             my $message;
-            $message = Sympa::Message->new($message_from_spool)
+            $message = Sympa::Message->new(%$message_from_spool)
                 if $message_from_spool;
             unless ($message) {
                 Sympa::Log::Syslog::do_log(
@@ -450,10 +450,9 @@ while (!$end) {
 
             foreach $rcpt (@rcpts) {
                 my $message = Sympa::Message->new(
-                    {   'messageasstring' => $messageasstring_init,
-                        'noxsympato'      => 'noxsympato',
-                        'list_object'     => $list,
-                    }
+                    'messageasstring' => $messageasstring_init,
+                    'noxsympato'      => 'noxsympato',
+                    'list_object'     => $list,
                 );
                 my $entity = $message->as_entity();
                 my $notification_id;
