@@ -340,8 +340,6 @@ sub cmd_process {
     my $self = shift;
     my $task = shift;    # The parsed instruction to execute.
 
-    my $messageasstring = $task->{'messageasstring'};
-
     Sympa::Log::Syslog::do_log(
         'debug',
         'Processing "%s" (line %d of task %s)',
@@ -742,7 +740,6 @@ sub purge_logs_table {
 
     # If a log is older then $list->get_latest_distribution_date()-$delai expire the log
     my ($self, $task) = @_;
-    my $date;
     my $execution_date = $task->{'date'};
     my @slots          = ();
 
@@ -1042,7 +1039,6 @@ sub expire_bounce {
     # Is this variable my be set in to task modele ?
     my ($self, $task) = @_;
 
-    my $execution_date = $task->{'date'};
     my @tab            = @{$self->{'Rarguments'}};
     my $delay          = $tab[0];
 
@@ -1189,7 +1185,6 @@ sub chk_cert_expiration {
         my @date = (0, 0, 0, $2, $Sympa::Spool::File::Task::months{$1}, $3 - 1900);
         $date =~ s/notAfter=//;
         my $expiration_date = Time::Local::timegm(@date);
-        my $rep = Sympa::Tools::Time::adate($expiration_date);
 
         # no near expiration nor expiration processing
         if ($expiration_date > $limit) {
@@ -1371,7 +1366,6 @@ sub update_crl {
         $date =~ /nextUpdate=(\w+)\s*(\d+)\s(\d\d)\:(\d\d)\:\d\d\s(\d+).+/;
         my @date = (0, $4, $3 - 1, $2, $Sympa::Spool::File::Task::months{$1}, $5 - 1900);
         my $expiration_date = Time::Local::timegm(@date);
-        my $rep = Sympa::Tools::Time::adate($expiration_date);
 
         ## check if the crl is soon expired or expired
         #my $file_date = $task->{'date'} - (-M $file) * 24 * 60 * 60; # last modification date

@@ -315,7 +315,7 @@ sub smart_lessthan {
     $strb =~ s/^\s+//;
     $strb =~ s/\s+$//;
     $ERRNO = 0;
-    my ($numa, $unparsed) = POSIX::strtod($stra);
+    my (undef, $unparsed) = POSIX::strtod($stra);
     my $numb;
     $numb = POSIX::strtod($strb)
         unless ($ERRNO || $unparsed != 0);

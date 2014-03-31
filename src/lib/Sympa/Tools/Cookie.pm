@@ -52,7 +52,6 @@ sub get_mac {
 
 sub set_cookie_extern {
     my ($secret, $http_domain, %alt_emails) = @_;
-    my $expiration;
     my $cookie;
     my $value;
 

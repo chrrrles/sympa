@@ -50,7 +50,6 @@ sub get_recipients_status {
     my $robot_id = $list->domain;
 
     my $sth;
-    my $pk;
 
     # the message->head method return message-id including <blabla@dom>
     # where mhonarc return blabla@dom that's why we test both of them
@@ -177,7 +176,7 @@ sub db_init_notification_table {
 ##############################################
 sub db_insert_notification {
     Sympa::Log::Syslog::do_log('debug2', '(%s, %s, %s, %s, ...)', @_);
-    my ($notification_id, $type, $status, $arrival_date,
+    my ($notification_id, undef, $status, $arrival_date,
         $notification_as_string)
         = @_;
     chomp $arrival_date;
@@ -222,7 +221,6 @@ sub find_notification_id_by_message {
     Sympa::Log::Syslog::do_log('debug2',
         'find_notification_id_by_message(%s,%s,%s,%s)',
         $recipient, $msgid, $listname, $robot_id);
-    my $pk;
 
     my $sth;
 

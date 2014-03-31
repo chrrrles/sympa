@@ -48,8 +48,6 @@ our $last_date_aggregation;
 
 
 sub get_log_date {
-    my $date_from, my $date_to;
-
     my $sth;
     my @dates;
     foreach my $query ('MIN', 'MAX') {

@@ -889,7 +889,7 @@ sub _fix_html_part {
         unless ($cset->decoder) {
 
             # Charset is unknown.  Detect 7-bit charset.
-            my ($dummy, $charset) =
+            my (undef, $charset) =
                 MIME::Charset::body_encode($body, '', Detect7Bit => 'YES');
             $cset = MIME::Charset->new($charset)
                 if $charset;
@@ -1083,7 +1083,6 @@ sub smime_encrypt {
     my $email = shift;
 
     my $usercert;
-    my $dummy;
 
     my $base = Sympa::Site->ssl_cert_dir . '/' . Sympa::Tools::escape_chars($email);
     if (-f "$base\@enc") {
@@ -1289,8 +1288,6 @@ sub smime_sign_check {
     my $is_signed = {};
     $is_signed->{'body'}    = undef;
     $is_signed->{'subject'} = undef;
-
-    my $verify;
 
     ## first step is the msg signing OK ; /tmp/sympa-smime.$PID is created
     ## to store the signer certificat for step two. I known, that's dirty.
@@ -1696,7 +1693,7 @@ sub add_parts {
         return $msg;
     }
 
-    my ($header, $headermime);
+    my $header;
     foreach my $file (
         "$listdir/message.header",
         "$listdir/message.header.mime",
@@ -1713,7 +1710,7 @@ sub add_parts {
         }
     }
 
-    my ($footer, $footermime);
+    my $footer;
     foreach my $file (
         "$listdir/message.footer",
         "$listdir/message.footer.mime",
@@ -1937,7 +1934,7 @@ sub _append_footer_header_to_part {
 
         # n.b. detect_7bit_charset() in MIME::Charset prior to 1.009.2 doesn't
         # work correctly.
-        my ($dummy, $charset) =
+        my (undef, $charset) =
             MIME::Charset::body_encode($body, '', Detect7Bit => 'YES');
         $cset = MIME::Charset->new($charset)
             if $charset;
@@ -2445,7 +2442,6 @@ sub _urlize_part {
     my $message     = shift;
     my $list        = shift;
     my $expl        = $list->dir . '/urlized';
-    my $robot       = $list->domain;
     my $dir         = shift;
     my $i           = shift;
     my $listname    = $list->name;

@@ -60,7 +60,6 @@ sub new {
     my $cookie = $context->{'cookie'};
     my $action = $context->{'action'};
     my $rss    = $context->{'rss'};
-    my $ajax   = $context->{'ajax'};
     Sympa::Log::Syslog::do_log('debug2', '(%s, cookie=%s, action=%s)',
         $robot, $cookie, $action);
 
@@ -359,7 +358,6 @@ sub renew {
         next unless ($var);
         $hash{$var} = $self->{$var};
     }
-    my $data_string = Sympa::Tools::Data::hash_2_string(\%hash);
 
     my $sth;
     ## Cookie may contain previous session ID.

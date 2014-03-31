@@ -414,7 +414,6 @@ sub set_robot_conf {
 # Store configs to database
 sub conf_2_db {
     Sympa::Log::Syslog::do_log('debug2', '(%s)', @_);
-    my $config_file = shift || get_sympa_conf();
 
     my @conf_parameters = @Sympa::ConfDef::params;
 
@@ -1320,8 +1319,6 @@ sub load_automatic_lists_description {
 
 ## load trusted_application.conf configuration file
 sub load_trusted_application {
-    my $robot = shift;
-
     # find appropriate trusted-application.conf file
     my $config_file =
         _get_config_file_name({'file' => "trusted_applications.conf"});
@@ -1581,7 +1578,7 @@ sub load_generic_conf_file {
 ### load_a_param
 #
 sub _load_a_param {
-    my ($key, $value, $p) = @_;
+    my (undef, $value, $p) = @_;
 
     ## Empty value
     if ($value =~ /^\s*$/) {

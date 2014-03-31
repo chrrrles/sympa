@@ -95,7 +95,7 @@ sub is_allowed_to_sync {
     Sympa::Log::Syslog::do_log('debug',
         "Checking whether sync is allowed at current time");
 
-    my ($sec, $min, $hour) = localtime(time);
+    my (undef, $min, $hour) = localtime(time);
     my $now = 60 * int($hour) + int($min);
 
     foreach my $range (split(/\s+/, $ranges)) {

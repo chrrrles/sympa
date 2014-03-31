@@ -129,9 +129,6 @@ sub maketext {
     my $stash         = $context->stash();
     my $component     = $stash->get('component');
     my $template_name = $component->{'name'};
-    my ($provider) =
-        grep { $_->{HEAD}[2] eq $component } @{$context->{LOAD_TEMPLATES}};
-    my $path = $provider->{HEAD}[1] if $provider;
 
     ## Strangely the path is sometimes empty...
     ## TODO : investigate
@@ -152,7 +149,7 @@ sub maketext {
 # OUT:
 #    Subref to generate formatted (i18n'ized) date/time.
 sub locdatetime {
-    my ($fmt, $arg) = @_;
+    my (undef, $arg) = @_;
     if ($arg !~
         /^(\d{4})\D(\d\d?)(?:\D(\d\d?)(?:\D(\d\d?)\D(\d\d?)(?:\D(\d\d?))?)?)?/
         ) {

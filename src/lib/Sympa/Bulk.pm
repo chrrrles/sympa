@@ -544,8 +544,6 @@ sub remove_bulkspool_message {
 sub get_remaining_packets_count {
     Sympa::Log::Syslog::do_log('debug3', '()');
 
-    my $m_count = 0;
-
     unless (
         $sth = Sympa::DatabaseManager::do_prepared_query(
             q{SELECT COUNT(*)

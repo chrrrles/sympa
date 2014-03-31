@@ -649,8 +649,6 @@ sub sendto {
     $delivery_date = time()
         unless $delivery_date;
 
-    my $msg;
-
     if ($message->is_crypted) {
 
         # encrypt message for each rcpt and send the message
@@ -876,8 +874,6 @@ sub smtpto {
             $from, join(',', @{$rcpt}), $sign_mode);
     }
 
-    my ($pid, $str);
-
     ## Escape "-" at beginning of recipient addresses
     ## prevent sendmail from taking it as argument
 
@@ -907,7 +903,7 @@ sub smtpto {
         croak sprintf('Unable to create a channel in smtpto: %s', $ERRNO);
         ## No return
     }
-    $pid = safefork();
+    my $pid = safefork();
     $pid{$pid} = 0;
 
     my $sendmail = $robot->sendmail;
@@ -1149,10 +1145,8 @@ sub fix_part {
 ## Exit with a fatal error is fork failed after all
 ## tests have been exhausted.
 sub safefork {
-    my ($i, $pid);
-
     my $err;
-    for ($i = 1; $i < 4; $i++) {
+    for (my $i = 1; $i < 4; $i++) {
         my ($pid) = fork;
         return $pid if (defined($pid));
 
