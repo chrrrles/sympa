@@ -120,10 +120,6 @@ sub new {
     my $pkg   = shift;
     my $datas = shift;
 
-    if ($datas->{'message_in_spool'}) {    #compat.
-        $datas = $datas->{'message_in_spool'};
-    }
-
     ## Bless Message object
     my $self = bless {
         'noxsympato' => $datas->{'noxsympato'},
