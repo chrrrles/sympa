@@ -718,8 +718,6 @@ Return:
 
 =item * I<the topic>, if it exists
 
-=item * I<empty string>, otherwise
-
 =back 
 
 =back
@@ -730,12 +728,7 @@ Return:
 sub get_topic {
     my ($self) = @_;
 
-    if (defined $self->{'topic'}) {
-        return $self->{'topic'};
-
-    } else {
-        return '';
-    }
+    return $self->{'topic'};
 }
 
 sub clean_html {
