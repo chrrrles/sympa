@@ -473,4 +473,6 @@ sub slurp_file {
 
 =back
 
+=cut
+
 1;
