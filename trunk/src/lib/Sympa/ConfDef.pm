@@ -23,7 +23,7 @@
 
 package Sympa::ConfDef;
 
-use strict "vars";
+use strict;
 
 use Sympa::Constants;
 

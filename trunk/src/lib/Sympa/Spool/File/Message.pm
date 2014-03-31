@@ -23,9 +23,12 @@
 
 package Sympa::Spool::File::Message;
 
+use strict;
 use base qw(Sympa::Spool::File);
 
 use Sympa::Log::Syslog;
+
+my $filename_regexp = '^(\S+)\.(\d+)\.\w+$';
 
 sub new {
     Sympa::Log::Syslog::do_log('debug2', '(%s, %s)', @_);
