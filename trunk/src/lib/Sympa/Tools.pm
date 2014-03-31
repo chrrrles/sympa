@@ -793,18 +793,6 @@ sub qencode_hierarchy {
     return $count;
 }
 
-# input user agent string and IP. return 1 if suspected to be a crawler.
-# initial version based on crawlers_detection.conf file only
-# later : use Session table to identify those who create a lot of sessions
-##FIXME:per-robot config should be available.
-sub is_a_crawler {
-    my $robot = shift;
-    my $context = shift || {};
-
-    return Sympa::Site->crawlers_detection->{'user_agent_string'}
-        {$context->{'user_agent_string'} || ''};
-}
-
 sub get_message_id {
     my $robot = shift;
     my $domain;
