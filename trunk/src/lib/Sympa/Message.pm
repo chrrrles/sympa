@@ -283,19 +283,6 @@ sub load {
     return $self;
 }
 
-
-#DEPRECATED.
-#sub create_message_from_mime_entity(entity)
-
-#DEPRECATED.
-#sub create_message_from_spool(hash)
-
-#DEPRECATED.
-#sub create_message_from_file(path)
-
-#DEPRECATED.
-#sub create_message_from_string(messageasstring)
-
 =over 4
 
 =item to_string
@@ -524,39 +511,6 @@ sub get_family {
     return shift->{'family'};
 }
 
-## NO LONGER USED.
-sub get_recipient {
-    my $self = shift;
-
-    return $self->{'rcpt'} if $self->{'rcpt'};
-
-    unless (defined $self->{'noxsympato'}) {
-        Sympa::Log::Syslog::do_log('err', 'no X-Sympa-To found.');
-        return undef;
-    }
-    my $rcpt;
-    unless ($rcpt = $self->get_header('To')) {
-        Sympa::Log::Syslog::do_log('err', 'no To: header found.');
-        return undef;
-    }
-
-    #FIXME: strip garbage.
-    ## Extract recipient address (X-Sympa-To)
-    $self->{'rcpt'} = $rcpt;
-    return $self->{'rcpt'};
-}
-
-# NOT USED.
-sub set_recipient {
-    my $self     = shift;
-    my $new_rcpt = shift;
-
-    $self->{'rcpt'} = $new_rcpt;
-}
-
-#sub get_list()
-#OBSOLETED: use list().
-
 =over 4
 
 =item list
@@ -572,15 +526,6 @@ sub list {
     croak "Can't modify \"list\" attribute" if scalar @_ > 1;
     return shift->{'list'};
 }
-
-#sub set_sympa_headers({rcpt => $rcpt, from => $from})
-#NO LONGER USED.
-
-#sub get_sympa_local_part()
-#DEPRECATED: Use $robot->split_listname().
-
-#sub get_robot()
-#OBSOLETED: use robot().
 
 =over 4
 
@@ -1479,9 +1424,6 @@ sub get_mime_message {
     return $self->{'msg'};
 }
 
-#sub get_encrypted_mime_message()
-#DEPRECATED: Use as_entity().
-
 =over 4
 
 =item as_entity
@@ -1512,14 +1454,6 @@ sub set_message_as_string {
     $self->{'msg_as_string'} = shift;
 }
 
-#NOT USED.
-sub set_decrypted_message_as_string {
-    my $self  = shift;
-    my $param = shift;
-
-    $self->{'decrypted_msg_as_string'} = $param->{'new_message_as_string'};
-}
-
 # Internal use.
 sub reset_message_from_entity {
     my $self   = shift;
@@ -1539,9 +1473,6 @@ sub reset_message_from_entity {
     }
     return 1;
 }
-
-#sub get_encrypted_message_as_string {
-#DEPRECATED: Use as_string().
 
 =over 4
 
