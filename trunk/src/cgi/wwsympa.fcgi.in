@@ -2045,11 +2045,6 @@ Sympa::Site->send_notify_to_listmaster(undef, undef, undef, 1);
 sub wwslog {
     my $facility = shift;
 
-    # do not log if log level if too high regarding the log requested by user
-    return
-        if ($Sympa::Log::Syslog::levels{$facility} >
-        $Sympa::Log::Syslog::log_level);
-
     my $msg = shift;
 
     my $remote = $ENV{'REMOTE_HOST'} || $ENV{'REMOTE_ADDR'};
@@ -21810,8 +21805,7 @@ sub do_send_mail {
         if ($in{'url'} =~ /^\s*$/ && $in{'uploaded_file'} =~ /^\s*$/) {
             Sympa::Report::reject_report_web('user', 'missing_post_source', {},
                 $param->{'action'});
-            ($Sympa::Log::Syslog::log_level >= 0)
-                && wwslog('info', 'Missing url and uploaded file');
+            wwslog('info', 'Missing url and uploaded file');
             return 'compose_mail';
         }
 
@@ -21820,7 +21814,7 @@ sub do_send_mail {
         if ($in{'url'} =~ /\S/ && $in{'uploaded_file'} =~ /\S/) {
             Sympa::Report::reject_report_web('user', 'two_post_sources_defined', {},
                 $param->{'action'});
-            ($Sympa::Log::Syslog::log_level >= 0) && wwslog(
+            wwslog(
                 'info',
                 'User specified both an URL (%s) and a file to upload (%s). Can\'t choose between them.',
                 $in{'url'},
@@ -21882,7 +21876,7 @@ sub do_send_mail {
         } else {
             Sympa::Report::reject_report_web('user', 'unable_to_parse', {},
                 $param->{'action'});
-            ($Sympa::Log::Syslog::log_level >= 0) && wwslog(
+            wwslog(
                 'info',
                 'A MIME part could not be created with the supplied data, %s, %s',
                 $in{'url'},
@@ -21896,8 +21890,7 @@ sub do_send_mail {
             Sympa::Report::reject_report_web('user', 'missing_arg',
                 {'argument' => 'body'},
                 $param->{'action'});
-            ($Sympa::Log::Syslog::log_level >= 0)
-                && wwslog('info', 'Missing body');
+            wwslog('info', 'Missing body');
             web_db_log(
                 {   'robot'        => $robot_id,
                     'list'         => $list->name,
