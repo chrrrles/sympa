@@ -49,14 +49,12 @@ use Sympa::Tools::Text;
 my $opensmtp = 0;
 my $fh       = 'fh0000000000';    ## File handle for the stream.
 
-my $max_arg = eval { POSIX::_SC_ARG_MAX; };
+my $max_arg;
+eval {
+    $max_arg = POSIX::sysconf( &POSIX::_SC_ARG_MAX );
+};
 if ($EVAL_ERROR) {
     $max_arg = 4096;
-    printf STDERR Sympa::Language::gettext(
-        "Your system does not conform to the POSIX P1003.1 standard, or\nyour Perl system does not define the _SC_ARG_MAX constant in its POSIX\nlibrary. You must modify the smtp.pm module in order to set a value\nfor variable %s.\n"
-    ), $max_arg;
-} else {
-    $max_arg = POSIX::sysconf($max_arg);
 }
 
 my %pid = ();
