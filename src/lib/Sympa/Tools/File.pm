@@ -26,6 +26,7 @@ package Sympa::Tools::File;
 use strict;
 use warnings;
 
+use Carp qw(croak);
 use Encode::Guess;
 use English qw(-no_match_vars);
 use File::Copy::Recursive;
@@ -464,7 +465,7 @@ sub slurp_file {
     my ($file) = @_;
 
     open(my $handle, '<', $file)
-        or return undef;
+        or croak "Cannot open file $file: $ERRNO\n";
     local $RS; # enable localized slurp mode
     my $content = <$handle>;
     close($handle);
