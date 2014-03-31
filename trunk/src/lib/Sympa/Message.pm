@@ -226,13 +226,6 @@ sub _load {
     my $self            = shift;
     my $messageasstring = shift;
 
-    if (ref $messageasstring) {
-        Sympa::Log::Syslog::do_log('err',
-            'deprecated: $messageasstring must be string, not %s',
-            $messageasstring);
-        return undef;
-    }
-
     # Get metadata
 
     unless ($self->{'noxsympato'}) {
