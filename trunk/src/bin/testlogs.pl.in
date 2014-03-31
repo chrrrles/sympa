@@ -57,5 +57,3 @@ if ($options{'log_level'}) {
         Sympa::Site->log_level);
 }
 print "Ok, now check logs \n";
-
-1;
