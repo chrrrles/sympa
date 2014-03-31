@@ -29,7 +29,7 @@ Message - mail message embedding for internal use in Sympa
 
 =head1 DESCRIPTION 
 
-While processing a message in Sympa, we need to link informations to the
+While processing a message in Sympa, we need to link information to the
 message, modify headers and such.  This was quite a problem when a message was
 signed, as modifying anything in the message body would alter its MD5
 footprint.  And probably make the message to be rejected by clients verifying
