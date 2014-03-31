@@ -69,7 +69,7 @@ sub new {
     # passive_session are session not stored in the database, they are used
     # for crawler bots and action such as css, wsdl, ajax and rss
 
-    if (Sympa::Tools::is_a_crawler(
+    if (_is_a_crawler(
             $robot, {'user_agent_string' => $ENV{'HTTP_USER_AGENT'}}
         )
         ) {
@@ -829,6 +829,18 @@ sub get_id {
     my $self = shift;
     return '' unless $self->{'id_session'} and $self->{'robot'};
     return sprintf '%s@%s', $self->{'id_session'}, $self->{'robot'}->name;
+}
+
+# input user agent string and IP. return 1 if suspected to be a crawler.
+# initial version based on crawlers_detection.conf file only
+# later : use Session table to identify those who create a lot of sessions
+##FIXME:per-robot config should be available.
+sub _is_a_crawler {
+    my $robot = shift;
+    my $context = shift || {};
+
+    return Sympa::Site->crawlers_detection->{'user_agent_string'}
+        {$context->{'user_agent_string'} || ''};
 }
 
 1;
