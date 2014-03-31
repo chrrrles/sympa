@@ -31,6 +31,15 @@ use English qw(-no_match_vars);
 use Sympa::Constants;
 use Sympa::Log::Syslog;
 
+# return the name of the used daemon
+sub get_daemon_name {
+    my $daemon_tmp = shift;
+    my @path       = split(/\//, $daemon_tmp);
+    my $daemon     = $path[$#path];
+    $daemon =~ s/(\.[^\.]+)$//;
+    return $daemon;
+}
+
 ## Remove PID file and STDERR output
 sub remove_pid {
     my ($name, $pid, $options) = @_;

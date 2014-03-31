@@ -123,7 +123,7 @@ unless (defined Sympa::Robot::get_robots()) {
 ## Open log
 Sympa::Log::Syslog::set_log_level(Sympa::Site->log_level);
 
-my $daemon_name = Sympa::Log::Syslog::set_daemon($0);
+my $daemon_name = Sympa::Tools::Daemon::get_daemon_name($0);
 
 Sympa::Log::Syslog::do_openlog(Sympa::Site->log_facility, Sympa::Site->log_socket_type,
     'wwsympa');

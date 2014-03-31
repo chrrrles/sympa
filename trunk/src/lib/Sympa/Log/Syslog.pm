@@ -232,15 +232,6 @@ sub do_connect {
     }
 }
 
-# return the name of the used daemon
-sub set_daemon {
-    my $daemon_tmp = shift;
-    my @path       = split(/\//, $daemon_tmp);
-    my $daemon     = $path[$#path];
-    $daemon =~ s/(\.[^\.]+)$//;
-    return $daemon;
-}
-
 sub set_log_level {
     $log_level = shift;
 }

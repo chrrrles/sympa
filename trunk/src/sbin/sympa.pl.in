@@ -381,7 +381,7 @@ srand(time());
 my $version_string =
     sprintf("Sympa version is %s\n", Sympa::Constants::VERSION);
 
-my $daemon_name = Sympa::Log::Syslog::set_daemon($0);
+my $daemon_name = Sympa::Tools::Daemon::get_daemon_name($0);
 my $ip;
 $ip = $ENV{'REMOTE_HOST'};
 $ip = $ENV{'REMOTE_ADDR'} unless ($ip);
