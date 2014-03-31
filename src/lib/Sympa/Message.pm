@@ -117,9 +117,7 @@ Parameters:
 
 =back 
 
-Return:
-
-A new L<Sympa::Message> object, or I<undef>, if something went wrong.
+Returns a new L<Sympa::Message> object, or I<undef> for failure.
 
 =cut 
 
@@ -292,14 +290,9 @@ sub _load {
     return $self;
 }
 
-=over 4
+=item $message->to_string()
 
-=item to_string
-
-I<Serializer>.
-Returns serialized data of Message object.
-
-=back
+Returns serialized data for this message.
 
 =cut
 
@@ -341,21 +334,16 @@ sub to_string {
     return $str;
 }
 
-=over 4
+=item $message->get_header( FIELD, [ SEP ] )
 
-=item get_header ( FIELD, [ SEP ] )
-
-I<Instance method>.
 Gets value(s) of header field FIELD, stripping trailing newline.
 
-B<In scalar context> without SEP, returns first occurrence or C<undef>.
-If SEP is defined, returns all occurrences joined by it, or C<undef>.
-Otherwise B<in array context>, returns an array of all occurrences or C<()>.
+B<In scalar context> without SEP, returns first occurrence or I<undef>.
+If SEP is defined, returns all occurrences joined by it, or I<undef>.
+Otherwise B<in array context>, returns an array of all occurrences or I<()>.
 
 Note:
 Folding newlines will not be removed.
-
-=back
 
 =cut
 
@@ -597,36 +585,22 @@ sub check_smime_signature {
     }
 }
 
-=over 4
+=item $message->dump($output)
 
-=item dump
+Dumps this message to a stream.
 
-I<Instance method>.
-Dump a Message object to a stream.
-
-Arguments:
+Parameters:
 
 =over 4
 
-=item * I<$self>, the Message object to dump
-
-=item * I<$output>, the stream to which dump the object
+=item * I<$output>: the stream to which dump the object
 
 =back 
 
-Return:
-
-=over 4
-
-=item * I<1>, if everything's alright
-
-=back 
-
-=back
+Returns a true value for success.
 
 =cut 
 
-## Dump the Message object
 sub dump {
     my ($self, $output) = @_;
 
@@ -649,36 +623,22 @@ sub dump {
     return 1;
 }
 
-=over 4
+=item $message->add_topic($topic)
 
-=item add_topic
-
-I<Instance method>.
 Add topic and put header X-Sympa-Topic.
 
-Arguments:
+Parameters:
 
 =over 4
 
-=item * I<$self>, the Message object to which add a topic
-
-=item * I<$output>, the string containing the topic to add
+=item * I<$topic>: the topic, as a string
 
 =back 
 
-Return:
-
-=over 4
-
-=item * I<1>, if everything's alright
-
-=back 
-
-=back
+Returns a true value for success.
 
 =cut 
 
-## Add topic and put header X-Sympa-Topic
 sub add_topic {
     my ($self, $topic) = @_;
 
@@ -697,34 +657,12 @@ sub _set_topic {
     }
 }
 
-=over 4
+=item $message->get_topic()
 
-=item get_topic
-
-I<Instance method>.
-Get topic.
-
-Arguments:
-
-=over 4
-
-=item * I<$self>, the Message object whose topic is retrieved
-
-=back 
-
-Return:
-
-=over 4
-
-=item * I<the topic>, if it exists
-
-=back 
-
-=back
+Gets the topic of this message.
 
 =cut 
 
-## Get topic
 sub get_topic {
     my ($self) = @_;
 
@@ -1382,14 +1320,9 @@ sub get_mime_message {
     return $self->{'msg'};
 }
 
-=over 4
+=item $message->as_entity()
 
-=item as_entity
-
-I<Instance method>.
-Returns message content as a L<MIME::Entity> object.
-
-=back
+Returns the content of this message, as a L<MIME::Entity> object.
 
 =cut
 
@@ -1431,14 +1364,9 @@ sub _reset_message_from_entity {
     return 1;
 }
 
-=over 4
+=item $message->as_string()
 
-=item as_string
-
-I<Instance method>.
-Returns message content as a string.
-
-=back
+Returns the content of this message, as a string.
 
 =cut
 
@@ -1879,29 +1807,22 @@ sub _append_footer_header_to_part {
     return $new_body;
 }
 
-=over 4
+=item $message->personalize($list, [ $recipient ])
 
-=item personalize ( LIST, [ RCPT ] )
-
-I<Instance method>.
 Personalize a message with custom attributes of a user.
 
+Parameters:
+
 =over 4
 
-=item LIST
+=item * I<$list>: a L<Sympa::List> object.
 
-L<List> object.
-
-=item RCPT
-
-Recipient.
+=item * I<$recipient>: the recipient email
 
 =back
 
-Returns modified message itself, or C<undef> if error occurred.
+Returns the modified message itself, or I<undef> for failure.
 Note that message can be modified in case of error.
-
-=back
 
 =cut
 
@@ -2035,17 +1956,12 @@ sub _personalize_entity {
     return $entity;
 }
 
-=over 4
+=item $message->test_personalize($list)
 
-=item test_personalize ( LIST )
-
-I<Instance method>.
 Test if personalization can be performed successfully over all subscribers
-of LIST.
+of I<$list>.
 
-Returns C<1> if succeed, or C<undef>.
-
-=back
+Returns a true value, or I<undef> for failure.
 
 =cut
 
@@ -2074,72 +1990,6 @@ sub test_personalize {
     return 1;
 }
 
-=over 4
-
-=item personalize_text ( BODY, LIST, [ RCPT ] )
-
-I<Function>.
-Retrieves the customized data of the
-users then parse the text. It returns the
-personalized text.
-
-=over 4
-
-=item BODY
-
-Message body with the TT2.
-
-=item LIST
-
-L<List> object
-
-=item RCPT
-
-The recipient email.
-
-=back
-
-Returns customized text, or C<undef> if error occurred.
-
-=back
-
-=cut
-
-sub personalize_text {
-    my $body = shift;
-    my $list = shift;
-    my $rcpt = shift || undef;
-
-    my $options;
-    $options->{'is_not_template'} = 1;
-
-    my $user = $list->user('member', $rcpt);
-    if ($user) {
-        $user->{'escaped_email'} = URI::Escape::uri_escape($rcpt);
-        $user->{'friendly_date'} =
-            Sympa::Language::gettext_strftime("%d %b %Y  %H:%M", localtime($user->{'date'}));
-    }
-
-    # this method as been removed because some users may forward
-    # authentication link
-    # $user->{'fingerprint'} = Sympa::Tools::get_fingerprint($rcpt);
-
-    my $data = {
-        'listname'    => $list->name,
-        'robot'       => $list->domain,
-        'wwsympa_url' => $list->robot->wwsympa_url,
-    };
-    $data->{'user'} = $user if $user;
-
-    # Parse the TT2 in the message : replace the tags and the parameters by
-    # the corresponding values
-    my $output;
-    unless (Sympa::Template::parse_tt2($data, \$body, \$output, '', $options)) {
-        return undef;
-    }
-
-    return $output;
-}
 
 sub prepare_message_according_to_mode {
     my $self = shift;
@@ -2422,14 +2272,9 @@ sub _urlize_part {
     return $entity;
 }
 
-=over 4
+=item $message->get_id()
 
-=item get_id
-
-I<Instance method>.
 Get unique ID for object.
-
-=back
 
 =cut
 
@@ -2439,5 +2284,73 @@ sub get_id {
         ($self->{'messagekey'} || ''),
         Sympa::Tools::clean_msg_id($self->get_msg_id || '');
 }
+
+=back
+
+=head1 FUNCTIONS
+
+=over 4
+
+=item personalize_text($body, $list, [ $recipient ])
+
+Retrieves the customized data of the
+users then parse the text. It returns the
+personalized text.
+
+Parameters:
+
+=over 4
+
+=item * I<$body>: the message body with the TT2
+
+=item * I<$list>: a L<Sympa::List> object
+
+=item * I<$recipient>: the recipient email
+
+=back
+
+Returns the customized text, or I<undef> for failure.
+
+=cut
+
+sub personalize_text {
+    my $body = shift;
+    my $list = shift;
+    my $rcpt = shift || undef;
+
+    my $options;
+    $options->{'is_not_template'} = 1;
+
+    my $user = $list->user('member', $rcpt);
+    if ($user) {
+        $user->{'escaped_email'} = URI::Escape::uri_escape($rcpt);
+        $user->{'friendly_date'} =
+            Sympa::Language::gettext_strftime("%d %b %Y  %H:%M", localtime($user->{'date'}));
+    }
+
+    # this method as been removed because some users may forward
+    # authentication link
+    # $user->{'fingerprint'} = Sympa::Tools::get_fingerprint($rcpt);
+
+    my $data = {
+        'listname'    => $list->name,
+        'robot'       => $list->domain,
+        'wwsympa_url' => $list->robot->wwsympa_url,
+    };
+    $data->{'user'} = $user if $user;
+
+    # Parse the TT2 in the message : replace the tags and the parameters by
+    # the corresponding values
+    my $output;
+    unless (Sympa::Template::parse_tt2($data, \$body, \$output, '', $options)) {
+        return undef;
+    }
+
+    return $output;
+}
+
+=back
+
+=cut
 
 1;
