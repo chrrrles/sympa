@@ -239,9 +239,8 @@ sub sign {
         return ($msg_as_string);
     }
     my $message = Sympa::Message->new(
-        {   'file'       => $temporary_file,
-            'noxsympato' => 'noxsympato'
-        }
+        'file'       => $temporary_file,
+        'noxsympato' => 'noxsympato'
     );
     unless ($message) {
         Sympa::Log::Syslog::do_log('err',

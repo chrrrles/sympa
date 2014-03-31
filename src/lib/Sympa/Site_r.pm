@@ -1065,23 +1065,20 @@ sub send_file {
     my $message;
     if ($list) {
         $message = Sympa::Message->new(
-            {   'messageasstring' => $messageasstring,
-                'noxsympato'      => 1,
-                'list_object'     => $list,
-            }
+            'messageasstring' => $messageasstring,
+            'noxsympato'      => 1,
+            'list_object'     => $list,
         );
     } elsif (ref $robot) {
         $message = Sympa::Message->new(
-            {   'messageasstring' => $messageasstring,
-                'noxsympato'      => 1,
-                'robot_object'    => $robot,
-            }
+            'messageasstring' => $messageasstring,
+            'noxsympato'      => 1,
+            'robot_object'    => $robot,
         );
     } else {
         $message = Sympa::Message->new(
-            {   'messageasstring' => $messageasstring,
-                'noxsympato'      => 1,
-            }
+            'messageasstring' => $messageasstring,
+            'noxsympato'      => 1,
         );
     }
 

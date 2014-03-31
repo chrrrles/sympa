@@ -509,7 +509,9 @@ sub store {
         && $self->{'spoolname'} ne 'digest'
         && $self->{'spoolname'} ne 'subscribe') {
         $message = Sympa::Message->new(
-            {'messageasstring' => $message_asstring, 'noxsympato' => 1});
+            'messageasstring' => $message_asstring,
+            'noxsympato'      => 1
+        );
     }
 
     if ($message) {

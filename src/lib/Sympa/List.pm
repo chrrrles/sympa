@@ -1829,9 +1829,8 @@ sub split_spooled_digest_to_messages {
 
     foreach my $message_as_string (@messages_as_string) {
         my $message = Sympa::Message->new(
-            {   'messageasstring' => $message_as_string,
-                'noxsymnpato'     => 1
-            }
+            'messageasstring' => $message_as_string,
+            'noxsymnpato'     => 1
         );
         next unless $message;
         push @{$self->{'digest'}{'list_of_mail'}}, $message;
@@ -2794,7 +2793,9 @@ sub archive_send_last {
     my $dir = $self->dir . '/archives';
 
     my $message = Sympa::Message->new(
-        {'file' => "$dir/last_message", 'noxsympato' => 'noxsympato'});
+        'file' => "$dir/last_message",
+        'noxsympato' => 'noxsympato'
+    );
     unless ($message) {
         Sympa::Log::Syslog::do_log('err',
             'Unable to create Message object from file %s',

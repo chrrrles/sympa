@@ -8401,7 +8401,7 @@ sub do_modindex {
         {'selector' => {'list' => $list_name, 'robot' => $robot_id}});
     foreach my $message_in_spool (@messages) {
         my $message = undef;
-        $message = Sympa::Message->new($message_in_spool)
+        $message = Sympa::Message->new(%$message_in_spool)
             if $message_in_spool;
         next unless $message;
         my $id = $message->{'authkey'};
@@ -8876,7 +8876,7 @@ sub do_reject {
             }
         );
         my $message = undef;
-        $message = Sympa::Message->new($message_in_spool)
+        $message = Sympa::Message->new(%$message_in_spool)
             if $message_in_spool;
         unless ($message) {
             Sympa::Report::reject_report_web('user', 'already_moderated', {},
@@ -9082,7 +9082,7 @@ sub do_distribute {
         my $message_in_spool = $modspool->get_message(
             {'list' => $list->name, 'robot' => $robot_id, 'authkey' => $id});
         my $message = undef;
-        $message = Sympa::Message->new($message_in_spool)
+        $message = Sympa::Message->new(%$message_in_spool)
             if $message_in_spool;
         unless ($message) {
             Sympa::Report::reject_report_web('user', 'already_moderated', {},
@@ -9197,7 +9197,7 @@ sub do_add_frommod {
         my $message_in_spool = $modspool->get_message(
             {'list' => $list->name, 'robot' => $robot_id, 'authkey' => $id});
         my $message = undef;
-        $message = Sympa::Message->new($message_in_spool)
+        $message = Sympa::Message->new(%$message_in_spool)
             if $message_in_spool;
         unless ($message) {
             ## if the message has been accepted via WWSympa, it's in spool
@@ -9209,7 +9209,7 @@ sub do_add_frommod {
                     'authkey' => $id
                 }
             );
-            $message = Sympa::Message->new($message_in_spool)
+            $message = Sympa::Message->new(%$message_in_spool)
                 if $message_in_spool;
         }
         unless ($message) {
@@ -10225,14 +10225,13 @@ sub do_send_me {
         $msg_string = <$fh>;
         close $fh;
 
-        unless (
-            $message = Sympa::Message->new(
-                {   'messageasstring' => $msg_string,
-                    'noxsympato'      => 'noxsympato',
-                    'list_object'     => $list
-                }
-            )
-            ) {
+        $message = Sympa::Message->new(
+            'messageasstring' => $msg_string,
+            'noxsympato'      => 'noxsympato',
+            'list_object'     => $list
+        );
+
+        unless ($message) {
             $param->{'status'} = 'message_err';
             wwslog('info', 'Could not read file %s/arctxt/%s',
                 $arcpath, $msgfile);
@@ -21958,9 +21957,8 @@ sub do_send_mail {
         );
     } elsif ($in{'sub_action'} eq 'sendmailtome') {
         my $message = Sympa::Message->new(
-            {   'messageasstring' => $messageasstring,
-                'noxsympato'      => 1,
-            }
+            'messageasstring' => $messageasstring,
+            'noxsympato'      => 1,
         );
         $result = Sympa::Mail::sending(
             'message'  => $message,
@@ -22065,7 +22063,7 @@ sub do_request_topic {
         }
     );
     my $message = undef;
-    $message = Sympa::Message->new($message_in_spool)
+    $message = Sympa::Message->new(%$message_in_spool)
         if $message_in_spool;
 
     unless ($message) {
@@ -22132,8 +22130,8 @@ sub do_tag_topic_by_sender {
         return undef;
     }
 
-    unless ($message =
-        Sympa::Message->new({%$message_in_spool, 'noxsympato' => 'noxsympato'})) {
+    $message = Sympa::Message->new(%$message_in_spool, 'noxsympato' => 'noxsympato');
+    unless ($message) {
         Sympa::Report::reject_report_web('intern',
             'cannot_parse_message retrived by key %s for list %s@%s',
             $in{'authkey'}, $listname, $robot_id);
