@@ -79,42 +79,50 @@ my %openssl_errors = (
         'the message was verified correctly but an error occurred writing out the signers certificates',
 );
 
-=head2 Methods and Functions
-
-This is the description of the subfunctions contained by Message.pm
+=head1 CLASS METHODS
 
 =over 4
 
-=item new ( DATAS )
+=item Sympa::Message->new(%parameters)
 
-I<Constructor>.
-Creates a new Message object.
+Creates a new L<Sympa::Message> object.
 
-Arguments:
+Parameters:
 
 =over 4
 
-=item * I<$pkg>, a package name 
+=item * I<file>: the message, as a file
 
-=item * I<$datas>, a hashref to metadata
+=item * I<messageasstring>: the message, as a string
+
+=item * I<noxsympato>: FIXME
+
+=item * I<messagekey>: FIXME
+
+=item * I<spoolname>: FIXME
+
+=item * I<robot>: FIXME
+
+=item * I<robot_object>: FIXME
+
+=item * I<list>: FIXME
+
+=item * I<list_object>: FIXME
+
+=item * I<authkey>: FIXME
+
+=item * I<priority>: FIXME
+
+=item * I<type>: FIXME
 
 =back 
 
 Return:
 
-=over 4
-
-=item * I<a Message object>, if created
-
-=item * I<undef>, if something went wrong
-
-=back 
-
-=back
+A new L<Sympa::Message> object, or I<undef>, if something went wrong.
 
 =cut 
 
-## Creates a new object
 sub new {
     Sympa::Log::Syslog::do_log('debug2', '(%s, %s)', @_);
     my ($class, %params) = @_;
@@ -172,6 +180,10 @@ sub new {
         unless $self->load($messageasstring);
     return $self;
 }
+
+=over
+
+=head1 INSTANCE METHODS
 
 =over 4
 
