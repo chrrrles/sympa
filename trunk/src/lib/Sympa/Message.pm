@@ -171,13 +171,9 @@ sub new {
         $messageasstring = $params{'messageasstring'};
     }
 
-    unless (defined $messageasstring) {
-        Sympa::Log::Syslog::do_log('warn', 'no content.  load() is required');
-        return $self;
-    }
-
     return undef
-        unless $self->load($messageasstring);
+        unless $self->_load($messageasstring);
+
     return $self;
 }
 
@@ -226,28 +222,7 @@ sub get_robot {
                            undef;
 }
 
-=over 4
-
-=item load ( MESSAGEASSTRING )
-
-I<Initializer>.
-Load message content from string.
-
-Return:
-
-=over 4
-
-=item * I<a Message object>, if loading succeeded
-
-=item * I<undef>, if something went wrong
-
-=back 
-
-=back
-
-=cut
-
-sub load {
+sub _load {
     my $self            = shift;
     my $messageasstring = shift;
 
