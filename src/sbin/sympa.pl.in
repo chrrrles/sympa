@@ -1471,8 +1471,8 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
             sleep(Sympa::Site->sleep);
             next;
         }
-        my $list  = $message->list;
-        my $robot = $message->robot;
+        my $list  = $message->get_list();
+        my $robot = $message->get_robot();
         Sympa::Log::Syslog::do_log(
             'info', 'Processing message %s for %s function %s',
             $message,
@@ -1482,12 +1482,12 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
 
         if (!defined $options{'mail'}
             or "$options{'mail'}" ne '1') {
-            $options{'mail'} = $message->robot->get_id
-                if $message->robot->log_smtp;
+            $options{'mail'} = $message->get_robot()->get_id
+                if $message->get_robot()->log_smtp;
         }
 
         ## Set NLS default lang for current message
-        $default_lang = $options{'lang'} || $message->robot->lang;
+        $default_lang = $options{'lang'} || $message->get_robot()->lang;
         Sympa::Language::SetLang($default_lang);
 
         my $status = process_message($message);
@@ -1605,8 +1605,8 @@ sub process_message {
     ## get listname & robot
     my $listname = $message->{'listname'};
     my $robot_id = $message->{'robot_id'} || Sympa::Site->domain;
-    my $list     = $message->list;
-    my $robot    = $message->robot;
+    my $list     = $message->get_list();
+    my $robot    = $message->get_robot();
     my $sender   = $message->get_sender_email;
     my $type     = $message->{'listtype'};
     my $status;
@@ -2069,8 +2069,8 @@ sub DoForward {
     Sympa::Log::Syslog::do_log('debug2', '(%s, %s)', @_);
     my ($message, $function) = @_;
 
-    my $robot = $message->robot;
-    my $list  = $message->list;
+    my $robot = $message->get_robot();
+    my $list  = $message->get_list();
     unless ($list or $robot) {
         croak 'bug in logic.  Ask developer';
     }
@@ -2280,14 +2280,14 @@ sub DoMessage {
         'debug2',
         '(%s, list=%s, sender=%s, size=%s, smime_crypted=%s)',
         $message,
-        $message->list,
+        $message->get_list(),
         $message->{'sender'},
         $message->{'size'},
         $message->{'smime_crypted'}
     );
 
-    my $list  = $message->list;
-    my $robot = $message->robot;
+    my $list  = $message->get_list();
+    my $robot = $message->get_robot();
 
     my $hdr = $message->as_entity()->head;
 
@@ -2861,8 +2861,8 @@ sub DoCommand {
     Sympa::Log::Syslog::do_log('debug2', '(%s, %s)', @_);
     my ($message, $command) = @_;
 
-    my $list  = $message->list;
-    my $robot = $message->robot;
+    my $list  = $message->get_list();
+    my $robot = $message->get_robot();
 
     my $msg = $message->as_entity();
 

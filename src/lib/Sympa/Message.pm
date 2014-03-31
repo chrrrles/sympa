@@ -185,6 +185,47 @@ sub new {
 
 =head1 INSTANCE METHODS
 
+=over
+
+=item $message->get_family()
+
+Gets the family context of this message.
+
+=cut
+
+sub get_family {
+    my $self = shift;
+
+    return $self->{'family'};
+}
+
+=item $message->get_list()
+
+Gets the list context of this message, as a L<Sympa::List> object.
+
+=cut
+
+sub get_list {
+    my $self = shift;
+
+    return $self->{'list'};
+}
+
+=item $message->get_robot()
+
+Gets the robot context of this message, as a L<Sympa::Robot> object.
+
+=cut
+
+sub get_robot {
+    my $self = shift;
+
+    return 
+        $self->{'robot'} ? $self->{'robot'}         :
+        $self->{'list'}  ? $self->{'list'}->robot() :
+                           undef;
+}
+
 =over 4
 
 =item load ( MESSAGEASSTRING )
@@ -507,49 +548,6 @@ sub get_subject {
     return $self->{'decoded_subject'};
 }
 
-sub get_family {
-    return shift->{'family'};
-}
-
-=over 4
-
-=item list
-
-I<Getter>.
-Gets list context of message as a L<List> object if any.
-
-=back
-
-=cut
-
-sub list {
-    croak "Can't modify \"list\" attribute" if scalar @_ > 1;
-    return shift->{'list'};
-}
-
-=over 4
-
-=item robot
-
-I<Getter>.
-Gets robot context of message as a L<Robot> object if any.
-
-=back
-
-=cut
-
-sub robot {
-    croak "Can't modify \"robot\" attribute" if scalar @_ > 1;
-    my $self = shift;
-
-    if ($self->{'robot'}) {
-        return $self->{'robot'};
-    } elsif ($self->{'list'}) {
-        return $self->{'list'}->robot;
-    } else {
-        return undef;
-    }
-}
 
 #FIXME: This should be moved to Messagespool.
 sub check_spam_status {

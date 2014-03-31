@@ -2799,7 +2799,7 @@ sub confirm {
     }
 
     my $msg  = $message->as_entity();
-    my $list = $message->list;
+    my $list = $message->get_list();
     Sympa::Language::SetLang($list->lang);
 
     my $name  = $list->name;
