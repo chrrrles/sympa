@@ -21939,8 +21939,9 @@ sub do_send_mail {
         if $in{'in_reply_to'} and $in{'in_reply_to'} ne '<>';
     $data->{'not_auto_submitted'} = 1;
 
-    my $messageasstring =
-        Sympa::Mail::parse_tt2_messageasstring($robot, '', $to, $data);
+    my $messageasstring = Sympa::Tools::Message::parse_tt2_messageasstring(
+        $robot, '', $to, $data
+    );
     my $result;
     if ($in{'sub_action'} eq 'sendmailtolist') {
         my $incomingspool = Sympa::Spool::File::Message->new();

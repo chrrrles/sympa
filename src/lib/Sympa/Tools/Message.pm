@@ -33,10 +33,14 @@ use Mail::Address;
 use MIME::EncWords;
 use MIME::Charset;
 use MIME::Decoder;
+use MIME::Parser;
+use Time::Local qw();
 
 use Sympa::HTML::MyFormatText;
 use Sympa::Language;
 use Sympa::Log::Syslog;
+use Sympa::Template;
+use Sympa::Tools;
 use Sympa::Tools::Text;
 
 ## Make a multipart/alternative, a singlepart
@@ -786,6 +790,439 @@ sub _getCharset {
 
     # get charset object.
     return MIME::Charset->new($charset);
+}
+
+####################################################
+# public parse_tt2_messageasstring
+####################################################
+# parse a tt2 file as message
+#
+#
+# IN : -$filename(+) : tt2 filename (with .tt2) | ''
+#      -$rcpt(+) : SCALAR |ref(ARRAY) : SMTP "RCPT To:" field
+#      -$data(+) : used to parse tt2 file, ref(HASH) with keys :
+#         -return_path(+) : SMTP "MAIL From:" field if send by smtp,
+#                           "X-Sympa-From:" field if send by spool
+#         -to : "To:" header field
+#         -lang : tt2 language if $filename
+#         -list :  ref(HASH) if $sign_mode = 'smime', keys are :
+#            -name
+#            -dir
+#         -from : "From:" field if not a full msg
+#         -subject : "Subject:" field if not a full msg
+#         -replyto : "Reply-to:" field if not a full msg
+#         -body  : body message if not $filename
+#         -headers : ref(HASH) with keys are headers mail
+#         -dkim : a set of parameters for appying DKIM signature
+#            -d : d=tag
+#            -i : i=tag (optionnal)
+#            -selector : dkim dns selector
+#            -key : the RSA private key
+#      -$self(+) : ref(Robot) | "Site"
+#      -$sign_mode :'smime' | '' | undef
+#
+# OUT : 1 | undef
+####################################################
+sub parse_tt2_messageasstring {
+    my $robot    = shift;
+    my $filename = shift;
+    my $rcpt     = shift;
+    my $data     = shift;
+
+    my $header_possible = $data->{'header_possible'};
+    my $sign_mode       = $data->{'sign_mode'};
+    Sympa::Log::Syslog::do_log('debug2',
+        '(%s, %s, %s, header_possible=%s, sign_mode=%s)',
+        $robot, $filename, $rcpt, $header_possible, $sign_mode);
+    my ($to, $message_as_string);
+
+    ## boolean
+    $header_possible = 0 unless (defined $header_possible);
+    my %header_ok;    # hash containing no missing headers
+    my $existing_headers = 0;    # the message already contains headers
+
+    ## We may receive a list of recipients
+    if (ref($rcpt)) {
+        unless (ref($rcpt) eq 'ARRAY') {
+            Sympa::Log::Syslog::do_log('notice',
+                'Wrong type of reference for rcpt');
+            return undef;
+        }
+    }
+
+    ## Charset for encoding
+    Sympa::Language::PushLang($data->{'lang'}) if defined $data->{'lang'};
+    $data->{'charset'} ||= Sympa::Language::GetCharset();
+    Sympa::Language::PopLang() if defined $data->{'lang'};
+
+    if ($filename =~ /\.tt2$/) {
+
+        # TT2 file parsing
+        my $output;
+        my @path = split /\//, $filename;
+
+        Sympa::Language::PushLang($data->{'lang'}) if defined $data->{'lang'};
+        Sympa::Template::parse_tt2($data, $path[$#path], \$output);
+        Sympa::Language::PopLang() if defined $data->{'lang'};
+
+        $message_as_string .= join('', $output);
+        $header_possible = 1;
+    } else {    # or not
+        $message_as_string .= $data->{'body'};
+    }
+
+    ## ## Does the message include headers ?
+    if ($header_possible) {
+        foreach my $line (split(/\n/, $message_as_string)) {
+            last if ($line =~ /^\s*$/);
+            if ($line =~ /^[\w-]+:\s*/) {    ## A header field
+                $existing_headers = 1;
+            } elsif ($existing_headers && ($line =~ /^\s/)) {
+                ## Following of a header field
+                next;
+            } else {
+                last;
+            }
+
+            foreach my $header (
+                qw(message-id date to from subject reply-to
+                mime-version content-type content-transfer-encoding)
+                ) {
+                if ($line =~ /^$header\s*:/i) {
+                    $header_ok{$header} = 1;
+                    last;
+                }
+            }
+        }
+    }
+
+    ## ADD MISSING HEADERS
+    my $headers = "";
+
+    unless ($header_ok{'message-id'}) {
+        $headers .=
+            sprintf("Message-Id: %s\n", Sympa::Tools::get_message_id($robot));
+    }
+
+    unless ($header_ok{'date'}) {
+        my $now   = time;
+        my $tzoff = Time::Local::timegm(localtime $now) - $now;
+        my $sign;
+        if ($tzoff < 0) {
+            ($sign, $tzoff) = ('-', -$tzoff);
+        } else {
+            $sign = '+';
+        }
+        $tzoff = sprintf '%s%02d%02d',
+            $sign, int($tzoff / 3600), int($tzoff / 60) % 60;
+        Sympa::Language::PushLang('en');
+        $headers .=
+              'Date: '
+            . POSIX::strftime("%a, %d %b %Y %H:%M:%S $tzoff", localtime $now)
+            . "\n";
+        Sympa::Language::PopLang();
+    }
+
+    unless ($header_ok{'to'}) {
+
+        # Currently, bare e-mail address is assumed.  Complex ones such as
+        # "phrase" <email> won't be allowed.
+        if (ref($rcpt)) {
+            if ($data->{'to'}) {
+                $to = $data->{'to'};
+            } else {
+                $to = join(",\n   ", @{$rcpt});
+            }
+        } else {
+            $to = $rcpt;
+        }
+        $headers .= "To: $to\n";
+    }
+    unless ($header_ok{'from'}) {
+        if (   !defined $data->{'from'}
+            or $data->{'from'} eq 'sympa'
+            or $data->{'from'} eq $data->{'conf'}{'sympa'}) {
+            $headers .= 'From: '
+                . Sympa::Tools::addrencode(
+                $data->{'conf'}{'sympa'},
+                $data->{'conf'}{'email_gecos'},
+                $data->{'charset'}
+                ) . "\n";
+        } else {
+            $headers .= "From: "
+                . MIME::EncWords::encode_mimewords(
+                Encode::decode('utf8', $data->{'from'}),
+                'Encoding' => 'A',
+                'Charset'  => $data->{'charset'},
+                'Field'    => 'From'
+                ) . "\n";
+        }
+    }
+    unless ($header_ok{'subject'}) {
+        $headers .= "Subject: "
+            . MIME::EncWords::encode_mimewords(
+            Encode::decode('utf8', $data->{'subject'}),
+            'Encoding' => 'A',
+            'Charset'  => $data->{'charset'},
+            'Field'    => 'Subject'
+            ) . "\n";
+    }
+    unless ($header_ok{'reply-to'}) {
+        $headers .= "Reply-to: "
+            . MIME::EncWords::encode_mimewords(
+            Encode::decode('utf8', $data->{'replyto'}),
+            'Encoding' => 'A',
+            'Charset'  => $data->{'charset'},
+            'Field'    => 'Reply-to'
+            )
+            . "\n"
+            if ($data->{'replyto'});
+    }
+    if ($data->{'headers'}) {
+        foreach my $field (keys %{$data->{'headers'}}) {
+            $headers .=
+                $field . ': '
+                . MIME::EncWords::encode_mimewords(
+                Encode::decode('utf8', $data->{'headers'}{$field}),
+                'Encoding' => 'A',
+                'Charset'  => $data->{'charset'},
+                'Field'    => $field
+                ) . "\n";
+        }
+    }
+    unless ($header_ok{'mime-version'}) {
+        $headers .= "MIME-Version: 1.0\n";
+    }
+    unless ($header_ok{'content-type'}) {
+        $headers .=
+            "Content-Type: text/plain; charset=" . $data->{'charset'} . "\n";
+    }
+    unless ($header_ok{'content-transfer-encoding'}) {
+        $headers .= "Content-Transfer-Encoding: 8bit\n";
+    }
+
+    ## Determine what value the Auto-Submitted header field should take
+    ## See http://www.tools.ietf.org/html/draft-palme-autosub-01
+    ## the header field can have one of the following values :
+    ## auto-generated, auto-replied, auto-forwarded
+    ## The header should not be set when wwsympa sends a command/mail to
+    ## sympa.pl through its spool
+    unless ($data->{'not_auto_submitted'} || $header_ok{'auto_submitted'}) {
+        ## Default value is 'auto-generated'
+        my $header_value = $data->{'auto_submitted'} || 'auto-generated';
+        $headers .= "Auto-Submitted: $header_value\n";
+    }
+
+    unless ($existing_headers) {
+        $headers .= "\n";
+    }
+
+    ## All these data provide mail attachements in service messages
+    my @msgs = ();
+    if (ref($data->{'msg_list'}) eq 'ARRAY') {
+        @msgs =
+            map { $_->{'msg'} || $_->{'full_msg'} } @{$data->{'msg_list'}};
+    } elsif ($data->{'spool'}) {
+        @msgs = @{$data->{'spool'}};
+    } elsif ($data->{'msg'}) {
+        push @msgs, $data->{'msg'};
+    } elsif ($data->{'msg_path'} and open IN, '<' . $data->{'msg_path'}) {
+        push @msgs, join('', <IN>);
+        close IN;
+    } elsif ($data->{'file'} and open IN, '<' . $data->{'file'}) {
+        push @msgs, join('', <IN>);
+        close IN;
+    }
+
+    unless (
+        $message_as_string = _reformat_message(
+            "$headers" . "$message_as_string",
+            \@msgs, $data->{'charset'}
+        )
+        ) {
+        Sympa::Log::Syslog::do_log('err', 'Failed to reformat message');
+    }
+
+    return $message_as_string;
+}
+
+####################################################
+# reformat_message
+####################################################
+# Reformat bodies of text parts contained in the message using
+# recommended encoding schema and/or charsets defined by MIME::Charset.
+#
+# MIME-compliant headers are appended / modified.  And custom X-Mailer:
+# header is appended :).
+#
+# IN : $msg: ref(MIME::Entity) | string - message to reformat
+#      $attachments: ref(ARRAY) - messages to be attached as subparts.
+# OUT : string
+#
+####################################################
+
+####################################################
+## Comments from Soji Ikeda below
+##  Some paths of message processing in Sympa can't recognize Unicode strings.
+##  At least MIME::Parser::parse_data() and Template::proccess(): these
+##  methods
+## occationalily break strings containing Unicode characters.
+##
+##  My mail_utf8 patch expects the behavior as following ---
+##
+##  Sub-messages to be attached (into digests, moderation notices etc.) will
+##  passed to Sympa::Mail::reformat_message() separately then attached to reformatted
+##  parent message again.  As a result, sub-messages won't be broken.  Since
+##  they won't cause mixture of Unicode string (parent message generated by
+##  Sympa::Template::parse_tt2()) and byte string (sub-messages).
+##
+##  Note: For compatibility with old style, data passed to
+##  Sympa::Mail::reformat_message() already includes sub-message(s).  Then:
+##   - When a part has an `X-Sympa-Attach:' header field for internal use, new
+##     style, Sympa::Mail::reformat_message() attaches raw sub-message to reformatted
+##     parent message again;
+##   - When a part doesn't have any `X-Sympa-Attach:' header fields,
+##     sub-messages generated by [% INSERT %] directive(s) in the template
+##     will be used.
+##
+##  More Note: Latter behavior above will give expected result only if
+##  contents of sub-messages are US-ASCII or ISO-8859-1. In other cases
+##  customized templates (if any) should be modified so that they have
+##  appropriate `X-Sympa-Attach:' header fileds.
+##
+##  Sub-messages are gathered from template context paramenters.
+
+sub _reformat_message($;$$) {
+    my $message     = shift;
+    my $attachments = shift || [];
+    my $defcharset  = shift;
+    my $msg;
+
+    my $parser = MIME::Parser->new();
+    unless (defined $parser) {
+        Sympa::Log::Syslog::do_log('err',
+            "Sympa::Mail::reformat_message: Failed to create MIME parser");
+        return undef;
+    }
+    $parser->output_to_core(1);
+
+    if (ref($message) eq 'MIME::Entity') {
+        $msg = $message;
+    } else {
+        eval { $msg = $parser->parse_data($message); };
+        if ($EVAL_ERROR) {
+            Sympa::Log::Syslog::do_log('err',
+                "Sympa::Mail::reformat_message: Failed to parse MIME data");
+            return undef;
+        }
+    }
+    $msg->head->delete("X-Mailer");
+    $msg = _fix_part($msg, $parser, $attachments, $defcharset);
+    $msg->head->add("X-Mailer", sprintf "Sympa %s",
+        Sympa::Constants::VERSION);
+    return $msg->as_string();
+}
+
+sub _fix_part {
+    my $part        = shift;
+    my $parser      = shift;
+    my $attachments = shift || [];
+    my $defcharset  = shift;
+    return $part unless $part;
+
+    my $enc = $part->head->mime_encoding;
+
+    # Parts with nonstandard encodings aren't modified.
+    if ($enc and $enc !~ /^(?:base64|quoted-printable|[78]bit|binary)$/i) {
+        return $part;
+    }
+    my $eff_type = $part->effective_type;
+
+    # Signed or encrypted parts aren't modified.
+    if ($eff_type =~ m{^multipart/(signed|encrypted)$}) {
+        return $part;
+    }
+
+    if ($part->head->get('X-Sympa-Attach')) {    # Need re-attaching data.
+        my $data = shift @{$attachments};
+        if (ref($data) ne 'MIME::Entity') {
+            eval { $data = $parser->parse_data($data); };
+            if ($EVAL_ERROR) {
+                Sympa::Log::Syslog::do_log('notice',
+                    "Failed to parse MIME data");
+                $data = $parser->parse_data('');
+            }
+        }
+        $part->head->delete('X-Sympa-Attach');
+        $part->parts([$data]);
+    } elsif ($part->parts) {
+        my @newparts = ();
+        foreach ($part->parts) {
+            push @newparts, _fix_part($_, $parser, $attachments, $defcharset);
+        }
+        $part->parts(\@newparts);
+    } elsif ($eff_type =~ m{^(?:multipart|message)(?:/|\Z)}i) {
+
+        # multipart or message types without subparts.
+        return $part;
+    } elsif (MIME::Tools::textual_type($eff_type)) {
+        my $bodyh = $part->bodyhandle;
+
+        # Encoded body or null body won't be modified.
+        return $part if !$bodyh or $bodyh->is_encoded;
+
+        my $head = $part->head;
+        my $body = $bodyh->as_string();
+        my $wrap = $body;
+        if ($head->get('X-Sympa-NoWrap')) {    # Need not wrapping
+            $head->delete('X-Sympa-NoWrap');
+        } elsif ($eff_type eq 'text/plain'
+            and lc($head->mime_attr('Content-type.Format') || '') ne 'flowed')
+        {
+            $wrap = Sympa::Tools::Text::wrap_text($body);
+        }
+        my $charset = $head->mime_attr("Content-Type.Charset") || $defcharset;
+
+        my ($newbody, $newcharset, $newenc) =
+            MIME::Charset::body_encode(Encode::decode('utf8', $wrap),
+            $charset, Replacement => 'FALLBACK');
+        if (    $newenc eq $enc
+            and $newcharset eq $charset
+            and $newbody eq $body) {
+            $head->add("MIME-Version", "1.0")
+                unless $head->get("MIME-Version");
+            return $part;
+        }
+
+        ## normalize newline to CRLF if transfer-encoding is BASE64.
+        $newbody =~ s/\r\n|\r|\n/\r\n/g
+            if $newenc and $newenc eq 'BASE64';
+
+        # Fix headers and body.
+        $head->mime_attr("Content-Type", "TEXT/PLAIN")
+            unless $head->mime_attr("Content-Type");
+        $head->mime_attr("Content-Type.Charset",      $newcharset);
+        $head->mime_attr("Content-Transfer-Encoding", $newenc);
+        $head->add("MIME-Version", "1.0") unless $head->get("MIME-Version");
+        my $io = $bodyh->open("w");
+
+        unless (defined $io) {
+            Sympa::Log::Syslog::do_log('err',
+                "Sympa::Mail::reformat_message: Failed to save message : $ERRNO");
+            return undef;
+        }
+
+        $io->print($newbody);
+        $io->close;
+        $part->sync_headers(Length => 'COMPUTE');
+    } else {
+
+        # Binary or text with long lines will be suggested to be BASE64.
+        $part->head->mime_attr("Content-Transfer-Encoding",
+            $part->suggest_encoding);
+        $part->sync_headers(Length => 'COMPUTE');
+    }
+    return $part;
 }
 
 1;
