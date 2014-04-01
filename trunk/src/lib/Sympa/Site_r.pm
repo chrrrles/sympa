@@ -41,9 +41,11 @@ use Carp qw(croak);
 use Sympa::Conf;
 use Sympa::Language;
 use Sympa::Log::Syslog;
+use Sympa::Mail;
 use Sympa::Tools;
 use Sympa::Tools::Data;
 use Sympa::Tools::File;
+use Sympa::Tools::Message;
 use Sympa::Tools::Password;
 use Sympa::User;
 
@@ -1058,8 +1060,9 @@ sub send_file {
     $data->{'use_bulk'} = 1
         unless ($data->{'alarm'});
 
-    my $messageasstring =
-        Sympa::Mail::parse_tt2_messageasstring($robot, $filename, $who, $data);
+    my $messageasstring = Sympa::Tools::Message::parse_tt2_messageasstring(
+        $robot, $filename, $who, $data
+    );
     return $messageasstring if $options->{'parse_and_return'};
 
     my $message;
