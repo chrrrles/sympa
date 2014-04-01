@@ -28,6 +28,7 @@ use strict;
 use English qw(-no_match_vars);
 use Time::Local qw();
 
+use Sympa::Bulk;
 use Sympa::List;
 use Sympa::Log::Syslog;
 use Sympa::Robot;
