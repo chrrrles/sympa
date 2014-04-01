@@ -43,7 +43,16 @@ use Sympa::Template;
 use Sympa::Tools;
 use Sympa::Tools::Text;
 
-## Make a multipart/alternative, a singlepart
+=head1 FUNCTIONS
+
+=over
+
+=item as_singlepart($message, $preferred_type, $loops)
+
+Make a multipart/alternative, a singlepart.
+
+=cut
+
 sub as_singlepart {
     my ($msg, $preferred_type, $loops) = @_;
     my $done = 0;
@@ -103,6 +112,12 @@ sub as_singlepart {
 
     return $done;
 }
+
+=item split_mail($message, $path, $directory)
+
+FIXME: missing description.
+
+=cut
 
 sub split_mail {
     my $message  = shift;
@@ -169,6 +184,12 @@ sub split_mail {
 
     return 1;
 }
+
+=item virus_infectd($message)
+
+FIXME: missing description
+
+=cut
 
 sub virus_infected {
     my $mail = shift;
@@ -441,14 +462,27 @@ sub virus_infected {
 
 }
 
-#*******************************************
-# Function : decode_header
-# Description : return header value decoded to UTF-8 or undef.
-#               trailing newline will be removed.
-#               If sep is given, return all occurrences joined by it.
-## IN : msg, tag, [sep]
-## OUT : decoded header(s), with hostile characters (newline, nul) removed.
-#*******************************************
+=item decode_header($message, $tag, $separator)
+
+Return header value, decoded to UTF-8. trailing newline will be
+removed. If sep is given, return all occurrences joined by it.
+
+Parameters:
+
+=over
+
+=item * I<$message>: FIXME
+
+=item * I<$tag>: FIXME
+
+=item * I<$separator>: FIXME
+
+=back
+
+Returns decoded header(s), with hostile characters (newline, nul) removed.
+
+=cut
+
 sub decode_header {
     my $msg = shift;
     my $tag = shift;
@@ -487,24 +521,28 @@ sub decode_header {
     }
 }
 
-# Returns a plain text version of an email # message, suitable for use in plain
-# text digests.
-#
-# Most attachments are stripped out and replaced with a note that they've been
-# stripped. text/plain parts are # retained.
-#
-# An attempt to convert text/html parts to plain text is made if there is no
-# text/plain alternative.
-#
-# All messages are converted from their original character set to UTF-8 
-#
-# Parts of type message/rfc822 are recursed through in the same way, with brief
-# headers included.
-#
-# Any line consisting only of 30 hyphens has the first character changed to
-# space (see RFC 1153). Lines are wrapped at 80 characters.
-# 
-# Copyright (C) 2004-2008 Chris Hastie
+=item plain_body_as_string($entity)
+
+Returns a plain text version of an email # message, suitable for use in plain
+text digests.
+
+Most attachments are stripped out and replaced with a note that they've been
+stripped. text/plain parts are # retained.
+
+An attempt to convert text/html parts to plain text is made if there is no
+text/plain alternative.
+
+All messages are converted from their original character set to UTF-8 
+
+Parts of type message/rfc822 are recursed through in the same way, with brief
+headers included.
+
+Any line consisting only of 30 hyphens has the first character changed to
+space (see RFC 1153). Lines are wrapped at 80 characters.
+
+Copyright (C) 2004-2008 Chris Hastie
+
+=cut
 
 sub plain_body_as_string {
     my ($topent, @paramlist) = @_;
@@ -792,37 +830,28 @@ sub _getCharset {
     return MIME::Charset->new($charset);
 }
 
-####################################################
-# public parse_tt2_messageasstring
-####################################################
-# parse a tt2 file as message
-#
-#
-# IN : -$filename(+) : tt2 filename (with .tt2) | ''
-#      -$rcpt(+) : SCALAR |ref(ARRAY) : SMTP "RCPT To:" field
-#      -$data(+) : used to parse tt2 file, ref(HASH) with keys :
-#         -return_path(+) : SMTP "MAIL From:" field if send by smtp,
-#                           "X-Sympa-From:" field if send by spool
-#         -to : "To:" header field
-#         -lang : tt2 language if $filename
-#         -list :  ref(HASH) if $sign_mode = 'smime', keys are :
-#            -name
-#            -dir
-#         -from : "From:" field if not a full msg
-#         -subject : "Subject:" field if not a full msg
-#         -replyto : "Reply-to:" field if not a full msg
-#         -body  : body message if not $filename
-#         -headers : ref(HASH) with keys are headers mail
-#         -dkim : a set of parameters for appying DKIM signature
-#            -d : d=tag
-#            -i : i=tag (optionnal)
-#            -selector : dkim dns selector
-#            -key : the RSA private key
-#      -$self(+) : ref(Robot) | "Site"
-#      -$sign_mode :'smime' | '' | undef
-#
-# OUT : 1 | undef
-####################################################
+=item parse_tt2_messageasstring($robot, $file, $recipient, $data)
+
+Creates a message from a template.
+
+Parameters:
+
+=over
+
+=item * B<$robot>: FIXME
+
+=item * B<$file>: template file
+
+=item * B<$recipient>: message recipient
+
+=item * B<$parameters>: data passed to the template
+
+=back
+
+Returns the message as a string on success, I<undef> on failure.
+
+=cut
+
 sub parse_tt2_messageasstring {
     my $robot    = shift;
     my $filename = shift;
@@ -1046,51 +1075,43 @@ sub parse_tt2_messageasstring {
     return $message_as_string;
 }
 
-####################################################
-# reformat_message
-####################################################
+# _reformat_message($message, $attachments, $defcharset)
+#
 # Reformat bodies of text parts contained in the message using
 # recommended encoding schema and/or charsets defined by MIME::Charset.
 #
-# MIME-compliant headers are appended / modified.  And custom X-Mailer:
-# header is appended :).
+# MIME-compliant headers are appended / modified. And custom X-Mailer: header
+# is appended :).
+#
+# Some paths of message processing in Sympa can't recognize Unicode strings.
+# At least MIME::Parser::parse_data() and Template::proccess(): these
+# methods occationalily break strings containing Unicode characters.
+#
+# Sub-messages to be attached (into digests, moderation notices etc.) will
+# passed to _reformat_message() separately then attached to reformatted parent
+# message again. As a result, sub-messages won't be broken.
+# Since they won't cause mixture of Unicode string (parent message generated
+# by Sympa::Template::parse_tt2()) and byte string (sub-messages).
+#
+# Note: For compatibility with old style, data passed to _reformat_message()
+# already includes sub-message(s). Then:
+# - When a part has an `X-Sympa-Attach:' header field for internal use, new
+#   style, Sympa::Mail::reformat_message() attaches raw sub-message to
+#   reformatted parent message again;
+# - When a part doesn't have any `X-Sympa-Attach:' header fields,
+#   sub-messages generated by [% INSERT %] directive(s) in the template
+#   will be used.
+#
+# Latter behavior above will give expected result only if contents of
+# sub-messages are US-ASCII or ISO-8859-1. In other cases customized templates
+# (if any) should be modified so that they have appropriate `X-Sympa-Attach:'
+# header fileds.
+#
+# Sub-messages are gathered from template context parameters.
 #
 # IN : $msg: ref(MIME::Entity) | string - message to reformat
 #      $attachments: ref(ARRAY) - messages to be attached as subparts.
 # OUT : string
-#
-####################################################
-
-####################################################
-## Comments from Soji Ikeda below
-##  Some paths of message processing in Sympa can't recognize Unicode strings.
-##  At least MIME::Parser::parse_data() and Template::proccess(): these
-##  methods
-## occationalily break strings containing Unicode characters.
-##
-##  My mail_utf8 patch expects the behavior as following ---
-##
-##  Sub-messages to be attached (into digests, moderation notices etc.) will
-##  passed to Sympa::Mail::reformat_message() separately then attached to reformatted
-##  parent message again.  As a result, sub-messages won't be broken.  Since
-##  they won't cause mixture of Unicode string (parent message generated by
-##  Sympa::Template::parse_tt2()) and byte string (sub-messages).
-##
-##  Note: For compatibility with old style, data passed to
-##  Sympa::Mail::reformat_message() already includes sub-message(s).  Then:
-##   - When a part has an `X-Sympa-Attach:' header field for internal use, new
-##     style, Sympa::Mail::reformat_message() attaches raw sub-message to reformatted
-##     parent message again;
-##   - When a part doesn't have any `X-Sympa-Attach:' header fields,
-##     sub-messages generated by [% INSERT %] directive(s) in the template
-##     will be used.
-##
-##  More Note: Latter behavior above will give expected result only if
-##  contents of sub-messages are US-ASCII or ISO-8859-1. In other cases
-##  customized templates (if any) should be modified so that they have
-##  appropriate `X-Sympa-Attach:' header fileds.
-##
-##  Sub-messages are gathered from template context paramenters.
 
 sub _reformat_message($;$$) {
     my $message     = shift;
@@ -1224,5 +1245,9 @@ sub _fix_part {
     }
     return $part;
 }
+
+=back
+
+=cut
 
 1;

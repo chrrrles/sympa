@@ -31,7 +31,16 @@ use English qw(-no_match_vars);
 use Sympa::Constants;
 use Sympa::Log::Syslog;
 
-# return the name of the used daemon
+=head1 FUNCTIONS
+
+=over
+
+=item get_daemon_name($path)
+
+Returns a name for current process, suitable for logging.
+
+=cut
+
 sub get_daemon_name {
     my $daemon_tmp = shift;
     my @path       = split(/\//, $daemon_tmp);
@@ -40,7 +49,12 @@ sub get_daemon_name {
     return $daemon;
 }
 
-## Remove PID file and STDERR output
+=item remove_pid($name, $pid, $options)
+
+Removes PID file and STDERR output.
+
+=cut
+
 sub remove_pid {
     my ($name, $pid, $options) = @_;
 
@@ -101,6 +115,12 @@ sub remove_pid {
     $lock_fh->close;
     return 1;
 }
+
+=item write_pid($name, $pid, $options)
+
+FIXME: missing description
+
+=cut
 
 sub write_pid {
     my ($name, $pid, $options) = @_;
@@ -189,6 +209,12 @@ sub write_pid {
     return 1;
 }
 
+=item direct_stderr_to_file(%parameters)
+
+FIXME: missing description
+
+=cut
+
 sub direct_stderr_to_file {
     my %data = @_;
     ## Error output is stored in a file with PID-based name
@@ -211,7 +237,12 @@ sub direct_stderr_to_file {
     return 1;
 }
 
-# Send content of $pid.stderr to listmaster for process whose PID is $pid.
+=item send_crash_report(%parameters)
+
+FIXME: missing description
+
+=cut
+
 sub send_crash_report {
     my %data = @_;
     Sympa::Log::Syslog::do_log('debug', 'Sending crash report for process %s',
@@ -236,14 +267,24 @@ sub send_crash_report {
     );
 }
 
-# return a lockname that is a uniq id of a processus (hostname + pid) ;
-# hostname (20) and pid(10) are truncated in order to store lockname in
-# database varchar(30)
+=item get_lockname()
+
+Returns a name for current process, suitable for locking.
+
+This name is based on hostname and PID, and is limited to 30 characters.
+
+=cut
+
 sub get_lockname () {
     return substr(substr(hostname(), 0, 20) . $PID, 0, 30);
 }
 
-## Returns the list of pid identifiers in the pid file.
+=item get_pids_in_pid_file($name)
+
+Returns the list of PID identifiers in the PID file.
+
+=cut
+
 sub get_pids_in_pid_file {
     my $name = shift;
 
@@ -262,6 +303,12 @@ sub get_pids_in_pid_file {
     return \@pids;
 }
 
+=item get_children_processes_list()
+
+FIXME: missing description
+
+=cut
+
 sub get_children_processes_list {
     Sympa::Log::Syslog::do_log('debug3', '');
     my @children;
@@ -272,5 +319,9 @@ sub get_children_processes_list {
     }
     return @children;
 }
+
+=back
+
+=cut
 
 1;

@@ -39,9 +39,12 @@ use Sympa::Log::Syslog;
 
 =over
 
+=item set_file_rights(%parameters)
+
+Sets owner and/or access rights on a file.
+
 =cut
 
-## Sets owner and/or access rights on a file.
 sub set_file_rights {
     my %param = @_;
     my ($uid, $gid);
@@ -88,7 +91,12 @@ sub set_file_rights {
     return 1;
 }
 
-#copy a directory and its content
+=item copy_dir($dir1, $dir2)
+
+Copy a directory and its content
+
+=cut
+
 sub copy_dir {
     my $dir1 = shift;
     my $dir2 = shift;
@@ -103,7 +111,12 @@ sub copy_dir {
     return (File::Copy::Recursive::dircopy($dir1, $dir2));
 }
 
-#delete a directory and its content
+=item del_dir($dir)
+
+Delete a directory and its content
+
+=cut
+
 sub del_dir {
     my $dir = shift;
     Sympa::Log::Syslog::do_log('debug', 'del_dir %s', $dir);
@@ -131,7 +144,12 @@ sub del_dir {
     }
 }
 
-#to be used before creating a file in a directory that may not exist already.
+=item mk_parent_dir($file)
+
+To be used before creating a file in a directory that may not exist already.
+
+=cut
+
 sub mk_parent_dir {
     my $file = shift;
     $file =~ /^(.*)\/([^\/])*$/;
@@ -141,7 +159,12 @@ sub mk_parent_dir {
     mkdir_all($dir, 0755);
 }
 
-## Recursively create directory and all parent directories
+=item mkdir_all($path, $mode)
+
+Recursively create directory and all parent directories
+
+=cut
+
 sub mkdir_all {
     my ($path, $mode) = @_;
     my $status = 1;
@@ -176,8 +199,13 @@ sub mkdir_all {
     return $status;
 }
 
-# shift file renaming it with date. If count is defined, keep $count file and
-# unlink others
+=item shift_file($file, $count)
+
+Shift file renaming it with date. If count is defined, keep $count file and
+unlink others
+
+=cut
+
 sub shift_file {
     my $file  = shift;
     my $count = shift;
@@ -223,7 +251,12 @@ sub shift_file {
     return ($file . '.' . $file_extention);
 }
 
-## Find a file in an ordered list of directories
+=item find_file($filename, @directories)
+
+Find a file in an ordered list of directories
+
+=cut
+
 sub find_file {
     my ($filename, @directories) = @_;
     Sympa::Log::Syslog::do_log(
@@ -240,8 +273,13 @@ sub find_file {
     return undef;
 }
 
-## Recursively list the content of a directory
-## Return an array of hash, each entry with directory + filename + encoding
+=item list_dir($dir, $all, $original_encoding)
+
+Recursively list the content of a directory
+Return an array of hash, each entry with directory + filename + encoding
+
+=cut
+
 sub list_dir {
     my $dir               = shift;
     my $all               = shift;
@@ -278,6 +316,10 @@ sub list_dir {
     return 1;
 }
 
+=item get_dir_size($dir)
+
+=cut
+
 sub get_dir_size {
     my $dir = shift;
 
@@ -298,10 +340,15 @@ sub get_dir_size {
     return $size;
 }
 
-## Function for Removing a non-empty directory
-## It takes a variable number of arguments :
-## it can be a list of directory
-## or few directory paths
+=item remove_dir(@directories)
+
+Function for Removing a non-empty directory
+It takes a variable number of arguments :
+it can be a list of directory
+or few directory paths
+
+=cut
+
 sub remove_dir {
 
     Sympa::Log::Syslog::do_log('debug2', 'remove_dir()');
@@ -328,20 +375,25 @@ sub remove_dir {
     return 1;
 }
 
-####################################################
-# a_is_older_than_b
-####################################################
-# Compares the last modifications date of two files
-#
-# IN : - a hash with two entries:
-#
-#        * a_file : the full path to a file
-#        * b_file : the full path to a file
-#
-# OUT : string: 'true' if the last modification date of "a_file" is older than
-# "b_file"'s, 'false' otherwise.
-#       return undef if the comparison could not be carried on.
-#######################################################
+=item a_is_older_than_b($parameters)
+
+Compares the last modifications date of two files
+
+Parameters:
+
+=over
+
+=item * I<a_file>: first file
+
+=item * I<b_file>: second file
+
+=back
+
+Returns 'true' if the last modification date of "a_file" is older than the last
+modification date of "b_file", 'false' otherwise, or I<undef> for failure.
+
+=cut
+
 sub a_is_older_than_b {
     my $param = shift;
     my ($a_file_readable, $b_file_readable) = (0, 0);
@@ -372,37 +424,24 @@ sub a_is_older_than_b {
     return $answer;
 }
 
-=item CleanSpool(STRING $spool_dir, INT $clean_delay)
+=item CleanDir($dir, $delay)
 
-Clean all messages in spool $spool_dir older than $clean_delay.
+Cleans old files from a directory.
 
 Parameters:
 
 =over 
 
-=item * I<spool_dir> : a string corresponding to the path to the spool to clean;
+=item * I<$dir>: the path to the directory
 
-=item * I<clean_delay> : the delay between the moment we try to clean spool and the last modification date of a file.
+=item * I<$delay>: the delay between the moment we try to clean spool and the last modification date of a file.
 
 =back
 
-Returns:
-
-A true value if the spool was cleaned without troubles, I<undef> otherwise.
+Returns a true value on success, I<undef> on failure.
 
 =cut 
 
-############################################################
-#  CleanDir
-############################################################
-#  Cleans files older than $clean_delay from spool $spool_dir
-#
-# IN : -$dir (+): the spool directory
-#      -$clean_delay (+): delay in days
-#
-# OUT : 1
-#
-##############################################################
 sub CleanDir {
     my ($dir, $clean_delay) = @_;
     Sympa::Log::Syslog::do_log('debug', 'CleanSpool(%s,%s)', $dir,
@@ -447,15 +486,11 @@ Parameters:
 
 =over
 
-=item $file
-
-The file to read.
+=item * I<$file>: the file to read.
 
 =back
 
-Return value:
-
-The file content as a string on success, I<undef> otherwise.
+Returns the file content as a string on success, I<undef> on failure.
 
 =cut
 
