@@ -10162,7 +10162,7 @@ sub do_remove_arc {
 ####################################################
 #  Sends a web archive message to a
 #  requesting user
-#  It uses Sympa::Mail::mail_forward() to do it.
+#  It uses Sympa::Mail::forward_message() to do it.
 #
 # IN : -
 #
@@ -10238,7 +10238,7 @@ sub do_send_me {
             return undef;
         }
         unless (
-            Sympa::Mail::mail_forward(
+            Sympa::Mail::forward_message(
                 $message,                  $robot->get_address(),
                 $param->{'user'}{'email'}, $robot
             )
@@ -21961,7 +21961,7 @@ sub do_send_mail {
             'messageasstring' => $messageasstring,
             'noxsympato'      => 1,
         );
-        $result = Sympa::Mail::sending(
+        $result = Sympa::Mail::send_message(
             'message'  => $message,
             'rcpt'     => $to,
             'from'     => $robot->get_address('owner'),

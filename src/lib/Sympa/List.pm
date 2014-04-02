@@ -2155,7 +2155,7 @@ sub send_msg {
         $new_message->prepare_message_according_to_mode($mode);
         my $verp = 'off';
         if ($message->{'rcpts_by_mode'}{$mode}{'noverp'}) {
-            my $result = Sympa::Mail::mail_message(
+            my $result = Sympa::Mail::distribute_message(
                 'message' => $new_message,
                 'rcpt'    => $message->{'rcpts_by_mode'}{$mode}{'noverp'},
                 'list'    => $self,
@@ -2193,7 +2193,7 @@ sub send_msg {
 
         if ($message->{'rcpts_by_mode'}{$mode}{'verp'}) {
             ## prepare VERP sending.
-            my $result = Sympa::Mail::mail_message(
+            my $result = Sympa::Mail::distribute_message(
                 'message' => $new_message,
                 'rcpt'    => $message->{'rcpts_by_mode'}{$mode}{'verp'},
                 'list'    => $self,
