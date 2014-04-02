@@ -69,7 +69,6 @@ sub new {
 
     my $self = bless {
         pids      => {},
-        max_args  => $max_arg,
         opensmtp  => 0,
         use_spool => $params{use_spool}
     }, $class;
