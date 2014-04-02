@@ -220,25 +220,59 @@ sub distribute_message {
         push @sendtobypacket, \@tab;
     }
 
-    unless (
-        _sendto(
+    my $delivery_date = $list->get_next_delivery_date() || time();
+
+    if ($message->is_crypted) {
+
+        # encrypt message for each recipient and send the message
+        # this MUST be moved to the bulk mailer. This way, merge will be
+        # applied after the SMIME encryption is applied ! This is a bug !
+        foreach my $bulk_of_rcpt (@sendtobypacket) {
+            foreach my $email (@{$bulk_of_rcpt}) {
+                if ($email !~ /@/) {
+                    Sympa::Log::Syslog::do_log('err',
+                        "incorrect call for encrypt with incorrect number of recipient"
+                    );
+                    return undef;
+                }
+                unless ($message->smime_encrypt($email)) {
+                    Sympa::Log::Syslog::do_log('err',
+                        "Failed to encrypt message");
+                    return undef;
+                }
+                my $result = send_message(
+                    'message'       => $message,
+                    'rcpt'          => $email,
+                    'from'          => $from,
+                    'listname'      => $list->name(),
+                    'robot'         => $robot,
+                    'priority'      => $list->priority(),
+                    'delivery_date' => $delivery_date,
+                    'use_bulk'      => 1,
+                    'tag_as_last'   => $tag_as_last
+                );
+                return undef if !$result;
+                $tag_as_last = 0;
+            }
+        }
+    } else {
+        $message->{'msg_as_string'} =
+            $msg_header->as_string() . "\n" . $msg_body;
+        my $result = send_message(
             'message'       => $message,
-            'from'          => $from,
             'rcpt'          => \@sendtobypacket,
-            'listname'      => $list->name,
-            'priority'      => $list->priority,
-            'delivery_date' => $list->get_next_delivery_date,
+            'from'          => $from,
+            'listname'      => $list->name(),
             'robot'         => $robot,
-            'use_bulk'      => 1,
+            'priority'      => $list->priority(),
+            'delivery_date' => $delivery_date,
             'verp'          => $verp,
+            'merge'         => $list->merge_feature(),
+            'use_bulk'      => 1,
             'dkim'          => $dkim,
-            'merge'         => $list->merge_feature,
             'tag_as_last'   => $tag_as_last
-        )
-        ) {
-        Sympa::Log::Syslog::do_log('err', 'Failed to send message to list %s',
-            $list);
-        return undef;
+        );
+        return undef if !$result;
     }
 
     return $numsmtp;
@@ -327,123 +361,6 @@ sub reaper {
 }
 
 ### PRIVATE FUNCTIONS ###
-
-####################################################
-# sendto
-####################################################
-# send messages, S/MIME encryption if needed,
-# grouped sending (or not if encryption)
-#
-# IN: $message (+): Message object
-#     $from (+): message from
-#     $rcpt(+) : ref(SCALAR) | ref(ARRAY) - message recipients
-#     $listname : use only to format return_path if VERP on
-#     $robot(+) : ref(Robot)
-#     $encrypt : 'smime_crypted' | undef
-#     $verp : 1| undef
-#     $use_bulk : if defined,  send message using bulk
-#
-# OUT : 1 - call to sending
-#
-####################################################
-sub _sendto {
-    my %params = @_;
-
-    my $message     = $params{'message'};
-    my $msg_header  = $message->get_mime_message->head;
-    my $msg_body    = $message->{'body_as_string'};
-    my $from        = $params{'from'};
-    my $rcpt        = $params{'rcpt'};
-    my $listname    = $params{'listname'};
-    my $robot       = Sympa::Robot::clean_robot($params{'robot'});  # may not be Site
-    my $priority    = $params{'priority'};
-    my $verp        = $params{'verp'};
-    my $merge       = $params{'merge'};
-    my $dkim        = $params{'dkim'};
-    my $use_bulk    = $params{'use_bulk'};
-    my $tag_as_last = $params{'tag_as_last'};
-
-    Sympa::Log::Syslog::do_log(
-        'debug2',
-        'Sympa::Mail::sendto(from : %s,listname: %s, encrypt : %s, verp : %s, priority = %s, last: %s, use_bulk: %s',
-        $from,
-        $listname,
-        $message->is_crypted,
-        $verp,
-        $priority,
-        $tag_as_last,
-        $use_bulk
-    );
-
-    my $delivery_date = $params{'delivery_date'};
-
-    # if not specified, delivery tile is right now (used for sympa messages
-    # etc)
-    $delivery_date = time()
-        unless $delivery_date;
-
-    if ($message->is_crypted) {
-
-        # encrypt message for each rcpt and send the message
-        # this MUST be moved to the bulk mailer. This way, merge will be
-        # applied after the SMIME encryption is applied ! This is a bug !
-        foreach my $bulk_of_rcpt (@{$rcpt}) {
-
-            # trace foreach my $unique_rcpt (@{$bulk_of_rcpt}) {
-            foreach my $email (@{$bulk_of_rcpt}) {
-                if ($email !~ /@/) {
-                    Sympa::Log::Syslog::do_log('err',
-                        "incorrect call for encrypt with incorrect number of recipient"
-                    );
-                    return undef;
-                }
-                unless ($message->smime_encrypt($email)) {
-                    Sympa::Log::Syslog::do_log('err',
-                        "Failed to encrypt message");
-                    return undef;
-                }
-                unless (
-                    send_message(
-                        'message'       => $message,
-                        'rcpt'          => $email,
-                        'from'          => $from,
-                        'listname'      => $listname,
-                        'robot'         => $robot,
-                        'priority'      => $priority,
-                        'delivery_date' => $delivery_date,
-                        'use_bulk'      => $use_bulk,
-                        'tag_as_last'   => $tag_as_last
-                    )
-                    ) {
-                    Sympa::Log::Syslog::do_log('err',
-                        "Failed to send encrypted message");
-                    return undef;
-                }
-                $tag_as_last = 0;
-            }
-        }
-    } else {
-        $message->{'msg_as_string'} =
-            $msg_header->as_string() . "\n" . $msg_body;
-        my $result = send_message(
-            'message'       => $message,
-            'rcpt'          => $rcpt,
-            'from'          => $from,
-            'listname'      => $listname,
-            'robot'         => $robot,
-            'priority'      => $priority,
-            'delivery_date' => $delivery_date,
-            'verp'          => $verp,
-            'merge'         => $merge,
-            'use_bulk'      => $use_bulk,
-            'dkim'          => $dkim,
-            'tag_as_last'   => $tag_as_last
-        );
-        return $result;
-
-    }
-    return 1;
-}
 
 ####################################################
 # sending
