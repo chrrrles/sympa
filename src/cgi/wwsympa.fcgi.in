@@ -133,8 +133,7 @@ if (eval "require Sympa::Plugin::Manager") {
     $plugins = Sympa::Plugin::Manager->new(application => 'website');
 }
 
-our $mailer = Sympa::Mailer->new();
-$mailer->set_send_spool(Sympa::Site->queue);
+our $mailer = Sympa::Mailer->new(use_spool => 1);
 
 if (Sympa::Site->use_fast_cgi) {
     require CGI::Fast;
