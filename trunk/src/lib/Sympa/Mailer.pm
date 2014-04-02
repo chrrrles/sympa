@@ -51,6 +51,14 @@ if ($EVAL_ERROR) {
 
 Creates a new L<Sympa::Mailer> object.
 
+Parameters:
+
+=over
+
+=item * B<use_spool>: spool messages instead of sending them (default: false)
+
+=back
+
 Returns a new L<Sympa::Mailer> object, or I<undef> for failure.
 
 =cut 
@@ -60,26 +68,11 @@ sub new {
 
 
     my $self = bless {
-        pids     => {},
-        max_args => $max_arg,
-        opensmtp => 0,
+        pids      => {},
+        max_args  => $max_arg,
+        opensmtp  => 0,
+        use_spool => $params{use_spool}
     }, $class;
-}
-
-####################################################
-# public set_send_spool
-####################################################
-# set in global $send_spool, the concerned spool for
-# sending message when it is not done by smtpto
-#
-# IN : $spool (+): spool concerned by sending
-# OUT :
-#
-####################################################
-sub set_send_spool {
-    my ($self, $spool) = @_;
-
-    $self->{spool} = $spool;
 }
 
 #sub mail_file($that, $filename, $rcpt, $data)
@@ -440,7 +433,7 @@ sub send_message {
         $trackingfeature = '';
     }
     my $mergefeature = ($merge and $merge eq 'on');
-    if ($use_bulk or defined $self->{spool}) {
+    if ($use_bulk or $self->{use_spool}) {
 
         # in that case use bulk tables to prepare message distribution
         unless ($use_bulk) {
