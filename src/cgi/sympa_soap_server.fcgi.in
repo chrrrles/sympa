@@ -14,7 +14,7 @@ use Sympa::DatabaseManager;
 use Sympa::Robot;
 use Sympa::Log::Syslog;
 use Sympa::List;
-use Sympa::Mail;
+use Sympa::Mailer;
 use Sympa::SOAP;
 use Sympa::Transport;
 
@@ -47,7 +47,8 @@ unless (Sympa::DatabaseManager::check_db_connect()) {
 
 ## The process should not fork for sending mail
 ## Messages will be spooled instead
-Sympa::Mail::set_send_spool(Sympa::Site->queue);
+our $mailer = Sympa::Mailer->new();
+$mailer->set_send_spool(Sympa::Site->queue);
 
 ## Loading all Lists at startup, in order to increase execution speed
 Sympa::List::get_lists('Site');

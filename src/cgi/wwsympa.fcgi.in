@@ -60,7 +60,7 @@ use Sympa::Language;
 use Sympa::List;
 use Sympa::Log::Database;
 use Sympa::Log::Syslog;
-use Sympa::Mail;
+use Sympa::Mailer;
 use Sympa::Message;
 use Sympa::Report;
 use Sympa::Robot;
@@ -133,7 +133,8 @@ if (eval "require Sympa::Plugin::Manager") {
     $plugins = Sympa::Plugin::Manager->new(application => 'website');
 }
 
-Sympa::Mail::set_send_spool(Sympa::Site->queue);
+our $mailer = Sympa::Mailer->new();
+$mailer->set_send_spool(Sympa::Site->queue);
 
 if (Sympa::Site->use_fast_cgi) {
     require CGI::Fast;
@@ -10161,8 +10162,7 @@ sub do_remove_arc {
 #  do_send_me
 ####################################################
 #  Sends a web archive message to a
-#  requesting user
-#  It uses Sympa::Mail::forward_message() to do it.
+#  requesting user, using forward_message()
 #
 # IN : -
 #
@@ -10237,12 +10237,11 @@ sub do_send_me {
                 $arcpath, $msgfile);
             return undef;
         }
-        unless (
-            Sympa::Mail::forward_message(
-                $message,                  $robot->get_address(),
-                $param->{'user'}{'email'}, $robot
-            )
-            ) {
+        my $result = $mailer->forward_message(
+            $message,                  $robot->get_address(),
+            $param->{'user'}{'email'}, $robot
+        );
+        unless ($result) {
             $param->{'status'} = 'message_err';
             wwslog(
                 'err',
@@ -21961,7 +21960,7 @@ sub do_send_mail {
             'messageasstring' => $messageasstring,
             'noxsympato'      => 1,
         );
-        $result = Sympa::Mail::send_message(
+        $result = $mailer->send_message(
             'message'  => $message,
             'rcpt'     => $to,
             'from'     => $robot->get_address('owner'),
