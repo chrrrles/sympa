@@ -66,16 +66,12 @@ Returns a new L<Sympa::Mailer> object, or I<undef> for failure.
 sub new {
     my ($class, %params) = @_;
 
-
     my $self = bless {
         pids      => {},
         opensmtp  => 0,
         use_spool => $params{use_spool}
     }, $class;
 }
-
-#sub mail_file($that, $filename, $rcpt, $data)
-#DEPRECATED: Use parse_tt2_messageastring() & sending().
 
 ####################################################
 # public mail_message
@@ -368,8 +364,6 @@ sub reaper {
     return $i;
 }
 
-### PRIVATE FUNCTIONS ###
-
 ####################################################
 # sending
 ####################################################
@@ -615,9 +609,6 @@ sub get_sendmail_handle {
 
     return $out;
 }
-
-#sub send_in_spool($rcpt,$robot,$sympa_email,$XSympaFrom)
-#DEPRECATED: not used at all
 
 ## Safefork does several tries before it gives up.
 ## Do 3 trials and wait 10 seconds * $i between each.
