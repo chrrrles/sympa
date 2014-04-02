@@ -527,12 +527,12 @@ while (!$end) {
 
                 # trace_smime($messageasstring,'dkim');
 
-                *SMTP = $mailer->get_sendmail_handle($return_path, \$rcpt, $robot,
-                    $notification_id);
-
+                my $handle = $mailer->get_sendmail_handle(
+                    $return_path, \$rcpt, $robot, $notification_id
+                );
                 # Message with customized data
-                print SMTP $messageasstring;
-                close SMTP;
+                print $handle $messageasstring;
+                close $handle;
             }
         } else {
 
@@ -559,9 +559,11 @@ while (!$end) {
 
             # trace_smime($messageasstring_init,'dkim 2');
 
-            *SMTP = $mailer->get_sendmail_handle($bulk->{'returnpath'}, \@rcpts, $robot);
-            print SMTP $messageasstring_init;
-            close SMTP;
+            my $handle = $mailer->get_sendmail_handle(
+                $bulk->{'returnpath'}, \@rcpts, $robot
+            );
+            print $handle $messageasstring_init;
+            close $handle;
         }
 
         ## Remove packet once it has been processed
