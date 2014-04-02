@@ -571,7 +571,7 @@ sub get_sendmail_handle {
         croak sprintf('Unable to create a channel in smtpto: %s', $ERRNO);
         ## No return
     }
-    my $pid = safefork();
+    my $pid = _safefork();
     $self->{pids}->{$pid} = 0;
 
     my $sendmail = $robot->sendmail;
@@ -631,7 +631,7 @@ sub get_sendmail_handle {
 ## Do 3 trials and wait 10 seconds * $i between each.
 ## Exit with a fatal error is fork failed after all
 ## tests have been exhausted.
-sub safefork {
+sub _safefork {
     my $err;
     for (my $i = 1; $i < 4; $i++) {
         my ($pid) = fork;
