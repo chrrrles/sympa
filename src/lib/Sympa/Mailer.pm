@@ -63,7 +63,6 @@ sub new {
         pids     => {},
         max_args => $max_arg,
         opensmtp => 0,
-        handle   => 'fh0000000000'
     }, $class;
 }
 
@@ -493,9 +492,9 @@ sub send_message {
             $string_to_send = $message->get_mime_message->as_string();  #FIXME
         }
 
-        *SMTP = $self->get_sendmail_handle($from, $rcpt, $robot);
-        print SMTP $string_to_send;
-        unless (close SMTP) {
+        my $handle = $self->get_sendmail_handle($from, $rcpt, $robot);
+        print $handle $string_to_send;
+        unless (close $handle) {
             Sympa::Log::Syslog::do_log('err',
                 'could not close safefork to sendmail');
             return undef;
@@ -564,10 +563,8 @@ sub get_sendmail_handle {
         last if ($self->reaper(0) == -1);    ## Blocking call to the reaper.
     }
 
-    *IN  = ++$self->{handle};
-    *OUT = ++$self->{handle};
-
-    if (!pipe(IN, OUT)) {
+    my ($in, $out);
+    if (!pipe($in, $out)) {
         croak sprintf('Unable to create a channel in smtpto: %s', $ERRNO);
         ## No return
     }
@@ -584,9 +581,9 @@ sub get_sendmail_handle {
         push @sendmail_args, "-V$msgkey";
     }
     if ($pid == 0) {
-
-        close(OUT);
-        open(STDIN, "<&IN");
+        # child
+        close($out);
+        open(STDIN, '<&', $in);
 
         $from = '' if $from eq '<>';    # null sender
         if (!ref($rcpt)) {
@@ -599,6 +596,8 @@ sub get_sendmail_handle {
 
         exit 1;                         ## Should never get there.
     }
+
+    # parent
     if ($main::options{'mail'}) {
         my $r;
         if (!ref $rcpt) {
@@ -614,14 +613,15 @@ sub get_sendmail_handle {
             $from, $r
         );
     }
-    unless (close(IN)) {
+    unless (close($in)) {
         Sympa::Log::Syslog::do_log('err',
             "Sympa::Mail::smtpto: could not close safefork");
         return undef;
     }
     $self->{opensmtp}++;
     select(undef, undef, undef, 0.3) if $self->{opensmtp} < $robot->maxsmtp;
-    return $self->{handle};
+
+    return $out;
 }
 
 #sub send_in_spool($rcpt,$robot,$sympa_email,$XSympaFrom)
