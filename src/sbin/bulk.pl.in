@@ -527,7 +527,7 @@ while (!$end) {
 
                 # trace_smime($messageasstring,'dkim');
 
-                *SMTP = $mailer->_get_sendmail_handle($return_path, \$rcpt, $robot,
+                *SMTP = $mailer->get_sendmail_handle($return_path, \$rcpt, $robot,
                     $notification_id);
 
                 # Message with customized data
@@ -559,7 +559,7 @@ while (!$end) {
 
             # trace_smime($messageasstring_init,'dkim 2');
 
-            *SMTP = $mailer->_get_sendmail_handle($bulk->{'returnpath'}, \@rcpts, $robot);
+            *SMTP = $mailer->get_sendmail_handle($bulk->{'returnpath'}, \@rcpts, $robot);
             print SMTP $messageasstring_init;
             close SMTP;
         }

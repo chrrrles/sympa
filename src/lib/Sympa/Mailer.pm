@@ -493,7 +493,7 @@ sub send_message {
             $string_to_send = $message->get_mime_message->as_string();  #FIXME
         }
 
-        *SMTP = $self->_get_sendmail_handle($from, $rcpt, $robot);
+        *SMTP = $self->get_sendmail_handle($from, $rcpt, $robot);
         print SMTP $string_to_send;
         unless (close SMTP) {
             Sympa::Log::Syslog::do_log('err',
@@ -520,7 +520,7 @@ sub send_message {
 #       | undef
 #
 ##############################################################################
-sub _get_sendmail_handle {
+sub get_sendmail_handle {
     my $self      = shift;
     Sympa::Log::Syslog::do_log('debug2', '(%s, %s, %s, %s, %s)', @_);
     my $from      = shift;
