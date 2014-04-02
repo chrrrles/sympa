@@ -84,7 +84,7 @@ sub set_send_spool {
 #      -@rcpt(+) : recipients
 #
 ####################################################
-sub mail_message {
+sub distribute_message {
 
     my %params      = @_;
     my $message     = $params{'message'};
@@ -221,7 +221,7 @@ sub mail_message {
     }
 
     unless (
-        sendto(
+        _sendto(
             'message'       => $message,
             'from'          => $from,
             'rcpt'          => \@sendtobypacket,
@@ -256,7 +256,7 @@ sub mail_message {
 # OUT : 1 | undef
 #
 ####################################################
-sub mail_forward {
+sub forward_message {
     Sympa::Log::Syslog::do_log('debug2', '(%s, %s, %s, %s)', @_);
     my $message = shift;
     my $from    = shift;
@@ -275,7 +275,7 @@ sub mail_forward {
                                                    #FIXME:
     $message->set_message_as_string($message->get_mime_message->as_string());
     unless (
-        defined sending(
+        defined send_message(
             'message'  => $message,
             'rcpt'     => $rcpt,
             'from'     => $from,
@@ -346,7 +346,7 @@ sub reaper {
 # OUT : 1 - call to sending
 #
 ####################################################
-sub sendto {
+sub _sendto {
     my %params = @_;
 
     my $message     = $params{'message'};
@@ -403,7 +403,7 @@ sub sendto {
                     return undef;
                 }
                 unless (
-                    sending(
+                    send_message(
                         'message'       => $message,
                         'rcpt'          => $email,
                         'from'          => $from,
@@ -425,7 +425,7 @@ sub sendto {
     } else {
         $message->{'msg_as_string'} =
             $msg_header->as_string() . "\n" . $msg_body;
-        my $result = sending(
+        my $result = send_message(
             'message'       => $message,
             'rcpt'          => $rcpt,
             'from'          => $from,
@@ -468,7 +468,7 @@ sub sendto {
 #           | undef
 #
 ####################################################
-sub sending {
+sub send_message {
     my %params      = @_;
     my $message     = $params{'message'};
     my $rcpt        = $params{'rcpt'};
@@ -559,7 +559,7 @@ sub sending {
             $string_to_send = $message->get_mime_message->as_string();  #FIXME
         }
 
-        *SMTP = smtpto($from, $rcpt, $robot);
+        *SMTP = _get_sendmail_handle($from, $rcpt, $robot);
         print SMTP $string_to_send;
         unless (close SMTP) {
             Sympa::Log::Syslog::do_log('err',
@@ -586,7 +586,7 @@ sub sending {
 #       | undef
 #
 ##############################################################################
-sub smtpto {
+sub _get_sendmail_handle {
     Sympa::Log::Syslog::do_log('debug2', '(%s, %s, %s, %s, %s)', @_);
     my $from      = shift;
     my $rcpt      = shift;

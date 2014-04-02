@@ -1087,7 +1087,7 @@ sub send_file {
 
     ## SENDING
     unless (
-        defined Sympa::Mail::sending(
+        defined Sympa::Mail::send_message(
             'message' => $message,
             'rcpt'    => $who,
             'from' =>

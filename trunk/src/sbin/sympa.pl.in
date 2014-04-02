@@ -2205,7 +2205,7 @@ sub DoForward {
     # my $msg_copy = $msg->dup;
     $message->{'msg'} = $msg;
     unless (
-        Sympa::Mail::mail_forward(
+        Sympa::Mail::forward_message(
             $message, $robot->get_address('owner'),    #FIXME: 'return_path'
             \@rcpt, $robot
         )
