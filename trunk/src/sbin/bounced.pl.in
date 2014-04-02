@@ -149,6 +149,7 @@ use POSIX qw();
 use Sympa::BounceMessage;
 use Sympa::DatabaseManager;
 use Sympa::List;
+use Sympa::Mailer;
 use Sympa::Robot;
 use Sympa::Site;
 use Sympa::Spool::File;
@@ -274,6 +275,8 @@ Sympa::Log::Syslog::do_log('notice', "bounced Started");
 $SIG{'TERM'} = 'sigterm';
 my $end = 0;
 
+our $mailer = Sympa::Mailer->new();
+
 my $spool = Sympa::Spool::File->new('bounce');
 
 Sympa::Log::Syslog::do_log('debug', 'starting infinite loop');
@@ -311,7 +314,7 @@ while (!$end) {
             $spool->move_to_bad($bounce->{'messagekey'});
         }
         ## Free zombie sendmail processes
-        Sympa::Mail::reaper();
+        $mailer->reaper();
     }
 }
 

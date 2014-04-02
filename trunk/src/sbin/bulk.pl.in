@@ -102,7 +102,7 @@ use Sympa::Bulk;
 use Sympa::Conf;
 use Sympa::Constants;
 use Sympa::List;
-use Sympa::Mail;
+use Sympa::Mailer;
 use Sympa::Log::Syslog;
 use Sympa::Site;
 use Sympa::Spool::SQL;
@@ -228,8 +228,7 @@ Sympa::Log::Syslog::do_log('notice', "bulk.pl %s Started",
 $SIG{'TERM'} = 'sigterm';
 my $end = 0;
 
-my $opensmtp = 0;
-my $fh       = 'fh0000000000';    ## File handle for the stream.
+our $mailer = Sympa::Mailer->new();
 
 my $messagekey;    # the key of the current message in the message_table
 my $messageasstring_init;    # the current message as a string
@@ -528,7 +527,7 @@ while (!$end) {
 
                 # trace_smime($messageasstring,'dkim');
 
-                *SMTP = Sympa::Mail::smtpto($return_path, \$rcpt, $robot,
+                *SMTP = $mailer->_get_sendmail_handle($return_path, \$rcpt, $robot,
                     $notification_id);
 
                 # Message with customized data
@@ -560,7 +559,7 @@ while (!$end) {
 
             # trace_smime($messageasstring_init,'dkim 2');
 
-            *SMTP = Sympa::Mail::smtpto($bulk->{'returnpath'}, \@rcpts, $robot);
+            *SMTP = $mailer->_get_sendmail_handle($bulk->{'returnpath'}, \@rcpts, $robot);
             print SMTP $messageasstring_init;
             close SMTP;
         }
@@ -589,7 +588,7 @@ while (!$end) {
         ## Sleep for a while if bulk_mailer DB table is empty
         sleep Sympa::Site->bulk_sleep;
     }
-    Sympa::Mail::reaper();
+    $mailer->reaper();
 
 }
 

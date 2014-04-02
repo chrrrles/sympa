@@ -21,7 +21,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package Sympa::Mail;
+package Sympa::Mailer;
 
 use strict;
 use warnings;
@@ -35,9 +35,6 @@ use Sympa::Constants;
 use Sympa::Log::Syslog;
 use Sympa::Site;
 
-my $opensmtp = 0;
-my $fh       = 'fh0000000000';    ## File handle for the stream.
-
 my $max_arg;
 eval {
     $max_arg = POSIX::sysconf( &POSIX::_SC_ARG_MAX );
@@ -46,11 +43,29 @@ if ($EVAL_ERROR) {
     $max_arg = 4096;
 }
 
-my %pid = ();
+=head1 CLASS METHODS
 
-my $send_spool;    ## for calling context
+=over 4
 
-### PUBLIC FUNCTIONS ###
+=item Sympa::Mailer->new(%parameters)
+
+Creates a new L<Sympa::Mailer> object.
+
+Returns a new L<Sympa::Mailer> object, or I<undef> for failure.
+
+=cut 
+
+sub new {
+    my ($class, %params) = @_;
+
+
+    my $self = bless {
+        pids     => {},
+        max_args => $max_arg,
+        opensmtp => 0,
+        handle   => 'fh0000000000'
+    }, $class;
+}
 
 ####################################################
 # public set_send_spool
@@ -63,9 +78,9 @@ my $send_spool;    ## for calling context
 #
 ####################################################
 sub set_send_spool {
-    my $spool = pop;
+    my ($self, $spool) = @_;
 
-    $send_spool = $spool;
+    $self->{spool} = $spool;
 }
 
 #sub mail_file($that, $filename, $rcpt, $data)
@@ -85,8 +100,8 @@ sub set_send_spool {
 #
 ####################################################
 sub distribute_message {
+    my ($self, %params) = @_;
 
-    my %params      = @_;
     my $message     = $params{'message'};
     my $list        = $params{'list'};
     my $verp        = $params{'verp'};
@@ -291,6 +306,7 @@ sub distribute_message {
 #
 ####################################################
 sub forward_message {
+    my $self = shift;
     Sympa::Log::Syslog::do_log('debug2', '(%s, %s, %s, %s)', @_);
     my $message = shift;
     my $from    = shift;
@@ -338,24 +354,25 @@ sub forward_message {
 # OUT : $i
 #####################################################################
 sub reaper {
+    my $self = shift;
     my $block = shift;
     my $i;
 
     $block = 1 unless (defined($block));
     while (($i = waitpid(-1, $block ? POSIX::WNOHANG : 0)) > 0) {
         $block = 1;
-        if (!defined($pid{$i})) {
+        if (!defined($self->{pids}->{$i})) {
             Sympa::Log::Syslog::do_log('debug2',
                 "Reaper waited $i, unknown process to me");
             next;
         }
-        $opensmtp--;
-        delete($pid{$i});
+        $self->{opensmtp}--;
+        delete($self->{pids}->{$i});
     }
     Sympa::Log::Syslog::do_log(
         'debug2',
         "Reaper unwaited PIDs : %s\nOpen = %s\n",
-        join(' ', sort keys %pid), $opensmtp
+        join(' ', sort keys %{$self->{pids}}), $self->{opensmtp}
     );
     return $i;
 }
@@ -386,7 +403,8 @@ sub reaper {
 #
 ####################################################
 sub send_message {
-    my %params      = @_;
+    my ($self, %params) = @_;
+
     my $message     = $params{'message'};
     my $rcpt        = $params{'rcpt'};
     my $from        = $params{'from'};
@@ -404,7 +422,6 @@ sub send_message {
     my $dkim        = $params{'dkim'};
     my $tag_as_last = $params{'tag_as_last'};
     my $sympa_file;
-    my $fh;
     my $signed_msg;    # if signing
 
     if ($sign_mode and $sign_mode eq 'smime') {
@@ -424,7 +441,7 @@ sub send_message {
         $trackingfeature = '';
     }
     my $mergefeature = ($merge and $merge eq 'on');
-    if ($use_bulk or defined $send_spool) {
+    if ($use_bulk or defined $self->{spool}) {
 
         # in that case use bulk tables to prepare message distribution
         unless ($use_bulk) {
@@ -476,7 +493,7 @@ sub send_message {
             $string_to_send = $message->get_mime_message->as_string();  #FIXME
         }
 
-        *SMTP = _get_sendmail_handle($from, $rcpt, $robot);
+        *SMTP = $self->_get_sendmail_handle($from, $rcpt, $robot);
         print SMTP $string_to_send;
         unless (close SMTP) {
             Sympa::Log::Syslog::do_log('err',
@@ -504,6 +521,7 @@ sub send_message {
 #
 ##############################################################################
 sub _get_sendmail_handle {
+    my $self      = shift;
     Sympa::Log::Syslog::do_log('debug2', '(%s, %s, %s, %s, %s)', @_);
     my $from      = shift;
     my $rcpt      = shift;
@@ -539,22 +557,22 @@ sub _get_sendmail_handle {
     ## Check how many open smtp's we have, if too many wait for a few
     ## to terminate and then do our job.
 
-    Sympa::Log::Syslog::do_log('debug3', "Open = $opensmtp");
-    while ($opensmtp > $robot->maxsmtp) {
+    Sympa::Log::Syslog::do_log('debug3', "Open = $self->{opensmtp}");
+    while ($self->{opensmtp} > $robot->maxsmtp) {
         Sympa::Log::Syslog::do_log('debug3',
-            "Sympa::Mail::smtpto: too many open SMTP ($opensmtp), calling reaper");
-        last if (reaper(0) == -1);    ## Blocking call to the reaper.
+            "Sympa::Mail::smtpto: too many open SMTP ($self->{opensmtp}), calling reaper");
+        last if ($self->reaper(0) == -1);    ## Blocking call to the reaper.
     }
 
-    *IN  = ++$fh;
-    *OUT = ++$fh;
+    *IN  = ++$self->{handle};
+    *OUT = ++$self->{handle};
 
     if (!pipe(IN, OUT)) {
         croak sprintf('Unable to create a channel in smtpto: %s', $ERRNO);
         ## No return
     }
     my $pid = safefork();
-    $pid{$pid} = 0;
+    $self->{pids}->{$pid} = 0;
 
     my $sendmail = $robot->sendmail;
     my @sendmail_args = split /\s+/, $robot->sendmail_args;
@@ -601,9 +619,9 @@ sub _get_sendmail_handle {
             "Sympa::Mail::smtpto: could not close safefork");
         return undef;
     }
-    $opensmtp++;
-    select(undef, undef, undef, 0.3) if $opensmtp < $robot->maxsmtp;
-    return ("Sympa::Mail::$fh");    ## Symbol for the write descriptor.
+    $self->{opensmtp}++;
+    select(undef, undef, undef, 0.3) if $self->{opensmtp} < $robot->maxsmtp;
+    return $self->{handle};
 }
 
 #sub send_in_spool($rcpt,$robot,$sympa_email,$XSympaFrom)

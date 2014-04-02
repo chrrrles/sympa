@@ -145,6 +145,7 @@ use Pod::Usage;
 use Sympa::List;
 use Sympa::Log::Database;
 use Sympa::Log::Syslog;
+use Sympa::Mailer;
 use Sympa::Message;
 use Sympa::Tools::Daemon;
 use Sympa::Tools::File;
@@ -280,6 +281,8 @@ $SIG{'TERM'} = 'sigterm';
 my $end = 0;
 
 my $spoolarchive = Sympa::Spool::File->new('outgoing');
+
+my $mailer = Sympa::Mailer->new();
 
 ## infinite loop scanning the queue (unless a sig TERM is received
 while (!$end) {
@@ -462,7 +465,7 @@ while (!$end) {
 Sympa::Site->send_notify_to_listmaster(undef, undef, undef, 1);
 
 ## Free zombie sendmail processes
-Sympa::Mail::reaper();
+$mailer->reaper();
 
 Sympa::Log::Syslog::do_log('notice',
     'archived exited normally due to signal');

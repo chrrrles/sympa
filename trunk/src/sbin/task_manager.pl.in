@@ -97,6 +97,7 @@ use Sympa::Conf;
 use Sympa::Constants;
 use Sympa::List;
 use Sympa::Log::Syslog;
+use Sympa::Mailer;
 use Sympa::Site;
 use Sympa::Spool::File::Task;
 use Sympa::Task;
@@ -222,6 +223,8 @@ undef my $log;
 
 #$log = 1;
 
+our $mailer = Sympa::Mailer->new();
+
 ###### INFINITE LOOP SCANING THE SPOOL (unless a sig TERM is received) ######
 while (!$end) {
     my $current_date = time;                           # current epoch date
@@ -256,7 +259,7 @@ while (!$end) {
     }
     sleep 30;
     ## Free zombie sendmail processes
-    Sympa::Mail::reaper();
+    $mailer->reaper();
 }
 
 ## when we catch SIGTERM, just change the value of the loop variable.

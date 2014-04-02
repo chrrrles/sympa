@@ -41,7 +41,6 @@ use Carp qw(croak);
 use Sympa::Conf;
 use Sympa::Language;
 use Sympa::Log::Syslog;
-use Sympa::Mail;
 use Sympa::Tools;
 use Sympa::Tools::Data;
 use Sympa::Tools::File;
@@ -1086,20 +1085,19 @@ sub send_file {
     }
 
     ## SENDING
-    unless (
-        defined Sympa::Mail::send_message(
-            'message' => $message,
-            'rcpt'    => $who,
-            'from' =>
-                ($data->{'return_path'} || $robot->get_address('owner')),
-            'robot'     => $robot,
-            'listname'  => $listname,
-            'priority'  => $robot->sympa_priority,
-            'sign_mode' => $data->{'sign_mode'},
-            'use_bulk'  => $data->{'use_bulk'},
-            'dkim'      => $data->{'dkim'},
-        )
-        ) {
+    my $result = $main::mailer->send_message(
+        'message' => $message,
+        'rcpt'    => $who,
+        'from' =>
+            ($data->{'return_path'} || $robot->get_address('owner')),
+        'robot'     => $robot,
+        'listname'  => $listname,
+        'priority'  => $robot->sympa_priority,
+        'sign_mode' => $data->{'sign_mode'},
+        'use_bulk'  => $data->{'use_bulk'},
+        'dkim'      => $data->{'dkim'},
+    );
+    if (!$result) {
         Sympa::Log::Syslog::do_log('err',
             'Could not send template "%s" to %s',
             $filename, $who);
