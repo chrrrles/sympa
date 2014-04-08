@@ -26,6 +26,7 @@ package Sympa::Tools::Message;
 use strict;
 
 use Carp qw(croak);
+use DateTime;
 use Encode qw();
 use English;
 use HTML::TreeBuilder;
@@ -934,22 +935,12 @@ sub parse_tt2_messageasstring {
     }
 
     unless ($header_ok{'date'}) {
-        my $now   = time;
-        my $tzoff = Time::Local::timegm(localtime $now) - $now;
-        my $sign;
-        if ($tzoff < 0) {
-            ($sign, $tzoff) = ('-', -$tzoff);
-        } else {
-            $sign = '+';
-        }
-        $tzoff = sprintf '%s%02d%02d',
-            $sign, int($tzoff / 3600), int($tzoff / 60) % 60;
-        Sympa::Language::PushLang('en');
-        $headers .=
-              'Date: '
-            . POSIX::strftime("%a, %d %b %Y %H:%M:%S $tzoff", localtime $now)
-            . "\n";
-        Sympa::Language::PopLang();
+        ## Format current time.
+        ## If setting local timezone fails, fallback to UTC.
+        my $date = (
+            eval { DateTime->now(time_zone => 'local') } || DateTime->now
+        )->strftime('%a, %{day} %b %Y %H:%M:%S %z');
+        $headers .= sprintf "Date: %s\n", $date;
     }
 
     unless ($header_ok{'to'}) {

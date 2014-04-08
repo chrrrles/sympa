@@ -257,11 +257,10 @@ sub parse_tt2 {
     Sympa::Language::SetLang($data->{lang}) if ($data->{'lang'});
 
     my $config = {
-
         # ABSOLUTE => 1,
         INCLUDE_PATH => $include_path,
-
-        #	PRE_CHOMP  => 1,
+        PLUGIN_BASE  => 'Sympa::Template::Plugin',
+        # PRE_CHOMP  => 1,
         UNICODE => 0,    # Prevent BOM auto-detection
 
         FILTERS => {

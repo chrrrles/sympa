@@ -20,26 +20,41 @@
 
 SUBDIRS = src default doc po www
 
-check_SCRIPTS = t/LockedFile.t \
+check_SCRIPTS = t/Language.t \
+		t/LockedFile.t \
 		t/Language.t \
 		t/compile_modules.t \
 		t/compile_executables.t \
 		t/tools_data.t \
 		t/tools_file.t \
 		t/tools_time.t
+check_DATA = t/locale/cs/LC_MESSAGES/sympa.mo \
+	     t/locale/cs/LC_MESSAGES/web_help.mo \
+	     t/locale/zh_TW/LC_MESSAGES/sympa.mo
 
 EXTRA_DIST = important_changes.pl \
 	     sympa.spec.in \
 	     sympa.spec \
-	     $(check_SCRIPTS)
+	     $(check_SCRIPTS) $(check_DATA)
+
+MSGFMT=@MSGFMT@
+.po.mo:
+	$(MSGFMT) -o $@ $<
 
 check-local:
-	$(PERL) -I src/lib -MTest::Harness -e 'runtests(@ARGV)' \
-	$(check_SCRIPTS)
+	[ -z "$(TEST_FILES)" ] && TEST_FILES="$(check_SCRIPTS)"; \
+	$(PERL) -I src/lib -MTest::Harness -e 'runtests @ARGV' $$TEST_FILES
 
 install-data-hook: installdir installconfig nextstep importantchanges
 
 installdir:
+	@echo "Creating plugin directory"
+	@for dir in $(modulesdir)/Sympa/Template/Plugin; do \
+		if [ ! -d $(DESTDIR)$$dir ] ; then \
+			echo "Creating $(DESTDIR)$$dir"; \
+			install -d -m 755 $(DESTDIR)$$dir; \
+		fi; \
+	done
 	@echo "Creating writable directories"
 	@for dir in $(expldir) $(spooldir) $(spooldir)/msg $(spooldir)/digest \
 		$(spooldir)/moderation $(spooldir)/expire $(spooldir)/auth \
