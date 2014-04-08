@@ -78,6 +78,13 @@ our %cpan_modules = (
         'gettext_id' =>
             'required to prevent Mail::DKIM from crashing Sympa processes.',
     },
+    # DateTime is used by DateTime::Format::Mail.
+    'DateTime::Format::Mail' => {
+        required_version => '0.28',
+        package_name => 'DateTime-Format-Mail',
+        mandatory => 1,
+        usage => 'used to decode date and time in message headers',
+    },
     'DBD::Oracle' => {
         required_version => '0.90',
         package_name     => 'DBD-Oracle',
@@ -207,6 +214,7 @@ our %cpan_modules = (
         'gettext_id'     => 'required when using the VOOT protocol',
     },
     'Locale::Messages' => {
+        required_version => '1.22',
         package_name => 'libintl-perl',
         mandatory    => 1,
         'gettext_id' => 'internationalization functions',

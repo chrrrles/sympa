@@ -44,6 +44,7 @@ use lib '--modulesdir--';
 # XXX MO: during development, where modules are not installed
 do '/home/sympa/ext/DEVEL.pm';
 
+use DateTime::Format::Mail;
 use Digest::MD5;
 use English; # FIXME: drop $MATCH usage
 use Archive::Zip qw(:ERROR_CODES);
@@ -942,6 +943,8 @@ our %in_regexp = (
     ## custom actions
     'cap'  => '.*',
     'lcap' => '.*',
+
+    'plugin' => '.*',
 );
 
 ## Regexp applied on incoming parameters (%in)
@@ -1230,6 +1233,9 @@ while ($query = new_loop()) {
 
     ## Get PATH_INFO parameters
     get_parameters();
+
+    # Propagate plugins parameters
+    $param->{'plugin'} = $in{'plugin'};
 
     # Static content
     $param->{'static_content_url'} = $robot->static_content_url;
@@ -2322,6 +2328,7 @@ sub get_parameters {
 
     my $custom_attribute;
     my $custom_input;
+    my $plugin = {};
 
     ## Check parameters format
     foreach my $p (keys %in) {
@@ -2350,6 +2357,13 @@ sub get_parameters {
             ##Sympa::Log::Syslog::do_log ('debug2', "get_parameters (custom_attribute) : ($p)($key) $pname $in{$p} ". Sympa::Site->$key->{type});
             $custom_attribute->{$key} = {value => $in{$p}};
             undef $in{$p};
+	 }elsif ($pname eq 'plugin' and $#tokens >= 2) {
+	     my $plugin_name = $tokens[1];
+	     my $param_name = $tokens[2];
+	     $regexp = $in_regexp{'plugin'};
+	     $plugin->{$plugin_name} = {} unless defined $plugin->{$plugin_name};
+	     $plugin->{$plugin_name}{$param_name} = $in{$p};
+	     undef $in{$p} ;
         } elsif ($pname =~ /^custom_input(.*)$/) {
             my $key = $tokens[1];
             $regexp = $in_regexp{'custom_input'};
@@ -2420,6 +2434,7 @@ sub get_parameters {
 
     $in{custom_attribute} = $custom_attribute;
     $in{custom_input}     = $custom_input;
+    $in{plugin}           = $plugin;
 
     ## For shared-related actions, Q-encode filenames
     ## This required for filenames that include non ascii characters
@@ -2831,19 +2846,15 @@ sub send_html {
 
     ## Send HTML headers
     if ($param->{'date'}) {
-        Sympa::Language::PushLang('en');
         printf "Date: %s\n",
-            POSIX::strftime("%a, %d %b %Y %H:%M:%S GMT", gmtime(time));
-        Sympa::Language::PopLang();
+            DateTime->now->strftime("%a, %{day} %b %Y %H:%M:%S GMT");
     }
     ## If we set the header indicating the last time the file to send was
     ## modified, add an HTTP header (limitate web harvesting).
     if ($param->{'header_date'}) {
-        Sympa::Language::PushLang('en');
         printf "Last-Modified: %s\n",
-            POSIX::strftime('%a, %d %b %Y %H:%M:%S GMT',
-            gmtime($param->{'header_date'}));
-        Sympa::Language::PopLang();
+            DateTime->from_epoch(epoch => $param->{'header_date'})
+                ->strftime("%a, %{day} %b %Y %H:%M:%S GMT");
     }
     print "Cache-control: no-cache\n" unless ($param->{'action'} eq 'arc');
     print "Content-Type: text/html; charset=utf-8\n";
@@ -8409,8 +8420,21 @@ sub do_modindex {
         $param->{'spool'}{$id}{'size'} = int($message->{'size'} / 1024 + 0.5);
         $param->{'spool'}{$id}{'subject'} =
             Sympa::Tools::Message::decode_header($message, 'Subject') || 'no_subject';
-        $param->{'spool'}{$id}{'date'} =
-            Sympa::Tools::Message::decode_header($message, 'Date');    #FIXME:
+                                                           
+        my $date = $message->{'msg'}->head->get('Date');
+        if ($date) {
+            $param->{'spool'}{$id}{'date_smtp'} = $date;
+            my $date_epoch = eval {
+                DateTime::Format::Mail->new->loose->parse_datetime($date)
+                    ->epoch;
+            };
+            if (defined $date_epoch) {
+                $param->{'spool'}{$id}{'date_epoch'} = $date_epoch;
+                $param->{'spool'}{$id}{'date'} =
+                    Sympa::Language::gettext_strftime("%a, %d %b %Y %H:%M:%S",
+                    localtime $date_epoch);
+            }
+        }
         $param->{'spool'}{$id}{'from'}  = $message->get_sender_email;
         $param->{'spool'}{$id}{'gecos'} = $message->get_sender_gecos
             if defined $message->get_sender_gecos;
@@ -10032,20 +10056,21 @@ sub do_latest_arc {
                     next;
                 }
 
-                my @array_date = Sympa::Tools::Time::parse_date($date);
-
                 $msg_info{'date_smtp'} = $date;
-                $msg_info{'date_epoch'} =
-                    get_timelocal_from_date(@array_date[1 .. $#array_date]);
+                my $date_epoch = eval {
+                    DateTime::Format::Mail->new->loose->parse_datetime($date)
+                        ->epoch;
+                };
+                if (defined $date_epoch) {
+                    $msg_info{'date_epoch'} = $date_epoch;
+                    $msg_info{'date'} = Sympa::Language::gettext_strftime(
+                        "%d %b %Y", localtime $date_epoch);
 
-                $msg_info{'date'} = Sympa::Language::gettext_strftime(
-                    "%d %b %Y", localtime($msg_info{'date_epoch'})
-                );
-                if ($msg_info{'date_epoch'} < $oldest_day) {
-                    $stop_search = 1;
-                    last;
+                    if ($date_epoch < $oldest_day) {
+                        $stop_search = 1;
+                        last;
+                    }
                 }
-
                 foreach my $key (keys %msg_info) {
                     chomp($msg_info{$key});
                 }
