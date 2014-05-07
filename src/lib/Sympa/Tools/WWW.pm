@@ -28,10 +28,6 @@ use strict;
 use English qw(-no_match_vars);
 
 use Sympa::Log::Syslog;
-use Sympa::Conf;
-use Sympa::Constants;
-use Sympa::Site;
-use Sympa::User;
 
 # hash of the icons linked with a type of file
 my %icons = (
@@ -156,58 +152,6 @@ sub new_passwd {
     }
 
     return 'init' . $passwd;
-}
-
-sub init_passwd {
-    my ($email, $data) = @_;
-
-    my ($passwd, $user);
-
-    if (Sympa::User::is_global_user($email)) {
-        $user = Sympa::User::get_global_user(
-            $email, Sympa::Site->db_additional_user_fields
-        );
-        $passwd = $user->{'password'};
-
-        unless ($passwd) {
-            $passwd = new_passwd();
-
-            unless (
-                Sympa::User::update_global_user(
-                    $email,
-                    {   'password' => $passwd,
-                        'lang'     => $user->{'lang'} || $data->{'lang'}
-                    }
-                )
-                ) {
-                Sympa::Report::reject_report_web('intern', 'update_user_db_failed',
-                    {'user' => $email},
-                    '', '', $email, undef);
-                Sympa::Log::Syslog::do_log('info',
-                    'init_passwd: update failed');
-                return undef;
-            }
-        }
-    } else {
-        $passwd = new_passwd();
-        unless (
-            Sympa::User::add_global_user(
-                {   'email'    => $email,
-                    'password' => $passwd,
-                    'lang'     => $data->{'lang'},
-                    'gecos'    => $data->{'gecos'}
-                }
-            )
-            ) {
-            Sympa::Report::reject_report_web('intern', 'add_user_db_failed',
-                {'user' => $email},
-                '', '', $email, undef);
-            Sympa::Log::Syslog::do_log('info', 'init_passwd: add failed');
-            return undef;
-        }
-    }
-
-    return 1;
 }
 
 sub get_my_url {
