@@ -1142,7 +1142,7 @@ sub smime_sign_check {
     }
     ## second step is the message signer match the sender
     ## a better analyse should be performed to extract the signer email.
-    my $signer = Sympa::Tools::SMIME::parse_cert({file => $temporary_file});
+    my $signer = Sympa::Tools::SMIME::parse_cert(file => $temporary_file);
 
     unless ($signer->{'email'}{lc($message->{'sender'})}) {
         unlink($temporary_file) unless ($main::options{'debug'});
@@ -1223,7 +1223,7 @@ sub smime_sign_check {
             }
             print CERT $workcert;
             close(CERT);
-            my ($parsed) = Sympa::Tools::SMIME::parse_cert({file => $tmpcert});
+            my ($parsed) = Sympa::Tools::SMIME::parse_cert(file => $tmpcert);
             unless ($parsed) {
                 Sympa::Log::Syslog::do_log('err',
                     'No result from parse_cert');
