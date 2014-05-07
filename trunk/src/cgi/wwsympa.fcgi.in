@@ -1499,7 +1499,7 @@ while ($query = new_loop()) {
 
             if (Sympa::User::is_global_user($param->{'user'}{'email'})) {
                 $param->{'user'} =
-                    Sympa::User::get_global_user($param->{'user'}{'email'});
+                    Sympa::User::get_global_user($param->{'user'}{'email'}, Sympa::Site->db_additional_user_fields);
             }
 
             ## For the parser to display an empty field instead of [xxx]
@@ -3620,7 +3620,7 @@ sub do_ticket {
         )
         ) {
         $session->{'email'} = lc($param->{'ticket_context'}{'email'});
-        $param->{'user'}    = Sympa::User::get_global_user($session->{'email'});
+        $param->{'user'}    = Sympa::User::get_global_user($session->{'email'}, Sympa::Site->db_additional_user_fields);
         $param->{'user'}{'email'} = $session->{'email'};
         $param->{'last_login _host'} = $param->{'user'}{'last_login_host'};
         $param->{'last_login_date'} = Sympa::Language::gettext_strftime(
@@ -3770,7 +3770,7 @@ sub do_login {
                 'error_type'   => 'authentication'
             }
         );
-        my $unauthenticated_user = Sympa::User::get_global_user($in{'email'});
+        my $unauthenticated_user = Sympa::User::get_global_user($in{'email'}, Sympa::Site->db_additional_user_fields);
         if ($unauthenticated_user->{'wrong_login_count'} >
             $robot->max_wrong_password) {
             $param->{'login_error'} = 'password_reset';
@@ -4700,7 +4700,7 @@ sub sendssopasswd {
 
     my $url_redirect;
 
-    if ($param->{'newuser'} = Sympa::User::get_global_user($email)) {
+    if ($param->{'newuser'} = Sympa::User::get_global_user($email), Sympa::Site->db_additional_user_fields) {
 
         ## Create a password if none
         unless ($param->{'newuser'}{'password'}) {
@@ -4852,7 +4852,7 @@ sub do_requestpasswd {
         Sympa::Auth::create_one_time_ticket($in{'email'}, $robot_id, 'choosepasswd',
         $ip);
     $param->{'request_from_host'} = $ip;
-    unless ($param->{'newuser'} = Sympa::User::get_global_user($in{'email'})) {
+    unless ($param->{'newuser'} = Sympa::User::get_global_user($in{'email'}, Sympa::Site->db_additional_user_fields)) {
         $param->{'newuser'} = {'email' => Sympa::Tools::clean_email($in{'email'})};
         $param->{'newuser'}{'escaped_email'} =
             Sympa::Tools::escape_chars($param->{'newuser'}{'email'});
@@ -5761,7 +5761,7 @@ sub do_set {
         ## Duplicate entry in user_table
         unless (Sympa::User::is_global_user($in{'new_email'})) {
 
-            my $user_pref = Sympa::User::get_global_user($in{'email'});
+            my $user_pref = Sympa::User::get_global_user($in{'email'}, Sympa::Site->db_additional_user_fields);
             $user_pref->{'email'} = $in{'new_email'};
             Sympa::User::add_global_user($user_pref);
         }
@@ -6439,7 +6439,7 @@ sub do_subrequest {
             return 1;
         }
         my $user;
-        $user = Sympa::User::get_global_user($in{'email'})
+        $user = Sympa::User::get_global_user($in{'email'}, Sympa::Site->db_additional_user_fields)
             if Sympa::User::is_global_user($in{'email'});
 
         ## Need to send a password by email
@@ -6448,7 +6448,7 @@ sub do_subrequest {
             'subscribe/' . $list->name, $ip);
         $param->{'login_error'}       = 'ticket_sent';
         $param->{'request_from_host'} = $ip;
-        unless ($param->{'newuser'} = Sympa::User::get_global_user($in{'email'})) {
+        unless ($param->{'newuser'} = Sympa::User::get_global_user($in{'email'}, Sympa::Site->db_additional_user_fields)) {
             $param->{'newuser'} =
                 {'email' => Sympa::Tools::clean_email($in{'email'})};
             $param->{'newuser'}{'escaped_email'} =
@@ -8168,7 +8168,7 @@ sub do_add {
             next;
         }
 
-        my $u2       = Sympa::User::get_global_user($email);
+        my $u2       = Sympa::User::get_global_user($email, Sympa::Site->db_additional_user_fields);
         my $defaults = $list->default_user_options;
         my $u;
         %{$u} = %{$defaults};
@@ -11448,7 +11448,7 @@ sub do_editsubscriber {
     $param->{'current_subscriber'}{'visibility'} ||= 'noconceal';
 
     ## Get language from user_table
-    my $user = Sympa::User::get_global_user($in{'email'});
+    my $user = Sympa::User::get_global_user($in{'email'}, Sympa::Site->db_additional_user_fields);
     $param->{'current_subscriber'}{'lang'} =
         Sympa::Language::GetLangName($user->{'lang'});
 
@@ -21216,7 +21216,7 @@ sub do_change_email {
 
     my ($password, $newuser);
 
-    if ($newuser = Sympa::User::get_global_user($old_email)) {
+    if ($newuser = Sympa::User::get_global_user($old_email, Sympa::Site->db_additional_user_fields)) {
 
         $password = $newuser->{'password'};
     }

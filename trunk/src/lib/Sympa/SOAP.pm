@@ -31,6 +31,7 @@ use SOAP::Lite;
 use Sympa::Auth;
 use Sympa::List;
 use Sympa::Log::Syslog;
+use Sympa::Site;
 use Sympa::Template;
 
 ## Define types of SOAP type listType
@@ -660,7 +661,9 @@ sub createList {
     $param->{'user'}{'email'} = $sender;
     if (Sympa::User::is_global_user($param->{'user'}{'email'})) {
         ##FIXME: use User object
-        $param->{'user'} = Sympa::User::get_global_user($sender);
+        $param->{'user'} = Sympa::User::get_global_user(
+            $sender, Sympa::Site->db_additional_user_fields
+        );
     }
     my $parameters;
     $parameters->{'creation_email'} = $sender;
@@ -873,7 +876,9 @@ sub add {
     } else {
         my $u;
         my $defaults = $list->default_user_options;
-        my $u2       = Sympa::User->new($email);
+        my $u2       = Sympa::User->new(
+            $email, Sympa::Site->db_additional_user_fields
+        );
         %{$u} = %{$defaults};
         $u->{'email'}    = $email;
         $u->{'gecos'}    = $gecos || $u2->gecos;
@@ -1598,7 +1603,9 @@ sub subscribe {
         }
 
         if ($Sympa::Site::use_db) {
-            my $u = Sympa::User->new($sender);
+            my $u = Sympa::User->new(
+                $sender, Sympa::Site->db_additional_user_fields
+            );
             unless ($u->lang) {
                 $u->lang($list->lang);
                 $u->save();

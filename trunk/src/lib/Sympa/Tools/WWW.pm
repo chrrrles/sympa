@@ -30,6 +30,8 @@ use English qw(-no_match_vars);
 use Sympa::Log::Syslog;
 use Sympa::Conf;
 use Sympa::Constants;
+use Sympa::Site;
+use Sympa::User;
 
 # hash of the icons linked with a type of file
 my %icons = (
@@ -162,8 +164,9 @@ sub init_passwd {
     my ($passwd, $user);
 
     if (Sympa::User::is_global_user($email)) {
-        $user = Sympa::User::get_global_user($email);
-
+        $user = Sympa::User::get_global_user(
+            $email, Sympa::Site->db_additional_user_fields
+        );
         $passwd = $user->{'password'};
 
         unless ($passwd) {
