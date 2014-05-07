@@ -30,14 +30,13 @@ use English qw(-no_match_vars);
 use Sympa::Language;
 use Sympa::Log::Syslog;
 use Sympa::Scenario;
-use Sympa::Site;
 use Sympa::Tools;
 use Sympa::Tools::Data;
 
 ## Creates a new object
 sub new {
     Sympa::Log::Syslog::do_log('debug2', '(%s, %s, %s, %s)', @_);
-    my ($pkg, $list, $path, $param) = @_;
+    my ($pkg, $list, $path, $param, $icon_base) = @_;
 
     my $email = $param->{'user'}{'email'};
 
@@ -188,7 +187,6 @@ sub new {
         }
     }
 
-    my $icon_base = Sympa::Site->static_content_url();
     ### File, directory or URL ?
     if ($document->{'type'} eq 'url') {
 

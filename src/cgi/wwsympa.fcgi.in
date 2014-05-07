@@ -24529,7 +24529,9 @@ sub new_d_read {
     # current list / current shared directory
     my $list_name = $list->name;
 
-    my $document = Sympa::SharedDocument->new($list, $in{'path'}, $param);
+    my $document = Sympa::SharedDocument->new(
+        $list, $in{'path'}, $param, Sympa::Site->static_content_url()
+    );
 
     unless (defined $document) {
         Sympa::Report::reject_report_web('intern', 'new_document_failed',
