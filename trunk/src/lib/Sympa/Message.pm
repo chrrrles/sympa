@@ -534,8 +534,9 @@ sub check_dkim_signature {
     # verify DKIM signature
     if (ref($self->robot) eq 'Sympa::Robot'
         and $self->robot->dkim_feature eq 'on') {
-        $self->{'dkim_pass'} =
-            Sympa::Tools::DKIM::verifier($self->{'msg_as_string'});
+        $self->{'dkim_pass'} = Sympa::Tools::DKIM::verifier(
+            $self->{'msg_as_string'}, Sympa::Site->tmpdir
+        );
     }
     return 1;
 }

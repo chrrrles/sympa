@@ -31,11 +31,11 @@ use MIME::Parser;
 
 use Sympa::Log::Syslog;
 use Sympa::Message;
-use Sympa::Site;
 
 # input a msg as string, output the dkim status
 sub verifier {
     my $msg_as_string = shift;
+    my $tmpdir = shift;
     my $dkim;
 
     Sympa::Log::Syslog::do_log('debug', "DKIM verifier");
@@ -52,7 +52,7 @@ sub verifier {
         return undef;
     }
 
-    my $temporary_file = Sympa::Site->tmpdir . "/dkim." . $PID;
+    my $temporary_file = $tmpdir . "/dkim." . $PID;
     if (!open(MSGDUMP, "> $temporary_file")) {
         Sympa::Log::Syslog::do_log('err', 'Can\'t store message in file %s',
             $temporary_file);
@@ -133,6 +133,7 @@ sub sign {
     # this would cause Sympa to send empty mail
     my $msg_as_string   = shift;
     my $data            = shift;
+    my $tmpdir          = shift;
     my $dkim_d          = $data->{'dkim_d'};
     my $dkim_i          = $data->{'dkim_i'};
     my $dkim_selector   = $data->{'dkim_selector'};
@@ -164,7 +165,7 @@ sub sign {
         return $msg_as_string;
     }
 
-    my $temporary_keyfile = Sympa::Site->tmpdir . "/dkimkey." . $PID;
+    my $temporary_keyfile = $tmpdir . "/dkimkey." . $PID;
     if (!open(MSGDUMP, "> $temporary_keyfile")) {
         Sympa::Log::Syslog::do_log('err', 'Can\'t store key in file %s',
             $temporary_keyfile);
@@ -209,7 +210,7 @@ sub sign {
         Sympa::Log::Syslog::do_log('err', 'Can\'t create Mail::DKIM::Signer');
         return ($msg_as_string);
     }
-    my $temporary_file = Sympa::Site->tmpdir . "/dkim." . $PID;
+    my $temporary_file = $tmpdir . "/dkim." . $PID;
     if (!open(MSGDUMP, "> $temporary_file")) {
         Sympa::Log::Syslog::do_log('err', 'Can\'t store message in file %s',
             $temporary_file);
