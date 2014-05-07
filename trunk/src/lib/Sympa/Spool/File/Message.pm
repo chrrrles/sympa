@@ -26,7 +26,9 @@ package Sympa::Spool::File::Message;
 use strict;
 use base qw(Sympa::Spool::File);
 
+use Sympa::List;
 use Sympa::Log::Syslog;
+use Sympa::Robot;
 
 my $filename_regexp = '^(\S+)\.(\d+)\.\w+$';
 
@@ -53,6 +55,85 @@ sub is_relevant {
     return 0 if $key =~ /^T\./;
 
     return 1;
+}
+
+sub get_storage_name {
+    my $self = shift;
+    my $filename;
+    my $param = shift;
+    if ($param->{'list'} && $param->{'robot'}) {
+        $filename =
+              $param->{'list'} . '@'
+            . $param->{'robot'} . '.'
+            . time . '.'
+            . int(rand(10000));
+    } else {
+        Sympa::Log::Syslog::do_log('err',
+            'Unsufficient parameters provided to create file name');
+        return undef;
+    }
+    return $filename;
+}
+
+sub analyze_file_name {
+    Sympa::Log::Syslog::do_log('debug3', '(%s, %s, %s)', @_);
+    my $self = shift;
+    my $key  = shift;
+    my $data = shift;
+
+    unless ($key =~ /$filename_regexp/) {
+        Sympa::Log::Syslog::do_log('err',
+            'File %s name does not have the proper format', $key);
+        return undef;
+    }
+    ($data->{'list'}, $data->{'robot'}) = split /\@/, $1;
+
+    $data->{'list'}  = lc($data->{'list'});
+    $data->{'robot'} = lc($data->{'robot'});
+    return undef
+        unless $data->{'robot_object'} = Sympa::Robot->new($data->{'robot'});
+
+    my $listname;
+
+    #FIXME: is this always needed?
+    ($listname, $data->{'type'}) =
+        $data->{'robot_object'}->split_listname($data->{'list'});
+    if (defined $listname) {
+        $data->{'list_object'} =
+            Sympa::List->new($listname, $data->{'robot_object'}, {'just_try' => 1});
+    }
+
+    ## Get priority
+    #FIXME: is this always needed?
+    if ($data->{'type'} and $data->{'type'} eq 'listmaster') {
+        ## highest priority
+        $data->{'priority'} = 0;
+    } elsif ($data->{'type'} and $data->{'type'} eq 'owner') {    # -request
+        $data->{'priority'} = $data->{'robot_object'}->request_priority;
+    } elsif ($data->{'type'} and $data->{'type'} eq 'return_path') {  # -owner
+        $data->{'priority'} = $data->{'robot_object'}->owner_priority;
+    } elsif ($data->{'type'} and $data->{'type'} eq 'sympa') {
+        $data->{'priority'} = $data->{'robot_object'}->sympa_priority;
+    } elsif (ref $data->{'list_object'}
+        and $data->{'list_object'}->isa('Sympa::List')) {
+        $data->{'priority'} = $data->{'list_object'}->priority;
+    } else {
+        $data->{'priority'} = $data->{'robot_object'}->default_list_priority;
+    }
+
+    Sympa::Log::Syslog::do_log('debug3',
+        'messagekey=%s, list=%s, robot=%s, priority=%s',
+        $key, $data->{'list'}, $data->{'robot'}, $data->{'priority'});
+
+    ## Get file date
+
+    unless ($key =~ /$filename_regexp/) {
+        $data->{'date'} = (stat $data->{'file'})[9];
+    } else {
+        $data->{'date'} = $2;
+    }
+
+    return $data;
 }
 
 1;
