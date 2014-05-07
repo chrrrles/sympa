@@ -70,12 +70,18 @@ Returns a new L<Sympa::Mailer> object, or I<undef> for failure.
 sub new {
     my ($class, %params) = @_;
 
+    # FIXME: to be done in db-specific code
+    my $max_length =
+        $params{db_type} eq 'mysql'  ? 65535 :
+        $params{db_type} eq 'SQLite' ?     0 :
+                                         500 ;
+
     my $self = bless {
         pids            => {},
         opensmtp        => 0,
         use_spool       => $params{use_spool},
-        db_type         => $params{db_type},
         nrcpt_by_domain => $params{nrcpt_by_domain},
+        max_length      => $max_length
     }, $class;
 }
 
@@ -218,9 +224,7 @@ sub distribute_message {
 
             # length of recipients field stored into bulkmailer table
             # (these limits might be relaxed by future release of Sympa)
-            ($self->{db_type} eq 'mysql' and $size + length($i) + 5 > 65535)
-            or
-            ($self->{db_type} !~ /^(mysql|SQLite)$/ and $size + length($i) + 5 > 500)
+            ($self->{max_length} and $size + length($i) + 5 > $self->{max_length})
             ) {
                 undef %rcpt_by_dom;
 
