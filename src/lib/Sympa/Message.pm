@@ -1142,7 +1142,11 @@ sub smime_sign_check {
     }
     ## second step is the message signer match the sender
     ## a better analyse should be performed to extract the signer email.
-    my $signer = Sympa::Tools::SMIME::parse_cert(file => $temporary_file);
+    my $signer = Sympa::Tools::SMIME::parse_cert(
+        file    => $temporary_file,
+        tmpdir  => Sympa::Site->tmpdir,
+        openssl => Sympa::Site->openssl,
+    );
 
     unless ($signer->{'email'}{lc($message->{'sender'})}) {
         unlink($temporary_file) unless ($main::options{'debug'});
@@ -1186,12 +1190,15 @@ sub smime_sign_check {
     Sympa::Log::Syslog::do_log('debug3', 'smime_sign_check: parsing %d parts',
         $nparts);
     if ($nparts == 0) {    # could be opaque signing...
-        $extracted += Sympa::Tools::SMIME::extract_certs($message->get_mime_message,
-            $certbundle);
+        $extracted += Sympa::Tools::SMIME::extract_certs(
+            $message->get_mime_message, $certbundle, Sympa::Site->openssl
+        );
     } else {
         for (my $i = 0; $i < $nparts; $i++) {
             my $part = $message->get_mime_message->parts($i);
-            $extracted += Sympa::Tools::SMIME::extract_certs($part, $certbundle);
+            $extracted += Sympa::Tools::SMIME::extract_certs(
+                $part, $certbundle, Sympa::Site->openssl
+            );
             last if $extracted;
         }
     }
@@ -1223,7 +1230,11 @@ sub smime_sign_check {
             }
             print CERT $workcert;
             close(CERT);
-            my ($parsed) = Sympa::Tools::SMIME::parse_cert(file => $tmpcert);
+            my ($parsed) = Sympa::Tools::SMIME::parse_cert(
+                file => $tmpcert,
+                tmpdir  => Sympa::Site->tmpdir,
+                openssl => Sympa::Site->openssl,
+            );
             unless ($parsed) {
                 Sympa::Log::Syslog::do_log('err',
                     'No result from parse_cert');
