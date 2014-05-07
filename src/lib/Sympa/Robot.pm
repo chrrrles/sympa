@@ -34,7 +34,6 @@ use base qw(Sympa::Site);
 
 use Carp qw(carp croak);
 
-use Sympa::List; # FIXME: circular dependency
 use Sympa::ListDef;
 use Sympa::Log::Syslog;
 use Sympa::Tools::Data;
@@ -397,32 +396,129 @@ sub split_listname {
 
 get idp xref to locally validated email address
 
+=cut
+
+sub get_netidtoemail_db {
+    my $self     = shift;
+    my $netid    = shift;
+    my $idpname  = shift;
+
+    Sympa::Log::Syslog::do_log('debug',
+        'Sympa::List::get_netidtoemail_db(%s, %s)',
+        $netid, $idpname);
+
+    my $robot_id = $self->domain();
+
+    my ($l, %which, $email);
+
+    my $sth;
+
+    unless (
+        $sth = Sympa::DatabaseManager::do_prepared_query(
+            q{SELECT email_netidmap
+	      FROM netidmap_table
+	      WHERE netid_netidmap = ? AND serviceid_netidmap = ? AND
+		    robot_netidmap = ?},
+            $netid, $idpname, $robot_id
+        )
+        ) {
+        Sympa::Log::Syslog::do_log(
+            'err',
+            'Unable to get email address from netidmap_table for id %s, service %s, robot %s',
+            $netid,
+            $idpname,
+            $robot_id
+        );
+        return undef;
+    }
+
+    $email = $sth->fetchrow;
+    $sth->finish();
+
+    return $email;
+}
+
 =item set_netidtoemail_db
 
 set idp xref to locally validated email address
+
+=cut
+
+sub set_netidtoemail_db {
+    my $self     = shift;
+    my $netid    = shift;
+    my $idpname  = shift;
+    my $email    = shift;
+
+    Sympa::Log::Syslog::do_log('debug2', '(%s, %s, %s, %s)', @_);
+
+    my $robot_id = $self->domain();
+
+    my ($l, %which);
+
+    unless (
+        Sympa::DatabaseManager::do_prepared_query(
+            q{INSERT INTO netidmap_table
+	      (netid_netidmap, serviceid_netidmap, email_netidmap,
+	       robot_netidmap)
+	      VALUES (?, ?, ?, ?)},
+            $netid, $idpname, $email, $robot_id
+        )
+        ) {
+        Sympa::Log::Syslog::do_log(
+            'err',
+            'Unable to set email address %s in netidmap_table for id %s, service %s, robot %s',
+            $email,
+            $netid,
+            $idpname,
+            $robot_id
+        );
+        return undef;
+    }
+
+    return 1;
+}
 
 =item update_email_netidmap_db
 
 Update netidmap table when user email address changes
 
-=back
-
 =cut
 
-sub get_netidtoemail_db {
-    my $self = shift;
-    return Sympa::List::get_netidtoemail_db($self->domain, @_);
-}
-
-sub set_netidtoemail_db {
-    my $self = shift;
-    return Sympa::List::set_netidtoemail_db($self->domain, @_);
-}
-
 sub update_email_netidmap_db {
-    my $self = shift;
-    return Sympa::List::update_netidtoemail_db($self->domain, @_);
+    my ($self, $old_email, $new_email) = @_;
+
+    my $robot_id = $self->domain();
+
+    unless (defined $robot_id
+        && defined $old_email
+        && defined $new_email) {
+        Sympa::Log::Syslog::do_log('err', 'Missing parameter');
+        return undef;
+    }
+
+    unless (
+        Sympa::DatabaseManager::do_prepared_query(
+            q{UPDATE netidmap_table
+	      SET email_netidmap = ?
+	      WHERE email_netidmap = ? AND robot_netidmap = ?},
+            $new_email, $old_email, $robot_id
+        )
+        ) {
+        Sympa::Log::Syslog::do_log(
+            'err',
+            'Unable to set new email address %s in netidmap_table to replace old address %s for robot %s',
+            $new_email,
+            $old_email,
+            $robot_id
+        );
+        return undef;
+    }
+
+    return 1;
 }
+
+=back
 
 =head3 Handling Memory Caches
 
