@@ -29,7 +29,6 @@ use warnings;
 use English qw(-no_match_vars);
 
 use Sympa::Log::Syslog;
-use Sympa::Site;
 
 ## find the appropriate S/MIME keys/certs for $oper in $dir.
 ## $oper can be:
@@ -116,8 +115,10 @@ sub find_keys {
 sub parse_cert {
     my (%params) = @_;
 
-    my $file = $params{file};
-    my $text = $params{text};
+    my $file   = $params{file};
+    my $text   = $params{text};
+    my $tmpdir  = $params{tmpdir};
+    my $openssl = $params{openssl};
 
     Sympa::Log::Syslog::do_log(
         'debug',
@@ -145,9 +146,8 @@ sub parse_cert {
     }
 
     ## Extract information from cert
-    my ($tmpfile) = Sympa::Site->tmpdir . "/parse_cert.$PID";
-    my $cmd = sprintf '%s x509 -email -subject -purpose -noout',
-        Sympa::Site->openssl;
+    my ($tmpfile) = $tmpdir . "/parse_cert.$PID";
+    my $cmd = sprintf '%s x509 -email -subject -purpose -noout', $openssl;
     unless (open(PSC, "| $cmd > $tmpfile")) {
         Sympa::Log::Syslog::do_log('err', 'open |openssl: %s', $ERRNO);
         return undef;
@@ -204,14 +204,13 @@ sub parse_cert {
 }
 
 sub extract_certs {
-    my ($mime, $outfile) = @_;
+    my ($mime, $outfile, $openssl) = @_;
     Sympa::Log::Syslog::do_log('debug2',
         "Sympa::Tools::extract_certs(%s)",
         $mime->mime_type);
 
     if ($mime->mime_type =~ /application\/(x-)?pkcs7-/) {
-        my $cmd = sprintf '%s pkcs7 -print_certs -inform der',
-            Sympa::Site->openssl;
+        my $cmd = sprintf '%s pkcs7 -print_certs -inform der', $openssl;
         unless (open(MSGDUMP, "| $cmd > $outfile")) {
             Sympa::Log::Syslog::do_log('err',
                 'unable to run openssl pkcs7: %s', $ERRNO);
