@@ -28,6 +28,7 @@ use warnings;
 
 use Carp qw(carp croak);
 use English qw(-no_match_vars);
+use IO::Handle;
 use POSIX qw();
 
 use Sympa::Bulk;
@@ -612,7 +613,8 @@ sub get_sendmail_handle {
         last if ($self->reaper(0) == -1);    ## Blocking call to the reaper.
     }
 
-    my ($in, $out);
+    my $in  = IO::Handle->new();
+    my $out = IO::Handle->new();
     if (!pipe($in, $out)) {
         croak sprintf('Unable to create a channel in smtpto: %s', $ERRNO);
         ## No return
