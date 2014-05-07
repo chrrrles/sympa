@@ -18,7 +18,7 @@ use Fcntl qw(:mode);
 
 use Sympa::Tools::File;
 
-plan tests => 24;
+plan tests => 26;
 
 my $user  = getpwuid($UID);
 my $group = getgrgid($GID);
@@ -116,15 +116,17 @@ ok(-d "$dir/foo/bar", 'mk_parent_dir second element');
 
 $dir = File::Temp->newdir();
 Sympa::Tools::File::mkdir_all($dir . '/foo/bar/baz');
-ok(!-d "$dir/foo", 'mkdir_all first element, no mode');
-ok(!-d "$dir/foo/bar", 'mkdir_all second element, no mode');
+ok(-d "$dir/foo", 'mkdir_all first directory presence');
+is(get_perms("$dir/foo"), "0777", "mkdir_all first directory expected mode");
+ok(-d "$dir/foo/bar", 'mkdir_all second directory presence');
+is(get_perms("$dir/foo/bar"), "0777", "mkdir_all second directory expected mode");
 
 $dir = File::Temp->newdir();
-Sympa::Tools::File::mkdir_all($dir . '/foo/bar/baz', 0777);
-ok(-d "$dir/foo", 'mkdir_all first element');
-ok(-d "$dir/foo/bar", 'mkdir_all second element');
-is(get_perms("$dir/foo"), "0777", "first element, expected mode");
-is(get_perms("$dir/foo/bar"), "0777", "second element, expected mode");
+Sympa::Tools::File::mkdir_all($dir . '/foo/bar/baz', 0755);
+ok(-d "$dir/foo", 'mkdir_all first directory presence');
+is(get_perms("$dir/foo"), "0755", "mkdir_all first directory expected mode");
+ok(-d "$dir/foo/bar", 'mkdir_all second directory presence');
+is(get_perms("$dir/foo/bar"), "0755", "mkdir_all second directory expected mode");
 
 sub touch {
     my ($file) = @_;

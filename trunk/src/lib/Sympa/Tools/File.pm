@@ -167,36 +167,31 @@ Recursively create directory and all parent directories
 
 sub mkdir_all {
     my ($path, $mode) = @_;
-    my $status = 1;
 
-    ## Change umask to fully apply modes of mkdir()
-    my $saved_mask = umask;
-    umask 0000;
+    return unless $path;
+    return 1 if -d $path;
 
-    return undef if ($path eq '');
-    return 1 if (-d $path);
+    $mode = 0777 if !$mode;
 
     ## Compute parent path
-    my @token = split /\//, $path;
+    my @token = split(/\//, $path);
     pop @token;
-    my $parent_path = join '/', @token;
+    my $parent_path = join('/', @token);
 
     unless (-d $parent_path) {
-        unless (mkdir_all($parent_path, $mode)) {
-            $status = undef;
-        }
+        my $result = mkdir_all($parent_path, $mode);
+        return unless $result;
     }
+    
+    # Change umask to fully apply modes of mkdir()
+    my $saved_mask = umask();
+    umask(0000);
 
-    if (defined $status) {    ## Don't try if parent dir could not be created
-        unless (mkdir($path, $mode)) {
-            $status = undef;
-        }
-    }
+    my $result = mkdir($path, $mode);
 
-    ## Restore umask
-    umask $saved_mask;
+    umask($saved_mask);
 
-    return $status;
+    return $result;
 }
 
 =item shift_file($file, $count)
