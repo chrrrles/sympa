@@ -521,7 +521,8 @@ while (!$end) {
                                 $message_from_spool->{'dkim_selector'},
                             'dkim_privatekey' =>
                                 $message_from_spool->{'dkim_privatekey'},
-                        }
+                        },
+                        Sympa::Site->tmpdir
                     );
                 }
 
