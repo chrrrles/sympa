@@ -117,7 +117,7 @@ sub distribute_message {
     my $tag_as_last = $params{'tag_as_last'};
     my $robot       = $list->robot;
 
-    unless (ref $message and $message->isa('Message')) {
+    unless (ref $message and $message->isa('Sympa::Message')) {
         Sympa::Log::Syslog::do_log('err', 'Invalid message parameter');
         return undef;
     }
