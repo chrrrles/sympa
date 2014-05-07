@@ -55,7 +55,7 @@ Parameters:
 
 =over
 
-=item * B<use_spool>: spool messages instead of sending them (default: false)
+=item * I<use_spool>: spool messages instead of sending them (default: false)
 
 =back
 
@@ -73,19 +73,38 @@ sub new {
     }, $class;
 }
 
-####################################################
-# public mail_message
-####################################################
-# distribute a message to a list, Crypting if needed
-#
-# IN : -$message(+) : ref(Message)
-#      -$from(+) : message from
-#      -$robot(+) : robot
-#      -{verp=>[on|off]} : a hash to introduce verp parameters, starting just
-#      on or off, later will probably introduce optionnal parameters
-#      -@rcpt(+) : recipients
-#
-####################################################
+=back
+
+=head1 INSTANCE METHODS
+
+=over
+
+=item $mailer->distribute_message(%parameters)
+
+Distribute a message to a list, crypting if needed.
+
+Parameters:
+
+=over
+
+=item * I<message>: the message to send
+
+=item * I<recipient>: the message recipient(s)
+
+=item * I<list>: FIXME
+
+=item * I<verp>: 'on', 'mdn', or 'dsn'
+
+=item * I<dkim_parameters>: dkim parameters, as an hashref
+
+=item * I<tag_as_last>: FIXME
+
+=back
+
+Returns a true value on success, I<undef> on failure.
+
+=cut
+
 sub distribute_message {
     my ($self, %params) = @_;
 
@@ -280,18 +299,28 @@ sub distribute_message {
     return $numsmtp;
 }
 
-####################################################
-# public mail_forward
-####################################################
-# forward a message.
-#
-# IN : -$mmessage(+) : ref(Message)
-#      -$from(+) : message from
-#      -$rcpt(+) : ref(SCALAR) | ref(ARRAY)  - recipients
-#      -$robot(+) : ref(Robot)
-# OUT : 1 | undef
-#
-####################################################
+=item $mailer->forward_message($message, $from, $recipient, $robot)
+
+Forward a message.
+
+Parameters:
+
+=over
+
+=item * I<$message>: the message to send, as a L<Sympa::Message> object
+
+=item * I<$from>: the message sender
+
+=item * I<$recipient>: the message recipient(s)
+
+=item * I<$robot>: FIXME
+
+=back
+
+Returns a true value on success, I<undef> on failure.
+
+=cut
+
 sub forward_message {
     my $self = shift;
     Sympa::Log::Syslog::do_log('debug2', '(%s, %s, %s, %s)', @_);
@@ -328,18 +357,22 @@ sub forward_message {
     return 1;
 }
 
-#####################################################################
-# public reaper
-#####################################################################
-# Non blocking function called by : Sympa::Mail::smtpto(), sympa::main_loop
-#  task_manager::INFINITE_LOOP scanning the queue,
-#  bounced::infinite_loop scanning the queue,
-# just to clean the defuncts list by waiting to any processes and
-#  decrementing the counter.
-#
-# IN : $block
-# OUT : $i
-#####################################################################
+=item $mailer->reaper($block)
+
+Clean the list of defunct forked processes.
+
+Parameters:
+
+=over
+
+=item * I<$block>: FIXME
+
+=back
+
+Returns the PID of the last cleaned process.
+
+=cut
+
 sub reaper {
     my $self = shift;
     my $block = shift;
@@ -364,29 +397,48 @@ sub reaper {
     return $i;
 }
 
-####################################################
-# sending
-####################################################
-# send a message using smpto function or puting it
-# in spool according to the context
-# Signing if needed
-#
-#
-# IN : -$msg(+) : ref(MIME::Entity) | string - message to send
-#      -$rcpt(+) : ref(SCALAR) | ref(ARRAY) - recipients
-#       (for SMTP : "RCPT To:" field)
-#      -$from(+) : for SMTP "MAIL From:" field , for
-#        spool sending : "X-Sympa-From" field
-#      -$robot(+) : ref(Robot) | "Site"
-#      -$listname : listname | ''
-#      -$sign_mode(+) : 'smime' | 'none' for signing
-#      -$verp
-#      -dkim : a hash for dkim parameters
-#
-# OUT : 1 - call to smtpto (sendmail) | 0 - push in spool
-#           | undef
-#
-####################################################
+=item $mailer->send_message(%parameters)
+
+Send a message or put it in spool according to the context, signing if needed.
+
+Parameters:
+
+=over
+
+=item * I<message>: the message to send
+
+=item * I<from>: the message sender
+
+=item * I<rcpt>: the message recipient(s)
+
+=item * I<robot>: FIXME
+
+=item * I<listname>: FIXME
+
+=item * I<sign_mode>: 'smime' or 'none'
+
+=item * I<sympa_email>: FIXME
+
+=item * I<priority>: FIXME
+
+=item * I<delivery_date>: FIXME
+
+=item * I<verp>: 'on', 'mdn', or 'dsn'
+
+=item * I<merge>: FIXME
+
+=item * I<use_bulk>: FIXME
+
+=item * I<dkim>: dkim parameters, as an hashref
+
+=item * I<tag_as_last>: FIXME
+
+=back
+
+Returns a true value on success, I<undef> on failure.
+
+=cut
+
 sub send_message {
     my ($self, %params) = @_;
 
@@ -489,22 +541,33 @@ sub send_message {
     return 1;
 }
 
-##############################################################################
-# smtpto
-##############################################################################
-# Makes a sendmail ready for the recipients given as argument, uses a file
-# descriptor in the smtp table which can be imported by other parties.
-# Before, waits for number of children process < number allowed by sympa.conf
-#
-# IN : $from :(+) for SMTP "MAIL From:" field
-#      $rcpt :(+) ref(SCALAR)|ref(ARRAY)- for SMTP "RCPT To:" field
-#      $robot :(+) ref(Robot) | "Site"
-#      $msgkey : a id of this message submission in notification table
-# OUT : Sympa::Mail::$fh - file handle on opened file for ouput, for SMTP "DATA"
-# field
-#       | undef
-#
-##############################################################################
+=item $mailer->get_sendmail_handle($from, $recipient, $robot, $msgkey, $sign_mode)
+
+Makes a sendmail ready for the recipients given as argument, uses a file
+descriptor in the smtp table which can be imported by other parties.
+
+Before, waits for number of children process < number allowed by sympa.conf
+
+Parameters:
+
+=over
+
+=item * I<$from>: the message sender
+
+=item * I<$recipient>: the message recipient(s)
+
+=item * I<$robot>: FIXME
+
+=item * I<$msgkey>: the message identifier in notification table
+
+=item * I<ssign_mode>: 'smime' or 'none'
+
+=back
+
+Returns a file handle on sendmail process on success, I<undef> on failure.
+
+=cut
+
 sub get_sendmail_handle {
     my $self      = shift;
     Sympa::Log::Syslog::do_log('debug2', '(%s, %s, %s, %s, %s)', @_);
@@ -630,5 +693,9 @@ sub _safefork {
         $err);
     ## No return.
 }
+
+=back
+
+=cut
 
 1;
