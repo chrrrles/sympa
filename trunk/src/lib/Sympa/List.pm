@@ -2159,7 +2159,7 @@ sub send_msg {
                 'rcpt'    => $message->{'rcpts_by_mode'}{$mode}{'noverp'},
                 'list'    => $self,
                 'verp'    => $verp,
-                'dkim_parameters' => $dkim_parameters,
+                'dkim'    => $dkim_parameters,
                 'tag_as_last' =>
                     (($mode eq $tag_mode) && ($tag_verp eq 'noverp'))
             );
@@ -2197,7 +2197,7 @@ sub send_msg {
                 'rcpt'    => $message->{'rcpts_by_mode'}{$mode}{'verp'},
                 'list'    => $self,
                 'verp'    => $verp,
-                'dkim_parameters' => $dkim_parameters,
+                'dkim'    => $dkim_parameters,
                 'tag_as_last' =>
                     (($mode eq $tag_mode) && ($tag_verp eq 'verp'))
             );

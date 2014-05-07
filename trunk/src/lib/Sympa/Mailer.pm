@@ -96,7 +96,7 @@ Parameters:
 
 =item * I<verp>: 'on', 'mdn', or 'dsn'
 
-=item * I<dkim_parameters>: dkim parameters, as an hashref
+=item * I<dkim>: dkim parameters, as an hashref
 
 =item * I<tag_as_last>: FIXME
 
@@ -113,7 +113,7 @@ sub distribute_message {
     my $list        = $params{'list'};
     my $verp        = $params{'verp'};
     my @rcpt        = @{$params{'rcpt'} || []};
-    my $dkim        = $params{'dkim_parameters'};
+    my $dkim        = $params{'dkim'};
     my $tag_as_last = $params{'tag_as_last'};
     my $robot       = $list->robot;
 
