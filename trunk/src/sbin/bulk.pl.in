@@ -528,7 +528,10 @@ while (!$end) {
                 # trace_smime($messageasstring,'dkim');
 
                 my $handle = $mailer->get_sendmail_handle(
-                    $return_path, \$rcpt, $robot, $notification_id
+                    from   => $return_path,
+                    rcpt   => \$rcpt,
+                    robot  => $robot,
+                    msgkey => $notification_id
                 );
                 # Message with customized data
                 print $handle $messageasstring;
