@@ -901,11 +901,16 @@ sub send_file {
                 $data->{'user'} =
                     bless {'email' => $who, 'lang' => $lang} => 'User';
             } else {
-                $data->{'user'} = Sympa::User->new($who, 'lang' => $lang);
+                $data->{'user'} = Sympa::User->new(
+                    $who,
+                    Sympa::Site->db_additional_user_fields,
+                    'lang' => $lang
+                );
             }
         } else {
             $data->{'user'} = Sympa::User->new(
                 $data->{user}->{email},
+                Sympa::Site->db_additional_user_fields,
                 %{$data->{'user'}}
             );
         }

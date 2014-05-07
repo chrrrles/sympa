@@ -30,7 +30,6 @@ use Carp qw(carp croak);
 
 use Sympa::DatabaseDescription;
 use Sympa::Log::Syslog;
-use Sympa::Site;
 use Sympa::Tools;
 use Sympa::Tools::Data;
 use Sympa::Tools::Password;
@@ -79,6 +78,7 @@ Create new Sympa::User object.
 sub new {
     my $pkg    = shift;
     my $who    = Sympa::Tools::clean_email(shift || '');
+    my $user_fields = shift;
     my %values = @_;
     my $self;
     return undef unless $who;
@@ -88,7 +88,7 @@ sub new {
         || $values{'lang'}
         if $values{'lang'};
 
-    if (!($self = get_global_user($who))) {
+    if (!($self = get_global_user($who, $user_fields))) {
         ## unauthenticated user would not be added to database.
         $values{'email'} = $who;
         if (scalar grep { $_ ne 'lang' and $_ ne 'email' } keys %values) {
@@ -328,12 +328,10 @@ sub delete_global_user {
 sub get_global_user {
     Sympa::Log::Syslog::do_log('debug2', '(%s)', @_);
     my $who = Sympa::Tools::clean_email(shift);
+    my $user_fields = shift;
 
     ## Additional subscriber fields
-    my $additional = '';
-    if (Sympa::Site->db_additional_user_fields) {
-        $additional = ', ' . Sympa::Site->db_additional_user_fields;
-    }
+    my $additional = $user_fields ? ', ' . $user_fields : '';
 
     push @sth_stack, $sth;
 

@@ -189,7 +189,9 @@ sub help {
 
     $data->{'is_owner'}  = 1 if scalar @owner;
     $data->{'is_editor'} = 1 if scalar @editor;
-    $data->{'user'}      = Sympa::User->new($sender);
+    $data->{'user'}      = Sympa::User->new(
+        $sender, Sympa::Site->db_additional_user_fields
+    );
     Sympa::Language::SetLang($data->{'user'}->lang)
         if $data->{'user'}->lang;
     $data->{'subject'}        = Sympa::Language::gettext("User guide");
@@ -1044,7 +1046,9 @@ sub subscribe {
         }
 
         if ($Sympa::Site::use_db) {
-            my $u = Sympa::User->new($sender);
+            my $u = Sympa::User->new(
+                $sender, Sympa::Site->db_additional_user_fields
+            );
             $u->lang($list->lang) unless $u->lang;
             $u->password(Sympa::Tools::Password::tmp_passwd($sender)) unless $u->password;
             $u->save;
@@ -1668,7 +1672,9 @@ sub add {
         }
 
         if ($Sympa::Site::use_db) {
-            my $u = Sympa::User->new($email);
+            my $u = Sympa::User->new(
+                $email, Sympa::Site->db_additional_user_fields
+            );
             $u->lang($list->lang) unless $u->lang;
             $u->password(Sympa::Tools::Password::tmp_passwd($email)) unless $u->password;
             $u->save;
@@ -2217,7 +2223,9 @@ sub remind {
                 'Sending REMIND * to %d users', $count);
 
             foreach my $email (keys %global_subscription) {
-                my $user = Sympa::User::get_global_user($email);
+                my $user = Sympa::User::get_global_user(
+                    $email, Sympa::Site->db_additional_user_fields
+                );
                 foreach my $key (keys %{$user}) {
                     $global_info{$email}{$key} = $user->{$key}
                         if ($user->{$key});

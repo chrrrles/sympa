@@ -77,7 +77,7 @@ sub check_auth {
         }
         if ($canonic) {
 
-            unless ($user = Sympa::User::get_global_user($canonic)) {
+            unless ($user = Sympa::User::get_global_user($canonic, Sympa::Site->db_additional_user_fields)) {
                 $user = {'email' => $canonic};
             }
             return {
@@ -131,7 +131,7 @@ sub authentication {
     my $pwd   = shift;
     my ($user, $canonic);
 
-    unless ($user = Sympa::User::get_global_user($email)) {
+    unless ($user = Sympa::User::get_global_user($email, Sympa::Site->db_additional_user_fields)) {
         $user = {'email' => $email};
     }
     unless ($user->{'password'}) {
@@ -176,7 +176,7 @@ sub authentication {
                     $robot, $auth_service, $email, $pwd, 'email_filter'
                 )
                 ) {
-                unless ($user = Sympa::User::get_global_user($canonic)) {
+                unless ($user = Sympa::User::get_global_user($canonic, Sympa::Site->db_additional_user_fields)) {
                     $user = {'email' => $canonic};
                 }
                 Sympa::User::update_global_user($canonic, {wrong_login_count => 0});

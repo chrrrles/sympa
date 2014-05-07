@@ -4880,6 +4880,7 @@ sub add_list_member {
             unless (
                 Sympa::User->new(
                     $who,
+                    Sympa::Site->db_additional_user_fields,
                     'gecos'    => $new_user->{'gecos'},
                     'lang'     => $new_user->{'lang'},
                     'password' => $new_user->{'password'}
@@ -5018,6 +5019,7 @@ sub add_list_admin {
             unless (
                 Sympa::User->new(
                     $who,
+                    Sympa::Site->db_additional_user_fields,
                     'gecos'    => $new_admin_user->{'gecos'},
                     'lang'     => $new_admin_user->{'lang'},
                     'password' => $new_admin_user->{'password'}
@@ -10532,7 +10534,9 @@ sub get_subscription_requests {
             'custom_attribute' => $xml
         };
         unless ($subscriptions{$email}{'gecos'}) {
-            my $user = Sympa::User->new($email);
+            my $user = Sympa::User->new(
+                $email, Sympa::Site->db_additional_user_fields
+            );
             if ($user->gecos) {
                 $subscriptions{$email}{'gecos'} = $user->gecos;
             }
@@ -10666,7 +10670,9 @@ sub get_signoff_requests {
         }
 
         $signoffs{$email} = {};
-        my $user = Sympa::User->new($email);
+        my $user = Sympa::User->new(
+            $email, Sympa::Site->db_additional_user_fields
+        );
         if ($user->gecos) {
             $signoffs{$email}{'gecos'} = $user->gecos;
         }

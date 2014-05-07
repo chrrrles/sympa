@@ -45,8 +45,10 @@ use Sympa::Constants;
 use Sympa::Language;
 use Sympa::List;
 use Sympa::Log::Syslog;
+use Sympa::Site;
 use Sympa::Tools;
 use Sympa::Tools::File;
+use Sympa::User;
 
 =pod 
 
@@ -1691,9 +1693,13 @@ sub change_user_email {
 
     ## Update User_table and remove existing entry first (to avoid duplicate
     ## entries)
-    my $oldu = Sympa::User->new($in{'new_email'});
+    my $oldu = Sympa::User->new(
+        $in{'new_email'}, Sympa::Site->db_additional_user_fields
+    );
     $oldu->expire if $oldu;
-    my $u = Sympa::User->new($in{'current_email'});
+    my $u = Sympa::User->new(
+        $in{'current_email'}, Sympa::Site->db_additional_user_fields
+    );
     unless ($u and $u->moveto($in{'new_mail'})) {
         Sympa::Log::Syslog::do_log('err', 'change_email: update failed');
         return undef;
