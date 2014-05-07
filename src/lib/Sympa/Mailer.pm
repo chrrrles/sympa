@@ -262,7 +262,7 @@ sub distribute_message {
                         "Failed to encrypt message");
                     return undef;
                 }
-                my $result = send_message(
+                my $result = $self->send_message(
                     'message'       => $message,
                     'rcpt'          => $email,
                     'from'          => $from,
@@ -280,7 +280,7 @@ sub distribute_message {
     } else {
         $message->{'msg_as_string'} =
             $msg_header->as_string() . "\n" . $msg_body;
-        my $result = send_message(
+        my $result = $self->send_message(
             'message'       => $message,
             'rcpt'          => \@sendtobypacket,
             'from'          => $from,
@@ -342,7 +342,7 @@ sub forward_message {
                                                    #FIXME:
     $message->set_message_as_string($message->get_mime_message->as_string());
     unless (
-        defined send_message(
+        defined $self->send_message(
             'message'  => $message,
             'rcpt'     => $rcpt,
             'from'     => $from,
