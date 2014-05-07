@@ -10262,8 +10262,10 @@ sub do_send_me {
             return undef;
         }
         my $result = $mailer->forward_message(
-            $message,                  $robot->get_address(),
-            $param->{'user'}{'email'}, $robot
+            message => $message,
+            from    => $robot->get_address(),
+            rcpt    => $param->{'user'}{'email'},
+            robot   => $robot
         );
         unless ($result) {
             $param->{'status'} = 'message_err';

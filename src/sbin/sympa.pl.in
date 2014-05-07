@@ -2208,8 +2208,10 @@ sub DoForward {
     $message->{'msg'} = $msg;
     unless (
         $mailer->forward_message(
-            $message, $robot->get_address('owner'),    #FIXME: 'return_path'
-            \@rcpt, $robot
+            message => $message,
+            from    => $robot->get_address('owner'), #FIXME: 'return_path'
+            rcpt    => \@rcpt,
+            robot   => $robot
         )
         ) {
         Sympa::Log::Syslog::do_log('err',

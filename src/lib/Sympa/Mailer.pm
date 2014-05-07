@@ -300,7 +300,7 @@ sub distribute_message {
     return $numsmtp;
 }
 
-=item $mailer->forward_message($message, $from, $recipient, $robot)
+=item $mailer->forward_message(%parameters)
 
 Forward a message.
 
@@ -308,13 +308,13 @@ Parameters:
 
 =over
 
-=item * I<$message>: the message to send, as a L<Sympa::Message> object
+=item * I<message>: the message to send, as a L<Sympa::Message> object
 
-=item * I<$from>: the message sender
+=item * I<from>: the message sender
 
-=item * I<$recipient>: the message recipient(s)
+=item * I<rcpt>: the message recipient(s)
 
-=item * I<$robot>: FIXME
+=item * I<robot>: FIXME
 
 =back
 
@@ -531,7 +531,11 @@ sub send_message {
             $string_to_send = $message->get_mime_message->as_string();  #FIXME
         }
 
-        my $handle = $self->get_sendmail_handle($from, $rcpt, $robot);
+        my $handle = $self->get_sendmail_handle(
+            from  => $from,
+            rcpt  => $rcpt,
+            robot => $robot
+        );
         print $handle $string_to_send;
         unless (close $handle) {
             Sympa::Log::Syslog::do_log('err',
@@ -542,7 +546,7 @@ sub send_message {
     return 1;
 }
 
-=item $mailer->get_sendmail_handle($from, $recipient, $robot, $msgkey, $sign_mode)
+=item $mailer->get_sendmail_handle(%parameters)
 
 Makes a sendmail ready for the recipients given as argument, uses a file
 descriptor in the smtp table which can be imported by other parties.
@@ -553,15 +557,15 @@ Parameters:
 
 =over
 
-=item * I<$from>: the message sender
+=item * I<from>: the message sender
 
-=item * I<$recipient>: the message recipient(s)
+=item * I<rcpt>: the message recipient(s)
 
-=item * I<$robot>: FIXME
+=item * I<robot>: FIXME
 
-=item * I<$msgkey>: the message identifier in notification table
+=item * I<msgkey>: the message identifier in notification table
 
-=item * I<ssign_mode>: 'smime' or 'none'
+=item * I<sign_mode>: 'smime' or 'none'
 
 =back
 
