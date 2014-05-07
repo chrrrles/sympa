@@ -47,7 +47,11 @@ unless (Sympa::DatabaseManager::check_db_connect()) {
 
 ## The process should not fork for sending mail
 ## Messages will be spooled instead
-our $mailer = Sympa::Mailer->new(use_spool => 1);
+our $mailer = Sympa::Mailer->new(
+    use_spool       => 1,
+    db_type         => Sympa::Site->db_type(),
+    nrcpt_by_domain => Sympa::Site->nrcpt_by_domain(),
+);
 
 ## Loading all Lists at startup, in order to increase execution speed
 Sympa::List::get_lists('Site');

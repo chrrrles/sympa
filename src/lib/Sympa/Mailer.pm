@@ -34,7 +34,6 @@ use POSIX qw();
 use Sympa::Bulk;
 use Sympa::Constants;
 use Sympa::Log::Syslog;
-use Sympa::Site;
 
 my $max_arg;
 eval {
@@ -58,6 +57,10 @@ Parameters:
 
 =item * I<use_spool>: spool messages instead of sending them (default: false)
 
+=item * I<db_type>: database type
+
+=item * I<nrcpt_by_domain>: FIXME
+
 =back
 
 Returns a new L<Sympa::Mailer> object, or I<undef> for failure.
@@ -68,9 +71,11 @@ sub new {
     my ($class, %params) = @_;
 
     my $self = bless {
-        pids      => {},
-        opensmtp  => 0,
-        use_spool => $params{use_spool}
+        pids            => {},
+        opensmtp        => 0,
+        use_spool       => $params{use_spool},
+        db_type         => $params{db_type},
+        nrcpt_by_domain => $params{nrcpt_by_domain},
     }, $class;
 }
 
@@ -174,7 +179,6 @@ sub distribute_message {
         length($robot->sendmail_args) +
         length(' -N success,delay,failure -V ') + 32 +
         length(" -f $from ");
-    my $db_type = Sympa::Site->db_type;
 
     while (defined($i = shift(@rcpt))) {
         my @k = reverse split(/[\.@]/, $i);
@@ -188,13 +192,13 @@ sub distribute_message {
         $rcpt_by_dom{$dom} += 1;
         Sympa::Log::Syslog::do_log('debug3',
             'domain: %s ; rcpt by dom: %s ; limit for this domain: %s',
-            $dom, $rcpt_by_dom{$dom}, Sympa::Site->nrcpt_by_domain->{$dom});
+            $dom, $rcpt_by_dom{$dom}, $self->{nrcpt_by_domain}->{$dom});
 
         if (
 
             # number of recipients by each domain
-            (   defined Sympa::Site->nrcpt_by_domain->{$dom}
-                and $rcpt_by_dom{$dom} >= Sympa::Site->nrcpt_by_domain->{$dom}
+            (   defined $self->{nrcpt_by_domain}->{$dom}
+                and $rcpt_by_dom{$dom} >= $self->{nrcpt_by_domain}->{$dom}
             )
             or
 
@@ -214,9 +218,9 @@ sub distribute_message {
 
             # length of recipients field stored into bulkmailer table
             # (these limits might be relaxed by future release of Sympa)
-            ($db_type eq 'mysql' and $size + length($i) + 5 > 65535)
+            ($self->{db_type} eq 'mysql' and $size + length($i) + 5 > 65535)
             or
-            ($db_type !~ /^(mysql|SQLite)$/ and $size + length($i) + 5 > 500)
+            ($self->{db_type} !~ /^(mysql|SQLite)$/ and $size + length($i) + 5 > 500)
             ) {
             undef %rcpt_by_dom;
 

@@ -228,7 +228,10 @@ Sympa::Log::Syslog::do_log('notice', "bulk.pl %s Started",
 $SIG{'TERM'} = 'sigterm';
 my $end = 0;
 
-our $mailer = Sympa::Mailer->new();
+our $mailer = Sympa::Mailer->new(
+    db_type         => Sympa::Site->db_type(),
+    nrcpt_by_domain => Sympa::Site->nrcpt_by_domain(),
+);
 
 my $messagekey;    # the key of the current message in the message_table
 my $messageasstring_init;    # the current message as a string

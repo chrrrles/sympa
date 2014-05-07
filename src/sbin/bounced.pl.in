@@ -275,7 +275,10 @@ Sympa::Log::Syslog::do_log('notice', "bounced Started");
 $SIG{'TERM'} = 'sigterm';
 my $end = 0;
 
-our $mailer = Sympa::Mailer->new();
+our $mailer = Sympa::Mailer->new(
+    db_type         => Sympa::Site->db_type(),
+    nrcpt_by_domain => Sympa::Site->nrcpt_by_domain(),
+);
 
 my $spool = Sympa::Spool::File->new('bounce');
 
