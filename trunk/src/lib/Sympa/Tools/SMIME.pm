@@ -114,29 +114,26 @@ sub find_keys {
 #  enc => true if v3 purpose is encryption
 #  sign => true if v3 purpose is signing
 sub parse_cert {
-    my ($arg) = @_;
+    my (%params) = @_;
+
+    my $file = $params{file};
+    my $text = $params{text};
+
     Sympa::Log::Syslog::do_log(
         'debug',
         'Sympa::Tools::parse_cert(%s)',
-        join('/', %{$arg})
+        join('/', %params)
     );
-
-    unless (ref($arg)) {
-        Sympa::Log::Syslog::do_log('err',
-            "parse_cert: must be called with hashref, not %s",
-            ref($arg));
-        return undef;
-    }
 
     ## Load certificate
     my @cert;
-    if ($arg->{'text'}) {
-        @cert = ($arg->{'text'});
-    } elsif ($arg->{file}) {
-        unless (open(PSC, "$arg->{file}")) {
+    if ($text) {
+        @cert = ($text);
+    } elsif ($file) {
+        unless (open(PSC, "$file")) {
             Sympa::Log::Syslog::do_log('err',
                 "parse_cert: open %s: $ERRNO",
-                $arg->{file});
+                $file);
             return undef;
         }
         @cert = <PSC>;
