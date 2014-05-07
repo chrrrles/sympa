@@ -33,7 +33,6 @@ use MIME::Base64;
 use Sys::Hostname;
 
 use Sympa::DatabaseManager;
-use Sympa::List;
 use Sympa::Log::Syslog;
 use Sympa::Robot;
 use Sympa::Spool::SQL;
@@ -175,6 +174,7 @@ sub next {
     }
     if ($robot) {
         if ($listname and length $listname) {
+            require Sympa::List;
             $result->{'list_object'} = Sympa::List->new($listname, $robot);
         }
         $result->{'robot_object'} = $robot;
