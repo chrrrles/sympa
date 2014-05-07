@@ -332,7 +332,7 @@ sub forward_message {
     my $rcpt    = $params{'rctp'};
     my $robot   = Sympa::Robot::clean_robot($params{'robot'}, 1);    #FIXME: may be Site?
 
-    unless (ref $message and $message->isa('Message')) {
+    unless (ref $message and $message->isa('Sympa::Message')) {
         Sympa::Log::Syslog::do_log('err', 'Unexpected parameter type: %s',
             ref $message);
         return undef;
