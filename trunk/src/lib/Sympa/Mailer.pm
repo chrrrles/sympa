@@ -343,15 +343,16 @@ sub forward_message {
     $message->{'rcpt'} = $rcpt;                    #FIXME: no effect
                                                    #FIXME:
     $message->set_message_as_string($message->get_mime_message->as_string());
-    unless (
-        defined $self->send_message(
-            'message'  => $message,
-            'rcpt'     => $rcpt,
-            'from'     => $from,
-            'robot'    => $robot,
-            'priority' => $robot->request_priority,
-        )
-        ) {
+
+    my $result = $self->send_message(
+        'message'  => $message,
+        'rcpt'     => $rcpt,
+        'from'     => $from,
+        'robot'    => $robot,
+        'priority' => $robot->request_priority,
+    );
+
+    unless ($result) {
         Sympa::Log::Syslog::do_log('err',
             'Impossible to send message %s from %s',
             $message, $from);
