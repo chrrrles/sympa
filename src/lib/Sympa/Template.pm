@@ -34,7 +34,6 @@ use Template;
 
 use Sympa::Constants;
 use Sympa::Language;
-use Sympa::List; # FIXME: circular dependency
 use Sympa::Log::Syslog;
 use Sympa::Tools::Text;
 
@@ -200,6 +199,7 @@ sub optdesc {
         return undef unless $x =~ /\S/;
         $x =~ s/^\s+//;
         $x =~ s/\s+$//;
+        require Sympa::List;
         return Sympa::List->get_option_title($x, $type, $withval);
     };
 }
