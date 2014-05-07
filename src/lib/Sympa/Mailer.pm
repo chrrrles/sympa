@@ -323,12 +323,14 @@ Returns a true value on success, I<undef> on failure.
 =cut
 
 sub forward_message {
-    my $self = shift;
+    my ($self, %params) = @_;
+
     Sympa::Log::Syslog::do_log('debug2', '(%s, %s, %s, %s)', @_);
-    my $message = shift;
-    my $from    = shift;
-    my $rcpt    = shift;
-    my $robot   = Sympa::Robot::clean_robot(shift, 1);    #FIXME: may be Site?
+
+    my $message = $params{'message'};
+    my $from    = $params{'from'};
+    my $rcpt    = $params{'rctp'};
+    my $robot   = Sympa::Robot::clean_robot($params{'robot'}, 1);    #FIXME: may be Site?
 
     unless (ref $message and $message->isa('Message')) {
         Sympa::Log::Syslog::do_log('err', 'Unexpected parameter type: %s',
@@ -574,13 +576,15 @@ Returns a file handle on sendmail process on success, I<undef> on failure.
 =cut
 
 sub get_sendmail_handle {
-    my $self      = shift;
+    my ($self, %params) = @_;
+
     Sympa::Log::Syslog::do_log('debug2', '(%s, %s, %s, %s, %s)', @_);
-    my $from      = shift;
-    my $rcpt      = shift;
-    my $robot     = Sympa::Robot::clean_robot(shift, 1);
-    my $msgkey    = shift;
-    my $sign_mode = shift;
+
+    my $from      = $params{from};
+    my $rcpt      = $params{rcpt};
+    my $robot     = Sympa::Robot::clean_robot($params{robot}, 1);
+    my $msgkey    = $params{msgkey};
+    my $sign_mode = $params{sign_mode};
 
     unless ($from) {
         Sympa::Log::Syslog::do_log('err',
