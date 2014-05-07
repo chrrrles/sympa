@@ -222,14 +222,14 @@ sub distribute_message {
             or
             ($self->{db_type} !~ /^(mysql|SQLite)$/ and $size + length($i) + 5 > 500)
             ) {
-            undef %rcpt_by_dom;
+                undef %rcpt_by_dom;
 
-            # do not replace this line by "push @sendtobypacket, \@sendto" !!!
-            my @tab = @sendto;
-            push @sendtobypacket, \@tab;
-            $numsmtp++;
-            $nrcpt = $size = 0;
-            @sendto = ();
+                # do not replace this line by "push @sendtobypacket, \@sendto" !!!
+                my @tab = @sendto;
+                push @sendtobypacket, \@tab;
+                $numsmtp++;
+                $nrcpt = $size = 0;
+                @sendto = ();
         }
 
         $nrcpt++;
