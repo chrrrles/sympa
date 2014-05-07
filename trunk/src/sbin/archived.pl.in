@@ -282,7 +282,10 @@ my $end = 0;
 
 my $spoolarchive = Sympa::Spool::File->new('outgoing');
 
-my $mailer = Sympa::Mailer->new();
+my $mailer = Sympa::Mailer->new(
+    db_type         => Sympa::Site->db_type(),
+    nrcpt_by_domain => Sympa::Site->nrcpt_by_domain(),
+);
 
 ## infinite loop scanning the queue (unless a sig TERM is received
 while (!$end) {

@@ -223,7 +223,10 @@ undef my $log;
 
 #$log = 1;
 
-our $mailer = Sympa::Mailer->new();
+our $mailer = Sympa::Mailer->new(
+    db_type         => Sympa::Site->db_type(),
+    nrcpt_by_domain => Sympa::Site->nrcpt_by_domain(),
+);
 
 ###### INFINITE LOOP SCANING THE SPOOL (unless a sig TERM is received) ######
 while (!$end) {

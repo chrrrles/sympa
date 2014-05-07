@@ -543,7 +543,10 @@ my $default_lang;
 # this loop is run foreach HUP signal received
 my $signal = 0;
 
-our $mailer = Sympa::Mailer->new();
+our $mailer = Sympa::Mailer->new(
+    db_type         => Sympa::Site->db_type(),
+    nrcpt_by_domain => Sympa::Site->nrcpt_by_domain(),
+);
 
 while ($signal ne 'term') {    #as long as a SIGTERM is not received }
 
