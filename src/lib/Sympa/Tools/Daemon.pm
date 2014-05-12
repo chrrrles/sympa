@@ -124,7 +124,7 @@ sub remove_pid {
             $lock_fh->close;
             return undef;
         }
-        my $err_file = $tmpdir . '/' . $pid . '.stderr';
+        my $err_file = _get_error_file(%params);
         if (-f $err_file) {
             unless (unlink $err_file) {
                 Sympa::Log::Syslog::do_log('err', "Failed to remove %s: %s",
