@@ -52,17 +52,21 @@ sub get_daemon_name {
 
 =item remove_pid(%parameters)
 
-Removes PID file and STDERR output.
+Remove a PID from the process PID file.
 
 Parameters:
 
 =over
 
-=item * I<name>: FIXME
+=item * I<name>: process name
 
-=item * I<pid>: FIXME
+=item * I<pid>: process PID
 
-=item * I<multiple_process>: FIXME
+=item * I<piddir>: PID file directory
+
+=item * I<tmpdir>: STDERR file directory
+
+=item * I<multiple_process>: allows multiple PIDs in the same file
 
 =back
 
@@ -136,15 +140,25 @@ sub remove_pid {
 
 =item write_pid(%parameters)
 
+Add a PID in process PID file.
+
 Parameters:
 
 =over
 
-=item * I<name>: FIXME
+=item * I<name>: process name
 
-=item * I<pid>: FIXME
+=item * I<pid>: process PID
 
-=item * I<multiple_process>: FIXME
+=item * I<piddir>: PID file directory
+
+=item * I<user>: PID file user
+
+=item * I<group>: PID file group
+
+=item * I<tmpdir>: STDERR file directory
+
+=item * I<multiple_process>: allows multiple PIDs in the same file
 
 =back
 
@@ -250,7 +264,22 @@ sub write_pid {
 
 =item direct_stderr_to_file(%parameters)
 
-FIXME: missing description
+Redirect STDERR output of current process into a file, whose name is based on
+current PID. If the process crash, its content can be used for analysis.
+
+Parameters:
+
+=over
+
+=item * I<pid>: current process PID
+
+=item * I<tmpdir>: STDERR file directory
+
+=item * I<user>: STDERR file user
+
+=item * I<group>: STDERR file group
+
+=back
 
 =cut
 
@@ -264,8 +293,6 @@ sub direct_stderr_to_file {
 
     my $err_file = _get_error_file(%params);
 
-    ## Error output is stored in a file with PID-based name
-    ## Useful if process crashes
     open(STDERR, '>>', $err_file);
     unless (
         Sympa::Tools::File::set_file_rights(
@@ -286,7 +313,19 @@ sub direct_stderr_to_file {
 
 =item send_crash_report(%parameters)
 
-FIXME: missing description
+Send a crash report to listmaster, using crashed process stderr file.
+
+Parameters:
+
+=over
+
+=item * I<pid>: crashed process PID
+
+=item * I<pname>: crashed process name
+
+=item * I<tmpdir>: STDERR file directory
+
+=back
 
 =cut
 
@@ -333,9 +372,19 @@ sub get_lockname () {
     return substr(substr(hostname(), 0, 20) . $PID, 0, 30);
 }
 
-=item get_pids_in_pidfile($name)
+=item get_pids_in_pidfile(%parameters)
 
-Returns the list of PID identifiers in the PID file.
+Returns the list of PID in the PID file.
+
+Parameters:
+
+=over
+
+=item * I<name>: process name
+
+=item * I<piddir>: PID file directory
+
+=back
 
 =cut
 
@@ -358,7 +407,7 @@ sub get_pids_in_pid_file {
 
 =item get_children_processes_list()
 
-FIXME: missing description
+Returns the list of PID for childrend of the current process.
 
 =cut
 
