@@ -77,7 +77,7 @@ sub remove_pid {
     my $tmpdir           = $params{tmpdir};
     my $multiple_process = $params{multiple_process};
 
-    my $pidfile = $piddir . '/' . $name . '.pid';
+    my $pidfile = _get_pid_file(%params);
 
     my @pids;
 
@@ -161,7 +161,7 @@ sub write_pid {
     my $tmpdir           = $params{tmpdir};
     my $multiple_process = $params{multiple_process};
 
-    my $pidfile = $piddir . '/' . $name . '.pid';
+    my $pidfile = _get_pid_file(%params);
 
     ## Create piddir
     mkdir($piddir, 0755) unless (-d $piddir);
@@ -262,12 +262,14 @@ sub direct_stderr_to_file {
     my $user   = $params{user};
     my $group  = $params{group};
 
+    my $err_file = _get_error_file(%params);
+
     ## Error output is stored in a file with PID-based name
     ## Useful if process crashes
-    open(STDERR, '>>', $tmpdir . '/' . $pid . '.stderr');
+    open(STDERR, '>>', $err_file);
     unless (
         Sympa::Tools::File::set_file_rights(
-            file  => $tmpdir . '/' . $pid . '.stderr',
+            file  => $err_file,
             user  => $user,
             group => $group,
         )
@@ -275,7 +277,7 @@ sub direct_stderr_to_file {
         Sympa::Log::Syslog::do_log(
             'err',
             'Unable to set rights on %s',
-            $tmpdir . '/' . $pid . '.stderr'
+            $err_file
         );
         return undef;
     }
@@ -298,7 +300,8 @@ sub send_crash_report {
     Sympa::Log::Syslog::do_log(
         'debug', 'Sending crash report for process %s', $pid
     );
-    my $err_file = $tmpdir . '/' . $pid . '.stderr';
+    my $err_file = _get_error_file(%params);
+
     my (@err_output, $err_date);
     if (-f $err_file) {
         open ERR, '<', $err_file;
@@ -330,7 +333,7 @@ sub get_lockname () {
     return substr(substr(hostname(), 0, 20) . $PID, 0, 30);
 }
 
-=item get_pids_in_pid_file($name)
+=item get_pids_in_pidfile($name)
 
 Returns the list of PID identifiers in the PID file.
 
@@ -339,10 +342,7 @@ Returns the list of PID identifiers in the PID file.
 sub get_pids_in_pid_file {
     my (%params) = @_;
 
-    my $name   = $params{name};
-    my $piddir = $params{piddir};
-
-    my $pidfile = $piddir . '/' . $name . '.pid';
+    my $pidfile = _get_pid_file(%params);
 
     my $lock_fh = Sympa::LockedFile->new($pidfile, 5, '<');
     unless ($lock_fh) {
@@ -371,6 +371,18 @@ sub get_children_processes_list {
         }
     }
     return @children;
+}
+
+sub _get_error_file {
+    my (%params) = @_;
+
+    return $params{tmpdir} . '/' . $params{pid} . '.stderr';
+}
+
+sub _get_pid_file {
+    my (%params) = @_;
+
+    return $params{piddir} . '/' . $params{name} . '.pid';
 }
 
 =back
