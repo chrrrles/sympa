@@ -5170,7 +5170,7 @@ sub may_edit {
         ) {
 
         $edit_conf = $edit_list_conf{$edit_conf_file} =
-            Sympa::Tools::load_edit_list_conf($self);
+            $self->_load_edit_list_conf();
         $mtime{'edit_list_conf'}{$edit_conf_file} = time;
     } else {
         $edit_conf = $edit_list_conf{$edit_conf_file};
@@ -5233,7 +5233,7 @@ sub may_create_parameter {
     if ($self->robot->is_listmaster($who)) {
         return 1;
     }
-    my $edit_conf = Sympa::Tools::load_edit_list_conf($self);
+    my $edit_conf = $self->_load_edit_list_conf();
     $edit_conf->{$parameter} ||= $edit_conf->{'default'};
     if (!$edit_conf->{$parameter}) {
         Sympa::Log::Syslog::do_log('notice',
@@ -12308,6 +12308,65 @@ sub get_dkim_parameters {
     close(KEY);
 
     return $data;
+}
+
+## return a hash from the edit_list_conf file
+sub _load_edit_list_conf {
+    Sympa::Log::Syslog::do_log('debug2', '(%s)', @_);
+    my $self  = shift;
+    my $robot = $self->robot;
+
+    my $file;
+    my $conf;
+
+    return undef
+        unless ($file = $self->get_etc_filename('edit_list.conf'));
+
+    my $fh;
+    unless (open $fh, '<', $file) {
+        Sympa::Log::Syslog::do_log('info', 'Unable to open config file %s',
+            $file);
+        return undef;
+    }
+
+    my $error_in_conf;
+    my $roles_regexp =
+        'listmaster|privileged_owner|owner|editor|subscriber|default';
+    while (<$fh>) {
+        next if /^\s*(\#.*|\s*)$/;
+
+        if (/^\s*(\S+)\s+(($roles_regexp)\s*(,\s*($roles_regexp))*)\s+(read|write|hidden)\s*$/i
+            ) {
+            my ($param, $role, $priv) = ($1, $2, $6);
+            my @roles = split /,/, $role;
+            foreach my $r (@roles) {
+                $r =~ s/^\s*(\S+)\s*$/$1/;
+                if ($r eq 'default') {
+                    $error_in_conf = 1;
+                    Sympa::Log::Syslog::do_log('notice',
+                        '"default" is no more recognised');
+                    foreach
+                        my $set ('owner', 'privileged_owner', 'listmaster') {
+                        $conf->{$param}{$set} = $priv;
+                    }
+                    next;
+                }
+                $conf->{$param}{$r} = $priv;
+            }
+        } else {
+            Sympa::Log::Syslog::do_log('info',
+                'unknown parameter in %s  (Ignored) %s',
+                $file, $_);
+            next;
+        }
+    }
+
+    if ($error_in_conf) {
+        $robot->send_notify_to_listmaster('edit_list_error', $file);
+    }
+
+    close $fh;
+    return $conf;
 }
 
 1;
