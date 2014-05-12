@@ -49,14 +49,30 @@ sub get_daemon_name {
     return $daemon;
 }
 
-=item remove_pid($name, $pid, $multiple_process)
+=item remove_pid(%parameters)
 
 Removes PID file and STDERR output.
+
+Parameters:
+
+=over
+
+=item * I<name>: FIXME
+
+=item * I<pid>: FIXME
+
+=item * I<multiple_process>: FIXME
+
+=back
 
 =cut
 
 sub remove_pid {
-    my ($name, $pid, $multiple_process) = @_;
+    my (%params) = @_;
+
+    my $name             = $params{name};
+    my $pid              = $params{pid};
+    my $multiple_process = $params{multiple_process};
 
     my $piddir  = Sympa::Constants::PIDDIR;
     my $pidfile = $piddir . '/' . $name . '.pid';
@@ -116,14 +132,28 @@ sub remove_pid {
     return 1;
 }
 
-=item write_pid($name, $pid, $multiple_process)
+=item write_pid(%parameters)
 
-FIXME: missing description
+Parameters:
+
+=over
+
+=item * I<name>: FIXME
+
+=item * I<pid>: FIXME
+
+=item * I<multiple_process>: FIXME
+
+=back
 
 =cut
 
 sub write_pid {
-    my ($name, $pid, $multiple_process) = @_;
+    my (%params) = @_;
+
+    my $name             = $params{name};
+    my $pid              = $params{pid};
+    my $multiple_process = $params{multiple_process};
 
     my $piddir  = Sympa::Constants::PIDDIR;
     my $pidfile = $piddir . '/' . $name . '.pid';

@@ -180,7 +180,7 @@ unless ($options{'debug'} || $options{'foreground'}) {
 ## If process is running in foreground, don't write STDERR to a dedicated file
 my $options;
 $options->{'stderr_to_tty'} = 1 if ($options{'foreground'});
-Sympa::Tools::Daemon::write_pid('task_manager', $PID);
+Sympa::Tools::Daemon::write_pid(name => 'task_manager', pid => $PID);
 unless ($options->{'stderr_to_tty'}) {
     Sympa::Tools::Daemon::direct_stderr_to_file(('pid' => $PID));
 }
@@ -275,6 +275,6 @@ Sympa::Site->send_notify_to_listmaster(undef, undef, undef, 1);
 
 Sympa::Log::Syslog::do_log('notice',
     'task_manager exited normally due to signal');
-Sympa::Tools::Daemon::remove_pid('task_manager', $PID);
+Sympa::Tools::Daemon::remove_pid(name => 'task_manager', pid => $PID);
 
 exit(0);
