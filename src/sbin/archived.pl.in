@@ -208,7 +208,7 @@ my $options;
 $options->{'stderr_to_tty'} = 1 if ($options{'foreground'});
 
 ## Create and write the PID file
-Sympa::Tools::Daemon::write_pid('archived', $PID);
+Sympa::Tools::Daemon::write_pid(name => 'archived', pid => $PID);
 unless ($options->{'stderr_to_tty'}) {
     Sympa::Tools::Daemon::direct_stderr_to_file(('pid' => $PID));
 }
@@ -472,7 +472,7 @@ $mailer->reaper();
 
 Sympa::Log::Syslog::do_log('notice',
     'archived exited normally due to signal');
-Sympa::Tools::Daemon::remove_pid('archived', $PID);
+Sympa::Tools::Daemon::remove_pid(name => 'archived', pid => $PID);
 
 exit(0);
 

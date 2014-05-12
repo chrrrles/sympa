@@ -222,7 +222,7 @@ my $options;
 $options->{'stderr_to_tty'} = 1 if ($options{'foreground'});
 
 ## Create and write the PID file
-Sympa::Tools::Daemon::write_pid('bounced', $PID);
+Sympa::Tools::Daemon::write_pid(name => 'bounced', pid => $PID);
 unless ($options->{'stderr_to_tty'}) {
     Sympa::Tools::Daemon::direct_stderr_to_file(('pid' => $PID));
 }
@@ -325,7 +325,7 @@ while (!$end) {
 Sympa::Site->send_notify_to_listmaster(undef, undef, undef, 1);
 
 Sympa::Log::Syslog::do_log('notice', 'bounced exited normally due to signal');
-Sympa::Tools::Daemon::remove_pid('bounced', $PID);
+Sympa::Tools::Daemon::remove_pid(name => 'bounced', pid => $PID);
 
 exit(0);
 
