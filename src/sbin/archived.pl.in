@@ -208,7 +208,7 @@ my $options;
 $options->{'stderr_to_tty'} = 1 if ($options{'foreground'});
 
 ## Create and write the PID file
-Sympa::Tools::Daemon::write_pid('archived', $PID, $options);
+Sympa::Tools::Daemon::write_pid('archived', $PID);
 unless ($options->{'stderr_to_tty'}) {
     Sympa::Tools::Daemon::direct_stderr_to_file(('pid' => $PID));
 }

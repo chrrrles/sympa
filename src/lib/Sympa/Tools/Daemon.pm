@@ -49,14 +49,14 @@ sub get_daemon_name {
     return $daemon;
 }
 
-=item remove_pid($name, $pid, $options)
+=item remove_pid($name, $pid, $multiple_process)
 
 Removes PID file and STDERR output.
 
 =cut
 
 sub remove_pid {
-    my ($name, $pid, $options) = @_;
+    my ($name, $pid, $multiple_process) = @_;
 
     my $piddir  = Sympa::Constants::PIDDIR;
     my $pidfile = $piddir . '/' . $name . '.pid';
@@ -73,7 +73,7 @@ sub remove_pid {
     ## If in multi_process mode (bulk.pl for instance can have child
     ## processes) then the PID file contains a list of space-separated PIDs
     ## on a single line
-    if ($options->{'multiple_process'}) {
+    if ($multiple_process) {
 
         # Read pid file
         seek $lock_fh, 0, 0;
@@ -116,14 +116,14 @@ sub remove_pid {
     return 1;
 }
 
-=item write_pid($name, $pid, $options)
+=item write_pid($name, $pid, $multiple_process)
 
 FIXME: missing description
 
 =cut
 
 sub write_pid {
-    my ($name, $pid, $options) = @_;
+    my ($name, $pid, $multiple_process) = @_;
 
     my $piddir  = Sympa::Constants::PIDDIR;
     my $pidfile = $piddir . '/' . $name . '.pid';
@@ -161,7 +161,7 @@ sub write_pid {
 
     ## If we can have multiple instances for the process.
     ## Print other pids + this one
-    if ($options->{'multiple_process'}) {
+    if ($multiple_process) {
         ## Print other pids + this one
         push(@pids, $pid);
 

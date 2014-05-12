@@ -649,7 +649,7 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
             ## dedicated file
             my $options;
             $options->{'stderr_to_tty'} = 1 if ($options{'foreground'});
-            Sympa::Tools::Daemon::write_pid('sympa', $PID, $options);
+            Sympa::Tools::Daemon::write_pid('sympa', $PID);
             unless ($options->{'stderr_to_tty'}) {
                 Sympa::Tools::Daemon::direct_stderr_to_file(('pid' => $PID));
             }
