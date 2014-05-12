@@ -108,7 +108,7 @@ sub remove_pid {
             ## Release the lock
             unless (unlink $pidfile) {
                 Sympa::Log::Syslog::do_log('err', "Failed to remove %s: %s",
-                    $pidfile, $!);
+                    $pidfile, $ERRNO);
                 $lock_fh->close;
                 return undef;
             }
@@ -120,7 +120,7 @@ sub remove_pid {
     } else {
         unless (unlink $pidfile) {
             Sympa::Log::Syslog::do_log('err', "Failed to remove %s: %s", $pidfile,
-                $!);
+                $ERRNO);
             $lock_fh->close;
             return undef;
         }
@@ -128,7 +128,7 @@ sub remove_pid {
         if (-f $err_file) {
             unless (unlink $err_file) {
                 Sympa::Log::Syslog::do_log('err', "Failed to remove %s: %s",
-                    $err_file, $!);
+                    $err_file, $ERRNO);
                 $lock_fh->close;
                 return undef;
             }
@@ -397,7 +397,7 @@ sub get_pids_in_pid_file {
     my $lock_fh = Sympa::LockedFile->new($pidfile, 5, '<');
     unless ($lock_fh) {
         Sympa::Log::Syslog::do_log('err', "unable to open pidfile %s:%s",
-            $pidfile, $!);
+            $pidfile, $ERRNO);
         return undef;
     }
     my $l = <$lock_fh>;
