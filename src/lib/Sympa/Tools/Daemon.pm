@@ -29,7 +29,9 @@ use warnings;
 use English qw(-no_match_vars);
 
 use Sympa::Constants;
+use Sympa::LockedFile;
 use Sympa::Log::Syslog;
+use Sympa::Tools::File;
 
 =head1 FUNCTIONS
 
