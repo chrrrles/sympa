@@ -250,13 +250,16 @@ FIXME: missing description
 =cut
 
 sub direct_stderr_to_file {
-    my %data = @_;
+    my (%params) = @_;
+
+    my $pid = $params{pid};
+
     ## Error output is stored in a file with PID-based name
     ## Useful if process crashes
-    open(STDERR, '>>', Sympa::Site->tmpdir . '/' . $data{'pid'} . '.stderr');
+    open(STDERR, '>>', Sympa::Site->tmpdir . '/' . $pid . '.stderr');
     unless (
         Sympa::Tools::File::set_file_rights(
-            file  => Sympa::Site->tmpdir . '/' . $data{'pid'} . '.stderr',
+            file  => Sympa::Site->tmpdir . '/' . $pid . '.stderr',
             user  => Sympa::Constants::USER,
             group => Sympa::Constants::GROUP,
         )
@@ -264,7 +267,7 @@ sub direct_stderr_to_file {
         Sympa::Log::Syslog::do_log(
             'err',
             'Unable to set rights on %s',
-            Sympa::Site->tmpdir . '/' . $data{'pid'} . '.stderr'
+            Sympa::Site->tmpdir . '/' . $pid . '.stderr'
         );
         return undef;
     }
@@ -278,10 +281,15 @@ FIXME: missing description
 =cut
 
 sub send_crash_report {
-    my %data = @_;
-    Sympa::Log::Syslog::do_log('debug', 'Sending crash report for process %s',
-        $data{'pid'}),
-        my $err_file = Sympa::Site->tmpdir . '/' . $data{'pid'} . '.stderr';
+    my (%params) = @_;
+
+    my $pid   = $params{pid};
+    my $pname = $params{pname};
+
+    Sympa::Log::Syslog::do_log(
+        'debug', 'Sending crash report for process %s', $pid
+    );
+    my $err_file = Sympa::Site->tmpdir . '/' . $pid . '.stderr';
     my (@err_output, $err_date);
     if (-f $err_file) {
         open ERR, '<', $err_file;
@@ -293,10 +301,10 @@ sub send_crash_report {
     }
     Sympa::Site->send_notify_to_listmaster(
         'crash',
-        {   'crashed_process' => $data{'pname'},
+        {   'crashed_process' => $pname,
             'crash_err'       => \@err_output,
             'crash_date'      => $err_date,
-            'pid'             => $data{'pid'}
+            'pid'             => $pid
         }
     );
 }
