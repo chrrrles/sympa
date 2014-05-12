@@ -328,7 +328,9 @@ Returns the list of PID identifiers in the PID file.
 =cut
 
 sub get_pids_in_pid_file {
-    my $name = shift;
+    my (%params) = @_;
+
+    my $name = $params{name};
 
     my $piddir  = Sympa::Constants::PIDDIR;
     my $pidfile = $piddir . '/' . $name . '.pid';

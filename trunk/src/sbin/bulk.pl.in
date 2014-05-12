@@ -285,7 +285,9 @@ while (!$end) {
                 Sympa::Log::Syslog::do_log('debug2',
                     'Some childs of current process disappeared. Checking whether they shut down cleanly or not.'
                 );
-                my $pids_in_pfile = Sympa::Tools::Daemon::get_pids_in_pid_file('bulk');
+                my $pids_in_pfile = Sympa::Tools::Daemon::get_pids_in_pid_file(
+                    name => 'bulk',
+                );
                 foreach my $fpid (@{$pids_in_pfile}) {
                     if (defined $dead_children{$fpid}) {
                         Sympa::Log::Syslog::do_log(
@@ -308,7 +310,9 @@ while (!$end) {
                     }
                 }
             }
-            my $pids_in_pfile = Sympa::Tools::Daemon::get_pids_in_pid_file('bulk');
+            my $pids_in_pfile = Sympa::Tools::Daemon::get_pids_in_pid_file(
+                name => 'bulk'
+            );
             unless (defined($pids_in_pfile)) {
                 Sympa::Tools::Daemon::write_pid(
                     name             => 'bulk',
