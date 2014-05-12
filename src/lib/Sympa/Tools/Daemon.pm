@@ -414,7 +414,7 @@ Returns the list of PID for childrend of the current process.
 sub get_children_processes_list {
     Sympa::Log::Syslog::do_log('debug3', '');
     my @children;
-    for my $p (@{new Proc::ProcessTable->table}) {
+    for my $p (@{Proc::ProcessTable->new()->table()}) {
         if ($p->ppid == $PID) {
             push @children, $p->pid;
         }
