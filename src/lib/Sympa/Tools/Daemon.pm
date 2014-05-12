@@ -28,7 +28,6 @@ use warnings;
 
 use English qw(-no_match_vars);
 
-use Sympa::Constants;
 use Sympa::LockedFile;
 use Sympa::Log::Syslog;
 use Sympa::Tools::File;
@@ -75,6 +74,7 @@ sub remove_pid {
     my $name             = $params{name};
     my $pid              = $params{pid};
     my $piddir           = $params{piddir};
+    my $tmpdir           = $params{tmpdir};
     my $multiple_process = $params{multiple_process};
 
     my $pidfile = $piddir . '/' . $name . '.pid';
@@ -119,7 +119,7 @@ sub remove_pid {
             $lock_fh->close;
             return undef;
         }
-        my $err_file = Site->tmpdir . '/' . $pid . '.stderr';
+        my $err_file = $tmpdir . '/' . $pid . '.stderr';
         if (-f $err_file) {
             unless (unlink $err_file) {
                 Sympa::Log::Syslog::do_log('err', "Failed to remove %s: %s",
@@ -158,6 +158,7 @@ sub write_pid {
     my $piddir           = $params{piddir};
     my $user             = $params{user};
     my $group            = $params{group};
+    my $tmpdir           = $params{tmpdir};
     my $multiple_process = $params{multiple_process};
 
     my $pidfile = $piddir . '/' . $name . '.pid';
@@ -212,7 +213,11 @@ sub write_pid {
                 $other_pid);
             my $pname = $0;
             $pname =~ s/.*\/(\w+)/$1/;
-            send_crash_report(('pid' => $other_pid, 'pname' => $pname));
+            send_crash_report(
+                pid    => $other_pid,
+                pname  => $pname,
+                tmpdir => $tmpdir
+            );
         }
 
         seek $lock_fh, 0, 0;
@@ -252,22 +257,25 @@ FIXME: missing description
 sub direct_stderr_to_file {
     my (%params) = @_;
 
-    my $pid = $params{pid};
+    my $pid    = $params{pid};
+    my $tmpdir = $params{tmpdir};
+    my $user   = $params{user};
+    my $group  = $params{group};
 
     ## Error output is stored in a file with PID-based name
     ## Useful if process crashes
-    open(STDERR, '>>', Sympa::Site->tmpdir . '/' . $pid . '.stderr');
+    open(STDERR, '>>', $tmpdir . '/' . $pid . '.stderr');
     unless (
         Sympa::Tools::File::set_file_rights(
-            file  => Sympa::Site->tmpdir . '/' . $pid . '.stderr',
-            user  => Sympa::Constants::USER,
-            group => Sympa::Constants::GROUP,
+            file  => $tmpdir . '/' . $pid . '.stderr',
+            user  => $user,
+            group => $group,
         )
         ) {
         Sympa::Log::Syslog::do_log(
             'err',
             'Unable to set rights on %s',
-            Sympa::Site->tmpdir . '/' . $pid . '.stderr'
+            $tmpdir . '/' . $pid . '.stderr'
         );
         return undef;
     }
@@ -283,13 +291,14 @@ FIXME: missing description
 sub send_crash_report {
     my (%params) = @_;
 
-    my $pid   = $params{pid};
-    my $pname = $params{pname};
+    my $pid    = $params{pid};
+    my $pname  = $params{pname};
+    my $tmpdir = $params{tmpdir};
 
     Sympa::Log::Syslog::do_log(
         'debug', 'Sending crash report for process %s', $pid
     );
-    my $err_file = Sympa::Site->tmpdir . '/' . $pid . '.stderr';
+    my $err_file = $tmpdir . '/' . $pid . '.stderr';
     my (@err_output, $err_date);
     if (-f $err_file) {
         open ERR, '<', $err_file;
@@ -330,9 +339,9 @@ Returns the list of PID identifiers in the PID file.
 sub get_pids_in_pid_file {
     my (%params) = @_;
 
-    my $name = $params{name};
+    my $name   = $params{name};
+    my $piddir = $params{piddir};
 
-    my $piddir  = Sympa::Constants::PIDDIR;
     my $pidfile = $piddir . '/' . $name . '.pid';
 
     my $lock_fh = Sympa::LockedFile->new($pidfile, 5, '<');

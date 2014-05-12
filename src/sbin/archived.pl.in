@@ -212,11 +212,17 @@ Sympa::Tools::Daemon::write_pid(
     name   => 'archived',
     pid    => $PID,
     piddir => Sympa::Constants::PIDDIR,
+    tmpdir => Sympa::Site->tmpdir(),
     user   => Sympa::Constants::USER,
     group  => Sympa::Constants::GROUP,
 );
 unless ($options->{'stderr_to_tty'}) {
-    Sympa::Tools::Daemon::direct_stderr_to_file(('pid' => $PID));
+    Sympa::Tools::Daemon::direct_stderr_to_file(
+        pid    => $PID,
+        tmpdir => Sympa::Site->tmpdir(),
+        user   => Sympa::Constants::USER,
+        group  => Sympa::Constants::GROUP,
+    );
 }
 
 # setting log_level using conf unless it is set by calling option
@@ -482,6 +488,7 @@ Sympa::Tools::Daemon::remove_pid(
     name   => 'archived',
     pid    => $PID,
     piddir => Sympa::Constants::PIDDIR,
+    tmpdir => Sympa::Site->tmpdir(),
 );
 
 exit(0);

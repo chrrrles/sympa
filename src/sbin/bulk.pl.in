@@ -195,11 +195,17 @@ Sympa::Tools::Daemon::write_pid(
     name   => 'bulk',
     pid    => $PID,
     piddir => Sympa::Constants::PIDDIR,
+    tmpdir => Sympa::Site->tmpdir(),
     user   => Sympa::Constants::USER,
     group  => Sympa::Constants::GROUP,
 );
 unless ($options->{'stderr_to_tty'}) {
-    Sympa::Tools::Daemon::direct_stderr_to_file(('pid' => $PID));
+    Sympa::Tools::Daemon::direct_stderr_to_file(
+        pid    => $PID,
+        tmpdir => Sympa::Site->tmpdir(),
+        user   => Sympa::Constants::USER,
+        group  => Sympa::Constants::GROUP,
+    );
 }
 ## Set the User ID & Group ID for the process
 $GID = $EGID = (getgrnam(Sympa::Constants::GROUP))[2];
@@ -286,7 +292,8 @@ while (!$end) {
                     'Some childs of current process disappeared. Checking whether they shut down cleanly or not.'
                 );
                 my $pids_in_pfile = Sympa::Tools::Daemon::get_pids_in_pid_file(
-                    name => 'bulk',
+                    name   => 'bulk',
+                    piddir => Sympa::Constants::PIDDIR,
                 );
                 foreach my $fpid (@{$pids_in_pfile}) {
                     if (defined $dead_children{$fpid}) {
@@ -303,6 +310,7 @@ while (!$end) {
                             name             => 'bulk',
                             pid              => $fpid,
                             piddir           => Sympa::Constants::PIDDIR,
+                            tmpdir           => Sympa::Site->tmpdir(),
                             multiple_process => 1
                         );
                         delete $dead_children{$fpid};
@@ -311,19 +319,26 @@ while (!$end) {
                 }
             }
             my $pids_in_pfile = Sympa::Tools::Daemon::get_pids_in_pid_file(
-                name => 'bulk'
+                name   => 'bulk',
+                piddir => Sympa::Constants::PIDDIR,
             );
             unless (defined($pids_in_pfile)) {
                 Sympa::Tools::Daemon::write_pid(
                     name             => 'bulk',
                     pid              => $PID,
                     piddir           => Sympa::Constants::PIDDIR,
+                    tmpdir           => Sympa::Site->tmpdir(),
                     user             => Sympa::Constants::USER,
                     group            => Sympa::Constants::GROUP,
                     multiple_process => 1
                 );
                 close STDERR;
-                Sympa::Tools::Daemon::direct_stderr_to_file(('pid' => $PID));
+                Sympa::Tools::Daemon::direct_stderr_to_file(
+                    pid    => $PID,
+                    tmpdir => Sympa::Site->tmpdir(),
+                    user   => Sympa::Constants::USER,
+                    group  => Sympa::Constants::GROUP,
+                );
                 $pids_in_pfile = [$PID];
             }
             ## Start new processes if there remain at least
@@ -363,6 +378,7 @@ while (!$end) {
                                 name             => 'bulk',
                                 pid              => $child_pid,
                                 piddir           => Sympa::Constants::PIDDIR,
+                                tmpdir           => Sympa::Site->tmpdir(),
                                 user             => Sympa::Constants::USER,
                                 group            => Sympa::Constants::GROUP,
                                 multiple_process => 1
@@ -372,7 +388,12 @@ while (!$end) {
                         } else {
                             ## We're in a child bulk process
                             close STDERR;
-                            Sympa::Tools::Daemon::direct_stderr_to_file(('pid' => $PID));
+                            Sympa::Tools::Daemon::direct_stderr_to_file(
+                                pid    => $PID,
+                                tmpdir => Sympa::Site->tmpdir(),
+                                user   => Sympa::Constants::USER,
+                                group  => Sympa::Constants::GROUP,
+                            );
                             $date_of_last_activity = time();
                             $daemon_usage =
                                 'DAEMON_SLAVE';    # automatic lists creation
@@ -636,6 +657,7 @@ Sympa::Tools::Daemon::remove_pid(
     name             => 'bulk',
     pid              => $PID,
     piddir           => Sympa::Constants::PIDDIR,
+    tmpdir           => Sympa::Site->tmpdir(),
     multiple_process => 1
 );
 
