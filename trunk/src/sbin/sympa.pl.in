@@ -653,11 +653,17 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
                 name   => 'sympa',
                 pid    => $PID,
                 piddir => Sympa::Constants::PIDDIR,
+                tmpdir => Sympa::Site->tmpdir(),
                 user   => Sympa::Constants::USER,
                 group  => Sympa::Constants::GROUP,
             );
             unless ($options->{'stderr_to_tty'}) {
-                Sympa::Tools::Daemon::direct_stderr_to_file(('pid' => $PID));
+                Sympa::Tools::Daemon::direct_stderr_to_file(
+                    pid    => $PID,
+                    tmpdir => Sympa::Site->tmpdir(),
+                    user   => Sympa::Constants::USER,
+                    group  => Sympa::Constants::GROUP,
+                );
             }
         }
 
@@ -1550,7 +1556,8 @@ Sympa::Log::Syslog::do_log('notice', 'Sympa exited normally due to signal');
 Sympa::Tools::Daemon::remove_pid(
     name   => 'sympa',
     pid    => $PID,
-    piddir => Sympa::Constants::PIDDIR
+    piddir => Sympa::Constants::PIDDIR,
+    tmpdir => Sympa::Site->tmpdir(),
 );
 
 exit(0);
