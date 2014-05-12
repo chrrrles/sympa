@@ -155,7 +155,7 @@ sub write_pid {
 
     my $name             = $params{name};
     my $pid              = $params{pid};
-    my $piddir           = $params{pid};
+    my $piddir           = $params{piddir};
     my $user             = $params{user};
     my $group            = $params{group};
     my $multiple_process = $params{multiple_process};
