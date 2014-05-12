@@ -72,9 +72,9 @@ sub remove_pid {
 
     my $name             = $params{name};
     my $pid              = $params{pid};
+    my $piddir           = $params{piddir};
     my $multiple_process = $params{multiple_process};
 
-    my $piddir  = Sympa::Constants::PIDDIR;
     my $pidfile = $piddir . '/' . $name . '.pid';
 
     my @pids;
@@ -153,9 +153,11 @@ sub write_pid {
 
     my $name             = $params{name};
     my $pid              = $params{pid};
+    my $piddir           = $params{pid};
+    my $user             = $params{user};
+    my $group            = $params{group};
     my $multiple_process = $params{multiple_process};
 
-    my $piddir  = Sympa::Constants::PIDDIR;
     my $pidfile = $piddir . '/' . $name . '.pid';
 
     ## Create piddir
@@ -164,8 +166,8 @@ sub write_pid {
     unless (
         Sympa::Tools::File::set_file_rights(
             file  => $piddir,
-            user  => Sympa::Constants::USER,
-            group => Sympa::Constants::GROUP,
+            user  => $user,
+            group => $group,
         )
         ) {
         Sympa::Log::fatal_err('Unable to set rights on %s. Exiting.',
@@ -225,8 +227,8 @@ sub write_pid {
     unless (
         Sympa::Tools::File::set_file_rights(
             file  => $pidfile,
-            user  => Sympa::Constants::USER,
-            group => Sympa::Constants::GROUP,
+            user  => $user,
+            group => $group,
         )
         ) {
         ## Unlock pid file

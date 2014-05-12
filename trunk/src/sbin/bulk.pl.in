@@ -191,7 +191,13 @@ my $options;
 $options->{'stderr_to_tty'} = 1 if ($options{'foreground'});
 
 # Save the PID number
-Sympa::Tools::Daemon::write_pid(name => 'bulk', pid => $PID);
+Sympa::Tools::Daemon::write_pid(
+    name   => 'bulk',
+    pid    => $PID,
+    piddir => Sympa::Constants::PIDDIR,
+    user   => Sympa::Constants::USER,
+    group  => Sympa::Constants::GROUP,
+);
 unless ($options->{'stderr_to_tty'}) {
     Sympa::Tools::Daemon::direct_stderr_to_file(('pid' => $PID));
 }
@@ -294,6 +300,7 @@ while (!$end) {
                         Sympa::Tools::Daemon::remove_pid(
                             name             => 'bulk',
                             pid              => $fpid,
+                            piddir           => Sympa::Constants::PIDDIR,
                             multiple_process => 1
                         );
                         delete $dead_children{$fpid};
@@ -306,6 +313,9 @@ while (!$end) {
                 Sympa::Tools::Daemon::write_pid(
                     name             => 'bulk',
                     pid              => $PID,
+                    piddir           => Sympa::Constants::PIDDIR,
+                    user             => Sympa::Constants::USER,
+                    group            => Sympa::Constants::GROUP,
                     multiple_process => 1
                 );
                 close STDERR;
@@ -348,6 +358,9 @@ while (!$end) {
                             Sympa::Tools::Daemon::write_pid(
                                 name             => 'bulk',
                                 pid              => $child_pid,
+                                piddir           => Sympa::Constants::PIDDIR,
+                                user             => Sympa::Constants::USER,
+                                group            => Sympa::Constants::GROUP,
                                 multiple_process => 1
                             );
                             $created_children{$child_pid} = 1;
@@ -618,6 +631,7 @@ Sympa::Log::Syslog::do_log('notice', 'bulk.pl exited normally due to signal');
 Sympa::Tools::Daemon::remove_pid(
     name             => 'bulk',
     pid              => $PID,
+    piddir           => Sympa::Constants::PIDDIR,
     multiple_process => 1
 );
 
