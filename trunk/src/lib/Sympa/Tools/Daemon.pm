@@ -27,6 +27,7 @@ use strict;
 use warnings;
 
 use English qw(-no_match_vars);
+use Proc::ProcessTable;
 
 use Sympa::LockedFile;
 use Sympa::Log::Syslog;
