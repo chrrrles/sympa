@@ -644,12 +644,18 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
         Sympa::Log::Syslog::do_log('debug', 'Running server %d', $PID);
         unless ($options{'batch'}) {
 
+            # check presence of a PID file from a previous execution
+            Sympa::Tools::Daemon::check_old_pid_file(
+                name   => 'sympa',
+                piddir => Sympa::Constants::PIDDIR,
+                tmpdir => Sympa::Site->tmpdir(),
+            );
+
             # Create the PID file
             Sympa::Tools::Daemon::write_pid(
                 name   => 'sympa',
                 pid    => $PID,
                 piddir => Sympa::Constants::PIDDIR,
-                tmpdir => Sympa::Site->tmpdir(),
                 user   => Sympa::Constants::USER,
                 group  => Sympa::Constants::GROUP,
             );

@@ -139,6 +139,34 @@ sub remove_pid {
     return 1;
 }
 
+## The previous process died suddenly, without pidfile cleanup
+## Send a notice to listmaster with STDERR of the previous process
+
+sub check_old_pid_file {
+    my (%params) = @_;
+
+    my $name   = $params{name};
+    my $piddir = $params{piddir};
+    my $tmpdir = $params{tmpdir};
+
+    my $pids = get_pids_from_pid_file(%params);
+    return unless $pids;
+
+    my $pid = $pids->[0];
+
+    Sympa::Log::Syslog::do_log(
+        'notice',
+        "Previous process %s died suddenly ; notifying listmaster",
+        $pid
+    );
+
+    send_crash_report(
+        pid    => $pid,
+        pname  => $name,
+        tmpdir => $tmpdir
+    );
+}
+
 =item write_pid(%parameters)
 
 Add a PID in process PID file.
@@ -173,7 +201,6 @@ sub write_pid {
     my $piddir           = $params{piddir};
     my $user             = $params{user};
     my $group            = $params{group};
-    my $tmpdir           = $params{tmpdir};
     my $multiple_process = $params{multiple_process};
 
     my $pidfile = _get_pid_file(%params);
@@ -219,22 +246,6 @@ sub write_pid {
         truncate $lock_fh, 0;
         print $lock_fh join(' ', @pids) . "\n";
     } else {
-        ## The previous process died suddenly, without pidfile cleanup
-        ## Send a notice to listmaster with STDERR of the previous process
-        if (@pids) {
-            my $other_pid = $pids[0];
-            Sympa::Log::Syslog::do_log('notice',
-                "Previous process %s died suddenly ; notifying listmaster",
-                $other_pid);
-            my $pname = $0;
-            $pname =~ s/.*\/(\w+)/$1/;
-            send_crash_report(
-                pid    => $other_pid,
-                pname  => $pname,
-                tmpdir => $tmpdir
-            );
-        }
-
         seek $lock_fh, 0, 0;
         unless (truncate $lock_fh, 0) {
             ## Unlock pid file

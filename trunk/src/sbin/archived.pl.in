@@ -203,12 +203,18 @@ unless ($options{'debug'} || $options{'foreground'}) {
     }
 }
 
+# check presence of a PID file from a previous execution
+Sympa::Tools::Daemon::check_old_pid_file(
+    name   => 'archived',
+    piddir => Sympa::Constants::PIDDIR,
+    tmpdir => Sympa::Site->tmpdir(),
+);
+
 # Create the PID file
 Sympa::Tools::Daemon::write_pid(
     name   => 'archived',
     pid    => $PID,
     piddir => Sympa::Constants::PIDDIR,
-    tmpdir => Sympa::Site->tmpdir(),
     user   => Sympa::Constants::USER,
     group  => Sympa::Constants::GROUP,
 );
