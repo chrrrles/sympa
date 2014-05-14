@@ -21,12 +21,13 @@ my @array_from_string_tests = (
 );
 
 my @string_2_hash_tests = (
-    [ 'var1="value1";var2="value2";' => { var1 => "value1", var2 => "value2" } ],
-    [ ';var1="value1";var2="value2"' => { var1 => "value1", var2 => "value2" } ]
+    [ 'var1="val1";var2="val2";' => { var1 => "val1", var2 => "val2" } ],
+    [ ';var1="val1";var2="val2"' => { var1 => "val1", var2 => "val2" } ]
 );
 
 my @hash_2_string_tests = (
-    [ { var1 => "value1", var2 => "value2" } => ';var1="value1";var2="value2"' ]
+    [ { var1 => "val1", var2 => "val2" }
+        => qr/^(;var1="val1";var2="val2"|;var2="val2";var1="val1")$/x ]
 );
 
 my @smart_lessthan_ok_tests = (
@@ -123,10 +124,10 @@ foreach my $test (@string_2_hash_tests) {
 }
 
 foreach my $test (@hash_2_string_tests) {
-    is(
+    like(
         Sympa::Tools::Data::hash_2_string($test->[0]),
         $test->[1],
-        "hash_2_string $test->[0]"
+        "hash_2_string"
     );
 }
 
@@ -145,10 +146,16 @@ foreach my $test (@smart_lessthan_nok_tests) {
 }
 
 foreach my $test (@diff_on_arrays_tests) {
+    # normalize result to enforce constant ordering despite hash randomization
+    my $result = Sympa::Tools::Data::diff_on_arrays(@{$test->[0]});
+    foreach my $key (qw/union intersection added deleted/) {
+        $result->{$key} = [ sort @{$result->{$key}} ];
+    }
+    my $expected = $test->[1];
     is_deeply(
-        Sympa::Tools::Data::diff_on_arrays(@{$test->[0]}),
-        $test->[1],
-        "diff_in_arrays $test->[0]"
+        $result,
+        $expected,
+        "diff_in_arrays"
     );
 }
 
@@ -158,6 +165,6 @@ foreach my $test (@recursive_transformation_tests) {
     is_deeply(
         $test->[0],
         $test->[1],
-        "recursive_transformation $test->[0]"
+        "recursive_transformation"
    );
 }
