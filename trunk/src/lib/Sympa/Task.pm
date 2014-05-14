@@ -109,7 +109,7 @@ sub create {
     $task_in_spool->{'task_flavour'} = $param->{'flavour'};
     if (defined $param->{'data'}{'list'}) {
         my $list = $param->{'data'}{'list'};
-        if (ref $list eq 'List') {
+        if (ref $list eq 'Sympa::List') {
             $task_in_spool->{'list'}   = $list->name;
             $task_in_spool->{'domain'} = $list->domain;
         } else {
@@ -615,7 +615,7 @@ sub check_list_task_is_valid {
     my $model = $self->{'model'};
 
     ## Skip closed lists
-    unless (defined $list and ref $list eq 'List' and $list->status eq 'open')
+    unless (defined $list and ref $list eq 'Sympa::List' and $list->status eq 'open')
     {
         Sympa::Log::Syslog::do_log(
             'notice',

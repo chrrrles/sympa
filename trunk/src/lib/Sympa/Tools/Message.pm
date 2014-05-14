@@ -490,7 +490,7 @@ sub decode_header {
     my $sep = shift || undef;
 
     my $head;
-    if (ref $msg and $msg->isa('Message')) {
+    if (ref $msg and $msg->isa('Sympa::Message')) {
         $head = $msg->as_entity()->head;
     } elsif (ref $msg eq 'MIME::Entity') {
         $head = $msg->head;

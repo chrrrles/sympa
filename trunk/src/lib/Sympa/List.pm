@@ -2075,7 +2075,7 @@ sub send_msg {
     my $apply_dkim_signature = $param{'apply_dkim_signature'};
     my $apply_tracking       = $param{'apply_tracking'};
     my $message              = $param{'message'};
-    unless (defined $message && ref($message) eq 'Message') {
+    unless (defined $message && ref($message) eq 'Sympa::Message') {
         Sympa::Log::Syslog::do_log('err', 'Invalid message paramater');
         return undef;
     }

@@ -419,7 +419,7 @@ sub store {
         }
         my $packetid = Digest::MD5::md5_hex($rcptasstring);
         my $packet_already_exist;
-        if (ref $listname eq 'List') {
+        if (ref $listname eq 'Sympa::List') {
             $listname = $listname->name;
         }
         if ($message_already_on_spool) {

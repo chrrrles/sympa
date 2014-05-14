@@ -90,7 +90,7 @@ sub db_log {
     my $listname;
     unless ($list) {
         $listname = '';
-    } elsif (ref $list and ref $list eq 'List') {
+    } elsif (ref $list and ref $list eq 'Sympa::List') {
         $listname = $list->name;
         $robot ||= $list->robot;
     } elsif ($list =~ /(.+)\@(.+)/) {

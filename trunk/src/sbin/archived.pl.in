@@ -904,7 +904,7 @@ sub mail2arc {
 
     my $arcpath = $robot->arc_path;
 
-    unless (ref $list and $list->isa('List')) {
+    unless (ref $list and $list->isa('Sympa::List')) {
         Sympa::Log::Syslog::do_log(
             'err',
             'Unknown list %s',
