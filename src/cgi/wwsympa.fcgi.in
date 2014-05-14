@@ -1576,13 +1576,13 @@ while ($query = new_loop()) {
             }
 
             ## list name and mail hostname
-            $param->{'host'} = $list->host if (ref($list) eq 'List');
+            $param->{'host'} = $list->host if (ref($list) eq 'Sympa::List');
             $param->{'host'} ||= $robot_id;
-            $param->{'domain'} = $list->domain if (ref($list) eq 'List');
+            $param->{'domain'} = $list->domain if (ref($list) eq 'Sympa::List');
 
             ## Get best language
             $param->{'list_lang'} = $list->lang
-                if ref $list eq 'List';
+                if ref $list eq 'Sympa::List';
             $param->{'user_lang'} = $param->{'user'}{'lang'}
                 if ref $param->{'user'};
             foreach my $lang (
@@ -1601,7 +1601,7 @@ while ($query = new_loop()) {
 
             ## blacklists
             my $blacklist = {};
-            if (ref $list eq 'List') {
+            if (ref $list eq 'Sympa::List') {
                 foreach my $action (split /\s*,\s*/, $robot->use_blacklist) {
                     next unless $action;
                     next if $action eq 'none';
@@ -1725,7 +1725,7 @@ while ($query = new_loop()) {
     $param->{'user_lang'} = $param->{'user'}{'lang'}
         if ref $param->{'user'};
     $param->{'list_lang'} = $list->lang
-        if ref $list eq 'List';
+        if ref $list eq 'Sympa::List';
     foreach my $lang (
         $param->{'lang'},      $param->{'user_lang'},
         $param->{'list_lang'}, $robot->lang,
@@ -1790,7 +1790,7 @@ while ($query = new_loop()) {
         }
 
         ## Set cookies "your_subscribtions" unless in one list page
-        if ($param->{'user'}{'email'} && ref($list) ne 'List') {
+        if ($param->{'user'}{'email'} && ref($list) ne 'Sympa::List') {
 
             ## In case get_which was not set.
             ## The get_which will be limited at most (your_lists_size + 1).
@@ -1962,7 +1962,7 @@ while ($query = new_loop()) {
         ## Retro compatibility concerns
         $param->{'active'} = 1;
 
-        if (ref $list eq 'List') {
+        if (ref $list eq 'Sympa::List') {
             $param->{'list_conf'} = $list->admin;
         }
 
@@ -1998,7 +1998,7 @@ while ($query = new_loop()) {
         ## Retro compatibility concerns
         $param->{'active'} = 1;
 
-        if (ref $list eq 'List') {
+        if (ref $list eq 'Sympa::List') {
             $param->{'list_conf'} = $list->admin;
         }
 
@@ -2886,12 +2886,12 @@ sub send_html {
         undef $list;
     }
 
-    if (ref $list eq 'List') {
+    if (ref $list eq 'Sympa::List') {
         $param->{'list_conf'} = $list->admin;
     }
 
     ## Trying to use custom_vars
-    if (ref $list eq 'List' and scalar @{$list->custom_vars}) {
+    if (ref $list eq 'Sympa::List' and scalar @{$list->custom_vars}) {
         foreach my $var (@{$list->custom_vars}) {
             $param->{'custom_vars'}{$var->{'name'}} = $var->{'value'};
         }
@@ -7256,7 +7256,7 @@ sub do_remove_template {
 
     my $template_path;
 
-    if ($in{'scope'} eq 'list' and ref $list ne 'List') {
+    if ($in{'scope'} eq 'list' and ref $list ne 'Sympa::List') {
         Sympa::Report::reject_report_web('user', 'missing_arg',
             {'argument' => 'list'},
             $param->{'action'});
@@ -7312,7 +7312,7 @@ sub do_view_template {
 
     my $template_path;
 
-    if ($in{'scope'} eq 'list' and ref $list ne 'List') {
+    if ($in{'scope'} eq 'list' and ref $list ne 'Sympa::List') {
         Sympa::Report::reject_report_web('user', 'missing_arg',
             {'argument' => 'list'},
             $param->{'action'});
@@ -7795,7 +7795,7 @@ sub do_edit_template {
     unless ($in{'content'}) {
         return 1;
     }
-    if ($in{'scope'} eq 'list' and ref $list ne 'List') {
+    if ($in{'scope'} eq 'list' and ref $list ne 'Sympa::List') {
         Sympa::Report::reject_report_web('user', 'listname_needed', {},
             $param->{'action'});
         wwslog('info',
@@ -12782,7 +12782,7 @@ sub _check_new_values {
     wwslog('debug3', '_check_new_values(%s)', $pname);
 
     my $fake_list =
-        bless {'robot' => $robot, 'config' => $new_admin} => 'List';
+        bless {'robot' => $robot, 'config' => $new_admin} => 'Sympa::List';
     $fake_list->config;    # update parameter cache
     my $uncompellable_param = Sympa::Family::get_uncompellable_param();
 
@@ -25022,7 +25022,7 @@ sub do_automatic_lists {
 
 sub prevent_visibility_bypass {
     wwslog('debug2', 'Starting');
-    if (defined $list && ref $list eq 'List') {
+    if (defined $list && ref $list eq 'Sympa::List') {
         my $result = $list->check_list_authz(
             'visibility',
             $param->{'auth_method'},

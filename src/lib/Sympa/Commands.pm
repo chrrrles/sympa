@@ -3342,7 +3342,7 @@ sub get_auth_method {
             $sender, $auth);
 
         my $compute;
-        if (ref $list eq 'List') {
+        if (ref $list eq 'Sympa::List') {
             $compute = $list->compute_auth($email, $cmd);
             $that = $list->robot;
         } else {

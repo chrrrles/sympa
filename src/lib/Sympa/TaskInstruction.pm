@@ -1679,7 +1679,7 @@ sub sync_include {
     Sympa::Log::Syslog::do_log('debug2', 'sync_include(%s)', $task->{'id'});
 
     my $list = $task->{'list_object'};
-    unless (defined $list and ref $list eq 'List') {
+    unless (defined $list and ref $list eq 'Sympa::List') {
         return undef;
     }
     unless ($list->sync_include()) {

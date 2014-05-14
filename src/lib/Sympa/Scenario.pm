@@ -93,7 +93,7 @@ sub new {
         $parameters{'options'}
     );
 
-    unless (ref $that and ref $that eq 'List'
+    unless (ref $that and ref $that eq 'Sympa::List'
         or ref $that and ref $that eq 'Sympa::Robot'
         or $that eq 'Site') {    # FIXME: really maybe a Site?
         croak 'bug in logic.  Ask developer';
@@ -344,7 +344,7 @@ sub request_action {
 
     my $robot;
     my $list;
-    if (ref $that and ref $that eq 'List') {
+    if (ref $that and ref $that eq 'Sympa::List') {
         $list  = $that;
         $robot = $that->robot;
     } else {
@@ -403,7 +403,7 @@ sub request_action {
         }
     }
     if ($log_it) {
-        if (ref $that and ref $that eq 'List') {
+        if (ref $that and ref $that eq 'Sympa::List') {
             $trace_scenario =
                   'scenario request '
                 . $operation
@@ -1553,7 +1553,7 @@ sub search {
     my $filter_file = shift;
     my $context     = shift;
 
-    unless (ref $that and ref $that eq 'List') {
+    unless (ref $that and ref $that eq 'Sympa::List') {
         $that = Sympa::Robot::clean_robot($that, 1);    #FIXME: really may be Site?
     }
 
@@ -1572,7 +1572,7 @@ sub search {
         unless ($sql_conf = Sympa::Conf::load_sql_filter($file)) {
             $that->send_notify_to_owner('named_filter',
                 {'filter' => $filter_file})
-                if ref $that eq 'List';
+                if ref $that eq 'Sympa::List';
             return undef;
         }
 
@@ -1828,7 +1828,7 @@ sub verify_custom {
     my $args_ref  = shift;
 
     my $robot;
-    if (ref $that and ref $that eq 'List') {
+    if (ref $that and ref $that eq 'Sympa::List') {
         $robot = $that->robot;
     } else {
         $that = Sympa::Robot::clean_robot($that, 1);    #FIXME: really may be Site?

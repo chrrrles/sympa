@@ -160,7 +160,7 @@ sub get_address {
     my $self = shift;
     my $type = shift || '';
 
-    if (ref $self and ref $self eq 'List') {
+    if (ref $self and ref $self eq 'Sympa::List') {
         unless ($type) {
             return $self->name . '@' . $self->host;
         } elsif ($type eq 'owner') {
@@ -272,7 +272,7 @@ sub best_language {
     my @langs = ();
     my $lang;
 
-    if (ref $self eq 'List') {
+    if (ref $self eq 'Sympa::List') {
         @supported_languages = $self->robot->supported_languages;
     } elsif (ref $self eq 'Sympa::Robot' or !ref $self and $self eq 'Sympa::Site') {
         @supported_languages = $self->supported_languages;
@@ -284,12 +284,12 @@ sub best_language {
     $lang = $self->lang;
     push @langs, $lang
         if $supported_languages{$lang};
-    if (ref $self eq 'List') {
+    if (ref $self eq 'Sympa::List') {
         $lang = $self->robot->lang;
         push @langs, $lang
             if $supported_languages{$lang} and !grep { $_ eq $lang } @langs;
     }
-    if (ref $self eq 'List' or ref $self eq 'Sympa::Robot') {
+    if (ref $self eq 'Sympa::List' or ref $self eq 'Sympa::Robot') {
         $lang = Sympa::Site->lang;
         push @langs, $lang
             if $supported_languages{$lang} and !grep { $_ eq $lang } @langs;
@@ -327,7 +327,7 @@ sub compute_auth {
 
     my ($cookie, $key, $listname);
 
-    if (ref $self and ref $self eq 'List') {
+    if (ref $self and ref $self eq 'Sympa::List') {
         $listname = $self->name;
     } elsif (ref $self and ref $self eq 'Sympa::Robot') {
         ## Method excluded from inheritance chain
@@ -383,7 +383,7 @@ sub request_auth {
     my $keyauth;
     my $data = {'to' => $email};
 
-    if (ref $self and ref $self eq 'List') {
+    if (ref $self and ref $self eq 'Sympa::List') {
         my $listname = $self->name;
         $data->{'list_context'} = 1;
 
@@ -472,7 +472,7 @@ sub get_etc_filename {
     my $name    = shift;
     my $options = shift || {};
 
-    unless (ref $self eq 'List'
+    unless (ref $self eq 'Sympa::List'
         or ref $self eq 'Sympa::Family'
         or ref $self eq 'Sympa::Robot'
         or $self     eq 'Sympa::Site') {
@@ -576,7 +576,7 @@ sub _get_etc_include_path {
 
     my @include_path;
 
-    if (ref $self and ref $self eq 'List') {
+    if (ref $self and ref $self eq 'Sympa::List') {
         my $path_list;
         my $path_family;
         @include_path = $self->robot->_get_etc_include_path(@_);
@@ -700,7 +700,7 @@ sub send_dsn {
     my $status  = shift;
     my $diag    = shift || '';
 
-    unless (ref $message and ref $message eq 'Message') {
+    unless (ref $message and ref $message eq 'Sympa::Message') {
         Sympa::Log::Syslog::do_log('err', 'object %s is not Message',
             $message);
         return undef;
@@ -716,7 +716,7 @@ sub send_dsn {
     }
 
     my $recipient = '';
-    if (ref $self and ref $self eq 'List') {
+    if (ref $self and ref $self eq 'Sympa::List') {
         $recipient = $self->get_address;
         $status ||= '5.1.1';
     } elsif (ref $self and ref $self eq 'Sympa::Robot') {
@@ -862,7 +862,7 @@ sub send_file {
     my $options = shift || {};
 
     my ($robot, $list, $robot_id, $listname);
-    if (ref $self and ref $self eq 'List') {
+    if (ref $self and ref $self eq 'Sympa::List') {
         $robot    = $self->robot;
         $list     = $self;
         $robot_id = $self->robot->name;
@@ -915,7 +915,7 @@ sub send_file {
             );
         }
 
-        if (ref $self eq 'List') {
+        if (ref $self eq 'Sympa::List') {
             $data->{'subscriber'} = $self->get_list_member($who);
 
             if ($data->{'subscriber'}) {
@@ -946,7 +946,7 @@ sub send_file {
             $data->{'user'}->password(Sympa::Tools::Password::tmp_passwd($who));
         }
 
-        if (ref $self eq 'List') {
+        if (ref $self eq 'Sympa::List') {
             ## Unique return-path VERP
             if (    $self->welcome_return_path eq 'unique'
                 and $tpl eq 'welcome') {
@@ -961,10 +961,10 @@ sub send_file {
     ## Lang
     undef $data->{'lang'};
     $data->{'lang'} = $data->{'user'}->lang if ref $data->{'user'};
-    $data->{'lang'} ||= $self->lang if ref $self eq 'List';
+    $data->{'lang'} ||= $self->lang if ref $self eq 'Sympa::List';
     $data->{'lang'} ||= $robot->lang;
 
-    if (ref $self eq 'List') {
+    if (ref $self eq 'Sympa::List') {
         ## Trying to use custom_vars
         if (defined $self->custom_vars) {
             $data->{'custom_vars'} = {};
@@ -980,7 +980,7 @@ sub send_file {
     unshift @$tt2_include_path, $::plugins->tt2Paths
         if $::plugins;
 
-    if (ref $self eq 'List') {
+    if (ref $self eq 'Sympa::List') {
         ## list directory to get the 'info' file
         push @{$tt2_include_path}, $self->dir;
         ## list archives to include the last message
@@ -1018,7 +1018,7 @@ sub send_file {
 
     $data->{'conf'}{'version'} = $main::Version if defined $main::Version;
     $data->{'robot_domain'} = $robot_id;
-    if (ref $self eq 'List') {
+    if (ref $self eq 'Sympa::List') {
         $data->{'list'} = $self;
         $data->{'list'}{'owner'} = $self->get_owners();
 
@@ -1150,7 +1150,7 @@ sub send_notify_to_listmaster {
     my $purge      = shift;
 
     my $robot_id;
-    if (ref $self and ref $self eq 'List') {
+    if (ref $self and ref $self eq 'Sympa::List') {
         ## Method excluded from inheritance chain
         croak sprintf 'Can\'t locate object method "%s" via package "%s"',
             'send_notify_to_listmaster', ref $self;
@@ -1295,7 +1295,7 @@ sub send_notify_to_listmaster {
     $data->{'alarm'}          = 1;
 
     my $list = undef;
-    if ($data->{'list'} and ref($data->{'list'}) eq 'List') {
+    if ($data->{'list'} and ref($data->{'list'}) eq 'Sympa::List') {
         $list = $data->{'list'};
         $data->{'list'} = {
             'name'    => $list->name,
@@ -1309,7 +1309,7 @@ sub send_notify_to_listmaster {
     if ($operation eq 'automatic_bounce_management') {
         ## Automatic action done on bouncing adresses
         delete $data->{'alarm'};
-        unless (defined $list and ref $list eq 'List') {
+        unless (defined $list and ref $list eq 'Sympa::List') {
             Sympa::Log::Syslog::do_log('err',
                 'Parameter %s is not a valid list', $list);
             return undef;

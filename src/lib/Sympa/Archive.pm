@@ -363,7 +363,7 @@ sub convert_single_message {
     my $robot;
     my $listname;
     my $hostname;
-    if (ref $that and ref $that eq 'List') {
+    if (ref $that and ref $that eq 'Sympa::List') {
         $robot    = $that->robot;
         $listname = $that->name;
     } elsif (ref $that and ref $that eq 'Sympa::Robot') {
@@ -376,7 +376,7 @@ sub convert_single_message {
 
     my $msg_as_string;
     my $messagekey;
-    if (ref $message eq 'Message') {
+    if (ref $message eq 'Sympa::Message') {
         $msg_as_string = $message->get_message_as_string;
         $messagekey    = $message->{'messagekey'};
     } elsif (ref $message eq 'HASH') {

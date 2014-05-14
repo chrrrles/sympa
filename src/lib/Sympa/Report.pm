@@ -75,7 +75,7 @@ sub reject_report_msg {
         return undef;
     }
 
-    if (ref $list and ref $list eq 'List') {
+    if (ref $list and ref $list eq 'Sympa::List') {
         $robot = $list->robot;
     } else {
         $robot = Sympa::Robot::clean_robot($robot, 1);    #FIXME: really may be Site?
@@ -103,7 +103,7 @@ sub reject_report_msg {
         $param->{'original_msg'} = _get_msg_as_hash($param->{'message'});
     }
 
-    my $send_to = ref $list eq "List" ? $list : $robot;
+    my $send_to = ref $list eq "Sympa::List" ? $list : $robot;
     $send_to->send_file('message_report', $user, $param)
         or Sympa::Log::Syslog::do_log(
         'notice',
@@ -209,7 +209,7 @@ sub notice_report_msg {
         return undef;
     }
 
-    if (ref $list and ref $list eq 'List') {
+    if (ref $list and ref $list eq 'Sympa::List') {
         $robot = $list->robot;
     } else {
         $robot = Sympa::Robot::clean_robot($robot, 1);    #FIXME: really may be Site?
@@ -225,7 +225,7 @@ sub notice_report_msg {
         $param->{'original_msg'} = _get_msg_as_hash($param->{'message'});
     }
 
-    if (ref $list and ref $list eq 'List') {
+    if (ref $list and ref $list eq 'Sympa::List') {
         unless ($list->send_file('message_report', $user, $param)) {
             Sympa::Log::Syslog::do_log('notice',
                 "Sympa::Report::notice_report_msg(): Unable to send template 'message_report' to '$user'"
@@ -788,14 +788,14 @@ sub reject_report_web {
     }
 
     my $robot = undef;
-    if (ref $list and ref $list eq 'List') {
+    if (ref $list and ref $list eq 'Sympa::List') {
         $robot = $list->robot;
     } elsif ($robot_id and $robot_id ne '*') {
         $robot = Sympa::Robot->new($robot_id);
     }
 
     my $listname;
-    if (ref($list) eq 'List') {
+    if (ref($list) eq 'Sympa::List') {
         $listname = $list->name;
     }
 

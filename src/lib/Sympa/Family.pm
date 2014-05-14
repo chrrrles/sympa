@@ -2341,7 +2341,7 @@ sub _get_customizing {
 
     my $fake_list =
         bless {'robot' => $list->robot, 'config' => $changed_values} =>
-        'List';
+        'Sympa::List';
     $fake_list->config;    # update parameter cache
 
     foreach my $param (keys %{$constraint}) {

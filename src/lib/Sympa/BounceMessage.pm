@@ -971,7 +971,7 @@ sub process_ndn {
     Sympa::Log::Syslog::do_log('debug3', '(%s)', @_);
     my $self = shift;
 
-    unless (ref $self->{'list'} and $self->{'list'}->isa('List')) {
+    unless (ref $self->{'list'} and $self->{'list'}->isa('Sympa::List')) {
         Sympa::Log::Syslog::do_log('err',
             'Skipping bounce %s for unknown list %s@%s',
             $self, $self->{'listname'}, $self->{'robotname'});
