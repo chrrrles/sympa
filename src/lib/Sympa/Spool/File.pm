@@ -36,6 +36,7 @@ use warnings;
 
 use Carp qw(croak);
 use English qw(-no_match_vars);
+use File::Copy;
 use File::Path qw(make_path);
 
 use Sympa::Constants;
