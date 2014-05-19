@@ -80,7 +80,6 @@ use Sympa::Tools::File;
 use Sympa::Tools::Message;
 use Sympa::Tools::Password;
 use Sympa::Tools::Text;
-use Sympa::Tools::Time;
 use Sympa::Tools::WWW;
 use Sympa::Tracking;
 
