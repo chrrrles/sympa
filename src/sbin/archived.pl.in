@@ -137,6 +137,7 @@ use strict;
 use warnings;
 use lib '--modulesdir--';
 
+use DateTime;
 use Digest::MD5;
 use English qw(-no_match_vars);
 use Getopt::Long;
@@ -149,7 +150,6 @@ use Sympa::Mailer;
 use Sympa::Message;
 use Sympa::Tools::Daemon;
 use Sympa::Tools::File;
-use Sympa::Tools::Time;
 
 my $daemon_name = Sympa::Tools::Daemon::get_daemon_name($0);
 my $ip          = $ENV{'REMOTE_HOST'};
@@ -881,24 +881,14 @@ Archives one message into one list archives directory.
 =cut 
 
 sub mail2arc {
+    my ($message) = @_;
 
-    my $message_in_spool = shift;
+    my $list  = $message->{'list_object'};
+    my $robot = $message->{'robot_object'};
 
-    my $list  = $message_in_spool->{'list_object'};
-    my $robot = $message_in_spool->{'robot_object'};
-    my ($yyyy, $mm, $dd, $hh, $min, $ss) = @_;
-    my $txtdate = Sympa::Tools::Time::epoch2yyyymmjj_hhmmss($message_in_spool->{'date'});
-    if ($txtdate =~ /(\d\d\d\d)\-(\d\d)\-(\d\d)\s*(\d\d)\:(\d\d)/) {
-        $yyyy = $1;
-        $mm   = $2;
-        $dd   = $3;
-        $hh   = $4;
-        $min  = $5;
-        $ss   = $6;
-    } else {
-        Sympa::Log::Syslog::do_log('err', "could not scan date");
-        return undef;
-    }
+    my $dt = DateTime->from_epoch(epoch => $message->{'date'});
+    my $yyyy = $dt->year();
+    my $mm   = $dt->month();
 
     my $newfile;
 
@@ -908,7 +898,7 @@ sub mail2arc {
         Sympa::Log::Syslog::do_log(
             'err',
             'Unknown list %s',
-            $message_in_spool->{'list'}
+            $message->{'list'}
         );
         return undef;
     }
@@ -926,9 +916,9 @@ sub mail2arc {
         my $file =
               Sympa::Site->tmpdir . "/arc."
             . $list->get_id
-            . $message_in_spool->{'messagekey'};
+            . $message->{'messagekey'};
         open DUMP, '>', $file;
-        print DUMP $message_in_spool->{'messageasstring'};
+        print DUMP $message->{'messageasstring'};
         my $cmd = sprintf '%s --list=%s --file=%s', Sympa::Site->custom_archiver,
             $list->get_id, $file;
         `$cmd`;
@@ -1061,7 +1051,7 @@ sub mail2arc {
         my $file   = $monthdir . '/arctxt/' . $newfile;
         my $output = Sympa::Site->tmpdir . '/arc' . $newfile;
         open DUMP, '>', $file;
-        print DUMP $message_in_spool->{'messageasstring'};
+        print DUMP $message->{'messageasstring'};
         close DUMP;
 
         # prepare a temporary file with clean message content (htlm parts are
