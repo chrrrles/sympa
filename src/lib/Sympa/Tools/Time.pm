@@ -31,16 +31,6 @@ use Time::Local qw();
 use Sympa::Log::Syslog;
 
 ## convert an epoch date into a readable date scalar
-sub epoch2yyyymmjj_hhmmss {
-
-    my $epoch = $_[0];
-    my @date  = localtime($epoch);
-    my $date  = POSIX::strftime("%Y-%m-%d  %H:%M:%S", @date);
-
-    return $date;
-}
-
-## convert an epoch date into a readable date scalar
 sub adate {
 
     my $epoch = $_[0];
