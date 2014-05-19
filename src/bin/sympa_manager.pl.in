@@ -78,8 +78,6 @@ B<sympa_manager.pl> B<--rename_list>=I<list[@robot]>
 
 B<sympa_manager.pl> B<--sync_include=>I<list[@robot]>
 
-B<sympa_manager.pl> B<--sync_list_db>
-
 B<sympa_manager.pl> B<--test_database_message_buffer>
 
 B<sympa_manager.pl> B<--upgrade> [B<--from>=I<X>] [B<--to>=I<Y>]
@@ -214,10 +212,6 @@ Renames a list or move it to another virtual robot.
 
 Trigger the list members update.
 
-=item B<--sync_list_db>
-
-B<Deprecated>.  Use B<--reload_list_config>.
-
 =item B<--test_database_message_buffer>
 
 Test the database message buffer size.
@@ -308,7 +302,6 @@ unless (
         'rename_list=s',
         'robot=s',
         'sync_include=s',
-        'sync_list_db',
         'test_database_message_buffer',
         'upgrade',
         'upgrade_shared',
@@ -369,8 +362,6 @@ if ($options{'help'}) {
     modify_list();
 } elsif ($options{'close_family'}) {
     close_family();
-} elsif ($options{'sync_list_db'}) {
-    sync_list_db();
 } elsif ($options{'export_list'}) {
     export_list();
 }
@@ -1100,12 +1091,6 @@ sub close_family {
     }
 
     print STDOUT $string;
-}
-
-sub sync_list_db {
-    print STDERR
-        "--sync_list_db was deprecated.  Use --reload_list_config.\n";
-    exit 1;
 }
 
 sub export_list {
