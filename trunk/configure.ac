@@ -24,70 +24,20 @@ AM_INIT_AUTOMAKE([foreign -Wall -Werror 1.9 tar-pax])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 AM_PO_SUBDIRS
 
-AC_PREFIX_DEFAULT(/home/sympa)
-
-## first initialises parameters to the standard Sympa filesystem organization
-# $prefix variable initialisation seems to be tricky
-if test "$prefix" = "NONE"; then
-   prefix=$ac_default_prefix
-fi
-
-## allow user to select FHS-compliant installation
-AC_ARG_ENABLE(
-	fhs,
-	AS_HELP_STRING(
-	[--enable-fhs],
-	[use standard FHS files and directories locations and naming (default is no)]
-	),
-	[fhs=$enableval]
-)
-
-if test "$fhs" = "yes"; then
-    # only define custom variables
-    initdir=$sysconfdir/rc.d/init.d
-    piddir=$localstatedir/run/sympa
-    lockdir=$localstatedir/lock/subsys
-    modulesdir=$datadir/sympa/lib
-    scriptdir=$datadir/sympa/bin
-    defaultdir=$datadir/sympa/default
-    execcgidir=$libdir/sympa/cgi
-    expldir=$localstatedir/lib/sympa/list_data
-    staticdir=$localstatedir/lib/sympa/static_content
-    spooldir=$localstatedir/spool/sympa
-    arcdir=$localstatedir/lib/sympa/arc
-    bouncedir=$localstatedir/lib/sympa/bounce
-    confdir=$sysconfdir
-else
-    # redefine default values for some standard variables,
-    # but only if no value was given
-    if test "$sbindir" = '${exec_prefix}/sbin'; then
-       sbindir=$prefix/bin
-    fi
-    if test "$libexecdir" = '${exec_prefix}/libexec'; then
-	libexecdir=$prefix/bin
-    fi
-    if test "$localstatedir" = '${prefix}/var'; then
-	localstatedir=/var
-    fi
-    if test "$localedir" = '${datarootdir}/locale'; then
-	localedir=$prefix/locale
-    fi
-
-    # define custom variables
-    initdir=/etc/rc.d/init.d
-    piddir=$prefix
-    lockdir=$localstatedir/lock/subsys
-    modulesdir=$prefix/bin
-    scriptdir=$prefix/bin
-    defaultdir=$prefix/default
-    execcgidir=$prefix/bin
-    expldir=$prefix/list_data
-    spooldir=$prefix/spool
-    staticdir=$prefix/static_content
-    arcdir=$prefix/arc
-    bouncedir=$prefix/bounce
-    confdir=/etc
-fi
+# only define custom variables
+initdir=$sysconfdir/rc.d/init.d
+piddir=$localstatedir/run/sympa
+lockdir=$localstatedir/lock/subsys
+modulesdir=$datadir/sympa/lib
+scriptdir=$datadir/sympa/bin
+defaultdir=$datadir/sympa/default
+execcgidir=$libdir/sympa/cgi
+expldir=$localstatedir/lib/sympa/list_data
+staticdir=$localstatedir/lib/sympa/static_content
+spooldir=$localstatedir/spool/sympa
+arcdir=$localstatedir/lib/sympa/arc
+bouncedir=$localstatedir/lib/sympa/bounce
+confdir=$sysconfdir
  
 # substitute custom variables
 AC_SUBST(initdir)
