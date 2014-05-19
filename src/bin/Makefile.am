@@ -1,6 +1,6 @@
-bin_SCRIPTS = sympa_wizard.pl sympa_soap_client.pl
+bin_SCRIPTS = sympa_wizard.pl sympa_manager.pl sympa_soap_client.pl
 
-man1_MANS = sympa_wizard.pl.1
+man1_MANS = sympa_wizard.pl.1 sympa_manager.pl.1
 
 dbscripts = create_db.Pg create_db.mysql create_db.Oracle \
 	    create_db.Sybase create_db.SQLite
@@ -26,11 +26,12 @@ EXTRA_DIST = $(dbscripts) \
 	     testlogs.pl.in \
 	     tpl2tt2.pl.in \
 	     sympa_wizard.pl.in \
+	     sympa_manager.pl.in \
 	     sympa_soap_client.pl.in
 
 CLEANFILES = $(perlscripts) $(bin_SCRIPTS) $(man1_MANS)
 
-arc2webarc.pl crypt_passwd.pl init_comment.pl mod2html.pl p12topem.pl testldap.pl testlogs.pl tpl2tt2.pl sympa_wizard.pl sympa_soap_client.pl: Makefile
+arc2webarc.pl crypt_passwd.pl init_comment.pl mod2html.pl p12topem.pl testldap.pl testlogs.pl tpl2tt2.pl sympa_wizard.pl sympa_manager.pl sympa_soap_client.pl: Makefile
 	rm -f $@
 	$(AM_V_GEN)$(SED) \
 		-e 's|--PERL--|$(PERL)|' \
@@ -56,6 +57,7 @@ testldap.pl: testldap.pl.in
 testlogs.pl: testlogs.pl.in
 tpl2tt2.pl: tpl2tt2.pl.in
 sympa_wizard.pl: $(srcdir)/sympa_wizard.pl.in
+sympa_manager.pl: $(srcdir)/sympa_manager.pl.in
 sympa_soap_client.pl: $(srcdir)/sympa_soap_client.pl.in
 
 .pl.1:
@@ -66,3 +68,10 @@ sympa_wizard.pl.1: Makefile
 		--lax --release="$(VERSION)" $* $@
 
 sympa_wizard.pl.1: sympa_wizard.pl
+
+sympa_manager.pl.1: Makefile
+	rm -f $@
+	$(AM_V_GEN)$(POD2MAN) --section=1 --center="sympa $(VERSION)" \
+		--lax --release="$(VERSION)" $* $@
+
+sympa_manager.pl.1: sympa_manager.pl
