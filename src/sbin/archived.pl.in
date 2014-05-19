@@ -138,7 +138,6 @@ use warnings;
 use lib '--modulesdir--';
 
 use DateTime;
-use Digest::MD5;
 use English qw(-no_match_vars);
 use Getopt::Long;
 use Pod::Usage;
@@ -1064,16 +1063,6 @@ sub create_idx {
     closedir DIR;
 
     return $index;
-}
-
-# get_tag($listname)
-# OBSOLETED: Use L<Archive/get_tag>.
-sub get_tag {
-    my $listname = shift;
-
-    return (
-        substr(Digest::MD5::md5_hex(join('/', Sympa::Site->cookie, $listname)), -10)
-    );
 }
 
 # Checks if directory exists and we have write and read accec to it.
