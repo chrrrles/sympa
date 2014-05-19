@@ -20,11 +20,10 @@
 
 SUBDIRS = src default doc po www
 
-check_SCRIPTS = t/Language.t \
-		t/LockedFile.t \
-		t/Language.t \
-		t/compile_modules.t \
+check_SCRIPTS = t/compile_modules.t \
 		t/compile_executables.t \
+		t/Language.t \
+		t/LockedFile.t \
 		t/tools_data.t \
 		t/tools_file.t \
 		t/tools_time.t
