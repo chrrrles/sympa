@@ -84,8 +84,6 @@ B<sympa_manager.pl> B<--upgrade> [B<--from>=I<X>] [B<--to>=I<Y>]
 
 B<sympa_manager.pl> B<--upgrade_shared> [B<--list>=I<X>] [B<--robot>=I<Y>]
 
-B<sympa_manager.pl> B<--md5_digest>=I<password>
-
 B<sympa_manager.pl> B<-h, --help>
 
 =head1 DESCRIPTION
@@ -228,11 +226,6 @@ Rename files in shared.
 
 Print this help message.
 
-=item B<--md5_digest>=I<password>
-
-Output a MD5 digest of a password (useful for SOAP client trusted
-application).
-
 =back
 
 =head1 FILES
@@ -245,7 +238,6 @@ use strict;
 use warnings;
 use lib '--modulesdir--';
 
-use Digest::MD5;
 use English qw(-no_match_vars);
 use Getopt::Long;
 use Pod::Usage;
@@ -291,7 +283,6 @@ unless (
         'log_level=s',
         'lowercase',
         'make_alias_file',
-        'md5_digest=s',
         'md5_encode_password',
         'modify_list=s',
         'new_email=s',
@@ -324,8 +315,6 @@ if ($options{'help'}) {
     dump_list();
 } elsif ($options{'make_alias_file'}) {
     make_alias_file();
-} elsif ($options{'md5_digest'}) {
-    md5_digest();
 } elsif ($options{'import'}) {
     import();
 } elsif ($options{'md5_encode_password'}) {
@@ -486,11 +475,6 @@ sub make_alias_file {
     printf
         "Sympa aliases file %s was made.  You probably need to install it in your SMTP engine\n",
         $aliases_file;
-}
-
-sub md5_digest {
-    my $md5 = Digest::MD5::md5_hex($options{'md5_digest'});
-    printf "MD5 digest : %s \n", $md5;
 }
 
 sub import {
