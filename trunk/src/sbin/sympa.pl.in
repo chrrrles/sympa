@@ -30,16 +30,18 @@ sympa, sympa.pl - A Modern Mailing List Manager
 
 =head1 SYNOPSIS
 
-S<B<sympa.pl> [ B<-d, --debug> ] [ B<-f, --file>=I<another.sympa.conf> ]>
-      S<[ B<-k, --keepcopy>=I<directory> ]>
-      S<[ B<-l, --lang>=I<lang> ]> [ B<-m, --mail> ]
-      S<[ B<-h, --help> ]> [ B<-v, --version> ]
-      S<>
-      S<[ B<--import>=I<listname> ]>
-      S<[ B<--close_list>=I<list[@robot]> ]>
-      S<[ B<--purge_list>=I<list[@robot]> ]>
-      S<[ B<--lowercase> ] [ B<--make_alias_file> ]>
-      S<[ B<--dump>=I<listname> | ALL ]>
+B<sympa.pl>
+    S<[ B<-d, --debug> ]>
+    S<[ B<-f, --config>=I<another.sympa.conf> ]>
+    S<[ B<-l, --lang>=I<lang> ]>
+    S<[ B<--log-level>=I<level> ]>
+    S<[ B<--foreground> ]>
+    S<[ B<-k, --keepcopy>=I<directory> ]>
+    S<[ B<-m, --mail> ]>
+
+B<sympa.pl> B<-h, --help>
+
+B<sympa.pl> B<-v, --version>
 
 =head1 DESCRIPTION
 
@@ -56,7 +58,7 @@ features.
 
 =head1 OPTIONS
 
-F<sympa.pl> may run with following options in general.
+F<sympa.pl> may run with following options:
 
 =over 4
 
@@ -64,32 +66,26 @@ F<sympa.pl> may run with following options in general.
 
 Enable debug mode.
 
-=item B<-f>, B<--config=>I<file>
+=item B<-f>, B<--config>=I<file>
 
 Force Sympa to use an alternative configuration file instead
 of F<--CONFIG-->.
 
-=item B<-l>, B<--lang=>I<lang>
+=item B<-l>, B<--lang>=I<lang>
 
 Set this option to use a language for Sympa. The corresponding
 gettext catalog file must be located in F<--localedir-->
 directory.
 
-=item B<--log_level=>I<level>
+=item B<--log_level>=I<level>
 
 Sets Sympa log level.
-
-=back
-
-F<sympa.pl> may run in daemon mode with following options.
-
-=over 4
 
 =item B<--foreground>
 
 The process remains attached to the TTY.
 
-=item B<-k>, B<--keepcopy=>F<directory>
+=item B<-k>, B<--keepcopy>=F<directory>
 
 This option tells Sympa to keep a copy of every incoming message, 
 instead of deleting them. `directory' is the directory to 
@@ -101,153 +97,6 @@ Sympa will log calls to sendmail, including recipients. This option is
 useful for keeping track of each mail sent (log files may grow faster
 though).
 
-=begin comment
-
-=item B<--service=process_command>|B<process_message>|B<process_creation>
-
-Process is dedicated to messages distribution, commands or to automatic lists
-creation (default three of them).
-
-B<Not implemented>.
-
-=end comment
-
-=back
-
-With the following options F<sympa.pl> will run in batch mode:
-
-=over 4
-
-=item B<--add_list=>I<family_name> B<--robot=>I<robot_name>
-    B<--input_file=>I</path/to/file.xml>
-
-Add the list described by the file.xml under robot_name, to the family
-family_name.
-
-=item B<--change_user_email> B<--current_email=>I<xx> B<--new_email=>I<xx>
-
-Changes a user email address in all Sympa  databases (subscriber_table,
-list config, etc) for all virtual robots.
-
-=item B<--close_family=>I<family_name> B<--robot=>I<robot_name>
-
-Close lists of family_name family under robot_name.      
-
-=item B<--close_list=>I<list[@robot]>
-
-Close the list (changing its status to closed), remove aliases and remove
-subscribers from DB (a dump is created in the list directory to allow
-restoring the list)
-
-=item B<--conf_2_db>
-
-Load sympa.conf and each robot.conf into database.
-
-=item B<--create_list> B<--robot=>I<robot_name>
-    B<--input_file=>I</path/to/file.xml >
-
-Create a list with the XML file under robot robot_name.
-
-=item B<--dump=>I<list>@I<dom>|C<ALL>
-
-Dumps subscribers of for `listname' list or all lists. Subscribers are 
-dumped in subscribers.db.dump.
-
-=begin comment
-
-=item B<--export_list> [B<--robot=>I<robot_name>]
-
-B<Not fully implemented>.
-
-=end comment
-
-=item B<--health_check>
-
-Check if F<sympa.conf>, F<robot.conf> of virtual robots and database structure
-are correct.  If any errors occur, exits with non-zero status.
-
-=item B<--import=>I<list>@I<dom>
-
-Import subscribers in the list. Data are read from standard input.
-The imported data should contain one entry per line : the first field
-is an email address, the second (optional) field is the free form name.
-Fields are spaces-separated.
-
-Sample:
-
-    ## Data to be imported
-    ## email        gecos
-    john.steward@some.company.com           John - accountant
-    mary.blacksmith@another.company.com     Mary - secretary
-
-=item B<--instantiate_family=>I<family_name> B<--robot=>I<robot_name>
-    B<--input_file=>I</path/to/file.xml> [B<--close_unknown>] [B<--quiet>]
-
-Instantiate family_name lists described in the file.xml under robot_name.
-The family directory must exist; automatically close undefined lists in a
-new instantiation if --close_unknown is specified; do not print report if
-C<--quiet> is specified.
-
-=item B<--lowercase>
-
-Lowercases email addresses in database.
-
-=item B<--make_alias_file>
-
-Create an aliases file in /tmp/ with all list aliases. It uses the
-F<list_aliases.tt2> template  (useful when list_aliases.tt2 was changed).
-
-=item B<--md5_encode_password>
-
-Rewrite password in C<user_table> of database using MD5 fingerprint.
-YOU CAN'T UNDO unless you save this table first.
-
-=item B<--modify_list=>I<family_name> B<--robot=>I<robot_name>
-    B<--input_file=>I</path/to/file.xml>
-
-Modify the existing list installed under the robot robot_name and that
-belongs to the family family_name. The new description is in the C<file.xml>.
-
-=item B<--purge_list>=I<list>[@I<robot>]
-
-Remove the list (remove archive, configuration files, users and owners in admin table. Restore is not possible after this operation.
-
-=item B<--reload_list_config>
-    [B<--list=>I<mylist>@I<mydom>] [B<--robot=>I<mydom>]
-
-Recreates all F<config.bin> files or cache in C<list_table>.
-You should run this command if you edit authorization scenarios.
-The list and robot parameters are optional.
-
-=item B<--rename_list=>I<listname>@I<robot>
-    B<--new_listname=>I<newlistname> B<--new_listrobot=>I<newrobot>
-
-Renames a list or move it to another virtual robot.
-
-=item B<--sync_include=>I<listname>@I<robot>
-
-Trigger the list members update.
-
-=begin comment
-
-=item B<--sync_list_db>
-
-B<Deprecated>.  Use B<--reload_list_config>.
-
-=end comment
-
-=item B<--test_database_message_buffer>
-
-Test the database message buffer size.
-
-=item B<--upgrade> [B<--from=>I<X>] [B<--to=>I<Y>]
-
-Runs Sympa maintenance script to upgrade from version I<X> to version I<Y>.
-
-=item B<--upgrade_shared> [B<--list=>I<X>] [B<--robot=>I<Y>]>
-
-Rename files in shared.
-
 =back
 
 With following options F<sympa.pl> will print some information and exit.
@@ -257,11 +106,6 @@ With following options F<sympa.pl> will print some information and exit.
 =item B<-h>, B<--help>
 
 Print this help message.
-
-=item B<--md5_digest=>I<password>
-
-Output a MD5 digest of a password (useful for SOAP client trusted
-application).
 
 =item B<-v>, B<--version>
 
@@ -335,17 +179,14 @@ use warnings;
 use lib '--modulesdir--';
 
 use Carp qw(croak);
-use Digest::MD5;
 use English qw(-no_match_vars);
 use Getopt::Long;
 use MIME::Charset;
 use Pod::Usage;
 use POSIX qw();
 
-use Sympa::Admin;
 use Sympa::Commands;
 use Sympa::Conf;
-use Sympa::Config_XML;
 use Sympa::Constants;
 use Sympa::DatabaseManager;
 use Sympa::Family;
@@ -357,16 +198,15 @@ use Sympa::Mailer;
 use Sympa::Message;
 use Sympa::Report;
 use Sympa::Robot;
+use Sympa::Site;
 use Sympa::Spool::File;
 use Sympa::Spool::File::Message;
-use Sympa::Spool::SQL;
 use Sympa::Tools;
 use Sympa::Tools::Data;
 use Sympa::Tools::Daemon;
 use Sympa::Tools::File;
 use Sympa::Tools::Message;
 use Sympa::Tools::Password;
-use Sympa::Upgrade;
 
 # dirty global variables
 my $is_signed = {};
@@ -386,33 +226,19 @@ my $ip;
 $ip = $ENV{'REMOTE_HOST'};
 $ip = $ENV{'REMOTE_ADDR'} unless ($ip);
 
-## Check --dump option
 my %options;
 unless (
     GetOptions(
-        \%options, 'dump=s',
-        'debug|d',,
-        'log_level=s',                  'foreground',
-        'config|f=s',                   'lang|l=s',
-        'mail|m',                       'keepcopy|k=s',
-        'help|h',                       'version|v',
-        'import=s',                     'make_alias_file',
-        'lowercase',                    'sync_list_db',
-        'md5_encode_password',          'close_list=s',
-        'rename_list=s',                'new_listname=s',
-        'new_listrobot=s',              'purge_list=s',
-        'create_list',                  'instantiate_family=s',
-        'robot=s',                      'add_list=s',
-        'modify_list=s',                'close_family=s',
-        'md5_digest=s',                 'change_user_email',
-        'current_email=s',              'new_email=s',
-        'input_file=s',                 'sync_include=s',
-        'upgrade',                      'upgrade_shared',
-        'from=s',                       'to=s',
-        'reload_list_config',           'list=s',
-        'quiet',                        'close_unknown',
-        'test_database_message_buffer', 'conf_2_db',
-        'export_list',                  'health_check'
+        \%options,
+        'config|f=s',
+        'debug|d',
+        'foreground',
+        'help|h',
+        'keepcopy|k=s',
+        'lang|l=s',
+        'log_level=s',
+        'mail|m',
+        'version|v',
     )
     ) {
     pod2usage(-exitval => 1, -output => \*STDERR);
@@ -421,115 +247,17 @@ unless (
 if ($options{'debug'}) {
     $options{'log_level'} = 2 unless ($options{'log_level'});
 }
-## Batch mode, ie NOT daemon
-$options{'batch'} = 1
-    if ($options{'dump'}
-    || $options{'help'}
-    || $options{'version'}
-    || $options{'import'}
-    || $options{'make_alias_file'}
-    || $options{'lowercase'}
-    || $options{'md5_encode_password'}
-    || $options{'change_user_email'}
-    || $options{'close_list'}
-    || $options{'purge_list'}
-    || $options{'create_list'}
-    || $options{'rename_list'}
-    || $options{'instantiate_family'}
-    || $options{'add_list'}
-    || $options{'modify_list'}
-    || $options{'close_family'}
-    || $options{'md5_digest'}
-    || $options{'sync_include'}
-    || $options{'upgrade'}
-    || $options{'upgrade_shared'}
-    || $options{'test_database_message_buffer'}
-    || $options{'conf_2_db'}
-    || $options{'reload_list_config'}
-    || $options{'sync_list_db'});
 
 # Some option force foreground mode
 $options{'foreground'} = 1
-    if ($options{'debug'} || $options{'batch'});
+    if ($options{'debug'});
 
-$options{'log_to_stderr'} = 1 unless ($options{'batch'});
-$options{'log_to_stderr'} = 1
-    if ($options{'upgrade'}
-    || $options{'reload_list_config'}
-    || $options{'test_database_message_buffer'}
-    || $options{'conf_2_db'});
+$options{'log_to_stderr'} = 1;
 
 if ($options{'help'}) {
     pod2usage(0);
 } elsif ($options{'version'}) {
     print $version_string;
-    exit 0;
-} elsif ($options{'health_check'}) {
-    ## Health check
-
-    ## Load configuration file. Ignoring database config for now: it avoids
-    ## trying to load a database that could not exist yet.
-    unless (Sympa::Site->load('no_db' => 1, 'force_reload' => 1)) {
-        printf STDERR
-            "Configuration file %s has errors.\n",
-            Sympa::Conf::get_sympa_conf();
-        exit 1;
-    }
-
-    ## Open the syslog and say we're read out stuff.
-    Sympa::Log::Syslog::do_openlog(Sympa::Site->syslog, Sympa::Site->log_socket_type,
-        'health_check');
-
-    ## Setting log_level using conf unless it is set by calling option
-    if ($options{'log_level'}) {
-        Sympa::Log::Syslog::set_log_level($options{'log_level'});
-        Sympa::Log::Syslog::do_log(
-            'info',
-            'Configuration file read, log level set using options : %s',
-            $options{'log_level'}
-        );
-    } else {
-        Sympa::Log::Syslog::set_log_level(Sympa::Site->log_level);
-        Sympa::Log::Syslog::do_log('info',
-            'Configuration file read, default log level %s',
-            Sympa::Site->log_level);
-    }
-
-    ## Check database connectivity and probe database
-    unless (Sympa::DatabaseManager::check_db_connect('just_try') and Sympa::DatabaseManager::probe_db()) {
-        printf STDERR
-            "Database %s defined in sympa.conf has not the right structure or is unreachable. verify db_xxx parameters in sympa.conf\n",
-            Sympa::Site->db_name;
-        exit 1;
-    }
-
-    ## Now trying to load full config (including database)
-    unless (Sympa::Site->load() and Sympa::Robot::get_robots()) {
-        printf STDERR
-            "Unable to load Sympa configuration, file %s or any of the virtual host robot.conf files contain errors. Exiting.\n",
-            Sympa::Conf::get_sympa_conf();
-        exit 1;
-    }
-
-    ## Change working directory.
-    if (!chdir(Sympa::Site->home)) {
-        printf STDERR "Can't chdir to %s: %s\n", Sympa::Site->home, $ERRNO;
-        exit 1;
-    }
-
-    ## Check for several files.
-    unless (Sympa::Conf::checkfiles_as_root()) {
-        printf STDERR "Missing files.\n";
-        exit 1;
-    }
-
-    ## Check that the data structure is uptodate
-    unless (Sympa::DatabaseManager::data_structure_uptodate()) {
-        printf STDERR
-            "Data structure was not updated; you should run sympa.pl --upgrade to run the upgrade process.\n";
-        exit 1;
-    }
-
     exit 0;
 }
 
@@ -642,32 +370,30 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
             'sympa');
 
         Sympa::Log::Syslog::do_log('debug', 'Running server %d', $PID);
-        unless ($options{'batch'}) {
 
-            # check presence of a PID file from a previous execution
-            Sympa::Tools::Daemon::check_old_pid_file(
-                name   => 'sympa',
-                piddir => Sympa::Constants::PIDDIR,
-                tmpdir => Sympa::Site->tmpdir(),
-            );
+        # check presence of a PID file from a previous execution
+        Sympa::Tools::Daemon::check_old_pid_file(
+            name   => 'sympa',
+            piddir => Sympa::Constants::PIDDIR,
+            tmpdir => Sympa::Site->tmpdir(),
+        );
 
-            # Create the PID file
-            Sympa::Tools::Daemon::write_pid(
-                name   => 'sympa',
+        # Create the PID file
+        Sympa::Tools::Daemon::write_pid(
+            name   => 'sympa',
+            pid    => $PID,
+            piddir => Sympa::Constants::PIDDIR,
+            user   => Sympa::Constants::USER,
+            group  => Sympa::Constants::GROUP,
+        );
+        # redirect STDERR to a file, unless the process is running in foreground
+        unless ($options{'foreground'}) {
+            Sympa::Tools::Daemon::direct_stderr_to_file(
                 pid    => $PID,
-                piddir => Sympa::Constants::PIDDIR,
+                tmpdir => Sympa::Site->tmpdir(),
                 user   => Sympa::Constants::USER,
                 group  => Sympa::Constants::GROUP,
             );
-            # redirect STDERR to a file, unless the process is running in foreground
-            unless ($options{'foreground'}) {
-                Sympa::Tools::Daemon::direct_stderr_to_file(
-                    pid    => $PID,
-                    tmpdir => Sympa::Site->tmpdir(),
-                    user   => Sympa::Constants::USER,
-                    group  => Sympa::Constants::GROUP,
-                );
-            }
         }
 
         # Set the User ID & Group ID for the process
@@ -701,700 +427,6 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
 
     unless (Sympa::Conf::checkfiles()) {
         Sympa::Log::Syslog::fatal_err("Missing files. Aborting.");
-    }
-
-    ## Daemon called for dumping subscribers list
-    if ($options{'dump'}) {
-
-        my ($all_lists, $list);
-        if ($options{'dump'} eq 'ALL') {
-            $all_lists = Sympa::List::get_lists();
-        } else {
-
-            ## The parameter can be a list address
-            unless ($options{'dump'} =~ /\@/) {
-                Sympa::Log::Syslog::do_log('err', 'Incorrect list address %s',
-                    $options{'dump'});
-
-                exit;
-            }
-
-            my $list = Sympa::List->new($options{'dump'});
-            unless (defined $list) {
-                Sympa::Log::Syslog::do_log('err', 'Unknown list %s',
-                    $options{'dump'});
-
-                exit;
-            }
-            push @$all_lists, $list;
-        }
-
-        foreach my $list (@$all_lists) {
-            unless ($list->dump()) {
-                print STDERR "Could not dump list(s)\n";
-            }
-        }
-
-        exit 0;
-    } elsif ($options{'make_alias_file'}) {
-        my $all_lists = Sympa::List::get_lists();
-
-        my $aliases_file = Sympa::Site->tmpdir . '/sympa_aliases' . $PID;
-        unless (open TMP, '>', $aliases_file) {
-            printf STDERR "Unable to create %s, exiting\n", $aliases_file;
-            exit;
-        }
-        printf TMP "#\n#\tAliases for all Sympa lists open\n#\n";
-        close TMP;
-
-        foreach my $list (@$all_lists) {
-            my $cmd = sprintf '%s add %s %s %s',
-                Sympa::Site->alias_manager, $list->name, $list->domain,
-                $aliases_file;
-            system($cmd) if $list->status eq 'open';
-        }
-        printf
-            "Sympa aliases file %s was made.  You probably need to install it in your SMTP engine\n",
-            $aliases_file;
-
-        exit 0;
-    } elsif ($options{'md5_digest'}) {
-        my $md5 = Digest::MD5::md5_hex($options{'md5_digest'});
-        printf "MD5 digest : %s \n", $md5;
-
-        exit 0;
-    } elsif ($options{'import'}) {
-        my ($list, $total);
-
-        ## The parameter should be a list address
-        unless ($options{'import'} =~ /\@/) {
-            Sympa::Log::Syslog::do_log(
-                'err',
-                'Incorrect list address %s',
-                $options{'import'}
-            );
-            exit;
-        }
-
-        unless ($list = Sympa::List->new($options{'import'})) {
-            Sympa::Log::Syslog::fatal_err('Unknown list name %s',
-                $options{'import'});
-        }
-
-        ## Read imported data from STDIN
-        while (<STDIN>) {
-            next if /^\s*$/;
-            next if /^\s*\#/;
-
-            unless (/^\s*((\S+|\".*\")@\S+)(\s*(\S.*))?\s*$/) {
-                printf STDERR "Not an email address: %s\n", $_;
-            }
-
-            my $email = lc($1);
-            my $gecos = $4;
-            my $u;
-            my $defaults = $list->default_user_options;
-            %{$u} = %{$defaults};
-            $u->{'email'} = $email;
-            $u->{'gecos'} = $gecos;
-
-            $list->add_list_member($u);
-            if (defined $list->{'add_outcome'}{'errors'}) {
-                printf STDERR "\nCould not add %s. %s\n", $email,
-                    $list->{'add_outcome'}{'errors'}{'error_message'};
-                next;
-            }
-            print STDERR '+';
-
-            $total++;
-        }
-
-        printf STDERR "Total imported subscribers: %d\n", $total;
-
-        exit 0;
-    } elsif ($options{'md5_encode_password'}) {
-
-        unless ($Sympa::Site::use_db) {
-            Sympa::Log::Syslog::fatal_err(
-                "You don't have a database setup, can't lowercase email addresses"
-            );
-        }
-
-        my $total = Sympa::Upgrade::md5_encode_password();
-        printf STDERR "Total password re-encoded using MD5: %d\n", $total;
-
-        exit 0;
-
-    } elsif ($options{'lowercase'}) {
-
-        unless ($Sympa::Site::use_db) {
-            Sympa::Log::Syslog::fatal_err(
-                "You don't have a database setup, can't lowercase email addresses"
-            );
-        }
-
-        print STDERR "Working on user_table...\n";
-        my $total = Sympa::List::lowercase_field('user_table', 'email_user');
-
-        print STDERR "Working on subscriber_table...\n";
-        $total +=
-            Sympa::List::lowercase_field('subscriber_table', 'user_subscriber');
-
-        unless (defined $total) {
-            Sympa::Log::Syslog::fatal_err("Could not work on database");
-        }
-
-        printf STDERR "Total lowercased rows: %d\n", $total;
-
-        exit 0;
-    } elsif ($options{'close_list'}) {
-
-        my ($listname, $robotname) = split /\@/, $options{'close_list'};
-        my $list = Sympa::List->new($listname, $robotname);
-
-        unless (defined $list) {
-            print STDERR "Incorrect list name $options{'close_list'}\n";
-            exit 1;
-        }
-
-        if ($list->family_name) {
-            unless (
-                $list->set_status_family_closed('close_list', $list->name)) {
-                print STDERR
-                    "Could not close list $options{'close_list'}\n";
-                exit 1;
-            }
-        } else {
-            unless ($list->close_list()) {
-                print STDERR
-                    "Could not close list $options{'close_list'}\n";
-                exit 1;
-            }
-        }
-
-        printf STDOUT "List %s has been closed, aliases have been removed\n",
-            $list->get_id;
-
-        exit 0;
-    } elsif ($options{'change_user_email'}) {
-
-        unless ($options{'current_email'}
-            && $options{'new_email'}) {
-            print STDERR "Missing current_email or new_email parameter\n";
-            exit 1;
-        }
-
-        foreach my $robot (@{Sympa::Robot::get_robots()}) {
-            printf STDOUT "Doing processing for virtual robot %s...\n",
-                $robot->name;
-            my ($status, $failed_for) = Sympa::Admin::change_user_email(
-                'current_email' => $options{'current_email'},
-                'new_email'     => $options{'new_email'},
-                'robot'         => $robot
-            );
-            unless (defined $status) {
-                printf STDERR
-                    "Failed to change user email address in virtual robot %s'}\n",
-                    $robot->name;
-                exit 1;
-            }
-
-            foreach my $failed_list (@$failed_for) {
-                printf STDERR
-                    "Failed to change user email address for list %s\n",
-                    $failed_list->{'name'};
-            }
-        }
-
-        printf STDOUT "Email address %s has been changed to %s\n",
-            $options{'current_email'}, $options{'new_email'};
-
-        exit 0;
-    } elsif ($options{'purge_list'}) {
-
-        my ($listname, $robotname) = split /\@/, $options{'purge_list'};
-        my $list = Sympa::List->new($listname, $robotname);
-
-        unless (defined $list) {
-            print STDERR "Incorrect list name $options{'purge_list'}\n";
-            exit 1;
-        }
-
-        if ($list->family_name) {
-            unless (
-                $list->set_status_family_closed('purge_list', $list->name)) {
-                print STDERR
-                    "Could not purge list $options{'purge_list'}\n";
-                exit 1;
-            }
-        } else {
-            unless ($list->purge()) {
-                print STDERR
-                    "Could not purge list $options{'close_list'}\n";
-                exit 1;
-            }
-        }
-
-        printf STDOUT "List %s has been closed, aliases have been removed\n",
-            $list->get_id;
-
-        exit 0;
-    } elsif ($options{'rename_list'}) {
-
-        ## TODO A completer
-
-        my ($listname, $robotname) = split /\@/,
-            $options{'rename_list'};
-        my $list = Sympa::List->new($listname, $robotname);
-
-        unless (defined $list) {
-            print STDERR
-                "Incorrect list name $options{'rename_list'}\n";
-            exit 1;
-        }
-
-        unless ($options{'new_listname'}) {
-            print STDERR "Missing parameter new_listname\n";
-            exit 1;
-        }
-
-        unless ($options{'new_listrobot'}) {
-            print STDERR "Missing parameter new_listrobot\n";
-            exit 1;
-        }
-
-        my ($new_listname, $new_robotname) =
-            ($options{'new_listname'}, $options{'new_listrobot'});
-
-        my $result = Sympa::Admin::rename_list(
-            list         => $list,
-            new_listname => $new_listname,
-            new_robot    => $new_robotname,
-            options      => {'skip_authz' => 1},
-            user_email   => 'listmaster@' . $robotname,
-        );
-
-        unless ($result == 1) {
-            printf STDERR "Could not rename list %s to %s\@%s: %s\n",
-                $options{'rename_list'}, $options{'new_listname'},
-                $options{'new_listrobot'}, $result;
-            exit 1;
-        }
-
-        printf STDOUT "List %s has been renamed to %s\@%s\n",
-            $options{'rename_list'}, $options{'new_listname'},
-            $options{'new_listrobot'};
-
-        exit 0;
-
-    } elsif ($options{'test_database_message_buffer'}) {
-        my $size = 0;
-        print
-            "Sympa is going to store messages bigger and bigger to test the limit with its database. This may be very long \n";
-        ## will test message until a 21 Mo message.
-        $size = Sympa::Spool::store_test(21000);
-        if ($size == 21000) {
-            printf
-                "The maximum message size (%d Ko) testing was successful \n",
-                $size;
-        } else {
-            printf
-                "maximum message size that can be stored in database : %d Ko\n",
-                $size;
-        }
-        exit 1;
-
-    } elsif ($options{'conf_2_db'}) {
-        printf
-            "Sympa is going to store %s in database conf_table. This operation do NOT remove original files\n",
-            Sympa::Conf::get_sympa_conf();
-        if (Sympa::Conf::conf_2_db()) {
-            printf "Done";
-        } else {
-            printf "an error occur";
-        }
-        exit 1;
-
-    } elsif ($options{'create_list'}) {
-        my $robot_id = $options{'robot'}
-            || Sympa::Site->host;    #FIXME: is domain better?
-
-        unless ($options{'input_file'}) {
-            print STDERR "Error : missing 'input_file' parameter\n";
-            exit 1;
-        }
-
-        unless (open INFILE, $options{'input_file'}) {
-            print STDERR "Unable to open $options{'input_file'}) file";
-            exit 1;
-        }
-
-        my $config = Sympa::Config_XML->new(\*INFILE);
-        unless (defined $config->createHash()) {
-            print STDERR "Error in representation data with these XML data\n";
-            exit 1;
-        }
-
-        my $hash = $config->getHash();
-
-        close INFILE;
-
-        my $resul =
-            Sympa::Admin::create_list_old($hash->{'config'}, $hash->{'type'},
-            $robot_id, "command_line");
-        unless (defined $resul) {
-            print STDERR "Could not create list with these XML data\n";
-            exit 1;
-        }
-
-        if (!defined($resul->{'aliases'}) || $resul->{'aliases'} == 1) {
-            print STDOUT "List has been created \n";
-            exit 0;
-        } else {
-            printf STDOUT "List has been created, required aliases :\n %s \n",
-                $resul->{'aliases'};
-            exit 0;
-        }
-    } elsif ($options{'instantiate_family'}) {
-
-        my $robot_id = $options{'robot'} || Sympa::Site->host;
-
-        my $family_name;
-        unless ($family_name = $options{'instantiate_family'}) {
-            print STDERR "Error : missing family parameter\n";
-            exit 1;
-        }
-        my $family;
-        unless ($family = Sympa::Family->new($family_name, $robot_id)) {
-            print STDERR
-                "The family $family_name does not exist, impossible instantiation\n";
-            exit 1;
-        }
-
-        unless ($options{'input_file'}) {
-            print STDERR "Error : missing input_file parameter\n";
-            exit 1;
-        }
-
-        unless (-r $options{'input_file'}) {
-            print STDERR "Unable to read $options{'input_file'} file";
-            exit 1;
-        }
-
-        unless (
-            $family->instantiate(
-                $options{'input_file'},
-                $options{'close_unknown'}
-            )
-            ) {
-            print STDERR
-                "\nImpossible family instantiation : action stopped \n";
-            exit 1;
-        }
-
-        my %result;
-        my $err = $family->get_instantiation_results(\%result);
-        close INFILE;
-
-        unless ($options{'quiet'}) {
-            print STDOUT "@{$result{'info'}}";
-            print STDOUT "@{$result{'warn'}}";
-        }
-        if ($err) {
-            print STDERR "@{$result{'errors'}}";
-        }
-
-        exit 0;
-    } elsif ($options{'add_list'}) {
-
-        my $robot_id = $options{'robot'} || Sympa::Site->host;
-
-        my $family_name;
-        unless ($family_name = $options{'add_list'}) {
-            print STDERR "Error : missing family parameter\n";
-            exit 1;
-        }
-
-        print STDOUT
-            "\n************************************************************\n";
-
-        my $family;
-        unless ($family = Sympa::Family->new($family_name, $robot_id)) {
-            print STDERR
-                "The family $family_name does not exist, impossible to add a list\n";
-            exit 1;
-        }
-
-        unless ($options{'input_file'}) {
-            print STDERR "Error : missing 'input_file' parameter\n";
-            exit 1;
-        }
-
-        unless (open INFILE, $options{'input_file'}) {
-            print STDERR "\n Impossible to open input file  : $ERRNO \n";
-            exit 1;
-        }
-
-        my $result;
-        unless ($result = $family->add_list(\*INFILE)) {
-            print STDERR
-                "\nImpossible to add a list to the family : action stopped \n";
-            exit 1;
-        }
-
-        print STDOUT
-            "\n************************************************************\n";
-
-        unless (defined $result->{'ok'}) {
-            printf STDERR "\n%s\n", join("\n", @{$result->{'string_info'}});
-            print STDERR
-                "\n The action has been stopped because of error :\n";
-            printf STDERR "\n%s\n", join("\n", @{$result->{'string_error'}});
-            exit 1;
-        }
-
-        close INFILE;
-
-        print STDOUT "\n%s\n", join("\n", @{$result->{'string_info'}});
-        exit 0;
-    } elsif ($options{'sync_include'}) {
-
-        my $list = Sympa::List->new($options{'sync_include'});
-
-        unless (defined $list) {
-            print STDERR
-                "Incorrect list name $options{'sync_include'}\n";
-            exit 1;
-        }
-
-        unless (defined $list->sync_include()) {
-            print STDERR "Failed to synchronize list members\n";
-            exit 1;
-        }
-
-        printf "Members of list %s have been successfully updated.\n",
-            $list->get_id;
-        exit 0;
-    } elsif ($options{'upgrade'}) {
-
-        ## Migration from one version to another
-        Sympa::Log::Syslog::do_log('notice', "Upgrade process...");
-
-        $options{'from'} ||= Sympa::Upgrade::get_previous_version();
-        $options{'to'}   ||= Sympa::Constants::VERSION;
-
-        if ($options{'from'} eq $options{'to'}) {
-            Sympa::Log::Syslog::do_log('err',
-                "Current version : %s ; no upgrade is required.",
-                $options{'to'});
-            exit 0;
-        } else {
-            Sympa::Log::Syslog::do_log('notice', "Upgrading from %s to %s...",
-                $options{'from'}, $options{'to'});
-        }
-
-        Sympa::DatabaseManager::probe_db;
-        unless (
-            Sympa::Upgrade::upgrade($options{'from'}, $options{'to'})) {
-            Sympa::Log::Syslog::do_log('err',
-                "Migration from %s to %s failed",
-                $options{'from'}, $options{'to'});
-            exit 1;
-        }
-        Sympa::Log::Syslog::do_log('notice', "Upgrade process finished.");
-        Sympa::Upgrade::update_version();
-
-        exit 0;
-
-    } elsif ($options{'upgrade_shared'}) {
-
-        ## rename file names that may be incorrectly encoded because of
-        ## previous Sympa versions
-        Sympa::Log::Syslog::do_log('notice', "Upgrade shared process...");
-
-        my $listname;
-        my $robot_id;
-
-        unless (($options{'list'}) || ($options{'robot'})) {
-            Sympa::Log::Syslog::do_log('err',
-                "listname and domain are required, use --list= --robot= options"
-            );
-            exit 0;
-        }
-        $listname = $options{'list'};
-        $robot_id = $options{'robot'};
-
-        Sympa::Log::Syslog::do_log('notice',
-            "Upgrading share for list=%s robot=%s",
-            $listname, $robot_id);
-
-        my $list = Sympa::List->new($listname, $robot_id);
-
-        unless (defined $list) {
-            printf STDERR "Incorrect list or domain name : %s %s\n",
-                $listname, $robot_id;
-            exit 1;
-        }
-
-        if (-d $list->dir . '/shared') {
-            Sympa::Log::Syslog::do_log('notice', '  Processing list %s...',
-                $list);
-
-            ## Determine default lang for this list
-            ## It should tell us what character encoding was used for
-            ## filenames
-            Sympa::Language::SetLang($list->lang);
-            my $list_encoding = Sympa::Language::GetCharset();
-
-            my $count = Sympa::Tools::qencode_hierarchy($list->dir . '/shared',
-                $list_encoding);
-
-            if ($count) {
-                Sympa::Log::Syslog::do_log('notice',
-                    'List %s : %d filenames has been changed',
-                    $list, $count);
-            }
-        }
-        Sympa::Log::Syslog::do_log('notice',
-            "Upgrade_shared process finished.");
-
-        exit 0;
-
-    } elsif ($options{'reload_list_config'}) {
-        my $listname = $options{'list'};
-        my $robot_id = $options{'robot'} || '';
-        $listname = '' unless defined $listname;
-        if ($listname =~ s/\@(.+)$//) {
-            $robot_id = $1;
-        }
-
-        if (length $listname) {
-            Sympa::Log::Syslog::do_log('notice', 'Loading list %s...',
-                $listname);
-            my $robot = Sympa::Robot->new($robot_id || Sympa::Site->domain);
-            unless (defined $robot) {
-                print STDERR "Error : incorrect robot name '$robot_id'\n";
-                exit 1;
-            }
-            unless (Sympa::List->new($listname, $robot, {'reload_config' => 1})) {
-                print STDERR "Error : incorrect list name '$listname'\n";
-                exit 1;
-            }
-        } else {
-            my $that;
-            if ($robot_id) {
-                Sympa::Log::Syslog::do_log('notice',
-                    'Loading all lists in %s...', $robot_id);
-                $that = Sympa::Robot->new($robot_id);
-                unless (defined $that) {
-                    print STDERR "Error : incorrect robot name '$robot_id'\n";
-                    exit 1;
-                }
-            } else {
-                Sympa::Log::Syslog::do_log('notice', 'Loading ALL lists...');
-                $that = 'Site';
-            }
-            Sympa::List::get_lists($that, {'reload_config' => 1});
-        }
-        Sympa::Log::Syslog::do_log('notice', '...Done.');
-
-        exit 0;
-    }
-
-    ##########################################
-    elsif ($options{'modify_list'}) {
-
-        my $robot_id = $options{'robot'} || Sympa::Site->host;
-
-        my $family_name;
-        unless ($family_name = $options{'modify_list'}) {
-            print STDERR "Error : missing family parameter\n";
-            exit 1;
-        }
-
-        print STDOUT
-            "\n************************************************************\n";
-
-        my $family;
-        unless ($family = Sympa::Family->new($family_name, $robot_id)) {
-            print STDERR
-                "The family $family_name does not exist, impossible to modify the list.\n";
-            exit 1;
-        }
-
-        unless ($options{'input_file'}) {
-            print STDERR "Error : missing input_file parameter\n";
-            exit 1;
-        }
-
-        unless (open INFILE, $options{'input_file'}) {
-            print STDERR "Unable to open $options{'input_file'}) file";
-            exit 1;
-        }
-
-        my $result;
-        unless ($result = $family->modify_list(\*INFILE)) {
-            print STDERR
-                "\nImpossible to modify the family list : action stopped. \n";
-            exit 1;
-        }
-
-        print STDOUT
-            "\n************************************************************\n";
-
-        unless (defined $result->{'ok'}) {
-            printf STDERR "\n%s\n", join("\n", @{$result->{'string_info'}});
-            print STDERR "\nThe action has been stopped because of error :\n";
-            printf STDERR "\n%s\n", join("\n", @{$result->{'string_error'}});
-            exit 1;
-        }
-
-        close INFILE;
-
-        printf STDOUT "\n%s\n", join("\n", @{$result->{'string_info'}});
-        exit 0;
-    }
-
-    ##########################################
-    elsif ($options{'close_family'}) {
-
-        my $robot_id = $options{'robot'} || Sympa::Site->host;
-
-        my $family_name;
-        unless ($family_name = $options{'close_family'}) {
-            pod2usage(-exitval => 1, -output => \*STDERR);
-        }
-        my $family;
-        unless ($family = Sympa::Family->new($family_name, $robot_id)) {
-            print STDERR
-                "The family $family_name does not exist, impossible family closure\n";
-            exit 1;
-        }
-
-        my $string;
-        unless ($string = $family->close_family()) {
-            print STDERR "\nImpossible family closure : action stopped \n";
-            exit 1;
-        }
-
-        print STDOUT $string;
-        exit 0;
-    }
-    ##########################################
-    elsif ($options{'sync_list_db'}) {
-        print STDERR
-            "--sync_list_db was deprecated.  Use --reload_list_config.\n";
-        exit 1;
-    }
-    ##########################################
-    elsif ($options{'export_list'}) {
-        my $robot_id = $options{'robot'} || '*';
-        my $all_lists = Sympa::List::get_lists($robot_id);
-        exit 1 unless defined $all_lists;
-        foreach my $list (@$all_lists) {
-            printf "%s\n", $list->name;
-        }
-        exit 0;
     }
 
     ## Do we have right access in the directory
