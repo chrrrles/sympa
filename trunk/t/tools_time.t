@@ -16,11 +16,6 @@ use Sympa::Tools::Time;
 
 setlocale(LC_ALL, 'C');
 
-my @epoch2yyyymmjj_hhmmss_tests = (
-    [ 1350544367, '2012-10-18  09:12:47' ],
-    [ 1250544367, '2009-08-17  23:26:07' ],
-);
-
 my @adate_tests = (
     [ 1350544367, '18 Thu Oct 2012  09 h 12 min 47 s' ],
     [ 1250544367, '17 Mon Aug 2009  23 h 26 min 07 s' ],
@@ -58,20 +53,11 @@ my @epoch_conv_tests = (
 );
 
 plan tests =>
-    @epoch2yyyymmjj_hhmmss_tests +
     @adate_tests                 +
     @get_midnight_time_tests     +
     @date_conv_tests             +
     @duration_conv_tests         +
     @epoch_conv_tests            ;
-
-foreach my $test (@epoch2yyyymmjj_hhmmss_tests) {
-    is(
-        Sympa::Tools::Time::epoch2yyyymmjj_hhmmss($test->[0]),
-        $test->[1],
-        "epoch2yyyymmjj_hhmmss $test->[0]"
-    );
-}
 
 foreach my $test (@adate_tests) {
     is(
