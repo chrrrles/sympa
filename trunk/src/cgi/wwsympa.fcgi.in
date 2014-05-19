@@ -41,9 +41,6 @@ This FastCGI script completely handles all aspects of the Sympa web interface
 use strict;
 use lib '--modulesdir--';
 
-# XXX MO: during development, where modules are not installed
-do '/home/sympa/ext/DEVEL.pm';
-
 use DateTime::Format::Mail;
 use Digest::MD5;
 use English; # FIXME: drop $MATCH usage
