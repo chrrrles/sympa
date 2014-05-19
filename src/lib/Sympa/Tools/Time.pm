@@ -122,26 +122,34 @@ sub duration_conv {
 
     return 0 unless $arg;
 
-    $arg =~ /(\d+y)?(\d+m)?(\d+w)?(\d+d)?(\d+h)?(\d+min)?(\d+sec)?$/i;
-    my @date = ("$1", "$2", "$3", "$4", "$5", "$6", "$7");
-    for (my $i = 0; $i < 7; $i++) {
-        $date[$i] =~ s/[a-z]+$//;    ## Remove trailing units
-    }
+    $arg =~ /
+        (?:(\d+) y)  ?
+        (?:(\d+) m)  ?
+        (?:(\d+) w)  ?
+        (?:(\d+) d)  ?
+        (?:(\d+) h)  ?
+        (?:(\d+) min)?
+        (?:(\d+) sec)?
+        $/xi;
+    my ($years, $monthes, $weeks, $days, $hours, $minutes, $seconds) =
+        ($1, $2, $3, $4, $5, $6, $7);
 
     my $duration =
-        $date[6] + 60 *
-        ($date[5] +
-            60 * ($date[4] + 24 * ($date[3] + 7 * $date[2] + 365 * $date[0]))
-        );
+        $seconds +
+        $minutes * 60 +
+        $hours   * 60  * 60 +
+        $days    * 24  * 60 * 60 +
+        $weeks   * 7   * 24 * 60 * 60 +
+        $years   * 365 * 24 * 60 * 60;
 
     # specific processing for the months because their duration varies
     my @months = (
         31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31,
         31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31
     );
-    my $start = (localtime($start_date))[4];
-    for (my $i = 0; $i < $date[1]; $i++) {
-        $duration += $months[$start + $i] * 60 * 60 * 24;
+    my $start_month = (localtime($start_date))[4];
+    for (my $i = 0; $i < $monthes; $i++) {
+        $duration += $months[$start_month + $i] * 60 * 60 * 24;
     }
 
     return $duration;
