@@ -57,21 +57,13 @@ my @duration_conv_tests = (
 my @epoch_conv_tests = (
 );
 
-my @parse_date_tests = (
-    [ 'Sun, 28 Oct 2012 10:53:21 +0100' =>
-        [ 0, 28, 9, 2012, 10, 53, 21, '+0100' ] ],
-    [ 'Sat, 27 Nov 2010 18:11:27 +0100 (MET)' =>
-        [ 6, 27, 10, 2010, 18, 11, 27, '+0100' ] ]
-);
-
 plan tests =>
     @epoch2yyyymmjj_hhmmss_tests +
     @adate_tests                 +
     @get_midnight_time_tests     +
     @date_conv_tests             +
     @duration_conv_tests         +
-    @epoch_conv_tests            +
-    @parse_date_tests            ;
+    @epoch_conv_tests            ;
 
 foreach my $test (@epoch2yyyymmjj_hhmmss_tests) {
     is(
@@ -119,14 +111,4 @@ foreach my $test (@epoch_conv_tests) {
         $test->[1],
         "epoch_conv $test->[0]"
     );
-}
-
-foreach my $test (@parse_date_tests) {
-    is_deeply(
-        [ Sympa::Tools::Time::parse_date($test->[0]) ],
-        $test->[1],
-        "parse_date $test->[0]"
-    ) or print Dumper(
-        [ Sympa::Tools::Time::parse_date($test->[0]) ]);
-    use Data::Dumper;
 }
