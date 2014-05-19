@@ -25,30 +25,26 @@ package Sympa::Tools::Time;
 
 use strict;
 
-use POSIX qw();
+use DateTime;
 use Time::Local qw();
 
 use Sympa::Log::Syslog;
 
-## convert an epoch date into a readable date scalar
+# convert an epoch date into a readable date scalar
 sub adate {
+    my ($timestamp) = @_;
 
-    my $epoch = $_[0];
-    my @date  = localtime($epoch);
-    my $date  = POSIX::strftime("%e %a %b %Y  %H h %M min %S s", @date);
-
-    return $date;
+    my $time = DateTime->from_epoch(epoch => $timestamp, time_zone => 'local');
+    return $time->strftime("%e %a %b %Y  %H h %M min %S s");
 }
 
 ## Return the epoch date corresponding to the last midnight before date given
 ## as argument.
 sub get_midnight_time {
+    my ($timestamp) = @_;
 
-    my $epoch = $_[0];
-    Sympa::Log::Syslog::do_log('debug3', 'Getting midnight time for: %s',
-        $epoch);
-    my @date = localtime($epoch);
-    return $epoch - $date[0] - $date[1] * 60 - $date[2] * 3600;
+    my $time = DateTime->from_epoch(epoch => $timestamp, time_zone => 'local');
+    return $time->truncate(to => 'day')->epoch();
 }
 
 ## convert a human format date into an epoch date
