@@ -543,7 +543,10 @@ sub parse {
     foreach my $line (split('\n', $messageasstring)) {
         $lnb++;
         my $result = Sympa::TaskInstruction->new(
-            {'line_as_string' => $line, 'line_number' => $lnb}, $self);
+            line_as_string => $line,
+            line_number    => $lnb,
+            task           => $self
+        );
         if (defined $self->{'errors'}) {
             $self->error_report;
             return undef;

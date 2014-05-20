@@ -36,7 +36,6 @@ use Sympa::Site;
 use Sympa::Spool::File::Task;
 use Sympa::Task;
 use Sympa::Tools;
-use Sympa::Tools::Data;
 use Sympa::Tools::Time;
 use Sympa::Tracking;
 
@@ -179,17 +178,17 @@ foreach (keys %asgn_commands) {
 }
 
 sub new {
-    my $pkg = shift;
+    my ($class, %params) = @_;
 
-    # Instructions are built by parsing a single line of a task string.
-    my $data = shift;
-    my $task = shift;
-    my $self = Sympa::Tools::Data::dup_var($data);
-    bless $self, $pkg;
+    my $self = bless {
+        line_as_string => $params{line_as_string},
+        line_number    => $params{line_number},
+    }, $class;
+
     $self->parse;
     if (defined $self->{'error'}) {
         $self->error(
-            {   'task'    => $task,
+            {   'task'    => $params{task},
                 'type'    => 'parsing',
                 'message' => $self->{'error'}
             }
@@ -247,7 +246,8 @@ sub parse {
     } elsif ($self->{'line_as_string'} =~ /^\s*(@\w+)\s*=\s*(.+)/) {
 
         my $subinstruction = Sympa::TaskInstruction->new(
-            {'line_as_string' => $2, 'line_number' => $self->{'line_number'}}
+            line_as_string => $2,
+            line_number    => $self->{'line_number'}
         );
 
         unless ($asgn_commands{$subinstruction->{'command'}}) {
