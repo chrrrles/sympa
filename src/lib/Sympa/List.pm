@@ -1210,9 +1210,6 @@ sub get_editors_email {
     return @rcpt;
 }
 
-## DEPRECATED.  Use family().
-##sub get_family
-
 ## return the config_changes hash
 ## Used ONLY with lists belonging to a family.
 sub get_config_changes {
@@ -1995,34 +1992,6 @@ See L<Site/send_dsn>.
 =cut
 
 ## Inherited from Site_r
-
-####################################################
-# send_global_file
-####################################################
-#  Send a global (not relative to a list)
-#  message to a user.
-#  Find the tt2 file according to $tpl, set up
-#  $data for the next parsing (with $context and
-#  configuration )
-#
-# IN : -$tpl (+): template file name (file.tt2),
-#         without tt2 extension
-#      -$who (+): SCALAR |ref(ARRAY) - recipient(s)
-#      -$robot (+): robot
-#      -$context : ref(HASH) - for the $data set up
-#         to parse file tt2, keys can be :
-#         -user : ref(HASH), keys can be :
-#           -email
-#           -lang
-#           -password
-#         -auto_submitted auto-generated|auto-replied|auto-forwarded
-#         -...
-#      -$options : ref(HASH) - options
-# OUT : 1 | undef
-#
-####################################################
-##sub send_global_file {
-## DEPRECATED: Use $list->robot->send_file() or Sympa::Site->send_file().
 
 ####################################################
 # send_file
@@ -2838,23 +2807,6 @@ sub archive_send_last {
 ###################   NOTIFICATION SENDING  ###############################
 
 ####################################################
-# send_notify_to_listmaster
-####################################################
-# Sends a notice to listmaster by parsing
-# listmaster_notification.tt2 template
-#
-# IN : -$operation (+): notification type
-#      -$param(+) : ref(HASH) | ref(ARRAY)
-#       values for template parsing
-#
-# OUT : 1 | undef
-#
-######################################################
-##sub send_notify_to_listmaster {
-## DEPRECATED. Use $robot->send_notify_to_listmaster() (to normal
-## listmaster) or Sympa::Site->send_notify_to_listmaster() (to super listmaster).
-
-####################################################
 # send_notify_to_owner
 ####################################################
 # Sends a notice to list owner(s) by parsing
@@ -3395,10 +3347,6 @@ sub delete_all_list_admin {
     return 1;
 }
 
-## Returns the cookie for a list, if any.
-##sub get_cookie {
-##DEPRECATED: use $list->cookie().
-
 ## Returns the maximum size allowed for a message to the list.
 sub get_max_size {
     return shift->max_size;
@@ -3413,10 +3361,6 @@ sub get_reply_to {
 
     return $value;
 }
-
-## Returns a default user option
-## DEPRECATED: use $list->default_user_options.
-##sub get_default_user_options {
 
 ## Returns the number of subscribers to the list
 ## not using cache.
@@ -9251,10 +9195,6 @@ sub by_order {
             {'order'} <=> $Sympa::ListDef::pinfo{$main::b}{'order'})
         || ($main::a cmp $main::b);
 }
-
-## Apply defaults to parameters definition (%Sympa::ListDef::pinfo)
-## DEPRECATED: use $robot->list_params().
-##sub _apply_defaults {
 
 ## Save a parameter
 sub _save_list_param {

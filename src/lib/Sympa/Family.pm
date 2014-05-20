@@ -1644,50 +1644,6 @@ sub get_param_constraint {
     }
 }
 
-=pod 
-
-=head2 sub get_family_lists()
-
-Returns a ref to an array whose values are the family lists' names.
-
-B<DEPRECATED>.
-Use L<List/get_lists>;
-
-=cut
-
-#########################################
-# get_family_lists
-#########################################
-# return the family's lists into an array
-#
-# IN  : -$self
-# OUT : -\@list_of_list
-#########################################
-##DEPRECATED: Use Sympa::List::get_lists($family);
-
-=pod 
-
-=head2 sub get_hash_family_lists()
-
-Returns a ref to a hash whose keys are this family's lists' names. They are associated to the value "1".
-
-I<DEPRECATED>.
-Use L<List/get_lists>.
-
-=cut
-
-#########################################
-# get_hash_family_lists
-#########################################
-# return the family's lists into a hash
-#
-# IN  : -$self
-# OUT : -\%list_of_list
-#########################################
-##DECPRECATED: Use Sympa::List::get_lists().
-
-=pod 
-
 =head2 sub get_uncompellable_param()
 
 Returns a reference to hash whose keys are the uncompellable parameters.

@@ -1105,9 +1105,6 @@ sub process_message {
     return $status;
 }
 
-#sub DoSendMessage($message, $robot_id)
-#DEPRECATED: Now outbound messages will be stored into "bulk" spool.
-
 ############################################################
 #  DoForward
 ############################################################
