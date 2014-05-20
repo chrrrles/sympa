@@ -1439,16 +1439,6 @@ sub upgrade {
     return 1;
 }
 
-##DEPRECATED: Use Sympa::DatabaseManager::probe_db().
-##sub probe_db {
-##    Sympa::DatabaseManager::probe_db();
-##}
-
-##DEPRECATED: Use Sympa::DatabaseManager::data_structure_uptodate().
-##sub data_structure_uptodate {
-##    Sympa::DatabaseManager::data_structure_uptodate();
-##}
-
 ## used to encode files to UTF-8
 ## also add X-Attach header field if template requires it
 ## IN : - arrayref with list of filepath/lang pairs

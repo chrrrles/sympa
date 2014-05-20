@@ -278,11 +278,6 @@ sub lang {
 These are accessors derived from default parameters.
 Some of them are obsoleted.
 
-=cut
-
-## DEPRECATED: Use $robot->split_listname().
-## sub list_check_regexp ( mailbox )
-
 =over 4
 
 =item listmasters
