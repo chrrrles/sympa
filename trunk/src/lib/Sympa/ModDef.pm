@@ -135,12 +135,6 @@ our %cpan_modules = (
         mandatory        => 1,
         'gettext_id'     => 'used to compute MD5 digests for passwords, etc.',
     },
-    'Email::Simple' => {
-        required_version => '2.100',
-        package_name     => 'Email-Simple',
-        mandatory        => 1,
-        'gettext_id'     => 'Used for email tracking',
-    },
     'Encode' => {
         package_name => 'Encode',
         mandatory    => 1,
