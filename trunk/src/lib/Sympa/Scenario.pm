@@ -1171,7 +1171,7 @@ sub verify {
             return -1;   ## always skip this rule because we can't evaluate it
         }
         my $block;
-        unless ($block = new2 Net::Netmask($args[0])) {
+        unless ($block = Net::Netmask->new2($args[0])) {
             Sympa::Log::Syslog::do_log('err',
                 "syntax error: failed to parse netmask '$args[0]'");
             return undef;
