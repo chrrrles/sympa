@@ -129,17 +129,6 @@ our %cpan_modules = (
         'gettext_id' =>
             'a generic Database Driver, required by Sympa to access Subscriber information and User preferences. An additional Database Driver is required for each database type you wish to connect to.',
     },
-    'Digest::MD5' => {
-        required_version => '2.00',
-        package_name     => 'Digest-MD5',
-        mandatory        => 1,
-        'gettext_id'     => 'used to compute MD5 digests for passwords, etc.',
-    },
-    'Encode' => {
-        package_name => 'Encode',
-        mandatory    => 1,
-        'gettext_id' => 'module for character encoding processing',
-    },
     'Encode::Locale' => {
         required_version => '1.02',
         package_name     => 'Encode-Locale',
