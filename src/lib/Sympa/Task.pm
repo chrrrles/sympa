@@ -25,6 +25,7 @@ package Sympa::Task;
 
 use strict;
 
+use English qw(-no_match_vars);
 use Template;
 
 use Sympa::List; # FIXME: circular dependency
@@ -542,16 +543,24 @@ sub parse {
     my $lnb = 0;                                         # line number
     foreach my $line (split('\n', $messageasstring)) {
         $lnb++;
-        my $result = Sympa::TaskInstruction->new(
-            line_as_string => $line,
-            line_number    => $lnb,
-            task           => $self
-        );
-        if (defined $self->{'errors'}) {
+        my $instruction;
+        eval {
+            $instruction = Sympa::TaskInstruction->new(
+                line_as_string => $line,
+                line_number    => $lnb,
+            );
+        };
+        if ($EVAL_ERROR) {
+            my $error = {
+                message => $EVAL_ERROR,
+                type    => 'parsing',
+                line    => $lnb
+            };
+            push @{$self->{errors}}, $error;
             $self->error_report;
             return undef;
         }
-        push @{$self->{'parsed_instructions'}}, $result;
+        push @{$self->{'parsed_instructions'}}, $instruction;
     }
     $self->make_summary;
     return 1;

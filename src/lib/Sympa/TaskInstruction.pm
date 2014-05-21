@@ -25,6 +25,7 @@ package Sympa::TaskInstruction;
 
 use strict;
 
+use Carp qw(croak);
 use English qw(-no_match_vars);
 use Time::Local qw();
 
@@ -185,15 +186,9 @@ sub new {
         line_number    => $params{line_number},
     }, $class;
 
-    $self->parse;
-    if (defined $self->{'error'}) {
-        $self->error(
-            {   'task'    => $params{task},
-                'type'    => 'parsing',
-                'message' => $self->{'error'}
-            }
-        );
-    }
+    # raise an exception if parsing fails
+    $self->parse();
+
     return $self;
 }
 
@@ -231,8 +226,7 @@ sub parse {
         foreach (@args) { s/\s//g; }
 
         unless ($commands{$command}) {
-            $self->{'nature'} = 'error';
-            $self->{'error'}  = "unknown command $command";
+            croak "unknown command $command\n";
         } else {
             $self->{'nature'}  = 'command';
             $self->{'command'} = $command;
@@ -251,8 +245,7 @@ sub parse {
         );
 
         unless ($asgn_commands{$subinstruction->{'command'}}) {
-            $self->{'nature'} = 'error';
-            $self->{'error'}  = "non valid assignment $2";
+            croak "non valid assignment $2\n";
         } else {
             $self->{'nature'}     = 'assignment';
             $self->{'var'}        = $1;
@@ -260,8 +253,7 @@ sub parse {
             $self->{'Rarguments'} = $subinstruction->{'Rarguments'};
         }
     } else {
-        $self->{'nature'} = 'error';
-        $self->{'error'}  = 'syntax error';
+        croak "syntax error\n";
     }
     return 1;
 }
@@ -314,9 +306,7 @@ sub chk_cmd {
             }
 
             if ($error) {
-                $self->{'nature'} = 'error';
-                $self->{'error'}  = "Argument $_ is not valid";
-                return undef;
+                croak "argument $_ is not valid\n";
             }
 
             $self->{'used_labels'}{$args[1]} = 1
