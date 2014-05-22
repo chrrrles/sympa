@@ -279,29 +279,27 @@ sub _chk_cmd {
             croak "wrong number of arguments for $self->{'command'}\n";
         }
 
-        foreach (@args) {
-
-            undef my $error;
+        foreach my $arg (@args) {
             my $regexp = $expected_args[0];
             shift(@expected_args);
 
             if ($regexp eq 'date') {
-                $error = 1
-                    unless ((/^$date_arg_regexp1$/i)
-                    or (/^$date_arg_regexp2$/i)
-                    or (/^$date_arg_regexp3$/i));
+                croak "argument '$arg' is not a valid date\n"
+                    unless (($arg =~ /^$date_arg_regexp1$/i)
+                    or ($arg =~ /^$date_arg_regexp2$/i)
+                    or ($arg =~ /^$date_arg_regexp3$/i));
             } elsif ($regexp eq 'delay') {
-                $error = 1 unless (/^$delay_regexp$/i);
+                croak "argument '$arg' is not a valid delay\n"
+                    unless ($arg =~ /^$delay_regexp$/i);
             } elsif ($regexp eq 'var') {
-                $error = 1 unless (/^$var_regexp$/i);
+                croak "argument '$arg' is not a valid variable\n"
+                    unless ($arg =~ /^$var_regexp$/i);
             } elsif ($regexp eq 'subarg') {
-                $error = 1 unless (/^$subarg_regexp$/i);
+                croak "argument '$arg' is not a valid sub-argument\n"
+                    unless ($arg =~ /^$subarg_regexp$/i);
             } else {
-                $error = 1 unless (/^$regexp$/i);
-            }
-
-            if ($error) {
-                croak "argument $_ is not valid\n";
+                croak "argument '$arg' is not valid\n"
+                    unless ($arg =~ /^$regexp$/i);
             }
 
             $self->{'used_labels'}{$args[1]} = 1
