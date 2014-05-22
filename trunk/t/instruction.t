@@ -15,9 +15,10 @@ use Test::Exception;
 use Sympa::Instruction;
 
 my @tests_nok = (
-    [ 'foo'      , qr/syntax error/        ],
-    [ 'foo()'    , qr/unknown command foo/ ],
-    [ 'next(333)', qr/wrong number of arguments/ ]
+    [ 'foo'      ,     qr/syntax error/        ],
+    [ 'foo()'    ,     qr/unknown command foo/ ],
+    [ 'next(foo)',     qr/wrong number of arguments/ ],
+    [ 'next(foo,bar)', qr/argument 'foo' is not a valid date/ ]
 );
 
 my @tests_ok_nocontent = (
