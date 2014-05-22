@@ -12,7 +12,7 @@ use lib "$Bin/../src/lib";
 use Test::More;
 use Test::Exception;
 
-use Sympa::TaskInstruction;
+use Sympa::Instruction;
 
 my @tests_nok = (
     [ 'foo'      , qr/syntax error/        ],
@@ -49,7 +49,7 @@ plan tests =>
 foreach my $test (@tests_nok) {
     my $instruction;
     throws_ok {
-        $instruction = Sympa::TaskInstruction->new(
+        $instruction = Sympa::Instruction->new(
             line_as_string => $test->[0],
             line_number    => 1
         );
@@ -60,7 +60,7 @@ foreach my $test (@tests_nok) {
 foreach my $test (@tests_ok_nocontent) {
     my $instruction;
     lives_ok {
-        $instruction = Sympa::TaskInstruction->new(
+        $instruction = Sympa::Instruction->new(
             line_as_string => $test->[0],
             line_number    => 1
         );
@@ -75,7 +75,7 @@ foreach my $test (@tests_ok_nocontent) {
 foreach my $test (@tests_ok_content) {
     my $instruction;
     lives_ok {
-        $instruction = Sympa::TaskInstruction->new(
+        $instruction = Sympa::Instruction->new(
             line_as_string => $test->[0],
             line_number    => 1
         );
