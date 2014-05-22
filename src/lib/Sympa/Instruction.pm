@@ -57,77 +57,77 @@ our %commands = (
         'args' => ['date', '\w*'],
 
         # date   label
-        'sub' => \&next_cmd,
+        'sub' => \&_next_cmd,
     },
     'stop' => {
         'args' => [],
-        'sub'  => \&stop,
+        'sub'  => \&_stop,
     },
     'create' => {
         'args' => ['subarg', '\w+', '\w+'],
 
         #object    model  model choice
-        'sub' => \&create_cmd,
+        'sub' => \&_create_cmd,
     },
     'exec' => {
         'args' => ['.+'],
 
         #script
-        'sub' => \&exec_cmd,
+        'sub' => \&_exec_cmd,
     },
     'update_crl' => {
         'args' => ['\w+', 'date'],
 
         #file    #delay
-        'sub' => \&update_crl,
+        'sub' => \&_update_crl,
     },
     'expire_bounce' => {
         'args' => ['\d+'],
 
         #Number of days (delay)
-        'sub' => \&expire_bounce,
+        'sub' => \&_expire_bounce,
     },
     'chk_cert_expiration' => {
         'args' => ['\w+', 'date'],
 
         #template  date
-        'sub' => \&chk_cert_expiration,
+        'sub' => \&_chk_cert_expiration,
     },
     'sync_include' => {
         'args' => [],
-        'sub'  => \&sync_include,
+        'sub'  => \&_sync_include,
     },
     'purge_user_table' => {
         'args' => [],
-        'sub'  => \&purge_user_table,
+        'sub'  => \&_purge_user_table,
     },
     'purge_logs_table' => {
         'args' => [],
-        'sub'  => \&purge_logs_table,
+        'sub'  => \&_purge_logs_table,
     },
     'purge_session_table' => {
         'args' => [],
-        'sub'  => \&purge_session_table,
+        'sub'  => \&_purge_session_table,
     },
     'purge_tables' => {
         'args' => [],
-        'sub'  => \&purge_tables,
+        'sub'  => \&_purge_tables,
     },
     'purge_one_time_ticket_table' => {
         'args' => [],
-        'sub'  => \&purge_one_time_ticket_table,
+        'sub'  => \&_purge_one_time_ticket_table,
     },
     'purge_orphan_bounces' => {
         'args' => [],
-        'sub'  => \&purge_orphan_bounces,
+        'sub'  => \&_purge_orphan_bounces,
     },
     'eval_bouncers' => {
         'args' => [],
-        'sub'  => \&eval_bouncers,
+        'sub'  => \&_eval_bouncers,
     },
     'process_bouncers' => {
         'args' => [],
-        'sub'  => \&process_bouncers,
+        'sub'  => \&_process_bouncers,
     },
 );
 
@@ -138,19 +138,19 @@ our %var_commands = (
         'args' => ['var'],
 
         # variable
-        'sub' => \&delete_subs_cmd,
+        'sub' => \&_delete_subs_cmd,
     },
     'send_msg' => {
         'args' => ['var', '\w+'],
 
         #variable template
-        'sub' => \&send_msg,
+        'sub' => \&_send_msg,
     },
     'rm_file' => {
         'args' => ['var'],
 
         # variable
-        'sub' => \&rm_file,
+        'sub' => \&_rm_file,
     },
 );
 
@@ -164,13 +164,13 @@ our %asgn_commands = (
         'args' => ['subarg'],
 
         # condition
-        'sub' => \&select_subs,
+        'sub' => \&_select_subs,
     },
     'delete_subs' => {
         'args' => ['var'],
 
         # variable
-        'sub' => \&delete_subs_cmd,
+        'sub' => \&_delete_subs_cmd,
     },
 );
 
@@ -187,13 +187,13 @@ sub new {
     }, $class;
 
     # raise an exception if parsing fails
-    $self->parse();
+    $self->_parse();
 
     return $self;
 }
 
 ## Parses the line of a task and returns a hash that can be executed.
-sub parse {
+sub _parse {
     my $self = shift;
 
     Sympa::Log::Syslog::do_log('debug2', 'Parsing "%s"',
@@ -233,7 +233,7 @@ sub parse {
 
             # arguments recovery. no checking of their syntax !!!
             $self->{'Rarguments'} = \@args;
-            $self->chk_cmd;
+            $self->_chk_cmd();
         }
 
         # assignment
@@ -259,7 +259,7 @@ sub parse {
 }
 
 ## Checks the arguments of a command
-sub chk_cmd {
+sub _chk_cmd {
 
     my $self = shift;
 
@@ -346,7 +346,7 @@ sub execute {
 ### command subroutines ###
 
 # remove files whose name is given in the key 'file' of the hash
-sub rm_file {
+sub _rm_file {
 
     my ($self, $task) = @_;
 
@@ -357,7 +357,7 @@ sub rm_file {
         my $file = $self->{'variables'}{$var}{$key}{'file'};
         next unless ($file);
         unless (unlink($file)) {
-            $self->error(
+            $self->_error(
                 {   'task' => $task,
                     'type' => 'execution',
                     'message' =>
@@ -370,7 +370,7 @@ sub rm_file {
     return 1;
 }
 
-sub stop {
+sub _stop {
 
     my ($self, $task) = @_;
 
@@ -378,7 +378,7 @@ sub stop {
         "$self->{'line_number'} : stop $task->{'messagekey'}");
 
     unless ($task->remove) {
-        $self->error(
+        $self->_error(
             {   'task' => $task,
                 'type' => 'execution',
                 'message' =>
@@ -389,7 +389,7 @@ sub stop {
     }
 }
 
-sub send_msg {
+sub _send_msg {
 
     my ($self, $task) = @_;
 
@@ -409,7 +409,7 @@ sub send_msg {
                 ) {
                 Sympa::Log::Syslog::do_log('notice',
                     "Unable to send template $template to $email");
-                $self->error(
+                $self->_error(
                     {   'task' => $task,
                         'type' => 'execution',
                         'message' =>
@@ -432,7 +432,7 @@ sub send_msg {
                 ) {
                 Sympa::Log::Syslog::do_log('notice',
                     "Unable to send template $template to $email");
-                $self->error(
+                $self->_error(
                     {   'task' => $task,
                         'type' => 'execution',
                         'message' =>
@@ -449,7 +449,7 @@ sub send_msg {
     return 1;
 }
 
-sub next_cmd {
+sub _next_cmd {
 
     my ($self, $task) = @_;
 
@@ -489,7 +489,7 @@ sub next_cmd {
 
         if ($model eq 'sync_include') {
             unless ($list->user_data_source eq 'include2') {
-                $self->error(
+                $self->_error(
                     {   'task' => $task,
                         'type' => 'execution',
                         'message' =>
@@ -505,7 +505,7 @@ sub next_cmd {
         } else {
             my $model_task_parameter = $model . '_task';
             unless (%{$list->$model_task_parameter}) {
-                $self->error(
+                $self->_error(
                     {   'task'    => $task,
                         'type'    => 'execution',
                         'message' => sprintf(
@@ -530,7 +530,7 @@ sub next_cmd {
             }
         )
         ) {
-        $self->error(
+        $self->_error(
             {   'task' => $task,
                 'type' => 'execution',
                 'message' =>
@@ -545,7 +545,7 @@ sub next_cmd {
     return 1;
 }
 
-sub select_subs {
+sub _select_subs {
 
     my ($self, $task) = @_;
 
@@ -597,7 +597,7 @@ sub select_subs {
     return \%selection;
 }
 
-sub delete_subs_cmd {
+sub _delete_subs_cmd {
 
     my ($self, $task) = @_;
 
@@ -621,7 +621,7 @@ sub delete_subs_cmd {
         my $action;
         $action = $result->{'action'} if (ref($result) eq 'HASH');
         if ($action =~ /reject/i) {
-            $self->error(
+            $self->_error(
                 {   'task'    => $task,
                     'type'    => 'execution',
                     'message' => "Deletion of $email not allowed"
@@ -630,7 +630,7 @@ sub delete_subs_cmd {
             return undef;
         } else {
             unless (my $u = $list->delete_list_member($email)) {
-                $self->error(
+                $self->_error(
                     {   'task' => $task,
                         'type' => 'execution',
                         'message' =>
@@ -647,7 +647,7 @@ sub delete_subs_cmd {
     return \%selection;
 }
 
-sub create_cmd {
+sub _create_cmd {
 
     my ($self, $task) = @_;
 
@@ -666,7 +666,7 @@ sub create_cmd {
         $type   = $1;
         $object = $3;
     } else {
-        $self->error(
+        $self->_error(
             {   'task'    => $task,
                 'type'    => 'execution',
                 'message' => "Don't know how to create $arg"
@@ -687,7 +687,7 @@ sub create_cmd {
     }
     $type = '_global';
     unless (Sympa::Task::create($task->{'date'}, '', $model, $flavour, \%data)) {
-        $self->error(
+        $self->_error(
             {   'task'    => $task,
                 'type'    => 'execution',
                 'message' => "Creation of task $model.$flavour failed"
@@ -698,7 +698,7 @@ sub create_cmd {
     return 1;
 }
 
-sub exec_cmd {
+sub _exec_cmd {
 
     my ($self, $task) = @_;
 
@@ -720,14 +720,14 @@ sub exec_cmd {
         } else {
             $message = sprintf 'Child exited with value %d', $CHILD_ERROR >> 8;
         }
-        $self->error(
+        $self->_error(
             {'task' => $task, 'type' => 'execution', 'message' => $message});
         return undef;
     }
     return 1;
 }
 
-sub purge_logs_table {
+sub _purge_logs_table {
 
     # If a log is older then $list->get_latest_distribution_date()-$delai expire the log
     my ($self, $task) = @_;
@@ -736,7 +736,7 @@ sub purge_logs_table {
 
     Sympa::Log::Syslog::do_log('debug2', 'purge_logs_table()');
     unless (Sympa::Log::Database::db_log_del()) {
-        $self->error(
+        $self->_error(
             {   'task'    => $task,
                 'type'    => 'execution',
                 'message' => "Failed to delete logs"
@@ -765,7 +765,7 @@ sub purge_logs_table {
             Sympa::DatabaseManager::get_limit_clause({'rows_count' => 1})
         )
         ) {
-        $self->error(
+        $self->_error(
             {   'task'    => $task,
                 'type'    => 'execution',
                 'message' => 'Unable to retrieve oldest non processed stat'
@@ -796,7 +796,7 @@ sub purge_logs_table {
 }
 
 ## remove sessions from session_table if older than Sympa::Site->session_table_ttl
-sub purge_session_table {
+sub _purge_session_table {
 
     my ($self, $task) = @_;
     Sympa::Log::Syslog::do_log('info', 'task_manager::purge_session_table()');
@@ -804,7 +804,7 @@ sub purge_session_table {
 
     my $removed = Sympa::Session::purge_old_sessions('Site');
     unless (defined $removed) {
-        $self->error(
+        $self->_error(
             {   'task'    => $task,
                 'type'    => 'execution',
                 'message' => 'Failed to remove old sessions'
@@ -819,7 +819,7 @@ sub purge_session_table {
 
 ## remove messages from bulkspool table when no more packet have any pointer
 ## to this message
-sub purge_tables {
+sub _purge_tables {
     my ($self, $task) = @_;
     Sympa::Log::Syslog::do_log('info', 'task_manager::purge_tables()');
 
@@ -829,7 +829,7 @@ sub purge_tables {
 
     $removed = Sympa::Bulk::purge_bulkspool();
     unless (defined $removed) {
-        $self->error(
+        $self->_error(
             {   'task'    => $task,
                 'type'    => 'execution',
                 'message' => 'Failed to purge tables'
@@ -856,7 +856,7 @@ sub purge_tables {
 }
 
 ## remove one time ticket table if older than Sympa::Site->one_time_ticket_table_ttl
-sub purge_one_time_ticket_table {
+sub _purge_one_time_ticket_table {
 
     my ($self, $task) = @_;
     Sympa::Log::Syslog::do_log('info',
@@ -865,7 +865,7 @@ sub purge_one_time_ticket_table {
 
     my $removed = Sympa::Session::purge_old_tickets('Site');
     unless (defined $removed) {
-        $self->error(
+        $self->_error(
             {   'task'    => $task,
                 'type'    => 'execution',
                 'message' => 'Failed to remove old tickets'
@@ -881,7 +881,7 @@ sub purge_one_time_ticket_table {
     return 1;
 }
 
-sub purge_user_table {
+sub _purge_user_table {
     my ($self, $task) = @_;
     Sympa::Log::Syslog::do_log('debug2', 'purge_user_table()');
 
@@ -939,7 +939,7 @@ sub purge_user_table {
 
     unless ($#purged_users < 0) {
         unless (Sympa::User::delete_global_user(@purged_users)) {
-            $self->error(
+            $self->_error(
                 {   'task'    => $task,
                     'type'    => 'execution',
                     'message' => 'Failed to delete users'
@@ -955,7 +955,7 @@ sub purge_user_table {
 }
 
 ## Subroutine which remove bounced message of no-more known users
-sub purge_orphan_bounces {
+sub _purge_orphan_bounces {
     my ($self, $task) = @_;
 
     Sympa::Log::Syslog::do_log('info', 'purge_orphan_bounces()');
@@ -989,7 +989,7 @@ sub purge_orphan_bounces {
 
         ## then reading Bounce directory & compare with %bounced_users
         unless (opendir(BOUNCE, $bounce_dir)) {
-            $self->error(
+            $self->_error(
                 {   'task' => $task,
                     'type' => 'execution',
                     'message' =>
@@ -1007,7 +1007,7 @@ sub purge_orphan_bounces {
                         'removing orphan Bounce for user %s in list %s',
                         $bounce, $listname);
                     unless (unlink($bounce_dir . '/' . $bounce)) {
-                        $self->error(
+                        $self->_error(
                             {   'task' => $task,
                                 'type' => 'execution',
                                 'message' =>
@@ -1024,7 +1024,7 @@ sub purge_orphan_bounces {
     return 1;
 }
 
-sub expire_bounce {
+sub _expire_bounce {
 
     # If a bounce is older then $list->get_latest_distribution_date()-$delai expire the bounce
     # Is this variable my be set in to task modele ?
@@ -1064,7 +1064,7 @@ sub expire_bounce {
                 my $email = $u->{'email'};
 
                 unless ($list->is_list_member($email)) {
-                    $self->error(
+                    $self->_error(
                         {   'task'    => $task,
                             'type'    => 'execution',
                             'message' => "$email not subscribed"
@@ -1080,7 +1080,7 @@ sub expire_bounce {
                         {'bounce_address' => 'NULL'}
                     )
                     ) {
-                    $self->error(
+                    $self->_error(
                         {   'task'    => $task,
                             'type'    => 'execution',
                             'message' => "failed update database for $email"
@@ -1093,7 +1093,7 @@ sub expire_bounce {
                 my $bounce_dir = $list->get_bounce_dir();
 
                 unless (unlink $bounce_dir . '/' . $escaped_email) {
-                    $self->error(
+                    $self->_error(
                         {   'task' => $task,
                             'type' => 'execution',
                             'message' =>
@@ -1125,7 +1125,7 @@ sub expire_bounce {
     return 1;
 }
 
-sub chk_cert_expiration {
+sub _chk_cert_expiration {
 
     my ($self, $task) = @_;
 
@@ -1141,7 +1141,7 @@ sub chk_cert_expiration {
 
     ## building of certificate list
     unless (opendir(DIR, $cert_dir)) {
-        $self->error(
+        $self->_error(
             {   'task' => $task,
                 'type' => 'execution',
                 'message' =>
@@ -1183,7 +1183,7 @@ sub chk_cert_expiration {
             # deletion of unuseful soon_expired file if it is existing
             if (-e $soon_expired_file) {
                 unless (unlink($soon_expired_file)) {
-                    $self->error(
+                    $self->_error(
                         {   'task'    => $task,
                             'type'    => 'execution',
                             'message' => "Can't delete $soon_expired_file"
@@ -1201,7 +1201,7 @@ sub chk_cert_expiration {
                 "--> $_ certificate expired ($date), certificate file deleted"
             );
             unless (unlink("$cert_dir/$_")) {
-                $self->error(
+                $self->_error(
                     {   'task'    => $task,
                         'type'    => 'execution',
                         'message' => "Can't delete certificate file $_"
@@ -1210,7 +1210,7 @@ sub chk_cert_expiration {
             }
             if (-e $soon_expired_file) {
                 unless (unlink("$cert_dir/$soon_expired_file")) {
-                    $self->error(
+                    $self->_error(
                         {   'task'    => $task,
                             'type'    => 'execution',
                             'message' => "Can't delete $soon_expired_file"
@@ -1227,7 +1227,7 @@ sub chk_cert_expiration {
             && !(-e $soon_expired_file)) {
 
             unless (open(FILE, ">$cert_dir/$soon_expired_file")) {
-                $self->error(
+                $self->_error(
                     {   'task'    => $task,
                         'type'    => 'execution',
                         'message' => "Can't create $soon_expired_file"
@@ -1246,7 +1246,7 @@ sub chk_cert_expiration {
             chomp($id);
 
             unless ($id) {
-                $self->error(
+                $self->_error(
                     {   'task' => $task,
                         'type' => 'execution',
                         'message' =>
@@ -1262,7 +1262,7 @@ sub chk_cert_expiration {
             $tpl_context{'certificate_id'}  = $id;
             $tpl_context{'auto_submitted'}  = 'auto-generated';
             unless (Sympa::Site->send_file($template, $_, \%tpl_context)) {
-                $self->error(
+                $self->_error(
                     {   'task'    => $task,
                         'type'    => 'execution',
                         'message' => "Unable to send template $template to $_"
@@ -1278,7 +1278,7 @@ sub chk_cert_expiration {
 
 ## attention, j'ai n'ai pas pu comprendre les retours d'erreurs des commandes
 ## wget donc pas de verif sur le bon fonctionnement de cette commande
-sub update_crl {
+sub _update_crl {
 
     my ($self, $task) = @_;
 
@@ -1291,7 +1291,7 @@ sub update_crl {
     # building of CA list
     my @CA;
     unless (open(FILE, $CA_file)) {
-        $self->error(
+        $self->_error(
             {   'task' => $task,
                 'type' => 'execution',
                 'message' =>
@@ -1313,7 +1313,7 @@ sub update_crl {
             Sympa::Log::Syslog::do_log('notice', 'creating spool %s',
                 Sympa::Site->crl_dir);
         } else {
-            $self->error(
+            $self->_error(
                 {   'task'    => $task,
                     'type'    => 'execution',
                     'message' => 'Unable to create CRLs directory '
@@ -1344,7 +1344,7 @@ sub update_crl {
         chomp($date);
 
         unless ($date) {
-            $self->error(
+            $self->_error(
                 {   'task' => $task,
                     'type' => 'execution',
                     'message' =>
@@ -1379,7 +1379,7 @@ sub update_crl {
 
 ## Subroutine for bouncers evaluation:
 # give a score for each bouncing user
-sub eval_bouncers {
+sub _eval_bouncers {
     #################
     my ($self, $task) = @_;
 
@@ -1393,7 +1393,7 @@ sub eval_bouncers {
         ## Analizing file Msg-count and fill %$list_traffic
         unless (open(COUNT, $list->dir . '/msg_count')) {
             if (-f $list->dir . '/msg_count') {
-                $self->error(
+                $self->_error(
                     {   'task' => $task,
                         'type' => 'execution',
                         'message' =>
@@ -1402,7 +1402,7 @@ sub eval_bouncers {
                 );
                 next;
             } else {
-                $self->error(
+                $self->_error(
                     {   'task' => $task,
                         'type' => 'execution',
                         'message' =>
@@ -1434,7 +1434,7 @@ sub eval_bouncers {
                     $user_ref->{'email'}, {'score' => $score}
                 )
                 ) {
-                $self->error(
+                $self->_error(
                     {   'task' => $task,
                         'type' => 'execution',
                         'message' =>
@@ -1448,14 +1448,14 @@ sub eval_bouncers {
     return 1;
 }
 
-sub none {
+sub _none {
 
     1;
 }
 
 ## Routine for automatic bouncing users management
 ##
-sub process_bouncers {
+sub _process_bouncers {
 ###################
     my ($self, $task) = @_;
     Sympa::Log::Syslog::do_log('info',
@@ -1530,7 +1530,7 @@ sub process_bouncers {
                 ## calling action subroutine with (list,email list) in
                 ## parameter
                 unless ($actions{$action}->($list, $bouncers[$level])) {
-                    $self->error(
+                    $self->_error(
                         {   'task' => $task,
                             'type' => 'execution',
                             'message' =>
@@ -1555,7 +1555,7 @@ sub process_bouncers {
                             'automatic_bounce_management', $param
                         )
                         ) {
-                        $self->error(
+                        $self->_error(
                             {   'task' => $task,
                                 'type' => 'execution',
                                 'message' =>
@@ -1569,7 +1569,7 @@ sub process_bouncers {
                             'automatic_bounce_management', $param
                         )
                         ) {
-                        $self->error(
+                        $self->_error(
                             {   'task' => $task,
                                 'type' => 'execution',
                                 'message' =>
@@ -1584,7 +1584,7 @@ sub process_bouncers {
     return 1;
 }
 
-sub get_score {
+sub _get_score {
 
     my $user_ref     = shift;
     my $list_traffic = shift;
@@ -1663,7 +1663,7 @@ sub get_score {
     return $note;
 }
 
-sub sync_include {
+sub _sync_include {
     my ($self, $task) = @_;
 
     Sympa::Log::Syslog::do_log('debug2', 'sync_include(%s)', $task->{'id'});
@@ -1673,7 +1673,7 @@ sub sync_include {
         return undef;
     }
     unless ($list->sync_include()) {
-        $self->error(
+        $self->_error(
             {   'task' => $task,
                 'type' => 'execution',
                 'message' =>
@@ -1685,7 +1685,7 @@ sub sync_include {
     }
     if (scalar @{$list->editor_include} or scalar @{$list->owner_include}) {
         unless ($list->sync_include_admin()) {
-            $self->error(
+            $self->_error(
                 {   'task' => $task,
                     'type' => 'execution',
                     'message' =>
@@ -1701,7 +1701,7 @@ sub sync_include {
 }
 
 ## Marks the task as being in error with details of the exact error.
-sub error {
+sub _error {
     my $self  = shift;
     my $param = shift;
 
