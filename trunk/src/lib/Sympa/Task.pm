@@ -581,7 +581,7 @@ sub process_all {
             last;
         }
         $instruction->{'variables'} = $variables;
-        unless ($result = $self->process_line($instruction)) {
+        unless ($result = $instruction->execute($self)) {
             Sympa::Log::Syslog::do_log(
                 'err',
                 'Error while executing %s at line %s, task %s',
@@ -720,23 +720,6 @@ sub error_report {
         $self->get_description
     );
     Sympa::Site->send_notify_to_listmaster('task_error', $data);
-}
-
-#### Task line level subs ####
-##############################
-
-## Executes a single parsed line of a task.
-sub process_line {
-    my $self        = shift;
-    my $instruction = shift;
-    my $status;
-    if (   $instruction->{'nature'} eq 'assignment'
-        || $instruction->{'nature'} eq 'command') {
-        $status = $instruction->cmd_process($self);
-    } else {
-        $status->{'output'} = 'Nothing to compute';
-    }
-    return $status;
 }
 
 ## Get unique ID.
