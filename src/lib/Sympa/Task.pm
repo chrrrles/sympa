@@ -32,7 +32,7 @@ use Sympa::List; # FIXME: circular dependency
 use Sympa::Log::Syslog;
 use Sympa::Site;
 use Sympa::Spool::File::Task;
-use Sympa::TaskInstruction;
+use Sympa::Instruction;
 use Sympa::Tools::Time;
 
 #### Task level subs ####
@@ -545,7 +545,7 @@ sub parse {
         $lnb++;
         my $instruction;
         eval {
-            $instruction = Sympa::TaskInstruction->new(
+            $instruction = Sympa::Instruction->new(
                 line_as_string => $line,
                 line_number    => $lnb,
             );

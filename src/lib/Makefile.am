@@ -38,6 +38,7 @@ nobase_modules_DATA = Sympa/Admin.pm \
 		      Sympa/Family.pm \
 		      Sympa/Fetch.pm \
 		      Sympa/HTML/MyFormatText.pm \
+		      Sympa/Instruction.pm \
 		      Sympa/Language.pm \
 		      Sympa/LDAP.pm \
 		      Sympa/LDAPSource.pm \
@@ -71,7 +72,6 @@ nobase_modules_DATA = Sympa/Admin.pm \
 		      Sympa/SOAP.pm \
 		      Sympa/Transport.pm \
 		      Sympa/Task.pm \
-		      Sympa/TaskInstruction.pm \
 		      Sympa/Tools.pm \
 		      Sympa/Tools/Cookie.pm \
 		      Sympa/Tools/SMIME.pm \
