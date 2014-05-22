@@ -276,12 +276,7 @@ sub chk_cmd {
         my @args          = @{$self->{'Rarguments'}};
 
         unless ($#expected_args == $#args) {
-            Sympa::Log::Syslog::do_log('err',
-                "error at line $self->{'line_number'} : wrong number of arguments for $self->{'command'}"
-            );
-            Sympa::Log::Syslog::do_log('err',
-                "args = @args ; expected_args = @expected_args");
-            return undef;
+            croak "wrong number of arguments for $self->{'command'}\n";
         }
 
         foreach (@args) {
