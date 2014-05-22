@@ -42,17 +42,17 @@ use Sympa::Tracking;
 
 ###### DEFINITION OF AVAILABLE COMMANDS FOR TASKS ######
 
-our $date_arg_regexp1 = '\d+|execution_date';
-our $date_arg_regexp2 = '(\d\d\d\dy)(\d+m)?(\d+d)?(\d+h)?(\d+min)?(\d+sec)?';
-our $date_arg_regexp3 =
+my $date_arg_regexp1 = '\d+|execution_date';
+my $date_arg_regexp2 = '(\d\d\d\dy)(\d+m)?(\d+d)?(\d+h)?(\d+min)?(\d+sec)?';
+my $date_arg_regexp3 =
     '(\d+|execution_date)(\+|\-)(\d+y)?(\d+m)?(\d+w)?(\d+d)?(\d+h)?(\d+min)?(\d+sec)?';
-our $delay_regexp = '(\d+y)?(\d+m)?(\d+w)?(\d+d)?(\d+h)?(\d+min)?(\d+sec)?';
-our $var_regexp   = '@\w+';
-our $subarg_regexp =
+my $delay_regexp = '(\d+y)?(\d+m)?(\d+w)?(\d+d)?(\d+h)?(\d+min)?(\d+sec)?';
+my $var_regexp   = '@\w+';
+my $subarg_regexp =
     '(\w+)(|\((.*)\))';    # for argument with sub argument (ie arg(sub_arg))
 
 # regular commands
-our %commands = (
+my %commands = (
     'next' => {
         'args' => ['date', '\w*'],
 
@@ -133,7 +133,7 @@ our %commands = (
 
 # commands which use a variable. If you add such a command, the first
 # parameter must be the variable
-our %var_commands = (
+my %var_commands = (
     'delete_subs' => {
         'args' => ['var'],
 
@@ -159,7 +159,7 @@ foreach (keys %var_commands) {
 }
 
 # commands which are used for assignments
-our %asgn_commands = (
+my %asgn_commands = (
     'select_subs' => {
         'args' => ['subarg'],
 
