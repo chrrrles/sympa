@@ -321,10 +321,8 @@ sub as_string {
 }
 
 ## Calls the appropriate functions for a parsed line of a task.
-sub cmd_process {
-
-    my $self = shift;
-    my $task = shift;    # The parsed instruction to execute.
+sub execute {
+    my ($self, $task) = @_;
 
     Sympa::Log::Syslog::do_log(
         'debug',
@@ -334,8 +332,15 @@ sub cmd_process {
         $task->get_description
     );
 
-    # regular commands
-    return &{$commands{$self->{'command'}}{'sub'}}($self, $task);
+    if (
+        $self->{nature} eq 'assignement' ||
+        $self->{nature} eq 'command'
+    ) {
+        # regular commands
+        return &{$commands{$self->{'command'}}{'sub'}}($self, $task);
+    } else {
+        return { output => 'Nothing to compute' };
+    }
 }
 
 ### command subroutines ###
