@@ -29,16 +29,9 @@ use Carp qw(croak);
 use English qw(-no_match_vars);
 use Time::Local qw();
 
-use Sympa::Bulk;
-use Sympa::List;
 use Sympa::Log::Syslog;
-use Sympa::Robot;
-use Sympa::Site;
-use Sympa::Spool::File::Task;
-use Sympa::Task;
 use Sympa::Tools;
 use Sympa::Tools::Time;
-use Sympa::Tracking;
 
 ###### DEFINITION OF AVAILABLE COMMANDS FOR TASKS ######
 
@@ -400,8 +393,9 @@ sub _stop {
 }
 
 sub _send_msg {
-
     my ($self, $task) = @_;
+
+    require Sympa::Site;
 
     my @tab      = @{$self->{'Rarguments'}};
     my $template = $tab[1];
@@ -460,8 +454,11 @@ sub _send_msg {
 }
 
 sub _next_cmd {
-
     my ($self, $task) = @_;
+
+    require Sympa::Site;
+    require Sympa::Spool::File::Task;
+    require Sympa::Task;
 
     my @tab = @{$self->{'Rarguments'}};
 
@@ -556,8 +553,9 @@ sub _next_cmd {
 }
 
 sub _select_subs {
-
     my ($self, $task) = @_;
+
+    require Sympa::Scenario;
 
     my @tab       = @{$self->{'Rarguments'}};
     my $condition = $tab[0];
@@ -608,8 +606,10 @@ sub _select_subs {
 }
 
 sub _delete_subs_cmd {
-
     my ($self, $task) = @_;
+
+    require Sympa::Scenario;
+    require Sympa::Site;
 
     my @tab = @{$self->{'Rarguments'}};
     my $var = $tab[0];
@@ -831,11 +831,15 @@ sub _purge_session_table {
 ## to this message
 sub _purge_tables {
     my ($self, $task) = @_;
+
+    require Sympa::Bulk;
+    require Sympa::List;
+    require Sympa::Robot;
+    require Sympa::Tracking;
+
     Sympa::Log::Syslog::do_log('info', 'task_manager::purge_tables()');
 
     my $removed;
-
-    require Sympa::Tracking;
 
     $removed = Sympa::Bulk::purge_bulkspool();
     unless (defined $removed) {
@@ -849,7 +853,6 @@ sub _purge_tables {
     Sympa::Log::Syslog::do_log('notice', '%s rows removed in bulkspool_table',
         $removed);
 
-    #
     $removed = 0;
     foreach my $robot (@{Sympa::Robot::get_robots()}) {
         my $all_lists = Sympa::List::get_lists($robot);
@@ -867,10 +870,10 @@ sub _purge_tables {
 
 ## remove one time ticket table if older than Sympa::Site->one_time_ticket_table_ttl
 sub _purge_one_time_ticket_table {
-
     my ($self, $task) = @_;
     Sympa::Log::Syslog::do_log('info',
         'task_manager::purge_one_time_ticket_table()');
+
     require Sympa::Session;
 
     my $removed = Sympa::Session::purge_old_tickets('Site');
@@ -893,7 +896,13 @@ sub _purge_one_time_ticket_table {
 
 sub _purge_user_table {
     my ($self, $task) = @_;
+
     Sympa::Log::Syslog::do_log('debug2', 'purge_user_table()');
+
+    require Sympa::Robot;
+    require Sympa::List;
+    require Sympa::Site;
+    require Sympa::User;
 
     ## Load user_table entries
     my @users = Sympa::User::get_all_global_user();
@@ -968,6 +977,8 @@ sub _purge_user_table {
 sub _purge_orphan_bounces {
     my ($self, $task) = @_;
 
+    require Sympa::List;
+
     Sympa::Log::Syslog::do_log('info', 'purge_orphan_bounces()');
 
     ## Hash {'listname' => 'bounced address' => 1}
@@ -1035,10 +1046,11 @@ sub _purge_orphan_bounces {
 }
 
 sub _expire_bounce {
-
     # If a bounce is older then $list->get_latest_distribution_date()-$delai expire the bounce
     # Is this variable my be set in to task modele ?
     my ($self, $task) = @_;
+
+    require Sympa::List;
 
     my @tab            = @{$self->{'Rarguments'}};
     my $delay          = $tab[0];
@@ -1136,14 +1148,17 @@ sub _expire_bounce {
 }
 
 sub _chk_cert_expiration {
-
     my ($self, $task) = @_;
+
+    require Sympa::Site;
+    require Sympa::Spool::File::Task;
 
     my $cert_dir       = Sympa::Site->ssl_cert_dir;
     my $execution_date = $task->{'date'};
     my @tab            = @{$self->{'Rarguments'}};
     my $template       = $tab[0];
     my $limit          = Sympa::Tools::Time::duration_conv($tab[1], $execution_date);
+
 
     Sympa::Log::Syslog::do_log('notice',
         "line $self->{'line_number'} : chk_cert_expiration (@{$self->{'Rarguments'}})"
@@ -1289,8 +1304,10 @@ sub _chk_cert_expiration {
 ## attention, j'ai n'ai pas pu comprendre les retours d'erreurs des commandes
 ## wget donc pas de verif sur le bon fonctionnement de cette commande
 sub _update_crl {
-
     my ($self, $task) = @_;
+
+    require Sympa::Scenario;
+    require Sympa::Site;
 
     my @tab = @{$self->{'Rarguments'}};
     my $limit = Sympa::Tools::Time::epoch_conv($tab[1], $task->{'date'});
@@ -1390,8 +1407,9 @@ sub _update_crl {
 ## Subroutine for bouncers evaluation:
 # give a score for each bouncing user
 sub _eval_bouncers {
-    #################
     my ($self, $task) = @_;
+
+    require Sympa::List;
 
     my $all_lists = Sympa::List::get_lists();
     foreach my $list (@$all_lists) {
@@ -1466,10 +1484,11 @@ sub _none {
 ## Routine for automatic bouncing users management
 ##
 sub _process_bouncers {
-###################
     my ($self, $task) = @_;
     Sympa::Log::Syslog::do_log('info',
         'Processing automatic actions on bouncing users');
+
+    require Sympa::List;
 
 ###########################################################################
     # This sub apply a treatment foreach category of bouncing-users
@@ -1595,12 +1614,13 @@ sub _process_bouncers {
 }
 
 sub _get_score {
-
     my $user_ref     = shift;
     my $list_traffic = shift;
 
     Sympa::Log::Syslog::do_log('debug', 'Get_score(%s) ',
         $user_ref->{'email'});
+
+    require Sympa::Site;
 
     my $min_period    = Sympa::Site->minimum_bouncing_period;
     my $min_msg_count = Sympa::Site->minimum_bouncing_count;
