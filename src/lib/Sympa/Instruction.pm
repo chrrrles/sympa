@@ -42,14 +42,28 @@ use Sympa::Tracking;
 
 ###### DEFINITION OF AVAILABLE COMMANDS FOR TASKS ######
 
-my $date_arg_regexp1 = '\d+|execution_date';
-my $date_arg_regexp2 = '(\d\d\d\dy)(\d+m)?(\d+d)?(\d+h)?(\d+min)?(\d+sec)?';
-my $date_arg_regexp3 =
-    '(\d+|execution_date)(\+|\-)(\d+y)?(\d+m)?(\d+w)?(\d+d)?(\d+h)?(\d+min)?(\d+sec)?';
-my $delay_regexp = '(\d+y)?(\d+m)?(\d+w)?(\d+d)?(\d+h)?(\d+min)?(\d+sec)?';
-my $var_regexp   = '@\w+';
-my $subarg_regexp =
-    '(\w+)(|\((.*)\))';    # for argument with sub argument (ie arg(sub_arg))
+my $delay_pattern = qr/
+    (?:\d+ y)?
+    (?:\d+ m)?
+    (?:\d+ w)?
+    (?:\d+ d)?
+    (?:\d+ h)?
+    (?:\d+ min)?
+    (?:\d+ sec)?
+/xi;
+my $time_pattern = qr/(?: \d+ | execution_date )/xi;
+
+my $delay_regexp = qr/^$delay_pattern$/;
+my $date_regexp = qr/^(?:
+    $time_pattern  |
+    $delay_pattern |
+    $time_pattern [+-] $delay_pattern
+)$/x;
+my $var_regexp  = qr/^@\w+$/;
+my $subarg_regexp = qr/^
+        (\w+)
+        (?: \( ([^)]+) \) )?
+$/x;
 
 # regular commands
 my %commands = (
@@ -285,21 +299,19 @@ sub _chk_cmd {
 
             if ($regexp eq 'date') {
                 croak "argument '$arg' is not a valid date\n"
-                    unless (($arg =~ /^$date_arg_regexp1$/i)
-                    or ($arg =~ /^$date_arg_regexp2$/i)
-                    or ($arg =~ /^$date_arg_regexp3$/i));
+                    unless $arg =~ $date_regexp;
             } elsif ($regexp eq 'delay') {
                 croak "argument '$arg' is not a valid delay\n"
-                    unless ($arg =~ /^$delay_regexp$/i);
+                    unless $arg =~ $delay_regexp;
             } elsif ($regexp eq 'var') {
                 croak "argument '$arg' is not a valid variable\n"
-                    unless ($arg =~ /^$var_regexp$/i);
+                    unless $arg =~ $var_regexp;
             } elsif ($regexp eq 'subarg') {
                 croak "argument '$arg' is not a valid sub-argument\n"
-                    unless ($arg =~ /^$subarg_regexp$/i);
+                    unless $arg =~ $subarg_regexp;
             } else {
                 croak "argument '$arg' is not valid\n"
-                    unless ($arg =~ /^$regexp$/i);
+                    unless $arg =~ /^$regexp$/i;
             }
 
             $self->{'used_labels'}{$args[1]} = 1
@@ -662,7 +674,7 @@ sub _create_cmd {
     my $object;
     if ($arg =~ /$subarg_regexp/) {
         $type   = $1;
-        $object = $3;
+        $object = $2;
     } else {
         $self->_error(
             {   'task'    => $task,
