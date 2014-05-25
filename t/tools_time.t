@@ -16,6 +16,10 @@ use Sympa::Tools::Time;
 
 setlocale(LC_ALL, 'C');
 
+# Fix our time zone for localtime().
+$ENV{'TZ'} = 'CEST-2';
+POSIX::tzset();
+
 my @adate_tests = (
     [ 1350544367, '18 Thu Oct 2012  09 h 12 min 47 s' ],
     [ 1250544367, '17 Mon Aug 2009  23 h 26 min 07 s' ],
