@@ -152,6 +152,7 @@ sub list_tasks {
     ## Create Task objects
     foreach my $t (@tasks) {
         my $task = Sympa::Task->new(
+            messageasstring => $t->{'messageasstring'},
             date    => $t->{'task_date'},
             label   => $t->{'task_label'},
             model   => $t->{'task_model'},

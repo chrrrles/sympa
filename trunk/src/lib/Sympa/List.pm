@@ -10794,6 +10794,7 @@ sub purge {
         )
         ) {
         my $task = Sympa::Task->new(
+            messageasstring => $task_in_spool->{'messageasstring'},
             date    => $task_in_spool->{'task_date'},
             label   => $task_in_spool->{'task_label'},
             model   => $task_in_spool->{'task_model'},
