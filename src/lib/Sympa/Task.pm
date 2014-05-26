@@ -113,28 +113,54 @@ sub new {
     return $self;
 }
 
+=item Sympa::Task->create(%parameters)
+
+Creates a new L<Sympa::Task> object, and stores it in a spool.
+
+Parameters:
+
+=over 4
+
+=item * I<creation_date>: FIXME
+
+=item * I<label>: FIXME
+
+=item * I<model>: FIXME
+
+=item * I<flavour>: FIXME
+
+=item * I<data>: FIXME
+
+=back
+
+Returns a new L<Sympa::Task> object, or I<undef> for failure.
+
 ## task creation in spool
+#
+=cut
+
 sub create {
-    my $param = shift;
+    my ($class, %params) = @_;
 
     Sympa::Log::Syslog::do_log(
         'notice',
         "create task date: %s label: %s model: %s flavour: %s Rdata :%s",
-        $param->{'creation_date'},
-        $param->{'label'},
-        $param->{'model'},
-        $param->{'flavour'},
-        $param->{'data'}
+        $params{'creation_date'},
+        $params{'label'},
+        $params{'model'},
+        $params{'flavour'},
+        $params{'data'}
     );
 
     # Creating task object. Simulating data retrieved from the database.
     my $task_in_spool;
-    $task_in_spool->{'task_date'}    = $param->{'creation_date'};
-    $task_in_spool->{'task_label'}   = $param->{'label'};
-    $task_in_spool->{'task_model'}   = $param->{'model'};
-    $task_in_spool->{'task_flavour'} = $param->{'flavour'};
-    if (defined $param->{'data'}{'list'}) {
-        my $list = $param->{'data'}{'list'};
+    $task_in_spool->{'task_date'}    = $params{'creation_date'};
+    $task_in_spool->{'task_label'}   = $params{'label'};
+    $task_in_spool->{'task_model'}   = $params{'model'};
+    $task_in_spool->{'task_flavour'} = $params{'flavour'};
+
+    if (defined $params{'data'}{'list'}) {
+        my $list = $params{'data'}{'list'};
         if (ref $list eq 'Sympa::List') {
             $task_in_spool->{'list'}   = $list->name;
             $task_in_spool->{'domain'} = $list->domain;
@@ -160,7 +186,7 @@ sub create {
         Sympa::Log::Syslog::do_log('err', 'Unable to create task object');
         return undef;
     }
-    $self->{'Rdata'} = $param->{'data'};
+    $self->{'Rdata'} = $params{'data'};
 
     ## model recovery
     return undef unless ($self->get_template);
