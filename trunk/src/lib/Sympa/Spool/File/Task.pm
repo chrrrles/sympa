@@ -129,12 +129,6 @@ sub analyze_file_name {
     return $data;
 }
 
-# Initialize Sympa::Spool global object.
-#NO LONGER USED.
-#sub set_spool {
-#    $taskspool = Sympa::Spool::File::Task->new;
-#}
-
 ## Build all Task objects
 sub _list_tasks {
     Sympa::Log::Syslog::do_log('debug2', '(%s)', @_);
@@ -172,16 +166,6 @@ sub _list_tasks {
     return 1;
 }
 
-## Return a list tasks for the given list
-# NO LONGER USED.
-#sub get_tasks_by_list {
-#    my $list_id = shift;
-#    Sympa::Log::Syslog::do_log('debug',"Getting tasks for list '%s'",
-#    $list_id);
-#    return () unless (defined $task_by_list{$list_id});
-#    return values %{$task_by_list{$list_id}};
-#}
-
 ## Returns a hash containing the model used. The models returned are all the
 ## global models or, if a list name is given as argument, the models used for
 ## this list.
@@ -206,13 +190,6 @@ sub _get_used_models {
         return keys %task_by_model;
     }
 }
-
-## Returns a ref to @task_list, previously defined in the "list_task" sub.
-# NO LONGER USED.
-#sub get_task_list {
-#    Sympa::Log::Syslog::do_log('debug',"Getting tasks list");
-#    return @task_list;
-#}
 
 ## Checks that all the required tasks at the server level are defined. Create
 ## them if needed.
