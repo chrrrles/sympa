@@ -136,8 +136,7 @@ sub analyze_file_name {
 #}
 
 ## Build all Task objects
-# Internal use.
-sub list_tasks {
+sub _list_tasks {
     Sympa::Log::Syslog::do_log('debug2', '(%s)', @_);
     my $self = shift;
 
@@ -186,8 +185,7 @@ sub list_tasks {
 ## Returns a hash containing the model used. The models returned are all the
 ## global models or, if a list name is given as argument, the models used for
 ## this list.
-# Internal use.
-sub get_used_models {
+sub _get_used_models {
     ## Optional list parameter
     my $list_id = shift;
     Sympa::Log::Syslog::do_log('debug3', "Getting used models for list '%s'",
@@ -223,7 +221,7 @@ sub create_required_tasks {
     my $current_date = shift;
 
     my $taskspool = Sympa::Spool::File::Task->new();
-    $taskspool->list_tasks();
+    $taskspool->_list_tasks();
 
     my %default_data = (
         'creation_date' =>
@@ -245,7 +243,7 @@ sub create_required_global_tasks {
         'Creating required tasks from global models');
 
     my %used_models;    # models for which a task exists
-    foreach my $model (get_used_models) {
+    foreach my $model (_get_used_models()) {
         $used_models{$model} = 1;
     }
 
@@ -294,7 +292,7 @@ sub create_required_lists_tasks {
             foreach my $model (@list_models) {
                 $used_list_models{$model} = undef;
             }
-            foreach my $model (get_used_models($list->get_id())) {
+            foreach my $model (_get_used_models($list->get_id())) {
                 $used_list_models{$model} = 1;
             }
             Sympa::Log::Syslog::do_log('debug3',
