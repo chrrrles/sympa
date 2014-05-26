@@ -53,6 +53,8 @@ Parameters:
 
 =item * I<task_label>: FIXME
 
+=item * I<task_model>: FIXME
+
 =item * I<task_flavour>: FIXME
 
 =item * I<task_object>: FIXME
@@ -80,7 +82,8 @@ sub new {
         'messageasstring' => $params{'messageasstring'},
         'date'            => $params{'task_date'} || time(),
         'label'           => $params{'task_label'},
-        'model'           => $params{'task_flavour'},
+        'model'           => $params{'task_model'},
+        'flavour'         => $params{'task_flavour'},
         'object'          => $params{'task_object'},
         'domain'          => $params{'robot'},
     }, $class;
