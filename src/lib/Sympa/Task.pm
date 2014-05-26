@@ -570,10 +570,10 @@ sub parse {
 sub process_all {
     my $self = shift;
     my $variables;
-    my $result;
     Sympa::Log::Syslog::do_log('debug',
         'Processing all instructions found in task %s',
         $self->get_description);
+
     foreach my $instruction (@{$self->{'parsed_instructions'}}) {
         if (defined $self->{'must_stop'}) {
             Sympa::Log::Syslog::do_log('debug', 'Stopping here for task %s',
@@ -581,7 +581,18 @@ sub process_all {
             last;
         }
         $instruction->{'variables'} = $variables;
-        unless ($result = $instruction->execute($self)) {
+
+        my $result;
+        eval {
+            $result = $instruction->execute();
+        };
+        if ($EVAL_ERROR) {
+            my $error = {
+                message => $EVAL_ERROR,
+                type    => 'execution',
+                line    => $instruction->{'line_number'},
+            };
+            push @{$self->{errors}}, $error;
             Sympa::Log::Syslog::do_log(
                 'err',
                 'Error while executing %s at line %s, task %s',
@@ -591,6 +602,7 @@ sub process_all {
             );
             return undef;
         }
+
         if (ref $result && $result->{'type'} eq 'variables') {
             $variables = $result->{'variables'};
         }
