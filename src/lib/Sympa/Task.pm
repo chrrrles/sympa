@@ -49,15 +49,15 @@ Parameters:
 
 =item * I<messageasstring>: FIXME
 
-=item * I<task_date>: FIXME
+=item * I<date>: FIXME
 
-=item * I<task_label>: FIXME
+=item * I<label>: FIXME
 
-=item * I<task_model>: FIXME
+=item * I<model>: FIXME
 
-=item * I<task_flavour>: FIXME
+=item * I<flavour>: FIXME
 
-=item * I<task_object>: FIXME
+=item * I<object>: FIXME
 
 =item * I<robot>: FIXME
 
@@ -80,11 +80,11 @@ sub new {
 
     my $self = bless {
         'messageasstring' => $params{'messageasstring'},
-        'date'            => $params{'task_date'} || time(),
-        'label'           => $params{'task_label'},
-        'model'           => $params{'task_model'},
-        'flavour'         => $params{'task_flavour'},
-        'object'          => $params{'task_object'},
+        'date'            => $params{'date'} || time(),
+        'label'           => $params{'label'},
+        'model'           => $params{'model'},
+        'flavour'         => $params{'flavour'},
+        'object'          => $params{'object'},
         'domain'          => $params{'robot'},
     }, $class;
 
@@ -171,13 +171,13 @@ sub create {
         $object = '_global';
     }
     my $self = Sympa::Task->new(
-        task_date    => $params{'creation_date'},
-        task_label   => $params{'label'},
-        task_model   => $params{'model'},
-        task_flavour => $params{'flavour'},
-        task_object  => $object,
-        list         => $list,
-        domain       => $domain,
+        date    => $params{'creation_date'},
+        label   => $params{'label'},
+        model   => $params{'model'},
+        flavour => $params{'flavour'},
+        object  => $object,
+        list    => $list,
+        domain  => $domain,
     );
     unless ($self) {
         Sympa::Log::Syslog::do_log('err', 'Unable to create task object');
