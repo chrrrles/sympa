@@ -359,37 +359,19 @@ sub _rm_file {
     foreach my $key (keys %{$self->{'variables'}{$var}}) {
         my $file = $self->{'variables'}{$var}{$key}{'file'};
         next unless ($file);
-        unless (unlink($file)) {
-            $self->_error(
-                {   'task' => $task,
-                    'type' => 'execution',
-                    'message' =>
-                        "error in rm_file command : unable to remove $file"
-                }
-            );
-            return undef;
-        }
+        unlink($file) or croak "unable to remove $file\n";
     }
     return 1;
 }
 
 sub _stop {
-
     my ($self, $task) = @_;
 
     Sympa::Log::Syslog::do_log('notice',
         "$self->{'line_number'} : stop $task->{'messagekey'}");
 
-    unless ($task->remove) {
-        $self->_error(
-            {   'task' => $task,
-                'type' => 'execution',
-                'message' =>
-                    "error in stop command : unable to delete task $task->{'messagekey'}"
-            }
-        );
-        return undef;
-    }
+    my $result = $task->remove();
+    croak "unable to delete task $task->{'messagekey'}\n" unless $result;
 }
 
 sub _send_msg {
@@ -406,48 +388,22 @@ sub _send_msg {
 
     if ($task->{'object'} eq '_global') {
         foreach my $email (keys %{$self->{'variables'}{$var}}) {
-            unless (
-                Sympa::Site->send_file(
-                    $template, $email, $self->{'variables'}{$var}{$email}
-                )
-                ) {
-                Sympa::Log::Syslog::do_log('notice',
-                    "Unable to send template $template to $email");
-                $self->_error(
-                    {   'task' => $task,
-                        'type' => 'execution',
-                        'message' =>
-                            "Unable to send template $template to $email"
-                    }
-                );
-                return undef;
-            } else {
-                Sympa::Log::Syslog::do_log('notice',
-                    "--> message sent to $email");
-            }
+            my $result = Sympa::Site->send_file(
+                $template, $email, $self->{'variables'}{$var}{$email}
+            );
+            croak "Unable to send template $template to $email\n"
+                unless $result;
+            Sympa::Log::Syslog::do_log('notice', "--> message sent to $email");
         }
     } else {
         my $list = $task->{'list_object'};
         foreach my $email (keys %{$self->{'variables'}{$var}}) {
-            unless (
-                $list->send_file(
-                    $template, $email, $self->{'variables'}{$var}{$email}
-                )
-                ) {
-                Sympa::Log::Syslog::do_log('notice',
-                    "Unable to send template $template to $email");
-                $self->_error(
-                    {   'task' => $task,
-                        'type' => 'execution',
-                        'message' =>
-                            "Unable to send template $template to $email"
-                    }
-                );
-                return undef;
-            } else {
-                Sympa::Log::Syslog::do_log('notice',
-                    "--> message sent to $email");
-            }
+            my $result = $list->send_file(
+                $template, $email, $self->{'variables'}{$var}{$email}
+            );
+            croak "Unable to send template $template to $email\n"
+                unless $result;
+            Sympa::Log::Syslog::do_log('notice', "--> message sent to $email");
         }
     }
     return 1;
@@ -491,61 +447,34 @@ sub _next_cmd {
     } else {
         $type = 'list';
         my $list = $task->{'list_object'};
+        my $listname = $list->name();
         $data{'list'}{'name'}  = $list->name;
         $data{'list'}{'robot'} = $list->domain;
 
         if ($model eq 'sync_include') {
-            unless ($list->user_data_source eq 'include2') {
-                $self->_error(
-                    {   'task' => $task,
-                        'type' => 'execution',
-                        'message' =>
-                            sprintf(
-                            'List %s no more require sync_include task',
-                            $list->name)
-                    }
-                );
-                return undef;
-            }
+            croak "List $listname no more require sync_include task\n"
+                unless $list->user_data_source eq 'include2';
             $data{'list'}{'ttl'} = $list->ttl;
             $flavour = 'ttl';
         } else {
             my $model_task_parameter = $model . '_task';
-            unless (%{$list->$model_task_parameter}) {
-                $self->_error(
-                    {   'task'    => $task,
-                        'type'    => 'execution',
-                        'message' => sprintf(
-                            'List %s no more require %s task',
-                            $list->name, $model
-                        )
-                    }
-                );
-                return undef;
-            }
+            croak "List $listname no more require $model task\n"
+                unless %{$list->$model_task_parameter};
             $flavour = $list->$model_task_parameter->{'name'};
         }
     }
     Sympa::Log::Syslog::do_log('debug2', 'Will create next task');
-    unless (
-        Sympa::Task::create(
-            {   'creation_date' => $date,
-                'label'         => $tab[1],
-                'model'         => $model,
-                'flavour'       => $flavour,
-                'data'          => \%data
-            }
-        )
-        ) {
-        $self->_error(
-            {   'task' => $task,
-                'type' => 'execution',
-                'message' =>
-                    "error in create command : Failed to create task $model.$flavour"
-            }
-        );
-        return undef;
-    }
+    
+    my $result = Sympa::Task::create(
+        {   'creation_date' => $date,
+            'label'         => $tab[1],
+            'model'         => $model,
+            'flavour'       => $flavour,
+            'data'          => \%data
+        }
+    );
+    croak "error in create command : Failed to create task $model.$flavour\n"
+        unless $result;
 
     my $human_date = Sympa::Tools::Time::adate($date);
     Sympa::Log::Syslog::do_log('debug2', "--> new task $model ($human_date)");
@@ -618,6 +547,7 @@ sub _delete_subs_cmd {
         "line $self->{'line_number'} : delete_subs ($var)");
 
     my $list = $task->{'list_object'};
+    my $listname = $list->name();
     my %selection;    # hash of subscriber emails who are successfully deleted
 
     foreach my $email (keys %{$self->{'variables'}{$var}}) {
@@ -630,28 +560,15 @@ sub _delete_subs_cmd {
         );
         my $action;
         $action = $result->{'action'} if (ref($result) eq 'HASH');
-        if ($action =~ /reject/i) {
-            $self->_error(
-                {   'task'    => $task,
-                    'type'    => 'execution',
-                    'message' => "Deletion of $email not allowed"
-                }
-            );
-            return undef;
-        } else {
-            unless (my $u = $list->delete_list_member($email)) {
-                $self->_error(
-                    {   'task' => $task,
-                        'type' => 'execution',
-                        'message' =>
-                            "Deletion of $email from list $list->get_list_id failed"
-                    }
-                );
-            } else {
-                Sympa::Log::Syslog::do_log('notice', "--> $email deleted");
-                $selection{$email} = {};
-            }
-        }
+        croak "Deletion of $email not allowed\n"
+            if $action =~ /reject/i;
+
+        my $result = $list->delete_list_member($email);
+        croak "Deletion of $email from list $listname failed\n"
+            unless $result;
+
+        Sympa::Log::Syslog::do_log('notice', "--> $email deleted");
+        $selection{$email} = {};
     }
 
     return \%selection;
@@ -670,20 +587,10 @@ sub _create_cmd {
         "line $self->{'line_number'} : create ($arg, $model, $flavour)");
 
     # recovery of the object type and object
-    my $type;
-    my $object;
-    if ($arg =~ /$subarg_regexp/) {
-        $type   = $1;
-        $object = $2;
-    } else {
-        $self->_error(
-            {   'task'    => $task,
-                'type'    => 'execution',
-                'message' => "Don't know how to create $arg"
-            }
-        );
-        return undef;
-    }
+    croak "Don't know how to create $arg\n"
+        unless $arg =~ /$subarg_regexp/;
+    my $type = $1;
+    my $object = $2;
 
     # building of the data hash necessary to the create subroutine
     my %data = (
@@ -696,15 +603,12 @@ sub _create_cmd {
         $data{'list'}{'name'} = $list->name;
     }
     $type = '_global';
-    unless (Sympa::Task::create($task->{'date'}, '', $model, $flavour, \%data)) {
-        $self->_error(
-            {   'task'    => $task,
-                'type'    => 'execution',
-                'message' => "Creation of task $model.$flavour failed"
-            }
-        );
-        return undef;
-    }
+
+    my $result = Sympa::Task::create(
+        $task->{'date'}, '', $model, $flavour, \%data
+    );
+    croak "Creation of task $model.$flavour failed\n" unless $result;
+
     return 1;
 }
 
@@ -721,18 +625,14 @@ sub _exec_cmd {
     system($file);
 
     if ($CHILD_ERROR != 0) {
-        my $message;
-        if ($CHILD_ERROR == -1) {
-            $message = "Failed to execute: $ERRNO";
-        } elsif ($CHILD_ERROR & 127) {
-            $message = sprintf 'Child died with signal %d, %s coredump',
-                ($CHILD_ERROR & 127), ($CHILD_ERROR & 128) ? 'with' : 'without';
-        } else {
-            $message = sprintf 'Child exited with value %d', $CHILD_ERROR >> 8;
-        }
-        $self->_error(
-            {'task' => $task, 'type' => 'execution', 'message' => $message});
-        return undef;
+        croak "Failed to execute: $ERRNO\n"
+            if $CHILD_ERROR == -1;
+        croak sprintf(
+            'Child died with signal %d, %s coredump\n',
+            ($CHILD_ERROR & 127),
+            ($CHILD_ERROR & 128) ? 'with' : 'without'
+        ) if $CHILD_ERROR & 127;
+        croak sprintf('Child exited with value %d\n', $CHILD_ERROR >> 8);
     }
     return 1;
 }
@@ -745,15 +645,8 @@ sub _purge_logs_table {
     my @slots          = ();
 
     Sympa::Log::Syslog::do_log('debug2', 'purge_logs_table()');
-    unless (Sympa::Log::Database::db_log_del()) {
-        $self->_error(
-            {   'task'    => $task,
-                'type'    => 'execution',
-                'message' => "Failed to delete logs"
-            }
-        );
-        return undef;
-    }
+    my $result = Sympa::Log::Database::db_log_del();
+    croak "Failed to delete logs\n" unless $result;
 
     #-----------Data aggregation, to make statistics-----------------
     my ($sec, $min, $hour, $mday, $mon, $year, $wday, $yday, $isdst) =
@@ -764,25 +657,15 @@ sub _purge_logs_table {
         Time::Local::timelocal($sec, $min, $hour, $mday, $mon, $year, $wday, $yday,
         $isdst);
 
-    my $sth;
-    unless (
-        $sth = Sympa::DatabaseManager::do_query(
-            q{SELECT date_stat
-	      FROM stat_table
-	      WHERE read_stat = 0
-	      ORDER BY date_stat ASC
-	      %s},
-            Sympa::DatabaseManager::get_limit_clause({'rows_count' => 1})
-        )
-        ) {
-        $self->_error(
-            {   'task'    => $task,
-                'type'    => 'execution',
-                'message' => 'Unable to retrieve oldest non processed stat'
-            }
-        );
-        return undef;
-    }
+    my $sth = Sympa::DatabaseManager::do_query(
+        q{SELECT date_stat
+          FROM stat_table
+          WHERE read_stat = 0
+          ORDER BY date_stat ASC
+          %s},
+        Sympa::DatabaseManager::get_limit_clause({'rows_count' => 1})
+    );
+    croak "Unable to retrieve oldest non processed stat\n" unless $sth;
     my @res = $sth->fetchrow_array;
     $sth->finish;
 
@@ -813,15 +696,8 @@ sub _purge_session_table {
     require Sympa::Session;
 
     my $removed = Sympa::Session::purge_old_sessions('Site');
-    unless (defined $removed) {
-        $self->_error(
-            {   'task'    => $task,
-                'type'    => 'execution',
-                'message' => 'Failed to remove old sessions'
-            }
-        );
-        return undef;
-    }
+    croak "Failed to remove old sessions\n" unless $removed;
+
     Sympa::Log::Syslog::do_log('notice',
         'purge_session_table(): %s rows removed in session_table', $removed);
     return 1;
@@ -839,17 +715,9 @@ sub _purge_tables {
 
     Sympa::Log::Syslog::do_log('info', 'task_manager::purge_tables()');
 
-    my $removed;
+    my $removed = Sympa::Bulk::purge_bulkspool();
+    croak "Failed to purge tables\n" unless $removed;
 
-    $removed = Sympa::Bulk::purge_bulkspool();
-    unless (defined $removed) {
-        $self->_error(
-            {   'task'    => $task,
-                'type'    => 'execution',
-                'message' => 'Failed to purge tables'
-            }
-        );
-    }
     Sympa::Log::Syslog::do_log('notice', '%s rows removed in bulkspool_table',
         $removed);
 
@@ -877,15 +745,8 @@ sub _purge_one_time_ticket_table {
     require Sympa::Session;
 
     my $removed = Sympa::Session::purge_old_tickets('Site');
-    unless (defined $removed) {
-        $self->_error(
-            {   'task'    => $task,
-                'type'    => 'execution',
-                'message' => 'Failed to remove old tickets'
-            }
-        );
-        return undef;
-    }
+    croak "Failed to remove old tickets\n" unless $removed;
+
     Sympa::Log::Syslog::do_log(
         'notice',
         'purge_one_time_ticket_table(): %s row removed in one_time_ticket_table',
@@ -957,15 +818,8 @@ sub _purge_user_table {
     }
 
     unless ($#purged_users < 0) {
-        unless (Sympa::User::delete_global_user(@purged_users)) {
-            $self->_error(
-                {   'task'    => $task,
-                    'type'    => 'execution',
-                    'message' => 'Failed to delete users'
-                }
-            );
-            return undef;
-        }
+        my $result = Sympa::User::delete_global_user(@purged_users);
+        croak "Failed to delete users\n" unless $result;
     }
 
     my $result;
@@ -990,6 +844,7 @@ sub _purge_orphan_bounces {
         return 1;
     }
 
+    my @errors;
     foreach my $list (@$all_lists) {
         my $listname = $list->name;
         ## first time: loading DB entries into %bounced_users
@@ -1009,16 +864,8 @@ sub _purge_orphan_bounces {
         }
 
         ## then reading Bounce directory & compare with %bounced_users
-        unless (opendir(BOUNCE, $bounce_dir)) {
-            $self->_error(
-                {   'task' => $task,
-                    'type' => 'execution',
-                    'message' =>
-                        "Error while opening bounce directory $bounce_dir"
-                }
-            );
-            return undef;
-        }
+        opendir(BOUNCE, $bounce_dir)
+            or croak "Error while opening bounce directory $bounce_dir\n";
 
         ## Finally removing orphan files
         foreach my $bounce (readdir(BOUNCE)) {
@@ -1027,21 +874,18 @@ sub _purge_orphan_bounces {
                     Sympa::Log::Syslog::do_log('info',
                         'removing orphan Bounce for user %s in list %s',
                         $bounce, $listname);
-                    unless (unlink($bounce_dir . '/' . $bounce)) {
-                        $self->_error(
-                            {   'task' => $task,
-                                'type' => 'execution',
-                                'message' =>
-                                    "Error while removing file $bounce_dir/$bounce"
-                            }
-                        );
-                    }
+                    my $file = $bounce_dir . '/' . $bounce;
+                    unlink($file)
+                        or push @errors, "Error while removing file $file\n";
                 }
             }
         }
 
         closedir BOUNCE;
     }
+
+    croak join("", @errors) if @errors;
+
     return 1;
 }
 
@@ -1056,6 +900,8 @@ sub _expire_bounce {
     my $delay          = $tab[0];
 
     Sympa::Log::Syslog::do_log('debug2', 'expire_bounce(%d)', $delay);
+
+    my @errors;
     my $all_lists = Sympa::List::get_lists();
     foreach my $list (@$all_lists) {
         my $listname = $list->name;
@@ -1079,49 +925,34 @@ sub _expire_bounce {
             my $u = $list->get_first_bouncing_list_member();
             $u;
             $u = $list->get_next_bouncing_list_member()
-            ) {
+        ) {
             $u->{'bounce'} =~ /^(\d+)\s+(\d+)\s+(\d+)(\s+(.*))?$/;
             $u->{'last_bounce'} = $2;
             if ($u->{'last_bounce'} < $refdate) {
                 my $email = $u->{'email'};
 
                 unless ($list->is_list_member($email)) {
-                    $self->_error(
-                        {   'task'    => $task,
-                            'type'    => 'execution',
-                            'message' => "$email not subscribed"
-                        }
-                    );
+                    push @errors, "$email not subscribed\n";
                     next;
                 }
 
-                unless (
-                    $list->update_list_member(
-                        $email,
-                        {'bounce'         => 'NULL'},
-                        {'bounce_address' => 'NULL'}
-                    )
-                    ) {
-                    $self->_error(
-                        {   'task'    => $task,
-                            'type'    => 'execution',
-                            'message' => "failed update database for $email"
-                        }
-                    );
+                my $result = $list->update_list_member(
+                    $email,
+                    {'bounce'         => 'NULL'},
+                    {'bounce_address' => 'NULL'}
+                );
+                if (!$result) {
+                    push @errors, "failed update database for $email\n";
                     next;
                 }
-                my $escaped_email = Sympa::Tools::escape_chars($email);
 
                 my $bounce_dir = $list->get_bounce_dir();
+                my $escaped_email = Sympa::Tools::escape_chars($email);
+                my $file = $bounce_dir . '/' . $escaped_email;
 
-                unless (unlink $bounce_dir . '/' . $escaped_email) {
-                    $self->_error(
-                        {   'task' => $task,
-                            'type' => 'execution',
-                            'message' =>
-                                "failed deleting $bounce_dir/$escaped_email"
-                        }
-                    );
+                my $result = unlink($file);
+                if (!$result) {
+                    push @errors, "failed deleting $file\n";
                     next;
                 }
                 Sympa::Log::Syslog::do_log(
@@ -1144,6 +975,8 @@ sub _expire_bounce {
         }
     }
 
+    croak join("", @errors) if @errors;
+
     return 1;
 }
 
@@ -1165,19 +998,13 @@ sub _chk_cert_expiration {
     );
 
     ## building of certificate list
-    unless (opendir(DIR, $cert_dir)) {
-        $self->_error(
-            {   'task' => $task,
-                'type' => 'execution',
-                'message' =>
-                    "error in chk_cert_expiration command : can't open dir $cert_dir"
-            }
-        );
-        return undef;
-    }
+    opendir(DIR, $cert_dir)
+        or croak "can't open dir $cert_dir\n";
+
     my @certificates = grep !/^(\.\.?)|(.+expired)$/, readdir DIR;
     closedir(DIR);
 
+    my @errors;
     foreach (@certificates) {
 
         # an empty .soon_expired file is created when a user is warned that
@@ -1207,14 +1034,8 @@ sub _chk_cert_expiration {
 
             # deletion of unuseful soon_expired file if it is existing
             if (-e $soon_expired_file) {
-                unless (unlink($soon_expired_file)) {
-                    $self->_error(
-                        {   'task'    => $task,
-                            'type'    => 'execution',
-                            'message' => "Can't delete $soon_expired_file"
-                        }
-                    );
-                }
+                unlink($soon_expired_file)
+                    or push @errors, "Can't delete $soon_expired_file\n"
             }
             next;
         }
@@ -1225,23 +1046,13 @@ sub _chk_cert_expiration {
             Sympa::Log::Syslog::do_log('notice',
                 "--> $_ certificate expired ($date), certificate file deleted"
             );
-            unless (unlink("$cert_dir/$_")) {
-                $self->_error(
-                    {   'task'    => $task,
-                        'type'    => 'execution',
-                        'message' => "Can't delete certificate file $_"
-                    }
-                );
-            }
+            unlink("$cert_dir/$_")
+                or push @errors, "Can't delete certificate file $_\n";
+
             if (-e $soon_expired_file) {
-                unless (unlink("$cert_dir/$soon_expired_file")) {
-                    $self->_error(
-                        {   'task'    => $task,
-                            'type'    => 'execution',
-                            'message' => "Can't delete $soon_expired_file"
-                        }
-                    );
-                }
+                my $file = "$cert_dir/$soon_expired_file";
+                unlink("$cert_dir/$soon_expired_file")
+                    or push @errors, "Can't delete $soon_expired_file\n";
             }
             next;
         }
@@ -1251,17 +1062,11 @@ sub _chk_cert_expiration {
             && ($expiration_date < $limit)
             && !(-e $soon_expired_file)) {
 
-            unless (open(FILE, ">$cert_dir/$soon_expired_file")) {
-                $self->_error(
-                    {   'task'    => $task,
-                        'type'    => 'execution',
-                        'message' => "Can't create $soon_expired_file"
-                    }
-                );
+            open(FILE, ">$cert_dir/$soon_expired_file") or do {
+                push @errors, "Can't create $soon_expired_file\n";
                 next;
-            } else {
-                close(FILE);
-            }
+            };
+            close(FILE);
 
             my %tpl_context;    # datas necessary to the template
 
@@ -1271,13 +1076,8 @@ sub _chk_cert_expiration {
             chomp($id);
 
             unless ($id) {
-                $self->_error(
-                    {   'task' => $task,
-                        'type' => 'execution',
-                        'message' =>
-                            "Can't get expiration date for $_ by using the x509 openssl command"
-                    }
-                );
+                push @errors,
+                    "Can't get expiration date for $_ by using the x509 openssl command";
                 next;
             }
 
@@ -1286,18 +1086,18 @@ sub _chk_cert_expiration {
             $tpl_context{'expiration_date'} = Sympa::Tools::Time::adate($expiration_date);
             $tpl_context{'certificate_id'}  = $id;
             $tpl_context{'auto_submitted'}  = 'auto-generated';
-            unless (Sympa::Site->send_file($template, $_, \%tpl_context)) {
-                $self->_error(
-                    {   'task'    => $task,
-                        'type'    => 'execution',
-                        'message' => "Unable to send template $template to $_"
-                    }
-                );
-            }
+
+            my $result = Sympa::Site->send_file($template, $_, \%tpl_context);
+            push @errors, "Unable to send template $template to $_\n"
+                unless $result;
+
             Sympa::Log::Syslog::do_log('notice',
                 "--> $_ certificate soon expired ($date), user warned");
         }
     }
+
+    croak join("", @errors) if @errors;
+
     return 1;
 }
 
@@ -1317,16 +1117,9 @@ sub _update_crl {
 
     # building of CA list
     my @CA;
-    unless (open(FILE, $CA_file)) {
-        $self->_error(
-            {   'task' => $task,
-                'type' => 'execution',
-                'message' =>
-                    "error in update_crl command : can't open $CA_file file"
-            }
-        );
-        return undef;
-    }
+    open(FILE, $CA_file)
+        or croak "can't open $CA_file file\n";
+
     while (<FILE>) {
         chomp;
         push(@CA, $_);
@@ -1335,22 +1128,13 @@ sub _update_crl {
 
     # updating of crl files
     my $crl_dir = Sympa::Site->crl_dir;
-    unless (-d Sympa::Site->crl_dir) {
-        if (mkdir(Sympa::Site->crl_dir, 0775)) {
-            Sympa::Log::Syslog::do_log('notice', 'creating spool %s',
-                Sympa::Site->crl_dir);
-        } else {
-            $self->_error(
-                {   'task'    => $task,
-                    'type'    => 'execution',
-                    'message' => 'Unable to create CRLs directory '
-                        . Sympa::Site->crl_dir
-                }
-            );
-            return undef;
-        }
+    unless (-d $crl_dir) {
+        mkdir($crl_dir, 0775)
+            or croak "Unable to create CRLs directory $crl_dir\n";
+        Sympa::Log::Syslog::do_log('notice', 'creating spool %s', $crl_dir);
     }
 
+    my @errors;
     foreach my $url (@CA) {
 
         my $crl_file =
@@ -1371,13 +1155,9 @@ sub _update_crl {
         chomp($date);
 
         unless ($date) {
-            $self->_error(
-                {   'task' => $task,
-                    'type' => 'execution',
-                    'message' =>
-                        "Can't get expiration date for $file CRL file by using the crl openssl command"
-                }
-            );
+            push @errors,
+                "Can't get expiration date for $file CRL file by using the " .
+                "crl openssl command\n";
             next;
         }
 
@@ -1412,6 +1192,8 @@ sub _eval_bouncers {
     require Sympa::List;
 
     my $all_lists = Sympa::List::get_lists();
+    my @errors;
+
     foreach my $list (@$all_lists) {
         my $listname     = $list->name;
         my $list_traffic = {};
@@ -1421,22 +1203,12 @@ sub _eval_bouncers {
         ## Analizing file Msg-count and fill %$list_traffic
         unless (open(COUNT, $list->dir . '/msg_count')) {
             if (-f $list->dir . '/msg_count') {
-                $self->_error(
-                    {   'task' => $task,
-                        'type' => 'execution',
-                        'message' =>
-                            "Could not open 'msg_count' file for list $listname"
-                    }
-                );
+                push @errors,
+                    "Could not open 'msg_count' file for list $listname\n";
                 next;
             } else {
-                $self->_error(
-                    {   'task' => $task,
-                        'type' => 'execution',
-                        'message' =>
-                            "File 'msg_count' does not exist for list $listname"
-                    }
-                );
+                push @errors, 
+                    "File 'msg_count' does not exist for list $listname\n";
                 next;
             }
         }
@@ -1456,23 +1228,16 @@ sub _eval_bouncers {
             ) {
 
             my $score = get_score($user_ref, $list_traffic) || 0;
-            ## copying score into DataBase
-            unless (
-                $list->update_list_member(
-                    $user_ref->{'email'}, {'score' => $score}
-                )
-                ) {
-                $self->_error(
-                    {   'task' => $task,
-                        'type' => 'execution',
-                        'message' =>
-                            "Error while updating DB for user $user_ref->{'email'}"
-                    }
-                );
-                next;
-            }
+            my $result = $list->update_list_member(
+                $user_ref->{'email'}, {'score' => $score}
+            );
+            push @errors,
+                "Error while updating DB for user $user_ref->{'email'}"
+                if !$result;
         }
     }
+    croak join("", @errors) if @errors;
+
     return 1;
 }
 
@@ -1513,6 +1278,7 @@ sub _process_bouncers {
     );
 
     my $all_lists = Sympa::List::get_lists();
+    my @errors;
     foreach my $list (@$all_lists) {
         my $listname = $list->name;
 
@@ -1558,16 +1324,9 @@ sub _process_bouncers {
             if (defined $bouncers[$level] && @{$bouncers[$level]}) {
                 ## calling action subroutine with (list,email list) in
                 ## parameter
-                unless ($actions{$action}->($list, $bouncers[$level])) {
-                    $self->_error(
-                        {   'task' => $task,
-                            'type' => 'execution',
-                            'message' =>
-                                "Error while trying to execute action for bouncing users in list $listname"
-                        }
-                    );
-                    return undef;
-                }
+                croak "Error while trying to execute action for bouncing " .
+                    "users in list $listname\n"
+                    unless $actions{$action}->($list, $bouncers[$level]);
 
                 ## calling notification subroutine with (list,action, email
                 ## list) in parameter
@@ -1579,37 +1338,23 @@ sub _process_bouncers {
                 };
 
                 if ($notification eq 'listmaster') {
-                    unless (
-                        $list->robot->send_notify_to_listmaster(
-                            'automatic_bounce_management', $param
-                        )
-                        ) {
-                        $self->_error(
-                            {   'task' => $task,
-                                'type' => 'execution',
-                                'message' =>
-                                    'error while notifying listmaster'
-                            }
-                        );
-                    }
+                    my $result = $list->robot->send_notify_to_listmaster(
+                        'automatic_bounce_management', $param
+                    );
+                    push @errors, "error while notifying listmaster\n"
+                        unless $result;
                 } elsif ($notification eq 'owner') {
-                    unless (
-                        $list->send_notify_to_owner(
-                            'automatic_bounce_management', $param
-                        )
-                        ) {
-                        $self->_error(
-                            {   'task' => $task,
-                                'type' => 'execution',
-                                'message' =>
-                                    'error while notifying listmaster'
-                            }
-                        );
-                    }
+                    my $result = $list->send_notify_to_owner(
+                        'automatic_bounce_management', $param
+                    );
+                    push @errors, "error while notifying listmaster\n"
+                        unless $result;
                 }
             }
         }
     }
+    croak join("", @errors) if @errors;
+
     return 1;
 }
 
@@ -1702,63 +1447,23 @@ sub _sync_include {
     unless (defined $list and ref $list eq 'Sympa::List') {
         return undef;
     }
-    unless ($list->sync_include()) {
-        $self->_error(
-            {   'task' => $task,
-                'type' => 'execution',
-                'message' =>
-                    sprintf(
-                    'Error while synchronizing list members for list %s',
-                    $list)
-            }
-        );
-    }
-    if (scalar @{$list->editor_include} or scalar @{$list->owner_include}) {
-        unless ($list->sync_include_admin()) {
-            $self->_error(
-                {   'task' => $task,
-                    'type' => 'execution',
-                    'message' =>
-                        sprintf(
-                        'Error while synchronizing list admins for list %s',
-                        $list->get_id)
-                }
-            );
-        }
-    }
-    return undef if ($self->{'errors'});
-    return 1;
-}
 
-## Marks the task as being in error with details of the exact error.
-sub _error {
-    my $self  = shift;
-    my $param = shift;
+    my $listname = $list->name();
+    my @errors;
 
-    my $task = $param->{'task'};
-    Sympa::Log::Syslog::do_log(
-        'err',
-        'Error at line %s in task %s: %s',
-        $self->{'line_number'},
-        $task->get_description, $param->{'message'}
-    );
-    my $error_description;
-    $error_description->{'message'} = $param->{'message'};
-    $error_description->{'type'}    = $param->{'type'};
-    $error_description->{'line'}    = $self->{'line_number'};
+    my $result = $list->sync_include();
+    push @errors, "Error while synchronizing list members for list $listname\n"
+        unless $result;
 
-    if (defined $task) {
-        if (defined $task->{'errors'}) {
-            push @{$task->{'errors'}}, $error_description;
-        } else {
-            $task->{'errors'} = [$error_description];
-        }
-    } else {
-        Sympa::Log::Syslog::do_log('err',
-            'No task object to register error. It will not be used in the reports.'
-        );
-        return undef;
+    if (@{$list->editor_include()} or @{$list->owner_include()}) {
+        $result = $list->sync_include_admin();
+        push @errors,
+            "Error while synchronizing list admins for list $listname\n"
+            unless $result;
     }
+
+    croak join("", @errors) if @errors;
+
     return 1;
 }
 
