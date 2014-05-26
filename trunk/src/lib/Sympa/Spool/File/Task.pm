@@ -248,29 +248,29 @@ sub create_required_global_tasks {
     foreach my $model (get_used_models) {
         $used_models{$model} = 1;
     }
+
     foreach my $key (keys %global_models) {
         Sympa::Log::Syslog::do_log('debug2', "global_model : $key");
-        unless ($used_models{$global_models{$key}}) {
-            if (Sympa::Site->$key) {
-                my $task = Sympa::Task->create(
-                    'creation_date' => $param->{'current_date'},
-                    'model'         => $global_models{$key},
-                    'flavour'       => Sympa::Site->$key,
-                    'data'          => $data
-                );
-                unless ($task) {
-                    creation_error(
-                        sprintf
-                            'Unable to create task with parameters creation_date = "%s", model = "%s", flavour = "%s", data = "%s"',
-                        $param->{'current_date'},
-                        $global_models{$key},
-                        Sympa::Site->$key,
-                        $data
-                    );
-                }
-                $used_models{$1} = 1;
-            }
+        next if $used_models{$global_models{$key}};
+        next unless Sympa::Site->$key;
+
+        my $task = Sympa::Task->create(
+            'creation_date' => $param->{'current_date'},
+            'model'         => $global_models{$key},
+            'flavour'       => Sympa::Site->$key,
+            'data'          => $data
+        );
+        unless ($task) {
+            creation_error(
+                sprintf
+                    'Unable to create task with parameters creation_date = "%s", model = "%s", flavour = "%s", data = "%s"',
+                $param->{'current_date'},
+                $global_models{$key},
+                Sympa::Site->$key,
+                $data
+            );
         }
+        $used_models{$1} = 1;
     }
 }
 
@@ -302,59 +302,59 @@ sub create_required_lists_tasks {
             my $tt = 0;
 
             foreach my $model (@list_models) {
-                unless ($used_list_models{$model}) {
-                    my $model_task_parameter = "$model" . '_task';
+                next if $used_list_models{$model};
 
-                    if ($model eq 'sync_include') {
-                        next
-                            unless $list->has_include_data_sources()
-                                and $list->status eq 'open';
-                        my $task = Sympa::Task->create(
-                            'creation_date' => $param->{'current_date'},
-                            'label'         => 'INIT',
-                            'model'         => $model,
-                            'flavour'       => 'ttl',
-                            'data'          => \%data
-                        );
-                        unless ($task) {
-                            creation_error(
-                                sprintf
-                                    'Unable to create task with parameters list = "%s", creation_date = "%s", label = "%s", model = "%s", flavour = "%s", data = "%s"',
-                                $list->get_list_id,
-                                $param->{'current_date'},
-                                'INIT',
-                                $model,
-                                'ttl',
-                                \%data
-                            );
-                        }
-                        Sympa::Log::Syslog::do_log('debug3',
-                            'sync_include task creation done');
-                        $tt++;
+                my $model_task_parameter = "$model" . '_task';
 
-                    } elsif (%{$list->$model_task_parameter}
-                        and defined $list->$model_task_parameter->{'name'}
-                        and $list->status eq 'open') {
-                        my $task = Sympa::Task->create(
-                            'creation_date' => $param->{'current_date'},
-                            'model'         => $model,
-                            'flavour'       =>
-                                $list->$model_task_parameter->{'name'},
-                            'data'          => \%data
+                if ($model eq 'sync_include') {
+                    next
+                        unless $list->has_include_data_sources()
+                            and $list->status eq 'open';
+                    my $task = Sympa::Task->create(
+                        'creation_date' => $param->{'current_date'},
+                        'label'         => 'INIT',
+                        'model'         => $model,
+                        'flavour'       => 'ttl',
+                        'data'          => \%data
+                    );
+                    unless ($task) {
+                        creation_error(
+                            sprintf
+                                'Unable to create task with parameters list = "%s", creation_date = "%s", label = "%s", model = "%s", flavour = "%s", data = "%s"',
+                            $list->get_list_id,
+                            $param->{'current_date'},
+                            'INIT',
+                            $model,
+                            'ttl',
+                            \%data
                         );
-                        unless ($task) {
-                            creation_error(
-                                sprintf
-                                    'Unable to create task with parameters list = "%s", creation_date = "%s", model = "%s", flavour = "%s", data = "%s"',
-                                $list->get_id,
-                                $param->{'current_date'},
-                                $model,
-                                $list->$model_task_parameter->{'name'},
-                                \%data
-                            );
-                        }
-                        $tt++;
                     }
+                    Sympa::Log::Syslog::do_log('debug3',
+                        'sync_include task creation done');
+                    $tt++;
+
+                } elsif (%{$list->$model_task_parameter}
+                    and defined $list->$model_task_parameter->{'name'}
+                    and $list->status eq 'open') {
+                    my $task = Sympa::Task->create(
+                        'creation_date' => $param->{'current_date'},
+                        'model'         => $model,
+                        'flavour'       =>
+                            $list->$model_task_parameter->{'name'},
+                        'data'          => \%data
+                    );
+                    unless ($task) {
+                        creation_error(
+                            sprintf
+                                'Unable to create task with parameters list = "%s", creation_date = "%s", model = "%s", flavour = "%s", data = "%s"',
+                            $list->get_id,
+                            $param->{'current_date'},
+                            $model,
+                            $list->$model_task_parameter->{'name'},
+                            \%data
+                        );
+                    }
+                    $tt++;
                 }
             }
         }
