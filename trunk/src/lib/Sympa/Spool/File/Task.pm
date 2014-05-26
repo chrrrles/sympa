@@ -152,13 +152,13 @@ sub list_tasks {
     ## Create Task objects
     foreach my $t (@tasks) {
         my $task = Sympa::Task->new(
-            task_date    => $t->{'task_date'},
-            task_label   => $t->{'task_label'},
-            task_model   => $t->{'task_model'},
-            task_flavour => $t->{'task_flavour'},
-            task_object  => $t->{'task_object'},
-            list         => $t->{'list'},
-            domain       => $t->{'domain'},
+            date    => $t->{'task_date'},
+            label   => $t->{'task_label'},
+            model   => $t->{'task_model'},
+            flavour => $t->{'task_flavour'},
+            object  => $t->{'task_object'},
+            list    => $t->{'list'},
+            domain  => $t->{'domain'},
         );
         ## Maintain list of tasks
         push @task_list, $task;
