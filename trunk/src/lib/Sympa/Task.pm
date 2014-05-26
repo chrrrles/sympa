@@ -155,35 +155,29 @@ sub create {
         $params{'data'}
     );
 
-    # Creating task object. Simulating data retrieved from the database.
-    my $task_in_spool;
-    $task_in_spool->{'task_date'}    = $params{'creation_date'};
-    $task_in_spool->{'task_label'}   = $params{'label'};
-    $task_in_spool->{'task_model'}   = $params{'model'};
-    $task_in_spool->{'task_flavour'} = $params{'flavour'};
-
+    my ($object, $list, $domain);
     if (defined $params{'data'}{'list'}) {
         my $list = $params{'data'}{'list'};
         if (ref $list eq 'Sympa::List') {
-            $task_in_spool->{'list'}   = $list->name;
-            $task_in_spool->{'domain'} = $list->domain;
+            $list   = $list->name;
+            $domain = $list->domain;
         } else {
             ## Compat: $list is not blessed.
-            $task_in_spool->{'list'}   = $list->{'name'};
-            $task_in_spool->{'domain'} = $list->{'robot'};
+            $list   = $list->{'name'};
+            $domain = $list->{'robot'};
         }
-        $task_in_spool->{'task_object'} = 'list';
+        $object = 'list';
     } else {
-        $task_in_spool->{'task_object'} = '_global';
+        $object = '_global';
     }
     my $self = Sympa::Task->new(
-        task_date    => $task_in_spool->{'task_date'},
-        task_label   => $task_in_spool->{'task_label'},
-        task_model   => $task_in_spool->{'task_model'},
-        task_flavour => $task_in_spool->{'task_flavour'},
-        task_object  => $task_in_spool->{'task_object'},
-        list         => $task_in_spool->{'list'},
-        domain       => $task_in_spool->{'domain'},
+        task_date    => $params{'creation_date'},
+        task_label   => $params{'label'},
+        task_model   => $params{'model'},
+        task_flavour => $params{'flavour'},
+        task_object  => $object,
+        list         => $list,
+        domain       => $domain,
     );
     unless ($self) {
         Sympa::Log::Syslog::do_log('err', 'Unable to create task object');
