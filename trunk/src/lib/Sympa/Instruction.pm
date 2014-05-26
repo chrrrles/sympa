@@ -465,13 +465,12 @@ sub _next_cmd {
     }
     Sympa::Log::Syslog::do_log('debug2', 'Will create next task');
     
-    my $result = Sympa::Task::create(
-        {   'creation_date' => $date,
-            'label'         => $tab[1],
-            'model'         => $model,
-            'flavour'       => $flavour,
-            'data'          => \%data
-        }
+    my $result = Sympa::Task->create(
+        'creation_date' => $date,
+        'label'         => $tab[1],
+        'model'         => $model,
+        'flavour'       => $flavour,
+        'data'          => \%data
     );
     croak "error in create command : Failed to create task $model.$flavour\n"
         unless $result;
@@ -604,8 +603,11 @@ sub _create_cmd {
     }
     $type = '_global';
 
-    my $result = Sympa::Task::create(
-        $task->{'date'}, '', $model, $flavour, \%data
+    my $result = Sympa::Task->create(
+        'creation_date' => $task->{'date'},
+        'model'         => $model,
+        'flavour'       => $flavour,
+        'data'          => \%data
     );
     croak "Creation of task $model.$flavour failed\n" unless $result;
 
