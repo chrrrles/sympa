@@ -10793,8 +10793,15 @@ sub purge {
             }
         )
         ) {
-        my $task = Sympa::Task->new($task_in_spool)
-            if $task_in_spool;
+        my $task = Sympa::Task->new(
+            task_date    => $task_in_spool->{'task_date'},
+            task_label   => $task_in_spool->{'task_label'},
+            task_model   => $task_in_spool->{'task_model'},
+            task_flavour => $task_in_spool->{'task_flavour'},
+            task_object  => $task_in_spool->{'task_object'},
+            list         => $task_in_spool->{'list'},
+            domain       => $task_in_spool->{'domain'},
+        ) if $task_in_spool;
         unlink $task->{'filepath'};
     }
 

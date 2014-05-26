@@ -35,57 +35,82 @@ use Sympa::Spool::File::Task;
 use Sympa::Instruction;
 use Sympa::Tools::Time;
 
-#### Task level subs ####
-##########################
+=head1 CLASS METHODS
 
-## Creates a new Task object
+=over 4
+
+=item Sympa::Task->new(%parameters)
+
+Creates a new L<Sympa::Task> object.
+
+Parameters:
+
+=over 4
+
+=item * I<messageasstring>: FIXME
+
+=item * I<task_date>: FIXME
+
+=item * I<task_label>: FIXME
+
+=item * I<task_flavour>: FIXME
+
+=item * I<task_object>: FIXME
+
+=item * I<robot>: FIXME
+
+=item * I<list>: FIXME
+
+=back
+
+Returns a new L<Sympa::Task> object, or I<undef> for failure.
+
+=cut
+
 sub new {
-    my ($pkg, $task_in_spool) = @_;
-    my $task;
+    my ($class, %params) = @_;
+
     Sympa::Log::Syslog::do_log(
         'debug2',
         'Sympa::Task::new  messagekey = %s',
-        $task_in_spool->{'messagekey'}
+        $params{'messagekey'}
     );
-    if ($task_in_spool) {
-        $task                      = $task_in_spool;
-        $task->{'messageasstring'} = $task_in_spool->{'messageasstring'};
-        $task->{'date'}            = $task_in_spool->{'task_date'};
-        $task->{'label'}           = $task_in_spool->{'task_label'};
-        $task->{'model'}           = $task_in_spool->{'task_model'};
-        $task->{'flavour'}         = $task_in_spool->{'task_flavour'};
-        $task->{'object'}          = $task_in_spool->{'task_object'};
-        $task->{'domain'}          = $task_in_spool->{'robot'};
 
-        if ($task_in_spool->{'list'}) {    # list task
-            $task->{'list_object'} = Sympa::List->new(
-                $task_in_spool->{'list'},
-                $task_in_spool->{'robot'},
-                {'skip_sync_admin' => 1}
+    my $self = bless {
+        'messageasstring' => $params{'messageasstring'},
+        'date'            => $params{'task_date'} || time(),
+        'label'           => $params{'task_label'},
+        'model'           => $params{'task_flavour'},
+        'object'          => $params{'task_object'},
+        'domain'          => $params{'robot'},
+    }, $class;
+
+    if ($params{'list'}) {    # list task
+        my $list = Sympa::List->new(
+            $params{'list'},
+            $params{'robot'},
+            {'skip_sync_admin' => 1}
+        );
+
+        unless ($list) {
+            Sympa::Log::Syslog::do_log(
+                'err',
+                'Unable to create new task object for list %s@%s. This list does not exist',
+                $params{'list'},
+                $params{'robot'}
             );
-            $task->{'domain'} = $task->{'list_object'}{'domain'};
-            unless (defined $task->{'list_object'}) {
-                Sympa::Log::Syslog::do_log(
-                    'err',
-                    'Unable to create new task object for list %s@%s. This list does not exist',
-                    $task_in_spool->{'list'},
-                    $task_in_spool->{'robot'}
-                );
-                return undef;
-            }
-            $task->{'id'} = $task->{'list_object'}{'name'};
-            $task->{'id'} .= '@' . $task->{'domain'}
-                if (defined $task->{'domain'});
+            return undef;
         }
-        $task->{'description'} = get_description($task);
-    } else {
-        $task->{'date'} = time;
+
+        $self->{'list_object'} = $list;
+        $self->{'domain'}      = $list->{'domain'};
+        $self->{'id'}          = $list->{'domain'} ?
+            $list->{'name'} . '@' . $list->{'domain'} : $list->{'name'};
     }
 
-    ## Bless Task object
-    bless $task, $pkg;
+    $self->{'description'} = get_description($self);
 
-    return $task;
+    return $self;
 }
 
 ## task creation in spool
@@ -122,7 +147,15 @@ sub create {
     } else {
         $task_in_spool->{'task_object'} = '_global';
     }
-    my $self = Sympa::Task->new($task_in_spool);
+    my $self = Sympa::Task->new(
+        task_date    => $task_in_spool->{'task_date'},
+        task_label   => $task_in_spool->{'task_label'},
+        task_model   => $task_in_spool->{'task_model'},
+        task_flavour => $task_in_spool->{'task_flavour'},
+        task_object  => $task_in_spool->{'task_object'},
+        list         => $task_in_spool->{'list'},
+        domain       => $task_in_spool->{'domain'},
+    );
     unless ($self) {
         Sympa::Log::Syslog::do_log('err', 'Unable to create task object');
         return undef;
