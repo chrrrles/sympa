@@ -150,16 +150,16 @@ sub list_tasks {
     my @tasks = $self->get_content();
 
     ## Create Task objects
-    foreach my $t (@tasks) {
+    foreach my $task_in_spool (@tasks) {
         my $task = Sympa::Task->new(
-            messageasstring => $t->{'messageasstring'},
-            date    => $t->{'task_date'},
-            label   => $t->{'task_label'},
-            model   => $t->{'task_model'},
-            flavour => $t->{'task_flavour'},
-            object  => $t->{'task_object'},
-            list    => $t->{'list'},
-            domain  => $t->{'domain'},
+            messageasstring => $task_in_spool->{'messageasstring'},
+            date            => $task_in_spool->{'task_date'},
+            label           => $task_in_spool->{'task_label'},
+            model           => $task_in_spool->{'task_model'},
+            flavour         => $task_in_spool->{'task_flavour'},
+            object          => $task_in_spool->{'task_object'},
+            list            => $task_in_spool->{'list'},
+            domain          => $task_in_spool->{'domain'},
         );
         ## Maintain list of tasks
         push @task_list, $task;

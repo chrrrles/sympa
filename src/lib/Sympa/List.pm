@@ -10793,16 +10793,20 @@ sub purge {
             }
         )
         ) {
+        next unless $task_in_spool;
+
         my $task = Sympa::Task->new(
             messageasstring => $task_in_spool->{'messageasstring'},
-            date    => $task_in_spool->{'task_date'},
-            label   => $task_in_spool->{'task_label'},
-            model   => $task_in_spool->{'task_model'},
-            flavour => $task_in_spool->{'task_flavour'},
-            object  => $task_in_spool->{'task_object'},
-            list    => $task_in_spool->{'list'},
-            domain  => $task_in_spool->{'domain'},
-        ) if $task_in_spool;
+            date            => $task_in_spool->{'task_date'},
+            label           => $task_in_spool->{'task_label'},
+            model           => $task_in_spool->{'task_model'},
+            flavour         => $task_in_spool->{'task_flavour'},
+            object          => $task_in_spool->{'task_object'},
+            list            => $task_in_spool->{'list'},
+            domain          => $task_in_spool->{'domain'},
+        );
+        next unless $task;
+
         unlink $task->{'filepath'};
     }
 
