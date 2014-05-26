@@ -244,7 +244,6 @@ sub create_required_global_tasks {
     Sympa::Log::Syslog::do_log('debug',
         'Creating required tasks from global models');
 
-    my $task;
     my %used_models;    # models for which a task exists
     foreach my $model (get_used_models) {
         $used_models{$model} = 1;
@@ -253,7 +252,7 @@ sub create_required_global_tasks {
         Sympa::Log::Syslog::do_log('debug2', "global_model : $key");
         unless ($used_models{$global_models{$key}}) {
             if (Sympa::Site->$key) {
-                $task = Sympa::Task->create(
+                my $task = Sympa::Task->create(
                     'creation_date' => $param->{'current_date'},
                     'model'         => $global_models{$key},
                     'flavour'       => Sympa::Site->$key,
@@ -281,7 +280,6 @@ sub create_required_lists_tasks {
     Sympa::Log::Syslog::do_log('debug',
         'Creating required tasks from list models');
 
-    my $task;
     foreach my $robot (@{Sympa::Robot::get_robots()}) {
         Sympa::Log::Syslog::do_log('debug3',
             'creating list task : current bot is %s', $robot);
@@ -311,7 +309,7 @@ sub create_required_lists_tasks {
                         next
                             unless $list->has_include_data_sources()
                                 and $list->status eq 'open';
-                        $task = Sympa::Task->create(
+                        my $task = Sympa::Task->create(
                             'creation_date' => $param->{'current_date'},
                             'label'         => 'INIT',
                             'model'         => $model,
@@ -337,7 +335,7 @@ sub create_required_lists_tasks {
                     } elsif (%{$list->$model_task_parameter}
                         and defined $list->$model_task_parameter->{'name'}
                         and $list->status eq 'open') {
-                        $task = Sympa::Task->create(
+                        my $task = Sympa::Task->create(
                             'creation_date' => $param->{'current_date'},
                             'model'         => $model,
                             'flavour'       =>
