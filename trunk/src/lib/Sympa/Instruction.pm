@@ -662,6 +662,9 @@ sub _purge_logs_table {
     my $execution_date = $task->{'date'};
     my @slots          = ();
 
+    require Sympa::DatabaseManager;
+    require Sympa::Log::Database;
+
     Sympa::Log::Syslog::do_log('debug2', 'purge_logs_table()');
     my $result = Sympa::Log::Database::db_log_del();
     croak "Failed to delete logs\n" unless $result;
