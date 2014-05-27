@@ -257,7 +257,7 @@ while (!$end) {
     # Process grouped notifications
     Sympa::Site->send_notify_to_listmaster(undef, undef, 1, undef);
 
-    Sympa::Spool::File::Task::create_required_tasks($current_date);
+    $taskspool->create_required_tasks($current_date);
 
     ## Execute existing tasks
     ## processing of tasks anterior to the current date
