@@ -215,17 +215,20 @@ sub create_required_tasks {
             $current_date,  # hash of datas necessary to the creation of tasks
         'execution_date' => 'execution_date'
     );
-    create_required_global_tasks(
-        {'data' => \%default_data, 'current_date' => $current_date});
-    create_required_lists_tasks(
-        {'data' => \%default_data, 'current_date' => $current_date});
+    $self->_create_required_global_tasks(
+        'data'         => \%default_data,
+        'current_date' => $current_date
+    );
+    $self->_create_required_lists_tasks(
+        'data'         => \%default_data,
+        'current_date' => $current_date
+    );
 }
 
 ## Checks that all the required GLOBAL tasks at the serever level are defined.
 ## Create them if needed.
-sub create_required_global_tasks {
-    my $param = shift;
-    my $data  = $param->{'data'};
+sub _create_required_global_tasks {
+    my ($self, %params) = @_;
     Sympa::Log::Syslog::do_log('debug',
         'Creating required tasks from global models');
 
@@ -240,19 +243,19 @@ sub create_required_global_tasks {
         next unless Sympa::Site->$key;
 
         my $task = Sympa::Task->create(
-            'creation_date' => $param->{'current_date'},
+            'creation_date' => $params{'current_date'},
             'model'         => $global_models{$key},
             'flavour'       => Sympa::Site->$key,
-            'data'          => $data
+            'data'          => $params{'data'}
         );
         unless ($task) {
             creation_error(
                 sprintf
                     'Unable to create task with parameters creation_date = "%s", model = "%s", flavour = "%s", data = "%s"',
-                $param->{'current_date'},
+                $params{'current_date'},
                 $global_models{$key},
                 Sympa::Site->$key,
-                $data
+                $params{data}
             );
         }
         $used_models{$1} = 1;
@@ -260,8 +263,8 @@ sub create_required_global_tasks {
 }
 
 ## Checks that all the required LIST tasks are defined. Create them if needed.
-sub create_required_lists_tasks {
-    my $param = shift;
+sub _create_required_lists_tasks {
+    my ($self, %params) = @_;
     Sympa::Log::Syslog::do_log('debug',
         'Creating required tasks from list models');
 
@@ -272,7 +275,7 @@ sub create_required_lists_tasks {
         foreach my $list (@$all_lists) {
             Sympa::Log::Syslog::do_log('debug3',
                 'creating list task : current list is %s', $list);
-            my %data = %{$param->{'data'}};
+            my %data = %{$params{'data'}};
             $data{'list'} = {'name' => $list->name, 'robot' => $list->domain};
 
             my %used_list_models;    # stores which models already have a task
@@ -296,7 +299,7 @@ sub create_required_lists_tasks {
                         unless $list->has_include_data_sources()
                             and $list->status eq 'open';
                     my $task = Sympa::Task->create(
-                        'creation_date' => $param->{'current_date'},
+                        'creation_date' => $params{'current_date'},
                         'label'         => 'INIT',
                         'model'         => $model,
                         'flavour'       => 'ttl',
@@ -307,7 +310,7 @@ sub create_required_lists_tasks {
                             sprintf
                                 'Unable to create task with parameters list = "%s", creation_date = "%s", label = "%s", model = "%s", flavour = "%s", data = "%s"',
                             $list->get_list_id,
-                            $param->{'current_date'},
+                            $params{'current_date'},
                             'INIT',
                             $model,
                             'ttl',
@@ -322,7 +325,7 @@ sub create_required_lists_tasks {
                     and defined $list->$model_task_parameter->{'name'}
                     and $list->status eq 'open') {
                     my $task = Sympa::Task->create(
-                        'creation_date' => $param->{'current_date'},
+                        'creation_date' => $params{'current_date'},
                         'model'         => $model,
                         'flavour'       =>
                             $list->$model_task_parameter->{'name'},
@@ -333,7 +336,7 @@ sub create_required_lists_tasks {
                             sprintf
                                 'Unable to create task with parameters list = "%s", creation_date = "%s", model = "%s", flavour = "%s", data = "%s"',
                             $list->get_id,
-                            $param->{'current_date'},
+                            $params{'current_date'},
                             $model,
                             $list->$model_task_parameter->{'name'},
                             \%data
