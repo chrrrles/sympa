@@ -191,14 +191,24 @@ sub _get_used_models {
     }
 }
 
-## Checks that all the required tasks at the server level are defined. Create
-## them if needed.
-sub create_required_tasks {
-    Sympa::Log::Syslog::do_log('debug2', '(%s)', @_);
-    my $current_date = shift;
+=head1 INSTANCE METHODS
 
-    my $taskspool = Sympa::Spool::File::Task->new();
-    $taskspool->_list_tasks();
+=over 4
+
+=item $spool->create_required_tasks($date)
+
+Checks that all the required tasks at the server level are defined. Create
+them if needed.
+
+=back
+
+=cut
+
+sub create_required_tasks {
+    my ($self, $current_date) = @_;
+    Sympa::Log::Syslog::do_log('debug2', '(%s)', @_);
+
+    $self->_list_tasks();
 
     my %default_data = (
         'creation_date' =>
