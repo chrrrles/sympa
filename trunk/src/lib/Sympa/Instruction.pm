@@ -58,6 +58,22 @@ my $subarg_regexp = qr/^
         (?: \( ([^)]+) \) )?
 $/x;
 
+# month hash used by epoch conversion routines
+my %months = (
+    'Jan' => 0,
+    'Feb' => 1,
+    'Mar' => 2,
+    'Apr' => 3,
+    'May' => 4,
+    'Jun' => 5,
+    'Jul' => 6,
+    'Aug' => 7,
+    'Sep' => 8,
+    'Oct' => 9,
+    'Nov' => 10,
+    'Dec' => 11
+);
+
 # regular commands
 my %commands = (
     'next' => {
@@ -986,7 +1002,6 @@ sub _chk_cert_expiration {
     my ($self, $task) = @_;
 
     require Sympa::Site;
-    require Sympa::Spool::File::Task;
 
     my $cert_dir       = Sympa::Site->ssl_cert_dir;
     my $execution_date = $task->{'date'};
@@ -1027,7 +1042,7 @@ sub _chk_cert_expiration {
         }
 
         $date =~ /notAfter=(\w+)\s*(\d+)\s[\d\:]+\s(\d+).+/;
-        my @date = (0, 0, 0, $2, $Sympa::Spool::File::Task::months{$1}, $3 - 1900);
+        my @date = (0, 0, 0, $2, $months{$1}, $3 - 1900);
         $date =~ s/notAfter=//;
         my $expiration_date = Time::Local::timegm(@date);
 
@@ -1164,7 +1179,7 @@ sub _update_crl {
         }
 
         $date =~ /nextUpdate=(\w+)\s*(\d+)\s(\d\d)\:(\d\d)\:\d\d\s(\d+).+/;
-        my @date = (0, $4, $3 - 1, $2, $Sympa::Spool::File::Task::months{$1}, $5 - 1900);
+        my @date = (0, $4, $3 - 1, $2, $months{$1}, $5 - 1900);
         my $expiration_date = Time::Local::timegm(@date);
 
         ## check if the crl is soon expired or expired
