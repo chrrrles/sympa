@@ -366,7 +366,6 @@ sub execute {
 
 # remove files whose name is given in the key 'file' of the hash
 sub _rm_file {
-
     my ($self, $task) = @_;
 
     my @tab = @{$self->{'Rarguments'}};
@@ -393,14 +392,14 @@ sub _stop {
 sub _send_msg {
     my ($self, $task) = @_;
 
-    require Sympa::Site;
-
     my @tab      = @{$self->{'Rarguments'}};
     my $template = $tab[1];
     my $var      = $tab[0];
 
     Sympa::Log::Syslog::do_log('notice',
         "line $self->{'line_number'} : send_msg (@{$self->{'Rarguments'}})");
+
+    require Sympa::Site;
 
     if ($task->{'object'} eq '_global') {
         foreach my $email (keys %{$self->{'variables'}{$var}}) {
@@ -428,12 +427,7 @@ sub _send_msg {
 sub _next_cmd {
     my ($self, $task) = @_;
 
-    require Sympa::Site;
-    require Sympa::Spool::File::Task;
-    require Sympa::Task;
-
     my @tab = @{$self->{'Rarguments'}};
-
     # conversion of the date argument into epoch format
     my $date = Sympa::Tools::Time::epoch_conv($tab[0], $task->{'date'});
     my $label = $tab[1];
@@ -441,6 +435,10 @@ sub _next_cmd {
     Sympa::Log::Syslog::do_log('debug2',
         "line $self->{'line_number'} of $task->{'model'} : next ($date, $label)"
     );
+
+    require Sympa::Site;
+    require Sympa::Spool::File::Task;
+    require Sympa::Task;
 
     $task->{'must_stop'} = 1;
     my $listname = $task->{'object'};
@@ -499,13 +497,14 @@ sub _next_cmd {
 sub _select_subs {
     my ($self, $task) = @_;
 
-    require Sympa::Scenario;
-
     my @tab       = @{$self->{'Rarguments'}};
     my $condition = $tab[0];
 
     Sympa::Log::Syslog::do_log('debug2',
         "line $self->{'line_number'} : select_subs ($condition)");
+
+    require Sympa::Scenario;
+
     $condition =~ /(\w+)\(([^\)]*)\)/;
     if ($2) {    # conversion of the date argument into epoch format
         my $date = Sympa::Tools::Time::epoch_conv($2, $task->{'date'});
@@ -552,14 +551,14 @@ sub _select_subs {
 sub _delete_subs_cmd {
     my ($self, $task) = @_;
 
-    require Sympa::Scenario;
-    require Sympa::Site;
-
     my @tab = @{$self->{'Rarguments'}};
     my $var = $tab[0];
 
     Sympa::Log::Syslog::do_log('notice',
         "line $self->{'line_number'} : delete_subs ($var)");
+
+    require Sympa::Scenario;
+    require Sympa::Site;
 
     my $list = $task->{'list_object'};
     my $listname = $list->name();
@@ -590,7 +589,6 @@ sub _delete_subs_cmd {
 }
 
 sub _create_cmd {
-
     my ($self, $task) = @_;
 
     my @tab     = @{$self->{'Rarguments'}};
@@ -631,7 +629,6 @@ sub _create_cmd {
 }
 
 sub _exec_cmd {
-
     my ($self, $task) = @_;
 
     my @tab  = @{$self->{'Rarguments'}};
@@ -655,17 +652,18 @@ sub _exec_cmd {
     return 1;
 }
 
+# If a log is older then $list->get_latest_distribution_date()-$delai expire the log
 sub _purge_logs_table {
-
-    # If a log is older then $list->get_latest_distribution_date()-$delai expire the log
     my ($self, $task) = @_;
+
     my $execution_date = $task->{'date'};
     my @slots          = ();
+
+    Sympa::Log::Syslog::do_log('debug2', 'purge_logs_table()');
 
     require Sympa::DatabaseManager;
     require Sympa::Log::Database;
 
-    Sympa::Log::Syslog::do_log('debug2', 'purge_logs_table()');
     my $result = Sympa::Log::Database::db_log_del();
     croak "Failed to delete logs\n" unless $result;
 
@@ -711,9 +709,10 @@ sub _purge_logs_table {
 
 ## remove sessions from session_table if older than Sympa::Site->session_table_ttl
 sub _purge_session_table {
-
     my ($self, $task) = @_;
+
     Sympa::Log::Syslog::do_log('info', 'task_manager::purge_session_table()');
+
     require Sympa::Session;
 
     my $removed = Sympa::Session::purge_old_sessions('Site');
@@ -729,12 +728,12 @@ sub _purge_session_table {
 sub _purge_tables {
     my ($self, $task) = @_;
 
+    Sympa::Log::Syslog::do_log('info', 'task_manager::purge_tables()');
+
     require Sympa::Bulk;
     require Sympa::List;
     require Sympa::Robot;
     require Sympa::Tracking;
-
-    Sympa::Log::Syslog::do_log('info', 'task_manager::purge_tables()');
 
     my $removed = Sympa::Bulk::purge_bulkspool();
     croak "Failed to purge tables\n" unless $removed;
@@ -760,6 +759,7 @@ sub _purge_tables {
 ## remove one time ticket table if older than Sympa::Site->one_time_ticket_table_ttl
 sub _purge_one_time_ticket_table {
     my ($self, $task) = @_;
+
     Sympa::Log::Syslog::do_log('info',
         'task_manager::purge_one_time_ticket_table()');
 
@@ -852,9 +852,9 @@ sub _purge_user_table {
 sub _purge_orphan_bounces {
     my ($self, $task) = @_;
 
-    require Sympa::List;
-
     Sympa::Log::Syslog::do_log('info', 'purge_orphan_bounces()');
+
+    require Sympa::List;
 
     ## Hash {'listname' => 'bounced address' => 1}
     my %bounced_users;
@@ -910,17 +910,17 @@ sub _purge_orphan_bounces {
     return 1;
 }
 
+# If a bounce is older then $list->get_latest_distribution_date()-$delai expire the bounce
+# Is this variable my be set in to task modele ?
 sub _expire_bounce {
-    # If a bounce is older then $list->get_latest_distribution_date()-$delai expire the bounce
-    # Is this variable my be set in to task modele ?
     my ($self, $task) = @_;
-
-    require Sympa::List;
 
     my @tab            = @{$self->{'Rarguments'}};
     my $delay          = $tab[0];
 
     Sympa::Log::Syslog::do_log('debug2', 'expire_bounce(%d)', $delay);
+
+    require Sympa::List;
 
     my @errors;
     my $all_lists = Sympa::List::get_lists();
@@ -1004,18 +1004,17 @@ sub _expire_bounce {
 sub _chk_cert_expiration {
     my ($self, $task) = @_;
 
-    require Sympa::Site;
-
     my $cert_dir       = Sympa::Site->ssl_cert_dir;
     my $execution_date = $task->{'date'};
     my @tab            = @{$self->{'Rarguments'}};
     my $template       = $tab[0];
     my $limit          = Sympa::Tools::Time::duration_conv($tab[1], $execution_date);
 
-
     Sympa::Log::Syslog::do_log('notice',
         "line $self->{'line_number'} : chk_cert_expiration (@{$self->{'Rarguments'}})"
     );
+
+    require Sympa::Site;
 
     ## building of certificate list
     opendir(DIR, $cert_dir)
@@ -1126,16 +1125,17 @@ sub _chk_cert_expiration {
 sub _update_crl {
     my ($self, $task) = @_;
 
-    require Sympa::Scenario;
-    require Sympa::Site;
-
     my @tab = @{$self->{'Rarguments'}};
     my $limit = Sympa::Tools::Time::epoch_conv($tab[1], $task->{'date'});
-    my $CA_file = Sympa::Site->home . "/$tab[0]";   # file where CA urls are stored ;
+
     Sympa::Log::Syslog::do_log('notice',
         "line $self->{'line_number'} : update_crl (@tab)");
 
+    require Sympa::Scenario;
+    require Sympa::Site;
+
     # building of CA list
+    my $CA_file = Sympa::Site->home . "/$tab[0]";   # file where CA urls are stored ;
     my @CA;
     open(FILE, $CA_file)
         or croak "can't open $CA_file file\n";
@@ -1266,10 +1266,10 @@ sub _none {
     1;
 }
 
-## Routine for automatic bouncing users management
-##
+# automatic bouncing users management
 sub _process_bouncers {
     my ($self, $task) = @_;
+
     Sympa::Log::Syslog::do_log('info',
         'Processing automatic actions on bouncing users');
 
@@ -1379,8 +1379,7 @@ sub _process_bouncers {
 }
 
 sub _get_score {
-    my $user_ref     = shift;
-    my $list_traffic = shift;
+    my ($user_ref, $list_traffic) = @_;
 
     Sympa::Log::Syslog::do_log('debug', 'Get_score(%s) ',
         $user_ref->{'email'});
