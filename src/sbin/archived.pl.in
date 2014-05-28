@@ -165,11 +165,10 @@ if ($options{'help'}) {
 
 if ($options{'debug'}) {
     $options{'log_level'} = 2 unless ($options{'log_level'});
+    $options{'foreground'} = 1;
 }
 
-$options{'foreground'} = 1 if ($options{'debug'});
-$options{'log_to_stderr'} = 1
-    if ($options{'debug'} || $options{'foreground'});
+$options{'log_to_stderr'} = 1 if $options{'foreground'};
 
 # Load sympa.conf
 unless (defined Sympa::Robot::get_robots()) {
@@ -187,7 +186,7 @@ unless (Sympa::DatabaseManager::check_db_connect()) {
 }
 
 ## Put ourselves in background if not in debug mode.
-unless ($options{'debug'} || $options{'foreground'}) {
+unless ($options{'foreground'}) {
     open(STDERR, ">> /dev/null");
     open(STDOUT, ">> /dev/null");
     if (open(TTY, "/dev/tty")) {

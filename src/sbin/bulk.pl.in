@@ -131,11 +131,10 @@ unless (
 
 if ($options{'debug'}) {
     $options{'log_level'} = 2 unless ($options{'log_level'});
+    $options{'foreground'} = 1;
 }
 
-$options{'foreground'} = 1 if ($options{'debug'});
-$options{'log_to_stderr'} = 1
-    if ($options{'debug'} || $options{'foreground'});
+$options{'log_to_stderr'} = 1 if $options{'foreground'};
 
 if ($options{'help'}) {
     pod2usage(0);
@@ -170,7 +169,7 @@ if ($options{'log_level'}) {
 my $is_main_bulk = 0;
 
 ## Put ourselves in background if not in debug mode.
-unless ($options{'debug'} || $options{'foreground'}) {
+unless ($options{'foreground'}) {
     open(STDERR, ">> /dev/null");
     open(STDOUT, ">> /dev/null");
     if (open(TTY, "/dev/tty")) {
