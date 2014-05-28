@@ -18,7 +18,9 @@ my @tests_nok = (
     [ 'foo'      ,     qr/syntax error/        ],
     [ 'foo()'    ,     qr/unknown command foo/ ],
     [ 'next(foo)',     qr/wrong number of arguments/ ],
-    [ 'next(foo,bar)', qr/argument 'foo' is not a valid date/ ]
+    [ 'next(foo,bar)', qr/argument 'foo' is not a valid date/ ],
+    [ 'next(execution date,bar)', qr/argument 'executiondate' is not a valid date/ ],
+    [ '@foo=bar'                , qr/invalid assignment bar/ ],
 );
 
 my @tests_ok_nocontent = (
@@ -28,18 +30,26 @@ my @tests_ok_nocontent = (
 );
 
 my @tests_ok_content = (
-    [ 'title...foo'     , 'title'  , 'foo'  ],
-    [ ' title...foo'    , 'title'  , 'foo'  ],
-    [ 'title... foo'    , 'title'  , 'foo'  ],
-    [ ' title... foo'   , 'title'  , 'foo'  ],
-    [ '/foo'            , 'label'  , 'foo'  ],
-    [ ' /foo'           , 'label'  , 'foo'  ],
-    [ '/ foo'           , 'label'  , 'foo'  ],
-    [ ' / foo'          , 'label'  , 'foo'  ],
-    [ 'next(333,bar)'   , 'command', 'next' ],
-    [ 'next (333,bar)'  , 'command', 'next' ],
-    [ ' next(333,bar)'  , 'command', 'next' ],
-    [ ' next (333,bar)' , 'command', 'next' ],
+    [ 'title...foo'     , 'title'  , 'title', 'foo'  ],
+    [ ' title...foo'    , 'title'  , 'title', 'foo'  ],
+    [ 'title... foo'    , 'title'  , 'title', 'foo'  ],
+    [ ' title... foo'   , 'title'  , 'title', 'foo'  ],
+    [ '/foo'            , 'label'  , 'label', 'foo'  ],
+    [ ' /foo'           , 'label'  , 'label', 'foo'  ],
+    [ '/ foo'           , 'label'  , 'label', 'foo'  ],
+    [ ' / foo'          , 'label'  , 'label', 'foo'  ],
+    [ 'next(333,bar)'   , 'command', 'command', 'next' ],
+    [ 'next (333,bar)'  , 'command', 'command', 'next' ],
+    [ ' next(333,bar)'  , 'command', 'command', 'next' ],
+    [ ' next (333,bar)' , 'command', 'command', 'next' ],
+    [ ' next(execution_date,bar)' , 'command', 'command', 'next' ],
+    [ ' next(1y1m1d1h1min1sec,bar)' , 'command', 'command', 'next' ],
+    [ ' next(33+1y1m1d1h1min1sec,bar)' , 'command', 'command', 'next' ],
+    [ ' next(33-1y1m1d1h1min1sec,bar)' , 'command', 'command', 'next' ],
+    [ '@foo=select_subs(bar)'          , 'assignment', 'var', '@foo' ],
+    [ ' @foo=select_subs(bar)'         , 'assignment', 'var', '@foo' ],
+    [ '@foo = select_subs(bar)'        , 'assignment', 'var', '@foo' ],
+    [ ' @foo = select_subs(bar)'       , 'assignment', 'var', '@foo' ],
 );
 
 plan tests =>
@@ -87,8 +97,8 @@ foreach my $test (@tests_ok_content) {
         "'$test->[0]' is a $test->[1]"
     );
     is(
-        $instruction->{$test->[1]},
-        $test->[2],
-        "'$test->[0]' has '$test->[2]' as content"
+        $instruction->{$test->[2]},
+        $test->[3],
+        "'$test->[0]' has '$test->[3]' value as '$test->[2]' attribute"
     );
 }
