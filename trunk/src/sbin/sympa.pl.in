@@ -246,13 +246,10 @@ unless (
 
 if ($options{'debug'}) {
     $options{'log_level'} = 2 unless ($options{'log_level'});
+    $options{'foreground'} = 1;
 }
 
-# Some option force foreground mode
-$options{'foreground'} = 1
-    if ($options{'debug'});
-
-$options{'log_to_stderr'} = 1;
+$options{'log_to_stderr'} = 1 if $options{'foreground'};
 
 if ($options{'help'}) {
     pod2usage(0);

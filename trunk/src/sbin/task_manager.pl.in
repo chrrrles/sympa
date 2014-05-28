@@ -121,12 +121,10 @@ if ($options{'help'}) {
 
 if ($options{'debug'}) {
     $options{'log_level'} = 2 unless ($options{'log_level'});
+    $options{'foreground'} = 1;
 }
 
-# Some option force foreground mode
-$options{'foreground'} = 1 if ($options{'debug'});
-$options{'log_to_stderr'} = 1
-    if ($options{'debug'} || $options{'foreground'});
+$options{'log_to_stderr'} = 1 if $options{'foreground'};
 
 my $Version = '0.1';
 
@@ -160,7 +158,7 @@ if ($options{'log_level'}) {
 
 ## Put ourselves in background if not in debug mode.
 
-unless ($options{'debug'} || $options{'foreground'}) {
+unless ($options{'foreground'}) {
     open(STDERR, ">> /dev/null");
     open(STDOUT, ">> /dev/null");
     if (open(TTY, "/dev/tty")) {
