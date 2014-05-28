@@ -262,19 +262,23 @@ sub _parse {
         # assignment
     } elsif ($self->{'line_as_string'} =~ /^\s*(@\w+)\s*=\s*(.+)/) {
 
-        my $subinstruction = Sympa::Instruction->new(
-            line_as_string => $2,
-            line_number    => $self->{'line_number'}
-        );
+        my $subinstruction;
+        eval {
+            $subinstruction = Sympa::Instruction->new(
+                line_as_string => $2,
+                line_number    => $self->{'line_number'}
+            );
+        };
 
-        unless ($asgn_commands{$subinstruction->{'command'}}) {
-            croak "non valid assignment $2\n";
-        } else {
-            $self->{'nature'}     = 'assignment';
-            $self->{'var'}        = $1;
-            $self->{'command'}    = $subinstruction->{'command'};
-            $self->{'Rarguments'} = $subinstruction->{'Rarguments'};
-        }
+        croak "invalid assignment $2: $EVAL_ERROR\n" if $EVAL_ERROR;
+
+        croak "invalid assignment $2: not an assignement command\n"
+            unless $asgn_commands{$subinstruction->{'command'}};
+
+        $self->{'nature'}     = 'assignment';
+        $self->{'var'}        = $1;
+        $self->{'command'}    = $subinstruction->{'command'};
+        $self->{'Rarguments'} = $subinstruction->{'Rarguments'};
     } else {
         croak "syntax error\n";
     }
