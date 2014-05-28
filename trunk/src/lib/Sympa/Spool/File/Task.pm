@@ -31,12 +31,6 @@ use Sympa::Log::Syslog;
 use Sympa::Robot;
 use Sympa::Task;
 
-my @task_list;
-my %task_by_list;
-my %task_by_model;
-
-my @tasks;    # list of tasks in the spool
-
 our $filename_regexp = '^(\d+)\.([^\.]+)?\.([^\.]+)\.(\S+)$';
 ## list of list task models
 #my @list_models = ('expire', 'remind', 'sync_include');
@@ -123,68 +117,6 @@ sub analyze_file_name {
     return $data;
 }
 
-## Build all Task objects
-sub _list_tasks {
-    Sympa::Log::Syslog::do_log('debug2', '(%s)', @_);
-    my $self = shift;
-
-    ## Reset the list of tasks
-    undef @task_list;
-    undef %task_by_list;
-    undef %task_by_model;
-
-    # fetch all task
-    my @tasks = $self->get_content();
-
-    ## Create Task objects
-    foreach my $task_in_spool (@tasks) {
-        my $task = Sympa::Task->new(
-            messageasstring => $task_in_spool->{'messageasstring'},
-            date            => $task_in_spool->{'task_date'},
-            label           => $task_in_spool->{'task_label'},
-            model           => $task_in_spool->{'task_model'},
-            flavour         => $task_in_spool->{'task_flavour'},
-            object          => $task_in_spool->{'task_object'},
-            list            => $task_in_spool->{'list'},
-            domain          => $task_in_spool->{'domain'},
-        );
-        ## Maintain list of tasks
-        push @task_list, $task;
-
-        my $list_id = $task->{'id'};
-        my $model   = $task->{'model'};
-
-        $task_by_model{$model}{$list_id} = $task;
-        $task_by_list{$list_id}{$model}  = $task;
-    }
-    return 1;
-}
-
-## Returns a hash containing the model used. The models returned are all the
-## global models or, if a list name is given as argument, the models used for
-## this list.
-sub _get_used_models {
-    ## Optional list parameter
-    my $list_id = shift;
-    Sympa::Log::Syslog::do_log('debug3', "Getting used models for list '%s'",
-        $list_id);
-
-    if (defined $list_id) {
-        if (defined $task_by_list{$list_id}) {
-            Sympa::Log::Syslog::do_log('debug2',
-                "Found used models for list '%s'", $list_id);
-            return keys %{$task_by_list{$list_id}};
-        } else {
-            Sympa::Log::Syslog::do_log('debug2',
-                "Did not find any used models for list '%s'", $list_id);
-            return ();
-        }
-
-    } else {
-        return keys %task_by_model;
-    }
-}
-
 =head1 INSTANCE METHODS
 
 =over 4
@@ -202,20 +134,46 @@ sub create_required_tasks {
     my ($self, $current_date) = @_;
     Sympa::Log::Syslog::do_log('debug2', '(%s)', @_);
 
-    $self->_list_tasks();
+    # create tasks objects for every task already present in the spool
+    # indexing them by list and model
+    my (%tasks_by_list, %tasks_by_model);
 
+    my @tasks = $self->get_content();
+
+    foreach my $task_in_spool (@tasks) {
+        my $task = Sympa::Task->new(
+            messageasstring => $task_in_spool->{'messageasstring'},
+            date            => $task_in_spool->{'task_date'},
+            label           => $task_in_spool->{'task_label'},
+            model           => $task_in_spool->{'task_model'},
+            flavour         => $task_in_spool->{'task_flavour'},
+            object          => $task_in_spool->{'task_object'},
+            list            => $task_in_spool->{'list'},
+            domain          => $task_in_spool->{'domain'},
+        );
+
+        my $list_id = $task->{'id'};
+        my $model   = $task->{'model'};
+
+        $tasks_by_model{$model}{$list_id} = $task;
+        $tasks_by_list{$list_id}{$model}  = $task;
+    }
+
+    # hash of datas necessary to the creation of tasks
     my %default_data = (
-        'creation_date' =>
-            $current_date,  # hash of datas necessary to the creation of tasks
+        'creation_date'  => $current_date,
         'execution_date' => 'execution_date'
     );
+
     $self->_create_required_global_tasks(
         'data'         => \%default_data,
-        'current_date' => $current_date
+        'current_date' => $current_date,
+        'tasks_index'  => \%tasks_by_model
     );
     $self->_create_required_lists_tasks(
         'data'         => \%default_data,
-        'current_date' => $current_date
+        'current_date' => $current_date,
+        'tasks_index'  => \%tasks_by_list
     );
 }
 
@@ -226,8 +184,9 @@ sub _create_required_global_tasks {
     Sympa::Log::Syslog::do_log('debug',
         'Creating required tasks from global models');
 
-    my %used_models;    # models for which a task exists
-    foreach my $model (_get_used_models()) {
+    # models for which a task exists
+    my %used_models;
+    foreach my $model (keys %{$params{tasks_index}}) {
         $used_models{$model} = 1;
     }
 
@@ -276,8 +235,11 @@ sub _create_required_lists_tasks {
             foreach my $model (@list_models) {
                 $used_list_models{$model} = undef;
             }
-            foreach my $model (_get_used_models($list->get_id())) {
-                $used_list_models{$model} = 1;
+            my $tasks_index = $params{tasks_index}->{$list->getid()};
+            if ($tasks_index) {
+                foreach my $model (keys %$tasks_index) {
+                    $used_list_models{$model} = 1;
+                }
             }
             Sympa::Log::Syslog::do_log('debug3',
                 'creating list task using models');
