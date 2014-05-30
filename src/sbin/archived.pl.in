@@ -26,7 +26,7 @@
 
 =head1 NAME
 
-archived, archived.pl - Mailing List Archiving Daemon for Sympa
+archived, archived.pl - Daemon feeding mailing list archives
 
 =head1 SYNOPSIS
 
@@ -39,10 +39,9 @@ B<archived.pl> B<-h, --help>
 
 =head1 DESCRIPTION
 
-B<Archived> is a program which scan permanently the outgoing B<Sympa> spool
-and feeds the web archives, converting messages to the HTML format and
-linking them. Original mails are also kept (in I<arctxt/> directory> for
-later rebuilding of archives.
+B<archived.pl> is a daemon scanning the B<outgoing> spool content, converting
+messages to HTML to feed the web archives. Original mails are also kept (in
+I<arctxt/> directory> for later rebuilding of archives.
 
 The HTML conversion is achieved by the means of the B<MHonArc> program.
 
