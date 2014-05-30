@@ -35,7 +35,7 @@ B<sympa.pl>
     S<[ B<-f, --config>=I<another.sympa.conf> ]>
     S<[ B<-l, --lang>=I<lang> ]>
     S<[ B<--log-level>=I<level> ]>
-    S<[ B<--foreground> ]>
+    S<[ B<-F, --foreground> ]>
     S<[ B<-k, --keepcopy>=I<directory> ]>
     S<[ B<-m, --mail> ]>
 
@@ -64,7 +64,7 @@ F<sympa.pl> may run with following options:
 
 =item B<-d>, B<--debug>
 
-Enable debug mode.
+Run in debug mode.
 
 =item B<-f>, B<--config>=I<file>
 
@@ -79,11 +79,11 @@ directory.
 
 =item B<--log_level>=I<level>
 
-Sets Sympa log level.
+Set log level.
 
-=item B<--foreground>
+=item B<-F>, B<--foreground>
 
-The process remains attached to the TTY.
+Do not detach from TTY.
 
 =item B<-k>, B<--keepcopy>=F<directory>
 
@@ -93,9 +93,7 @@ store messages.
 
 =item B<-m>, B<--mail>
 
-Sympa will log calls to sendmail, including recipients. This option is
-useful for keeping track of each mail sent (log files may grow faster
-though).
+Log every sendmail call.
 
 =back
 
@@ -232,15 +230,14 @@ unless (
         \%options,
         'config|f=s',
         'debug|d',
-        'foreground',
+        'foreground|F',
         'help|h',
         'keepcopy|k=s',
         'lang|l=s',
         'log_level=s',
         'mail|m',
         'version|v',
-    )
-    ) {
+    )) {
     pod2usage(-exitval => 1, -output => \*STDERR);
 }
 

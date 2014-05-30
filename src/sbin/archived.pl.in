@@ -30,7 +30,12 @@ archived, archived.pl - Mailing List Archiving Daemon for Sympa
 
 =head1 SYNOPSIS
 
-S<B<archived.pl> [ B<--foreground> ] [ B<--debug> ]>
+B<archived.pl>
+    S<[ B<-d, --debug> ]>
+    S<[ B<-F, --foreground> ]>
+    S<[ B<--log-level>=I<level> ]>
+
+B<archived.pl> B<-h, --help>
 
 =head1 DESCRIPTION
 
@@ -53,17 +58,21 @@ options is included below.
 
 =over 5
 
-=item B<-F>, B<--foreground>
-
-Do not detach TTY.
-
 =item B<-d>, B<--debug>
 
-Run the program in a debug mode.
+Run in debug mode.
+
+=item B<-F>, B<--foreground>
+
+Do not detach from TTY.
 
 =item B<-h>, B<--help>
 
 Print this help message.
+
+=item B<--log_level>=I<level>
+
+Set log level.
 
 =back
 
@@ -153,9 +162,15 @@ use Sympa::Tools::File;
 my $daemon_name = Sympa::Tools::Daemon::get_daemon_name($0);
 my $ip          = $ENV{'REMOTE_HOST'};
 
-## Check options
 my %options;
-unless (GetOptions(\%options, 'debug|d', 'foreground|F', 'help|h')) {
+unless (
+    GetOptions(
+        \%options,
+        'debug|d',
+        'foreground|F',
+        'help|h',
+        'log_level=s',
+    )) {
     pod2usage(-exitval => 1, -output => \*STDERR);
 }
 

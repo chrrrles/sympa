@@ -30,7 +30,12 @@ task_manager, task_manager.pl - Daemon to Process Periodical Sympa Tasks
 
 =head1 SYNOPSIS
 
-S<B<task_manager.pl> [ B<--foreground> ] [ B<--debug> ]>
+B<task_manager.pl>
+    S<[ B<-d, --debug> ]>
+    S<[ B<-F, --foreground> ]>
+    S<[ B<--log-level>=I<level> ]>
+
+B<task_manager.pl> B<-h, --help>
 
 =head1 DESCRIPTION
 
@@ -42,11 +47,11 @@ XXX @todo doc
 
 =item B<-d>, B<--debug>
 
-Sets the debug mode
+Run in debug mode.
 
 =item B<-F>, B<--foreground>
 
-Prevents the script from being daemonized
+Do not detach from TTY.
 
 =item B<-h>, B<--help>
 
@@ -105,13 +110,14 @@ use Sympa::Tools::Daemon;
 use Sympa::Tools::Time;
 
 my %options;
-
 unless (
     GetOptions(
-        \%options, 'debug|d', 'help|h', 'log_level=s',
-        'foreground|F'
-    )
-    ) {
+        \%options,
+        'debug|d',
+        'foreground|F',
+        'help|h',
+        'log_level=s',
+    )) {
     pod2usage(-exitval => 1, -output => \*STDERR);
 }
 
