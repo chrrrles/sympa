@@ -26,7 +26,7 @@
 
 =head1 NAME
 
-task_manager, task_manager.pl - Daemon to Process Periodical Sympa Tasks
+task_manager, task_manager.pl - Daemon executing background tasks
 
 =head1 SYNOPSIS
 
@@ -39,7 +39,8 @@ B<task_manager.pl> B<-h, --help>
 
 =head1 DESCRIPTION
 
-XXX @todo doc
+B<task_manager.pl> is a daemon scanning the B<task> spool content, and
+executing tasks.
 
 =head1 OPTIONS
 

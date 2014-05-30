@@ -26,7 +26,7 @@
 
 =head1 NAME
 
-sympa, sympa.pl - A Modern Mailing List Manager
+sympa, sympa.pl - Main Sympa daemon
 
 =head1 SYNOPSIS
 

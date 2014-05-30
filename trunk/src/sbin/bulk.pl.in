@@ -26,7 +26,7 @@
 
 =head1 NAME 
 
-bulk, bulk.pl - Daemon for Submitting Bulk Content to SMTP Engine
+bulk, bulk.pl - Daemon submitting bulk content to SMTP engine
 
 =head1 SYNOPSIS
 
@@ -40,10 +40,9 @@ B<bulk.pl> B<-h, --help>
 
 =head1 DESCRIPTION 
 
-This daemon must be run along with Sympa.  It regularly checks the
-C<bulkpacket_table> content and submit the messages it finds in it to the
-sendmail engine.  Several daemon should be used on deferent server for huge
-traffic.
+B<bulk.pl> is a daemon scanning the C<bulkpacket_table> database table content,
+submitting messages to the SMTP server. Several daemon should be used on
+different server for huge traffic.
 
 =head1 OPTIONS
 
