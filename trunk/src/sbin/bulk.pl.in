@@ -30,7 +30,13 @@ bulk, bulk.pl - Daemon for Submitting Bulk Content to SMTP Engine
 
 =head1 SYNOPSIS
 
-S<B<bulk.pl> [ B<--foreground> ] [ B<--debug> ]>
+B<bulk.pl>
+    S<[ B<-d, --debug> ]>
+    S<[ B<-F, --foreground> ]>
+    S<[ B<--log-level>=I<level> ]>
+    S<[ B<-m, --mail> ]>
+
+B<bulk.pl> B<-h, --help>
 
 =head1 DESCRIPTION 
 
@@ -45,23 +51,23 @@ traffic.
 
 =item B<-d>, B<--debug>
 
-Sets the debug mode
+Run in debug mode.
 
 =item B<-F>, B<--foreground>
 
-Prevents the script from being daemonized
+Do not detach from TTY.
 
 =item B<-h>, B<--help>
 
 Prints this help message.
 
-=item B<--log_level=>I<level>
+=item B<--log_level>=<level>
 
 Set log level.
 
 =item B<-m>, B<--mail>
 
-Logs every sendmail calls.
+Log every sendmail calls.
 
 =back
 
@@ -115,17 +121,16 @@ my $date_of_last_activity = time();
 my $daemon_usage =
     'DAEMON_MASTER';    ## Default is to launch bulk as master daemon.
 
-## Check options
-##  --debug : sets the debug mode
-##  --foreground : prevents the script from beeing daemonized
-##  --mail : logs every sendmail calls
 my %options;
 unless (
     GetOptions(
-        \%options, 'debug|d', 'foreground|F', 'help|h',
-        'log_level=s',   'mail|m'
-    )
-    ) {
+        \%options,
+        'debug|d',
+        'foreground|F',
+        'help|h',
+        'log_level=s',
+        'mail|m'
+    )) {
     pod2usage(-exitval => 1, -output => \*STDERR);
 }
 

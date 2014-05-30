@@ -30,7 +30,12 @@ bounced, bounced.pl - Mailing List Bounce Processing Daemon for Sympa
 
 =head1 SYNOPSIS
 
-S<B<bounced> [ B<--foreground> ] [ B<--debug> ]>
+B<bounced.pl>
+    S<[ B<-d, --debug> ]>
+    S<[ B<-F, --foreground> ]>
+    S<[ B<--log-level>=I<level> ]>
+
+B<bounced.pl> B<-h, --help>
 
 =head1 DESCRIPTION
 
@@ -49,21 +54,21 @@ options is included below.
 
 =over 5
 
-=item B<-F>, B<--foreground>
-
-Do not detach TTY.
-
 =item B<-d>, B<--debug>
 
-Run the program in a debug mode.
+Run in debug mode.
+
+=item B<-F>, B<--foreground>
+
+Do not detach from TTY.
 
 =item B<-h>, B<--help>
 
 Print this help message.
 
-=item B<--log_level=>I<level>
+=item B<--log_level>=I<level>
 
-Sets daemon log level.
+Set log level.
 
 =back
 
@@ -133,10 +138,6 @@ L<sympa(8)>, L<wwsympa(8)>, L<mhonarc(1)>, L<sympa.conf(5)>.
 
 =cut
 
-## Options :  F         -> do not detach TTY
-##         :  d		-> debug -d is equiv to -dF
-## Now, it is impossible to use -dF but you have to write it -d -F
-
 use strict;
 use warnings;
 use lib '--modulesdir--';
@@ -155,14 +156,15 @@ use Sympa::Site;
 use Sympa::Spool::File;
 use Sympa::Tools::Daemon;
 
-## Check options
 my %options;
 unless (
     GetOptions(
-        \%options, 'debug|d', 'help|h', 'log_level=s',
-        'foreground|F'
-    )
-    ) {
+        \%options,
+        'debug|d',
+        'foreground|F',
+        'help|h',
+        'log_level=s',
+    )) {
     pod2usage(-exitval => 1, -output => \*STDERR);
 }
 
