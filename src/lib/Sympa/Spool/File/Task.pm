@@ -307,12 +307,15 @@ sub get_content {
     foreach my $task_in_spool ($self->SUPER::get_content(%params)) {
         next unless $task_in_spool; # is this really needed ?
 
-        my $list = Sympa::List->new(
-            $task_in_spool->{'list'},
-            $task_in_spool->{'domain'},
-            {'skip_sync_admin' => 1}
-        );
-        
+        my $list;
+        if ($task_in_spool->{'list'}) {
+            $list = Sympa::List->new(
+                $task_in_spool->{'list'},
+                $task_in_spool->{'domain'},
+                {'skip_sync_admin' => 1}
+            );
+        }
+            
         my $task = Sympa::Task->new(
             messageasstring => $task_in_spool->{'messageasstring'},
             date            => $task_in_spool->{'task_date'},
