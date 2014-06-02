@@ -653,9 +653,7 @@ sub change_label {
     }
 }
 
-## Check that a task in list context is still legitimate. for example, a list
-## whose all datasource inclusions parameters would have been removed should
-## not keep a sync_include task.
+## Check that a task in list context is still legitimate.
 sub check_list_task_is_valid {
     Sympa::Log::Syslog::do_log('debug3', '(%s)', @_);
     my $self  = shift;
