@@ -141,6 +141,12 @@ sub create_required_tasks {
     my @tasks = $self->get_content();
 
     foreach my $task_in_spool (@tasks) {
+        my $list = Sympa::List->new(
+            $task_in_spool->{'list'},
+            $task_in_spool->{'domain'},
+            {'skip_sync_admin' => 1}
+        );
+        
         my $task = Sympa::Task->new(
             messageasstring => $task_in_spool->{'messageasstring'},
             date            => $task_in_spool->{'task_date'},
@@ -148,8 +154,7 @@ sub create_required_tasks {
             model           => $task_in_spool->{'task_model'},
             flavour         => $task_in_spool->{'task_flavour'},
             object          => $task_in_spool->{'task_object'},
-            list            => $task_in_spool->{'list'},
-            domain          => $task_in_spool->{'domain'},
+            list            => $list
         );
 
         my $list_id = $task->{'id'};
