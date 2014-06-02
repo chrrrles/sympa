@@ -287,8 +287,8 @@ unless (chdir(Sympa::Site->home)) {
 Sympa::Log::Syslog::do_log('notice', "bounced Started");
 
 ## Catch SIGTERM, in order to exit cleanly, whenever possible.
-$SIG{'TERM'} = 'sigterm';
 my $end = 0;
+$SIG{'TERM'} = sub { $end = 1 };
 
 our $mailer = Sympa::Mailer->new(
     db_type         => Sympa::Site->db_type(),
@@ -348,9 +348,3 @@ Sympa::Tools::Daemon::remove_pid(
 );
 
 exit(0);
-
-## When we catch SIGTERM, just change the value of the loop
-## variable.
-sub sigterm {
-    $end = 1;
-}

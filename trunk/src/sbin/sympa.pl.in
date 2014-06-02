@@ -265,6 +265,29 @@ my $default_lang;
 # this loop is run foreach HUP signal received
 my $signal = 0;
 
+## Catch SIGTERM, in order to exit cleanly, whenever possible.
+$SIG{'TERM'} = sub {
+    Sympa::Log::Syslog::do_log('notice',
+        'signal TERM received, still processing current task');
+    $signal = 'term';
+};
+$SIG{'HUP'}  = sub {
+    if ($options{'mail'}) {
+        Sympa::Log::Syslog::do_log('notice',
+            'signal HUP received, switch of the "-mail" logging option and continue current task'
+        );
+        undef $options{'mail'};
+    } else {
+        Sympa::Log::Syslog::do_log('notice',
+            'signal HUP received, switch on the "-mail" logging option and continue current task'
+        );
+        $options{'mail'} = 1;
+    }
+    $signal = 'hup';
+};
+## Ignore SIGPIPE ; prevents sympa.pl from dying
+$SIG{'PIPE'} = 'IGNORE';
+
 our $mailer = Sympa::Mailer->new(
     db_type         => Sympa::Site->db_type(),
     nrcpt_by_domain => Sympa::Site->nrcpt_by_domain(),
@@ -442,11 +465,6 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
         }
     }
 
-    ## Catch SIGTERM, in order to exit cleanly, whenever possible.
-    $SIG{'TERM'} = 'sigterm';
-    $SIG{'HUP'}  = 'sighup';
-    $SIG{'PIPE'} = 'IGNORE';  ## Ignore SIGPIPE ; prevents sympa.pl from dying
-
     my $index_queuedigest = 0;    # verify the digest queue
     my $index_cleanqueue  = 0;
     my @qfile;
@@ -590,49 +608,6 @@ Sympa::Tools::Daemon::remove_pid(
 );
 
 exit(0);
-
-############################################################
-# sigterm
-############################################################
-#  When we catch SIGTERM, just changes the value of the $signal
-#  loop variable.
-#
-# IN : -
-#
-# OUT : -
-#
-############################################################
-sub sigterm {
-    Sympa::Log::Syslog::do_log('notice',
-        'signal TERM received, still processing current task');
-    $signal = 'term';
-}
-
-############################################################
-# sighup
-############################################################
-#  When we catch SIGHUP, changes the value of the $signal
-#  loop variable and puts the "-mail" logging option
-#
-# IN : -
-#
-# OUT : -
-#
-###########################################################
-sub sighup {
-    if ($options{'mail'}) {
-        Sympa::Log::Syslog::do_log('notice',
-            'signal HUP received, switch of the "-mail" logging option and continue current task'
-        );
-        undef $options{'mail'};
-    } else {
-        Sympa::Log::Syslog::do_log('notice',
-            'signal HUP received, switch on the "-mail" logging option and continue current task'
-        );
-        $options{'mail'} = 1;
-    }
-    $signal = 'hup';
-}
 
 ############################################################
 #  process_message
