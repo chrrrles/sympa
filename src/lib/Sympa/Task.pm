@@ -535,12 +535,10 @@ sub execute {
     if (!$self->parse) {
         $self->{'error'} = 'parse';
         $self->error_report;
-        $self->remove;
         return undef;
     } elsif (!$self->process_all) {
         $self->{'error'} = 'execution';
         $self->error_report;
-        $self->remove;
         return undef;
     } else {
         Sympa::Log::Syslog::do_log(
@@ -549,7 +547,6 @@ sub execute {
             $self->get_description,
             $self->{'messagekey'}
         );
-        $self->remove;
     }
     return 1;
 }

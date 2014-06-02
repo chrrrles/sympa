@@ -272,6 +272,13 @@ while (!$end) {
             $task->check_list_task_is_valid();
         }
         $task->execute;
+
+        my $result = $taskspool->remove_message($task->{'messagekey'});
+        unless ($result) {
+            Sympa::Log::Syslog::do_log('err',
+            'Unable to remove task (messagekey = %s)',
+            $task->{'messagekey'});
+        }
     }
     sleep 30;
     ## Free zombie sendmail processes
