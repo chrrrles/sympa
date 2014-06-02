@@ -366,21 +366,6 @@ sub store {
     return 1;
 }
 
-## Removes a task using message key
-sub remove {
-    Sympa::Log::Syslog::do_log('debug2', '(%s)', @_);
-    my $self = shift;
-
-    my $taskspool = Sympa::Spool::File::Task->new;
-    unless ($taskspool->remove_message($self->{'messagekey'})) {
-        Sympa::Log::Syslog::do_log('err',
-            'Unable to remove task (messagekey = %s)',
-            $self->{'messagekey'});
-        return undef;
-    }
-    return 1;
-}
-
 ## Builds a string giving the name of the model of the task, along with its
 ## flavour and, if the task is in list context, the name of the list.
 sub get_description {
