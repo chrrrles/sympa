@@ -268,26 +268,7 @@ while (!$end) {
     ## processing of tasks anterior to the current date
     Sympa::Log::Syslog::do_log('debug2',
         'Processing tasks anterior to the current date');
-    foreach my $task_in_spool ($taskspool->get_content) {
-        next unless $task_in_spool;
-
-        my $list = Sympa::List->new(
-            $task_in_spool->{'list'},
-            $task_in_spool->{'domain'},
-            {'skip_sync_admin' => 1}
-        );
-
-        my $task = Sympa::Task->new(
-            messageasstring => $task_in_spool->{'messageasstring'},
-            date            => $task_in_spool->{'task_date'},
-            label           => $task_in_spool->{'task_label'},
-            model           => $task_in_spool->{'task_model'},
-            flavour         => $task_in_spool->{'task_flavour'},
-            object          => $task_in_spool->{'task_object'},
-            list            => $list
-        );
-        next unless $task;
-
+    foreach my $task ($taskspool->get_content) {
         last if $end;
         next unless $task->{'date'} <= $current_date;
 
