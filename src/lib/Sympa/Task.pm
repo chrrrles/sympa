@@ -671,7 +671,6 @@ sub check_list_task_is_valid {
             $self->{'messagekey'},
             $self->{'id'}
         );
-        $self->remove;
         return 0;
     }
 
@@ -688,7 +687,6 @@ sub check_list_task_is_valid {
                 $self->{'messagekey'},
                 $self->{'id'}
             );
-            $self->remove;
             return 0;
         }
     } else {
@@ -701,7 +699,6 @@ sub check_list_task_is_valid {
                 $self->{'messagekey'},
                 $self->{'id'}
             );
-            $self->remove;
             return 0;
         }
     }
