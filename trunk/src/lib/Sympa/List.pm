@@ -55,7 +55,6 @@ use Sympa::Message;
 use Sympa::Robot; # FIXME: circular dependency
 use Sympa::Scenario; # FIXME: circular dependency
 use Sympa::SQLSource;
-use Sympa::Task;
 use Sympa::Spool::File; # FIXME: circular dependency
 use Sympa::Spool::File::Key; # FIXME: circular dependency
 use Sympa::Spool::File::Subscribe;
@@ -10785,7 +10784,7 @@ sub purge {
 
     ## Remove tasks for this list
     my $taskspool = Sympa::Spool::File::Task->new();
-    foreach my $task_in_spool (
+    foreach my $task (
         $taskspool->get_content(
             {   'selector' =>
                     {'list' => $self->name, 'robot' => $self->domain},
@@ -10793,18 +10792,6 @@ sub purge {
             }
         )
         ) {
-        next unless $task_in_spool;
-
-        my $task = Sympa::Task->new(
-            messageasstring => $task_in_spool->{'messageasstring'},
-            date            => $task_in_spool->{'task_date'},
-            label           => $task_in_spool->{'task_label'},
-            model           => $task_in_spool->{'task_model'},
-            flavour         => $task_in_spool->{'task_flavour'},
-            object          => $task_in_spool->{'task_object'},
-            list            => $self
-        );
-        next unless $task;
 
         unlink $task->{'filepath'};
     }

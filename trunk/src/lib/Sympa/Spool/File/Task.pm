@@ -140,23 +140,7 @@ sub create_required_tasks {
 
     my @tasks = $self->get_content();
 
-    foreach my $task_in_spool (@tasks) {
-        my $list = Sympa::List->new(
-            $task_in_spool->{'list'},
-            $task_in_spool->{'domain'},
-            {'skip_sync_admin' => 1}
-        );
-        
-        my $task = Sympa::Task->new(
-            messageasstring => $task_in_spool->{'messageasstring'},
-            date            => $task_in_spool->{'task_date'},
-            label           => $task_in_spool->{'task_label'},
-            model           => $task_in_spool->{'task_model'},
-            flavour         => $task_in_spool->{'task_flavour'},
-            object          => $task_in_spool->{'task_object'},
-            list            => $list
-        );
-
+    foreach my $task (@tasks) {
         my $list_id = $task->{'id'};
         my $model   = $task->{'model'};
 
@@ -314,6 +298,36 @@ sub creation_error {
     my $message = shift;
     Sympa::Log::Syslog::do_log('err', $message);
     Sympa::Site->send_notify_to_listmaster('task_creation_error', $message);
+}
+
+sub get_content {
+    my ($self, %params) = @_;
+
+    my @tasks;
+    foreach my $task_in_spool ($self->SUPER::get_content(%params)) {
+        next unless $task_in_spool; # is this really needed ?
+
+        my $list = Sympa::List->new(
+            $task_in_spool->{'list'},
+            $task_in_spool->{'domain'},
+            {'skip_sync_admin' => 1}
+        );
+        
+        my $task = Sympa::Task->new(
+            messageasstring => $task_in_spool->{'messageasstring'},
+            date            => $task_in_spool->{'task_date'},
+            label           => $task_in_spool->{'task_label'},
+            model           => $task_in_spool->{'task_model'},
+            flavour         => $task_in_spool->{'task_flavour'},
+            object          => $task_in_spool->{'task_object'},
+            list            => $list
+        );
+        next unless $task; # is this really needed ?
+
+        push @tasks, $task;
+    }
+
+    return @tasks;
 }
 
 1;
