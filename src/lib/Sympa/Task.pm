@@ -91,7 +91,6 @@ sub new {
         croak "invalid parameter list: should be a Sympa::List instance"
             unless $params{'list'}->isa('Sympa::List');
         $self->{'list'}        = $params{'list'};
-        $self->{'domain'}      = $params{'list'}->{'domain'};
         $self->{'id'}          = $params{'list'}->{'domain'} ?
             $params{'list'}->{'name'} . '@' . $params{'list'}->{'domain'} :
             $params{'list'}->{'name'};
@@ -341,9 +340,9 @@ sub store {
     $meta{'task_label'}   = $self->{'label'};
     $meta{'task_model'}   = $self->{'model'};
     $meta{'task_flavour'} = $self->{'flavour'};
-    $meta{'robot'}        = $self->{'domain'} if $self->{'domain'};
     if ($self->{'list'}) {
         $meta{'list'}        = $self->{'list'}{'name'};
+        $meta{'domain'}      = $self->{'list'}{'domain'};
         $meta{'task_object'} = $self->{'id'};
     } else {
         $meta{'task_object'} = '_global';
