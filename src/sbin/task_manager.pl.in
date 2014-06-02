@@ -241,11 +241,6 @@ $SIG{'TERM'} = 'sigterm';
 my $end = 0;
 
 ###### VARIABLES DECLARATION ######
-# won't execute send_msg and delete_subs commands if true, only log
-undef my $log;
-
-#$log = 1;
-
 our $mailer = Sympa::Mailer->new(
     db_type         => Sympa::Site->db_type(),
     nrcpt_by_domain => Sympa::Site->nrcpt_by_domain(),
