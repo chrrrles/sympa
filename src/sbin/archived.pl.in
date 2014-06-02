@@ -305,8 +305,8 @@ Sympa::Log::Syslog::do_log('notice', "archived %s Started",
     Sympa::Constants::VERSION);
 
 ## Catch SIGTERM, in order to exit cleanly, whenever possible.
-$SIG{'TERM'} = 'sigterm';
 my $end = 0;
+$SIG{'TERM'} = sub { $end = 1 };
 
 my $spoolarchive = Sympa::Spool::File->new('outgoing');
 
@@ -508,12 +508,6 @@ Sympa::Tools::Daemon::remove_pid(
 );
 
 exit(0);
-
-## When we catch SIGTERM, just change the value of the loop
-## variable.
-sub sigterm {
-    $end = 1;
-}
 
 # remove($listname, $msgid, $robotname)
 # Removes the message having the identifier $msgid from the list named $adrlist.

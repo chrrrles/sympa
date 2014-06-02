@@ -244,8 +244,12 @@ Sympa::Log::Syslog::do_log('notice', "bulk.pl %s Started",
     Sympa::Constants::VERSION);
 
 ## Catch SIGTERM, in order to exit cleanly, whenever possible.
-$SIG{'TERM'} = 'sigterm';
 my $end = 0;
+$SIG{'TERM'} = sub {
+    Sympa::Log::Syslog::do_log('notice',
+        'signal TERM received, still processing current task');
+    $end = 1;
+};
 
 our $mailer = Sympa::Mailer->new(
     db_type         => Sympa::Site->db_type(),
@@ -670,14 +674,6 @@ Sympa::Tools::Daemon::remove_pid(
 );
 
 exit(0);
-
-## When we catch SIGTERM, just change the value of the loop
-## variable.
-sub sigterm {
-    Sympa::Log::Syslog::do_log('notice',
-        'signal TERM received, still processing current task');
-    $end = 1;
-}
 
 sub trace_smime {
 

@@ -237,8 +237,8 @@ unless (chdir(Sympa::Site->home)) {
 my $taskspool = Sympa::Spool::File::Task->new();
 
 ## Catch SIGTERM, in order to exit cleanly, whenever possible.
-$SIG{'TERM'} = 'sigterm';
 my $end = 0;
+$SIG{'TERM'} = sub { $end = 1 };
 
 ###### VARIABLES DECLARATION ######
 our $mailer = Sympa::Mailer->new(
@@ -276,11 +276,6 @@ while (!$end) {
     sleep 30;
     ## Free zombie sendmail processes
     $mailer->reaper();
-}
-
-## when we catch SIGTERM, just change the value of the loop variable.
-sub sigterm {
-    $end = 1;
 }
 
 # Purge grouped notifications
