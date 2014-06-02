@@ -55,7 +55,7 @@ use Sympa::Message;
 use Sympa::Robot; # FIXME: circular dependency
 use Sympa::Scenario; # FIXME: circular dependency
 use Sympa::SQLSource;
-use Sympa::Task; # FIXME: circular dependency
+use Sympa::Task;
 use Sympa::Spool::File; # FIXME: circular dependency
 use Sympa::Spool::File::Key; # FIXME: circular dependency
 use Sympa::Spool::File::Subscribe;
@@ -10802,8 +10802,7 @@ sub purge {
             model           => $task_in_spool->{'task_model'},
             flavour         => $task_in_spool->{'task_flavour'},
             object          => $task_in_spool->{'task_object'},
-            list            => $task_in_spool->{'list'},
-            domain          => $task_in_spool->{'domain'},
+            list            => $self
         );
         next unless $task;
 

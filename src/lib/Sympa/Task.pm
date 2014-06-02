@@ -25,10 +25,10 @@ package Sympa::Task;
 
 use strict;
 
+use Carp qw(croak);
 use English qw(-no_match_vars);
 use Template;
 
-use Sympa::List; # FIXME: circular dependency
 use Sympa::Log::Syslog;
 use Sympa::Site;
 use Sympa::Spool::File::Task;
@@ -85,30 +85,16 @@ sub new {
         'model'           => $params{'model'},
         'flavour'         => $params{'flavour'},
         'object'          => $params{'object'},
-        'domain'          => $params{'robot'},
     }, $class;
 
     if ($params{'list'}) {    # list task
-        my $list = Sympa::List->new(
-            $params{'list'},
-            $params{'robot'},
-            {'skip_sync_admin' => 1}
-        );
-
-        unless ($list) {
-            Sympa::Log::Syslog::do_log(
-                'err',
-                'Unable to create new task object for list %s@%s. This list does not exist',
-                $params{'list'},
-                $params{'robot'}
-            );
-            return undef;
-        }
-
-        $self->{'list_object'} = $list;
-        $self->{'domain'}      = $list->{'domain'};
-        $self->{'id'}          = $list->{'domain'} ?
-            $list->{'name'} . '@' . $list->{'domain'} : $list->{'name'};
+        croak "invalid parameter list: should be a Sympa::List instance"
+            unless $params{'list'}->isa('Sympa::List');
+        $self->{'list'}        = $params{'list'};
+        $self->{'domain'}      = $params{'list'}->{'domain'};
+        $self->{'id'}          = $params{'list'}->{'domain'} ?
+            $params{'list'}->{'name'} . '@' . $params{'list'}->{'domain'} :
+            $params{'list'}->{'name'};
     }
 
     $self->{'description'} = get_description($self);
@@ -155,29 +141,15 @@ sub create {
         $params{'data'}
     );
 
-    my ($object, $list, $domain);
-    if (defined $params{'data'}{'list'}) {
-        my $list = $params{'data'}{'list'};
-        if (ref $list eq 'Sympa::List') {
-            $list   = $list->name;
-            $domain = $list->domain;
-        } else {
-            ## Compat: $list is not blessed.
-            $list   = $list->{'name'};
-            $domain = $list->{'robot'};
-        }
-        $object = 'list';
-    } else {
-        $object = '_global';
-    }
+    my $object = $params{'data'}{'list'} ? 'list' : '_global';
+
     my $self = Sympa::Task->new(
         date    => $params{'creation_date'},
         label   => $params{'label'},
         model   => $params{'model'},
         flavour => $params{'flavour'},
+        list    => $params{'data'}{'list'},
         object  => $object,
-        list    => $list,
-        domain  => $domain,
     );
     unless ($self) {
         Sympa::Log::Syslog::do_log('err', 'Unable to create task object');
@@ -242,7 +214,7 @@ sub get_template {
 
     # for a list
     if ($self->{'object'} eq 'list') {
-        my $list = $self->{'list_object'};
+        my $list = $self->{'list'};
         unless ($self->{'template'} =
             $list->get_etc_filename("list_task_models/$self->{'model_name'}"))
         {
@@ -284,7 +256,7 @@ sub generate_from_template {
     );
     my $messageasstring = '';
     if ($self->{'model'} eq 'sync_include') {
-        $self->{'Rdata'}{'list'}{'ttl'} = $self->{'list_object'}->ttl;
+        $self->{'Rdata'}{'list'}{'ttl'} = $self->{'list'}->ttl;
     }
     unless (
         defined $tt2
@@ -370,8 +342,8 @@ sub store {
     $meta{'task_model'}   = $self->{'model'};
     $meta{'task_flavour'} = $self->{'flavour'};
     $meta{'robot'}        = $self->{'domain'} if $self->{'domain'};
-    if ($self->{'list_object'}) {
-        $meta{'list'}        = $self->{'list_object'}{'name'};
+    if ($self->{'list'}) {
+        $meta{'list'}        = $self->{'list'}{'name'};
         $meta{'task_object'} = $self->{'id'};
     } else {
         $meta{'task_object'} = '_global';
@@ -420,7 +392,7 @@ sub get_description {
     unless (defined $self->{'description'} && $self->{'description'} ne '') {
         $self->{'description'} = sprintf '%s.%s', $self->{'model'},
             $self->{'flavour'};
-        if (defined $self->{'list_object'}) {    # list task
+        if (defined $self->{'list'}) {    # list task
             $self->{'description'} .= sprintf ' (list %s)', $self->{'id'};
         }
     }
@@ -494,8 +466,8 @@ sub as_string {
 ## context, undef otherwise.
 sub get_short_listname {
     my $self = shift;
-    if (defined $self->{'list_object'}) {
-        return $self->{'list_object'}{'name'};
+    if (defined $self->{'list'}) {
+        return $self->{'list'}{'name'};
     }
     return undef;
 }
@@ -504,8 +476,8 @@ sub get_short_listname {
 ## undef otherwise.
 sub get_full_listname {
     my $self = shift;
-    if (defined $self->{'list_object'}) {
-        return $self->{'list_object'}->get_list_id;
+    if (defined $self->{'list'}) {
+        return $self->{'list'}->get_list_id;
     }
     return undef;
 }
@@ -691,7 +663,7 @@ sub change_label {
 sub check_list_task_is_valid {
     Sympa::Log::Syslog::do_log('debug3', '(%s)', @_);
     my $self  = shift;
-    my $list  = $self->{'list_object'};
+    my $list  = $self->{'list'};
     my $model = $self->{'model'};
 
     ## Skip closed lists
@@ -777,8 +749,8 @@ sub error_report {
         $self->get_description);
 
     my $data;
-    if (defined $self->{'list_object'}) {
-        $data->{'list'} = $self->{'list_object'};
+    if (defined $self->{'list'}) {
+        $data->{'list'} = $self->{'list'};
     }
     $self->{'human_date'} = Sympa::Tools::Time::adate($self->{'date'});
     $data->{'task'}       = $self;
