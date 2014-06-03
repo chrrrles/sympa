@@ -9,10 +9,13 @@ use warnings;
 use FindBin qw($Bin);
 use lib "$Bin/../src/lib";
 
+use English qw(-no_match_vars);
+use File::Temp;
 use Test::More;
 use Test::Exception;
 
 use Sympa::Instruction;
+use Sympa::Task;
 
 my @tests_nok = (
     [ 'foo'      ,     qr/syntax error/        ],
@@ -55,7 +58,8 @@ my @tests_ok_content = (
 plan tests =>
     scalar @tests_nok              +
     scalar @tests_ok_nocontent * 2 +
-    scalar @tests_ok_content   * 3;
+    scalar @tests_ok_content   * 3 +
+    4;
 
 foreach my $test (@tests_nok) {
     my $instruction;
@@ -101,4 +105,25 @@ foreach my $test (@tests_ok_content) {
         $test->[3],
         "'$test->[0]' has '$test->[3]' value as '$test->[2]' attribute"
     );
+}
+my $dir = File::Temp->newdir(CLEANUP => $ENV{TEST_DEBUG} ? 0 : 1);
+my $file = $dir .'/foo';
+touch($file);
+
+my $task = Sympa::Task->new(model => 'model', flavour => 'flavour');
+
+my $instruction = Sympa::Instruction->new(
+    line_as_string => 'rm_file(@var)',
+    line_number    => 1
+);
+$instruction->{'variables'} = { '@var' => { a => { file => $file } } };
+lives_ok {
+    $instruction->execute($task);
+} 'single file deletion instruction success';
+ok(!-f $file, 'single file deletion instruction result');
+
+sub touch {
+    my ($file) = @_;
+    open (my $fh, '>', $file) or die "Can't create file: $ERRNO";
+    close $fh;
 }
