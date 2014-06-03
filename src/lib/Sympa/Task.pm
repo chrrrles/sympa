@@ -31,7 +31,6 @@ use Template;
 
 use Sympa::Log::Syslog;
 use Sympa::Site;
-use Sympa::Spool::File::Task;
 use Sympa::Instruction;
 use Sympa::Tools::Time;
 
@@ -168,9 +167,6 @@ sub create {
     if ($self->{'label'}) {
         return undef unless ($self->crop_after_label($self->{'label'}));
     }
-
-    # task is accetable, store it in spool
-    return undef unless ($self->store);
 
     return $self;
 }
@@ -333,45 +329,6 @@ sub crop_after_label {
         $self->stringify_parsed_instructions;
     }
 
-    return 1;
-}
-
-## Stores the task to database
-sub store {
-    my $self = shift;
-
-    Sympa::Log::Syslog::do_log('debug', 'Spooling task %s',
-        $self->get_description);
-    my $taskspool = Sympa::Spool::File::Task->new;
-    my %meta;
-    $meta{'task_date'}    = $self->{'date'};
-    $meta{'date'}         = $self->{'date'};
-    $meta{'task_label'}   = $self->{'label'};
-    $meta{'task_model'}   = $self->{'model'};
-    $meta{'task_flavour'} = $self->{'flavour'};
-    if ($self->{'list'}) {
-        $meta{'list'}        = $self->{'list'}{'name'};
-        $meta{'domain'}      = $self->{'list'}{'domain'};
-        $meta{'task_object'} = $self->{'id'};
-    } else {
-        $meta{'task_object'} = '_global';
-    }
-
-    Sympa::Log::Syslog::do_log(
-        'debug3',
-        'Task creation done. date: %s, label: %s, model: %s, flavour: %s',
-        $self->{'date'},
-        $self->{'label'},
-        $self->{'model'},
-        $self->{'flavour'}
-    );
-    unless ($taskspool->store($self->{'messageasstring'}, \%meta)) {
-        Sympa::Log::Syslog::do_log('err', 'Unable to store task %s.',
-            $self->get_description);
-        return undef;
-    }
-    Sympa::Log::Syslog::do_log('debug3', 'task %s successfully stored.',
-        $self->get_description);
     return 1;
 }
 

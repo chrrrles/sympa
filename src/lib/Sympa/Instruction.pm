@@ -483,7 +483,7 @@ sub _next_cmd {
     }
     Sympa::Log::Syslog::do_log('debug2', 'Will create next task');
     
-    my $result = Sympa::Task->create(
+    my $task = Sympa::Task->create(
         'creation_date' => $date,
         'label'         => $tab[1],
         'model'         => $model,
@@ -491,7 +491,12 @@ sub _next_cmd {
         'data'          => \%data
     );
     croak "error in create command : Failed to create task $model.$flavour\n"
-        unless $result;
+        unless $task;
+
+    Sympa::Spool::File::Task->new()->store(
+        $task->{'messageastring'},
+        $task->get_metadata()
+    );
 
     my $human_date = Sympa::Tools::Time::adate($date);
     Sympa::Log::Syslog::do_log('debug2', "--> new task $model ($human_date)");
