@@ -116,9 +116,8 @@ my $instruction = Sympa::Instruction->new(
     line_as_string => 'rm_file(@var)',
     line_number    => 1
 );
-$instruction->{'variables'} = { '@var' => { a => { file => $file } } };
 lives_ok {
-    $instruction->execute($task);
+    $instruction->execute($task, { '@var' => { a => { file => $file } } });
 } 'single file deletion instruction success';
 ok(!-f $file, 'single file deletion instruction result');
 
