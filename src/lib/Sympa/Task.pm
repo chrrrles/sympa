@@ -56,11 +56,9 @@ Parameters:
 
 =item * I<flavour>: FIXME
 
-=item * I<object>: FIXME
-
-=item * I<robot>: FIXME
-
 =item * I<list>: FIXME
+
+=item * I<data>: FIXME
 
 =back
 
@@ -83,14 +81,16 @@ sub new {
         'label'           => $params{'label'},
         'model'           => $params{'model'},
         'flavour'         => $params{'flavour'},
-        'object'          => $params{'object'},
+        'object'          => '_global',
         'description'     => $params{'model'} . '.' . $params{'flavour'},
+        'Rdata'           => $params{'data'},
     }, $class;
 
 
     if ($params{'list'}) {    # list task
         croak "invalid parameter list: should be a Sympa::List instance"
             unless $params{'list'}->isa('Sympa::List');
+        $self->{'object'}      = 'list';
         $self->{'list'}        = $params{'list'};
         $self->{'id'}          = $params{'list'}->{'domain'} ?
             $params{'list'}->{'name'} . '@' . $params{'list'}->{'domain'} :
@@ -101,60 +101,22 @@ sub new {
     return $self;
 }
 
-=item Sympa::Task->create(%parameters)
-
-Creates a new L<Sympa::Task> object, and stores it in a spool.
-
-Parameters:
-
-=over 4
-
-=item * I<creation_date>: FIXME
-
-=item * I<label>: FIXME
-
-=item * I<model>: FIXME
-
-=item * I<flavour>: FIXME
-
-=item * I<data>: FIXME
-
 =back
 
-Returns a new L<Sympa::Task> object, or I<undef> for failure.
+=head1 INSTANCE METHODS
 
-## task creation in spool
-#
+=over
+
+=item $task->init()
+
+Initialize a task.
+
+Returns a true value for success, I<undef> for failure.
+
 =cut
 
-sub create {
-    my ($class, %params) = @_;
-
-    Sympa::Log::Syslog::do_log(
-        'notice',
-        "create task date: %s label: %s model: %s flavour: %s Rdata :%s",
-        $params{'creation_date'},
-        $params{'label'},
-        $params{'model'},
-        $params{'flavour'},
-        $params{'data'}
-    );
-
-    my $object = $params{'data'}{'list'} ? 'list' : '_global';
-
-    my $self = Sympa::Task->new(
-        date    => $params{'creation_date'},
-        label   => $params{'label'},
-        model   => $params{'model'},
-        flavour => $params{'flavour'},
-        list    => $params{'data'}{'list'},
-        object  => $object,
-    );
-    unless ($self) {
-        Sympa::Log::Syslog::do_log('err', 'Unable to create task object');
-        return undef;
-    }
-    $self->{'Rdata'} = $params{'data'};
+sub init {
+    my ($self) = @_;
 
     ## model recovery
     return undef unless ($self->get_template);
@@ -168,16 +130,9 @@ sub create {
         return undef unless ($self->crop_after_label($self->{'label'}));
     }
 
-    return $self;
+    return 1;
 }
 
-=back
-
-=head1 INSTANCE METHODS
-
-=over
-
-=cut
 
 ## Sets and returns the path to the file that must be used to generate the
 ## task as string.
