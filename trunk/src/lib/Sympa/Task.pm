@@ -573,11 +573,10 @@ sub process_all {
                 $self->get_description);
             last;
         }
-        $instruction->{'variables'} = $variables;
 
         my $result;
         eval {
-            $result = $instruction->execute();
+            $result = $instruction->execute($self, $variables);
         };
         if ($EVAL_ERROR) {
             my $error = {

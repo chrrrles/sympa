@@ -345,7 +345,7 @@ sub as_string {
 
 ## Calls the appropriate functions for a parsed line of a task.
 sub execute {
-    my ($self, $task) = @_;
+    my ($self, $task, $params) = @_;
 
     Sympa::Log::Syslog::do_log(
         'debug',
@@ -360,7 +360,7 @@ sub execute {
         $self->{nature} eq 'command'
     ) {
         # regular commands
-        return &{$commands{$self->{'command'}}{'sub'}}($self, $task);
+        return &{$commands{$self->{'command'}}{'sub'}}($self, $task, $params);
     } else {
         return { output => 'Nothing to compute' };
     }
@@ -370,13 +370,13 @@ sub execute {
 
 # remove files whose name is given in the key 'file' of the hash
 sub _rm_file {
-    my ($self, $task) = @_;
+    my ($self, $task, $params) = @_;
 
     my @tab = @{$self->{'Rarguments'}};
     my $var = $tab[0];
 
-    foreach my $key (keys %{$self->{'variables'}{$var}}) {
-        my $file = $self->{'variables'}{$var}{$key}{'file'};
+    foreach my $key (keys %{$params->{$var}}) {
+        my $file = $params->{$var}{$key}{'file'};
         next unless ($file);
         unlink($file) or croak "unable to remove $file\n";
     }
@@ -384,7 +384,7 @@ sub _rm_file {
 }
 
 sub _stop {
-    my ($self, $task) = @_;
+    my ($self, $task, $params) = @_;
 
     Sympa::Log::Syslog::do_log('notice',
         "$self->{'line_number'} : stop $task->{'messagekey'}");
@@ -394,7 +394,7 @@ sub _stop {
 }
 
 sub _send_msg {
-    my ($self, $task) = @_;
+    my ($self, $task, $params) = @_;
 
     my @tab      = @{$self->{'Rarguments'}};
     my $template = $tab[1];
@@ -406,9 +406,9 @@ sub _send_msg {
     require Sympa::Site;
 
     if ($task->{'object'} eq '_global') {
-        foreach my $email (keys %{$self->{'variables'}{$var}}) {
+        foreach my $email (keys %{$params->{$var}}) {
             my $result = Sympa::Site->send_file(
-                $template, $email, $self->{'variables'}{$var}{$email}
+                $template, $email, $params->{$var}{$email}
             );
             croak "Unable to send template $template to $email\n"
                 unless $result;
@@ -416,9 +416,9 @@ sub _send_msg {
         }
     } else {
         my $list = $task->{'list_object'};
-        foreach my $email (keys %{$self->{'variables'}{$var}}) {
+        foreach my $email (keys %{$params->{$var}}) {
             my $result = $list->send_file(
-                $template, $email, $self->{'variables'}{$var}{$email}
+                $template, $email, $params->{$var}{$email}
             );
             croak "Unable to send template $template to $email\n"
                 unless $result;
@@ -429,7 +429,7 @@ sub _send_msg {
 }
 
 sub _next_cmd {
-    my ($self, $task) = @_;
+    my ($self, $task, $params) = @_;
 
     my @tab = @{$self->{'Rarguments'}};
     # conversion of the date argument into epoch format
@@ -504,7 +504,7 @@ sub _next_cmd {
 }
 
 sub _select_subs {
-    my ($self, $task) = @_;
+    my ($self, $task, $params) = @_;
 
     my @tab       = @{$self->{'Rarguments'}};
     my $condition = $tab[0];
@@ -558,7 +558,7 @@ sub _select_subs {
 }
 
 sub _delete_subs_cmd {
-    my ($self, $task) = @_;
+    my ($self, $task, $params) = @_;
 
     my @tab = @{$self->{'Rarguments'}};
     my $var = $tab[0];
@@ -573,7 +573,7 @@ sub _delete_subs_cmd {
     my $listname = $list->name();
     my %selection;    # hash of subscriber emails who are successfully deleted
 
-    foreach my $email (keys %{$self->{'variables'}{$var}}) {
+    foreach my $email (keys %{$params->{$var}}) {
         Sympa::Log::Syslog::do_log('notice', "email : $email");
         my $result = Sympa::Scenario::request_action(
             $list, 'del', 'smime',
@@ -598,7 +598,7 @@ sub _delete_subs_cmd {
 }
 
 sub _create_cmd {
-    my ($self, $task) = @_;
+    my ($self, $task, $params) = @_;
 
     my @tab     = @{$self->{'Rarguments'}};
     my $arg     = $tab[0];
@@ -638,7 +638,7 @@ sub _create_cmd {
 }
 
 sub _exec_cmd {
-    my ($self, $task) = @_;
+    my ($self, $task, $params) = @_;
 
     my @tab  = @{$self->{'Rarguments'}};
     my $file = $tab[0];
@@ -663,7 +663,7 @@ sub _exec_cmd {
 
 # If a log is older then $list->get_latest_distribution_date()-$delai expire the log
 sub _purge_logs_table {
-    my ($self, $task) = @_;
+    my ($self, $task, $params) = @_;
 
     my $execution_date = $task->{'date'};
     my @slots          = ();
@@ -718,7 +718,7 @@ sub _purge_logs_table {
 
 ## remove sessions from session_table if older than Sympa::Site->session_table_ttl
 sub _purge_session_table {
-    my ($self, $task) = @_;
+    my ($self, $task, $params) = @_;
 
     Sympa::Log::Syslog::do_log('info', 'task_manager::purge_session_table()');
 
@@ -735,7 +735,7 @@ sub _purge_session_table {
 ## remove messages from bulkspool table when no more packet have any pointer
 ## to this message
 sub _purge_tables {
-    my ($self, $task) = @_;
+    my ($self, $task, $params) = @_;
 
     Sympa::Log::Syslog::do_log('info', 'task_manager::purge_tables()');
 
@@ -767,7 +767,7 @@ sub _purge_tables {
 
 ## remove one time ticket table if older than Sympa::Site->one_time_ticket_table_ttl
 sub _purge_one_time_ticket_table {
-    my ($self, $task) = @_;
+    my ($self, $task, $params) = @_;
 
     Sympa::Log::Syslog::do_log('info',
         'task_manager::purge_one_time_ticket_table()');
@@ -786,7 +786,7 @@ sub _purge_one_time_ticket_table {
 }
 
 sub _purge_user_table {
-    my ($self, $task) = @_;
+    my ($self, $task, $params) = @_;
 
     Sympa::Log::Syslog::do_log('debug2', 'purge_user_table()');
 
@@ -859,7 +859,7 @@ sub _purge_user_table {
 
 ## Subroutine which remove bounced message of no-more known users
 sub _purge_orphan_bounces {
-    my ($self, $task) = @_;
+    my ($self, $task, $params) = @_;
 
     Sympa::Log::Syslog::do_log('info', 'purge_orphan_bounces()');
 
@@ -922,7 +922,7 @@ sub _purge_orphan_bounces {
 # If a bounce is older then $list->get_latest_distribution_date()-$delai expire the bounce
 # Is this variable my be set in to task modele ?
 sub _expire_bounce {
-    my ($self, $task) = @_;
+    my ($self, $task, $params) = @_;
 
     my @tab            = @{$self->{'Rarguments'}};
     my $delay          = $tab[0];
@@ -1011,7 +1011,7 @@ sub _expire_bounce {
 }
 
 sub _chk_cert_expiration {
-    my ($self, $task) = @_;
+    my ($self, $task, $params) = @_;
 
     my $cert_dir       = Sympa::Site->ssl_cert_dir;
     my $execution_date = $task->{'date'};
@@ -1132,7 +1132,7 @@ sub _chk_cert_expiration {
 ## attention, j'ai n'ai pas pu comprendre les retours d'erreurs des commandes
 ## wget donc pas de verif sur le bon fonctionnement de cette commande
 sub _update_crl {
-    my ($self, $task) = @_;
+    my ($self, $task, $params) = @_;
 
     my @tab = @{$self->{'Rarguments'}};
     my $limit = Sympa::Tools::Time::epoch_conv($tab[1], $task->{'date'});
@@ -1216,7 +1216,7 @@ sub _update_crl {
 ## Subroutine for bouncers evaluation:
 # give a score for each bouncing user
 sub _eval_bouncers {
-    my ($self, $task) = @_;
+    my ($self, $task, $params) = @_;
 
     require Sympa::List;
 
@@ -1277,7 +1277,7 @@ sub _none {
 
 # automatic bouncing users management
 sub _process_bouncers {
-    my ($self, $task) = @_;
+    my ($self, $task, $params) = @_;
 
     Sympa::Log::Syslog::do_log('info',
         'Processing automatic actions on bouncing users');
@@ -1467,7 +1467,7 @@ sub _get_score {
 }
 
 sub _sync_include {
-    my ($self, $task) = @_;
+    my ($self, $task, $params) = @_;
 
     Sympa::Log::Syslog::do_log('debug2', 'sync_include(%s)', $task->{'id'});
 
