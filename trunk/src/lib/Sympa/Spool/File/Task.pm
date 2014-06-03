@@ -190,7 +190,12 @@ sub _create_required_global_tasks {
             'flavour'       => Sympa::Site->$key,
             'data'          => $params{'data'}
         );
-        unless ($task) {
+        if ($task) {
+            $self->store(
+                $task->{'messageastring'},
+                $task->get_metadata()
+            );
+        } else {
             creation_error(
                 sprintf
                     'Unable to create task with parameters creation_date = "%s", model = "%s", flavour = "%s", data = "%s"',
@@ -250,7 +255,12 @@ sub _create_required_lists_tasks {
                         'flavour'       => 'ttl',
                         'data'          => \%data
                     );
-                    unless ($task) {
+                    if ($task) {
+                        $self->store(
+                            $task->{'messageastring'},
+                            $task->get_metadata()
+                        );
+                    } else {
                         creation_error(
                             sprintf
                                 'Unable to create task with parameters list = "%s", creation_date = "%s", label = "%s", model = "%s", flavour = "%s", data = "%s"',
@@ -276,7 +286,12 @@ sub _create_required_lists_tasks {
                             $list->$model_task_parameter->{'name'},
                         'data'          => \%data
                     );
-                    unless ($task) {
+                    if ($task) {
+                        $self->store(
+                            $task->{'messageastring'},
+                            $task->get_metadata()
+                        );
+                    } else {
                         creation_error(
                             sprintf
                                 'Unable to create task with parameters list = "%s", creation_date = "%s", model = "%s", flavour = "%s", data = "%s"',
