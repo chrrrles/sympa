@@ -59,7 +59,7 @@ plan tests =>
     scalar @tests_nok              +
     scalar @tests_ok_nocontent * 2 +
     scalar @tests_ok_content   * 3 +
-    4;
+    2;
 
 foreach my $test (@tests_nok) {
     my $instruction;
