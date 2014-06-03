@@ -85,7 +85,9 @@ sub new {
         'model'           => $params{'model'},
         'flavour'         => $params{'flavour'},
         'object'          => $params{'object'},
+        'description'     => $params{'model'} . '.' . $params{'flavour'},
     }, $class;
+
 
     if ($params{'list'}) {    # list task
         croak "invalid parameter list: should be a Sympa::List instance"
@@ -94,9 +96,8 @@ sub new {
         $self->{'id'}          = $params{'list'}->{'domain'} ?
             $params{'list'}->{'name'} . '@' . $params{'list'}->{'domain'} :
             $params{'list'}->{'name'};
+        $self->{'description'} .= sprintf(' (list %s)', $self->{'id'});
     }
-
-    $self->{'description'} = get_description($self);
 
     return $self;
 }
@@ -406,16 +407,6 @@ sub get_metadata {
 ## flavour and, if the task is in list context, the name of the list.
 sub get_description {
     my $self = shift;
-    Sympa::Log::Syslog::do_log('debug3',
-        'Computing textual description for task %s.%s',
-        $self->{'model'}, $self->{'flavour'});
-    unless (defined $self->{'description'} && $self->{'description'} ne '') {
-        $self->{'description'} = sprintf '%s.%s', $self->{'model'},
-            $self->{'flavour'};
-        if (defined $self->{'list'}) {    # list task
-            $self->{'description'} .= sprintf ' (list %s)', $self->{'id'};
-        }
-    }
     return $self->{'description'};
 }
 
