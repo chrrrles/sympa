@@ -267,23 +267,15 @@ while (!$end) {
         last if $end;
         next unless $task->{'date'} <= $current_date;
 
-        # Check that a task in list context is still legitimate.
-        # For example, a list whose all datasource inclusions parameters would
-        # have been removed should not keep a sync_include task.
-        if ($task->{'object'} ne '_global') {
-            my $result = $task->check_list_task_is_valid();
-            unless ($result) {
-                Sympa::Log::Syslog::do_log(
-                    'err',
-                    'Unable to remove task (messagekey = %s)',
-                    $task->{'messagekey'}
-                );
-                next;
-            }
-        }
+        # Check that a task is still legitimate before executing it, as tasks
+        # for list whose parameters have been changed may not be valid anymore,
+        # such as synchronisation without datasources
+        my $validity = $task->check_validity();
 
-        Sympa::Log::Syslog::do_log('debug2', 'Processing task %s', $task);
-        $task->execute;
+        if ($validity) {
+            Sympa::Log::Syslog::do_log('debug2', 'Processing task %s', $task);
+            $task->execute();
+        }
 
         my $result = $taskspool->remove_message($task->{'messagekey'});
         unless ($result) {

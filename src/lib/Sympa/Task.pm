@@ -638,8 +638,8 @@ sub change_label {
     }
 }
 
-## Check that a task in list context is still legitimate.
-sub check_list_task_is_valid {
+## Check that a task is still legitimate.
+sub check_validity {
     Sympa::Log::Syslog::do_log('debug3', '(%s)', @_);
     my $self  = shift;
     my $list  = $self->{'list'};
