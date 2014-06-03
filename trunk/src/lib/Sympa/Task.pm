@@ -119,15 +119,15 @@ sub init {
     my ($self) = @_;
 
     ## model recovery
-    return undef unless ($self->get_template);
+    return undef unless ($self->_get_template);
 
     ## Task as string generation
-    return undef unless ($self->generate_from_template);
+    return undef unless ($self->_generate_from_template);
 
     ## In case a label is specified, ensure we won't use anything in the task
     ## prior to this label.
     if ($self->{'label'}) {
-        return undef unless ($self->crop_after_label($self->{'label'}));
+        return undef unless ($self->_crop_after_label($self->{'label'}));
     }
 
     return 1;
@@ -136,7 +136,7 @@ sub init {
 
 ## Sets and returns the path to the file that must be used to generate the
 ## task as string.
-sub get_template {
+sub _get_template {
     my $self = shift;
     Sympa::Log::Syslog::do_log('debug2',
         'Computing model file path for task %s',
@@ -181,7 +181,7 @@ sub get_template {
                 'err',
                 'Unable to find task model %s for list %s. Creation aborted',
                 $self->{'model_name'},
-                $self->get_full_listname
+                $self->_get_full_listname
             );
             return undef;
         }
@@ -192,7 +192,7 @@ sub get_template {
 }
 
 ## Uses the template of this task to generate the task as string.
-sub generate_from_template {
+sub _generate_from_template {
     my $self = shift;
     Sympa::Log::Syslog::do_log('debug',
         "Generate task content with tt2 template %s",
@@ -245,7 +245,7 @@ sub generate_from_template {
 
 # Chop whetever content the task as string could contain (except titles)
 # before the label of the task.
-sub crop_after_label {
+sub _crop_after_label {
     my $self  = shift;
     my $label = shift;
 
@@ -261,7 +261,7 @@ sub crop_after_label {
     # content.
     my $label_found_in_task = 0;
     my @new_parsed_instructions;
-    $self->parse
+    $self->_parse
         unless (defined $self->{'parsed_instructions'}
         && $#{$self->{'parsed_instructions'}} > -1);
     foreach my $line (@{$self->{'parsed_instructions'}}) {
@@ -281,7 +281,7 @@ sub crop_after_label {
         return undef;
     } else {
         $self->{'parsed_instructions'} = \@new_parsed_instructions;
-        $self->stringify_parsed_instructions;
+        $self->_stringify_parsed_instructions;
     }
 
     return 1;
@@ -324,7 +324,7 @@ sub get_description {
 
 ## Uses the parsed instructions to build a new task as string. If no parsed
 ## instructions are found, returns the original task as string.
-sub stringify_parsed_instructions {
+sub _stringify_parsed_instructions {
     my $self = shift;
     Sympa::Log::Syslog::do_log(
         'debug2',
@@ -387,7 +387,7 @@ sub as_string {
 
 ## Returns the local part of the list name of the task if the task is in list
 ## context, undef otherwise.
-sub get_short_listname {
+sub _get_short_listname {
     my $self = shift;
     if (defined $self->{'list'}) {
         return $self->{'list'}{'name'};
@@ -406,11 +406,11 @@ sub get_full_listname {
 }
 
 ## Check the syntax of a task
-sub check {
+sub _check {
     my $self = shift;    # the task to check
     Sympa::Log::Syslog::do_log('debug2', 'check %s', $self->get_description);
 
-    $self->parse;
+    $self->_parse;
 
     # are all labels used ?
     foreach my $label (keys %{$self->{'labels'}}) {
@@ -456,13 +456,13 @@ sub execute {
     my $self = shift;
     Sympa::Log::Syslog::do_log('notice', 'Running task id = %s, %s)',
         $self->{'messagekey'}, $self->get_description);
-    if (!$self->parse) {
+    if (!$self->_parse) {
         $self->{'error'} = 'parse';
-        $self->error_report;
+        $self->_error_report;
         return undef;
-    } elsif (!$self->process_all) {
+    } elsif (!$self->_process_all) {
         $self->{'error'} = 'execution';
-        $self->error_report;
+        $self->_error_report;
         return undef;
     } else {
         Sympa::Log::Syslog::do_log(
@@ -476,7 +476,7 @@ sub execute {
 }
 
 ## Parses the task as string into parsed instructions.
-sub parse {
+sub _parse {
     my $self = shift;
     Sympa::Log::Syslog::do_log('debug2', "Parsing task id = %s : %s",
         $self->{'messagekey'}, $self->get_description);
@@ -505,17 +505,17 @@ sub parse {
                 line    => $lnb
             };
             push @{$self->{errors}}, $error;
-            $self->error_report;
+            $self->_error_report;
             return undef;
         }
         push @{$self->{'parsed_instructions'}}, $instruction;
     }
-    $self->make_summary;
+    $self->_make_summary;
     return 1;
 }
 
 ## Processes all parsed instructions sequentially.
-sub process_all {
+sub _process_all {
     my $self = shift;
     my $variables;
     Sympa::Log::Syslog::do_log('debug',
@@ -628,7 +628,7 @@ sub check_validity {
     return 1;
 }
 
-sub make_summary {
+sub _make_summary {
     my $self = shift;
     Sympa::Log::Syslog::do_log('debug2',
         'Computing general informations about the task %s',
@@ -657,7 +657,7 @@ sub make_summary {
 
 }
 
-sub error_report {
+sub _error_report {
     my $self = shift;
     Sympa::Log::Syslog::do_log('debug2', 'Producing error report for task %s',
         $self->get_description);
