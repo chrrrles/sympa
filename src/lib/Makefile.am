@@ -72,6 +72,8 @@ nobase_modules_DATA = Sympa/Admin.pm \
 		      Sympa/SOAP.pm \
 		      Sympa/Transport.pm \
 		      Sympa/Task.pm \
+		      Sympa/Task/Global.pm \
+		      Sympa/Task/List.pm \
 		      Sympa/Tools.pm \
 		      Sympa/Tools/Cookie.pm \
 		      Sympa/Tools/SMIME.pm \

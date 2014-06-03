@@ -36,11 +36,19 @@ use Sympa::Tools::Time;
 
 =head1 CLASS METHODS
 
-=over 4
-
 =item Sympa::Task->new(%parameters)
 
-Creates a new L<Sympa::Task> object.
+Creates a new L<Sympa::Task> subclass object.
+
+The exact subclass depends on the presence of a I<list> parameter:
+
+=over 4
+
+=item * if present, L<Sympa::Task::List> is used
+
+=item * if absent, L<Sympa::Task::Global> is used
+
+=back
 
 Parameters:
 
@@ -56,17 +64,30 @@ Parameters:
 
 =item * I<flavour>: FIXME
 
-=item * I<list>: FIXME
-
 =item * I<data>: FIXME
+
+=item * I<list>: FIXME
 
 =back
 
-Returns a new L<Sympa::Task> object, or I<undef> for failure.
+Returns a new L<Sympa::Task> subclass object, or I<undef> for failure.
 
 =cut
 
 sub new {
+    my ($class, %params) = @_;
+
+    if ($params{list}) {
+        require Sympa::Task::List;
+        return Sympa::Task::List->new(%params);
+    } else {
+        require Sympa::Task::Global;
+        return Sympa::Task::Global->new(%params);
+    }
+}
+
+# private constructor used by subclasses
+sub _new {
     my ($class, %params) = @_;
 
     Sympa::Log::Syslog::do_log(
@@ -81,22 +102,9 @@ sub new {
         'label'           => $params{'label'},
         'model'           => $params{'model'},
         'flavour'         => $params{'flavour'},
-        'object'          => '_global',
         'description'     => $params{'model'} . '.' . $params{'flavour'},
         'Rdata'           => $params{'data'},
     }, $class;
-
-
-    if ($params{'list'}) {    # list task
-        croak "invalid parameter list: should be a Sympa::List instance"
-            unless $params{'list'}->isa('Sympa::List');
-        $self->{'object'}      = 'list';
-        $self->{'list'}        = $params{'list'};
-        $self->{'id'}          = $params{'list'}->{'domain'} ?
-            $params{'list'}->{'name'} . '@' . $params{'list'}->{'domain'} :
-            $params{'list'}->{'name'};
-        $self->{'description'} .= sprintf(' (list %s)', $self->{'id'});
-    }
 
     return $self;
 }
@@ -131,64 +139,6 @@ sub init {
     }
 
     return 1;
-}
-
-
-## Sets and returns the path to the file that must be used to generate the
-## task as string.
-sub _get_template {
-    my $self = shift;
-    Sympa::Log::Syslog::do_log('debug2',
-        'Computing model file path for task %s',
-        $self->get_description);
-
-    unless ($self->{'model'}) {
-        Sympa::Log::Syslog::do_log('err',
-            'Missing a model name. Impossible to get a template. Aborting.');
-        return undef;
-    }
-    unless ($self->{'flavour'}) {
-        Sympa::Log::Syslog::do_log(
-            'err',
-            'Missing a flavour name for model %s name. Impossible to get a template. Aborting.',
-            $self->{'model'}
-        );
-        return undef;
-    }
-    $self->{'model_name'} =
-        $self->{'model'} . '.' . $self->{'flavour'} . '.' . 'task';
-
-    # for global model
-    if ($self->{'object'} eq '_global') {
-        unless (
-            $self->{'template'} = Sympa::Site->get_etc_filename(
-                "global_task_models/$self->{'model_name'}")
-            ) {
-            Sympa::Log::Syslog::do_log('err',
-                'Unable to find task model %s. Creation aborted',
-                $self->{'model_name'});
-            return undef;
-        }
-    }
-
-    # for a list
-    if ($self->{'object'} eq 'list') {
-        my $list = $self->{'list'};
-        unless ($self->{'template'} =
-            $list->get_etc_filename("list_task_models/$self->{'model_name'}"))
-        {
-            Sympa::Log::Syslog::do_log(
-                'err',
-                'Unable to find task model %s for list %s. Creation aborted',
-                $self->{'model_name'},
-                $self->_get_full_listname
-            );
-            return undef;
-        }
-    }
-    Sympa::Log::Syslog::do_log('debug2', 'Model for task %s is %s',
-        $self->get_description, $self->{'template'});
-    return $self->{'template'};
 }
 
 ## Uses the template of this task to generate the task as string.
@@ -285,34 +235,6 @@ sub _crop_after_label {
     }
 
     return 1;
-}
-
-=item $task->get_metadata()
-
-Return task metadata, needed for serializing it.
-
-=cut
-
-sub get_metadata {
-    my ($self) = @_;
-
-    my %meta = (
-        'task_date'    => $self->{'date'},
-        'date'         => $self->{'date'},
-        'task_label'   => $self->{'label'},
-        'task_model'   => $self->{'model'},
-        'task_flavour' => $self->{'flavour'},
-    );
-
-    if ($self->{'list'}) {
-        $meta{'list'}        = $self->{'list'}{'name'};
-        $meta{'domain'}      = $self->{'list'}{'domain'};
-        $meta{'task_object'} = $self->{'id'};
-    } else {
-        $meta{'task_object'} = '_global';
-    }
-
-    return %meta;
 }
 
 ## Builds a string giving the name of the model of the task, along with its
@@ -576,57 +498,11 @@ sub change_label {
     }
 }
 
-## Check that a task is still legitimate.
-sub check_validity {
-    Sympa::Log::Syslog::do_log('debug3', '(%s)', @_);
-    my $self  = shift;
-    my $list  = $self->{'list'};
-    my $model = $self->{'model'};
+=item $task->check_validity()
 
-    ## Skip closed lists
-    unless (defined $list and ref $list eq 'Sympa::List' and $list->status eq 'open')
-    {
-        Sympa::Log::Syslog::do_log(
-            'notice',
-            'Removing task %s, label %s (messageid = %s) because list %s is closed',
-            $model,
-            $self->{'label'},
-            $self->{'messagekey'},
-            $self->{'id'}
-        );
-        return 0;
-    }
+Check that a task is still legitimate.
 
-    ## Skip if parameter is not defined
-    if ($model eq 'sync_include') {
-        if ($list->has_include_data_sources()) {
-            return 1;
-        } else {
-            Sympa::Log::Syslog::do_log(
-                'notice',
-                'Removing task %s, label %s (messageid = %s) because list does not use any inclusion',
-                $model,
-                $self->{'label'},
-                $self->{'messagekey'},
-                $self->{'id'}
-            );
-            return 0;
-        }
-    } else {
-        unless (%{$list->$model} and defined $list->$model->{'name'}) {
-            Sympa::Log::Syslog::do_log(
-                'notice',
-                'Removing task %s, label %s (messageid = %s) because it is not defined in list %s configuration',
-                $model,
-                $self->{'label'},
-                $self->{'messagekey'},
-                $self->{'id'}
-            );
-            return 0;
-        }
-    }
-    return 1;
-}
+=cut
 
 sub _make_summary {
     my $self = shift;
