@@ -397,7 +397,7 @@ sub _get_short_listname {
 
 ## Returns the full list name of the task if the task is in list context,
 ## undef otherwise.
-sub get_full_listname {
+sub _get_full_listname {
     my $self = shift;
     if (defined $self->{'list'}) {
         return $self->{'list'}->get_list_id;
