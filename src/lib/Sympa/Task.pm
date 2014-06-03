@@ -174,6 +174,14 @@ sub create {
     return $self;
 }
 
+=back
+
+=head1 INSTANCE METHODS
+
+=over
+
+=cut
+
 ## Sets and returns the path to the file that must be used to generate the
 ## task as string.
 sub get_template {
@@ -364,6 +372,34 @@ sub store {
     Sympa::Log::Syslog::do_log('debug3', 'task %s successfully stored.',
         $self->get_description);
     return 1;
+}
+
+=item $task->get_metadata()
+
+Return task metadata, needed for serializing it.
+
+=cut
+
+sub get_metadata {
+    my ($self) = @_;
+
+    my %meta = (
+        'task_date'    => $self->{'date'},
+        'date'         => $self->{'date'},
+        'task_label'   => $self->{'label'},
+        'task_model'   => $self->{'model'},
+        'task_flavour' => $self->{'flavour'},
+    );
+
+    if ($self->{'list'}) {
+        $meta{'list'}        = $self->{'list'}{'name'};
+        $meta{'domain'}      = $self->{'list'}{'domain'};
+        $meta{'task_object'} = $self->{'id'};
+    } else {
+        $meta{'task_object'} = '_global';
+    }
+
+    return %meta;
 }
 
 ## Builds a string giving the name of the model of the task, along with its
@@ -742,5 +778,9 @@ sub error_report {
 sub get_id {
     return shift->get_description() || '';
 }
+
+=back
+
+=cut
 
 1;
