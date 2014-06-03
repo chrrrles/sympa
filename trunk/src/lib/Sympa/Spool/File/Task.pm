@@ -184,13 +184,13 @@ sub _create_required_global_tasks {
         next if $used_models{$global_models{$key}};
         next unless Sympa::Site->$key;
 
-        my $task = Sympa::Task->create(
-            'creation_date' => $params{'current_date'},
+        my $task = Sympa::Task->new(
+            'date'          => $params{'current_date'},
             'model'         => $global_models{$key},
             'flavour'       => Sympa::Site->$key,
             'data'          => $params{'data'}
         );
-        if ($task) {
+        if ($task && $task->init()) {
             $self->store(
                 $task->{'messageastring'},
                 $task->get_metadata()
@@ -248,14 +248,14 @@ sub _create_required_lists_tasks {
                     next
                         unless $list->has_include_data_sources()
                             and $list->status eq 'open';
-                    my $task = Sympa::Task->create(
-                        'creation_date' => $params{'current_date'},
+                    my $task = Sympa::Task->new(
+                        'date'          => $params{'current_date'},
                         'label'         => 'INIT',
                         'model'         => $model,
                         'flavour'       => 'ttl',
                         'data'          => \%data
                     );
-                    if ($task) {
+                    if ($task && $task->init()) {
                         $self->store(
                             $task->{'messageastring'},
                             $task->get_metadata()
@@ -279,14 +279,14 @@ sub _create_required_lists_tasks {
                 } elsif (%{$list->$model_task_parameter}
                     and defined $list->$model_task_parameter->{'name'}
                     and $list->status eq 'open') {
-                    my $task = Sympa::Task->create(
-                        'creation_date' => $params{'current_date'},
+                    my $task = Sympa::Task->new(
+                        'date'          => $params{'current_date'},
                         'model'         => $model,
                         'flavour'       =>
                             $list->$model_task_parameter->{'name'},
                         'data'          => \%data
                     );
-                    if ($task) {
+                    if ($task && $task->init()) {
                         $self->store(
                             $task->{'messageastring'},
                             $task->get_metadata()
