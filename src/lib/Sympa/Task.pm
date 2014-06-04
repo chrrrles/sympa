@@ -390,25 +390,16 @@ sub _check {
 
 ## Executes the task
 sub execute {
+    my ($self) = @_;
 
-    my $self = shift;
     Sympa::Log::Syslog::do_log('notice', 'Running task id = %s, %s)',
         $self->{'messagekey'}, $self->get_description);
-    if (!$self->_parse) {
-        $self->{'error'} = 'parse';
-        return undef;
-    } elsif (!$self->_process_all) {
-        $self->{'error'} = 'execution';
-        return undef;
-    } else {
-        Sympa::Log::Syslog::do_log(
-            'notice',
-            'The task %s has been correctly executed. Removing it (messagekey=%s)',
-            $self->get_description,
-            $self->{'messagekey'}
-        );
-    }
-    return 1;
+
+    # will raise an exception in case of error
+    $self->_parse();
+
+    # will raise an exception in case of error
+    $self->_process_all();
 }
 
 ## Parses the task as string into parsed instructions.
@@ -434,15 +425,9 @@ sub _parse {
                 line_number    => $lnb,
             );
         };
-        if ($EVAL_ERROR) {
-            my $error = {
-                message => $EVAL_ERROR,
-                type    => 'parsing',
-                line    => $lnb
-            };
-            push @{$self->{errors}}, $error;
-            return undef;
-        }
+        croak "parsing error at line $lnb: $EVAL_ERROR\n"
+            if $EVAL_ERROR;
+
         push @{$self->{'parsed_instructions'}}, $instruction;
     }
     $self->_make_summary;
@@ -468,22 +453,8 @@ sub _process_all {
         eval {
             $result = $instruction->execute($self, $variables);
         };
-        if ($EVAL_ERROR) {
-            my $error = {
-                message => $EVAL_ERROR,
-                type    => 'execution',
-                line    => $instruction->{'line_number'},
-            };
-            push @{$self->{errors}}, $error;
-            Sympa::Log::Syslog::do_log(
-                'err',
-                'Error while executing %s at line %s, task %s',
-                $instruction->{'line_as_string'},
-                $instruction->{'line_number'},
-                $self->get_description
-            );
-            return undef;
-        }
+        croak "execution error at line $instruction->{'line_number'}: $EVAL_ERROR\n"
+            if $EVAL_ERROR;
 
         if (ref $result && $result->{'type'} eq 'variables') {
             $variables = $result->{'variables'};
