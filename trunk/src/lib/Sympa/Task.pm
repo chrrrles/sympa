@@ -323,26 +323,6 @@ sub as_string {
     return $task_as_string;
 }
 
-## Returns the local part of the list name of the task if the task is in list
-## context, undef otherwise.
-sub _get_short_listname {
-    my $self = shift;
-    if (defined $self->{'list'}) {
-        return $self->{'list'}{'name'};
-    }
-    return undef;
-}
-
-## Returns the full list name of the task if the task is in list context,
-## undef otherwise.
-sub _get_full_listname {
-    my $self = shift;
-    if (defined $self->{'list'}) {
-        return $self->{'list'}->get_list_id;
-    }
-    return undef;
-}
-
 ## Check the syntax of a task
 sub _check {
     my $self = shift;    # the task to check
