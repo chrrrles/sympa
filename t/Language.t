@@ -9,9 +9,12 @@
 
 use strict;
 use warnings;
+
+use FindBin qw($Bin);
+use lib 't/stub', "$Bin/../src/lib";
+
 use Test::More;
 
-use lib 't/stub', @INC;
 use Sympa::Language;
 
 # Lang 2 gettext locale
