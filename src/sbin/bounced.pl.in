@@ -290,6 +290,33 @@ Sympa::Log::Syslog::do_log('notice', "bounced Started");
 my $end = 0;
 $SIG{'TERM'} = sub { $end = 1 };
 
+# Catch fatal errors, to generate traceback.
+$SIG{'__DIE__'} = sub {
+    return if $^S;    # invoked from inside eval.
+
+    my $msg = $_[0];
+    chomp $msg;
+    Sympa::Log::Syslog::do_log('err', 'DIED: %s', $msg);
+    eval { Sympa::Site->send_notify_to_listmaster(undef, undef, undef, 1); };
+    eval { Sympa::DatabaseManager::db_disconnect(); };    # unlock database
+    Sympa::Log::Syslog::closelog();           # flush log
+
+    ## gather traceback information
+    my @calls;
+    my @f;
+    $_[0] =~ /.+ at (.+? line \d+\.)\n$/s;
+    @calls = ($1) if $1;
+    for (my $i = 1; @f = caller($i); $i++) {
+        $calls[0] = "In $f[3] at $calls[0]" if @calls;
+        unshift @calls, "$f[1] line $f[2].";
+    }
+    $calls[0] = "In (top-level) at $calls[0]";
+
+    print STDERR join "\n", "DIED: $msg", @calls;
+    print STDERR "\n";
+    exit 255;
+}
+
 our $mailer = Sympa::Mailer->new(
     db_type         => Sympa::Site->db_type(),
     nrcpt_by_domain => Sympa::Site->nrcpt_by_domain(),

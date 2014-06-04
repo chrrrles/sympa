@@ -399,51 +399,6 @@ sub sympa {
 
 =over 4
 
-=item import
-
-XXX @todo doc
-
-=back
-
-=cut
-
-sub import {
-    ## register crash handler.
-    $SIG{'__DIE__'} = \&_crash_handler;
-}
-
-## Handler for $SIG{__DIE__} to generate traceback.
-## IN : error message
-## OUT : none.  This function exits with status 255 or (if invoked from
-## inside eval) simply returns.
-sub _crash_handler {
-    return if $^S;    # invoked from inside eval.
-
-    my $msg = $_[0];
-    chomp $msg;
-    Sympa::Log::Syslog::do_log('err', 'DIED: %s', $msg);
-    eval { Sympa::Site->send_notify_to_listmaster(undef, undef, undef, 1); };
-    eval { Sympa::DatabaseManager::db_disconnect(); };    # unlock database
-    Sympa::Log::Syslog::closelog();           # flush log
-
-    ## gather traceback information
-    my @calls;
-    my @f;
-    $_[0] =~ /.+ at (.+? line \d+\.)\n$/s;
-    @calls = ($1) if $1;
-    for (my $i = 1; @f = caller($i); $i++) {
-        $calls[0] = "In $f[3] at $calls[0]" if @calls;
-        unshift @calls, "$f[1] line $f[2].";
-    }
-    $calls[0] = "In (top-level) at $calls[0]";
-
-    print STDERR join "\n", "DIED: $msg", @calls;
-    print STDERR "\n";
-    exit 255;
-}
-
-=over 4
-
 =item robots_config
 
 Get C<'robots'> item of loaded config.
