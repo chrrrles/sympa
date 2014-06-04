@@ -30,9 +30,7 @@ use English qw(-no_match_vars);
 use Template;
 
 use Sympa::Log::Syslog;
-use Sympa::Site;
 use Sympa::Instruction;
-use Sympa::Tools::Time;
 
 =head1 CLASS METHODS
 
@@ -398,11 +396,9 @@ sub execute {
         $self->{'messagekey'}, $self->get_description);
     if (!$self->_parse) {
         $self->{'error'} = 'parse';
-        $self->_error_report;
         return undef;
     } elsif (!$self->_process_all) {
         $self->{'error'} = 'execution';
-        $self->_error_report;
         return undef;
     } else {
         Sympa::Log::Syslog::do_log(
@@ -445,7 +441,6 @@ sub _parse {
                 line    => $lnb
             };
             push @{$self->{errors}}, $error;
-            $self->_error_report;
             return undef;
         }
         push @{$self->{'parsed_instructions'}}, $instruction;
@@ -549,25 +544,6 @@ sub _make_summary {
         }
     }
 
-}
-
-sub _error_report {
-    my $self = shift;
-    Sympa::Log::Syslog::do_log('debug2', 'Producing error report for task %s',
-        $self->get_description);
-
-    my $data;
-    if (defined $self->{'list'}) {
-        $data->{'list'} = $self->{'list'};
-    }
-    $self->{'human_date'} = Sympa::Tools::Time::adate($self->{'date'});
-    $data->{'task'}       = $self;
-    Sympa::Log::Syslog::do_log(
-        'err',
-        'Execution of task %s failed. sending detailed report to listmaster',
-        $self->get_description
-    );
-    Sympa::Site->send_notify_to_listmaster('task_error', $data);
 }
 
 ## Get unique ID.
