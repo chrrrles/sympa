@@ -152,7 +152,7 @@ sub init {
         return undef;
     }
 
-    ## model recovery
+    # model recovery
     my $model_name = 
         $self->{'model'} . '.' . $self->{'flavour'} . '.' . 'task';
 
@@ -165,9 +165,27 @@ sub init {
         return undef;
     }
 
-    ## Task as string generation
-    my $result = $self->_generate_from_template($template);
-    return unless $result;
+    # string content generation
+    my $content_ok = $self->_generate_from_template($template);
+    return unless $content_ok;
+
+    # string content parsing
+    eval {
+        $self->_parse();
+    };
+    return undef if $EVAL_ERROR;
+
+    # content checking
+    my $summary = $self->_make_summary();
+    my $syntax_ok = $self->_check_syntax($summary);
+    unless ($syntax_ok) {
+        Sympa::Log::Syslog::do_log('err',
+            'error : syntax error in task %s, you should check %s',
+            $self->get_description, $template);
+        Sympa::Log::Syslog::do_log('notice',
+            "Ignoring creation task request");
+        return undef;
+    }
 
     ## In case a label is specified, ensure we won't use anything in the task
     ## prior to this label.
@@ -210,16 +228,6 @@ sub _generate_from_template {
     }
     $self->{'messageasstring'} = $messageasstring;
 
-    if (!$self->_check_syntax) {
-        Sympa::Log::Syslog::do_log('err',
-            'error : syntax error in task %s, you should check %s',
-            $self->get_description, $template);
-        Sympa::Log::Syslog::do_log('notice',
-            "Ignoring creation task request");
-        return undef;
-    }
-    Sympa::Log::Syslog::do_log('debug2', 'Resulting task_as_string: %s',
-        $self->as_string());
     return 1;
 }
 
@@ -352,22 +360,20 @@ sub as_string {
 }
 
 sub _check_syntax {
-    my $self = shift;    # the task to check
+    my ($self, $summary) = @_;
     Sympa::Log::Syslog::do_log('debug2', 'check %s', $self->get_description);
 
-    $self->_parse;
-
     # are all labels used ?
-    foreach my $label (keys %{$self->{'labels'}}) {
+    foreach my $label (keys %{$summary->{'labels'}}) {
         Sympa::Log::Syslog::do_log('debug2',
             'Warning : label %s exists but is not used in %s',
             $label, $self->get_description)
-            unless (defined $self->{'used_labels'}{$label});
+            unless (defined $summary->{'used_labels'}{$label});
     }
 
     # do all used labels exist ?
-    foreach my $label (keys %{$self->{'used_labels'}}) {
-        unless (defined $self->{'labels'}{$label}) {
+    foreach my $label (keys %{$summary->{'used_labels'}}) {
+        unless (defined $summary->{'labels'}{$label}) {
             Sympa::Log::Syslog::do_log('err',
                 'Error : label %s is used but does not exist in %s',
                 $label, $self->get_description);
@@ -376,16 +382,16 @@ sub _check_syntax {
     }
 
     # are all variables used ?
-    foreach my $var (keys %{$self->{'vars'}}) {
+    foreach my $var (keys %{$summary->{'vars'}}) {
         Sympa::Log::Syslog::do_log('debug2',
             'Warning : var %s exists but is not used in %s',
             $var, $self->get_description)
-            unless (defined $self->{'used_vars'}{$var});
+            unless (defined $summary->{'used_vars'}{$var});
     }
 
     # do all used variables exist ?
-    foreach my $var (keys %{$self->{'used_vars'}}) {
-        unless (defined $self->{'vars'}{$var}) {
+    foreach my $var (keys %{$summary->{'used_vars'}}) {
+        unless (defined $summary->{'vars'}{$var}) {
             Sympa::Log::Syslog::do_log('err',
                 'Error : var %s is used but does not exist in %s',
                 $var, $self->get_description);
@@ -442,7 +448,6 @@ sub _parse {
 
         push @{$self->{'parsed_instructions'}}, $instruction;
     }
-    $self->_make_summary;
     return 1;
 }
 
@@ -506,27 +511,30 @@ sub _make_summary {
         'Computing general informations about the task %s',
         $self->get_description);
 
-    $self->{'labels'}      = {};
-    $self->{'used_labels'} = {};
-    $self->{'vars'}        = {};
-    $self->{'used_vars'}   = {};
+    my $summary = {
+        'labels'      => {},
+        'used_labels' => {},
+        'vars'        => {},
+        'used_vars'   => {},
+    };
 
     foreach my $instruction (@{$self->{'parsed_instructions'}}) {
         if ($instruction->{'nature'} eq 'label') {
-            $self->{'labels'}{$instruction->{'label'}} = 1;
+            $summary->{'labels'}{$instruction->{'label'}} = 1;
         } elsif ($instruction->{'nature'} eq 'assignment'
             && $instruction->{'var'}) {
-            $self->{'vars'}{$instruction->{'var'}} = 1;
+            $summary->{'vars'}{$instruction->{'var'}} = 1;
         } elsif ($instruction->{'nature'} eq 'command') {
             foreach my $used_var (keys %{$instruction->{'used_vars'}}) {
-                $self->{'used_vars'}{$used_var} = 1;
+                $summary->{'used_vars'}{$used_var} = 1;
             }
             foreach my $used_label (keys %{$instruction->{'used_labels'}}) {
-                $self->{'used_labels'}{$used_label} = 1;
+                $summary->{'used_labels'}{$used_label} = 1;
             }
         }
     }
 
+    return $summary;
 }
 
 =back
