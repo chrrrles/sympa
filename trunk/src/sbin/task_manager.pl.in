@@ -274,8 +274,11 @@ while (!$end) {
 
         if ($validity) {
             Sympa::Log::Syslog::do_log('debug2', 'Processing task %s', $task);
-            my $result = $task->execute();
-            unless ($result) {
+
+            eval {
+                $task->execute();
+            };
+            if ($EVAL_ERROR) {
                 my $data = {
                     'task'       => $task,
                     'human_date' => Sympa::Tools::Time::adate($task->{'date'}),
@@ -285,10 +288,16 @@ while (!$end) {
                 }
                 Sympa::Log::Syslog::do_log(
                     'err',
-                    'Execution of task %s failed. sending detailed report to listmaster',
+                    'Execution of task %s failed, sending detailed report to listmaster',
                     $task->get_description()
                 );
                 Sympa::Site->send_notify_to_listmaster('task_error', $data);
+            } else {
+                Sympa::Log::Syslog::do_log(
+                    'notice',
+                    'Execution of task %s suceeded',
+                    $task->get_description,
+                );
             }
         }
 
