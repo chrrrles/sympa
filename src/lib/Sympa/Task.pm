@@ -126,11 +126,36 @@ Returns a true value for success, I<undef> for failure.
 sub init {
     my ($self) = @_;
 
+    unless ($self->{'model'}) {
+        Sympa::Log::Syslog::do_log('err',
+            'Missing a model name. Impossible to get a template. Aborting.');
+        return undef;
+    }
+    unless ($self->{'flavour'}) {
+        Sympa::Log::Syslog::do_log(
+            'err',
+            'Missing a flavour name for model %s name. Impossible to get a template. Aborting.',
+            $self->{'model'}
+        );
+        return undef;
+    }
+
     ## model recovery
-    return undef unless ($self->_get_template);
+    my $model_name = 
+        $self->{'model'} . '.' . $self->{'flavour'} . '.' . 'task';
+
+    my $template = $self->_get_template($model_name);
+    unless ($template) {
+        Sympa::Log::Syslog::do_log(
+            'err',
+            'Unable to find task model %s. Creation aborted',
+            $model_name);
+        return undef;
+    }
 
     ## Task as string generation
-    return undef unless ($self->_generate_from_template);
+    my $result = $self->_generate_from_template($template);
+    return unless $result;
 
     ## In case a label is specified, ensure we won't use anything in the task
     ## prior to this label.
@@ -143,19 +168,12 @@ sub init {
 
 ## Uses the template of this task to generate the task as string.
 sub _generate_from_template {
-    my $self = shift;
+    my ($self, $template) = @_;
+
     Sympa::Log::Syslog::do_log('debug',
         "Generate task content with tt2 template %s",
-        $self->{'template'});
+        $template);
 
-    unless ($self->{'template'}) {
-        unless ($self->get_template) {
-            Sympa::Log::Syslog::do_log('err',
-                'Unable to find a suitable template file for task %s',
-                $self->get_description);
-            return undef;
-        }
-    }
     ## creation
     my $tt2 = Template->new(
         {   'START_TAG' => quotemeta('['),
@@ -170,12 +188,12 @@ sub _generate_from_template {
     unless (
         defined $tt2
         && $tt2->process(
-            $self->{'template'}, $self->{'Rdata'}, \$messageasstring
+            $template, $self->{'Rdata'}, \$messageasstring
         )
         ) {
         Sympa::Log::Syslog::do_log('err',
             "Failed to parse task template '%s' : %s",
-            $self->{'template'}, $tt2->error());
+            $template, $tt2->error());
         return undef;
     }
     $self->{'messageasstring'} = $messageasstring;
@@ -183,7 +201,7 @@ sub _generate_from_template {
     if (!$self->check) {
         Sympa::Log::Syslog::do_log('err',
             'error : syntax error in task %s, you should check %s',
-            $self->get_description, $self->{'template'});
+            $self->get_description, $template);
         Sympa::Log::Syslog::do_log('notice',
             "Ignoring creation task request");
         return undef;

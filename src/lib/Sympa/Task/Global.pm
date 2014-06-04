@@ -34,47 +34,14 @@ sub new {
     return $class->_new(%params);
 }
 
-## Sets and returns the path to the file that must be used to generate the
-## task as string.
+# returns the path to template used to generate the
+# task as string.
 sub _get_template {
-    my ($self) = @_;
+    my ($self, $model_name) = @_;
 
-    Sympa::Log::Syslog::do_log('debug2',
-        'Computing model file path for task %s',
-        $self->get_description);
-
-    unless ($self->{'model'}) {
-        Sympa::Log::Syslog::do_log('err',
-            'Missing a model name. Impossible to get a template. Aborting.');
-        return undef;
-    }
-    unless ($self->{'flavour'}) {
-        Sympa::Log::Syslog::do_log(
-            'err',
-            'Missing a flavour name for model %s name. Impossible to get a template. Aborting.',
-            $self->{'model'}
-        );
-        return undef;
-    }
-
-    $self->{'model_name'} =
-        $self->{'model'} . '.' . $self->{'flavour'} . '.' . 'task';
-
-
-    unless (
-        $self->{'template'} = Sympa::Site->get_etc_filename(
-            "global_task_models/$self->{'model_name'}")
-        ) {
-        Sympa::Log::Syslog::do_log('err',
-            'Unable to find task model %s. Creation aborted',
-            $self->{'model_name'});
-        return undef;
-    }
-
-    Sympa::Log::Syslog::do_log('debug2', 'Model for task %s is %s',
-        $self->get_description, $self->{'template'});
-
-    return $self->{'template'};
+    return Sympa::Site->get_etc_filename(
+        "global_task_models/$model_name"
+    );
 }
 
 sub get_metadata {
