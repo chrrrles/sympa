@@ -317,32 +317,6 @@ sub listmasters {
 
 =over 4
 
-=item request
-
-I<Getter>.
-Get E<lt>sympa-requestE<gt> address of robot.
-
-B<Obsoleted>.
-This method will be removed in near future.
-Use C<get_address('owner')> method intead.
-
-=back
-
-=cut
-
-sub request {
-    my $self = shift;
-
-    my $level = $Carp::CarpLevel;
-    $Carp::CarpLevel = 1;
-    carp "Deprecated: Use get_address('owner') method instead";
-    $Carp::CarpLevel = $level;
-
-    return $self->get_address('owner');
-}
-
-=over 4
-
 =item supported_languages
 
 I<Getter>.
@@ -371,28 +345,6 @@ sub supported_languages {
 
 =over 4
 
-=item sympa
-
-I<Getter>.
-Get E<lt>sympaE<gt> address of robot.
-
-B<Obsoleted>.
-This method will be removed in near future.
-Use C<get_address()> method instead.
-
-=back
-
 =cut
-
-sub sympa {
-    my $self = shift;
-
-    my $level = $Carp::CarpLevel;
-    $Carp::CarpLevel = 1;
-    carp "Deprecated: Use get_address() method instead";
-    $Carp::CarpLevel = $level;
-
-    return $self->get_address();
-}
 
 1;
