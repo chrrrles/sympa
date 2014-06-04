@@ -210,7 +210,7 @@ sub _generate_from_template {
     }
     $self->{'messageasstring'} = $messageasstring;
 
-    if (!$self->check) {
+    if (!$self->_check_syntax) {
         Sympa::Log::Syslog::do_log('err',
             'error : syntax error in task %s, you should check %s',
             $self->get_description, $template);
@@ -351,8 +351,7 @@ sub as_string {
     return $task_as_string;
 }
 
-# Check this task syntax
-sub _check {
+sub _check_syntax {
     my $self = shift;    # the task to check
     Sympa::Log::Syslog::do_log('debug2', 'check %s', $self->get_description);
 
