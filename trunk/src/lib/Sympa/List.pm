@@ -12307,4 +12307,46 @@ sub _load_edit_list_conf {
     return $conf;
 }
 
+sub _get_etc_include_path {
+    my ($self, $dir, $lang_dirs) = @_;
+
+    my @include_path;
+
+    my $path_list;
+    my $path_family;
+    @include_path = $self->robot->_get_etc_include_path(@_);
+
+    if ($dir) {
+        $path_list = $self->dir . '/' . $dir;
+    } else {
+        $path_list = $self->dir;
+    }
+    if ($lang_dirs) {
+        unshift @include_path,
+            (map { $path_list . '/' . $_ } @$lang_dirs),
+            $path_list;
+    } else {
+        unshift @include_path, $path_list;
+    }
+
+    if (defined $self->family) {
+        my $family = $self->family;
+        if ($dir) {
+            $path_family = $family->dir . '/' . $dir;
+        } else {
+            $path_family = $family->dir;
+        }
+        if ($lang_dirs) {
+            unshift @include_path,
+                (map { $path_family . '/' . $_ } @$lang_dirs),
+                $path_family;
+        } else {
+            unshift @include_path, $path_family;
+        }
+    }
+
+    return @include_path;
+}
+
+
 1;
