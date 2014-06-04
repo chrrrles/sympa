@@ -142,7 +142,7 @@ sub AUTOLOAD {
             } elsif ($type->{'RobotParameter'}) {
                 ## getters for robot parameters.
                 unless ($self->{'etc'} eq Sympa::Site->etc
-                    or defined Sympa::Site->robots_config->{$self->{'name'}}) {
+                    or defined Sympa::Robot::get_robots()->{$self->{'name'}}) {
                     croak "Can't call method \"$attr\" on uninitialized "
                         . (ref $self)
                         . " object";
@@ -150,10 +150,10 @@ sub AUTOLOAD {
                 croak "Can't modify \"$attr\" attribute" if scalar @_;
 
                 if ($self->{'etc'} ne Sympa::Site->etc
-                    and defined Sympa::Site->robots_config->{$self->{'name'}}{$attr})
+                    and defined Sympa::Robot::get_robots()->{$self->{'name'}}{$attr})
                 {
                     ##FIXME: Might "exists" be used?
-                    Sympa::Site->robots_config->{$self->{'name'}}{$attr};
+                    Sympa::Robot::get_robots()->{$self->{'name'}}{$attr};
                 } else {
                     Sympa::Site->$attr;
                 }
@@ -256,8 +256,8 @@ sub lang {
     if (    ref $self
         and ref $self eq 'Sympa::Robot'
         and $self->{'etc'} ne Sympa::Site->etc
-        and exists Sympa::Site->robots_config->{$self->{'name'}}{'lang'}) {
-        $lang = Sympa::Site->robots_config->{$self->{'name'}}{'lang'};
+        and exists Sympa::Robot::get_robots()->{$self->{'name'}}{'lang'}) {
+        $lang = Sympa::Robot::get_robots()->{$self->{'name'}}{'lang'};
     } elsif (ref $self and ref $self eq 'Sympa::Robot'
         or !ref $self and $self eq 'Site') {
         croak "Can't call method \"lang\" on uninitialized $self class"
@@ -297,9 +297,9 @@ sub listmasters {
     croak "Can't modify \"listmasters\" attribute" if scalar @_ > 1;
     if (ref $self and ref $self eq 'Sympa::Robot') {
         if (wantarray) {
-            @{Sympa::Site->robots_config->{$self->domain}{'listmasters'} || []};
+            @{Sympa::Robot::get_robots()->{$self->domain}{'listmasters'} || []};
         } else {
-            Sympa::Site->robots_config->{$self->domain}{'listmasters'};
+            Sympa::Robot::get_robots()->{$self->domain}{'listmasters'};
         }
     } elsif ($self eq 'Site') {
         croak "Can't call method \"listmasters\" on uninitialized $self class"
@@ -393,26 +393,6 @@ sub sympa {
     $Carp::CarpLevel = $level;
 
     return $self->get_address();
-}
-
-=head3 Miscelaneous
-
-=over 4
-
-=item robots_config
-
-Get C<'robots'> item of loaded config.
-
-I<NOT RECOMMENDED>.
-This class method is prepared for backward compatibility.
-L<Robot/get_robots> should be used.
-
-=back
-
-=cut
-
-sub robots_config {
-    return $Sympa::Conf::Conf{'robots'} || {};
 }
 
 1;

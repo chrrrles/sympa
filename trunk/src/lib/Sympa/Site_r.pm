@@ -1440,7 +1440,7 @@ sub robots {
         my $v = shift;
         unless (defined $v) {
             delete $robots{$name};
-            delete Sympa::Site->robots_config->{$name};
+            delete Sympa::Robot::get_robots()->{$name};
         } else {
             $robots{$name} = $v;
         }
