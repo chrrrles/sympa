@@ -21,6 +21,19 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+=encoding utf-8
+
+=head1 NAME
+
+Sympa::Task::List - A list-specific background task
+
+=head1 DESCRIPTION
+
+This class implements a list-specific background task, such as syncing external
+data sources for instance.
+
+=cut
+
 package Sympa::Task::List;
 
 use strict;

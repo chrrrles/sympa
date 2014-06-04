@@ -21,6 +21,19 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+=encoding utf-8
+
+=head1 NAME
+
+Sympa::Task::Global - A global background task
+
+=head1 DESCRIPTION
+
+This class implements a global background task, such as cleaning the expired
+sessions for instance.
+
+=cut
+
 package Sympa::Task::Global;
 
 use strict;

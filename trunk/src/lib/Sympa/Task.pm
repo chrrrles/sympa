@@ -21,6 +21,18 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+=encoding utf-8
+
+=head1 NAME
+
+Sympa::Task - An abstract background task
+
+=head1 DESCRIPTION
+
+This is an abstract base for all background tasks.
+
+=cut
+
 package Sympa::Task;
 
 use strict;
@@ -33,6 +45,8 @@ use Sympa::Log::Syslog;
 use Sympa::Instruction;
 
 =head1 CLASS METHODS
+
+=over
 
 =item Sympa::Task->new(%parameters)
 
@@ -253,8 +267,22 @@ sub _crop_after_label {
     return 1;
 }
 
-## Builds a string giving the name of the model of the task, along with its
-## flavour and, if the task is in list context, the name of the list.
+=item $task->get_id()
+
+Returns the task unique ID.
+
+=cut
+
+sub get_id {
+    return shift->get_description() || '';
+}
+
+=item $task->get_description()
+
+Returns the task description.
+
+=cut
+
 sub get_description {
     my $self = shift;
     return $self->{'description'};
@@ -323,7 +351,7 @@ sub as_string {
     return $task_as_string;
 }
 
-## Check the syntax of a task
+# Check this task syntax
 sub _check {
     my $self = shift;    # the task to check
     Sympa::Log::Syslog::do_log('debug2', 'check %s', $self->get_description);
@@ -368,7 +396,12 @@ sub _check {
     return 1;
 }
 
-## Executes the task
+=item $task->executes()
+
+Executes the task.
+
+=cut
+
 sub execute {
     my ($self) = @_;
 
@@ -382,7 +415,7 @@ sub execute {
     $self->_process_all();
 }
 
-## Parses the task as string into parsed instructions.
+# Parses the raw content of this task into instructions.
 sub _parse {
     my $self = shift;
     Sympa::Log::Syslog::do_log('debug2', "Parsing task id = %s : %s",
@@ -414,7 +447,7 @@ sub _parse {
     return 1;
 }
 
-## Processes all parsed instructions sequentially.
+# Processes all instructions sequentially.
 sub _process_all {
     my $self = shift;
     my $variables;
@@ -464,7 +497,7 @@ sub change_label {
 
 =item $task->check_validity()
 
-Check that a task is still legitimate.
+Check this task is still valid.
 
 =cut
 
@@ -495,11 +528,6 @@ sub _make_summary {
         }
     }
 
-}
-
-## Get unique ID.
-sub get_id {
-    return shift->get_description() || '';
 }
 
 =back
