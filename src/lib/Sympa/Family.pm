@@ -2946,4 +2946,28 @@ sub get_id {
         $self->{'name'}, Sympa::Robot->new($self->{'robot'})->get_id;
 }
 
+sub _get_etc_include_path {
+    my ($self, $dir, $lang_dirs) = @_;
+
+    my @include_path;
+
+    my $path_family;
+    @include_path = $self->robot->_get_etc_include_path(@_);
+
+    if ($dir) {
+        $path_family = $self->dir . '/' . $dir;
+    } else {
+        $path_family = $self->dir;
+    }
+    if ($lang_dirs) {
+        unshift @include_path,
+            (map { $path_family . '/' . $_ } @$lang_dirs),
+            $path_family;
+    } else {
+        unshift @include_path, $path_family;
+    }
+
+    return @include_path;
+}
+
 1;
