@@ -315,7 +315,7 @@ $SIG{'__DIE__'} = sub {
     print STDERR join "\n", "DIED: $msg", @calls;
     print STDERR "\n";
     exit 255;
-}
+};
 
 our $mailer = Sympa::Mailer->new(
     db_type         => Sympa::Site->db_type(),
