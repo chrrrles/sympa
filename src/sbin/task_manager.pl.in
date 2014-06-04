@@ -274,7 +274,22 @@ while (!$end) {
 
         if ($validity) {
             Sympa::Log::Syslog::do_log('debug2', 'Processing task %s', $task);
-            $task->execute();
+            my $result = $task->execute();
+            unless ($result) {
+                my $data = {
+                    'task'       => $task,
+                    'human_date' => Sympa::Tools::Time::adate($task->{'date'}),
+                };
+                if ($task->isa('Sympa::Task::List')) {
+                    $data->{'list'} = $task->{'list'};
+                }
+                Sympa::Log::Syslog::do_log(
+                    'err',
+                    'Execution of task %s failed. sending detailed report to listmaster',
+                    $task->get_description()
+                );
+                Sympa::Site->send_notify_to_listmaster('task_error', $data);
+            }
         }
 
         my $result = $taskspool->remove_message($task->{'messagekey'});
