@@ -333,7 +333,7 @@ $SIG{'__DIE__'} = sub {
     print STDERR join "\n", "DIED: $msg", @calls;
     print STDERR "\n";
     exit 255;
-}
+};
 
 my $spoolarchive = Sympa::Spool::File->new('outgoing');
 

@@ -265,7 +265,7 @@ $SIG{'__DIE__'} = sub {
     print STDERR join "\n", "DIED: $msg", @calls;
     print STDERR "\n";
     exit 255;
-}
+};
 
 ###### VARIABLES DECLARATION ######
 our $mailer = Sympa::Mailer->new(
