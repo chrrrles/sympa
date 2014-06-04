@@ -40,6 +40,7 @@ use strict;
 use base qw(Sympa::Task);
 
 use Sympa::Log::Syslog;
+use Sympa::Site;
 
 sub new {
     my ($class, %params) = @_;
