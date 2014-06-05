@@ -29,7 +29,7 @@ use English qw(-no_match_vars);
 #use Carp; # currently not used
 use Sys::Syslog;
 
-my ($log_facility, $log_socket_type, $log_service);
+my ($log_facility, $log_service);
 
 # When logs are not available, period of time to wait before sending another
 # warning to listmaster.
@@ -188,15 +188,11 @@ sub do_log {
 }
 
 sub do_openlog {
-    my ($fac, $socket_type, $service) = @_;
+    my ($fac, $service) = @_;
     $service ||= 'sympa';
 
-    ($log_facility, $log_socket_type, $log_service) =
-        ($fac, $socket_type, $service);
-
-    if ($log_socket_type =~ /^(unix|inet)$/i) {
-        Sys::Syslog::setlogsock(lc($log_socket_type));
-    }
+    ($log_facility, $log_service) =
+        ($fac, $service);
 
     # close log may be usefull : if parent processus did open log child
     # process inherit the openlog with parameters from parent process

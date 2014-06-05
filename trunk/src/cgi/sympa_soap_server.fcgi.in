@@ -31,8 +31,7 @@ unless (defined Sympa::Robot::get_robots()) {
 Sympa::Log::Syslog::set_log_level(Sympa::Site->log_level);
 
 ## Open log
-Sympa::Log::Syslog::do_openlog(Sympa::Site->log_facility, Sympa::Site->log_socket_type,
-    'soap');
+Sympa::Log::Syslog::do_openlog(Sympa::Site->log_facility, 'soap');
 Sympa::Log::Syslog::do_log('info', 'SOAP server launched');
 
 ## We set the real UID with the effective UID value

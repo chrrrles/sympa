@@ -371,8 +371,7 @@ sub health_check {
     }
 
     ## Open the syslog and say we're read out stuff.
-    Sympa::Log::Syslog::do_openlog(Sympa::Site->syslog, Sympa::Site->log_socket_type,
-        'health_check');
+    Sympa::Log::Syslog::do_openlog(Sympa::Site->syslog, 'health_check');
 
     ## Setting log_level using conf unless it is set by calling option
     if ($options{'log_level'}) {

@@ -152,7 +152,7 @@ unless (Sympa::Robot::get_robots()) {
     exit 1;
 }
 
-Sympa::Log::Syslog::do_openlog(Sympa::Site->syslog, Sympa::Site->log_socket_type, 'bulk');
+Sympa::Log::Syslog::do_openlog(Sympa::Site->syslog, 'bulk');
 
 # setting log_level using conf unless it is set by calling option
 if ($options{'log_level'}) {
@@ -188,7 +188,7 @@ unless ($options{'foreground'}) {
         exit(0);
     }
 }
-Sympa::Log::Syslog::do_openlog(Sympa::Site->syslog, Sympa::Site->log_socket_type, 'bulk');
+Sympa::Log::Syslog::do_openlog(Sympa::Site->syslog, 'bulk');
 
 # check presence of a PID file from a previous execution
 Sympa::Tools::Daemon::check_old_pid_file(
@@ -437,7 +437,7 @@ while (!$end) {
                             $daemon_usage =
                                 'DAEMON_SLAVE';    # automatic lists creation
                             Sympa::Log::Syslog::do_openlog(Sympa::Site->syslog,
-                                Sympa::Site->log_socket_type, 'bulk');
+                                'bulk');
                             Sympa::Log::Syslog::do_log('info',
                                 "Bulk slave daemon started with PID %s", $PID);
                             last;

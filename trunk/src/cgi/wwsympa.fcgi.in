@@ -122,8 +122,7 @@ Sympa::Log::Syslog::set_log_level(Sympa::Site->log_level);
 
 my $daemon_name = Sympa::Tools::Daemon::get_daemon_name($0);
 
-Sympa::Log::Syslog::do_openlog(Sympa::Site->log_facility, Sympa::Site->log_socket_type,
-    'wwsympa');
+Sympa::Log::Syslog::do_openlog(Sympa::Site->log_facility, 'wwsympa');
 
 ## Start plugins
 if (eval "require Sympa::Plugin::Manager") {
