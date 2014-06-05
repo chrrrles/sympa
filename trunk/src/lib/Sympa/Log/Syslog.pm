@@ -120,7 +120,7 @@ sub do_log {
 
     ## If in 'err' level, build a stack trace,
     ## except if syslog has not been setup yet.
-    if (defined $log_level and $level eq 'err') {
+    if (defined $log_level and $level == ERR) {
         my $go_back = 1;
         my @calls;
 
@@ -153,10 +153,10 @@ sub do_log {
     $message = $level . ' ' . $message;
 
     # map to standard syslog facility if needed
-    if ($level eq 'trace') {
+    if ($level == TRACE) {
         $message = "###### TRACE MESSAGE ######:  " . $message;
         $level   = 'notice';
-    } elsif ($level eq 'debug2' || $level eq 'debug3') {
+    } elsif ($level == DEBUG2 || $level == DEBUG3) {
         $level = 'debug';
     }
 
@@ -165,7 +165,7 @@ sub do_log {
         or ($main::options{'foreground'} and $main::options{'log_to_stderr'})
         or (    $main::options{'foreground'}
             and $main::options{'batch'}
-            and $level eq 'err')
+            and $level == ERR)
         ) {
         $message =~ s/%m/$ERRNO/g;
         printf STDERR "$message\n", @param;
