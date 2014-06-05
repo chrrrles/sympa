@@ -27,12 +27,12 @@ use strict;
 
 use constant {
     ERR    => 0,
-    INFO   => 0,
-    NOTICE => 0,
-    TRACE  => 0,
-    DEBUG  => 1,
-    DEBUG2 => 2,
-    DEBUG3 => 3,
+    INFO   => 1,
+    NOTICE => 2,
+    TRACE  => 3,
+    DEBUG  => 4,
+    DEBUG2 => 5,
+    DEBUG3 => 6,
 };
 
 use English qw(-no_match_vars);
@@ -51,6 +51,28 @@ my $warning_timeout = 600;
 my $warning_date = 0;
 
 my $log_level = undef;
+
+# map internal constants against sympa 'log_level' directive
+my %sympa_levels = (
+    ERR    => 0,
+    INFO   => 0,
+    NOTICE => 0,
+    TRACE  => 0,
+    DEBUG  => 1,
+    DEBUG2 => 2,
+    DEBUG3 => 3,
+);
+
+# map internal constants against syslog levels
+my %syslog_levels = (
+    ERR    => Sys::Syslog::LOG_ERR,
+    INFO   => Sys::Syslog::LOG_INFO,
+    NOTICE => Sys::Syslog::LOG_NOTICE,
+    TRACE  => Sys::Syslog::LOG_NOTICE,
+    DEBUG  => Sys::Syslog::LOG_DEBUG,
+    DEBUG2 => Sys::Syslog::LOG_DEBUG,
+    DEBUG3 => Sys::Syslog::LOG_DEBUG,
+);
 
 ##sub import {
 ##my @call = caller(1);
@@ -82,8 +104,8 @@ sub do_log {
     my $level = shift;
 
     # do not log if log level is too high regarding the log requested by user
-    return if defined $log_level  and $level > $log_level;
-    return if !defined $log_level and $level > 0;
+    return if defined $log_level  and $sympa_levels{$level} > $log_level;
+    return if !defined $log_level and $sympa_levels{$level} > 0;
 
     my $message = shift;
     my @param   = ();
@@ -149,17 +171,6 @@ sub do_log {
 
     $message = $caller_string . ' ' . $message if ($caller_string);
 
-    ## Add facility to log entry
-    $message = $level . ' ' . $message;
-
-    # map to standard syslog facility if needed
-    if ($level == TRACE) {
-        $message = "###### TRACE MESSAGE ######:  " . $message;
-        $level   = 'notice';
-    } elsif ($level == DEBUG2 || $level == DEBUG3) {
-        $level = 'debug';
-    }
-
     ## Output to STDERR if needed
     if (   !defined $log_level
         or ($main::options{'foreground'} and $main::options{'log_to_stderr'})
@@ -172,7 +183,7 @@ sub do_log {
     }
 
     return unless defined $log_level;
-    syslog($level, $message, @param);
+    syslog($syslog_levels{$level}, $message, @param);
 }
 
 sub do_openlog {
