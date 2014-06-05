@@ -188,17 +188,7 @@ sub do_log {
     }
 
     return unless defined $log_level;
-    eval {
-        unless (syslog($level, $message, @param)) {
-            do_connect();
-            syslog($level, $message, @param);
-        }
-    };
-
-    if ($EVAL_ERROR && ($warning_date < time - $warning_timeout)) {
-        $warning_date = time + $warning_timeout;
-        Sympa::Site->send_notify_to_listmaster('logs_failed', [$EVAL_ERROR]);
-    }
+    syslog($level, $message, @param);
 }
 
 sub do_openlog {
