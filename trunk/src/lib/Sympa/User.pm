@@ -148,7 +148,7 @@ sub moveto {
     my $newemail = Sympa::Tools::clean_email(shift || '');
 
     unless ($newemail) {
-        Sympa::Log::Syslog::do_log('err', 'No email');
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'No email');
         return undef;
     }
     if ($self->email eq $newemail) {
@@ -166,7 +166,7 @@ sub moveto {
         )
         and $sth->rows
         ) {
-        Sympa::Log::Syslog::do_log('err', 'Can\'t move user %s to %s',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'Can\'t move user %s to %s',
             $self, $newemail);
         $sth = pop @sth_stack;
         return undef;
@@ -193,7 +193,7 @@ sub save {
     my $self = shift;
     unless (add_global_user('email' => $self->email, %$self)
         or update_global_user($self->email, %$self)) {
-        Sympa::Log::Syslog::do_log('err', 'Cannot save user %s', $self);
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'Cannot save user %s', $self);
         return undef;
     }
 
@@ -302,7 +302,7 @@ sub get_users {
 sub delete_global_user {
     my @users = @_;
 
-    Sympa::Log::Syslog::do_log('debug2', '');
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, '');
 
     return undef unless ($#users >= 0);
 
@@ -315,7 +315,7 @@ sub delete_global_user {
                 q{DELETE FROM user_table WHERE email_user = ?}, $who
             )
             ) {
-            Sympa::Log::Syslog::do_log('err', 'Unable to delete user %s',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'Unable to delete user %s',
                 $who);
             next;
         }
@@ -326,7 +326,7 @@ sub delete_global_user {
 
 ## Returns a hash for a given user
 sub get_global_user {
-    Sympa::Log::Syslog::do_log('debug2', '(%s)', @_);
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, '(%s)', @_);
     my $who = Sympa::Tools::clean_email(shift);
     my $user_fields = shift;
 
@@ -352,7 +352,7 @@ sub get_global_user {
             $who
         )
         ) {
-        Sympa::Log::Syslog::do_log('err', 'Failed to prepare SQL query');
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'Failed to prepare SQL query');
         $sth = pop @sth_stack;
         return undef;
     }
@@ -400,7 +400,7 @@ sub get_global_user {
 
 ## Returns an array of all users in User table hash for a given user
 sub get_all_global_user {
-    Sympa::Log::Syslog::do_log('debug2', '()');
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, '()');
 
     my @users;
 
@@ -408,7 +408,7 @@ sub get_all_global_user {
 
     unless ($sth =
         Sympa::DatabaseManager::do_prepared_query('SELECT email_user FROM user_table')) {
-        Sympa::Log::Syslog::do_log('err', 'Unable to gather all users in DB');
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'Unable to gather all users in DB');
         $sth = pop @sth_stack;
         return undef;
     }
@@ -426,7 +426,7 @@ sub get_all_global_user {
 ## Is the person in user table (db only)
 sub is_global_user {
     my $who = Sympa::Tools::clean_email(pop);
-    Sympa::Log::Syslog::do_log('debug3', '(%s)', $who);
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG3, '(%s)', $who);
 
     return undef unless ($who);
 
@@ -438,7 +438,7 @@ sub is_global_user {
             q{SELECT count(*) FROM user_table WHERE email_user = ?}, $who
         )
         ) {
-        Sympa::Log::Syslog::do_log('err',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
             'Unable to check whether user %s is in the user table.');
         $sth = pop @sth_stack;
         return undef;
@@ -454,7 +454,7 @@ sub is_global_user {
 
 ## Sets new values for the given user in the Database
 sub update_global_user {
-    Sympa::Log::Syslog::do_log('debug', '(%s, ...)', @_);
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG, '(%s, ...)', @_);
     my $who    = shift;
     my $values = $_[0];
     if (ref $values) {
@@ -508,7 +508,7 @@ sub update_global_user {
         Sympa::DatabaseManager::quote($who)
     );
     unless (defined $sth) {
-        Sympa::Log::Syslog::do_log('err',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
             'Could not update informations for user %s in user_table', $who);
         $sth = pop @sth_stack;
         return undef;
@@ -525,7 +525,7 @@ sub update_global_user {
 
 ## Adds a user to the user_table
 sub add_global_user {
-    Sympa::Log::Syslog::do_log('debug3', '(...)');
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG3, '(...)');
     my $values = $_[0];
     if (ref $values) {
         $values = {%$values};
@@ -582,7 +582,7 @@ sub add_global_user {
         join(',', @insert_value)
     );
     unless (defined $sth) {
-        Sympa::Log::Syslog::do_log('err',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
             'Unable to add user %s to the DB table user_table',
             $values->{'email'});
         $sth = pop @sth_stack;

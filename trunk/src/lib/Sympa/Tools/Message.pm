@@ -60,12 +60,12 @@ sub as_singlepart {
     $loops++;
 
     unless (defined $msg) {
-        Sympa::Log::Syslog::do_log('err', "Undefined message parameter");
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, "Undefined message parameter");
         return undef;
     }
 
     if ($loops > 4) {
-        Sympa::Log::Syslog::do_log('err',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
             'Could not change multipart to singlepart');
         return undef;
     }
@@ -149,7 +149,7 @@ sub split_mail {
 
         ## Store body in file
         unless (open OFILE, ">$dir/$pathname.$fileExt") {
-            Sympa::Log::Syslog::do_log('err', 'Unable to create %s/%s.%s: %s',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'Unable to create %s/%s.%s: %s',
                 $dir, $pathname, $fileExt, $ERRNO);
             return undef;
         }
@@ -165,7 +165,7 @@ sub split_mail {
 
             my $decoder = MIME::Decoder->new($encoding);
             unless (defined $decoder) {
-                Sympa::Log::Syslog::do_log('err',
+                Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                     'Cannot create decoder for %s', $encoding);
                 return undef;
             }
@@ -198,10 +198,10 @@ sub virus_infected {
     # in, version previous from db spools, $file was the filename of the
     # message
     my $file = int(rand(time));
-    Sympa::Log::Syslog::do_log('debug2', 'Scan virus in %s', $file);
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, 'Scan virus in %s', $file);
 
     unless (Sympa::Site->antivirus_path) {
-        Sympa::Log::Syslog::do_log('debug',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG,
             'Sympa not configured to scan virus in message');
         return 0;
     }
@@ -209,7 +209,7 @@ sub virus_infected {
     my $work_dir = Sympa::Site->tmpdir . '/antivirus';
 
     unless ((-d $work_dir) || (mkdir $work_dir, 0755)) {
-        Sympa::Log::Syslog::do_log('err',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
             "Unable to create tmp antivirus directory $work_dir");
         return undef;
     }
@@ -217,7 +217,7 @@ sub virus_infected {
     $work_dir = Sympa::Site->tmpdir . '/antivirus/' . $name[$#name];
 
     unless ((-d $work_dir) || mkdir($work_dir, 0755)) {
-        Sympa::Log::Syslog::do_log('err',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
             "Unable to create tmp antivirus directory $work_dir");
         return undef;
     }
@@ -226,7 +226,7 @@ sub virus_infected {
 
     ## Call the procedure of splitting mail
     unless (split_mail($mail, 'msg', $work_dir)) {
-        Sympa::Log::Syslog::do_log('err', 'Could not split mail %s', $mail);
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'Could not split mail %s', $mail);
         return undef;
     }
 
@@ -239,7 +239,7 @@ sub virus_infected {
 
         # impossible to look for viruses with no option set
         unless (Sympa::Site->antivirus_args) {
-            Sympa::Log::Syslog::do_log('err',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                 "Missing 'antivirus_args' in sympa.conf");
             return undef;
         }
@@ -308,7 +308,7 @@ sub virus_infected {
 
         # impossible to look for viruses with no option set
         unless (Sympa::Site->antivirus_args) {
-            Sympa::Log::Syslog::do_log('err',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                 "Missing 'antivirus_args' in sympa.conf");
             return undef;
         }
@@ -334,7 +334,7 @@ sub virus_infected {
         }
     } elsif (Sympa::Site->antivirus_path =~ /f-prot\.sh$/) {
 
-        Sympa::Log::Syslog::do_log('debug2', 'f-prot is running');
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, 'f-prot is running');
         my $cmd = sprintf '%s %s %s',
             Sympa::Site->antivirus_path, Sympa::Site->antivirus_args,
             $work_dir;
@@ -350,7 +350,7 @@ sub virus_infected {
 
         my $status = $CHILD_ERROR >> 8;
 
-        Sympa::Log::Syslog::do_log('debug2', 'Status: ' . $status);
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, 'Status: ' . $status);
 
         ## f-prot status =3 (*256) => virus
         if (($status == 3) and not($virusfound)) {
@@ -360,7 +360,7 @@ sub virus_infected {
 
         # impossible to look for viruses with no option set
         unless (Sympa::Site->antivirus_args) {
-            Sympa::Log::Syslog::do_log('err',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                 "Missing 'antivirus_args' in sympa.conf");
             return undef;
         }
@@ -390,7 +390,7 @@ sub virus_infected {
 
         # impossible to look for viruses with no option set
         unless (Sympa::Site->antivirus_args) {
-            Sympa::Log::Syslog::do_log('err',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                 "Missing 'antivirus_args' in sympa.conf");
             return undef;
         }
@@ -861,7 +861,7 @@ sub parse_tt2_messageasstring {
 
     my $header_possible = $data->{'header_possible'};
     my $sign_mode       = $data->{'sign_mode'};
-    Sympa::Log::Syslog::do_log('debug2',
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2,
         '(%s, %s, %s, header_possible=%s, sign_mode=%s)',
         $robot, $filename, $rcpt, $header_possible, $sign_mode);
     my ($to, $message_as_string);
@@ -874,7 +874,7 @@ sub parse_tt2_messageasstring {
     ## We may receive a list of recipients
     if (ref($rcpt)) {
         unless (ref($rcpt) eq 'ARRAY') {
-            Sympa::Log::Syslog::do_log('notice',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE,
                 'Wrong type of reference for rcpt');
             return undef;
         }
@@ -1060,7 +1060,7 @@ sub parse_tt2_messageasstring {
             \@msgs, $data->{'charset'}
         )
         ) {
-        Sympa::Log::Syslog::do_log('err', 'Failed to reformat message');
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'Failed to reformat message');
     }
 
     return $message_as_string;
@@ -1112,7 +1112,7 @@ sub _reformat_message($;$$) {
 
     my $parser = MIME::Parser->new();
     unless (defined $parser) {
-        Sympa::Log::Syslog::do_log('err',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
             "Sympa::Mail::reformat_message: Failed to create MIME parser");
         return undef;
     }
@@ -1123,7 +1123,7 @@ sub _reformat_message($;$$) {
     } else {
         eval { $msg = $parser->parse_data($message); };
         if ($EVAL_ERROR) {
-            Sympa::Log::Syslog::do_log('err',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                 "Sympa::Mail::reformat_message: Failed to parse MIME data");
             return undef;
         }
@@ -1160,7 +1160,7 @@ sub _fix_part {
         if (ref($data) ne 'MIME::Entity') {
             eval { $data = $parser->parse_data($data); };
             if ($EVAL_ERROR) {
-                Sympa::Log::Syslog::do_log('notice',
+                Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE,
                     "Failed to parse MIME data");
                 $data = $parser->parse_data('');
             }
@@ -1219,7 +1219,7 @@ sub _fix_part {
         my $io = $bodyh->open("w");
 
         unless (defined $io) {
-            Sympa::Log::Syslog::do_log('err',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                 "Sympa::Mail::reformat_message: Failed to save message : $ERRNO");
             return undef;
         }

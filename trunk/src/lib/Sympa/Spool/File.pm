@@ -68,7 +68,7 @@ XXX @todo doc
 
 ## Creates an object.
 sub new {
-    Sympa::Log::Syslog::do_log('debug2', '(%s, %s, %s, ...)', @_);
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, '(%s, %s, %s, ...)', @_);
     my ($pkg, $spoolname, $selection_status, %opts) = @_;
 
     my $self;
@@ -78,7 +78,7 @@ sub new {
     my $dir;
     eval { $dir = Sympa::Site->$queue; };    # check if parameter is defined.
     if ($EVAL_ERROR) {
-        Sympa::Log::Syslog::do_log('err', 'internal error unknown spool %s',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'internal error unknown spool %s',
             $spoolname);
         return undef;
     }
@@ -95,7 +95,7 @@ sub new {
     $self->{'sortby'}   = $opts{'sortby'}   if $opts{'sortby'};
     $self->{'way'}      = $opts{'way'}      if $opts{'way'};
 
-    Sympa::Log::Syslog::do_log('debug3', 'Spool to scan "%s"', $dir);
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG3, 'Spool to scan "%s"', $dir);
 
     $self->create_spool_dir;
 
@@ -132,7 +132,7 @@ XXX @todo doc
 #  content
 #
 sub get_content {
-    Sympa::Log::Syslog::do_log('debug2', '(%s, %s)', @_);
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, '(%s, %s)', @_);
     my $self = shift;
     my $param = shift || {};
     my $perlselector =
@@ -170,7 +170,7 @@ sub get_content {
         }
         my $cmp = eval $perlselector;
         if ($EVAL_ERROR) {
-            Sympa::Log::Syslog::do_log('err',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                 'Failed to evaluate selector: %s', $EVAL_ERROR);
             return undef;
         }
@@ -182,7 +182,7 @@ sub get_content {
     if ($perlcomparator) {
         my @sorted = eval sprintf 'sort { %s } @messages', $perlcomparator;
         if ($EVAL_ERROR) {
-            Sympa::Log::Syslog::do_log('err', 'Could not sort messages: %s',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'Could not sort messages: %s',
                 $EVAL_ERROR);
         } else {
             @messages = @sorted;
@@ -260,13 +260,13 @@ XXX @todo doc
 #  returns 0 if no file found
 #  returns undef if problem scanning spool
 sub next {
-    Sympa::Log::Syslog::do_log('debug2', '(%s)', @_);
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, '(%s)', @_);
     my $self = shift;
 
     my $data;
 
     unless ($self->refresh_spool_files_list) {
-        Sympa::Log::Syslog::do_log('err',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
             'Unable to refresh spool %s files list', $self);
         return undef;
     }
@@ -285,7 +285,7 @@ sub parse_filename {
     my $key  = shift;
 
     unless ($key) {
-        Sympa::Log::Syslog::do_log('err',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
             'Unable to find out which file to process');
         return undef;
     }
@@ -311,14 +311,14 @@ sub parse_file_content {
     my $data = shift;
 
     unless ($key) {
-        Sympa::Log::Syslog::do_log('err',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
             'Unable to find out which file to process');
         return undef;
     }
 
     $data->{'messageasstring'} = $self->get_file_content($key);
     unless (defined $data->{'messageasstring'}) {
-        Sympa::Log::Syslog::do_log('err',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
             'Unable to gather content from file %s', $key);
         return undef;
     }
@@ -335,7 +335,7 @@ sub get_additional_details {
 }
 
 sub get_next_file_to_process {
-    Sympa::Log::Syslog::do_log('debug2', '(%s)', @_);
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, '(%s)', @_);
     my $self = shift;
 
     my $perlselector = _perlselector($self->{'selector'}) || '1';
@@ -350,7 +350,7 @@ sub get_next_file_to_process {
 
         $cmp = eval $perlselector;
         if ($EVAL_ERROR) {
-            Sympa::Log::Syslog::do_log('err',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                 'Failed to evaluate selector: %s', $EVAL_ERROR);
             return undef;
         }
@@ -363,7 +363,7 @@ sub get_next_file_to_process {
         my ($a, $b) = ($data, $item);
         $cmp = eval $perlcomparator;
         if ($EVAL_ERROR) {
-            Sympa::Log::Syslog::do_log('err',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                 'Could not compare messages: %s', $EVAL_ERROR);
             return $data;
         }
@@ -390,7 +390,7 @@ sub is_readable {
 }
 
 sub get_file_content {
-    Sympa::Log::Syslog::do_log('debug3', '(%s, %s)', @_);
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG3, '(%s, %s)', @_);
     my $self = shift;
     my $key  = shift;
 
@@ -410,14 +410,14 @@ sub get_file_content {
 }
 
 sub lock_message {
-    Sympa::Log::Syslog::do_log('debug2', '(%s, %s)', @_);
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, '(%s, %s)', @_);
     my $self = shift;
     my $key  = shift;
 
     $self->{'lock'} = Sympa::Lock->new($key);
     $self->{'lock'}->set_timeout(-1);
     unless ($self->{'lock'}->lock('write')) {
-        Sympa::Log::Syslog::do_log('err', 'Unable to put a lock on file %s',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'Unable to put a lock on file %s',
             $key);
         delete $self->{'lock'};
         return undef;
@@ -426,7 +426,7 @@ sub lock_message {
 }
 
 sub unlock_message {
-    Sympa::Log::Syslog::do_log('debug2', '(%s, %s)', @_);
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, '(%s, %s)', @_);
     my $self = shift;
     my $key  = shift;
 
@@ -435,7 +435,7 @@ sub unlock_message {
         return undef;
     }
     unless ($self->{'lock'}->unlock()) {
-        Sympa::Log::Syslog::do_log('err',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
             'Unable to remove lock from file %s', $key);
         delete $self->{'lock'};
         return undef;
@@ -457,7 +457,7 @@ sub get_dirs_in_spool {
 
 sub refresh_spool_files_list {
     my $self = shift;
-    Sympa::Log::Syslog::do_log('debug2', '%s', $self->get_id);
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, '%s', $self->get_id);
     unless (-d $self->{'dir'}) {
         $self->create_spool_dir;
     }
@@ -479,7 +479,7 @@ sub refresh_spool_files_list {
 
 sub refresh_spool_dirs_list {
     my $self = shift;
-    Sympa::Log::Syslog::do_log('debug2', '%s', $self->get_id);
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, '%s', $self->get_id);
     unless (-d $self->{'dir'}) {
         $self->create_spool_dir;
     }
@@ -501,7 +501,7 @@ sub refresh_spool_dirs_list {
 
 sub create_spool_dir {
     my $self = shift;
-    Sympa::Log::Syslog::do_log('debug', '%s', $self->get_id);
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG, '%s', $self->get_id);
     unless (-d $self->{'dir'}) {
         make_path($self->{'dir'});
     }
@@ -519,7 +519,7 @@ XXX @todo doc
 =cut
 
 sub move_to_bad {
-    Sympa::Log::Syslog::do_log('debug3', '(%s, %s)', @_);
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG3, '(%s, %s)', @_);
     my $self = shift;
     my $key  = shift;
 
@@ -541,7 +541,7 @@ sub move_to_bad {
         return undef;
     }
     unless (unlink($self->{'dir'} . '/' . $key)) {
-        Sympa::Log::Syslog::do_log('err',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
             "Could not unlink message %s/%s . Exiting",
             $self->{'dir'}, $key);
     }
@@ -581,7 +581,7 @@ sub get_message {
 #    my $self = shift;
 #    my $messagekey = shift;
 #
-#    Sympa::Log::Syslog::do_log('debug', 'Spool::unlock_message(%s,%s)',$self->{'spoolname'}, $messagekey);
+#    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG, 'Spool::unlock_message(%s,%s)',$self->{'spoolname'}, $messagekey);
 #    return ( $self->update({'messagekey' => $messagekey},
 #			   {'messagelock' => 'NULL'}));
 #}
@@ -626,7 +626,7 @@ sub store {
     $target_file ||= $self->get_storage_name($param);
     my $fh;
     unless (open $fh, ">", "$self->{'dir'}/$target_file") {
-        Sympa::Log::Syslog::do_log('err', 'Unable to write file to spool %s',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'Unable to write file to spool %s',
             $self->{'dir'});
         return undef;
     }
@@ -700,10 +700,10 @@ sub clean {
         if ((stat "$self->{'dir'}/$f")[9] < $freshness_date) {
             if (unlink("$self->{'dir'}/$f")) {
                 $deleted++;
-                Sympa::Log::Syslog::do_log('notice', 'Deleting old file %s',
+                Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE, 'Deleting old file %s',
                     "$self->{'dir'}/$f");
             } else {
-                Sympa::Log::Syslog::do_log('notice',
+                Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE,
                     'unable to delete old file %s: %s',
                     "$self->{'dir'}/$f", $ERRNO);
             }
@@ -716,10 +716,10 @@ sub clean {
         if ((stat "$self->{'dir'}/$d")[9] < $freshness_date) {
             if (Sympa::Tools::File::remove_dir("$self->{'dir'}/$d")) {
                 $deleted++;
-                Sympa::Log::Syslog::do_log('notice', 'Deleting old file %s',
+                Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE, 'Deleting old file %s',
                     "$self->{'dir'}/$d");
             } else {
-                Sympa::Log::Syslog::do_log('notice',
+                Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE,
                     'unable to delete old file %s: %s',
                     "$self->{'dir'}/$d", $ERRNO);
             }
@@ -728,7 +728,7 @@ sub clean {
         }
     }
 
-    Sympa::Log::Syslog::do_log('debug',
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG,
         "%s entries older than %s days removed from spool %s",
         $deleted, $filter->{'delay'}, $self->{'spoolname'});
     return 1;

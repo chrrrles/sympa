@@ -142,7 +142,7 @@ sub load_robots {
 
     my $robots_list_ref = get_robots_list();
     unless (defined $robots_list_ref) {
-        Sympa::Log::Syslog::do_log('err', 'robots config loading failed.');
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'robots config loading failed.');
         return undef;
     } else {
         @robots = @{$robots_list_ref};
@@ -249,7 +249,7 @@ sub get_wwsympa_conf {
 
 # deletes all the *.conf.bin files.
 sub delete_binaries {
-    Sympa::Log::Syslog::do_log('debug2', '()');
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, '()');
     my @files = (get_sympa_conf(), get_wwsympa_conf());
     foreach my $robot (@{get_robots_list()}) {
         push @files, "$Conf{'etc'}/$robot/robot.conf";
@@ -272,10 +272,10 @@ sub delete_binaries {
 # Return a reference to an array containing the names of the robots on the
 # server.
 sub get_robots_list {
-    Sympa::Log::Syslog::do_log('debug2', '()');
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, '()');
     my @robots_list;
     unless (opendir DIR, $Conf{'etc'}) {
-        Sympa::Log::Syslog::do_log('err',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
             'Unable to open directory %s for virtual robots config',
             $Conf{'etc'});
         return undef;
@@ -294,7 +294,7 @@ sub get_robots_list {
 ## (as defined in confdef.pm) whose name is given as argument, in the context
 ## of the robot given as argument.
 sub get_parameters_group {
-    Sympa::Log::Syslog::do_log('debug3', '(%s, %s)', @_);
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG3, '(%s, %s)', @_);
     my ($robot, $group) = @_;
     my $param_hash;
     foreach my $param_name (keys %{$params_by_categories->{$group}}) {
@@ -338,7 +338,7 @@ sub get_db_conf {
 
 ## store the value from parameter $label of robot $robot from conf_table
 sub set_robot_conf {
-    Sympa::Log::Syslog::do_log('debug2', '(%s, %s, %s)', @_);
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, '(%s, %s, %s)', @_);
     my $robot = shift;
     my $label = shift;
     my $value = shift;
@@ -413,7 +413,7 @@ sub set_robot_conf {
 
 # Store configs to database
 sub conf_2_db {
-    Sympa::Log::Syslog::do_log('debug2', '(%s)', @_);
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, '(%s)', @_);
 
     my @conf_parameters = @Sympa::ConfDef::params;
 
@@ -423,7 +423,7 @@ sub conf_2_db {
     load_robots();
 
     unless (opendir DIR, $Conf{'etc'}) {
-        Sympa::Log::Syslog::do_log('err',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
             'Unable to open directory %s for virtual robots config',
             $Conf{'etc'});
         return undef;
@@ -471,7 +471,7 @@ sub conf_2_db {
     my $global_conf;
     unless ($global_conf =
         Sympa::Site->load('no_db' => 1, 'return_result' => 1)) {
-        Sympa::Log::Syslog::do_log('err', 'Configuration file %s has errors.',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'Configuration file %s has errors.',
             get_sympa_conf());
         return undef;
     }
@@ -538,7 +538,7 @@ sub checkfiles_as_root {
         my $dir = get_robot_conf($robot, 'static_content_path');
         if ($dir ne '' && !-d $dir) {
             unless (mkdir($dir, 0775)) {
-                Sympa::Log::Syslog::do_log('err',
+                Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                     'Unable to create directory %s: %s',
                     $dir, $ERRNO);
                 $config_err++;
@@ -551,7 +551,7 @@ sub checkfiles_as_root {
                     group => Sympa::Constants::GROUP,
                 )
                 ) {
-                Sympa::Log::Syslog::do_log('err',
+                Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                     'Unable to set rights on %s', $dir);
                 return undef;
             }
@@ -569,7 +569,7 @@ sub checkfiles {
         next unless $Conf{$p};
 
         unless (-x $Conf{$p}) {
-            Sympa::Log::Syslog::do_log('err',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                 "File %s does not exist or is not executable",
                 $Conf{$p});
             $config_err++;
@@ -586,9 +586,9 @@ sub checkfiles {
         'tmpdir'
         ) {
         unless (-d $Conf{$qdir}) {
-            Sympa::Log::Syslog::do_log('info', "creating spool $Conf{$qdir}");
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::INFO, "creating spool $Conf{$qdir}");
             unless (mkdir($Conf{$qdir}, 0775)) {
-                Sympa::Log::Syslog::do_log('err', 'Unable to create spool %s',
+                Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'Unable to create spool %s',
                     $Conf{$qdir});
                 $config_err++;
             }
@@ -599,7 +599,7 @@ sub checkfiles {
                     group => Sympa::Constants::GROUP,
                 )
                 ) {
-                Sympa::Log::Syslog::do_log('err',
+                Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                     'Unable to set rights on %s',
                     $Conf{$qdir});
                 $config_err++;
@@ -611,9 +611,9 @@ sub checkfiles {
     foreach my $qdir ('queue', 'queuedistribute', 'queueautomatic') {
         my $subdir = $Conf{$qdir} . '/bad';
         unless (-d $subdir) {
-            Sympa::Log::Syslog::do_log('info', 'creating spool %s', $subdir);
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::INFO, 'creating spool %s', $subdir);
             unless (mkdir($subdir, 0775)) {
-                Sympa::Log::Syslog::do_log('err', 'Unable to create spool %s',
+                Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'Unable to create spool %s',
                     $subdir);
                 $config_err++;
             }
@@ -624,7 +624,7 @@ sub checkfiles {
                     group => Sympa::Constants::GROUP,
                 )
                 ) {
-                Sympa::Log::Syslog::do_log('err',
+                Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                     'Unable to set rights on %s', $subdir);
                 $config_err++;
             }
@@ -634,7 +634,7 @@ sub checkfiles {
     ## Check cafile and capath access
     if (defined $Conf{'cafile'} && $Conf{'cafile'}) {
         unless (-f $Conf{'cafile'} && -r $Conf{'cafile'}) {
-            Sympa::Log::Syslog::do_log('err', 'Cannot access cafile %s',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'Cannot access cafile %s',
                 $Conf{'cafile'});
             Sympa::Site->send_notify_to_listmaster('cannot_access_cafile',
                 $Conf{'cafile'});
@@ -644,7 +644,7 @@ sub checkfiles {
 
     if (defined $Conf{'capath'} && $Conf{'capath'}) {
         unless (-d $Conf{'capath'} && -x $Conf{'capath'}) {
-            Sympa::Log::Syslog::do_log('err', 'Cannot access capath %s',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'Cannot access capath %s',
                 $Conf{'capath'});
             Sympa::Site->send_notify_to_listmaster('cannot_access_capath',
                 $Conf{'capath'});
@@ -687,7 +687,7 @@ sub checkfiles {
                 my $pictures_dir = $robot->static_content_path . '/pictures';
                 unless (-d $pictures_dir) {
                     unless (mkdir($pictures_dir, 0775)) {
-                        Sympa::Log::Syslog::do_log('err',
+                        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                             'Unable to create directory %s',
                             $pictures_dir);
                         $config_err++;
@@ -731,7 +731,7 @@ sub checkfiles {
         unless (-d $dir) {
             unless (Sympa::Tools::File::mkdir_all($dir, 0755)) {
                 my $msg = "Failed to create directory $dir: $ERRNO";
-                Sympa::Log::Syslog::do_log('err', '%s', $msg);
+                Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, '%s', $msg);
                 $robot->send_notify_to_listmaster('cannot_mkdir', $msg);
                 return undef;
             }
@@ -762,7 +762,7 @@ sub checkfiles {
                     my $msg = "Could not open (write) file $dir/$css: $ERRNO";
                     $robot->send_notify_to_listmaster('cannot_open_file',
                         $msg);
-                    Sympa::Log::Syslog::do_log('err', '%s', $msg);
+                    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, '%s', $msg);
                     return undef;
                 }
 
@@ -775,7 +775,7 @@ sub checkfiles {
                     $param->{'tt2_error'} = $error;
                     $robot->send_notify_to_listmaster('web_tt2_error',
                         $error);
-                    Sympa::Log::Syslog::do_log('err',
+                    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                         'Error while installing %s/%s',
                         $dir, $css);
                 }
@@ -830,7 +830,7 @@ sub valid_robot {
 
     ## Robot not loaded
     unless (defined $Conf{'robots'}{$robot}) {
-        Sympa::Log::Syslog::do_log('err',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
             'Robot %s was not loaded by this Sympa process', $robot)
             unless ($options->{'just_try'});
         return undef;
@@ -849,7 +849,7 @@ sub get_sso_by_id {
     }
 
     foreach my $sso (@{$Conf{'auth_services'}{$param{'robot'}}}) {
-        Sympa::Log::Syslog::do_log('debug3', 'SSO: %s', $sso->{'service_id'});
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG3, 'SSO: %s', $sso->{'service_id'});
         next unless ($sso->{'service_id'} eq $param{'service_id'});
 
         return $sso;
@@ -863,14 +863,14 @@ sub get_sso_by_id {
 ##########################################
 
 sub _load_auth {
-    Sympa::Log::Syslog::do_log('debug2', '(%s, %s)', @_);
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, '(%s, %s)', @_);
     my $robot         = shift;
     my $is_main_robot = shift;
 
     # find appropriate auth.conf file
     my $config_file =
         _get_config_file_name({'robot' => $robot, 'file' => "auth.conf"});
-    Sympa::Log::Syslog::do_log('debug3', 'config_file: %s', $config_file);
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG3, 'config_file: %s', $config_file);
 
     $robot ||= $Conf{'domain'};
     my $line_num   = 0;
@@ -955,7 +955,7 @@ sub _load_auth {
 
     ## Open the configuration file or return and read the lines.
     unless (open(IN, $config_file)) {
-        Sympa::Log::Syslog::do_log('notice', 'Unable to open %s: %s',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE, 'Unable to open %s: %s',
             $config_file, $ERRNO);
         return undef;
     }
@@ -981,7 +981,7 @@ sub _load_auth {
             unless (
                 defined $valid_keywords{$current_paragraph->{'auth_type'}}
                 {$keyword}) {
-                Sympa::Log::Syslog::do_log('err',
+                Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                     'unknown keyword "%s" in %s line %d',
                     $keyword, $config_file, $line_num);
                 next;
@@ -989,7 +989,7 @@ sub _load_auth {
             unless ($value =~
                 /^$valid_keywords{$current_paragraph->{'auth_type'}}{$keyword}$/
                 ) {
-                Sympa::Log::Syslog::do_log('err',
+                Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                     'unknown format "%s" for keyword "%s" in %s line %d',
                     $value, $keyword, $config_file, $line_num);
                 next;
@@ -1009,14 +1009,14 @@ sub _load_auth {
 
                 if ($current_paragraph->{'auth_type'} eq 'cas') {
                     unless (defined $current_paragraph->{'base_url'}) {
-                        Sympa::Log::Syslog::do_log('err',
+                        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                             'Incorrect CAS paragraph in auth.conf');
                         next;
                     }
 
                     eval "require AuthCAS";
                     if ($EVAL_ERROR) {
-                        Sympa::Log::Syslog::do_log('err',
+                        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                             'Failed to load AuthCAS perl module');
                         return undef;
                     }
@@ -1131,7 +1131,7 @@ sub load_charset {
         _get_config_file_name({'robot' => '', 'file' => "charset.conf"});
     if (-f $config_file) {
         unless (open CONFIG, $config_file) {
-            Sympa::Log::Syslog::do_log('err',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                 'Unable to read configuration file %s: %s',
                 $config_file, $ERRNO);
             return {};
@@ -1152,7 +1152,7 @@ sub load_charset {
                 next;
             }
             unless ($lang and $lang = Sympa::Language::CanonicLang($lang)) {
-                Sympa::Log::Syslog::do_log('err',
+                Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                     'Illegal lang name in configuration file %s line %d',
                     $config_file, $.);
                 next;
@@ -1179,7 +1179,7 @@ sub load_nrcpt_by_domain {
     return undef unless (-f $config_file);
     ## Open the configuration file or return and read the lines.
     unless (open(IN, $config_file)) {
-        Sympa::Log::Syslog::do_log('err', 'Unable to open %s: %s',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'Unable to open %s: %s',
             $config_file, $ERRNO);
         return undef;
     }
@@ -1193,7 +1193,7 @@ sub load_nrcpt_by_domain {
             $nrcpt_by_domain->{$domain} = $value;
             $valid_dom += 1;
         } else {
-            Sympa::Log::Syslog::do_log('notice',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE,
                 Sympa::Language::gettext('Error at line %d: %s'),
                 $line_num, $config_file, $_);
             $config_err++;
@@ -1235,7 +1235,7 @@ sub load_sql_filter {
 sub load_automatic_lists_description {
     my $robot  = shift;
     my $family = shift;
-    Sympa::Log::Syslog::do_log('debug2', 'Starting: robot %s family %s',
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, 'Starting: robot %s family %s',
         $robot, $family);
 
     my %automatic_lists_params = (
@@ -1371,7 +1371,7 @@ sub load_crawlers_detection {
 #
 ##############################################################
 sub load_generic_conf_file {
-    Sympa::Log::Syslog::do_log('debug2', '(%s, %s, %s)', @_);
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, '(%s, %s, %s)', @_);
     my $config_file   = shift;
     my $structure_ref = shift;
     my $on_error      = shift;
@@ -1392,7 +1392,7 @@ sub load_generic_conf_file {
     ## Split in paragraphs
     my $i = 0;
     unless (open(CONFIG, $config_file)) {
-        Sympa::Log::Syslog::do_log('err',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
             'unable to read configuration file %s', $config_file);
         return undef;
     }
@@ -1433,7 +1433,7 @@ sub load_generic_conf_file {
 
         ## Look for first valid line
         unless ($paragraph[0] =~ /^\s*([\w-]+)(\s+.*)?$/) {
-            Sympa::Log::Syslog::do_log('notice',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE,
                 'Bad paragraph "%s" in %s, ignored',
                 $paragraph[0], $config_file);
             return undef if $on_error eq 'abort';
@@ -1442,7 +1442,7 @@ sub load_generic_conf_file {
 
         $pname = $1;
         unless (defined $structure{$pname}) {
-            Sympa::Log::Syslog::do_log('notice',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE,
                 'Unknown parameter "%s" in %s, ignored',
                 $pname, $config_file);
             return undef if $on_error eq 'abort';
@@ -1452,7 +1452,7 @@ sub load_generic_conf_file {
         if (defined $admin{$pname}) {
             unless (($structure{$pname}{'occurrence'} eq '0-n')
                 or ($structure{$pname}{'occurrence'} eq '1-n')) {
-                Sympa::Log::Syslog::do_log('err',
+                Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                     'Multiple parameter "%s" in %s',
                     $pname, $config_file);
                 return undef if $on_error eq 'abort';
@@ -1480,13 +1480,13 @@ sub load_generic_conf_file {
             for my $i (0 .. $#paragraph) {
                 next if ($paragraph[$i] =~ /^\s*\#/);
                 unless ($paragraph[$i] =~ /^\s*(\w+)\s*/) {
-                    Sympa::Log::Syslog::do_log('err', 'Bad line "%s" in %s',
+                    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'Bad line "%s" in %s',
                         $paragraph[$i], $config_file);
                     return undef if $on_error eq 'abort';
                 }
                 my $key = $1;
                 unless (defined $structure{$pname}{'format'}{$key}) {
-                    Sympa::Log::Syslog::do_log('err',
+                    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                         'Unknown key "%s" in paragraph "%s" in %s',
                         $key, $pname, $config_file);
                     return undef if $on_error eq 'abort';
@@ -1496,7 +1496,7 @@ sub load_generic_conf_file {
                 unless ($paragraph[$i] =~
                     /^\s*$key\s+($structure{$pname}{'format'}{$key}{'format'})\s*$/i
                     ) {
-                    Sympa::Log::Syslog::do_log('err',
+                    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                         'Bad entry "%s" in paragraph "%s" in %s',
                         $paragraph[$i], $key, $pname, $config_file);
                     return undef if $on_error eq 'abort';
@@ -1522,7 +1522,7 @@ sub load_generic_conf_file {
                 ## Required fields
                 if ($structure{$pname}{'format'}{$k}{'occurrence'} eq '1') {
                     unless (defined $hash{$k}) {
-                        Sympa::Log::Syslog::do_log('err',
+                        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                             'Missing key %s in param %s in %s',
                             $k, $pname, $config_file);
                         return undef if $on_error eq 'abort';
@@ -1545,7 +1545,7 @@ sub load_generic_conf_file {
             ## This should be a single line
             my $xxxmachin = $structure{$pname}{'format'};
             unless ($#paragraph == 0) {
-                Sympa::Log::Syslog::do_log('err',
+                Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                     'Expecting a single line for %s parameter in %s %s',
                     $pname, $config_file, $xxxmachin);
                 return undef if $on_error eq 'abort';
@@ -1553,7 +1553,7 @@ sub load_generic_conf_file {
 
             unless ($paragraph[0] =~
                 /^\s*$pname\s+($structure{$pname}{'format'})\s*$/i) {
-                Sympa::Log::Syslog::do_log('err', 'Bad entry "%s" in %s',
+                Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'Bad entry "%s" in %s',
                     $paragraph[0], $config_file);
                 return undef if $on_error eq 'abort';
                 next;
@@ -1627,7 +1627,7 @@ sub _load_config_file_to_hash {
 
     ## Open the configuration file or return and read the lines.
     unless (open IN, '<', $config_file) {
-        Sympa::Log::Syslog::do_log('err', 'Unable to open %s: %s',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'Unable to open %s: %s',
             $config_file, $ERRNO);
         return undef;
     }
@@ -1666,7 +1666,7 @@ sub _load_config_file_to_hash {
                 $result->{'numbered_config'}{$keyword} = [$value, $line_num];
             }
         } else {
-            Sympa::Log::Syslog::do_log('err',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                 Sympa::Language::gettext('Error at %s line %d: %s'),
                 $config_file, $line_num, $_);
             $result->{'errors'}++;
@@ -1683,7 +1683,7 @@ sub _remove_unvalid_robot_entry {
     my $config_hash = $param->{'config_hash'};
     foreach my $keyword (keys %$config_hash) {
         unless ($valid_robot_key_words{$keyword}) {
-            Sympa::Log::Syslog::do_log('err',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                 'removing unknown robot keyword %s', $keyword)
                 unless $param->{'quiet'};
             delete $config_hash->{$keyword};
@@ -1788,7 +1788,7 @@ sub _infer_server_specific_parameter_values {
         if ($log_condition =~ /^\s*(ip|email)\s*\=\s*(.*)\s*$/i) {
             $param->{'config_hash'}{'loging_condition'}{$1} = $2;
         } else {
-            Sympa::Log::Syslog::do_log('notice',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE,
                 'unrecognized log_condition token %s ; ignored',
                 $log_condition);
         }
@@ -1920,7 +1920,7 @@ sub _infer_robot_parameter_values {
     ## db_list_cache is obsoleted by Sympa 6.2.  Use cache_list_config
     if (    $param->{'config_hash'}{'db_list_cache'}
         and $param->{'config_hash'}{'db_list_cache'} eq 'on') {
-        Sympa::Log::Syslog::do_log('notice',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE,
             'db_list_cache is "on" but it is obsoleted.  Setting cache_list_config as "database".'
         );
         $param->{'config_hash'}{'cache_list_config'} = 'database';
@@ -1987,7 +1987,7 @@ sub _detect_missing_mandatory_parameters {
         unless (defined $param->{'config_hash'}{$parameter}
             or defined $params{$parameter}->{'default'}
             or defined $params{$parameter}->{'optional'}) {
-            Sympa::Log::Syslog::do_log('err',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                 'Required field not found in sympa.conf: %s', $parameter);
             $number_of_errors++;
             next;
@@ -2012,7 +2012,7 @@ sub _check_cpan_modules_required_by_config {
     if ($param->{'config_hash'}{'dkim_feature'} eq 'on') {
         eval "require Mail::DKIM";
         if ($EVAL_ERROR) {
-            Sympa::Log::Syslog::do_log('notice',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE,
                 'Failed to load Mail::DKIM perl module ; setting "dkim_feature" to "off"'
             );
             $param->{'config_hash'}{'dkim_feature'} = 'off';
@@ -2027,7 +2027,7 @@ sub _dump_non_robot_parameters {
     foreach my $key (keys %{$param->{'config_hash'}}) {
         unless ($valid_robot_key_words{$key}) {
             delete $param->{'config_hash'}{$key};
-            Sympa::Log::Syslog::do_log('err',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                 'Robot %s config: unknown robot parameter: %s',
                 $param->{'robot'}, $key);
         }
@@ -2063,7 +2063,7 @@ sub load_robot_conf {
     }
 
     unless (-r $config_file) {
-        Sympa::Log::Syslog::do_log('err', 'No read access on %s',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'No read access on %s',
             $config_file);
         return undef;
     }
@@ -2147,7 +2147,7 @@ sub load_robot_conf {
         _infer_robot_parameter_values({'config_hash' => $conf});
 
         if ($config_err) {
-            Sympa::Log::Syslog::do_log('err',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                 'Errors while parsing main config file %s', $config_file);
             return undef;
         }
@@ -2157,7 +2157,7 @@ sub load_robot_conf {
         _save_config_hash_to_binary(
             {'config_hash' => $conf, 'source_file' => $config_file});
     } else {
-        Sympa::Log::Syslog::do_log('err', 'Unable to load %s. Aborting',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'Unable to load %s. Aborting',
             $config_file);
         return undef;
     }
@@ -2167,7 +2167,7 @@ sub load_robot_conf {
         if ($count =
             _check_cpan_modules_required_by_config({'config_hash' => $conf}))
         {
-            Sympa::Log::Syslog::do_log('err',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                 'Warning: %d required modules are missing.', $count);
         }
     }
@@ -2306,7 +2306,7 @@ sub _save_binary_cache {
     my $param = shift;
     my $lock_fh = Sympa::LockedFile->new($param->{'target_file'}, 2, '>');
     unless ($lock_fh) {
-        Sympa::Log::Syslog::do_log('err', 'Could not create new lock');
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'Could not create new lock');
         return undef;
     }
 
@@ -2352,7 +2352,7 @@ sub _load_binary_cache {
 
     my $lock_fh = Sympa::LockedFile->new($param->{'config_file'}, 2, '<');
     unless ($lock_fh) {
-        Sympa::Log::Syslog::do_log('err', 'Could not create new lock');
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'Could not create new lock');
         return undef;
     }
 
@@ -2478,7 +2478,7 @@ sub _load_wwsconf {
 
     my $fh;
     unless (open $fh, '<', $config_file) {
-        Sympa::Log::Syslog::do_log('err', 'unable to open %s', $config_file);
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'unable to open %s', $config_file);
         return undef;
     }
 
@@ -2491,11 +2491,11 @@ sub _load_wwsconf {
             if (defined($conf->{$k})) {    #FIXME: Might "exists" be used?
                 $conf->{$k} = $v;
             } elsif (defined $old_param{$k}) {
-                Sympa::Log::Syslog::do_log('err',
+                Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                     'Parameter %s in %s no more supported : %s',
                     $k, $config_file, $old_param{$k});
             } else {
-                Sympa::Log::Syslog::do_log('err',
+                Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                     'Unknown parameter %s in %s',
                     $k, $config_file);
             }
@@ -2507,7 +2507,7 @@ sub _load_wwsconf {
 
     ## Check binaries and directories
     if ($conf->{'arc_path'} && (!-d $conf->{'arc_path'})) {
-        Sympa::Log::Syslog::do_log('err', "No web archives directory: %s\n",
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, "No web archives directory: %s\n",
             $conf->{'arc_path'});
     }
 
@@ -2520,7 +2520,7 @@ sub _load_wwsconf {
     }
 
     if ($conf->{'mhonarc'} && (!-x $conf->{'mhonarc'})) {
-        Sympa::Log::Syslog::do_log('err',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
             "MHonArc is not installed or %s is not executable.",
             $conf->{'mhonarc'});
     }

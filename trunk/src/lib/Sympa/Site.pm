@@ -78,7 +78,7 @@ our $AUTOLOAD;
 sub DESTROY;
 
 sub AUTOLOAD {
-    Sympa::Log::Syslog::do_log('debug3', 'Autoloading %s', $AUTOLOAD);
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG3, 'Autoloading %s', $AUTOLOAD);
     $AUTOLOAD =~ m/^(.*)::(.*)/;
     my $pkg  = $1;
     my $attr = $2;

@@ -50,7 +50,7 @@ sub get_previous_version {
 
     if (-f $version_file) {
         unless (open VFILE, $version_file) {
-            Sympa::Log::Syslog::do_log('err', "Unable to open %s : %s",
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, "Unable to open %s : %s",
                 $version_file, $ERRNO);
             return undef;
         }
@@ -93,11 +93,11 @@ sub update_version {
 
 ## Upgrade data structure from one version to another
 sub upgrade {
-    Sympa::Log::Syslog::do_log('debug3', '(%s, %s)', @_);
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG3, '(%s, %s)', @_);
     my ($previous_version, $new_version) = @_;
 
     if (lower_version($new_version, $previous_version)) {
-        Sympa::Log::Syslog::do_log('notice',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE,
             'Installing  older version of Sympa ; no upgrade operation is required'
         );
         return 1;
@@ -117,12 +117,12 @@ sub upgrade {
     Sympa::Conf::delete_binaries();
     ## Always update config.bin files while upgrading
     ## This is especially useful for character encoding reasons
-    Sympa::Log::Syslog::do_log('notice',
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE,
         'Rebuilding config.bin files for ALL lists...it may take a while...');
     my $all_lists = Sympa::List::get_lists('Site', {'reload_config' => 1});
 
     ## Empty the admin_table entries and recreate them
-    Sympa::Log::Syslog::do_log('notice', 'Rebuilding the admin_table...');
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE, 'Rebuilding the admin_table...');
     Sympa::List::delete_all_list_admin();
     foreach my $list (@$all_lists) {
         $list->sync_include_admin();
@@ -131,24 +131,24 @@ sub upgrade {
     ## Migration to tt2
     if (lower_version($previous_version, '4.2b')) {
 
-        Sympa::Log::Syslog::do_log('notice',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE,
             'Migrating templates to TT2 format...');
 
         my $tpl_script = Sympa::Constants::SCRIPTDIR . '/tpl2tt2.pl';
         unless (open EXEC, "$tpl_script|") {
-            Sympa::Log::Syslog::do_log('err', "Unable to run $tpl_script");
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, "Unable to run $tpl_script");
             return undef;
         }
         close EXEC;
 
-        Sympa::Log::Syslog::do_log('notice', 'Rebuilding web archives...');
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE, 'Rebuilding web archives...');
         my $all_lists = Sympa::List::get_lists('Site');
         foreach my $list (@$all_lists) {
             next unless %{$list->web_archive};    #FIXME: always success
             my $file = Sympa::Site->queueoutgoing . '/.rebuild.' . $list->get_id();
 
             unless (open REBUILD, ">$file") {
-                Sympa::Log::Syslog::do_log('err', 'Cannot create %s', $file);
+                Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'Cannot create %s', $file);
                 next;
             }
             print REBUILD ' ';
@@ -158,7 +158,7 @@ sub upgrade {
 
     ## Initializing the new admin_table
     if (lower_version($previous_version, '4.2b.4')) {
-        Sympa::Log::Syslog::do_log('notice',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE,
             'Initializing the new admin_table...');
         my $all_lists = Sympa::List::get_lists('Site');
         foreach my $list (@$all_lists) {
@@ -168,10 +168,10 @@ sub upgrade {
 
     ## Move old-style web templates out of the include_path
     if (lower_version($previous_version, '5.0.1')) {
-        Sympa::Log::Syslog::do_log('notice',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE,
             'Old web templates HTML structure is not compliant with latest ones.'
         );
-        Sympa::Log::Syslog::do_log('notice',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE,
             'Moving old-style web templates out of the include_path...');
 
         my @directories;
@@ -218,14 +218,14 @@ sub upgrade {
                 next;
             }
 
-            Sympa::Log::Syslog::do_log('notice', 'File %s renamed %s',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE, 'File %s renamed %s',
                 $tpl, "$tpl.oldtemplate");
         }
     }
 
     ## Clean buggy list config files
     if (lower_version($previous_version, '5.1b')) {
-        Sympa::Log::Syslog::do_log('notice',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE,
             'Cleaning buggy list config files...');
         my $all_lists = Sympa::List::get_lists('Site');
         foreach my $list (@$all_lists) {
@@ -235,7 +235,7 @@ sub upgrade {
 
     ## Fix a bug in Sympa 5.1
     if (lower_version($previous_version, '5.1.2')) {
-        Sympa::Log::Syslog::do_log('notice', 'Rename archives/log. files...');
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE, 'Rename archives/log. files...');
         my $all_lists = Sympa::List::get_lists('Site');
         foreach my $list (@$all_lists) {
             if (-f $list->dir . '/archives/log.') {
@@ -248,7 +248,7 @@ sub upgrade {
     if (lower_version($previous_version, '5.2a.1')) {
 
         ## Fill the robot_subscriber and robot_admin fields in DB
-        Sympa::Log::Syslog::do_log('notice',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE,
             'Updating the new robot_subscriber and robot_admin  Db fields...'
         );
 
@@ -291,12 +291,12 @@ sub upgrade {
         }
 
         ## Rename web archive directories using 'domain' instead of 'host'
-        Sympa::Log::Syslog::do_log('notice',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE,
             'Renaming web archive directories with the list domain...');
 
         my $root_dir = Sympa::Site->arc_path;
         unless (opendir ARCDIR, $root_dir) {
-            Sympa::Log::Syslog::do_log('err',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                 "Unable to open $root_dir : $ERRNO");
             return undef;
         }
@@ -312,7 +312,7 @@ sub upgrade {
 
             my $list = Sympa::List->new($listname);
             unless (defined $list) {
-                Sympa::Log::Syslog::do_log('notice',
+                Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE,
                     "Skipping unknown list $listname");
                 next;
             }
@@ -333,12 +333,12 @@ sub upgrade {
                     next;
                 } else {
                     unless (rename $old_path, $new_path) {
-                        Sympa::Log::Syslog::do_log('err',
+                        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                             "Failed to rename %s to %s : %s",
                             $old_path, $new_path, $ERRNO);
                         next;
                     }
-                    Sympa::Log::Syslog::do_log('notice', "Renamed %s to %s",
+                    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE, "Renamed %s to %s",
                         $old_path, $new_path);
                 }
             }
@@ -365,7 +365,7 @@ sub upgrade {
                 $sth = Sympa::DatabaseManager::do_query(q{SELECT max(%s) FROM %s},
                     $field, $check{$field});
                 unless ($sth) {
-                    Sympa::Log::Syslog::do_log('err',
+                    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                         'Unable to execute SQL statement');
                     return undef;
                 }
@@ -377,23 +377,23 @@ sub upgrade {
                 ## Restore correct field value
                 if ($max > 1) {
                     ## 1 to 0
-                    Sympa::Log::Syslog::do_log('notice',
+                    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE,
                         'Fixing DB field %s ; turning 1 to 0...', $field);
                     my $rows;
                     $sth =
                         Sympa::DatabaseManager::do_query(q{UPDATE %s SET %s = %d WHERE %s = %d},
                         $check{$field}, $field, 0, $field, 1);
                     unless ($sth) {
-                        Sympa::Log::Syslog::do_log('err',
+                        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                             'Unable to execute SQL statement');
                         return undef;
                     }
                     $rows = $sth->rows;
-                    Sympa::Log::Syslog::do_log('notice', 'Updated %d rows',
+                    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE, 'Updated %d rows',
                         $rows);
 
                     ## 2 to 1
-                    Sympa::Log::Syslog::do_log('notice',
+                    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE,
                         'Fixing DB field %s ; turning 2 to 1...', $field);
 
                     $statement = sprintf "UPDATE %s SET %s=%d WHERE (%s=%d)",
@@ -403,18 +403,18 @@ sub upgrade {
                         Sympa::DatabaseManager::do_query(q{UPDATE %s SET %s = %d WHERE %s = %d},
                         $check{$field}, $field, 1, $field, 2);
                     unless ($sth) {
-                        Sympa::Log::Syslog::do_log('err',
+                        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                             'Unable to execute SQL statement');
                         return undef;
                     }
                     $rows = $sth->rows;
-                    Sympa::Log::Syslog::do_log('notice', 'Updated %d rows',
+                    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE, 'Updated %d rows',
                         $rows);
                 }
 
                 ## Set 'subscribed' data field to '1' is none of 'subscribed'
                 ## and 'included' is set
-                Sympa::Log::Syslog::do_log('notice',
+                Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE,
                     'Updating subscribed field of the subscriber table...');
                 my $rows;
                 $sth = Sympa::DatabaseManager::do_query(
@@ -426,12 +426,12 @@ sub upgrade {
 			     subscribed_subscriber <> 1)}
                 );
                 unless ($sth) {
-                    Sympa::Log::Syslog::do_log('err',
+                    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                         'Unable to execute SQL statement');
                     return undef;
                 }
                 $rows = $sth->rows;
-                Sympa::Log::Syslog::do_log('notice',
+                Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE,
                     '%d rows have been updated', $rows);
             }
         }
@@ -440,12 +440,12 @@ sub upgrade {
     ## Rename bounce sub-directories
     if (lower_version($previous_version, '5.2a.1')) {
 
-        Sympa::Log::Syslog::do_log('notice',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE,
             'Renaming bounce sub-directories adding list domain...');
 
         my $root_dir = Sympa::Site->bounce_path;
         unless (opendir BOUNCEDIR, $root_dir) {
-            Sympa::Log::Syslog::do_log('err',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                 "Unable to open $root_dir : $ERRNO");
             return undef;
         }
@@ -459,7 +459,7 @@ sub upgrade {
             my $listname = $dir;
             my $list     = Sympa::List->new($listname);
             unless (defined $list) {
-                Sympa::Log::Syslog::do_log('notice',
+                Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE,
                     'Skipping unknown list %s', $listname);
                 next;
             }
@@ -468,18 +468,18 @@ sub upgrade {
             my $new_path = $root_dir . '/' . $list->get_id;
 
             if (-d $new_path) {
-                Sympa::Log::Syslog::do_log('err',
+                Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                     "Could not rename %s to %s ; directory already exists",
                     $old_path, $new_path);
                 next;
             } else {
                 unless (rename $old_path, $new_path) {
-                    Sympa::Log::Syslog::do_log('err',
+                    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                         "Failed to rename %s to %s : %s",
                         $old_path, $new_path, $ERRNO);
                     next;
                 }
-                Sympa::Log::Syslog::do_log('notice', "Renamed %s to %s",
+                Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE, "Renamed %s to %s",
                     $old_path, $new_path);
             }
         }
@@ -489,7 +489,7 @@ sub upgrade {
     ## Update lists config using 'include_list'
     if (lower_version($previous_version, '5.2a.1')) {
 
-        Sympa::Log::Syslog::do_log('notice',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE,
             'Update lists config using include_list parameter...');
 
         my $all_lists = Sympa::List::get_lists('Site');
@@ -525,7 +525,7 @@ sub upgrade {
     ## New mhonarc ressource file with utf-8 recoding
     if (lower_version($previous_version, '5.3a.6')) {
 
-        Sympa::Log::Syslog::do_log('notice',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE,
             'Looking for customized mhonarc-ressources.tt2 files...');
         foreach my $vr (@{Sympa::Robot::get_robots()}) {
             my $etc_dir = $vr->etc;
@@ -545,14 +545,14 @@ sub upgrade {
             }
         }
 
-        Sympa::Log::Syslog::do_log('notice', 'Rebuilding web archives...');
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE, 'Rebuilding web archives...');
         my $all_lists = Sympa::List::get_lists('Site');
         foreach my $list (@$all_lists) {
             next unless %{$list->web_archive};    #FIXME: always true
             my $file = Sympa::Site->queueoutgoing . '/.rebuild.' . $list->get_id();
 
             unless (open REBUILD, ">$file") {
-                Sympa::Log::Syslog::do_log('err', 'Cannot create %s', $file);
+                Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'Cannot create %s', $file);
                 next;
             }
             print REBUILD ' ';
@@ -565,14 +565,14 @@ sub upgrade {
     ## They are Q-encoded therefore easier to store on any filesystem with any
     ## encoding
     if (lower_version($previous_version, '5.3a.8')) {
-        Sympa::Log::Syslog::do_log('notice',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE,
             'Q-Encoding web documents filenames...');
 
         Sympa::Language::PushLang(Sympa::Site->lang);
         my $all_lists = Sympa::List::get_lists('Site');
         foreach my $list (@$all_lists) {
             if (-d $list->dir . '/shared') {
-                Sympa::Log::Syslog::do_log('notice',
+                Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE,
                     '  Processing list %s...', $list);
 
                 ## Determine default lang for this list
@@ -585,7 +585,7 @@ sub upgrade {
                     $list_encoding);
 
                 if ($count) {
-                    Sympa::Log::Syslog::do_log('notice',
+                    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE,
                         'List %s : %d filenames has been changed',
                         $list, $count);
                 }
@@ -598,7 +598,7 @@ sub upgrade {
     ## and footers, info files
     ## + web_tt2, scenari, create_list_templates, families
     if (lower_version($previous_version, '5.3b.3')) {
-        Sympa::Log::Syslog::do_log('notice',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE,
             'Encoding all custom files to UTF-8...');
 
         my (@directories, @files);
@@ -711,7 +711,7 @@ sub upgrade {
         ## Do the encoding modifications
         ## Previous versions of files are backed up with the date extension
         my $total = &to_utf8(\@files);
-        Sympa::Log::Syslog::do_log('notice', '%d files have been modified',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE, '%d files have been modified',
             $total);
     }
 
@@ -719,7 +719,7 @@ sub upgrade {
     ## Also giving up old 'database' mode
     if (lower_version($previous_version, '5.4a.1')) {
 
-        Sympa::Log::Syslog::do_log('notice',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE,
             'Looking for lists with user_data_source parameter set to file or database...'
         );
 
@@ -749,12 +749,12 @@ sub upgrade {
                     );
                 }
 
-                Sympa::Log::Syslog::do_log('notice',
+                Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE,
                     '%d subscribers have been loaded into the database',
                     $total);
 
                 unless ($list->save_config('automatic')) {
-                    Sympa::Log::Syslog::do_log('err',
+                    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                         'Failed to save config file for list %s', $list);
                 }
             } elsif ($list->user_data_source eq 'database') {
@@ -766,14 +766,14 @@ sub upgrade {
                 );
 
                 unless ($list->update_list_member('*', {'subscribed' => 1})) {
-                    Sympa::Log::Syslog::do_log('err',
+                    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                         'Failed to update subscribed DB field');
                 }
 
                 $list->user_data_source = 'include2';
 
                 unless ($list->save_config('automatic')) {
-                    Sympa::Log::Syslog::do_log('err',
+                    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                         'Failed to save config file for list %s', $list);
                 }
             }
@@ -783,7 +783,7 @@ sub upgrade {
     if (lower_version($previous_version, '5.5a.1')) {
 
         ## Remove OTHER/ subdirectories in bounces
-        Sympa::Log::Syslog::do_log('notice',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE,
             "Removing obsolete OTHER/ bounce directories");
         if (opendir BOUNCEDIR, Sympa::Site->bounce_path) {
 
@@ -791,7 +791,7 @@ sub upgrade {
                 my $other_dir = Sympa::Site->bounce_path . '/' . $subdir . '/OTHER';
                 if (-d $other_dir) {
                     Sympa::Tools::File::remove_dir($other_dir);
-                    Sympa::Log::Syslog::do_log('notice',
+                    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE,
                         "Directory $other_dir removed");
                 }
             }
@@ -799,7 +799,7 @@ sub upgrade {
             close BOUNCEDIR;
 
         } else {
-            Sympa::Log::Syslog::do_log('err',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                 "Failed to open directory Sympa::Site->queuebounce : $ERRNO");
         }
 
@@ -811,12 +811,12 @@ sub upgrade {
         ## MIME::EncWords::encode_mimewords() used to encode characters -!*+/
         ## Now these characters are preserved, according to RFC 2047 section 5
         ## We change encoding of shared documents according to new algorithm
-        Sympa::Log::Syslog::do_log('notice',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE,
             'Fixing Q-encoding of web document filenames...');
         my $all_lists = Sympa::List::get_lists('Site');
         foreach my $list (@$all_lists) {
             if (-d $list->dir . '/shared') {
-                Sympa::Log::Syslog::do_log('notice',
+                Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE,
                     '  Processing list %s...', $list);
 
                 my @all_files;
@@ -838,11 +838,11 @@ sub upgrade {
                             . $f_struct->{'filename'};
                         my $new_f =
                             $f_struct->{'directory'} . '/' . $new_filename;
-                        Sympa::Log::Syslog::do_log('notice',
+                        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE,
                             "Renaming %s to %s",
                             $orig_f, $new_f);
                         unless (rename $orig_f, $new_f) {
-                            Sympa::Log::Syslog::do_log('err',
+                            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                                 "Failed to rename %s to %s : %s",
                                 $orig_f, $new_f, $ERRNO);
                             next;
@@ -851,7 +851,7 @@ sub upgrade {
                     }
                 }
                 if ($count) {
-                    Sympa::Log::Syslog::do_log('notice',
+                    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE,
                         'List %s : %d filenames has been changed',
                         $list->name, $count);
                 }
@@ -877,11 +877,11 @@ sub upgrade {
         );
         if (lower_version($previous_version, '6.1.11')) {
             ## Exclusion table was not robot-enabled.
-            Sympa::Log::Syslog::do_log('notice',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE,
                 'fixing robot column of exclusion table.');
             my $sth = Sympa::DatabaseManager::do_query(q{SELECT * FROM exclusion_table});
             unless ($sth) {
-                Sympa::Log::Syslog::do_log('err',
+                Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                     'Unable to gather informations from the exclusions table.'
                 );
             }
@@ -934,10 +934,10 @@ sub upgrade {
                 }
             }
             ## Caching all list config
-            Sympa::Log::Syslog::do_log('notice',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE,
                 'Caching all list config to database...');
             Sympa::List::get_lists('Site', {'reload_config' => 1});
-            Sympa::Log::Syslog::do_log('notice', '...done');
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE, '...done');
         }
 
         foreach my $spoolparameter (keys %spools_def) {
@@ -955,7 +955,7 @@ sub upgrade {
                 );
                 next;
             }
-            Sympa::Log::Syslog::do_log('notice',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE,
                 'Performing upgrade for spool %s', $spooldir);
 
             my $spool = Sympa::Spool::SQL->new($spools_def{$spoolparameter});
@@ -974,10 +974,10 @@ sub upgrade {
                 my ($listname, $robot_id, $robot);
                 my %meta;
 
-                Sympa::Log::Syslog::do_log('notice',
+                Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE,
                     " spool : $spooldir, file $filename");
                 if (-d $spooldir . '/' . $filename) {
-                    Sympa::Log::Syslog::do_log('notice',
+                    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE,
                         "%s/%s est un répertoire",
                         $spooldir, $filename);
                     next;
@@ -1014,7 +1014,7 @@ sub upgrade {
                     my $match = 0;
                     foreach my $robot (@{Sympa::Robot::get_robots()}) {
                         my $robot_id = $robot->domain;
-                        Sympa::Log::Syslog::do_log('notice', 'robot : %s',
+                        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE, 'robot : %s',
                             $robot_id);
                         if ($filename =~ /^([^@]*)\@$robot_id\.(.*)$/) {
                             $listname = $1;
@@ -1085,7 +1085,7 @@ sub upgrade {
                 $meta{'priority'} = 1 unless $meta{'priority'};
 
                 unless (open FILE, $spooldir . '/' . $filename) {
-                    Sympa::Log::Syslog::do_log('err',
+                    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                         'Cannot open message file %s : %s',
                         $filename, $ERRNO);
                     return undef;
@@ -1104,7 +1104,7 @@ sub upgrade {
                     or $spoolparameter eq 'queueoutgoing') {
                     my $messagekey = $spool->store($messageasstring, \%meta);
                     unless ($messagekey) {
-                        Sympa::Log::Syslog::do_log('err',
+                        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                             'Could not load message %s/%s in db spool',
                             $spooldir, $filename);
                         next;
@@ -1134,7 +1134,7 @@ sub upgrade {
                             $html_view_dir, $new_html_view_dir
                         )
                         ) {
-                        Sympa::Log::Syslog::do_log('err',
+                        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                             'Could not rename %s to %s: %s',
                             $html_view_dir, $new_html_view_dir, $ERRNO);
                         exit 1;
@@ -1154,30 +1154,30 @@ sub upgrade {
                     my $goal =
                         $spooldir . '/copy_by_upgrade_process/' . $filename;
 
-                    Sympa::Log::Syslog::do_log('notice', 'source %s, goal %s',
+                    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE, 'source %s, goal %s',
                         $source, $goal);
 
                     # unless (File::Copy::copy($spooldir.'/'.$filename,
                     #     $spooldir.'/copy_by_upgrade_process/'.$filename)) {
                     unless (File::Copy::copy($source, $goal)) {
-                        Sympa::Log::Syslog::do_log('err',
+                        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                             'Could not rename %s to %s: %s',
                             $source, $goal, $ERRNO);
                         exit 1;
                     }
 
                     unless (unlink($spooldir . '/' . $filename)) {
-                        Sympa::Log::Syslog::do_log('err',
+                        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                             'Could not unlink message %s/%s. Exiting',
                             $spooldir, $filename);
                     }
                     $performed .= ',' . $filename;
                 }
             }
-            Sympa::Log::Syslog::do_log('info',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::INFO,
                 "Upgrade process for spool %s : ignored files %s",
                 $spooldir, $ignored);
-            Sympa::Log::Syslog::do_log('info',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::INFO,
                 "Upgrade process for spool %s : performed files %s",
                 $spooldir, $performed);
         }
@@ -1453,7 +1453,7 @@ sub to_utf8 {
     foreach my $pair (@{$files}) {
         my ($file, $lang) = @$pair;
         unless (open(TEMPLATE, $file)) {
-            Sympa::Log::Syslog::do_log('err', "Cannot open template %s",
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, "Cannot open template %s",
                 $file);
             next;
         }
@@ -1508,7 +1508,7 @@ sub to_utf8 {
                     Encode::from_to($t, $charset, "UTF-8", Encode::FB_CROAK);
                 };
                 if ($EVAL_ERROR) {
-                    Sympa::Log::Syslog::do_log('err',
+                    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                         "Template %s cannot be converted from %s to UTF-8",
                         $charset, $file);
                 } else {
@@ -1522,12 +1522,12 @@ sub to_utf8 {
 
         my $date = POSIX::strftime("%Y.%m.%d-%H.%M.%S", localtime(time));
         unless (rename $file, $file . '@' . $date) {
-            Sympa::Log::Syslog::do_log('err', "Cannot rename old template %s",
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, "Cannot rename old template %s",
                 $file);
             next;
         }
         unless (open(TEMPLATE, ">$file")) {
-            Sympa::Log::Syslog::do_log('err', "Cannot open new template %s",
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, "Cannot open new template %s",
                 $file);
             next;
         }
@@ -1541,11 +1541,11 @@ sub to_utf8 {
                 mode  => 0644,
             )
             ) {
-            Sympa::Log::Syslog::do_log('err', 'Unable to set rights on %s',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'Unable to set rights on %s',
                 $file);
             next;
         }
-        Sympa::Log::Syslog::do_log('notice',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE,
             'Modified file %s ; original file kept as %s',
             $file, $file . '@' . $date);
 
@@ -1563,7 +1563,7 @@ sub md5_encode_password {
 
     my $total = 0;
 
-    Sympa::Log::Syslog::do_log('notice',
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE,
         'Upgrade::md5_encode_password() recoding password using MD5 fingerprint'
     );
 
@@ -1574,7 +1574,7 @@ sub md5_encode_password {
     my $sth =
         Sympa::DatabaseManager::do_query(q{SELECT email_user, password_user FROM user_table});
     unless ($sth) {
-        Sympa::Log::Syslog::do_log('err', 'Unable to execute SQL statement');
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'Unable to execute SQL statement');
         return undef;
     }
 
@@ -1584,7 +1584,7 @@ sub md5_encode_password {
     while (my $user = $sth->fetchrow_hashref('NAME_lc')) {
         my $clear_password;
         if ($user->{'password_user'} =~ /^[0-9a-f]{32}/) {
-            Sympa::Log::Syslog::do_log('info',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::INFO,
                 'password from %s already encoded as MD5 fingerprint',
                 $user->{'email_user'});
             $total_md5++;
@@ -1613,7 +1613,7 @@ sub md5_encode_password {
                 Sympa::DatabaseManager::quote($user->{'email_user'})
             )
             ) {
-            Sympa::Log::Syslog::do_log('err',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                 'Unable to execute SQL statement');
             return undef;
         }

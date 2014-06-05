@@ -139,7 +139,7 @@ sub init {
     my ($self) = @_;
 
     unless ($self->{'model'}) {
-        Sympa::Log::Syslog::do_log('err',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
             'Missing a model name. Impossible to get a template. Aborting.');
         return undef;
     }
@@ -179,10 +179,10 @@ sub init {
     my $summary = $self->_make_summary();
     my $syntax_ok = $self->_check_syntax($summary);
     unless ($syntax_ok) {
-        Sympa::Log::Syslog::do_log('err',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
             'error : syntax error in task %s, you should check %s',
             $self->get_description, $template);
-        Sympa::Log::Syslog::do_log('notice',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE,
             "Ignoring creation task request");
         return undef;
     }
@@ -200,7 +200,7 @@ sub init {
 sub _generate_from_template {
     my ($self, $template) = @_;
 
-    Sympa::Log::Syslog::do_log('debug',
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG,
         "Generate task content with tt2 template %s",
         $template);
 
@@ -221,7 +221,7 @@ sub _generate_from_template {
             $template, $self->{'Rdata'}, \$messageasstring
         )
         ) {
-        Sympa::Log::Syslog::do_log('err',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
             "Failed to parse task template '%s' : %s",
             $template, $tt2->error());
         return undef;
@@ -263,7 +263,7 @@ sub _crop_after_label {
         }
     }
     unless ($label_found_in_task) {
-        Sympa::Log::Syslog::do_log('err',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
             'The label %s does not exist in task %s. We can not crop after it.'
         );
         return undef;
@@ -317,11 +317,11 @@ sub _stringify_parsed_instructions {
     } else {
         $self->{'messageasstring'} = $new_string;
         if (Sympa::Log::Syslog::get_log_level() > 1) {
-            Sympa::Log::Syslog::do_log('debug2',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2,
                 'task %s content recreated. Content:',
                 $self->get_description);
             foreach (split "\n", $self->{'messageasstring'}) {
-                Sympa::Log::Syslog::do_log('debug2', '%s', $_);
+                Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, '%s', $_);
             }
         }
     }
@@ -340,7 +340,7 @@ sub _stringify_parsed_instructions {
 ## stringify_parsed_instructions().
 sub as_string {
     my $self = shift;
-    Sympa::Log::Syslog::do_log('debug2',
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2,
         'Generating task string from the parsed content of task %s',
         $self->get_description);
 
@@ -352,7 +352,7 @@ sub as_string {
         }
         $task_as_string =~ s/\n\n$/\n/;
     } else {
-        Sympa::Log::Syslog::do_log('err',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
             'Task %s appears to have no parsed instructions.');
         $task_as_string = undef;
     }
@@ -361,11 +361,11 @@ sub as_string {
 
 sub _check_syntax {
     my ($self, $summary) = @_;
-    Sympa::Log::Syslog::do_log('debug2', 'check %s', $self->get_description);
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, 'check %s', $self->get_description);
 
     # are all labels used ?
     foreach my $label (keys %{$summary->{'labels'}}) {
-        Sympa::Log::Syslog::do_log('debug2',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2,
             'Warning : label %s exists but is not used in %s',
             $label, $self->get_description)
             unless (defined $summary->{'used_labels'}{$label});
@@ -374,7 +374,7 @@ sub _check_syntax {
     # do all used labels exist ?
     foreach my $label (keys %{$summary->{'used_labels'}}) {
         unless (defined $summary->{'labels'}{$label}) {
-            Sympa::Log::Syslog::do_log('err',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                 'Error : label %s is used but does not exist in %s',
                 $label, $self->get_description);
             return undef;
@@ -383,7 +383,7 @@ sub _check_syntax {
 
     # are all variables used ?
     foreach my $var (keys %{$summary->{'vars'}}) {
-        Sympa::Log::Syslog::do_log('debug2',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2,
             'Warning : var %s exists but is not used in %s',
             $var, $self->get_description)
             unless (defined $summary->{'used_vars'}{$var});
@@ -392,7 +392,7 @@ sub _check_syntax {
     # do all used variables exist ?
     foreach my $var (keys %{$summary->{'used_vars'}}) {
         unless (defined $summary->{'vars'}{$var}) {
-            Sympa::Log::Syslog::do_log('err',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                 'Error : var %s is used but does not exist in %s',
                 $var, $self->get_description);
             return undef;
@@ -410,7 +410,7 @@ Executes the task.
 sub execute {
     my ($self) = @_;
 
-    Sympa::Log::Syslog::do_log('notice', 'Running task id = %s, %s)',
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE, 'Running task id = %s, %s)',
         $self->{'messagekey'}, $self->get_description);
 
     # will raise an exception in case of error
@@ -423,12 +423,12 @@ sub execute {
 # Parses the raw content of this task into instructions.
 sub _parse {
     my $self = shift;
-    Sympa::Log::Syslog::do_log('debug2', "Parsing task id = %s : %s",
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, "Parsing task id = %s : %s",
         $self->{'messagekey'}, $self->get_description);
 
     my $messageasstring = $self->{'messageasstring'};    # task to execute
     unless ($messageasstring) {
-        Sympa::Log::Syslog::do_log('err',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
             'No string describing the task available in %s',
             $self->get_description);
         return undef;
@@ -455,13 +455,13 @@ sub _parse {
 sub _process_all {
     my $self = shift;
     my $variables;
-    Sympa::Log::Syslog::do_log('debug',
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG,
         'Processing all instructions found in task %s',
         $self->get_description);
 
     foreach my $instruction (@{$self->{'parsed_instructions'}}) {
         if (defined $self->{'must_stop'}) {
-            Sympa::Log::Syslog::do_log('debug', 'Stopping here for task %s',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG, 'Stopping here for task %s',
                 $self->get_description);
             last;
         }
@@ -489,11 +489,11 @@ sub change_label {
     $new_task_file =~ s/(.+\.)(\w*)(\.\w+\.\w+$)/$1$new_label$3/;
 
     if (rename($task_file, $new_task_file)) {
-        Sympa::Log::Syslog::do_log('notice',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE,
             "$task_file renamed in $new_task_file");
         return 1;
     } else {
-        Sympa::Log::Syslog::do_log('err',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
             "error ; can't rename $task_file in $new_task_file");
         return undef;
     }
@@ -507,7 +507,7 @@ Check this task is still valid.
 
 sub _make_summary {
     my $self = shift;
-    Sympa::Log::Syslog::do_log('debug2',
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2,
         'Computing general informations about the task %s',
         $self->get_description);
 

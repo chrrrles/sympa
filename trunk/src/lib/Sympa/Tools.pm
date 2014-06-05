@@ -76,7 +76,7 @@ my %regexp            = (
 sub _create_xss_parser {
     my %parameters = @_;
     my $robot      = $parameters{'robot'};
-    Sympa::Log::Syslog::do_log('debug3', '(%s)', $robot);
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG3, '(%s)', $robot);
 
     my $http_host_re = $robot->http_host;
     $http_host_re =~ s/([^\s\w\x80-\xFF])/\\$1/g;
@@ -94,17 +94,17 @@ sub _create_xss_parser {
 sub sanitize_html {
     my %parameters = @_;
     my $robot      = $parameters{'robot'};
-    Sympa::Log::Syslog::do_log('debug3', '(string=%s, robot=%s)',
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG3, '(string=%s, robot=%s)',
         $parameters{'string'}, $robot);
 
     unless (defined $parameters{'string'}) {
-        Sympa::Log::Syslog::do_log('err', "No string provided.");
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, "No string provided.");
         return undef;
     }
 
     my $hss = _create_xss_parser('robot' => $robot);
     unless (defined $hss) {
-        Sympa::Log::Syslog::do_log('err', "Can't create StripScript parser.");
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, "Can't create StripScript parser.");
         return undef;
     }
     my $string = $hss->filter_html($parameters{'string'});
@@ -116,17 +116,17 @@ sub sanitize_html {
 sub sanitize_html_file {
     my %parameters = @_;
     my $robot      = $parameters{'robot'};
-    Sympa::Log::Syslog::do_log('debug3', '(file=%s, robot=%s)',
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG3, '(file=%s, robot=%s)',
         $parameters{'file'}, $robot);
 
     unless (defined $parameters{'file'}) {
-        Sympa::Log::Syslog::do_log('err', "No path to file provided.");
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, "No path to file provided.");
         return undef;
     }
 
     my $hss = _create_xss_parser('robot' => $robot);
     unless (defined $hss) {
-        Sympa::Log::Syslog::do_log('err', "Can't create StripScript parser.");
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, "Can't create StripScript parser.");
         return undef;
     }
     $hss->parse_file($parameters{'file'});
@@ -137,10 +137,10 @@ sub sanitize_html_file {
 sub sanitize_var {
     my %parameters = @_;
     my $robot      = $parameters{'robot'};
-    Sympa::Log::Syslog::do_log('debug3', '(var=%s, level=%s, robot=%s)',
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG3, '(var=%s, level=%s, robot=%s)',
         $parameters{'var'}, $parameters{'level'}, $robot);
     unless (defined $parameters{'var'}) {
-        Sympa::Log::Syslog::do_log('err', 'Missing var to sanitize.');
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'Missing var to sanitize.');
         return undef;
     }
     unless (defined $parameters{'htmlAllowedParam'}
@@ -207,7 +207,7 @@ sub sanitize_var {
             }
         }
     } else {
-        Sympa::Log::Syslog::do_log('err',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
             'Variable is neither a hash nor an array.');
         return undef;
     }
@@ -251,7 +251,7 @@ sub checkcommand {
     my $subject = $msg->head->get('Subject');
     chomp $subject if $subject;
 
-    Sympa::Log::Syslog::do_log('debug3',
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG3,
         'Sympa::Tools::checkcommand(msg->head->get(subject): %s,%s)',
         $subject, $sender);
 
@@ -424,7 +424,7 @@ sub cookie_changed {
     my $changed = 1;
     if (-f Sympa::Site->etc . '/cookies.history') {
         unless (open COOK, '<', Sympa::Site->etc . '/cookies.history') {
-            Sympa::Log::Syslog::do_log('err',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                 'Unable to read %s/cookies.history',
                 Sympa::Site->etc);
             return undef;
@@ -435,13 +435,13 @@ sub cookie_changed {
         my @cookies = split(/\s+/, $oldcook);
 
         if ($cookies[$#cookies] eq $current) {
-            Sympa::Log::Syslog::do_log('debug2', "cookie is stable");
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, "cookie is stable");
             $changed = 0;
 
             #	}else{
             #	    push @cookies, $current ;
             #	    unless (open COOK, '>', Sympa::Site->etc . '/cookies.history') {
-            #		Sympa::Log::Syslog::do_log('err',
+            #		Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
             #		"Unable to create %s/cookies.history", Sympa::Site->etc);
             #		return undef ;
             #	    }
@@ -454,7 +454,7 @@ sub cookie_changed {
         my $umask = umask 037;
         unless (open COOK, '>', Sympa::Site->etc . '/cookies.history') {
             umask $umask;
-            Sympa::Log::Syslog::do_log('err',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                 'Unable to create %s/cookies.history',
                 Sympa::Site->etc);
             return undef;
@@ -497,10 +497,10 @@ sub qencode_hierarchy {
         my $new_f  = $f_struct->{'directory'} . '/' . $new_filename;
 
         ## Rename the file using utf8
-        Sympa::Log::Syslog::do_log('notice', "Renaming %s to %s",
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE, "Renaming %s to %s",
             $orig_f, $new_f);
         unless (rename $orig_f, $new_f) {
-            Sympa::Log::Syslog::do_log('err',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                 'Failed to rename %s to %s : %s',
                 $orig_f, $new_f, $ERRNO);
             next;
@@ -534,14 +534,14 @@ sub valid_email {
     my $email = shift;
 
     unless (defined $email and $email =~ /^$regexp{'email'}$/) {
-        Sympa::Log::Syslog::do_log('err', "Invalid email address '%s'",
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, "Invalid email address '%s'",
             $email);
         return undef;
     }
 
     ## Forbidden characters
     if ($email =~ /[\|\$\*\?\!]/) {
-        Sympa::Log::Syslog::do_log('err', "Invalid email address '%s'",
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, "Invalid email address '%s'",
             $email);
         return undef;
     }
@@ -605,7 +605,7 @@ sub change_x_sympa_to {
 
     ## Change X-Sympa-To
     unless (open FILE, $file) {
-        Sympa::Log::Syslog::do_log('err', "Unable to open '%s' : %s",
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, "Unable to open '%s' : %s",
             $file, $ERRNO);
         next;
     }
@@ -613,7 +613,7 @@ sub change_x_sympa_to {
     close FILE;
 
     unless (open FILE, ">$file") {
-        Sympa::Log::Syslog::do_log('err', "Unable to open '%s' : %s",
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, "Unable to open '%s' : %s",
             "$file", $ERRNO);
         next;
     }
@@ -633,7 +633,7 @@ sub add_in_blacklist {
     my $robot = shift;
     my $list  = shift;
 
-    Sympa::Log::Syslog::do_log('info',
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::INFO,
         "Sympa::Tools::add_in_blacklist(%s,%s,%s)",
         $entry, $robot, $list->name);
     $entry = lc($entry);
@@ -641,24 +641,24 @@ sub add_in_blacklist {
 
     # robot blacklist not yet available
     unless ($list) {
-        Sympa::Log::Syslog::do_log('info',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::INFO,
             "Sympa::Tools::add_in_blacklist: robot blacklist not yet availible, missing list parameter"
         );
         return undef;
     }
     unless (($entry) && ($robot)) {
-        Sympa::Log::Syslog::do_log('info',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::INFO,
             "Sympa::Tools::add_in_blacklist:  missing parameters");
         return undef;
     }
     if ($entry =~ /\*.*\*/) {
-        Sympa::Log::Syslog::do_log('info',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::INFO,
             "Sympa::Tools::add_in_blacklist: incorrect parameter $entry");
         return undef;
     }
     my $dir = $list->dir . '/search_filters';
     unless ((-d $dir) || mkdir($dir, 0755)) {
-        Sympa::Log::Syslog::do_log('info',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::INFO,
             'do_blacklist : unable to create directory %s', $dir);
         return undef;
     }
@@ -672,7 +672,7 @@ sub add_in_blacklist {
             $regexp =~ s/\*/.*/;
             $regexp = '^' . $regexp . '$';
             if ($entry =~ /$regexp/i) {
-                Sympa::Log::Syslog::do_log('notice',
+                Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE,
                     'do_blacklist : %s already in blacklist(%s)',
                     $entry, $_);
                 return 0;
@@ -681,7 +681,7 @@ sub add_in_blacklist {
         close BLACKLIST;
     }
     unless (open BLACKLIST, ">> $file") {
-        Sympa::Log::Syslog::do_log('info', 'do_blacklist : append to file %s',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::INFO, 'do_blacklist : append to file %s',
             $file);
         return undef;
     }
@@ -738,7 +738,7 @@ sub addrencode {
 # Generate a newsletter from an HTML URL or a file path.
 sub create_html_part_from_web_page {
     my $param = shift;
-    Sympa::Log::Syslog::do_log('debug', "Creating HTML MIME part. Source: %s",
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG, "Creating HTML MIME part. Source: %s",
         $param->{'source'});
     my $mailHTML = MIME::Lite::HTML->new(
         {   From         => $param->{'From'},
@@ -756,7 +756,7 @@ sub create_html_part_from_web_page {
     # parse return the MIME::Lite part to send
     my $part = $mailHTML->parse($param->{'source'});
     unless (defined($part)) {
-        Sympa::Log::Syslog::do_log('err',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
             'Unable to convert file %s to a MIME part',
             $param->{'source'});
         return undef;

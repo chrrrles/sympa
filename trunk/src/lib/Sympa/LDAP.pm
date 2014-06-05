@@ -53,7 +53,7 @@ my %Ldap = ();
 sub load {
     my $config = shift;
 
-    Sympa::Log::Syslog::do_log('debug3', 'Ldap::load(%s)', $config);
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG3, 'Ldap::load(%s)', $config);
 
     my $line_num   = 0;
     my $config_err = 0;
@@ -61,7 +61,7 @@ sub load {
 
     ## Open the configuration file or return and read the lines.
     unless (open(IN, $config)) {
-        Sympa::Log::Syslog::do_log('err', 'Unable to open %s: %s',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'Unable to open %s: %s',
             $config, $ERRNO);
         return undef;
     }
@@ -101,7 +101,7 @@ sub load {
         $Ldap{$i} = $o{$i}[0] || $Default_Conf{$i};
 
         unless ($valid_options{$i}) {
-            Sympa::Log::Syslog::do_log('err', "Line %d, unknown field: %s \n",
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, "Line %d, unknown field: %s \n",
                 $o{$i}[1], $i);
             $config_err++;
         }
@@ -109,7 +109,7 @@ sub load {
     ## Do we have all required values ?
     foreach $i (keys %required_options) {
         unless (defined $o{$i} or defined $Default_Conf{$i}) {
-            Sympa::Log::Syslog::do_log('err',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                 "Required field not found : %s\n", $i);
             $config_err++;
             next;

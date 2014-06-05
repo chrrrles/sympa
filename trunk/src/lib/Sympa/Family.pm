@@ -109,7 +109,7 @@ sub get_families {
         next unless -d $dir;
 
         unless (opendir FAMILIES, $dir) {
-            Sympa::Log::Syslog::do_log('err', "error : can't open dir %s: %s",
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, "error : can't open dir %s: %s",
                 $dir, $ERRNO);
             next;
         }
@@ -193,7 +193,7 @@ Creates a new Sympa::Family object of name $name, belonging to the robot $robot.
 # OUT : -$self
 #########################################
 sub new {
-    Sympa::Log::Syslog::do_log('debug2', '(%s, %s, %s)', @_);
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, '(%s, %s, %s)', @_);
 
     ## NOTICE: Don't use accessors like "$self->dir" but "$self->{'dir'}",
     ## since the object has not been fully initialized yet.
@@ -224,7 +224,7 @@ sub new {
 
     ## family name
     unless ($name && ($name =~ /^$family_name_regexp$/io)) {
-        Sympa::Log::Syslog::do_log('err', 'Incorrect family name "%s"',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'Incorrect family name "%s"',
             $name);
         return undef;
     }
@@ -245,7 +245,7 @@ sub new {
     ## family directory
     $self->{'dir'} = $self->_get_directory();
     unless (defined $self->{'dir'}) {
-        Sympa::Log::Syslog::do_log('err',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
             'the family directory %s does not exist',
             $self->{'dir'});
         return undef;
@@ -253,7 +253,7 @@ sub new {
 
     ## family files
     if (my $file_names = $self->_check_mandatory_files()) {
-        Sympa::Log::Syslog::do_log('err',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
             'Definition family files are missing : %s', $file_names);
         return undef;
     }
@@ -315,7 +315,7 @@ Adds a list to the family. List description can be passed either through a hash 
 sub add_list {
     my ($self, $data, $abort_on_error) = @_;
 
-    Sympa::Log::Syslog::do_log('info', 'Sympa::Family::add_list(%s)', $self);
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::INFO, 'Sympa::Family::add_list(%s)', $self);
 
     $self->state('no_check');
     my $return;
@@ -331,7 +331,7 @@ sub add_list {
 
         #copy the xml file in another file
         unless (open(FIC, '>', $self->dir . '/_new_list.xml')) {
-            Sympa::Log::Syslog::do_log('err',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                 'impossible to create the temp file %s/_new_list.xml : %s',
                 $self->dir, $ERRNO);
         }
@@ -435,7 +435,7 @@ sub add_list {
 
     ## Synchronize list members if required
     if ($list->has_include_data_sources()) {
-        Sympa::Log::Syslog::do_log('notice', "Synchronizing list members...");
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE, "Synchronizing list members...");
         $list->sync_include();
     }
 
@@ -487,7 +487,7 @@ Adds a list to the family.
 sub modify_list {
     my $self = shift;
     my $fh   = shift;
-    Sympa::Log::Syslog::do_log('info', 'Sympa::Family::modify_list(%s)',
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::INFO, 'Sympa::Family::modify_list(%s)',
         $self->name);
 
     $self->state('no_check');
@@ -498,7 +498,7 @@ sub modify_list {
 
     #copy the xml file in another file
     unless (open(FIC, '>', $self->dir . '/_mod_list.xml')) {
-        Sympa::Log::Syslog::do_log('err',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
             'impossible to create the temp file %s/_mod_list.xml : %s',
             $self->dir, $ERRNO);
     }
@@ -545,7 +545,7 @@ sub modify_list {
     ## get allowed and forbidden list customizing
     my $custom = $self->_get_customizing($list);
     unless (defined $custom) {
-        Sympa::Log::Syslog::do_log('err',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
             'impossible to get list %s customizing', $list);
         push @{$return->{'string_error'}},
             sprintf(
@@ -561,7 +561,7 @@ sub modify_list {
     my $result = Sympa::Admin::update_list($list, $hash_list->{'config'},
         $self, $self->{'robot'});
     unless (defined $result) {
-        Sympa::Log::Syslog::do_log('err',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
             'No object list resulting from updating list %s', $list);
         push @{$return->{'string_error'}},
             "Error during updating list $list->name, the list is set in status error_config.";
@@ -574,7 +574,7 @@ sub modify_list {
     foreach my $p (keys %{$custom->{'allowed'}}) {
         $list->$p($custom->{'allowed'}{$p});
         $list->defaults($p, undef);
-        Sympa::Log::Syslog::do_log('info',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::INFO,
             'Customizing : keeping values for parameter %s', $p);
     }
 
@@ -592,7 +592,7 @@ sub modify_list {
     }
 
     foreach my $f (keys %{$config_changes->{'file'}}) {
-        Sympa::Log::Syslog::do_log('info',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::INFO,
             "Customizing : this file has been changed : $f");
     }
 
@@ -618,7 +618,7 @@ sub modify_list {
 
         #	my $forbidden_files = join(',',@{$custom->{'forbidden'}{'file'}});
         my $forbidden_param = join(',', @{$custom->{'forbidden'}{'param'}});
-        Sympa::Log::Syslog::do_log('notice',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE,
             "These parameters aren't allowed in the new family definition, they are erased by a new instantiation family : \n $forbidden_param"
         );
 
@@ -721,7 +721,7 @@ sub modify_list {
 
     ## Synchronize list members if required
     if ($list->has_include_data_sources()) {
-        Sympa::Log::Syslog::do_log('notice', "Synchronizing list members...");
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE, "Synchronizing list members...");
         $list->sync_include();
     }
 
@@ -766,7 +766,7 @@ Closes every list family.
 # OUT : -$string
 #########################################
 sub close_family {
-    Sympa::Log::Syslog::do_log('debug2', '(%s)', @_);
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, '(%s)', @_);
     my $self = shift;
 
     my $family_lists = Sympa::List::get_lists($self);
@@ -859,7 +859,7 @@ Creates family lists or updates them if they exist already.
 # OUT : -1 or undef
 #########################################
 sub instantiate {
-    Sympa::Log::Syslog::do_log('debug2', '(%s, %s, %s)', @_);
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, '(%s, %s, %s)', @_);
     my $self          = shift;
     my $xml_file      = shift;
     my $close_unknown = shift;
@@ -878,7 +878,7 @@ sub instantiate {
     ## xml files
     ## and collects lists to be created in $self->{'list_to_generate'}.
     unless ($self->_split_xml_file($xml_file)) {
-        Sympa::Log::Syslog::do_log('err',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
             'Errors during the parsing of family xml file');
         return undef;
     }
@@ -936,7 +936,7 @@ sub instantiate {
                         @{$self->{'errors'}{'listname_already_used'}},
                         $list->name
                     );
-                    Sympa::Log::Syslog::do_log('err',
+                    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                         'The list %s already belongs to family %s',
                         $list, $list->family_name);
                     next;
@@ -946,7 +946,7 @@ sub instantiate {
                     @{$self->{'errors'}{'listname_already_used'}},
                     $list->name
                 );
-                Sympa::Log::Syslog::do_log('err',
+                Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                     'The orphan list %s already exists', $list);
                 next;
             }
@@ -1011,7 +1011,7 @@ sub instantiate {
 
         ## ENDING : existing and new lists
         unless ($self->_end_update_list($list, 1)) {
-            Sympa::Log::Syslog::do_log('err',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                 'Instantiation stopped on list %s', $list);
             return undef;
         }
@@ -1110,7 +1110,7 @@ sub instantiate {
             $list = $result;
 
             unless ($self->_end_update_list($list, 0)) {
-                Sympa::Log::Syslog::do_log('err',
+                Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                     'Instantiation stopped on list %s', $list);
                 return undef;
             }
@@ -1154,7 +1154,7 @@ Returns a string with information summarizing the instantiation results.
 # OUT : -$string
 #########################################
 sub get_instantiation_results {
-    Sympa::Log::Syslog::do_log('debug3', '(%s, %s)', @_);
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG3, '(%s, %s)', @_);
     my ($self, $result) = @_;
 
     $result->{'errors'} = ();
@@ -1367,7 +1367,7 @@ Checks the parameter constraints taken from param_constraint.conf file for the L
 #        undef
 #########################################
 sub check_param_constraint {
-    Sympa::Log::Syslog::do_log('debug2', '(%s, %s)', @_);
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, '(%s, %s)', @_);
     my $self = shift;
     my $list = shift;
 
@@ -1384,7 +1384,7 @@ sub check_param_constraint {
     ## checking
     my $constraint = $self->get_constraints();
     unless (defined $constraint) {
-        Sympa::Log::Syslog::do_log('err', 'unable to get family constraints');
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'unable to get family constraints');
         return undef;
     }
     foreach my $param (keys %{$constraint}) {
@@ -1415,7 +1415,7 @@ sub check_param_constraint {
         if (ref($value_error)) {
             foreach my $v (@{$value_error}) {
                 push(@error, $param);
-                Sympa::Log::Syslog::do_log('err',
+                Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                     'Error constraint on parameter %s, value : %s',
                     $param, $v);
             }
@@ -1463,7 +1463,7 @@ Returns a hash containing the values found in the param_constraint.conf file.
 # OUT : -$self->{'param_constraint_conf'}
 #########################################
 sub get_constraints {
-    Sympa::Log::Syslog::do_log('debug3', '(%s)', @_);
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG3, '(%s)', @_);
     my $self = shift;
 
     ## load param_constraint.conf
@@ -1473,7 +1473,7 @@ sub get_constraints {
         $self->{'param_constraint_conf'} =
             $self->_load_param_constraint_conf();
         unless (defined $self->{'param_constraint_conf'}) {
-            Sympa::Log::Syslog::do_log('err',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                 'Cannot load file param_constraint.conf ');
             return undef;
         }
@@ -1524,7 +1524,7 @@ Returns 0 if all the value(s) found in $param_value appear also in $constraint_v
 #        or '0' for free parameters
 #########################################
 sub check_values {
-    Sympa::Log::Syslog::do_log('debug3', '(%s, ...)', @_);
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG3, '(%s, ...)', @_);
     my ($self, $param_value, $constraint_value) = @_;
 
     my @param_values;
@@ -1627,7 +1627,7 @@ Gets the constraints on parameter $param from the 'param_constraint.conf' file.
 #        undef
 #########################################
 sub get_param_constraint {
-    Sympa::Log::Syslog::do_log('debug3', '(%s, %s)', @_);
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG3, '(%s, %s)', @_);
     my $self  = shift;
     my $param = shift;
 
@@ -1678,7 +1678,7 @@ Returns a reference to hash whose keys are the uncompellable parameters.
 #########################################
 sub get_uncompellable_param {
     my %list_of_param;
-    Sympa::Log::Syslog::do_log('debug3', 'Sympa::Family::get_uncompellable_param()');
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG3, 'Sympa::Family::get_uncompellable_param()');
 
     foreach my $param (@uncompellable_param) {
         if ($param =~ /^([\w-]+)\.([\w-]+)$/) {
@@ -1736,7 +1736,7 @@ Gets the family directory, look for it in the robot, then in the site and finall
 #        undef if the directory does not exist
 #####################################################
 sub _get_directory {
-    Sympa::Log::Syslog::do_log('debug3', '(%s)', @_);
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG3, '(%s)', @_);
     my $self  = shift;
     my $robot = $self->{'robot'};
     my $name  = $self->name;
@@ -1794,7 +1794,7 @@ Checks the existence of the mandatory files (param_constraint.conf and config.tt
 #        $string containing missing file names
 #####################################################
 sub _check_mandatory_files {
-    Sympa::Log::Syslog::do_log('debug3', '(%s)', @_);
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG3, '(%s)', @_);
     my $self   = shift;
     my $dir    = $self->dir;
     my $string = "";
@@ -1846,7 +1846,7 @@ Initializes all the values used for instantiation and results description to emp
 # OUT : -1
 #####################################################
 sub _initialize_instantiation() {
-    Sympa::Log::Syslog::do_log('debug3', '(%s)', @_);
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG3, '(%s)', @_);
     my $self = shift;
 
     ### info vars for instantiate  ###
@@ -1941,7 +1941,7 @@ Splits the XML family file into XML list files. New list names are put in the ar
 # OUT : -1 (if OK) or undef
 #####################################################
 sub _split_xml_file {
-    Sympa::Log::Syslog::do_log('debug2', '(%s, %s)', @_);
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, '(%s, %s)', @_);
     my $self     = shift;
     my $xml_file = shift;
     my $root;
@@ -1952,7 +1952,7 @@ sub _split_xml_file {
     my $doc;
 
     unless ($doc = $parser->parse_file($xml_file)) {
-        Sympa::Log::Syslog::do_log('err',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
             "Sympa::Family::_split_xml_file() : failed to parse XML file");
         return undef;
     }
@@ -1960,7 +1960,7 @@ sub _split_xml_file {
     ## the family document
     $root = $doc->documentElement();
     unless ($root->nodeName eq 'family') {
-        Sympa::Log::Syslog::do_log('err',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
             "Sympa::Family::_split_xml_file() : the root element must be called \"family\" "
         );
         return undef;
@@ -2076,13 +2076,13 @@ Updates an already existing list in the new family context
 # OUT : -$list : the new list (or undef)
 #####################################################
 sub _update_existing_list {
-    Sympa::Log::Syslog::do_log('debug3', '(%s, %s, %s)', @_);
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG3, '(%s, %s, %s)', @_);
     my ($self, $list, $hash_list) = @_;
 
     ## get allowed and forbidden list customizing
     my $custom = $self->_get_customizing($list);
     unless (defined $custom) {
-        Sympa::Log::Syslog::do_log('err',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
             'impossible to get list %s customizing', $list);
         return undef;
     }
@@ -2093,7 +2093,7 @@ sub _update_existing_list {
     my $result = Sympa::Admin::update_list($list, $hash_list->{'config'},
         $self, $self->{'robot'});
     unless (defined $result) {
-        Sympa::Log::Syslog::do_log('err',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
             'No object list resulting from updating list %s', $list);
         return undef;
     }
@@ -2103,7 +2103,7 @@ sub _update_existing_list {
     foreach my $p (keys %{$custom->{'allowed'}}) {
         $list->$p($custom->{'allowed'}{$p});
         $list->defaults($p, undef);
-        Sympa::Log::Syslog::do_log('info',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::INFO,
             'Customizing : keeping values for parameter %s', $p);
     }
 
@@ -2112,7 +2112,7 @@ sub _update_existing_list {
         $hash_list->{'config'}{'description'} =~ s/\r\n|\r/\n/g;
 
         unless (open INFO, '>', $list->dir . '/info') {
-            Sympa::Log::Syslog::do_log('err',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                 'Impossible to open %s/info : %s',
                 $list->dir, $ERRNO);
         }
@@ -2121,7 +2121,7 @@ sub _update_existing_list {
     }
 
     foreach my $f (keys %{$config_changes->{'file'}}) {
-        Sympa::Log::Syslog::do_log('info',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::INFO,
             'Customizing : this file has been changed : %s', $f);
     }
 
@@ -2147,7 +2147,7 @@ sub _update_existing_list {
 
         #	my $forbidden_files = join(',',@{$custom->{'forbidden'}{'file'}});
         my $forbidden_param = join(',', @{$custom->{'forbidden'}{'param'}});
-        Sympa::Log::Syslog::do_log('notice',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE,
             "These parameters aren't allowed in the new family definition, they are erased by a new instantiation family : \n $forbidden_param"
         );
 
@@ -2190,7 +2190,7 @@ sub _update_existing_list {
     }
 
     unless (open FILE, '>', $list->dir . '/config_changes') {
-        Sympa::Log::Syslog::do_log('err',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
             'impossible to open file %s/config_changes : %s',
             $list->dir, $ERRNO);
         push(@{$self->{'generated_lists'}{'file_error'}}, $list->name);
@@ -2259,14 +2259,14 @@ Gets list customizations from the config_changes file and keeps on changes allow
 #                              {'file'} = \@ (no working)
 #####################################################
 sub _get_customizing {
-    Sympa::Log::Syslog::do_log('debug3', '(%s, %s)', @_);
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG3, '(%s, %s)', @_);
     my ($self, $list) = @_;
 
     my $result;
     my $config_changes = $list->get_config_changes;
 
     unless (defined $config_changes) {
-        Sympa::Log::Syslog::do_log('err', 'impossible to get config_changes');
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'impossible to get config_changes');
         return undef;
     }
 
@@ -2291,7 +2291,7 @@ sub _get_customizing {
     # check these values
     my $constraint = $self->get_constraints();
     unless (defined $constraint) {
-        Sympa::Log::Syslog::do_log('err', 'unable to get family constraints');
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'unable to get family constraints');
         return undef;
     }
 
@@ -2320,7 +2320,7 @@ sub _get_customizing {
 
         foreach my $v (@{$value_error}) {
             push @{$result->{'forbidden'}{'param'}}, $param;
-            Sympa::Log::Syslog::do_log('err',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                 'Error constraint on parameter %s, value : %s',
                 $param, $v);
         }
@@ -2395,7 +2395,7 @@ Sets changes (loads the users, installs or removes the aliases); deals with the 
 #        a string of aliases needed to be installed or removed
 #####################################################
 sub _set_status_changes {
-    Sympa::Log::Syslog::do_log('debug3', '(%s, %s, %s)', @_);
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG3, '(%s, %s, %s)', @_);
     my ($self, $list, $old_status) = @_;
 
     my $result;
@@ -2428,7 +2428,7 @@ sub _set_status_changes {
 ##	    $list->{'users'} = Sympa::List::_load_users_file($list->dir . '/subscribers.closed.dump');
 ##	}elsif ($list->user_data_source eq 'database') {
 ##	    unless (-f $list->dir . '/subscribers.closed.dump') {
-##		Sympa::Log::Syslog::do_log('notice', 'No subscribers to restore');
+##		Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE, 'No subscribers to restore');
 ##	    }
 ##	    my @users = Sympa::List::_load_users_file($list->dir . '/subscribers.closed.dump');
 ##
@@ -2494,7 +2494,7 @@ Finishes to generate a list in a family context (for a new or an already existin
 # OUT : -1 or undef
 #####################################################
 sub _end_update_list {
-    Sympa::Log::Syslog::do_log('debug3', '(%s, %s, %s)', @_);
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG3, '(%s, %s, %s)', @_);
     my ($self, $list, $xml_file) = @_;
 
     my $host = $self->robot->host;
@@ -2583,7 +2583,7 @@ Copies the instance.xml file into the list directory. This file contains the cur
 # OUT : -1 or undef
 #####################################################
 sub _copy_files {
-    Sympa::Log::Syslog::do_log('debug3', '(%s, %s, %s)', @_);
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG3, '(%s, %s, %s)', @_);
     my $self     = shift;
     my $list_dir = shift;
     my $file     = shift;
@@ -2592,7 +2592,7 @@ sub _copy_files {
     # instance.xml
     if (defined $file) {
         unless (File::Copy::copy("$dir/$file", "$list_dir/instance.xml")) {
-            Sympa::Log::Syslog::do_log('err',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                 'impossible to copy %s/%s into %s/instance.xml : %s',
                 $dir, $file, $list_dir, $ERRNO);
             return undef;
@@ -2638,7 +2638,7 @@ Loads the param_constraint.conf file into a hash
 # OUT : -$constraint : ref on a hash or undef
 #########################################
 sub _load_param_constraint_conf {
-    Sympa::Log::Syslog::do_log('debug3', '(%s)', @_);
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG3, '(%s)', @_);
     my $self = shift;
 
     my $file = $self->dir . '/param_constraint.conf';
@@ -2646,13 +2646,13 @@ sub _load_param_constraint_conf {
     my $constraint = {};
 
     unless (-e $file) {
-        Sympa::Log::Syslog::do_log('err',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
             'No file %s. Assuming no constraints to apply.', $file);
         return $constraint;
     }
 
     unless (open(FILE, $file)) {
-        Sympa::Log::Syslog::do_log('err',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
             'File %s exists, but unable to open it: %s',
             $file, $ERRNO);
         return undef;
@@ -2673,7 +2673,7 @@ sub _load_param_constraint_conf {
 
             unless (($param =~ /^([\w-]+)\.([\w-]+)$/)
                 || ($param =~ /^([\w-]+)$/)) {
-                Sympa::Log::Syslog::do_log('err',
+                Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                     'unknown parameter "%s" in %s',
                     $_, $file);
                 $error = 1;
@@ -2688,7 +2688,7 @@ sub _load_param_constraint_conf {
                 }
             }
         } else {
-            Sympa::Log::Syslog::do_log('err', 'bad line : %s in %s',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'bad line : %s in %s',
                 $_, $file);
             $error = 1;
             next;
@@ -2733,14 +2733,14 @@ sub create_automatic_list {
                $result->{'string_error'}
             || $result->{'string_info'}
             || [];
-        Sympa::Log::Syslog::do_log('err',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
             "Failed to add a dynamic list to the family %s : %s",
             $self, join(';', @{$details}));
         return undef;
     }
     my $list = Sympa::List->new($listname, $self->robot);
     unless (defined $list) {
-        Sympa::Log::Syslog::do_log('err',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
             'dynamic list %s could not be created', $listname);
         return undef;
     }
@@ -2790,7 +2790,7 @@ sub is_allowed_to_create_automatic_lists {
     }
 
     unless ($r_action =~ /do_it/) {
-        Sympa::Log::Syslog::do_log('debug2',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2,
             'Automatic list creation refused to user %s for family %s',
             $sender, $self);
         return undef;
@@ -2801,7 +2801,7 @@ sub is_allowed_to_create_automatic_lists {
 
 ## Handle exclusion table for family
 sub insert_delete_exclusion {
-    Sympa::Log::Syslog::do_log('debug2', '(%s, %s, %s)', @_);
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, '(%s, %s, %s)', @_);
     my $self   = shift;
     my $email  = shift;
     my $action = shift;
@@ -2825,7 +2825,7 @@ sub insert_delete_exclusion {
                 Sympa::DatabaseManager::quote($date)
             )
             ) {
-            Sympa::Log::Syslog::do_log('err',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                 'Unable to exclude user %s from family %s',
                 $email, $self);
             return undef;
@@ -2835,7 +2835,7 @@ sub insert_delete_exclusion {
         ##FIXME: Not implemented yet.
         return undef;
     } else {
-        Sympa::Log::Syslog::do_log('err', 'Unknown action %s', $action);
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'Unknown action %s', $action);
         return undef;
     }
 

@@ -67,7 +67,7 @@ Returns a Robot object, or undef on errors.
 
 ## Constructor of a Robot instance
 sub new {
-    Sympa::Log::Syslog::do_log('debug2', '(%s, %s, ...)', @_);
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, '(%s, %s, ...)', @_);
     my $pkg  = shift;
     my $name = shift;
 
@@ -153,7 +153,7 @@ sub load {
             ## robot of main conf
             $self->{'etc'} = Sympa::Site->etc;
         } else {
-            Sympa::Log::Syslog::do_log('err',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                 'Unknown robot "%s": config directory was not found', $name)
                 unless ($options{'just_try'});
             return undef;
@@ -163,7 +163,7 @@ sub load {
     }
 
     unless ($self->{'name'} eq $name) {
-        Sympa::Log::Syslog::do_log('err', 'Bug in logic.  Ask developer');
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'Bug in logic.  Ask developer');
         return undef;
     }
 
@@ -172,7 +172,7 @@ sub load {
         my $config_file = $self->{'etc'} . '/robot.conf';
 
         unless (-r $config_file) {
-            Sympa::Log::Syslog::do_log('err', 'No read access on %s',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'No read access on %s',
                 $config_file);
             Sympa::Site->send_notify_to_listmaster(
                 'cannot_access_robot_conf',
@@ -194,7 +194,7 @@ sub load {
         ## Sympa might be wanted to allow arbitrary robot names  used
         ## for config & home directories, though.
         unless ($self->domain eq $name) {
-            Sympa::Log::Syslog::do_log('err',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                 'Robot name "%s" is not same as domain "%s"',
                 $name, $self->domain);
             Sympa::Site->robots($name, undef);
@@ -211,7 +211,7 @@ sub load {
         } elsif ($self->domain eq Sympa::Site->domain) {
             $self->{'home'} = Sympa::Site->home;
         } else {
-            Sympa::Log::Syslog::do_log('err',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                 'Unknown robot "%s": home directory was not found', $name);
             return undef;
         }
@@ -306,7 +306,7 @@ OUT : - 1 if the topic is in the robot conf or undef
 =cut
 
 sub is_available_topic {
-    Sympa::Log::Syslog::do_log('debug2', '(%s, %s)', @_);
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, '(%s, %s)', @_);
     my $self  = shift;
     my $topic = shift;
 
@@ -314,7 +314,7 @@ sub is_available_topic {
 
     my %topics;
     unless (%topics = %{$self->topics || {}}) {
-        Sympa::Log::Syslog::do_log('err', 'unable to load list of topics');
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'unable to load list of topics');
     }
 
     if ($subtop) {
@@ -403,7 +403,7 @@ sub get_netidtoemail_db {
     my $netid    = shift;
     my $idpname  = shift;
 
-    Sympa::Log::Syslog::do_log('debug',
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG,
         'Sympa::List::get_netidtoemail_db(%s, %s)',
         $netid, $idpname);
 
@@ -450,7 +450,7 @@ sub set_netidtoemail_db {
     my $idpname  = shift;
     my $email    = shift;
 
-    Sympa::Log::Syslog::do_log('debug2', '(%s, %s, %s, %s)', @_);
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, '(%s, %s, %s, %s)', @_);
 
     my $robot_id = $self->domain();
 
@@ -493,7 +493,7 @@ sub update_email_netidmap_db {
     unless (defined $robot_id
         && defined $old_email
         && defined $new_email) {
-        Sympa::Log::Syslog::do_log('err', 'Missing parameter');
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'Missing parameter');
         return undef;
     }
 
@@ -698,7 +698,7 @@ sub topics {
 
     my $conf_file = $self->get_etc_filename('topics.conf');
     unless ($conf_file) {
-        Sympa::Log::Syslog::do_log('err', 'No topics.conf defined');
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'No topics.conf defined');
         return undef;
     }
 
@@ -713,13 +713,13 @@ sub topics {
         $list_of_topics = {};
 
         unless (-r $conf_file) {
-            Sympa::Log::Syslog::do_log('err', 'Unable to read %s',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'Unable to read %s',
                 $conf_file);
             return undef;
         }
 
         unless (open(FILE, '<', $conf_file)) {
-            Sympa::Log::Syslog::do_log('err', 'Unable to open config file %s',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'Unable to open config file %s',
                 $conf_file);
             return undef;
         }
@@ -757,7 +757,7 @@ sub topics {
         $self->{'mtime'}{'topics.conf'} = (stat($conf_file))[9];
 
         unless ($#rough_data > -1) {
-            Sympa::Log::Syslog::do_log('notice', 'No topic defined in %s',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE, 'No topic defined in %s',
                 $conf_file);
             return undef;
         }
@@ -942,7 +942,7 @@ sub clean_robot {
     my $robot      = shift;
     my $maybe_site = shift;
 
-    # Sympa::Log::Syslog::do_log('debug3', 'robot "%s", maybe_site "%s"',
+    # Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG3, 'robot "%s", maybe_site "%s"',
     # $robot, $maybe_site);
     unless (ref $robot
         or ($maybe_site and !ref $robot and $robot eq 'Site')) {
@@ -976,7 +976,7 @@ Returns arrayref of Robot objects.
 =cut
 
 sub get_robots {
-    Sympa::Log::Syslog::do_log('debug2', '(...)');
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, '(...)');
     my %options = @_;
 
     my $robot;
@@ -1001,7 +1001,7 @@ sub get_robots {
     %orphan = map { $_->domain => 1 } Sympa::Site->robots;
 
     unless (opendir $dir, Sympa::Site->etc) {
-        Sympa::Log::Syslog::do_log('err',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
             'Unable to open directory %s for virtual robots config',
             Sympa::Site->etc);
         return undef;
@@ -1029,7 +1029,7 @@ sub get_robots {
 
     ## purge orphan robots
     foreach my $domain (keys %orphan) {
-        Sympa::Log::Syslog::do_log('debug3', 'removing orphan robot %s',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG3, 'removing orphan robot %s',
             $domain);
         Sympa::Site->robots($domain, undef);
     }
@@ -1040,7 +1040,7 @@ sub get_robots {
 }
 
 sub get_dkim_parameters {
-    Sympa::Log::Syslog::do_log('debug2', '(%s)', @_);
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, '(%s)', @_);
     my $self = shift;
 
     my $data;
@@ -1052,7 +1052,7 @@ sub get_dkim_parameters {
     $keyfile            = $self->dkim_private_key_path;
 
     unless (open(KEY, $keyfile)) {
-        Sympa::Log::Syslog::do_log('err',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
             "Could not read DKIM private key %s", $keyfile);
         return undef;
     }

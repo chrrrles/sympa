@@ -64,12 +64,12 @@ sub do_query {
 
     if (check_db_connect()) {
         unless ($sth = $db_source->do_query($query, @params)) {
-            Sympa::Log::Syslog::do_log('err',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                 'SQL query failed to execute in the Sympa database');
             return undef;
         }
     } else {
-        Sympa::Log::Syslog::do_log('err',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
             'Unable to get a handle to Sympa database');
         return undef;
     }
@@ -84,12 +84,12 @@ sub do_prepared_query {
 
     if (check_db_connect()) {
         unless ($sth = $db_source->do_prepared_query($query, @params)) {
-            Sympa::Log::Syslog::do_log('err',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                 'SQL query failed to execute in the Sympa database');
             return undef;
         }
     } else {
-        Sympa::Log::Syslog::do_log('err',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
             'Unable to get a handle to Sympa database');
         return undef;
     }
@@ -103,12 +103,12 @@ sub do_prepared_query {
 ##
 ## NOT RECOMMENDED.  Should not access to database handler.
 sub db_get_handler {
-    Sympa::Log::Syslog::do_log('debug3', '()');
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG3, '()');
 
     if (check_db_connect('just_try')) {
         return $db_source->{'dbh'};
     } else {
-        Sympa::Log::Syslog::do_log('err',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
             'Unable to get a handle to Sympa database');
         return undef;
     }
@@ -119,12 +119,12 @@ sub db_get_handler {
 ## connection is not available.
 sub check_db_connect {
 
-    #Sympa::Log::Syslog::do_log('debug3', '(%s)', @_);
+    #Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG3, '(%s)', @_);
     my @options = @_;
 
     ## Is the Database defined
     unless (Sympa::Site->db_name) {
-        Sympa::Log::Syslog::do_log('err',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
             'No db_name defined in configuration file');
         return undef;
     }
@@ -133,7 +133,7 @@ sub check_db_connect {
         and $db_source->{'dbh'}
         and $db_source->{'dbh'}->ping()) {
         unless (connect_sympa_database(@options)) {
-            Sympa::Log::Syslog::do_log('err',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                 'Failed to connect to database');
             return undef;
         }
@@ -144,7 +144,7 @@ sub check_db_connect {
 
 ## Connect to Database
 sub connect_sympa_database {
-    Sympa::Log::Syslog::do_log('debug2', '(%s)', @_);
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, '(%s)', @_);
     my $option = shift || '';
 
     ## We keep trying to connect if this is the first attempt
@@ -159,7 +159,7 @@ sub connect_sympa_database {
         'warn' => 1
     };
     unless ($db_source = Sympa::SQLSource->new($db_conf)) {
-        Sympa::Log::Syslog::do_log('err',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
             'Unable to create Sympa::SQLSource object');
         return undef;
     }
@@ -169,11 +169,11 @@ sub connect_sympa_database {
 
     # Just in case, we connect to the database here. Probably not necessary.
     unless ($db_source->{'dbh'} = $db_source->connect()) {
-        Sympa::Log::Syslog::do_log('err',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
             'Unable to connect to the Sympa database');
         return undef;
     }
-    Sympa::Log::Syslog::do_log('debug3', 'Connected to Database %s',
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG3, 'Connected to Database %s',
         Sympa::Site->db_name);
 
     return 1;
@@ -182,7 +182,7 @@ sub connect_sympa_database {
 ## Disconnect from Database.
 ## Destroy db handle so that any pending statement handles will be finalized.
 sub db_disconnect {
-    Sympa::Log::Syslog::do_log('debug2', '()');
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, '()');
 
     my $dbh = $db_source->{'dbh'};
     $dbh->disconnect if $dbh;
@@ -191,10 +191,10 @@ sub db_disconnect {
 }
 
 sub probe_db {
-    Sympa::Log::Syslog::do_log('debug3', 'Checking database structure');
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG3, 'Checking database structure');
 
     unless (check_db_connect()) {
-        Sympa::Log::Syslog::do_log('err',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
             'Could not check the database structure.  Make sure that database connection is available'
         );
         return undef;
@@ -223,7 +223,7 @@ sub probe_db {
         unless ($found) {
             if (my $rep = $db_source->add_table({'table' => $t1})) {
                 push @report, $rep;
-                Sympa::Log::Syslog::do_log('notice',
+                Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE,
                     'Table %s created in database %s',
                     $t1, Sympa::Site->db_name);
                 push @tables, $t1;
@@ -305,7 +305,7 @@ sub probe_db {
 
         # add autoincrement if needed
         foreach my $table (keys %autoincrement) {
-            Sympa::Log::Syslog::do_log('debug',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG,
                 "Checking auto-increment for table $table, field $autoincrement{$table}"
             );
             unless (
@@ -322,11 +322,11 @@ sub probe_db {
                         }
                     )
                     ) {
-                    Sympa::Log::Syslog::do_log('notice',
+                    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE,
                         "Setting table $table field $autoincrement{$table} as auto-increment"
                     );
                 } else {
-                    Sympa::Log::Syslog::do_log('err',
+                    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                         "Could not set table $table field $autoincrement{$table} as auto-increment"
                     );
                     return undef;
@@ -334,7 +334,7 @@ sub probe_db {
             }
         }
     } else {
-        Sympa::Log::Syslog::do_log('err',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
             "Could not check the database structure. consider verify it manually before launching Sympa."
         );
         return undef;
@@ -385,7 +385,7 @@ sub check_fields {
                 push @{$report_ref}, $rep;
 
             } else {
-                Sympa::Log::Syslog::do_log('err',
+                Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                     'Addition of fields in database failed. Aborting.');
                 return undef;
             }
@@ -426,7 +426,7 @@ sub check_fields {
                     ) {
                     push @{$report_ref}, $rep;
                 } else {
-                    Sympa::Log::Syslog::do_log('err',
+                    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                         'Fields update in database failed. Aborting.');
                     return undef;
                 }
@@ -442,7 +442,7 @@ sub check_fields {
                     Sympa::Site->db_name,
                     $db_struct{Sympa::Site->db_type}{$t}{$f}
                 );
-                Sympa::Log::Syslog::do_log('err',
+                Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                     'Sympa\'s database structure may have change since last update ; please check RELEASE_NOTES'
                 );
                 return undef;
@@ -456,12 +456,12 @@ sub check_primary_key {
     my $param      = shift;
     my $t          = $param->{'table'};
     my $report_ref = $param->{'report'};
-    Sympa::Log::Syslog::do_log('debug', 'Checking primary key for table %s',
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG, 'Checking primary key for table %s',
         $t);
 
     my $list_of_keys = join ',', @{$primary{$t}};
     my $key_as_string = "$t [$list_of_keys]";
-    Sympa::Log::Syslog::do_log('debug',
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG,
         'Checking primary keys for table %s expected_keys %s',
         $t, $key_as_string);
 
@@ -475,7 +475,7 @@ sub check_primary_key {
         my $list_of_keys = join ',', @{$primary{$t}};
         my $key_as_string = "$t [$list_of_keys]";
         if ($should_update->{'empty'}) {
-            Sympa::Log::Syslog::do_log('notice',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE,
                 "Primary key %s is missing. Adding it.",
                 $key_as_string);
             ## Add primary key
@@ -487,7 +487,7 @@ sub check_primary_key {
                 push @{$report_ref}, $rep;
             }
         } elsif ($should_update->{'existing_key_correct'}) {
-            Sympa::Log::Syslog::do_log('debug',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG,
                 "Existing key correct (%s) nothing to change",
                 $key_as_string);
         } else {
@@ -532,16 +532,16 @@ sub check_indexes {
     my $param      = shift;
     my $t          = $param->{'table'};
     my $report_ref = $param->{'report'};
-    Sympa::Log::Syslog::do_log('debug', 'Checking indexes for table %s', $t);
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG, 'Checking indexes for table %s', $t);
     ## drop previous index if this index is not a primary key and was defined
     ## by a previous Sympa version
     my %index_columns = %{$db_source->get_indexes({'table' => $t})};
     foreach my $idx (keys %index_columns) {
-        Sympa::Log::Syslog::do_log('debug', 'Found index %s', $idx);
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG, 'Found index %s', $idx);
         ## Remove the index if obsolete.
         foreach my $known_index (@former_indexes) {
             if ($idx eq $known_index) {
-                Sympa::Log::Syslog::do_log('notice',
+                Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE,
                     'Removing obsolete index %s', $idx);
                 if (my $rep =
                     $db_source->unset_index({'table' => $t, 'index' => $idx}))
@@ -557,7 +557,7 @@ sub check_indexes {
     foreach my $idx (keys %{$indexes{$t}}) {
         ## Add indexes
         unless ($index_columns{$idx}) {
-            Sympa::Log::Syslog::do_log('notice',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE,
                 'Index %s on table %s does not exist. Adding it.',
                 $idx, $t);
             if (my $rep = $db_source->set_index(
@@ -582,7 +582,7 @@ sub check_indexes {
             if ($index_check->{'empty'}) {
                 ## Add index
                 my $rep = undef;
-                Sympa::Log::Syslog::do_log('notice',
+                Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE,
                     "Index %s is missing. Adding it.",
                     $index_as_string);
                 if ($rep = $db_source->set_index(
@@ -595,12 +595,12 @@ sub check_indexes {
                     push @{$report_ref}, $rep;
                 }
             } elsif ($index_check->{'existing_key_correct'}) {
-                Sympa::Log::Syslog::do_log('debug',
+                Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG,
                     "Existing index correct (%s) nothing to change",
                     $index_as_string);
             } else {
                 ## drop previous index
-                Sympa::Log::Syslog::do_log('notice',
+                Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE,
                     "Index %s has not the right structure. Changing it.",
                     $index_as_string);
                 my $rep = undef;
@@ -658,7 +658,7 @@ sub data_structure_uptodate {
 
     if (-f $version_file) {
         unless (open VFILE, $version_file) {
-            Sympa::Log::Syslog::do_log('err', "Unable to open %s : %s",
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, "Unable to open %s : %s",
                 $version_file, $ERRNO);
             return undef;
         }
@@ -718,7 +718,7 @@ sub quote {
         if (check_db_connect()) {
             return $db_source->quote($param);
         } else {
-            Sympa::Log::Syslog::do_log('err',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                 'Unable to get a handle to Sympa database');
             return undef;
         }
@@ -733,7 +733,7 @@ sub get_substring_clause {
         if (check_db_connect()) {
             return $db_source->get_substring_clause($param);
         } else {
-            Sympa::Log::Syslog::do_log('err',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                 'Unable to get a handle to Sympa database');
             return undef;
         }
@@ -748,7 +748,7 @@ sub get_limit_clause {
         if (check_db_connect()) {
             return ' ' . $db_source->get_limit_clause($param) . ' ';
         } else {
-            Sympa::Log::Syslog::do_log('err',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                 'Unable to get a handle to Sympa database');
             return undef;
         }
@@ -768,7 +768,7 @@ sub get_canonical_write_date {
         if (check_db_connect()) {
             return $db_source->get_canonical_write_date($param);
         } else {
-            Sympa::Log::Syslog::do_log('err',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                 'Unable to get a handle to Sympa database');
             return undef;
         }
@@ -788,7 +788,7 @@ sub get_canonical_read_date {
         if (check_db_connect()) {
             return $db_source->get_canonical_read_date($param);
         } else {
-            Sympa::Log::Syslog::do_log('err',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                 'Unable to get a handle to Sympa database');
             return undef;
         }

@@ -29,6 +29,8 @@ use warnings;
 use Digest::MD5;
 use English qw(-no_match_vars);
 
+use Sympa::Log::Syslog;
+
 ## global var to store a CipherSaber object
 my $cipher;
 
@@ -68,7 +70,7 @@ sub crypt_password {
 ## decrypt a password
 sub decrypt_password {
     my $inpasswd = shift;
-    Sympa::Log::Syslog::do_log('debug2',
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2,
         'Sympa::Tools::Password::decrypt_password (%s)', $inpasswd);
 
     return $inpasswd unless ($inpasswd =~ /^crypt\.(.*)$/);
@@ -76,7 +78,7 @@ sub decrypt_password {
 
     ciphersaber_installed();
     unless ($cipher) {
-        Sympa::Log::Syslog::do_log('info',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::INFO,
             'password seems encrypted while CipherSaber is not installed !');
         return $inpasswd;
     }

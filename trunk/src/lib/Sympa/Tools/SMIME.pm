@@ -41,7 +41,7 @@ use Sympa::Log::Syslog;
 ## for 'decrypt', these are arrayrefs containing absolute file names
 sub find_keys {
     my ($dir, $oper) = @_;
-    Sympa::Log::Syslog::do_log('debug',
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG,
         'Sympa::Tools::find_keys(%s, %s)',
         $dir, $oper);
 
@@ -49,7 +49,7 @@ sub find_keys {
     my $ext = ($oper eq 'sign' ? 'sign' : 'enc');
 
     unless (opendir(D, $dir)) {
-        Sympa::Log::Syslog::do_log('err', "unable to opendir $dir: $ERRNO");
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, "unable to opendir $dir: $ERRNO");
         return undef;
     }
 
@@ -66,7 +66,7 @@ sub find_keys {
         my $k = $c;
         $k =~ s/\/cert\.pem/\/private_key/;
         unless ($keys{$k}) {
-            Sympa::Log::Syslog::do_log('notice',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE,
                 "$c exists, but matching $k doesn't");
             delete $certs{$c};
         }
@@ -76,7 +76,7 @@ sub find_keys {
         my $c = $k;
         $c =~ s/\/private_key/\/cert\.pem/;
         unless ($certs{$c}) {
-            Sympa::Log::Syslog::do_log('notice',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE,
                 "$k exists, but matching $c doesn't");
             delete $keys{$k};
         }
@@ -94,7 +94,7 @@ sub find_keys {
             $certs = "$dir/cert.pem";
             $keys  = "$dir/private_key";
         } else {
-            Sympa::Log::Syslog::do_log('info',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::INFO,
                 "$dir: no certs/keys found for $oper");
             return undef;
         }
@@ -132,7 +132,7 @@ sub parse_cert {
         @cert = ($text);
     } elsif ($file) {
         unless (open(PSC, "$file")) {
-            Sympa::Log::Syslog::do_log('err',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                 "parse_cert: open %s: $ERRNO",
                 $file);
             return undef;
@@ -140,7 +140,7 @@ sub parse_cert {
         @cert = <PSC>;
         close(PSC);
     } else {
-        Sympa::Log::Syslog::do_log('err',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
             'parse_cert: neither "text" nor "file" given');
         return undef;
     }
@@ -149,19 +149,19 @@ sub parse_cert {
     my ($tmpfile) = $tmpdir . "/parse_cert.$PID";
     my $cmd = sprintf '%s x509 -email -subject -purpose -noout', $openssl;
     unless (open(PSC, "| $cmd > $tmpfile")) {
-        Sympa::Log::Syslog::do_log('err', 'open |openssl: %s', $ERRNO);
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'open |openssl: %s', $ERRNO);
         return undef;
     }
     print PSC join('', @cert);
 
     unless (close(PSC)) {
-        Sympa::Log::Syslog::do_log('err',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
             "parse_cert: close openssl: $ERRNO, $EVAL_ERROR");
         return undef;
     }
 
     unless (open(PSC, "$tmpfile")) {
-        Sympa::Log::Syslog::do_log('err',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
             "parse_cert: open $tmpfile: $ERRNO");
         return undef;
     }
@@ -205,14 +205,14 @@ sub parse_cert {
 
 sub extract_certs {
     my ($mime, $outfile, $openssl) = @_;
-    Sympa::Log::Syslog::do_log('debug2',
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2,
         "Sympa::Tools::extract_certs(%s)",
         $mime->mime_type);
 
     if ($mime->mime_type =~ /application\/(x-)?pkcs7-/) {
         my $cmd = sprintf '%s pkcs7 -print_certs -inform der', $openssl;
         unless (open(MSGDUMP, "| $cmd > $outfile")) {
-            Sympa::Log::Syslog::do_log('err',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                 'unable to run openssl pkcs7: %s', $ERRNO);
             return 0;
         }

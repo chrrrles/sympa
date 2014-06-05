@@ -51,7 +51,7 @@ sub set_file_rights {
 
     if ($param{'user'}) {
         unless ($uid = (getpwnam($param{'user'}))[2]) {
-            Sympa::Log::Syslog::do_log('err',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                 "User %s can't be found in passwd file",
                 $param{'user'});
             return undef;
@@ -64,7 +64,7 @@ sub set_file_rights {
     }
     if ($param{'group'}) {
         unless ($gid = (getgrnam($param{'group'}))[2]) {
-            Sympa::Log::Syslog::do_log('err', "Group %s can't be found",
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, "Group %s can't be found",
                 $param{'group'});
             return undef;
         }
@@ -75,14 +75,14 @@ sub set_file_rights {
         $gid = -1;
     }
     unless (chown($uid, $gid, $param{'file'})) {
-        Sympa::Log::Syslog::do_log('err',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
             "Can't give ownership of file %s to %s.%s: %s",
             $param{'file'}, $param{'user'}, $param{'group'}, $ERRNO);
         return undef;
     }
     if ($param{'mode'}) {
         unless (chmod($param{'mode'}, $param{'file'})) {
-            Sympa::Log::Syslog::do_log('err',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                 "Can't change rights of file %s to %o: %s",
                 $param{'file'}, $param{'mode'}, $ERRNO);
             return undef;
@@ -100,11 +100,11 @@ Copy a directory and its content
 sub copy_dir {
     my $dir1 = shift;
     my $dir2 = shift;
-    Sympa::Log::Syslog::do_log('debug', 'Copy directory %s to %s',
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG, 'Copy directory %s to %s',
         $dir1, $dir2);
 
     unless (-d $dir1) {
-        Sympa::Log::Syslog::do_log('err',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
             "Directory source '%s' doesn't exist. Copy impossible", $dir1);
         return undef;
     }
@@ -119,7 +119,7 @@ Delete a directory and its content
 
 sub del_dir {
     my $dir = shift;
-    Sympa::Log::Syslog::do_log('debug', 'del_dir %s', $dir);
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG, 'del_dir %s', $dir);
 
     if (opendir DIR, $dir) {
         for (readdir DIR) {
@@ -130,7 +130,7 @@ sub del_dir {
         }
         closedir DIR;
         unless (rmdir $dir) {
-            Sympa::Log::Syslog::do_log('err',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                 'Unable to delete directory %s: %s',
                 $dir, $ERRNO);
         }
@@ -204,10 +204,10 @@ unlink others
 sub shift_file {
     my $file  = shift;
     my $count = shift;
-    Sympa::Log::Syslog::do_log('debug', "shift_file ($file,$count)");
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG, "shift_file ($file,$count)");
 
     unless (-f $file) {
-        Sympa::Log::Syslog::do_log('info', "shift_file : unknown file $file");
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::INFO, "shift_file : unknown file $file");
         return undef;
     }
 
@@ -215,7 +215,7 @@ sub shift_file {
     my $file_extention = POSIX::strftime("%Y:%m:%d:%H:%M:%S", @date);
 
     unless (rename($file, $file . '.' . $file_extention)) {
-        Sympa::Log::Syslog::do_log('err',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
             "shift_file : Cannot rename file $file to $file.$file_extention");
         return undef;
     }
@@ -224,7 +224,7 @@ sub shift_file {
         my $dir = $1;
 
         unless (opendir(DIR, $dir)) {
-            Sympa::Log::Syslog::do_log('err',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                 "shift_file : Cannot read directory $dir");
             return ($file . '.' . $file_extention);
         }
@@ -234,10 +234,10 @@ sub shift_file {
             $i++;
             if ($count lt $i) {
                 if (unlink($oldfile)) {
-                    Sympa::Log::Syslog::do_log('info',
+                    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::INFO,
                         "shift_file : unlink $oldfile");
                 } else {
-                    Sympa::Log::Syslog::do_log('info',
+                    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::INFO,
                         "shift_file : unable to unlink $oldfile");
                 }
             }
@@ -346,7 +346,7 @@ or few directory paths
 
 sub remove_dir {
 
-    Sympa::Log::Syslog::do_log('debug2', 'remove_dir()');
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, 'remove_dir()');
 
     foreach my $current_dir (@_) {
         finddepth({wanted => \&del, no_chdir => 1}, $current_dir);
@@ -357,12 +357,12 @@ sub remove_dir {
 
         if (!-l && -d _) {
             unless (rmdir($name)) {
-                Sympa::Log::Syslog::do_log('err',
+                Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                     'Error while removing directory %s', $name);
             }
         } else {
             unless (unlink($name)) {
-                Sympa::Log::Syslog::do_log('err',
+                Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                     'Error while removing file  %s', $name);
             }
         }
@@ -396,14 +396,14 @@ sub a_is_older_than_b {
     if (-r $param->{'a_file'}) {
         $a_file_readable = 1;
     } else {
-        Sympa::Log::Syslog::do_log('err',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
             'Could not read file "%s". Comparison impossible',
             $param->{'a_file'});
     }
     if (-r $param->{'b_file'}) {
         $b_file_readable = 1;
     } else {
-        Sympa::Log::Syslog::do_log('err',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
             'Could not read file "%s". Comparison impossible',
             $param->{'b_file'});
     }
@@ -439,11 +439,11 @@ Returns a true value on success, I<undef> on failure.
 
 sub CleanDir {
     my ($dir, $clean_delay) = @_;
-    Sympa::Log::Syslog::do_log('debug', 'CleanSpool(%s,%s)', $dir,
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG, 'CleanSpool(%s,%s)', $dir,
         $clean_delay);
 
     unless (opendir(DIR, $dir)) {
-        Sympa::Log::Syslog::do_log('err', "Unable to open '%s' spool : %s",
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, "Unable to open '%s' spool : %s",
             $dir, $ERRNO);
         return undef;
     }
@@ -456,16 +456,16 @@ sub CleanDir {
         if ((stat "$dir/$f")[9] < (time - $clean_delay * 60 * 60 * 24)) {
             if (-f "$dir/$f") {
                 unlink("$dir/$f");
-                Sympa::Log::Syslog::do_log('notice', 'Deleting old file %s',
+                Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE, 'Deleting old file %s',
                     "$dir/$f");
             } elsif (-d "$dir/$f") {
                 unless (Sympa::Tools::File::remove_dir("$dir/$f")) {
-                    Sympa::Log::Syslog::do_log('err',
+                    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                         'Cannot remove old directory %s : %s',
                         "$dir/$f", $ERRNO);
                     next;
                 }
-                Sympa::Log::Syslog::do_log('notice',
+                Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE,
                     'Deleting old directory %s', "$dir/$f");
             }
         }

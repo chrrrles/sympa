@@ -157,7 +157,7 @@ if ($options{'log_level'}) {
     );
 } else {
     Sympa::Log::Syslog::set_log_level(Sympa::Site->log_level);
-    Sympa::Log::Syslog::do_log('info',
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::INFO,
         'Configuration file read, default log level %s',
         Sympa::Site->log_level);
 }
@@ -228,7 +228,7 @@ umask(oct(Sympa::Site->umask));
 
 ## Change to list root
 unless (chdir(Sympa::Site->home)) {
-    Sympa::Log::Syslog::do_log('err',
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
         'error : unable to change to directory %s', Sympa::Site->home);
     exit(-1);
 }
@@ -245,7 +245,7 @@ $SIG{'__DIE__'} = sub {
 
     my $msg = $_[0];
     chomp $msg;
-    Sympa::Log::Syslog::do_log('err', 'DIED: %s', $msg);
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'DIED: %s', $msg);
     eval { Sympa::Site->send_notify_to_listmaster(undef, undef, undef, 1); };
     eval { Sympa::DatabaseManager::db_disconnect(); };    # unlock database
     Sympa::Log::Syslog::closelog();           # flush log
@@ -287,7 +287,7 @@ while (!$end) {
 
     ## Execute existing tasks
     ## processing of tasks anterior to the current date
-    Sympa::Log::Syslog::do_log('debug2',
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2,
         'Processing tasks anterior to the current date');
     foreach my $task ($taskspool->get_content) {
         last if $end;
@@ -299,7 +299,7 @@ while (!$end) {
         my $validity = $task->check_validity();
 
         if ($validity) {
-            Sympa::Log::Syslog::do_log('debug2', 'Processing task %s', $task);
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, 'Processing task %s', $task);
 
             eval {
                 $task->execute();
@@ -344,7 +344,7 @@ while (!$end) {
 # Purge grouped notifications
 Sympa::Site->send_notify_to_listmaster(undef, undef, undef, 1);
 
-Sympa::Log::Syslog::do_log('notice',
+Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE,
     'task_manager exited normally due to signal');
 Sympa::Tools::Daemon::remove_pid(
     name   => 'task_manager',
