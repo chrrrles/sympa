@@ -196,7 +196,7 @@ sub do_openlog {
     # close log may be usefull : if parent processus did open log child
     # process inherit the openlog with parameters from parent process
     closelog;
-    eval { openlog("$log_service\[$PID\]", 'ndelay,nofatal', $log_facility) };
+    eval { openlog("$log_service\[$PID\]", 'ndelay', $log_facility) };
     if ($EVAL_ERROR && ($warning_date < time - $warning_timeout)) {
         $warning_date = time + $warning_timeout;
         unless (Sympa::Site->send_notify_to_listmaster('logs_failed', [$EVAL_ERROR])) {
