@@ -145,8 +145,7 @@ unless (Sympa::Robot::get_robots()) {
     exit 1;
 }
 
-Sympa::Log::Syslog::do_openlog(Sympa::Site->log_facility, Sympa::Site->log_socket_type,
-    'task_manager');
+Sympa::Log::Syslog::do_openlog(Sympa::Site->log_facility, 'task_manager');
 
 # setting log_level using conf unless it is set by calling option
 if ($options{'log_level'}) {

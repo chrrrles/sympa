@@ -254,8 +254,7 @@ if ($options{'log_level'}) {
         Sympa::Site->log_level);
 }
 
-Sympa::Log::Syslog::do_openlog(Sympa::Site->log_facility, Sympa::Site->log_socket_type,
-    'archived');
+Sympa::Log::Syslog::do_openlog(Sympa::Site->log_facility, 'archived');
 
 ## Set the User ID & Group ID for the process
 $GID = $EGID = (getgrnam(Sympa::Constants::GROUP))[2];

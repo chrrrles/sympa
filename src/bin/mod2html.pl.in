@@ -38,8 +38,7 @@ use Sympa::Log::Syslog;
 unless (Sympa::Conf::load(Sympa::Constants::CONFIG)) {
     die "Can't load Sympa configuration file";
 }
-Sympa::Log::Syslog::do_openlog($Sympa::Conf::Conf{'syslog'}, $Sympa::Conf::Conf{'log_socket_type'},
-    'sympa');
+Sympa::Log::Syslog::do_openlog($Sympa::Conf::Conf{'syslog'}, 'sympa');
 
 if ($Sympa::Conf::Conf{'db_name'} and $Sympa::Conf::Conf{'db_type'}) {
     unless (Sympa::DatabaseManager::probe_db()) {

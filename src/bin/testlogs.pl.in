@@ -42,7 +42,7 @@ unless (Sympa::Site->load('config_file' => $config_file)) {
 }
 
 ## Open the syslog and say we're read out stuff.
-Sympa::Log::Syslog::do_openlog(Sympa::Site->syslog, Sympa::Site->log_socket_type, 'sympa');
+Sympa::Log::Syslog::do_openlog(Sympa::Site->syslog, 'sympa');
 
 # setting log_level using conf unless it is set by calling option
 if ($options{'log_level'}) {

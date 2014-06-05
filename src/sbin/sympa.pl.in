@@ -334,8 +334,7 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
     }
 
     ## Open the syslog and say we're read out stuff.
-    Sympa::Log::Syslog::do_openlog(Sympa::Site->syslog, Sympa::Site->log_socket_type,
-        'sympa');
+    Sympa::Log::Syslog::do_openlog(Sympa::Site->syslog, 'sympa');
 
     # setting log_level using conf unless it is set by calling option
     if ($options{'log_level'}) {
@@ -413,8 +412,7 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
             }
         }
 
-        Sympa::Log::Syslog::do_openlog(Sympa::Site->syslog, Sympa::Site->log_socket_type,
-            'sympa');
+        Sympa::Log::Syslog::do_openlog(Sympa::Site->syslog, 'sympa');
 
         Sympa::Log::Syslog::do_log('debug', 'Running server %d', $PID);
 

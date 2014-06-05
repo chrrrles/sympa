@@ -53,8 +53,7 @@ unless (Sympa::Site->load('no_db' => 1)) {
 }
 
 Sympa::Log::Syslog::set_log_level(Sympa::Site->log_level);
-Sympa::Log::Syslog::do_openlog(Sympa::Site->syslog, Sympa::Site->log_socket_type,
-    'alias_manager');
+Sympa::Log::Syslog::do_openlog(Sympa::Site->syslog, 'alias_manager');
 
 ## MYSQL configuration
 my $mysql_host = "localhost";
