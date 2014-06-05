@@ -29,8 +29,7 @@ use English qw(-no_match_vars);
 #use Carp; # currently not used
 use Sys::Syslog;
 
-my ($log_facility, $log_socket_type, $log_service, $sth, @sth_stack,
-    $rows_nb);
+my ($log_facility, $log_socket_type, $log_service);
 
 # When logs are not available, period of time to wait before sending another
 # warning to listmaster.
@@ -60,7 +59,6 @@ my %levels = (
 ##
 sub fatal_err {
     my $m     = shift;
-    my $errno = $ERRNO;
 
     eval {
         syslog('err', $m, @_);
@@ -72,7 +70,7 @@ sub fatal_err {
             print STDERR "No logs available, can't send warning message";
         }
     }
-    $m =~ s/%m/$errno/g;
+    $m =~ s/%m/$ERRNO/g;
 
     my $full_msg = sprintf $m, @_;
 
@@ -101,8 +99,6 @@ sub do_log {
 
     my $message = shift;
     my @param   = ();
-
-    my $errno = $ERRNO;
 
     ## Do not display variables which are references.
     my @n = ($message =~ /(%[^%])/g);
@@ -183,7 +179,7 @@ sub do_log {
             and $main::options{'batch'}
             and $level eq 'err')
         ) {
-        $message =~ s/%m/$errno/g;
+        $message =~ s/%m/$ERRNO/g;
         printf STDERR "$message\n", @param;
     }
 
