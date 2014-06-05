@@ -107,7 +107,7 @@ sub remove_pid {
         unless (@pids) {
             ## Release the lock
             unless (unlink $pidfile) {
-                Sympa::Log::Syslog::do_log('err', "Failed to remove %s: %s",
+                Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, "Failed to remove %s: %s",
                     $pidfile, $ERRNO);
                 $lock_fh->close;
                 return undef;
@@ -119,7 +119,7 @@ sub remove_pid {
         }
     } else {
         unless (unlink $pidfile) {
-            Sympa::Log::Syslog::do_log('err', "Failed to remove %s: %s", $pidfile,
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, "Failed to remove %s: %s", $pidfile,
                 $ERRNO);
             $lock_fh->close;
             return undef;
@@ -127,7 +127,7 @@ sub remove_pid {
         my $err_file = _get_error_file(%params);
         if (-f $err_file) {
             unless (unlink $err_file) {
-                Sympa::Log::Syslog::do_log('err', "Failed to remove %s: %s",
+                Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, "Failed to remove %s: %s",
                     $err_file, $ERRNO);
                 $lock_fh->close;
                 return undef;
@@ -407,7 +407,7 @@ sub get_pids_in_pid_file {
 
     my $lock_fh = Sympa::LockedFile->new($pidfile, 5, '<');
     unless ($lock_fh) {
-        Sympa::Log::Syslog::do_log('err', "unable to open pidfile %s:%s",
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, "unable to open pidfile %s:%s",
             $pidfile, $ERRNO);
         return undef;
     }
@@ -424,7 +424,7 @@ Returns the list of PID for childrend of the current process.
 =cut
 
 sub get_children_processes_list {
-    Sympa::Log::Syslog::do_log('debug3', '');
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG3, '');
     my @children;
     for my $p (@{Proc::ProcessTable->new()->table()}) {
         if ($p->ppid == $PID) {

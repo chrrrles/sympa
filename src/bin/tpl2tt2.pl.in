@@ -222,7 +222,7 @@ foreach my $tpl (@templates) {
                 mode  => 0755,
             )
             ) {
-            Sympa::Log::Syslog::do_log('err', 'Unable to set rights on %s',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'Unable to set rights on %s',
                 Sympa::Site->db_name);
             next;
         }
@@ -278,7 +278,7 @@ sub convert {
             group => Sympa::Constants::GROUP
         )
         ) {
-        Sympa::Log::Syslog::do_log('err', 'Unable to set rights on %s',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'Unable to set rights on %s',
             $Sympa::Conf::Conf{'db_name'});
         return undef;
     }

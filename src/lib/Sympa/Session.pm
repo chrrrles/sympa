@@ -60,7 +60,7 @@ sub new {
     my $cookie = $context->{'cookie'};
     my $action = $context->{'action'};
     my $rss    = $context->{'rss'};
-    Sympa::Log::Syslog::do_log('debug2', '(%s, cookie=%s, action=%s)',
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, '(%s, cookie=%s, action=%s)',
         $robot, $cookie, $action);
 
     my $self = {'robot' => $robot};
@@ -92,7 +92,7 @@ sub new {
         if ($status eq 'not_found') {
 
             # start a new session (may be a fake cookie)
-            Sympa::Log::Syslog::do_log('info',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::INFO,
                 'ignoring unknown session cookie "%s"', $cookie);
             return __PACKAGE__->new($robot);
         }
@@ -114,12 +114,12 @@ sub new {
 }
 
 sub load {
-    Sympa::Log::Syslog::do_log('debug2', '(%s, %s)', @_);
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, '(%s, %s)', @_);
     my $self   = shift;
     my $cookie = shift;
 
     unless ($cookie) {
-        Sympa::Log::Syslog::do_log('err', 'internal error, undef id_session');
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'internal error, undef id_session');
         return undef;
     }
 
@@ -150,14 +150,14 @@ sub load {
                 $self->{'robot'}->name, $id_session
             )
             ) {
-            Sympa::Log::Syslog::do_log('err', 'Unable to load session %s',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'Unable to load session %s',
                 $id_session);
             return undef;
         }
     } else {
         $id_session = decrypt_session_id($cookie);
         unless ($id_session) {
-            Sympa::Log::Syslog::do_log('err',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                 'internal error, undef id_session');
             return 'not_found';
         }
@@ -179,7 +179,7 @@ sub load {
                 $self->{'robot'}->name, $id_session, $id_session
             )
             ) {
-            Sympa::Log::Syslog::do_log('err', 'Unable to load session %s',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'Unable to load session %s',
                 $id_session);
             return undef;
         }
@@ -190,7 +190,7 @@ sub load {
     my $counter     = 0;
     while ($new_session = $sth->fetchrow_hashref('NAME_lc')) {
         if ($counter > 0) {
-            Sympa::Log::Syslog::do_log('err',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                 'The SQL statement did return more than one session');
             $session->{'email'} = '';
             last;
@@ -237,7 +237,7 @@ sub load {
 
 ## This method will both store the session information in the database
 sub store {
-    Sympa::Log::Syslog::do_log('debug2', '(%s)', @_);
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, '(%s)', @_);
     my $self = shift;
 
     return undef unless $self->{'id_session'};
@@ -278,7 +278,7 @@ sub store {
                 $data_string
             )
             ) {
-            Sympa::Log::Syslog::do_log('err',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                 'Unable to add new session %s informations in database',
                 $self->{'id_session'});
             return undef;
@@ -297,7 +297,7 @@ sub store {
             $self->{'robot'}->name, $self->{'id_session'}
         );
         unless ($sth) {
-            Sympa::Log::Syslog::do_log('err',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                 'Unable to update session information in database');
             return undef;
         }
@@ -328,7 +328,7 @@ sub store {
                 $self->{'id_session'}
             )
             ) {
-            Sympa::Log::Syslog::do_log('err',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                 'Unable to update session %s information in database',
                 $self->{'id_session'});
             return undef;
@@ -340,7 +340,7 @@ sub store {
 
 ## This method will renew the session ID
 sub renew {
-    Sympa::Log::Syslog::do_log('debug2', '(%s)', @_);
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, '(%s)', @_);
     my $self = shift;
 
     return undef unless $self->{'id_session'};
@@ -368,7 +368,7 @@ sub renew {
         $self->{'robot'}->name, $self->{'id_session'}
     );
     unless ($sth) {
-        Sympa::Log::Syslog::do_log('err',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
             'Unable to update session information in database');
         return undef;
     }
@@ -427,7 +427,7 @@ sub renew {
         Sympa::DatabaseManager::quote($remote_addr), $refresh_term
     );
     unless ($sth) {
-        Sympa::Log::Syslog::do_log('err',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
             'Unable to renew session ID for session %s',
             $self->{'id_session'});
         return undef;
@@ -470,7 +470,7 @@ sub renew {
 ## remove old sessions from a particular robot or from all robots.
 ## delay is a parameter in seconds
 sub purge_old_sessions {
-    Sympa::Log::Syslog::do_log('debug2', '(%s)', @_);
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, '(%s)', @_);
     my $robot = Sympa::Robot::clean_robot(shift, 1);
 
     my $delay = Sympa::Tools::Time::duration_conv(Sympa::Site->session_table_ttl);
@@ -478,11 +478,11 @@ sub purge_old_sessions {
         Sympa::Tools::Time::duration_conv(Sympa::Site->anonymous_session_table_ttl);
 
     unless ($delay) {
-        Sympa::Log::Syslog::do_log('debug3', 'exit with delay null');
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG3, 'exit with delay null');
         return;
     }
     unless ($anonymous_delay) {
-        Sympa::Log::Syslog::do_log('debug3',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG3,
             'exit with anonymous delay null');
         return;
     }
@@ -516,36 +516,36 @@ sub purge_old_sessions {
     my $anonymous_statement       = q{DELETE FROM session_table%s};
 
     unless ($sth = Sympa::DatabaseManager::do_query($count_statement, $condition)) {
-        Sympa::Log::Syslog::do_log('err',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
             'Unable to count old session for robot %s', $robot);
         return undef;
     }
 
     my $total = $sth->fetchrow;
     if ($total == 0) {
-        Sympa::Log::Syslog::do_log('debug3', 'no sessions to expire');
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG3, 'no sessions to expire');
     } else {
         unless ($sth = Sympa::DatabaseManager::do_query($statement, $condition)) {
-            Sympa::Log::Syslog::do_log('err',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                 'Unable to purge old sessions for robot %s', $robot);
             return undef;
         }
     }
     unless ($sth =
         Sympa::DatabaseManager::do_query($anonymous_count_statement, $anonymous_condition)) {
-        Sympa::Log::Syslog::do_log('err',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
             'Unable to count anonymous sessions for robot %s', $robot);
         return undef;
     }
     my $anonymous_total = $sth->fetchrow;
     if ($anonymous_total == 0) {
-        Sympa::Log::Syslog::do_log('debug3',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG3,
             'no anonymous sessions to expire');
         return $total;
     }
     unless ($sth = Sympa::DatabaseManager::do_query($anonymous_statement, $anonymous_condition))
     {
-        Sympa::Log::Syslog::do_log('err',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
             'Unable to purge anonymous sessions for robot %s', $robot);
         return undef;
     }
@@ -556,12 +556,12 @@ sub purge_old_sessions {
 ## delay is a parameter in seconds
 ##
 sub purge_old_tickets {
-    Sympa::Log::Syslog::do_log('debug2', '(%s)', @_);
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, '(%s)', @_);
     my $robot = Sympa::Robot::clean_robot(shift, 1);
 
     my $delay = Sympa::Tools::Time::duration_conv(Sympa::Site->one_time_ticket_table_ttl);
     unless ($delay) {
-        Sympa::Log::Syslog::do_log('debug3', 'exit with delay null');
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG3, 'exit with delay null');
         return;
     }
 
@@ -582,19 +582,19 @@ sub purge_old_tickets {
             q{SELECT count(*) FROM one_time_ticket_table%s}, $condition
         )
         ) {
-        Sympa::Log::Syslog::do_log('err',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
             'Unable to count old one time tickets for robot %s', $robot);
         return undef;
     }
 
     my $total = $sth->fetchrow;
     if ($total == 0) {
-        Sympa::Log::Syslog::do_log('debug3', 'no tickets to expire');
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG3, 'no tickets to expire');
     } else {
         unless ($sth =
             Sympa::DatabaseManager::do_query(q{DELETE FROM one_time_ticket_table%s}, $condition))
         {
-            Sympa::Log::Syslog::do_log('err',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                 'Unable to delete expired one time tickets for robot %s',
                 $robot);
             return undef;
@@ -606,7 +606,7 @@ sub purge_old_tickets {
 # list sessions for $robot where last access is newer then $delay. List is
 # limited to connected users if $connected_only
 sub list_sessions {
-    Sympa::Log::Syslog::do_log('debug2', '(%s, %s, %s)', @_);
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, '(%s, %s, %s)', @_);
     my $delay          = shift;
     my $robot          = Sympa::Robot::clean_robot(shift, 1);
     my $connected_only = shift;
@@ -637,7 +637,7 @@ sub list_sessions {
             $condition
         )
         ) {
-        Sympa::Log::Syslog::do_log('err',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
             'Unable to get the list of sessions for robot %s', $robot);
         return undef;
     }
@@ -680,7 +680,7 @@ sub get_session_cookie {
 ## Set user $email cookie, ckecksum use $secret, expire=(now|session|#sec)
 ## domain=(localhost|<a domain>)
 sub set_cookie {
-    Sympa::Log::Syslog::do_log('debug2', '(%s, %s, %s, %s)', @_);
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, '(%s, %s, %s, %s)', @_);
     my ($self, $http_domain, $expires, $use_ssl) = @_;
 
     my $expiration;
@@ -760,7 +760,7 @@ sub soap_cookie2 {
 }
 
 sub get_random {
-    Sympa::Log::Syslog::do_log('debug3', '()');
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG3, '()');
     ## Concatenates 2 integers for a better entropy
     my $random = int(rand(10**7)) . int(rand(10**7));
     $random =~ s/^0(\.|\,)//;

@@ -131,7 +131,7 @@ sub maketext {
 
     ## Strangely the path is sometimes empty...
     ## TODO : investigate
-    #    Sympa::Log::Syslog::do_log('notice', "PATH: $path ; $template_name");
+    #    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE, "PATH: $path ; $template_name");
 
     ## Sample code to dump the STASH
     # my $s = $stash->_dump();
@@ -300,7 +300,7 @@ sub parse_tt2 {
 
     unless ($tt2->process($template, $data, $output)) {
         $last_error = $tt2->error();
-        Sympa::Log::Syslog::do_log('err', 'Failed to parse %s : %s',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'Failed to parse %s : %s',
             $template, "$last_error");
         Sympa::Log::Syslog::do_log(
             'err',

@@ -36,7 +36,7 @@ use Sympa::Robot;
 our $filename_regexp = '^(\S+)_(\w+)(\.distribute)?$';
 
 sub new {
-    Sympa::Log::Syslog::do_log('debug2', '(%s, %s)', @_);
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, '(%s, %s)', @_);
     return shift->SUPER::new('mod', shift);
 }
 
@@ -54,13 +54,13 @@ sub get_storage_name {
 }
 
 sub analyze_file_name {
-    Sympa::Log::Syslog::do_log('debug3', '(%s, %s, %s)', @_);
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG3, '(%s, %s, %s)', @_);
     my $self = shift;
     my $key  = shift;
     my $data = shift;
 
     unless ($key =~ /$filename_regexp/) {
-        Sympa::Log::Syslog::do_log('err',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
             'File %s name does not have the proper format', $key);
         return undef;
     }
@@ -112,12 +112,12 @@ sub validate_message {
             $self->{'dir'} . '/' . $key . '.distribute'
         )
         ) {
-        Sympa::Log::Syslog::do_log('err', 'Could not rename file %s/%s: %s',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'Could not rename file %s/%s: %s',
             $self->{'dir'}, $key, $ERRNO);
         return undef;
     }
     unless (unlink($self->{'dir'} . '/' . $key)) {
-        Sympa::Log::Syslog::do_log('err',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
             'Could not unlink message %s/%s: %s',
             $self->{'dir'}, $key, $ERRNO);
     }

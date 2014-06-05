@@ -48,7 +48,7 @@ use Sympa::Tools;
 sub new {
 
     my ($pkg, $param) = @_;
-    Sympa::Log::Syslog::do_log('debug', '');
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG, '');
     my $self = $param;
     ## Bless Message object
     bless $self, $pkg;
@@ -58,7 +58,7 @@ sub new {
 # Returns a unique ID for an include datasource
 sub _get_datasource_id {
     my ($source) = shift;
-    Sympa::Log::Syslog::do_log('debug2',
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2,
         "Getting datasource id for source '%s'", $source);
     if (ref($source) eq 'Sympa::Datasource') {
         $source = shift;
@@ -92,7 +92,7 @@ sub is_allowed_to_sync {
     my $rsre = Sympa::Tools::get_regexp('time_ranges');
     return 1 unless ($ranges =~ /^$rsre$/);
 
-    Sympa::Log::Syslog::do_log('debug',
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG,
         "Checking whether sync is allowed at current time");
 
     my (undef, $min, $hour) = localtime(time);
@@ -107,7 +107,7 @@ sub is_allowed_to_sync {
         my $end   = 60 * int($3) + int($4);
         $end += 24 * 60 if ($end < $start);
 
-        Sympa::Log::Syslog::do_log('debug',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG,
                   "Checking for range from "
                 . sprintf('%02d', $start / 60) . "h"
                 . sprintf('%02d', $start % 60) . " to "
@@ -117,14 +117,14 @@ sub is_allowed_to_sync {
         next if ($start == $end);
 
         if ($now >= $start && $now <= $end) {
-            Sympa::Log::Syslog::do_log('debug', "Failed, sync not allowed.");
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG, "Failed, sync not allowed.");
             return 0;
         }
 
-        Sympa::Log::Syslog::do_log('debug', "Pass ...");
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG, "Pass ...");
     }
 
-    Sympa::Log::Syslog::do_log('debug', "Sync allowed");
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG, "Sync allowed");
     return 1;
 }
 

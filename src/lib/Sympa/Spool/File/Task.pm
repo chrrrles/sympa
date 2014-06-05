@@ -56,7 +56,7 @@ our %global_models = (    #'crl_update_task' => 'crl_update',
 ##########################
 
 sub new {
-    Sympa::Log::Syslog::do_log('debug2', '(%s, %s)', @_);
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, '(%s, %s)', @_);
     return shift->SUPER::new('task', shift);
 }
 
@@ -75,13 +75,13 @@ sub get_storage_name {
 }
 
 sub analyze_file_name {
-    Sympa::Log::Syslog::do_log('debug3', '(%s, %s, %s)', @_);
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG3, '(%s, %s, %s)', @_);
     my $self = shift;
     my $key  = shift;
     my $data = shift;
 
     unless ($key =~ /$filename_regexp/) {
-        Sympa::Log::Syslog::do_log('err',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
             'File %s name does not have the proper format', $key);
         return undef;
     }
@@ -132,7 +132,7 @@ them if needed.
 
 sub create_required_tasks {
     my ($self, $current_date) = @_;
-    Sympa::Log::Syslog::do_log('debug2', '(%s)', @_);
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, '(%s)', @_);
 
     # create tasks objects for every task already present in the spool
     # indexing them by list and model
@@ -170,7 +170,7 @@ sub create_required_tasks {
 ## Create them if needed.
 sub _create_required_global_tasks {
     my ($self, %params) = @_;
-    Sympa::Log::Syslog::do_log('debug',
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG,
         'Creating required tasks from global models');
 
     # models for which a task exists
@@ -180,7 +180,7 @@ sub _create_required_global_tasks {
     }
 
     foreach my $key (keys %global_models) {
-        Sympa::Log::Syslog::do_log('debug2', "global_model : $key");
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, "global_model : $key");
         next if $used_models{$global_models{$key}};
         next unless Sympa::Site->$key;
 
@@ -212,15 +212,15 @@ sub _create_required_global_tasks {
 ## Checks that all the required LIST tasks are defined. Create them if needed.
 sub _create_required_lists_tasks {
     my ($self, %params) = @_;
-    Sympa::Log::Syslog::do_log('debug',
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG,
         'Creating required tasks from list models');
 
     foreach my $robot (@{Sympa::Robot::get_robots()}) {
-        Sympa::Log::Syslog::do_log('debug3',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG3,
             'creating list task : current bot is %s', $robot);
         my $all_lists = Sympa::List::get_lists($robot);
         foreach my $list (@$all_lists) {
-            Sympa::Log::Syslog::do_log('debug3',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG3,
                 'creating list task : current list is %s', $list);
             my %data = %{$params{'data'}};
             $data{'list'} = {'name' => $list->name, 'robot' => $list->domain};
@@ -235,7 +235,7 @@ sub _create_required_lists_tasks {
                     $used_list_models{$model} = 1;
                 }
             }
-            Sympa::Log::Syslog::do_log('debug3',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG3,
                 'creating list task using models');
             my $tt = 0;
 
@@ -272,7 +272,7 @@ sub _create_required_lists_tasks {
                             \%data
                         );
                     }
-                    Sympa::Log::Syslog::do_log('debug3',
+                    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG3,
                         'sync_include task creation done');
                     $tt++;
 
@@ -311,7 +311,7 @@ sub _create_required_lists_tasks {
 
 sub creation_error {
     my $message = shift;
-    Sympa::Log::Syslog::do_log('err', $message);
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, $message);
     Sympa::Site->send_notify_to_listmaster('task_creation_error', $message);
 }
 

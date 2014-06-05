@@ -43,7 +43,7 @@ use Sympa::DatabaseManager;
 #
 ##############################################
 sub get_recipients_status {
-    Sympa::Log::Syslog::do_log('debug2', '(%s, %s)', @_);
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, '(%s, %s)', @_);
     my $list     = shift;
     my $msgid    = shift;
     my $listname = $list->name;
@@ -117,7 +117,7 @@ sub db_init_notification_table {
     my $reception_option = $params{'reception_option'};
     my @rcpt             = @{$params{'rcpt'}};
 
-    Sympa::Log::Syslog::do_log('debug2',
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2,
         '(%s, msgid=%s, reception_option=%s)',
         $list, $msgid, $reception_option);
 
@@ -175,7 +175,7 @@ sub db_init_notification_table {
 #
 ##############################################
 sub db_insert_notification {
-    Sympa::Log::Syslog::do_log('debug2', '(%s, %s, %s, %s, ...)', @_);
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, '(%s, %s, %s, %s, ...)', @_);
     my ($notification_id, undef, $status, $arrival_date,
         $notification_as_string)
         = @_;
@@ -192,7 +192,7 @@ sub db_insert_notification {
             $status, $arrival_date, $notification_as_string, $notification_id
         )
         ) {
-        Sympa::Log::Syslog::do_log('err',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
             'Unable to update notification %s in database',
             $notification_id);
         return undef;
@@ -218,7 +218,7 @@ sub find_notification_id_by_message {
     my $listname = shift;
     my $robot_id = shift;
 
-    Sympa::Log::Syslog::do_log('debug2',
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2,
         'find_notification_id_by_message(%s,%s,%s,%s)',
         $recipient, $msgid, $listname, $robot_id);
 
@@ -277,7 +277,7 @@ sub find_notification_id_by_message {
 #
 ##############################################
 sub remove_message_by_id {
-    Sympa::Log::Syslog::do_log('debug2', '(%s, %s)', @_);
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, '(%s, %s)', @_);
     my $list  = shift;
     my $msgid = shift;
 
@@ -318,7 +318,7 @@ sub remove_message_by_id {
 #
 ##############################################
 sub remove_message_by_period {
-    Sympa::Log::Syslog::do_log('debug2', '(%s, %s)', @_);
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, '(%s, %s)', @_);
     my $list   = shift;
     my $period = shift;
 

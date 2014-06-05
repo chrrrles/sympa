@@ -24,6 +24,17 @@
 package Sympa::Log::Syslog;
 
 use strict;
+
+use constant {
+    ERR    => 0,
+    INFO   => 0,
+    NOTICE => 0,
+    TRACE  => 0,
+    DEBUG  => 1,
+    DEBUG2 => 2,
+    DEBUG3 => 3,
+};
+
 use English qw(-no_match_vars);
 
 #use Carp; # currently not used
@@ -40,16 +51,6 @@ my $warning_timeout = 600;
 my $warning_date = 0;
 
 my $log_level = undef;
-
-my %levels = (
-    err    => 0,
-    info   => 0,
-    notice => 0,
-    trace  => 0,
-    debug  => 1,
-    debug2 => 2,
-    debug3 => 3,
-);
 
 ##sub import {
 ##my @call = caller(1);
@@ -80,14 +81,9 @@ sub fatal_err {
 sub do_log {
     my $level = shift;
 
-    unless (defined $levels{$level}) {
-        do_log('err', 'Invalid $level: "%s"', $level);
-        $level = 'info';
-    }
-
     # do not log if log level is too high regarding the log requested by user
-    return if defined $log_level  and $levels{$level} > $log_level;
-    return if !defined $log_level and $levels{$level} > 0;
+    return if defined $log_level  and $level > $log_level;
+    return if !defined $log_level and $level > 0;
 
     my $message = shift;
     my @param   = ();

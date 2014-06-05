@@ -33,7 +33,7 @@ use Sympa::Robot;
 my $filename_regexp = '^(\S+)\.(\d+)\.\w+$';
 
 sub new {
-    Sympa::Log::Syslog::do_log('debug2', '(%s, %s)', @_);
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, '(%s, %s)', @_);
     my $pkg = shift;
     return $pkg->SUPER::new(
         'msg', shift,
@@ -43,7 +43,7 @@ sub new {
 }
 
 sub is_relevant {
-    Sympa::Log::Syslog::do_log('debug3', '(%s, %s)', @_);
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG3, '(%s, %s)', @_);
     my $self = shift;
     my $key  = shift;
 
@@ -68,7 +68,7 @@ sub get_storage_name {
             . time . '.'
             . int(rand(10000));
     } else {
-        Sympa::Log::Syslog::do_log('err',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
             'Unsufficient parameters provided to create file name');
         return undef;
     }
@@ -76,13 +76,13 @@ sub get_storage_name {
 }
 
 sub analyze_file_name {
-    Sympa::Log::Syslog::do_log('debug3', '(%s, %s, %s)', @_);
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG3, '(%s, %s, %s)', @_);
     my $self = shift;
     my $key  = shift;
     my $data = shift;
 
     unless ($key =~ /$filename_regexp/) {
-        Sympa::Log::Syslog::do_log('err',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
             'File %s name does not have the proper format', $key);
         return undef;
     }
@@ -121,7 +121,7 @@ sub analyze_file_name {
         $data->{'priority'} = $data->{'robot_object'}->default_list_priority;
     }
 
-    Sympa::Log::Syslog::do_log('debug3',
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG3,
         'messagekey=%s, list=%s, robot=%s, priority=%s',
         $key, $data->{'list'}, $data->{'robot'}, $data->{'priority'});
 

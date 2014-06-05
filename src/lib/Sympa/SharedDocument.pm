@@ -35,7 +35,7 @@ use Sympa::Tools::Data;
 
 ## Creates a new object
 sub new {
-    Sympa::Log::Syslog::do_log('debug2', '(%s, %s, %s, %s)', @_);
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, '(%s, %s, %s, %s)', @_);
     my ($pkg, $list, $path, $param, $icon_base) = @_;
 
     my $email = $param->{'user'}{'email'};
@@ -44,7 +44,7 @@ sub new {
     my $document = {};
 
     unless (ref($list) =~ /List/i) {
-        Sympa::Log::Syslog::do_log('err',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
             'SharedDocument::new : incorrect list parameter');
         return undef;
     }
@@ -57,7 +57,7 @@ sub new {
 
     ### Document isn't a description file
     if ($document->{'path'} =~ /\.desc/) {
-        Sympa::Log::Syslog::do_log('err',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
             "SharedDocument::new : %s : description file",
             $document->{'path'});
         return undef;
@@ -335,7 +335,7 @@ sub check_access_control {
 
     my $list = $self->{'list'};
 
-    Sympa::Log::Syslog::do_log('debug', "check_access_control(%s)",
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG, "check_access_control(%s)",
         $self->{'path'});
 
     # Control for editing

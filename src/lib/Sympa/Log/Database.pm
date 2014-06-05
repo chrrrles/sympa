@@ -53,7 +53,7 @@ sub get_log_date {
     foreach my $query ('MIN', 'MAX') {
         unless ($sth =
             Sympa::DatabaseManager::do_query("SELECT $query(date_logs) FROM logs_table")) {
-            do_log('err', 'Unable to get %s date from logs_table', $query);
+            do_log(Sympa::Log::Syslog::ERR, 'Unable to get %s date from logs_table', $query);
             return undef;
         }
         while (my $d = ($sth->fetchrow_array)[0]) {
@@ -108,7 +108,7 @@ sub db_log {
     }
 
     unless ($daemon =~ /^(task|archived|sympa|wwsympa|bounced|sympa_soap)$/) {
-        do_log('err', "Internal_error : incorrect process value $daemon");
+        do_log(Sympa::Log::Syslog::ERR, "Internal_error : incorrect process value $daemon");
         return undef;
     }
 
@@ -126,7 +126,7 @@ sub db_log {
             $error_type, $user_email, $client, $daemon
         )
         ) {
-        do_log('err', 'Unable to insert new db_log entry in the database');
+        do_log(Sympa::Log::Syslog::ERR, 'Unable to insert new db_log entry in the database');
         return undef;
     }
 
@@ -179,7 +179,7 @@ sub db_stat_log {
             Sympa::DatabaseManager::quote($read)
         )
         ) {
-        do_log('err', 'Unable to insert new stat entry in the database');
+        do_log(Sympa::Log::Syslog::ERR, 'Unable to insert new stat entry in the database');
         return undef;
     }
     return 1;
@@ -218,7 +218,7 @@ sub db_stat_counter_log {
             $total
         )
         ) {
-        do_log('err',
+        do_log(Sympa::Log::Syslog::ERR,
             'Unable to insert new stat counter entry in the database');
         return undef;
     }
@@ -238,7 +238,7 @@ sub db_log_del {
             $date
         )
         ) {
-        do_log('err', 'Unable to delete db_log entry from the database');
+        do_log(Sympa::Log::Syslog::ERR, 'Unable to delete db_log entry from the database');
         return undef;
     }
     return 1;
@@ -413,7 +413,7 @@ sub get_first_db_log {
 
     push @sth_stack, $sth;
     unless ($sth = Sympa::DatabaseManager::do_query($statement)) {
-        do_log('err', 'Unable to retrieve logs entry from the database');
+        do_log(Sympa::Log::Syslog::ERR, 'Unable to retrieve logs entry from the database');
         return undef;
     }
 
@@ -470,7 +470,7 @@ sub aggregate_data {
             $begin_date, $end_date
         )
         ) {
-        do_log('err',
+        do_log(Sympa::Log::Syslog::ERR,
             'Unable to retrieve stat entries between date %s and date %s',
             $begin_date, $end_date);
         return undef;
@@ -801,7 +801,7 @@ sub aggregate_data {
 
     my $d_deb = localtime($begin_date);
     my $d_fin = localtime($end_date);
-    do_log('debug2', 'data aggregated from %s to %s', $d_deb, $d_fin);
+    do_log(Sympa::Log::Syslog::DEBUG2, 'data aggregated from %s to %s', $d_deb, $d_fin);
 }
 
 #called by subroutine aggregate_data
@@ -1102,7 +1102,7 @@ sub deal_data {
 sub update_subscriber_msg_send {
 
     my ($mail, $list, $robot, $counter) = @_;
-    Sympa::Log::Syslog::do_log('debug2', '%s,%s,%s,%s', $mail, $list, $robot,
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, '%s,%s,%s,%s', $mail, $list, $robot,
         $counter);
 
     unless (
@@ -1111,7 +1111,7 @@ sub update_subscriber_msg_send {
             $robot, $list, $mail
         )
         ) {
-        do_log('err',
+        do_log(Sympa::Log::Syslog::ERR,
             'Unable to retrieve message count for user %s, list %s@%s',
             $mail, $list, $robot);
         return undef;
@@ -1126,7 +1126,7 @@ sub update_subscriber_msg_send {
             $nb_msg, $robot, $list, $mail
         )
         ) {
-        do_log('err',
+        do_log(Sympa::Log::Syslog::ERR,
             'Unable to update message count for user %s, list %s@%s',
             $mail, $list, $robot);
         return undef;
@@ -1142,7 +1142,7 @@ sub get_last_date_aggregation {
         $sth = Sympa::DatabaseManager::do_query(
             " SELECT MAX( end_date_counter ) FROM `stat_counter_table` ")
         ) {
-        do_log('err', 'Unable to retrieve last date of aggregation');
+        do_log(Sympa::Log::Syslog::ERR, 'Unable to retrieve last date of aggregation');
         return undef;
     }
 
@@ -1152,7 +1152,7 @@ sub get_last_date_aggregation {
 
 sub agregate_daily_data {
     my $param = shift;
-    Sympa::Log::Syslog::do_log('debug2', 'Agregating data');
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, 'Agregating data');
     my $result;
     my $first_date = $param->{'first_date'} || time;
     my $last_date  = $param->{'last_date'}  || time;

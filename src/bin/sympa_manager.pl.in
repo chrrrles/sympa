@@ -383,7 +383,7 @@ sub health_check {
         );
     } else {
         Sympa::Log::Syslog::set_log_level(Sympa::Site->log_level);
-        Sympa::Log::Syslog::do_log('info',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::INFO,
             'Configuration file read, default log level %s',
             Sympa::Site->log_level);
     }
@@ -432,7 +432,7 @@ sub dump_list {
 
         ## The parameter can be a list address
         unless ($options{'dump'} =~ /\@/) {
-            Sympa::Log::Syslog::do_log('err', 'Incorrect list address %s',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'Incorrect list address %s',
                 $options{'dump'});
 
             exit;
@@ -440,7 +440,7 @@ sub dump_list {
 
         my $list = Sympa::List->new($options{'dump'});
         unless (defined $list) {
-            Sympa::Log::Syslog::do_log('err', 'Unknown list %s',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'Unknown list %s',
                 $options{'dump'});
 
             exit;
@@ -950,43 +950,43 @@ sub sync_include {
 
 ## Migration from one version to another
 sub upgrade  {
-    Sympa::Log::Syslog::do_log('notice', "Upgrade process...");
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE, "Upgrade process...");
 
     $options{'from'} ||= Sympa::Upgrade::get_previous_version();
     $options{'to'}   ||= Sympa::Constants::VERSION;
 
     if ($options{'from'} eq $options{'to'}) {
-        Sympa::Log::Syslog::do_log('err',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
             "Current version : %s ; no upgrade is required.",
             $options{'to'});
         exit 0;
     } else {
-        Sympa::Log::Syslog::do_log('notice', "Upgrading from %s to %s...",
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE, "Upgrading from %s to %s...",
             $options{'from'}, $options{'to'});
     }
 
     Sympa::DatabaseManager::probe_db;
     unless (
         Sympa::Upgrade::upgrade($options{'from'}, $options{'to'})) {
-        Sympa::Log::Syslog::do_log('err',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
             "Migration from %s to %s failed",
             $options{'from'}, $options{'to'});
         exit 1;
     }
-    Sympa::Log::Syslog::do_log('notice', "Upgrade process finished.");
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE, "Upgrade process finished.");
     Sympa::Upgrade::update_version();
 }
 
 ## rename file names that may be incorrectly encoded because of
 ## previous Sympa versions
 sub upgrade_shared {
-    Sympa::Log::Syslog::do_log('notice', "Upgrade shared process...");
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE, "Upgrade shared process...");
 
     my $listname;
     my $robot_id;
 
     unless (($options{'list'}) || ($options{'robot'})) {
-        Sympa::Log::Syslog::do_log('err',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
             "listname and domain are required, use --list= --robot= options"
         );
         exit 0;
@@ -994,7 +994,7 @@ sub upgrade_shared {
     $listname = $options{'list'};
     $robot_id = $options{'robot'};
 
-    Sympa::Log::Syslog::do_log('notice',
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE,
         "Upgrading share for list=%s robot=%s",
         $listname, $robot_id);
 
@@ -1007,7 +1007,7 @@ sub upgrade_shared {
     }
 
     if (-d $list->dir . '/shared') {
-        Sympa::Log::Syslog::do_log('notice', '  Processing list %s...',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE, '  Processing list %s...',
             $list);
 
         ## Determine default lang for this list
@@ -1020,12 +1020,12 @@ sub upgrade_shared {
             $list_encoding);
 
         if ($count) {
-            Sympa::Log::Syslog::do_log('notice',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE,
                 'List %s : %d filenames has been changed',
                 $list, $count);
         }
     }
-    Sympa::Log::Syslog::do_log('notice',
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE,
         "Upgrade_shared process finished.");
 }
 
@@ -1038,7 +1038,7 @@ sub reload_list_config {
     }
 
     if (length $listname) {
-        Sympa::Log::Syslog::do_log('notice', 'Loading list %s...',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE, 'Loading list %s...',
             $listname);
         my $robot = Sympa::Robot->new($robot_id || Sympa::Site->domain);
         unless (defined $robot) {
@@ -1052,7 +1052,7 @@ sub reload_list_config {
     } else {
         my $that;
         if ($robot_id) {
-            Sympa::Log::Syslog::do_log('notice',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE,
                 'Loading all lists in %s...', $robot_id);
             $that = Sympa::Robot->new($robot_id);
             unless (defined $that) {
@@ -1060,12 +1060,12 @@ sub reload_list_config {
                 exit 1;
             }
         } else {
-            Sympa::Log::Syslog::do_log('notice', 'Loading ALL lists...');
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE, 'Loading ALL lists...');
             $that = 'Site';
         }
         Sympa::List::get_lists($that, {'reload_config' => 1});
     }
-    Sympa::Log::Syslog::do_log('notice', '...Done.');
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE, '...Done.');
 }
 
 sub modify_list {

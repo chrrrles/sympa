@@ -219,7 +219,7 @@ sub new {
 sub _parse {
     my $self = shift;
 
-    Sympa::Log::Syslog::do_log('debug2', 'Parsing "%s"',
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, 'Parsing "%s"',
         $self->{'line_as_string'});
 
     $self->{'nature'} = undef;
@@ -338,7 +338,7 @@ sub _chk_cmd {
 
 sub as_string {
     my $self = shift;
-    Sympa::Log::Syslog::do_log('debug3',
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG3,
         'Computing string representation of the instruction.');
     return $self->{'line_as_string'};
 }
@@ -386,7 +386,7 @@ sub _rm_file {
 sub _stop {
     my ($self, $task, $params) = @_;
 
-    Sympa::Log::Syslog::do_log('notice',
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE,
         "$self->{'line_number'} : stop $task->{'messagekey'}");
 
     my $result = $task->remove();
@@ -400,7 +400,7 @@ sub _send_msg {
     my $template = $tab[1];
     my $var      = $tab[0];
 
-    Sympa::Log::Syslog::do_log('notice',
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE,
         "line $self->{'line_number'} : send_msg (@{$self->{'Rarguments'}})");
 
     require Sympa::Site;
@@ -412,7 +412,7 @@ sub _send_msg {
             );
             croak "Unable to send template $template to $email\n"
                 unless $result;
-            Sympa::Log::Syslog::do_log('notice', "--> message sent to $email");
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE, "--> message sent to $email");
         }
     } else {
         my $list = $task->{'list_object'};
@@ -422,7 +422,7 @@ sub _send_msg {
             );
             croak "Unable to send template $template to $email\n"
                 unless $result;
-            Sympa::Log::Syslog::do_log('notice', "--> message sent to $email");
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE, "--> message sent to $email");
         }
     }
     return 1;
@@ -436,7 +436,7 @@ sub _next_cmd {
     my $date = Sympa::Tools::Time::epoch_conv($tab[0], $task->{'date'});
     my $label = $tab[1];
 
-    Sympa::Log::Syslog::do_log('debug2',
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2,
         "line $self->{'line_number'} of $task->{'model'} : next ($date, $label)"
     );
 
@@ -481,7 +481,7 @@ sub _next_cmd {
             $flavour = $list->$model_task_parameter->{'name'};
         }
     }
-    Sympa::Log::Syslog::do_log('debug2', 'Will create next task');
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, 'Will create next task');
     
     my $task = Sympa::Task->new(
         'date'          => $date,
@@ -499,7 +499,7 @@ sub _next_cmd {
     );
 
     my $human_date = Sympa::Tools::Time::adate($date);
-    Sympa::Log::Syslog::do_log('debug2', "--> new task $model ($human_date)");
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, "--> new task $model ($human_date)");
     return 1;
 }
 
@@ -509,7 +509,7 @@ sub _select_subs {
     my @tab       = @{$self->{'Rarguments'}};
     my $condition = $tab[0];
 
-    Sympa::Log::Syslog::do_log('debug2',
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2,
         "line $self->{'line_number'} : select_subs ($condition)");
 
     require Sympa::Scenario;
@@ -550,7 +550,7 @@ sub _select_subs {
             if ($condition =~ /(older|newer)\((\d+)\)/);
         if (Sympa::Scenario::verify($verify_context, $new_condition) == 1) {
             $selection{$user->{'email'}} = undef;
-            Sympa::Log::Syslog::do_log('notice',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE,
                 "--> user $user->{'email'} has been selected");
         }
     }
@@ -563,7 +563,7 @@ sub _delete_subs_cmd {
     my @tab = @{$self->{'Rarguments'}};
     my $var = $tab[0];
 
-    Sympa::Log::Syslog::do_log('notice',
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE,
         "line $self->{'line_number'} : delete_subs ($var)");
 
     require Sympa::Scenario;
@@ -574,7 +574,7 @@ sub _delete_subs_cmd {
     my %selection;    # hash of subscriber emails who are successfully deleted
 
     foreach my $email (keys %{$params->{$var}}) {
-        Sympa::Log::Syslog::do_log('notice', "email : $email");
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE, "email : $email");
         my $result = Sympa::Scenario::request_action(
             $list, 'del', 'smime',
             {   'sender' => Sympa::Site->listmaster,
@@ -590,7 +590,7 @@ sub _delete_subs_cmd {
         croak "Deletion of $email from list $listname failed\n"
             unless $result;
 
-        Sympa::Log::Syslog::do_log('notice', "--> $email deleted");
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE, "--> $email deleted");
         $selection{$email} = {};
     }
 
@@ -605,7 +605,7 @@ sub _create_cmd {
     my $model   = $tab[1];
     my $flavour = $tab[2];
 
-    Sympa::Log::Syslog::do_log('notice',
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE,
         "line $self->{'line_number'} : create ($arg, $model, $flavour)");
 
     # recovery of the object type and object
@@ -643,7 +643,7 @@ sub _exec_cmd {
     my @tab  = @{$self->{'Rarguments'}};
     my $file = $tab[0];
 
-    Sympa::Log::Syslog::do_log('notice',
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE,
         "line $self->{'line_number'} : exec ($file)");
 
     system($file);
@@ -668,7 +668,7 @@ sub _purge_logs_table {
     my $execution_date = $task->{'date'};
     my @slots          = ();
 
-    Sympa::Log::Syslog::do_log('debug2', 'purge_logs_table()');
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, 'purge_logs_table()');
 
     require Sympa::DatabaseManager;
     require Sympa::Log::Database;
@@ -712,7 +712,7 @@ sub _purge_logs_table {
 
     #-------------------------------------------------------------------
 
-    Sympa::Log::Syslog::do_log('notice', 'purge_logs_table(): logs purged');
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE, 'purge_logs_table(): logs purged');
     return 1;
 }
 
@@ -720,14 +720,14 @@ sub _purge_logs_table {
 sub _purge_session_table {
     my ($self, $task, $params) = @_;
 
-    Sympa::Log::Syslog::do_log('info', 'task_manager::purge_session_table()');
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::INFO, 'task_manager::purge_session_table()');
 
     require Sympa::Session;
 
     my $removed = Sympa::Session::purge_old_sessions('Site');
     croak "Failed to remove old sessions\n" unless $removed;
 
-    Sympa::Log::Syslog::do_log('notice',
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE,
         'purge_session_table(): %s rows removed in session_table', $removed);
     return 1;
 }
@@ -737,7 +737,7 @@ sub _purge_session_table {
 sub _purge_tables {
     my ($self, $task, $params) = @_;
 
-    Sympa::Log::Syslog::do_log('info', 'task_manager::purge_tables()');
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::INFO, 'task_manager::purge_tables()');
 
     require Sympa::Bulk;
     require Sympa::List;
@@ -747,7 +747,7 @@ sub _purge_tables {
     my $removed = Sympa::Bulk::purge_bulkspool();
     croak "Failed to purge tables\n" unless $removed;
 
-    Sympa::Log::Syslog::do_log('notice', '%s rows removed in bulkspool_table',
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE, '%s rows removed in bulkspool_table',
         $removed);
 
     $removed = 0;
@@ -759,7 +759,7 @@ sub _purge_tables {
                 $list->tracking->{'retention_period'});
         }
     }
-    Sympa::Log::Syslog::do_log('notice', "%s rows removed in tracking table",
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE, "%s rows removed in tracking table",
         $removed);
 
     return 1;
@@ -769,7 +769,7 @@ sub _purge_tables {
 sub _purge_one_time_ticket_table {
     my ($self, $task, $params) = @_;
 
-    Sympa::Log::Syslog::do_log('info',
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::INFO,
         'task_manager::purge_one_time_ticket_table()');
 
     require Sympa::Session;
@@ -788,7 +788,7 @@ sub _purge_one_time_ticket_table {
 sub _purge_user_table {
     my ($self, $task, $params) = @_;
 
-    Sympa::Log::Syslog::do_log('debug2', 'purge_user_table()');
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, 'purge_user_table()');
 
     require Sympa::Robot;
     require Sympa::List;
@@ -842,7 +842,7 @@ sub _purge_user_table {
     my @purged_users;
     foreach (@users) {
         unless ($known_people{$_}) {
-            Sympa::Log::Syslog::do_log('debug2', 'User to purge: %s', $_);
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, 'User to purge: %s', $_);
             push @purged_users, $_;
         }
     }
@@ -861,7 +861,7 @@ sub _purge_user_table {
 sub _purge_orphan_bounces {
     my ($self, $task, $params) = @_;
 
-    Sympa::Log::Syslog::do_log('info', 'purge_orphan_bounces()');
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::INFO, 'purge_orphan_bounces()');
 
     require Sympa::List;
 
@@ -870,7 +870,7 @@ sub _purge_orphan_bounces {
     my $all_lists;
 
     unless ($all_lists = Sympa::List::get_lists()) {
-        Sympa::Log::Syslog::do_log('notice', 'No list available');
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE, 'No list available');
         return 1;
     }
 
@@ -888,7 +888,7 @@ sub _purge_orphan_bounces {
         }
         my $bounce_dir = $list->get_bounce_dir();
         unless (-d $bounce_dir) {
-            Sympa::Log::Syslog::do_log('notice',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE,
                 'No bouncing subscribers in list %s', $listname);
             next;
         }
@@ -901,7 +901,7 @@ sub _purge_orphan_bounces {
         foreach my $bounce (readdir(BOUNCE)) {
             if ($bounce =~ /\@/) {
                 unless (defined($bounced_users{$listname}{$bounce})) {
-                    Sympa::Log::Syslog::do_log('info',
+                    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::INFO,
                         'removing orphan Bounce for user %s in list %s',
                         $bounce, $listname);
                     my $file = $bounce_dir . '/' . $bounce;
@@ -927,7 +927,7 @@ sub _expire_bounce {
     my @tab            = @{$self->{'Rarguments'}};
     my $delay          = $tab[0];
 
-    Sympa::Log::Syslog::do_log('debug2', 'expire_bounce(%d)', $delay);
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, 'expire_bounce(%d)', $delay);
 
     require Sympa::List;
 
@@ -1019,7 +1019,7 @@ sub _chk_cert_expiration {
     my $template       = $tab[0];
     my $limit          = Sympa::Tools::Time::duration_conv($tab[1], $execution_date);
 
-    Sympa::Log::Syslog::do_log('notice',
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE,
         "line $self->{'line_number'} : chk_cert_expiration (@{$self->{'Rarguments'}})"
     );
 
@@ -1046,7 +1046,7 @@ sub _chk_cert_expiration {
         chomp($date);
 
         unless ($date) {
-            Sympa::Log::Syslog::do_log('err',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
                 "error in chk_cert_expiration command : can't get expiration date for $_ by using the x509 openssl command"
             );
             next;
@@ -1071,7 +1071,7 @@ sub _chk_cert_expiration {
         # expired certificate processing
         if ($expiration_date < $execution_date) {
 
-            Sympa::Log::Syslog::do_log('notice',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE,
                 "--> $_ certificate expired ($date), certificate file deleted"
             );
             unlink("$cert_dir/$_")
@@ -1110,7 +1110,7 @@ sub _chk_cert_expiration {
             }
 
             $id =~ s/subject= //;
-            Sympa::Log::Syslog::do_log('notice', "id : $id");
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE, "id : $id");
             $tpl_context{'expiration_date'} = Sympa::Tools::Time::adate($expiration_date);
             $tpl_context{'certificate_id'}  = $id;
             $tpl_context{'auto_submitted'}  = 'auto-generated';
@@ -1119,7 +1119,7 @@ sub _chk_cert_expiration {
             push @errors, "Unable to send template $template to $_\n"
                 unless $result;
 
-            Sympa::Log::Syslog::do_log('notice',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE,
                 "--> $_ certificate soon expired ($date), user warned");
         }
     }
@@ -1137,7 +1137,7 @@ sub _update_crl {
     my @tab = @{$self->{'Rarguments'}};
     my $limit = Sympa::Tools::Time::epoch_conv($tab[1], $task->{'date'});
 
-    Sympa::Log::Syslog::do_log('notice',
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE,
         "line $self->{'line_number'} : update_crl (@tab)");
 
     require Sympa::Scenario;
@@ -1160,7 +1160,7 @@ sub _update_crl {
     unless (-d $crl_dir) {
         mkdir($crl_dir, 0775)
             or croak "Unable to create CRLs directory $crl_dir\n";
-        Sympa::Log::Syslog::do_log('notice', 'creating spool %s', $crl_dir);
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE, 'creating spool %s', $crl_dir);
     }
 
     my @errors;
@@ -1202,7 +1202,7 @@ sub _update_crl {
 
         if (Sympa::Scenario::verify($verify_context, $condition) == 1) {
             unlink($file);
-            Sympa::Log::Syslog::do_log('notice',
+            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE,
                 "--> updating of the $file CRL file");
             my $cmd = "wget -O \'$file\' \'$url\'";
             open CMD, "| $cmd";
@@ -1227,7 +1227,7 @@ sub _eval_bouncers {
         my $listname     = $list->name;
         my $list_traffic = {};
 
-        Sympa::Log::Syslog::do_log('info', 'eval_bouncers(%s)', $listname);
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::INFO, 'eval_bouncers(%s)', $listname);
 
         ## Analizing file Msg-count and fill %$list_traffic
         unless (open(COUNT, $list->dir . '/msg_count')) {
@@ -1279,7 +1279,7 @@ sub _none {
 sub _process_bouncers {
     my ($self, $task, $params) = @_;
 
-    Sympa::Log::Syslog::do_log('info',
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::INFO,
         'Processing automatic actions on bouncing users');
 
     require Sympa::List;
@@ -1390,7 +1390,7 @@ sub _process_bouncers {
 sub _get_score {
     my ($user_ref, $list_traffic) = @_;
 
-    Sympa::Log::Syslog::do_log('debug', 'Get_score(%s) ',
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG, 'Get_score(%s) ',
         $user_ref->{'email'});
 
     require Sympa::Site;
@@ -1412,7 +1412,7 @@ sub _get_score {
     unless ($bounce_count >= $min_msg_count) {
 
         #not enough messages distributed to keep score
-        Sympa::Log::Syslog::do_log('debug',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG,
             'Not enough messages for evaluation of user %s',
             $user_ref->{'email'});
         return undef;
@@ -1421,7 +1421,7 @@ sub _get_score {
     unless (($EO_period - $BO_period) >= $min_period) {
 
         #too short bounce period to keep score
-        Sympa::Log::Syslog::do_log('debug',
+        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG,
             'Too short period for evaluate %s',
             $user_ref->{'email'});
         return undef;
@@ -1469,7 +1469,7 @@ sub _get_score {
 sub _sync_include {
     my ($self, $task, $params) = @_;
 
-    Sympa::Log::Syslog::do_log('debug2', 'sync_include(%s)', $task->{'id'});
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, 'sync_include(%s)', $task->{'id'});
 
     my $list = $task->{'list_object'};
     unless (defined $list and ref $list eq 'Sympa::List') {
