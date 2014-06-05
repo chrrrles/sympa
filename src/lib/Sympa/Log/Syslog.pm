@@ -194,14 +194,6 @@ sub do_openlog {
     ($log_facility, $log_socket_type, $log_service) =
         ($fac, $socket_type, $service);
 
-    #   foreach my $k (keys %options) {
-    #       printf "%s = %s\n", $k, $options{$k};
-    #   }
-
-    do_connect();
-}
-
-sub do_connect {
     if ($log_socket_type =~ /^(unix|inet)$/i) {
         Sys::Syslog::setlogsock(lc($log_socket_type));
     }
