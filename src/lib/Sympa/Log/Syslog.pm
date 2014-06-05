@@ -60,16 +60,8 @@ my %levels = (
 sub fatal_err {
     my $m     = shift;
 
-    eval {
-        syslog('err', $m, @_);
-        syslog('err', "Exiting.");
-    };
-    if ($EVAL_ERROR && ($warning_date < time - $warning_timeout)) {
-        $warning_date = time + $warning_timeout;
-        unless (Sympa::Site->send_notify_to_listmaster('logs_failed', [$EVAL_ERROR])) {
-            print STDERR "No logs available, can't send warning message";
-        }
-    }
+    syslog('err', $m, @_);
+    syslog('err', "Exiting.");
     $m =~ s/%m/$ERRNO/g;
 
     my $full_msg = sprintf $m, @_;
