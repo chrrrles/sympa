@@ -215,21 +215,14 @@ unless ($options{'foreground'}) {
         group  => Sympa::Constants::GROUP,
     );
 }
-## Set the User ID & Group ID for the process
-$GID = $EGID = (getgrnam(Sympa::Constants::GROUP))[2];
-$UID = $EUID = (getpwnam(Sympa::Constants::USER))[2];
 
-## Required on FreeBSD to change ALL IDs(effective UID + real UID + saved UID)
-POSIX::setuid((getpwnam(Sympa::Constants::USER))[2]);
-POSIX::setgid((getgrnam(Sympa::Constants::GROUP))[2]);
-
-## Check if the UID has correctly been set (useful on OS X)
-unless (($GID == (getgrnam(Sympa::Constants::GROUP))[2])
-    && ($UID == (getpwnam(Sympa::Constants::USER))[2])) {
-    Sympa::Log::Syslog::fatal_err(
-        "Failed to change process user ID and group ID. Note that on some OS Perl scripts can't change their real UID. In such circumstances Sympa should be run via sudo."
+eval {
+    Sympa::Tools::Daemon::drop_privileges(
+        user  => Sympa::Constants::USER,
+        group => Sympa::Constants::GROUP
     );
-}
+};
+Sympa::Log::Syslog::fatal_err($EVAL_ERROR) if $EVAL_ERROR;
 
 ## Sets the UMASK
 umask(oct(Sympa::Site->umask));
