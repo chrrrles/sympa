@@ -113,7 +113,7 @@ sub AUTOLOAD {
                 or exists $Sympa::Conf::Conf{$attr})
             ) {
             Sympa::Log::Syslog::do_log(
-                'err',
+                Sympa::Log::Syslog::ERR,
                 'Unconcerned object method "%s" via package "%s".  Though it may not be fatal, you might want to report it developer',
                 $attr,
                 $pkg

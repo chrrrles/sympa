@@ -158,7 +158,7 @@ Sympa::Log::Syslog::do_openlog(Sympa::Site->syslog, 'bulk');
 if ($options{'log_level'}) {
     Sympa::Log::Syslog::set_log_level($options{'log_level'});
     Sympa::Log::Syslog::do_log(
-        'info',
+        Sympa::Log::Syslog::INFO,
         'Configuration file read, log level set using options : %s',
         $options{'log_level'}
     );
@@ -337,7 +337,7 @@ while (!$end) {
                 foreach my $fpid (@{$pids_in_pfile}) {
                     if (defined $dead_children{$fpid}) {
                         Sympa::Log::Syslog::do_log(
-                            'err',
+                            Sympa::Log::Syslog::ERR,
                             'The %s child exists in the PID file but is no longer running. Removing it and notyfying listmaster.',
                             $fpid
                         );
@@ -397,7 +397,7 @@ while (!$end) {
 
                 if (Sympa::Site->bulk_max_count > 1) {
                     Sympa::Log::Syslog::do_log(
-                        'info',
+                        Sympa::Log::Syslog::INFO,
                         'Important workload: %s packets to process. Creating %s child bulks to increase sending rate.',
                         $r_packets,
                         Sympa::Site->bulk_max_count- ($#remaining_children + 1)
@@ -476,13 +476,13 @@ while (!$end) {
                 if $message_from_spool;
             unless ($message) {
                 Sympa::Log::Syslog::do_log(
-                    'err',
+                    Sympa::Log::Syslog::ERR,
                     'Internal error: current packet (messagekey=%s) refers to a null message',
                     $messagekey
                 );
                 unless (Sympa::Bulk::remove($messagekey, $bulk->{'packetid'})) {
                     Sympa::Log::Syslog::do_log(
-                        'err',
+                        Sympa::Log::Syslog::ERR,
                         'Failed to remove processed packet "%s", messagekey "%s"',
                         $messagekey,
                         $bulk->{'packetid'}
@@ -495,7 +495,7 @@ while (!$end) {
             $messageasstring_init = $message->as_string();
 
             Sympa::Log::Syslog::do_log(
-                'notice',
+                Sympa::Log::Syslog::NOTICE,
                 'Start sending message "%s" (key "%s") to list "%s@%s" (priority %s) (starting %s seconds after scheduled expedition date)',
                 $bulk->{'messageid'},
                 $messagekey,
@@ -669,7 +669,7 @@ while (!$end) {
 
         if ($bulk->{'priority_packet'} == Sympa::Site->sympa_packet_priority + 5) {
             Sympa::Log::Syslog::do_log(
-                'notice',
+                Sympa::Log::Syslog::NOTICE,
                 'Done sending message "%s" (key "%s") to list "%s@%s" (priority %s) in %s seconds since scheduled expedition date.',
                 $bulk->{'messageid'},
                 $bulk->{'messagekey'},

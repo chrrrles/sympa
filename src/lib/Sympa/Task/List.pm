@@ -98,7 +98,7 @@ sub check_validity {
     ## Skip closed lists
     if ($list->status ne 'open') {
         Sympa::Log::Syslog::do_log(
-            'notice',
+            Sympa::Log::Syslog::NOTICE,
             'Removing task %s, label %s (messageid = %s) because list %s is closed',
             $model,
             $self->{'label'},
@@ -114,7 +114,7 @@ sub check_validity {
             return 1;
         } else {
             Sympa::Log::Syslog::do_log(
-                'notice',
+                Sympa::Log::Syslog::NOTICE,
                 'Removing task %s, label %s (messageid = %s) because list does not use any inclusion',
                 $model,
                 $self->{'label'},
@@ -126,7 +126,7 @@ sub check_validity {
     } else {
         unless (%{$list->$model} and defined $list->$model->{'name'}) {
             Sympa::Log::Syslog::do_log(
-                'notice',
+                Sympa::Log::Syslog::NOTICE,
                 'Removing task %s, label %s (messageid = %s) because it is not defined in list %s configuration',
                 $model,
                 $self->{'label'},

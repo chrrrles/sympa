@@ -72,7 +72,7 @@ sub get_recipients_status {
         )
         ) {
         Sympa::Log::Syslog::do_log(
-            'err',
+            Sympa::Log::Syslog::ERR,
             'Unable to retrieve tracking informations for message %s, list %s',
             $msgid,
             $list
@@ -138,7 +138,7 @@ sub db_init_notification_table {
             )
             ) {
             Sympa::Log::Syslog::do_log(
-                'err',
+                Sympa::Log::Syslog::ERR,
                 'Unable to prepare notification table for user %s, message %s, list %s',
                 $email,
                 $msgid,
@@ -238,7 +238,7 @@ sub find_notification_id_by_message {
         )
         ) {
         Sympa::Log::Syslog::do_log(
-            'err',
+            Sympa::Log::Syslog::ERR,
             'Unable to retrieve the tracking informations for user %s, message %s, list %s@%s',
             $recipient,
             $msgid,
@@ -251,7 +251,7 @@ sub find_notification_id_by_message {
     my @pk_notifications = $sth->fetchrow_array;
     if ($#pk_notifications > 0) {
         Sympa::Log::Syslog::do_log(
-            'err',
+            Sympa::Log::Syslog::ERR,
             'Found more then one pk_notification maching  (recipient=%s,msgis=%s,listname=%s,robot%s)',
             $recipient,
             $msgid,
@@ -294,7 +294,7 @@ sub remove_message_by_id {
         )
         ) {
         Sympa::Log::Syslog::do_log(
-            'err',
+            Sympa::Log::Syslog::ERR,
             'Unable to remove the tracking informations for message %s, list %s',
             $msgid,
             $listname,
@@ -338,7 +338,7 @@ sub remove_message_by_period {
         )
         ) {
         Sympa::Log::Syslog::do_log(
-            'err',
+            Sympa::Log::Syslog::ERR,
             'Unable to remove the tracking informations older than %s days for list %s',
             $limit,
             $list

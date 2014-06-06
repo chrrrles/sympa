@@ -83,7 +83,7 @@ sub new {
     my $that       = shift;
     my %parameters = @_;
     Sympa::Log::Syslog::do_log(
-        'debug2',
+        Sympa::Log::Syslog::DEBUG2,
         '(%s, %s, function=%s, name=%s, file_path=%s, options=%s)',
         $pkg,
         $that,
@@ -192,7 +192,7 @@ sub new {
     } else {
         ## Default rule is 'true() smtp -> reject'
         Sympa::Log::Syslog::do_log(
-            'err',
+            Sympa::Log::Syslog::ERR,
             'Unable to find scenario file "%s.%s", please report to listmaster',
             $function,
             $name
@@ -272,7 +272,7 @@ sub _parse_scenario {
             @auth_methods_list = split ',', $auth_methods;
         } else {
             Sympa::Log::Syslog::do_log(
-                'err',
+                Sympa::Log::Syslog::ERR,
                 'syntax error in scenario %s rule line %d expected : <condition> <auth_mod> -> <action>',
                 $function,
                 $.
@@ -393,7 +393,7 @@ sub request_action {
                     /$context->{'email'}/i)
                 ) {
                 Sympa::Log::Syslog::do_log(
-                    'info',
+                    Sympa::Log::Syslog::INFO,
                     'Will log scenario process for user with email: "%s", IP: "%s"',
                     $context->{'email'},
                     $context->{'remote_addr'}
@@ -579,7 +579,7 @@ sub request_action {
     foreach my $rule (@rules) {
         if ($log_it) {
             Sympa::Log::Syslog::do_log(
-                'info', 'Verify rule %s, auth %s, action %s',
+                Sympa::Log::Syslog::INFO, 'Verify rule %s, auth %s, action %s',
                 $rule->{'condition'}, $rule->{'auth_method'},
                 $rule->{'action'}
             );
@@ -587,7 +587,7 @@ sub request_action {
         if ($auth_method eq $rule->{'auth_method'}) {
             if ($log_it) {
                 Sympa::Log::Syslog::do_log(
-                    'info',
+                    Sympa::Log::Syslog::INFO,
                     'Context uses auth method %s',
                     $rule->{'auth_method'}
                 );
@@ -600,7 +600,7 @@ sub request_action {
                     "error in $rule->{'condition'},$rule->{'auth_method'},$rule->{'action'}"
                 );
                 Sympa::Log::Syslog::do_log(
-                    'info',
+                    Sympa::Log::Syslog::INFO,
                     'Error in %s scenario, in list %s',
                     $context->{'scenario'},
                     $context->{'listname'}
@@ -678,7 +678,7 @@ sub request_action {
             if ($result == 1) {
                 if ($log_it) {
                     Sympa::Log::Syslog::do_log(
-                        'info', "rule '%s %s -> %s' accepted",
+                        Sympa::Log::Syslog::INFO, "rule '%s %s -> %s' accepted",
                         $rule->{'condition'}, $rule->{'auth_method'},
                         $rule->{'action'}
                     );
@@ -703,7 +703,7 @@ sub request_action {
         } else {
             if ($log_it) {
                 Sympa::Log::Syslog::do_log(
-                    'info',
+                    Sympa::Log::Syslog::INFO,
                     'Context does not use auth method %s',
                     $rule->{'auth_method'}
                 );
@@ -771,7 +771,7 @@ sub verify {
         unless ($context->{'list_object'} =
             Sympa::List->new($context->{'listname'}, $robot)) {
             Sympa::Log::Syslog::do_log(
-                'err',
+                Sympa::Log::Syslog::ERR,
                 'Unable to create List object for list %s',
                 $context->{'listname'}
             );
@@ -981,7 +981,7 @@ sub verify {
                 && defined($context->{'msg'}->bodyhandle)) {
                 if ($log_it) {
                     Sympa::Log::Syslog::do_log(
-                        'info',
+                        Sympa::Log::Syslog::INFO,
                         'no proper textual message body to evaluate rule %s',
                         $condition
                     );
@@ -1092,7 +1092,7 @@ sub verify {
         ) {
         unless ($#args == 1) {
             Sympa::Log::Syslog::do_log(
-                'err',
+                Sympa::Log::Syslog::ERR,
                 "syntax_error: incorrect argument number (%d instead of %d) for condition $condition_key",
                 $#args + 1,
                 2
@@ -1475,7 +1475,7 @@ sub verify {
                     $args_as_string .= ", $arg";
                 }
                 Sympa::Log::Syslog::do_log(
-                    'info',
+                    Sympa::Log::Syslog::INFO,
                     "custom condition '%s' returned an undef value with arguments '%s' (rule %s)",
                     $condition,
                     $args_as_string,
@@ -1629,7 +1629,7 @@ sub search {
         my $ds = Sympa::SQLSource->new($sql_conf->{'sql_named_filter_query'});
         unless (defined $ds && $ds->connect() && $ds->ping) {
             Sympa::Log::Syslog::do_log(
-                'notice',
+                Sympa::Log::Syslog::NOTICE,
                 'Unable to connect to the SQL server %s:%d',
                 $sql_conf->{'db_host'},
                 $sql_conf->{'db_port'}

@@ -47,7 +47,7 @@ Sympa::Log::Syslog::do_openlog(Sympa::Site->syslog, 'sympa');
 # setting log_level using conf unless it is set by calling option
 if ($options{'log_level'}) {
     Sympa::Log::Syslog::do_log(
-        'info',
+        Sympa::Log::Syslog::INFO,
         'Logs seems OK, log level set using options : %s',
         $options{'log_level'}
     );

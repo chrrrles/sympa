@@ -334,7 +334,7 @@ sub get_message {
     my $self     = shift;
     my $selector = shift;
     Sympa::Log::Syslog::do_log(
-        'debug2', '(%s, messagekey=%s, list=%s, robot=%s)',
+        Sympa::Log::Syslog::DEBUG2, '(%s, messagekey=%s, list=%s, robot=%s)',
         $self, $selector->{'messagekey'},
         $selector->{'list'}, $selector->{'robot'}
     );
@@ -493,7 +493,7 @@ sub store {
     $sender |= '';
 
     Sympa::Log::Syslog::do_log(
-        'debug2',
+        Sympa::Log::Syslog::DEBUG2,
         '(%s, <message_asstring>, list=%s, robot=%s, date=%s, %s)',
         $self,
         $metadata->{'list'},
@@ -640,7 +640,7 @@ sub clean {
     my $self   = shift;
     my $filter = shift;
     Sympa::Log::Syslog::do_log(
-        'debug', 'Cleaning spool %s (%s), delay: %s',
+        Sympa::Log::Syslog::DEBUG, 'Cleaning spool %s (%s), delay: %s',
         $self->{'spoolname'}, $self->{'selection_status'},
         $filter->{'delay'}
     );

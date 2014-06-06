@@ -121,7 +121,7 @@ sub parse_cert {
     my $openssl = $params{openssl};
 
     Sympa::Log::Syslog::do_log(
-        'debug',
+        Sympa::Log::Syslog::DEBUG,
         'Sympa::Tools::parse_cert(%s)',
         join('/', %params)
     );
@@ -220,7 +220,7 @@ sub extract_certs {
         close(MSGDUMP);
         if ($CHILD_ERROR) {
             Sympa::Log::Syslog::do_log(
-                'err',
+                Sympa::Log::Syslog::ERR,
                 "openssl pkcs7 returned an error: ",
                 $CHILD_ERROR / 256
             );

@@ -124,7 +124,7 @@ sub next {
 
     if ($sth->rows < 0) {
         Sympa::Log::Syslog::do_log(
-            'err',
+            Sympa::Log::Syslog::ERR,
             'Unable to lock packet %s for message %s, though the query succeeded',
             $packet->{'packetid'},
             $packet->{'messagekey'}
@@ -222,7 +222,7 @@ sub messageasstring {
         )
         ) {
         Sympa::Log::Syslog::do_log(
-            'err',
+            Sympa::Log::Syslog::ERR,
             'Unable to retrieve message %s text representation from database',
             $messagekey
         );
@@ -427,7 +427,7 @@ sub store {
                 )
                 ) {
                 Sympa::Log::Syslog::do_log(
-                    'err',
+                    Sympa::Log::Syslog::ERR,
                     'Unable to check presence of packet %s of message %s in database',
                     $packetid,
                     $message->{'messagekey'}
@@ -466,7 +466,7 @@ sub store {
                 )
                 ) {
                 Sympa::Log::Syslog::do_log(
-                    'err',
+                    Sympa::Log::Syslog::ERR,
                     'Unable to add packet %s of message %s to database spool',
                     $packetid,
                     $msg_id

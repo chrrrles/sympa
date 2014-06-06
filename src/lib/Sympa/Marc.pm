@@ -8,6 +8,8 @@ use strict;
 
 use Carp;
 
+use Sympa::Log::Syslog;
+
 our $AUTOLOAD;
 our $VERSION = "4.3";
 
@@ -44,7 +46,7 @@ sub AUTOLOAD {
 
     unless (exists($self->{permitted}->{$name})) {
         message('arcsearch_marc_autoload_no_access');
-        wwslog('info',
+        wwslog(Sympa::Log::Syslog::INFO,
             'arcsearch_marc: Can not access %s field in object of class %s',
             $name, $type);
         return undef;

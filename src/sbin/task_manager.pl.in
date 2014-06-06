@@ -151,7 +151,7 @@ Sympa::Log::Syslog::do_openlog(Sympa::Site->log_facility, 'task_manager');
 if ($options{'log_level'}) {
     Sympa::Log::Syslog::set_log_level($options{'log_level'});
     Sympa::Log::Syslog::do_log(
-        'info',
+        Sympa::Log::Syslog::INFO,
         'Configuration file read, log level set using options : %s',
         $options{'log_level'}
     );
@@ -313,14 +313,14 @@ while (!$end) {
                     $data->{'list'} = $task->{'list'};
                 }
                 Sympa::Log::Syslog::do_log(
-                    'err',
+                    Sympa::Log::Syslog::ERR,
                     'Execution of task %s failed, sending detailed report to listmaster',
                     $task->get_description()
                 );
                 Sympa::Site->send_notify_to_listmaster('task_error', $data);
             } else {
                 Sympa::Log::Syslog::do_log(
-                    'notice',
+                    Sympa::Log::Syslog::NOTICE,
                     'Execution of task %s suceeded',
                     $task->get_description,
                 );
@@ -330,7 +330,7 @@ while (!$end) {
         my $result = $taskspool->remove_message($task->{'messagekey'});
         unless ($result) {
             Sympa::Log::Syslog::do_log(
-                'err',
+                Sympa::Log::Syslog::ERR,
                 'Unable to remove task (messagekey = %s)',
                 $task->{'messagekey'}
             );

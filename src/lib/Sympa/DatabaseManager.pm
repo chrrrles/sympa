@@ -242,7 +242,7 @@ sub probe_db {
         foreach my $t (keys %{$db_struct{'mysql'}}) {
             unless ($real_struct{$t}) {
                 Sympa::Log::Syslog::do_log(
-                    'err',
+                    Sympa::Log::Syslog::ERR,
                     "Table '%s' not found in database '%s' ; you should create it with create_db.%s script",
                     $t,
                     Sympa::Site->db_name,
@@ -259,7 +259,7 @@ sub probe_db {
                 )
                 ) {
                 Sympa::Log::Syslog::do_log(
-                    'err',
+                    Sympa::Log::Syslog::ERR,
                     "Unable to check the validity of fields definition for table %s. Aborting.",
                     $t
                 );
@@ -283,7 +283,7 @@ sub probe_db {
                     check_primary_key({'table' => $t, 'report' => \@report}))
                 {
                     Sympa::Log::Syslog::do_log(
-                        'err',
+                        Sympa::Log::Syslog::ERR,
                         "Unable to check the validity of primary key for table %s. Aborting.",
                         $t
                     );
@@ -293,7 +293,7 @@ sub probe_db {
                 unless (check_indexes({'table' => $t, 'report' => \@report}))
                 {
                     Sympa::Log::Syslog::do_log(
-                        'err',
+                        Sympa::Log::Syslog::ERR,
                         "Unable to check the validity of indexes for table %s. Aborting.",
                         $t
                     );
@@ -364,7 +364,7 @@ sub check_fields {
                 "Field '%s' (table '%s' ; database '%s') was NOT found. Attempting to add it...",
                 $f, $t, Sympa::Site->db_name);
             Sympa::Log::Syslog::do_log(
-                'info',
+                Sympa::Log::Syslog::INFO,
                 "Field '%s' (table '%s' ; database '%s') was NOT found. Attempting to add it...",
                 $f,
                 $t,
@@ -406,7 +406,7 @@ sub check_fields {
                     $f, $t, Sympa::Site->db_name, $db_struct{Sympa::Site->db_type}{$t}{$f});
 
                 Sympa::Log::Syslog::do_log(
-                    'notice',
+                    Sympa::Log::Syslog::NOTICE,
                     "Field '%s'  (table '%s' ; database '%s') does NOT have awaited type (%s) where type in database seems to be (%s). Attempting to change it...",
                     $f,
                     $t,
@@ -435,7 +435,7 @@ sub check_fields {
             unless ($real_struct{$t}{$f} eq $db_struct{Sympa::Site->db_type}{$t}{$f})
             {
                 Sympa::Log::Syslog::do_log(
-                    'err',
+                    Sympa::Log::Syslog::ERR,
                     'Field \'%s\'  (table \'%s\' ; database \'%s\') does NOT have awaited type (%s).',
                     $f,
                     $t,
@@ -507,7 +507,7 @@ sub check_primary_key {
         }
     } else {
         Sympa::Log::Syslog::do_log(
-            'err',
+            Sympa::Log::Syslog::ERR,
             'Unable to evaluate table %s primary key. Trying to reset primary key anyway.',
             $t
         );
@@ -623,7 +623,7 @@ sub check_indexes {
             }
         } else {
             Sympa::Log::Syslog::do_log(
-                'err',
+                Sympa::Log::Syslog::ERR,
                 'Unable to evaluate index %s in table %s. Trying to reset index anyway.',
                 $t,
                 $idx
@@ -675,7 +675,7 @@ sub data_structure_uptodate {
     if (defined $data_structure_version
         && $data_structure_version ne Sympa::Constants::VERSION) {
         Sympa::Log::Syslog::do_log(
-            'err',
+            Sympa::Log::Syslog::ERR,
             "Data structure (%s) is not up-to-date for current release (%s)",
             $data_structure_version,
             Sympa::Constants::VERSION

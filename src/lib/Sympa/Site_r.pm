@@ -1091,7 +1091,7 @@ sub send_notify_to_listmaster {
                     %{$listmaster_messages_stack{$robot_id}{$operation}
                         {'messages'}};
                 Sympa::Log::Syslog::do_log(
-                    'info', 'got messages about "%s" (%s)',
+                    Sympa::Log::Syslog::INFO, 'got messages about "%s" (%s)',
                     $operation, join(', ', keys %messages)
                 );
 
@@ -1121,7 +1121,7 @@ sub send_notify_to_listmaster {
                         )
                         ) {
                         Sympa::Log::Syslog::do_log(
-                            'notice',
+                            Sympa::Log::Syslog::NOTICE,
                             'Unable to send notify "%s" to listmaster: Unable to send template "listmaster_groupnotifications" to %s',
                             $operation,
                             $email
@@ -1173,7 +1173,7 @@ sub send_notify_to_listmaster {
     }
     unless (ref $data eq 'HASH' or ref $data eq 'ARRAY') {
         Sympa::Log::Syslog::do_log(
-            'err',
+            Sympa::Log::Syslog::ERR,
             'Error on incoming parameter "%s", it must be a ref on HASH or a ref on ARRAY',
             $data
         ) unless $operation eq 'logs_failed';
@@ -1220,7 +1220,7 @@ sub send_notify_to_listmaster {
             )
             ) {
             Sympa::Log::Syslog::do_log(
-                'notice',
+                Sympa::Log::Syslog::NOTICE,
                 'Unable to send notify "%s" to listmaster: Unable to send template "listmaster_notification" to %s',
                 $operation,
                 $listmaster
@@ -1281,7 +1281,7 @@ sub send_notify_to_listmaster {
 
         unless ($r) {
             Sympa::Log::Syslog::do_log(
-                'notice',
+                Sympa::Log::Syslog::NOTICE,
                 'Unable to send notify "%s" to listmaster: Unable to send template "listmaster_notification" to %s',
                 $operation,
                 $listmaster

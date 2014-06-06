@@ -509,7 +509,7 @@ while (!$end) {
         }
         unless ($spoolarchive->remove_message($item->{'messagekey'})) {
             Sympa::Log::Syslog::do_log(
-                'err',
+                Sympa::Log::Syslog::ERR,
                 "Couldn't remove message in archive spool %s. exiting to prevent infinite loop",
                 $item->{'messagekey'}
             );
@@ -711,7 +711,7 @@ sub rebuild {
         ## Remove lock if required
         if ($exitcode == 75) {
             Sympa::Log::Syslog::do_log(
-                'notice',
+                Sympa::Log::Syslog::NOTICE,
                 'Removing lock directory %s',
                 $arcpath . '/' . $adrlist . '/' . $arc . '/.mhonarc.lck'
             );
@@ -791,7 +791,7 @@ sub rebuild {
             ## Remove lock if required
             if ($exitcode == 75) {
                 Sympa::Log::Syslog::do_log(
-                    'notice',
+                    Sympa::Log::Syslog::NOTICE,
                     'Removing lock directory %s',
                     $arcdir . '/.mhonarc.lck'
                 );
@@ -829,7 +829,7 @@ sub mail2arc {
 
     unless (ref $list and $list->isa('Sympa::List')) {
         Sympa::Log::Syslog::do_log(
-            'err',
+            Sympa::Log::Syslog::ERR,
             'Unknown list %s',
             $message->{'list'}
         );
@@ -881,7 +881,7 @@ sub mail2arc {
 
             if ($used >= $list->web_archive->{'quota'} * 1024) {
                 Sympa::Log::Syslog::do_log(
-                    'err',
+                    Sympa::Log::Syslog::ERR,
                     'archived::mail2arc : web_arc Quota exceeded for list %s',
                     $list
                 );
@@ -891,7 +891,7 @@ sub mail2arc {
                     )
                     ) {
                     Sympa::Log::Syslog::do_log(
-                        'notice',
+                        Sympa::Log::Syslog::NOTICE,
                         'Unable to send notify "arc_quota_exceeded" to %s owner',
                         $list
                     );
@@ -900,7 +900,7 @@ sub mail2arc {
             }
             if ($used >= ($list->web_archive->{'quota'} * 1024 * 0.95)) {
                 Sympa::Log::Syslog::do_log(
-                    'err',
+                    Sympa::Log::Syslog::ERR,
                     'archived::mail2arc : web_arc Quota exceeded for list %s',
                     $list
                 );
@@ -1014,7 +1014,7 @@ sub mail2arc {
         ## Remove lock if required
         if ($exitcode == 75) {
             Sympa::Log::Syslog::do_log(
-                'notice',
+                Sympa::Log::Syslog::NOTICE,
                 'Removing lock directory %s',
                 $monthdir . '/.mhonarc.lck'
             );

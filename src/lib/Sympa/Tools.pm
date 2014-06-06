@@ -146,7 +146,7 @@ sub sanitize_var {
     unless (defined $parameters{'htmlAllowedParam'}
         && $parameters{'htmlToFilter'}) {
         Sympa::Log::Syslog::do_log(
-            'err',
+            Sympa::Log::Syslog::ERR,
             'Missing var *** %s *** %s *** to ignore.',
             $parameters{'htmlAllowedParam'},
             $parameters{'htmlToFilter'}

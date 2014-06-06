@@ -186,7 +186,7 @@ sub connect {
 
     unless (defined($cnx) && ($cnx->code() == 0)) {
         Sympa::Log::Syslog::do_log(
-            'err',
+            Sympa::Log::Syslog::ERR,
             "Failed to bind to LDAP server : '%s', LDAP server error : '%s'",
             $host_entry,
             $cnx->error,
@@ -207,7 +207,7 @@ sub query {
     my ($self, $sql_query) = @_;
     unless ($self->{'sth'} = $self->{'dbh'}->prepare($sql_query)) {
         Sympa::Log::Syslog::do_log(
-            'err',
+            Sympa::Log::Syslog::ERR,
             'Unable to prepare SQL query : %s',
             $self->{'dbh'}->errstr
         );

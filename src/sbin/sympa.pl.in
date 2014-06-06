@@ -340,7 +340,7 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
     if ($options{'log_level'}) {
         Sympa::Log::Syslog::set_log_level($options{'log_level'});
         Sympa::Log::Syslog::do_log(
-            'info',
+            Sympa::Log::Syslog::INFO,
             'Configuration file read, log level set using options : %s',
             $options{'log_level'}
         );
@@ -403,7 +403,7 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
                 Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::INFO, 'Server started %s PID %s',
                     $0, $child_pid);
                 Sympa::Log::Syslog::do_log(
-                    'debug',
+                    Sympa::Log::Syslog::DEBUG,
                     '%s server started, PID %s, exiting from initial process',
                     $0,
                     $child_pid
@@ -478,14 +478,14 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
     if ($options{'keepcopy'}) {
         if (!-d $options{'keepcopy'}) {
             Sympa::Log::Syslog::do_log(
-                'notice',
+                Sympa::Log::Syslog::NOTICE,
                 'Cannot keep a copy of incoming messages : %s is not a directory',
                 $options{'keepcopy'}
             );
             delete $options{'keepcopy'};
         } elsif (!-w $options{'keepcopy'}) {
             Sympa::Log::Syslog::do_log(
-                'notice',
+                Sympa::Log::Syslog::NOTICE,
                 'Cannot keep a copy of incoming messages : no write access to %s',
                 $options{'keepcopy'}
             );
@@ -566,7 +566,7 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
         my $list  = $message->get_list();
         my $robot = $message->get_robot();
         Sympa::Log::Syslog::do_log(
-            'info', 'Processing message %s for %s function %s',
+            Sympa::Log::Syslog::INFO, 'Processing message %s for %s function %s',
             $message,
             ($list || $robot),
             ($message->{'listtype'} || '(post)')
@@ -586,7 +586,7 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
 
         if (defined($status)) {
             Sympa::Log::Syslog::do_log(
-                'info',
+                Sympa::Log::Syslog::INFO,
                 'Done processing message %s for %s function %s',
                 $message,
                 ($list || $robot),
@@ -610,7 +610,7 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
                 exit 1;
             }
             Sympa::Log::Syslog::do_log(
-                'notice',
+                Sympa::Log::Syslog::NOTICE,
                 'Message %s for %s function %s was moved to bad spool',
                 $message,
                 ($list || $robot),
@@ -719,7 +719,7 @@ sub process_message {
     unless ($options{'log_level'}) {
         Sympa::Log::Syslog::set_log_level($robot->log_level);
         Sympa::Log::Syslog::do_log(
-            'debug',
+            Sympa::Log::Syslog::DEBUG,
             'Setting log level with robot %s configuration (or sympa.conf) : %d',
             $robot->log_level
         );
@@ -763,7 +763,7 @@ sub process_message {
             my $dyn_family;
             unless ($dyn_family = Sympa::Family->new($dyn_list_family, $robot)) {
                 Sympa::Log::Syslog::do_log(
-                    'err',
+                    Sympa::Log::Syslog::ERR,
                     "Failed to process message: family %s does not exist, impossible to create the dynamic list.",
                     $dyn_list_family
                 );
@@ -832,7 +832,7 @@ sub process_message {
             || $robot->loop_prevention_regex;
         if ($sender =~ /^($conf_loop_prevention_regex)(\@|$)/mio) {
             Sympa::Log::Syslog::do_log(
-                'err',
+                Sympa::Log::Syslog::ERR,
                 'Ignoring message %s from %s which would cause a loop; "%s" matches loop_prevention_regex',
                 $message,
                 $sender,
@@ -851,7 +851,7 @@ sub process_message {
             or $hdr->get('Auto-Submitted')
             and $hdr->get('Auto-Submitted') !~ /^no$/i) {
             Sympa::Log::Syslog::do_log(
-                'err',
+                Sympa::Log::Syslog::ERR,
                 'Ignoring message %s which would cause a loop; message appears to be an auto-reply',
                 $message
             );
@@ -908,7 +908,7 @@ sub process_message {
             }
         }
         Sympa::Log::Syslog::do_log(
-            'notice',
+            Sympa::Log::Syslog::NOTICE,
             'Ignoring message %s for %s function %s from %s; virus "%s" found',
             $message,
             ($list || $robot),
@@ -941,7 +941,7 @@ sub process_message {
         if (defined $dyn_list_family and $dyn_just_created) {
             unless (defined $list->sync_include()) {
                 Sympa::Log::Syslog::do_log(
-                    'err',
+                    Sympa::Log::Syslog::ERR,
                     'Failed to synchronize list members of dynamic list %s from family %s',
                     $list,
                     $list->family
@@ -1062,7 +1062,7 @@ sub process_message {
             ## Too many reports sent => message skipped !!
             if ($loop_info{$sender}{'count'} >= Sympa::Site->loop_command_max) {
                 Sympa::Log::Syslog::do_log(
-                    'err',
+                    Sympa::Log::Syslog::ERR,
                     'Ignoring message %s which would cause a loop; %d messages sent to %s; loop_command_max exceeded',
                     $message,
                     $loop_info{$sender}{'count'},
@@ -1140,7 +1140,7 @@ sub DoForward {
     }
 
     Sympa::Log::Syslog::do_log(
-        'info', 'Processing message %s for %s function %s with priority %s',
+        Sympa::Log::Syslog::INFO, 'Processing message %s for %s function %s with priority %s',
         $message, ($list || $robot),
         $function, $message->{'priority'}
     );
@@ -1152,14 +1152,14 @@ sub DoForward {
     if ($function eq 'listmaster') {
         @rcpt = @{$robot->listmasters || Sympa::Site->listmasters || []};
         Sympa::Log::Syslog::do_log(
-            'notice',
+            Sympa::Log::Syslog::NOTICE,
             'Warning : no listmaster defined in robot.conf for robot %s nor sympa.conf',
             $robot
         ) unless @rcpt;
     } elsif ($function eq 'owner') {    # -request
         @rcpt = $list->get_owners_email();
         Sympa::Log::Syslog::do_log(
-            'notice',
+            Sympa::Log::Syslog::NOTICE,
             'Warning : no owner defined or all of them use nomail option in list %s',
             $list
         ) unless @rcpt;
@@ -1167,7 +1167,7 @@ sub DoForward {
         @rcpt = $list->get_editors_email();
 
         Sympa::Log::Syslog::do_log(
-            'notice',
+            Sympa::Log::Syslog::NOTICE,
             'Warning : no owner and editor defined or all of them use nomail option in list %s',
             $list
         ) unless @rcpt;
@@ -1180,7 +1180,7 @@ sub DoForward {
     unless (@rcpt) {
         if ($function ne 'listmaster') {
             Sympa::Log::Syslog::do_log(
-                'err',
+                Sympa::Log::Syslog::ERR,
                 'No recipient available in message %s for %s function %s. Trying to proceed ignoring nomail option',
                 $message,
                 ($list || $robot),
@@ -1195,7 +1195,7 @@ sub DoForward {
             } elsif ($function eq 'editor') {
                 @rcpt = $list->get_editors_email({'ignore_nomail', 1});
                 Sympa::Log::Syslog::do_log(
-                    'notice',
+                    Sympa::Log::Syslog::NOTICE,
                     'Warning : no owner and editor defined at all in list %s',
                     $list
                 ) unless @rcpt;
@@ -1204,14 +1204,14 @@ sub DoForward {
         ## Could we find a recipient by ignoring the "nomail" option?
         if (@rcpt) {
             Sympa::Log::Syslog::do_log(
-                'notice',
+                Sympa::Log::Syslog::NOTICE,
                 'All the intended recipients of message %s in list %s have set the "nomail" option. Ignoring it and sending it to all of them.',
                 $message,
                 $list
             );
         } else {
             Sympa::Log::Syslog::do_log(
-                'err',
+                Sympa::Log::Syslog::ERR,
                 'Impossible to forward a message %s to %s function %s: Undefined function',
                 $message,
                 $list,
@@ -1330,7 +1330,7 @@ sub DoForward {
 sub DoMessage {
     my $message = shift;
     Sympa::Log::Syslog::do_log(
-        'debug2',
+        Sympa::Log::Syslog::DEBUG2,
         '(%s, list=%s, sender=%s, size=%s, smime_crypted=%s)',
         $message,
         $message->get_list(),
@@ -1493,7 +1493,7 @@ sub DoMessage {
 
     unless (defined $action) {
         Sympa::Log::Syslog::do_log(
-            'err',
+            Sympa::Log::Syslog::ERR,
             'Message %s ignored because unable to evaluate scenario "send" for list %s',
             $message,
             $list
@@ -1547,7 +1547,7 @@ sub DoMessage {
         ## Check TT2 syntax for merge_feature.
         unless ($message->test_personalize($list)) {
             Sympa::Log::Syslog::do_log(
-                'err',
+                Sympa::Log::Syslog::ERR,
                 'Failed to personalize. Message %s for list %s was rejected',
                 $message,
                 $list
@@ -1593,7 +1593,7 @@ sub DoMessage {
             return undef;
         }
         Sympa::Log::Syslog::do_log(
-            'info',
+            Sympa::Log::Syslog::INFO,
             'Message %s for %s from %s accepted; %d seconds, %d sessions, %d subscribers, size=%d',
             $message,
             $list,
@@ -1610,7 +1610,7 @@ sub DoMessage {
         ## Check syntax for merge_feature.
         unless ($message->test_personalize($list)) {
             Sympa::Log::Syslog::do_log(
-                'err',
+                Sympa::Log::Syslog::ERR,
                 'Failed to personalize. Message %s for list %s was rejected',
                 $message,
                 $list
@@ -1623,7 +1623,7 @@ sub DoMessage {
 
         unless (defined $key) {
             Sympa::Log::Syslog::do_log(
-                'err',
+                Sympa::Log::Syslog::ERR,
                 'Calling to send_auth function failed for user %s in list %s',
                 $sender,
                 $list
@@ -1672,7 +1672,7 @@ sub DoMessage {
         ## Check syntax for merge_feature.
         unless ($message->test_personalize($list)) {
             Sympa::Log::Syslog::do_log(
-                'err',
+                Sympa::Log::Syslog::ERR,
                 'Failed to personalize. Message %s for list %s was rejected',
                 $message,
                 $list
@@ -1686,7 +1686,7 @@ sub DoMessage {
 
         unless (defined $key) {
             Sympa::Log::Syslog::do_log(
-                'err',
+                Sympa::Log::Syslog::ERR,
                 'Calling to send_to_editor() function failed for user %s in list %s',
                 $sender,
                 $list
@@ -1735,7 +1735,7 @@ sub DoMessage {
                 )
                 ) {
                 Sympa::Log::Syslog::do_log(
-                    'notice',
+                    Sympa::Log::Syslog::NOTICE,
                     'Unable to send template "message_report", entry "moderating_message" to %s',
                     $sender
                 );
@@ -1746,7 +1746,7 @@ sub DoMessage {
         ## Check syntax for merge_feature.
         unless ($message->test_personalize($list)) {
             Sympa::Log::Syslog::do_log(
-                'err',
+                Sympa::Log::Syslog::ERR,
                 'Failed to personalize. Message %s for list %s was rejected',
                 $message,
                 $list
@@ -1760,7 +1760,7 @@ sub DoMessage {
 
         unless (defined $key) {
             Sympa::Log::Syslog::do_log(
-                'err',
+                Sympa::Log::Syslog::ERR,
                 'Calling to send_to_editor() function failed for user %s in list %s',
                 $sender,
                 $list
@@ -1809,7 +1809,7 @@ sub DoMessage {
                 )
                 ) {
                 Sympa::Log::Syslog::do_log(
-                    'notice',
+                    Sympa::Log::Syslog::NOTICE,
                     'Unable to send template "message_report", type "success", entry "moderating_message" to %s',
                     $sender
                 );
@@ -1849,7 +1849,7 @@ sub DoMessage {
                     )
                     ) {
                     Sympa::Log::Syslog::do_log(
-                        'notice',
+                        Sympa::Log::Syslog::NOTICE,
                         'Unable to send template "message_report", type "auth" to %s',
                         $sender
                     );
@@ -2196,7 +2196,7 @@ sub SendDigest {
         my $list = Sympa::List->new($digest->{'list'}, $digest->{'robot'});
         unless ($list) {
             Sympa::Log::Syslog::do_log(
-                'info',
+                Sympa::Log::Syslog::INFO,
                 'Unknown list %s, (robot %s), deleting digest (messagekey %s)',
                 $digest->{'list'},
                 $digest->{'messagekey'}

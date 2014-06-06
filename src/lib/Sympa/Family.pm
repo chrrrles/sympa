@@ -628,7 +628,7 @@ sub modify_list {
             )
             ) {
             Sympa::Log::Syslog::do_log(
-                'notice',
+                Sympa::Log::Syslog::NOTICE,
                 'the owner isn\'t informed from erased customizing of the list %s',
                 $list
             );
@@ -777,7 +777,7 @@ sub close_family {
         my $listname = $list->name;    #XXX FIXME
         unless (defined $list) {
             Sympa::Log::Syslog::do_log(
-                'err',
+                Sympa::Log::Syslog::ERR,
                 'The %s list belongs to %s family but the list does not exist',
                 $listname,
                 $self
@@ -996,7 +996,7 @@ sub instantiate {
             # config_changes
             unless (open FILE, '>', $list->dir . '/config_changes') {
                 Sympa::Log::Syslog::do_log(
-                    'err',
+                    Sympa::Log::Syslog::ERR,
                     'Sympa::Family::instantiate : impossible to create file %s/config_changes : %s',
                     $list->dir,
                     $ERRNO
@@ -1394,7 +1394,7 @@ sub check_param_constraint {
 
         unless (defined $constraint_value) {
             Sympa::Log::Syslog::do_log(
-                'err',
+                Sympa::Log::Syslog::ERR,
                 'No value constraint on parameter %s in param_constraint.conf',
                 $param
             );
@@ -1972,7 +1972,7 @@ sub _split_xml_file {
         if ($list_elt->nodeType == 1) {    # ELEMENT_NODE
             unless ($list_elt->nodeName eq 'list') {
                 Sympa::Log::Syslog::do_log(
-                    'err',
+                    Sympa::Log::Syslog::ERR,
                     'Sympa::Family::_split_xml_file() : elements contained in the root element must be called "list", line %s',
                     $list_elt->line_number()
                 );
@@ -1987,7 +1987,7 @@ sub _split_xml_file {
 
         if ($#children < 0) {
             Sympa::Log::Syslog::do_log(
-                'err',
+                Sympa::Log::Syslog::ERR,
                 'Sympa::Family::_split_xml_file() : "listname" element is required in "list" element, line : %s',
                 $list_elt->line_number()
             );
@@ -1999,7 +1999,7 @@ sub _split_xml_file {
                 push(@error, $i->line_number());
             }
             Sympa::Log::Syslog::do_log(
-                'err',
+                Sympa::Log::Syslog::ERR,
                 'Sympa::Family::_split_xml_file() : Only one "listname" element is allowed for "list" element, lines : %s',
                 join(", ", @error)
             );
@@ -2021,7 +2021,7 @@ sub _split_xml_file {
         ## creating the list xml file
         unless ($list_doc->toFile($self->dir . "/$filename", 0)) {
             Sympa::Log::Syslog::do_log(
-                'err',
+                Sympa::Log::Syslog::ERR,
                 'Sympa::Family::_split_xml_file() : cannot create list file %s',
                 $self->dir . '/' . $filename,
                 $list_elt->line_number()
@@ -2130,7 +2130,7 @@ sub _update_existing_list {
     #	unless (rename ($list->dir . "/"."info", $list->dir ."/"."info.orig")) {
     ################
     #	}
-    #	if ($f eq 'info') {
+    #	if ($f 'info') {
     #	    $hash_list->{'config'}{'description'} =~ s/\r\n|\r/\n/g;
     #	    unless (open INFO, '>', "$list_dir/info") {
     ################
@@ -2157,7 +2157,7 @@ sub _update_existing_list {
             )
             ) {
             Sympa::Log::Syslog::do_log(
-                'notice',
+                Sympa::Log::Syslog::NOTICE,
                 'the owner isn\'t informed from erased customizing of the list %s',
                 $list->name
             );
@@ -2307,7 +2307,7 @@ sub _get_customizing {
 
         unless (defined $constraint_value) {
             Sympa::Log::Syslog::do_log(
-                'err',
+                Sympa::Log::Syslog::ERR,
                 'No value constraint on parameter %s in param_constraint.conf',
                 $param
             );
@@ -2516,7 +2516,7 @@ sub _end_update_list {
 
     unless (defined $error) {
         Sympa::Log::Syslog::do_log(
-            'err',
+            Sympa::Log::Syslog::ERR,
             'Impossible to check parameters constraint, it happens on list %s. It is set in status error_config',
             $list
         );
@@ -2718,7 +2718,7 @@ sub create_automatic_list {
 
     unless ($self->is_allowed_to_create_automatic_lists(%param)) {
         Sympa::Log::Syslog::do_log(
-            'err',
+            Sympa::Log::Syslog::ERR,
             'Unconsistent scenario evaluation result for automatic list creation of list %s@%s by user %s.',
             $listname,
             $self->domain,
@@ -2771,7 +2771,7 @@ sub is_allowed_to_create_automatic_lists {
     my $r_action;
     unless (defined $result) {
         Sympa::Log::Syslog::do_log(
-            'err',
+            Sympa::Log::Syslog::ERR,
             'Unable to evaluate scenario "automatic_list_creation" for family %s',
             $self
         );
@@ -2782,7 +2782,7 @@ sub is_allowed_to_create_automatic_lists {
         $r_action = $result->{'action'};
     } else {
         Sympa::Log::Syslog::do_log(
-            'err',
+            Sympa::Log::Syslog::ERR,
             'Inconsistent scenario evaluation result for automatic list creation in family %s',
             $self
         );

@@ -245,7 +245,7 @@ sub load_html_message {
 
     unless (open ARC, $parameters{'file_path'}) {
         Sympa::Log::Syslog::do_log(
-            'err',
+            Sympa::Log::Syslog::ERR,
             "Failed to load message '%s' : $ERRNO",
             $parameters{'file_path'}
         );
@@ -291,7 +291,7 @@ sub clean_archive_directory {
         )
         ) {
         Sympa::Log::Syslog::do_log(
-            'err',
+            Sympa::Log::Syslog::ERR,
             "Unable to create a temporary directory where to store files for HTML escaping (%s). Cancelling.",
             $number_of_copies
         );
@@ -314,7 +314,7 @@ sub clean_archive_directory {
         $answer->{'dir_to_rebuild'} = $answer->{'cleaned_dir'};
     } else {
         Sympa::Log::Syslog::do_log(
-            'err',
+            Sympa::Log::Syslog::ERR,
             'Unable to open directory %s: %s',
             $answer->{'dir_to_rebuild'}, $ERRNO
         );

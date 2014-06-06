@@ -136,7 +136,7 @@ sub del_dir {
         }
     } else {
         Sympa::Log::Syslog::do_log(
-            'err',
+            Sympa::Log::Syslog::ERR,
             'Unable to open directory %s to delete the files it contains: %s',
             $dir,
             $ERRNO
@@ -255,7 +255,7 @@ Find a file in an ordered list of directories
 sub find_file {
     my ($filename, @directories) = @_;
     Sympa::Log::Syslog::do_log(
-        'debug3', 'Sympa::Tools::find_file(%s,%s)',
+        Sympa::Log::Syslog::DEBUG3, 'Sympa::Tools::find_file(%s,%s)',
         $filename, join(':', @directories)
     );
 

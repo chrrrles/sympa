@@ -303,7 +303,7 @@ sub parse_tt2 {
         Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'Failed to parse %s : %s',
             $template, "$last_error");
         Sympa::Log::Syslog::do_log(
-            'err',
+            Sympa::Log::Syslog::ERR,
             'Looking for TT2 files in %s',
             join(',', @{$include_path})
         );

@@ -75,7 +75,7 @@ sub update_version {
     ## Saving current version if required
     unless (open VFILE, ">$version_file") {
         Sympa::Log::Syslog::do_log(
-            'err',
+            Sympa::Log::Syslog::ERR,
             "Unable to write %s ; sympa.pl needs write access on %s directory : %s",
             $version_file,
             Sympa::Site->etc,
@@ -106,7 +106,7 @@ sub upgrade {
     ## Check database connectivity and probe database
     unless (Sympa::DatabaseManager::check_db_connect('just_try') and Sympa::DatabaseManager::probe_db()) {
         Sympa::Log::Syslog::do_log(
-            'err',
+            Sympa::Log::Syslog::ERR,
             'Database %s defined in sympa.conf has not the right structure or is unreachable. verify db_xxx parameters in sympa.conf',
             Sympa::Site->db_name
         );
@@ -269,7 +269,7 @@ sub upgrade {
                         )
                         ) {
                         Sympa::Log::Syslog::do_log(
-                            'err',
+                            Sympa::Log::Syslog::ERR,
                             'Unable to fille the robot_admin and robot_subscriber fields in database for robot %s.',
                             $r
                         );
@@ -325,7 +325,7 @@ sub upgrade {
 
                 if (-d $new_path) {
                     Sympa::Log::Syslog::do_log(
-                        'err',
+                        Sympa::Log::Syslog::ERR,
                         "Could not rename %s to %s ; directory already exists",
                         $old_path,
                         $new_path
@@ -504,7 +504,7 @@ sub upgrade {
                     if (defined $incl_list
                         and $incl_list->domain ne $list->domain) {
                         Sympa::Log::Syslog::do_log(
-                            'notice',
+                            Sympa::Log::Syslog::NOTICE,
                             'Update config file of list %s, including list %s',
                             $list,
                             $incl_list
@@ -535,7 +535,7 @@ sub upgrade {
                     $etc_dir . '/mhonarc-ressources.tt2' . '.' . time;
                 rename $etc_dir . '/mhonarc-ressources.tt2', $new_filename;
                 Sympa::Log::Syslog::do_log(
-                    'notice',
+                    Sympa::Log::Syslog::NOTICE,
                     "Custom %s file has been backed up as %s",
                     $etc_dir . '/mhonarc-ressources.tt2',
                     $new_filename
@@ -646,7 +646,7 @@ sub upgrade {
         my $all_lists = Sympa::List::get_lists('Site');
         foreach my $list (@$all_lists) {
             foreach my $f (
-                'config',   'info',
+                'config',   Sympa::Log::Syslog::INFO,
                 'homepage', 'message.header',
                 'message.footer'
                 ) {
@@ -727,7 +727,7 @@ sub upgrade {
         foreach my $list (@$all_lists) {
             if ($list->user_data_source eq 'file') {
                 Sympa::Log::Syslog::do_log(
-                    'notice',
+                    Sympa::Log::Syslog::NOTICE,
                     'List %s ; changing user_data_source from file to include2...',
                     $list
                 );
@@ -743,7 +743,7 @@ sub upgrade {
                 my $total = $list->{'add_outcome'}{'added_members'};
                 if (defined $list->{'add_outcome'}{'errors'}) {
                     Sympa::Log::Syslog::do_log(
-                        'err',
+                        Sympa::Log::Syslog::ERR,
                         'Failed to add users: %s',
                         $list->{'add_outcome'}{'errors'}{'error_message'}
                     );
@@ -760,7 +760,7 @@ sub upgrade {
             } elsif ($list->user_data_source eq 'database') {
 
                 Sympa::Log::Syslog::do_log(
-                    'notice',
+                    Sympa::Log::Syslog::NOTICE,
                     'List %s ; changing user_data_source from database to include2...',
                     $list
                 );
@@ -914,7 +914,7 @@ sub upgrade {
                     );
                     unless ($sth) {
                         Sympa::Log::Syslog::do_log(
-                            'err',
+                            Sympa::Log::Syslog::ERR,
                             'Unable to update entry (%s,%s) in exclusions table (trying to add robot %s)',
                             $data->{'list_exclusion'},
                             $data->{'user_exclusion'},
@@ -923,7 +923,7 @@ sub upgrade {
                     }
                 } else {
                     Sympa::Log::Syslog::do_log(
-                        'err',
+                        Sympa::Log::Syslog::ERR,
                         "Exclusion robot could not be guessed for user '%s' in list '%s'. Either this user is no longer subscribed to the list or the list appears in more than one robot (or the query to the database failed). Here is the list of robots in which this list name appears: '%s'",
                         $data->{'user_exclusion'},
                         $data->{'list_exclusion'},
@@ -949,7 +949,7 @@ sub upgrade {
 
             unless (-d $spooldir) {
                 Sympa::Log::Syslog::do_log(
-                    'info',
+                    Sympa::Log::Syslog::INFO,
                     "Could not perform migration of spool %s because it is not a directory",
                     $spoolparameter
                 );
@@ -1122,7 +1122,7 @@ sub upgrade {
                         $list_html_view_dir . '/' . $meta{'authkey'};
                     unless (Sympa::Tools::File::mkdir_all($list_html_view_dir, 0755)) {
                         Sympa::Log::Syslog::do_log(
-                            'err',
+                            Sympa::Log::Syslog::ERR,
                             'Could not create list html view directory %s: %s',
                             $list_html_view_dir,
                             $ERRNO
@@ -1621,13 +1621,13 @@ sub md5_encode_password {
     $sth->finish();
 
     Sympa::Log::Syslog::do_log(
-        'info',
+        Sympa::Log::Syslog::INFO,
         "Updating password storage in table user_table using MD5 for %d users",
         $total
     );
     if ($total_md5) {
         Sympa::Log::Syslog::do_log(
-            'info',
+            Sympa::Log::Syslog::INFO,
             "Found in table user %d password stored using MD5, did you run Sympa before upgrading ?",
             $total_md5
         );

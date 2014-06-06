@@ -451,7 +451,7 @@ sub renew {
 
     ## Renew the session ID in order to prevent session hijacking
     Sympa::Log::Syslog::do_log(
-        'info',
+        Sympa::Log::Syslog::INFO,
         '[robot %s] [session %s] [client %s]%s new session %s',
         $self->{'robot'}->name,
         $self->{'id_session'},

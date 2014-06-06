@@ -103,7 +103,7 @@ sub _new {
     my ($class, %params) = @_;
 
     Sympa::Log::Syslog::do_log(
-        'debug2',
+        Sympa::Log::Syslog::DEBUG2,
         'Sympa::Task::new  messagekey = %s',
         $params{'messagekey'}
     );
@@ -145,7 +145,7 @@ sub init {
     }
     unless ($self->{'flavour'}) {
         Sympa::Log::Syslog::do_log(
-            'err',
+            Sympa::Log::Syslog::ERR,
             'Missing a flavour name for model %s name. Impossible to get a template. Aborting.',
             $self->{'model'}
         );
@@ -159,7 +159,7 @@ sub init {
     my $template = $self->_get_template($model_name);
     unless ($template) {
         Sympa::Log::Syslog::do_log(
-            'err',
+            Sympa::Log::Syslog::ERR,
             'Unable to find task model %s. Creation aborted',
             $model_name);
         return undef;
@@ -238,7 +238,7 @@ sub _crop_after_label {
     my $label = shift;
 
     Sympa::Log::Syslog::do_log(
-        'debug',
+        Sympa::Log::Syslog::DEBUG,
         'Cropping task content to keep only the content located starting label %s',
         $label
     );
@@ -301,7 +301,7 @@ sub get_description {
 sub _stringify_parsed_instructions {
     my $self = shift;
     Sympa::Log::Syslog::do_log(
-        'debug2',
+        Sympa::Log::Syslog::DEBUG2,
         'Resetting messageasstring key of task object from the parsed content of %s',
         $self->get_description
     );
@@ -309,7 +309,7 @@ sub _stringify_parsed_instructions {
     my $new_string = $self->as_string();
     unless (defined $new_string) {
         Sympa::Log::Syslog::do_log(
-            'err',
+            Sympa::Log::Syslog::ERR,
             'task %s has no parsed content. Leaving messageasstring key unchanged',
             $self->get_description
         );
