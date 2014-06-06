@@ -215,9 +215,6 @@ my $digestsleep = 5;
 ## Init random engine
 srand(time());
 
-my $version_string =
-    sprintf("Sympa version is %s\n", Sympa::Constants::VERSION);
-
 my $daemon_name = 'sympa';
 my $ip;
 $ip = $ENV{'REMOTE_HOST'};
@@ -250,7 +247,7 @@ $options{'log_to_stderr'} = 1 if $options{'foreground'};
 if ($options{'help'}) {
     pod2usage(0);
 } elsif ($options{'version'}) {
-    print $version_string;
+    printf("Sympa version is %s\n", Sympa::Constants::VERSION);
     exit 0;
 }
 
