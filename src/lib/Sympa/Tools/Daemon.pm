@@ -28,6 +28,7 @@ use warnings;
 
 use Carp qw(croak);
 use English qw(-no_match_vars);
+use POSIX qw();
 use Proc::ProcessTable;
 
 use Sympa::LockedFile;

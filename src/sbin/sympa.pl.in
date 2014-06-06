@@ -181,7 +181,6 @@ use English qw(-no_match_vars);
 use Getopt::Long;
 use MIME::Charset;
 use Pod::Usage;
-use POSIX qw();
 
 use Sympa::Commands;
 use Sympa::Conf;
