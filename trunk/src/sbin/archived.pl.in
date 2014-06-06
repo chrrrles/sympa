@@ -184,20 +184,41 @@ if ($options{'debug'}) {
 
 $options{'log_to_stderr'} = 1 if $options{'foreground'};
 
-# Load sympa.conf
+# load configuration
 unless (defined Sympa::Robot::get_robots()) {
     Sympa::Log::Syslog::fatal_err(
         'Unable to load sympa configuration, file %s has errors.',
         Sympa::Conf::get_sympa_conf());
 }
 
-## Check databse connectivity
+# initialize database access
 unless (Sympa::DatabaseManager::check_db_connect()) {
     Sympa::Log::Syslog::fatal_err(
         'Database %s defined in sympa.conf has not the right structure or is unreachable.',
         Sympa::Site->db_name
     );
 }
+
+# initialize logging subsystem
+if ($options{'log_level'}) {
+    Sympa::Log::Syslog::set_log_level($options{'log_level'});
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::INFO,
+        "Configuration file read, log level set using options : $options{'log_level'}"
+    );
+} else {
+    Sympa::Log::Syslog::set_log_level(Sympa::Site->log_level);
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::INFO,
+        'Configuration file read, default log level %s',
+        Sympa::Site->log_level);
+}
+
+Sympa::Log::Syslog::do_openlog(Sympa::Site->log_facility, $daemon_name);
+
+# initialize SMTP subsystem
+our $mailer = Sympa::Mailer->new(
+    db_type         => Sympa::Site->db_type(),
+    nrcpt_by_domain => Sympa::Site->nrcpt_by_domain(),
+);
 
 # put ourselves in background if not in debug mode.
 Sympa::Tools::Daemon::daemonize(name => $daemon_name)
@@ -228,21 +249,6 @@ unless ($options{'foreground'}) {
         group  => Sympa::Constants::GROUP,
     );
 }
-
-# setting log_level using conf unless it is set by calling option
-if ($options{'log_level'}) {
-    Sympa::Log::Syslog::set_log_level($options{'log_level'});
-    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::INFO,
-        "Configuration file read, log level set using options : $options{'log_level'}"
-    );
-} else {
-    Sympa::Log::Syslog::set_log_level(Sympa::Site->log_level);
-    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::INFO,
-        'Configuration file read, default log level %s',
-        Sympa::Site->log_level);
-}
-
-Sympa::Log::Syslog::do_openlog(Sympa::Site->log_facility, $daemon_name);
 
 eval {
     Sympa::Tools::Daemon::drop_privileges(
@@ -280,9 +286,6 @@ unless (chdir(Sympa::Site->home)) {
 
 Sympa::Language::SetLang(Sympa::Site->lang || 'en');
 
-Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE, "archived %s Started",
-    Sympa::Constants::VERSION);
-
 ## Catch SIGTERM, in order to exit cleanly, whenever possible.
 my $end = 0;
 $SIG{'TERM'} = sub { $end = 1 };
@@ -316,12 +319,9 @@ $SIG{'__DIE__'} = sub {
 
 my $spool = Sympa::Spool::File->new('outgoing');
 
-my $mailer = Sympa::Mailer->new(
-    db_type         => Sympa::Site->db_type(),
-    nrcpt_by_domain => Sympa::Site->nrcpt_by_domain(),
-);
+Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE, "archived started");
 
-## infinite loop scanning the queue (unless a sig TERM is received
+# infinite loop, until a sig TERM is received
 while (!$end) {
 
     Sympa::List::init_list_cache();

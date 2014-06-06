@@ -143,7 +143,7 @@ if ($options{'help'}) {
     pod2usage(0);
 }
 
-# Load sympa.conf
+# load configuration
 unless (Sympa::Robot::get_robots()) {
     print STDERR
         "Unable to load Sympa configuration, file %s or any of the virtual host robot.conf files contain errors. Exiting.\n",
@@ -151,9 +151,9 @@ unless (Sympa::Robot::get_robots()) {
     exit 1;
 }
 
+# initialize logging subsystem
 Sympa::Log::Syslog::do_openlog(Sympa::Site->syslog, $daemon_name);
 
-# setting log_level using conf unless it is set by calling option
 if ($options{'log_level'}) {
     Sympa::Log::Syslog::set_log_level($options{'log_level'});
     Sympa::Log::Syslog::do_log(
@@ -168,13 +168,19 @@ if ($options{'log_level'}) {
         Sympa::Site->log_level);
 }
 
+# initialize SMTP subsystem
+our $mailer = Sympa::Mailer->new(
+    db_type         => Sympa::Site->db_type(),
+    nrcpt_by_domain => Sympa::Site->nrcpt_by_domain(),
+);
+
+
 ## Set the process as main bulk daemon by default.
 my $is_main_bulk = 0;
 
 # put ourselves in background if not in debug mode.
 Sympa::Tools::Daemon::daemonize(name => $daemon_name) unless $options{'foreground'};
 
-Sympa::Log::Syslog::do_openlog(Sympa::Site->syslog, $daemon_name);
 
 # check presence of a PID file from a previous execution
 Sympa::Tools::Daemon::check_old_pid_file(
@@ -219,9 +225,6 @@ unless (chdir(Sympa::Site->home)) {
     exit(-1);
 }
 
-Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE, "bulk.pl %s Started",
-    Sympa::Constants::VERSION);
-
 ## Catch SIGTERM, in order to exit cleanly, whenever possible.
 my $end = 0;
 $SIG{'TERM'} = sub {
@@ -257,11 +260,6 @@ $SIG{'__DIE__'} = sub {
     exit 255;
 };
 
-our $mailer = Sympa::Mailer->new(
-    db_type         => Sympa::Site->db_type(),
-    nrcpt_by_domain => Sympa::Site->nrcpt_by_domain(),
-);
-
 my $messagekey;    # the key of the current message in the message_table
 my $messageasstring_init;    # the current message as a string
 my $messageasstring;         # the transformed message.
@@ -274,6 +272,9 @@ $Sympa::Conf::Conf{'maxsmtp'} = int(Sympa::Site->maxsmtp / Sympa::Site->bulk_max
 
 my $spool = Sympa::Spool::SQL->new('bulk');
 
+Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE, "bulk started");
+
+# infinite loop, until a sig TERM is received
 while (!$end) {
     Sympa::List::init_list_cache();
 
@@ -670,9 +671,13 @@ while (!$end) {
 # Purge grouped notifications
 Sympa::Site->send_notify_to_listmaster(undef, undef, undef, 1);
 
-Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE, 'bulk.pl exited normally due to signal');
+Sympa::Log::Syslog::do_log(
+    Sympa::Log::Syslog::NOTICE,
+    'bulk exited normally due to signal'
+);
+
 Sympa::Tools::Daemon::remove_pid(
-    name             => 'bulk',
+    name             => $daemon_name,
     pid              => $PID,
     piddir           => Sympa::Constants::PIDDIR,
     tmpdir           => Sympa::Site->tmpdir(),

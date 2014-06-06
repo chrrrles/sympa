@@ -134,7 +134,7 @@ if ($options{'debug'}) {
 
 $options{'log_to_stderr'} = 1 if $options{'foreground'};
 
-# Load sympa.conf
+# load configuration
 unless (Sympa::Robot::get_robots()) {
     printf STDERR
         "Unable to load Sympa configuration, file %s or any of the virtual host robot.conf files contain errors. Exiting.\n",
@@ -142,9 +142,9 @@ unless (Sympa::Robot::get_robots()) {
     exit 1;
 }
 
+# initialize logging subsystem
 Sympa::Log::Syslog::do_openlog(Sympa::Site->log_facility, $daemon_name);
 
-# setting log_level using conf unless it is set by calling option
 if ($options{'log_level'}) {
     Sympa::Log::Syslog::set_log_level($options{'log_level'});
     Sympa::Log::Syslog::do_log(
@@ -158,6 +158,12 @@ if ($options{'log_level'}) {
         'Configuration file read, default log level %s',
         Sympa::Site->log_level);
 }
+
+# initialize SMTP subsystem
+our $mailer = Sympa::Mailer->new(
+    db_type         => Sympa::Site->db_type(),
+    nrcpt_by_domain => Sympa::Site->nrcpt_by_domain(),
+);
 
 # put ourselves in background if not in debug mode.
 Sympa::Tools::Daemon::daemonize(name => $daemon_name)
@@ -188,7 +194,6 @@ unless ($options{'foreground'}) {
         group  => Sympa::Constants::GROUP,
     );
 }
-
 eval {
     Sympa::Tools::Daemon::drop_privileges(
         user  => Sympa::Constants::USER,
@@ -206,8 +211,6 @@ unless (chdir(Sympa::Site->home)) {
         'error : unable to change to directory %s', Sympa::Site->home);
     exit(-1);
 }
-
-my $spool = Sympa::Spool::File::Task->new();
 
 ## Catch SIGTERM, in order to exit cleanly, whenever possible.
 my $end = 0;
@@ -240,13 +243,11 @@ $SIG{'__DIE__'} = sub {
     exit 255;
 };
 
-###### VARIABLES DECLARATION ######
-our $mailer = Sympa::Mailer->new(
-    db_type         => Sympa::Site->db_type(),
-    nrcpt_by_domain => Sympa::Site->nrcpt_by_domain(),
-);
+my $spool = Sympa::Spool::File::Task->new();
 
-###### INFINITE LOOP SCANING THE SPOOL (unless a sig TERM is received) ######
+Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE, "task_manager started");
+
+# infinite loop, until a sig TERM is received
 while (!$end) {
     my $current_date = time;                           # current epoch date
     my $rep          = Sympa::Tools::Time::adate($current_date);

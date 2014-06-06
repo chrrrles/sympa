@@ -249,15 +249,14 @@ if ($options{'help'}) {
     exit 0;
 }
 
-## Main loop
-
 my %loop_info;
 my %msgid_table;
 my $latest_msgid_table_cleanup = time;
 my $default_lang;
-my $signal = 0;
+our $mailer;
 
 # signal handlers
+my $signal = 0;
 
 # Catch SIGTERM, in order to exit cleanly, whenever possible.
 $SIG{'TERM'} = sub {
@@ -312,14 +311,12 @@ $SIG{'__DIE__'} = sub {
     exit 255;
 };
 
-our $mailer = Sympa::Mailer->new(
-    db_type         => Sympa::Site->db_type(),
-    nrcpt_by_domain => Sympa::Site->nrcpt_by_domain(),
-);
+Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE, "sympa started");
 
-while ($signal ne 'term') {    #as long as a SIGTERM is not received }
+# infinite loop, until a sig TERM is received
+while ($signal ne 'term') {
 
-    ## Load sympa.conf.
+    # load configuration
     unless (Sympa::Robot::get_robots()) {
         print STDERR
             "Unable to load Sympa configuration, file %s or any of the virtual host robot.conf files contain errors. Exiting.\n",
@@ -327,10 +324,9 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
         exit 1;
     }
 
-    ## Open the syslog and say we're read out stuff.
+    # initialize logging subsystem
     Sympa::Log::Syslog::do_openlog(Sympa::Site->syslog, 'sympa');
 
-    # setting log_level using conf unless it is set by calling option
     if ($options{'log_level'}) {
         Sympa::Log::Syslog::set_log_level($options{'log_level'});
         Sympa::Log::Syslog::do_log(
@@ -344,6 +340,12 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
             'Configuration file read, default log level %s',
             Sympa::Site->log_level);
     }
+
+    # initialize SMTP subsystem
+    $mailer = Sympa::Mailer->new(
+        db_type         => Sympa::Site->db_type(),
+        nrcpt_by_domain => Sympa::Site->nrcpt_by_domain(),
+    );
 
     Sympa::Tools::Password::ciphersaber_installed();
 
@@ -583,11 +585,15 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
     ## Disconnect from Database
     Sympa::DatabaseManager::db_disconnect;
 
-}    #end of block while ($signal ne 'term'){
+}
 
-Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE, 'Sympa exited normally due to signal');
+Sympa::Log::Syslog::do_log(
+    Sympa::Log::Syslog::NOTICE,
+    'sympa exited normally due to signal'
+);
+
 Sympa::Tools::Daemon::remove_pid(
-    name   => 'sympa',
+    name   => $daemon_name,
     pid    => $PID,
     piddir => Sympa::Constants::PIDDIR,
     tmpdir => Sympa::Site->tmpdir(),
