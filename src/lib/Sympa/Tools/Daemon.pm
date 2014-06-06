@@ -39,20 +39,6 @@ use Sympa::Tools::File;
 
 =over
 
-=item get_daemon_name($path)
-
-Returns a name for current process, suitable for logging.
-
-=cut
-
-sub get_daemon_name {
-    my $daemon_tmp = shift;
-    my @path       = split(/\//, $daemon_tmp);
-    my $daemon     = $path[$#path];
-    $daemon =~ s/(\.[^\.]+)$//;
-    return $daemon;
-}
-
 =item remove_pid(%parameters)
 
 Remove a PID from the process PID file.

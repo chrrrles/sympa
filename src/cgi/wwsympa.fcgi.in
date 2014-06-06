@@ -118,11 +118,9 @@ unless (defined Sympa::Robot::get_robots()) {
 }
 
 ## Open log
+my $daemon_name = 'wwsympa';
 Sympa::Log::Syslog::set_log_level(Sympa::Site->log_level);
-
-my $daemon_name = Sympa::Tools::Daemon::get_daemon_name($0);
-
-Sympa::Log::Syslog::do_openlog(Sympa::Site->log_facility, 'wwsympa');
+Sympa::Log::Syslog::do_openlog(Sympa::Site->log_facility, $daemon_name);
 
 ## Start plugins
 if (eval "require Sympa::Plugin::Manager") {
@@ -2092,7 +2090,7 @@ sub web_db_log {
     my $data = shift;
 
     $data->{'client'} = $param->{'remote_addr'};
-    $data->{'daemon'} = 'wwsympa';
+    $data->{'daemon'} = $daemon_name;
     $data->{'robot'}      ||= $robot;
     $data->{'list'}       ||= $list;
     $data->{'action'}     ||= $param->{'action'};
@@ -2117,7 +2115,7 @@ sub web_db_stat_log {
         if defined $param->{'user'};
     $data->{'operation'} ||= $param->{'action'};
     $data->{'list'} ||= $list->name if defined $list;
-    $data->{'daemon'} = 'wwsympa';
+    $data->{'daemon'} = $daemon_name;
     $data->{'client'} = $param->{'remote_addr'};
     $data->{'robot'} ||= $robot_id;
 
@@ -8354,7 +8352,7 @@ sub do_del {
         'users'     => \@removed_users,
         'exclude'   => '1',
         'parameter' => 'deleted by admin',
-        'daemon'    => 'wwsympa'
+        'daemon'    => $daemon_name
     );
 
     unless (defined $total) {

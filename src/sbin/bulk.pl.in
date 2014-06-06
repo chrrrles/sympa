@@ -114,7 +114,7 @@ use Sympa::Tools::DKIM;
 use Sympa::Tools::Daemon;
 use Sympa::Tracking;
 
-my $daemon_name           = Sympa::Tools::Daemon::get_daemon_name($0);
+my $daemon_name           = 'bulk';
 my $date_of_last_activity = time();
 my $daemon_usage =
     'DAEMON_MASTER';    ## Default is to launch bulk as master daemon.
@@ -151,7 +151,7 @@ unless (Sympa::Robot::get_robots()) {
     exit 1;
 }
 
-Sympa::Log::Syslog::do_openlog(Sympa::Site->syslog, 'bulk');
+Sympa::Log::Syslog::do_openlog(Sympa::Site->syslog, $daemon_name);
 
 # setting log_level using conf unless it is set by calling option
 if ($options{'log_level'}) {
@@ -172,20 +172,20 @@ if ($options{'log_level'}) {
 my $is_main_bulk = 0;
 
 # put ourselves in background if not in debug mode.
-Sympa::Tools::Daemon::daemonize('bulk') unless $options{'foreground'};
+Sympa::Tools::Daemon::daemonize(name => $daemon_name) unless $options{'foreground'};
 
-Sympa::Log::Syslog::do_openlog(Sympa::Site->syslog, 'bulk');
+Sympa::Log::Syslog::do_openlog(Sympa::Site->syslog, $daemon_name);
 
 # check presence of a PID file from a previous execution
 Sympa::Tools::Daemon::check_old_pid_file(
-    name   => 'task_manager',
+    name   => $daemon_name,
     piddir => Sympa::Constants::PIDDIR,
     tmpdir => Sympa::Site->tmpdir(),
 );
 
 # Create the PID file
 Sympa::Tools::Daemon::write_pid(
-    name   => 'bulk',
+    name   => $daemon_name,
     pid    => $PID,
     piddir => Sympa::Constants::PIDDIR,
     user   => Sympa::Constants::USER,
@@ -310,7 +310,7 @@ while (!$end) {
                     'Some childs of current process disappeared. Checking whether they shut down cleanly or not.'
                 );
                 my $pids_in_pfile = Sympa::Tools::Daemon::get_pids_in_pid_file(
-                    name   => 'bulk',
+                    name   => $daemon_name,
                     piddir => Sympa::Constants::PIDDIR,
                 );
                 foreach my $fpid (@{$pids_in_pfile}) {
@@ -325,7 +325,7 @@ while (!$end) {
                         Sympa::Tools::Daemon::send_crash_report(
                             ('pid' => $fpid, 'pname' => $pname));
                         Sympa::Tools::Daemon::remove_pid(
-                            name             => 'bulk',
+                            name             => $daemon_name,
                             pid              => $fpid,
                             piddir           => Sympa::Constants::PIDDIR,
                             tmpdir           => Sympa::Site->tmpdir(),
@@ -337,12 +337,12 @@ while (!$end) {
                 }
             }
             my $pids_in_pfile = Sympa::Tools::Daemon::get_pids_in_pid_file(
-                name   => 'bulk',
+                name   => $daemon_name,
                 piddir => Sympa::Constants::PIDDIR,
             );
             unless (defined($pids_in_pfile)) {
                 Sympa::Tools::Daemon::write_pid(
-                    name             => 'bulk',
+                    name             => $daemon_name,
                     pid              => $PID,
                     piddir           => Sympa::Constants::PIDDIR,
                     tmpdir           => Sympa::Site->tmpdir(),
@@ -393,7 +393,7 @@ while (!$end) {
 
                             # Saves the pid number
                             Sympa::Tools::Daemon::write_pid(
-                                name             => 'bulk',
+                                name             => $daemon_name,
                                 pid              => $child_pid,
                                 piddir           => Sympa::Constants::PIDDIR,
                                 tmpdir           => Sympa::Site->tmpdir(),
@@ -416,7 +416,7 @@ while (!$end) {
                             $daemon_usage =
                                 'DAEMON_SLAVE';    # automatic lists creation
                             Sympa::Log::Syslog::do_openlog(Sympa::Site->syslog,
-                                'bulk');
+                                $daemon_name);
                             Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::INFO,
                                 "Bulk slave daemon started with PID %s", $PID);
                             last;

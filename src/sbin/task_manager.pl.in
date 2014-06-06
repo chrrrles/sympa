@@ -109,6 +109,8 @@ use Sympa::Task;
 use Sympa::Tools::Daemon;
 use Sympa::Tools::Time;
 
+my $daemon_name = 'task_manager';
+
 my %options;
 unless (
     GetOptions(
@@ -132,10 +134,6 @@ if ($options{'debug'}) {
 
 $options{'log_to_stderr'} = 1 if $options{'foreground'};
 
-my $Version = '0.1';
-
-my $adrlist = {};
-
 # Load sympa.conf
 unless (Sympa::Robot::get_robots()) {
     printf STDERR
@@ -144,7 +142,7 @@ unless (Sympa::Robot::get_robots()) {
     exit 1;
 }
 
-Sympa::Log::Syslog::do_openlog(Sympa::Site->log_facility, 'task_manager');
+Sympa::Log::Syslog::do_openlog(Sympa::Site->log_facility, $daemon_name);
 
 # setting log_level using conf unless it is set by calling option
 if ($options{'log_level'}) {
@@ -162,18 +160,19 @@ if ($options{'log_level'}) {
 }
 
 # put ourselves in background if not in debug mode.
-Sympa::Tools::Daemon::daemonize('task_manager') unless $options{'foreground'};
+Sympa::Tools::Daemon::daemonize(name => $daemon_name)
+    unless $options{'foreground'};
 
 # check presence of a PID file from a previous execution
 Sympa::Tools::Daemon::check_old_pid_file(
-    name   => 'task_manager',
+    name   => $daemon_name,
     piddir => Sympa::Constants::PIDDIR,
     tmpdir => Sympa::Site->tmpdir(),
 );
 
 # Create the PID file
 Sympa::Tools::Daemon::write_pid(
-    name   => 'task_manager',
+    name   => $daemon_name,
     pid    => $PID,
     piddir => Sympa::Constants::PIDDIR,
     user   => Sympa::Constants::USER,
@@ -321,8 +320,9 @@ Sympa::Site->send_notify_to_listmaster(undef, undef, undef, 1);
 
 Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE,
     'task_manager exited normally due to signal');
+
 Sympa::Tools::Daemon::remove_pid(
-    name   => 'task_manager',
+    name   => $daemon_name,
     pid    => $PID,
     piddir => Sympa::Constants::PIDDIR,
     tmpdir => Sympa::Site->tmpdir(),
