@@ -490,7 +490,7 @@ sub aggregate_data {
         )
         ) {
         do_log(
-            'err',
+            Sympa::Log::Syslog::ERR,
             'Unable to set stat entries between date %s and date %s as read',
             $begin_date,
             $end_date

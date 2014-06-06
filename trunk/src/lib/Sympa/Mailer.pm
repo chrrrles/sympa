@@ -137,7 +137,7 @@ sub distribute_message {
     my $from = $list->get_address('return_path');
 
     Sympa::Log::Syslog::do_log(
-        'debug2',
+        Sympa::Log::Syslog::DEBUG2,
         '(from=%s, message=%s, encrypt=%s, verp=%s, %d rcpt, tag_as_last=%s)',
         $from,
         $message,
@@ -402,7 +402,7 @@ sub reaper {
         delete($self->{pids}->{$i});
     }
     Sympa::Log::Syslog::do_log(
-        'debug2',
+        Sympa::Log::Syslog::DEBUG2,
         "Reaper unwaited PIDs : %s\nOpen = %s\n",
         join(' ', sort keys %{$self->{pids}}), $self->{opensmtp}
     );
@@ -497,7 +497,7 @@ sub send_message {
 
             # in context wwsympa.fcgi store directly to spool.
             Sympa::Log::Syslog::do_log(
-                'info',
+                Sympa::Log::Syslog::INFO,
                 'USING BULK AS OUTGOING SPOOL: rcpt: %s, from: %s, message: %s',
                 $rcpt,
                 $from,
@@ -676,7 +676,7 @@ sub get_sendmail_handle {
             $r = join(' ', @$rcpt);
         }
         Sympa::Log::Syslog::do_log(
-            'debug3', 'safefork: %s %s -f \'%s\' %s',
+            Sympa::Log::Syslog::DEBUG3, 'safefork: %s %s -f \'%s\' %s',
             $sendmail, join(' ', @sendmail_args),
             $from, $r
         );

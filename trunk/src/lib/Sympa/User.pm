@@ -566,7 +566,7 @@ sub add_global_user {
 
     unless (@insert_field) {
         Sympa::Log::Syslog::do_log(
-            'err',
+            Sympa::Log::Syslog::ERR,
             'The fields (%s) do not correspond to anything in the database',
             join(',', keys(%{$values}))
         );

@@ -191,7 +191,7 @@ sub _getMultipleAndRequiredChild {
         my $hash = _getChildren($o);
         unless (defined $hash) {
             Sympa::Log::Syslog::do_log(
-                'err',
+                Sympa::Log::Syslog::ERR,
                 'Config_XML::_getMultipleAndRequiredChild() : error on _getChildren(%s) ',
                 $o->nodeName
             );
@@ -264,7 +264,7 @@ sub _getRequiredSingle {
         my $values = _getChildren($node);
         unless (defined $values) {
             Sympa::Log::Syslog::do_log(
-                'err',
+                Sympa::Log::Syslog::ERR,
                 'Config_XML::_getRequiredSingle() : error on _getChildren(%s) ',
                 $node->nodeName
             );
@@ -326,7 +326,7 @@ sub _getChildren {
             my $values = _getChildren($child);
             unless (defined $values) {
                 Sympa::Log::Syslog::do_log(
-                    'err',
+                    Sympa::Log::Syslog::ERR,
                     'Config_XML::_getChildren() : error on _getChildren(%s) ',
                     $childName
                 );
@@ -377,7 +377,7 @@ sub _getChildren {
         ## error
         if ($error) {
             Sympa::Log::Syslog::do_log(
-                'err',
+                Sympa::Log::Syslog::ERR,
                 'Config_XML::_getChildren(%s) : the children are not homogeneous, line %s',
                 $node->nodeName,
                 $node->line_number()

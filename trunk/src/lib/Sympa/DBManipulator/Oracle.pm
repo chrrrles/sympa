@@ -307,7 +307,7 @@ sub add_field {
     my $self  = shift;
     my $param = shift;
     Sympa::Log::Syslog::do_log(
-        'debug3',            'Adding field %s in table %s (%s, %s, %s, %s)',
+        Sympa::Log::Syslog::DEBUG3,            'Adding field %s in table %s (%s, %s, %s, %s)',
         $param->{'field'},   $param->{'table'},
         $param->{'type'},    $param->{'notnull'},
         $param->{'autoinc'}, $param->{'primary'}
@@ -468,7 +468,7 @@ sub set_primary_key {
         )
         ) {
         Sympa::Log::Syslog::do_log(
-            'err',
+            Sympa::Log::Syslog::ERR,
             'Could not set fields %s as primary key for table %s in database %s',
             $fields,
             $param->{'table'},
@@ -501,7 +501,7 @@ sub get_indexes {
     my $sth;
     unless ($sth = $self->do_query("SHOW INDEX FROM %s", $param->{'table'})) {
         Sympa::Log::Syslog::do_log(
-            'err',
+            Sympa::Log::Syslog::ERR,
             'Could not get the list of indexes from table %s in database %s',
             $param->{'table'},
             $self->{'db_name'}
@@ -571,7 +571,7 @@ sub set_index {
     my $sth;
     my $fields = join ',', @{$param->{'fields'}};
     Sympa::Log::Syslog::do_log(
-        'debug3',
+        Sympa::Log::Syslog::DEBUG3,
         'Setting index %s for table %s using fields %s',
         $param->{'index_name'},
         $param->{'table'}, $fields
@@ -583,7 +583,7 @@ sub set_index {
         )
         ) {
         Sympa::Log::Syslog::do_log(
-            'err',
+            Sympa::Log::Syslog::ERR,
             'Could not add index %s using field %s for table %s in database %s',
             $fields,
             $param->{'table'},

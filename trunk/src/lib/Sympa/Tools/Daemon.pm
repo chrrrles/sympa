@@ -155,7 +155,7 @@ sub check_old_pid_file {
     my $pid = $pids->[0];
 
     Sympa::Log::Syslog::do_log(
-        'notice',
+        Sympa::Log::Syslog::NOTICE,
         "Previous process %s died suddenly ; notifying listmaster",
         $pid
     );
@@ -314,7 +314,7 @@ sub direct_stderr_to_file {
         )
         ) {
         Sympa::Log::Syslog::do_log(
-            'err',
+            Sympa::Log::Syslog::ERR,
             'Unable to set rights on %s',
             $err_file
         );
@@ -349,7 +349,7 @@ sub send_crash_report {
     my $tmpdir = $params{tmpdir};
 
     Sympa::Log::Syslog::do_log(
-        'debug', 'Sending crash report for process %s', $pid
+        Sympa::Log::Syslog::DEBUG, 'Sending crash report for process %s', $pid
     );
     my $err_file = _get_error_file(%params);
 

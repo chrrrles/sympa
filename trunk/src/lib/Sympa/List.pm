@@ -607,7 +607,7 @@ sub new {
         if ($type) {
             unless ($options->{'just_try'}) {
                 Sympa::Log::Syslog::do_log(
-                    'err',
+                    Sympa::Log::Syslog::ERR,
                     'Incorrect name: listname "%s" matches one of service aliases',
                     $name
                 );
@@ -712,7 +712,7 @@ sub set_status_family_closed {
             'The list %s is set in status family_closed', $self);
         unless ($self->send_notify_to_owner($message, \@param)) {
             Sympa::Log::Syslog::do_log(
-                'err',
+                Sympa::Log::Syslog::ERR,
                 'Impossible to send notify to owner informing status family_closed for the list %s',
                 $self
             );
@@ -889,7 +889,7 @@ sub extract_verp_rcpt {
             $nbpart = 100 / $1;
         } else {
             Sympa::Log::Syslog::do_log(
-                'err',
+                Sympa::Log::Syslog::ERR,
                 'Wrong format for parameter extract_verp: %s. Can\'t process VERP.',
                 $percent
             );
@@ -1461,7 +1461,7 @@ sub distribute_msg {
     my $apply_dkim_signature = $param{'apply_dkim_signature'};
 
     Sympa::Log::Syslog::do_log(
-        'debug2',
+        Sympa::Log::Syslog::DEBUG2,
         '(%s, msg=%s, size=%s, filename=%s, smime_crypted=%s, apply_dkim_signature=%s)',
         $self,
         $message,
@@ -1671,7 +1671,7 @@ sub distribute_msg {
     ## Add RFC 2919 header field
     if ($message->get_header('List-Id')) {
         Sympa::Log::Syslog::do_log(
-            'notice',
+            Sympa::Log::Syslog::NOTICE,
             'Found List-Id: %s',
             $message->get_header('List-Id')
         );
@@ -1933,7 +1933,7 @@ sub do_digest_sending {
                 )
                 ) {
                 Sympa::Log::Syslog::do_log(
-                    'notice',
+                    Sympa::Log::Syslog::NOTICE,
                     'Unable to send template "digest" to %s list subscribers',
                     $self
                 );
@@ -1952,7 +1952,7 @@ sub do_digest_sending {
                 )
                 ) {
                 Sympa::Log::Syslog::do_log(
-                    'notice',
+                    Sympa::Log::Syslog::NOTICE,
                     'Unable to send template "digest_plain" to %s list subscribers',
                     $self
                 );
@@ -1970,7 +1970,7 @@ sub do_digest_sending {
                 )
                 ) {
                 Sympa::Log::Syslog::do_log(
-                    'notice',
+                    Sympa::Log::Syslog::NOTICE,
                     'Unable to send template "summary" to %s list subscribers',
                     $self
                 );
@@ -2050,7 +2050,7 @@ sub send_msg {
     $message->check_message_structure;
 
     Sympa::Log::Syslog::do_log(
-        'debug2',
+        Sympa::Log::Syslog::DEBUG2,
         'Sympa::List::send_msg(filename = %s, smime_crypted = %s,apply_dkim_signature = %s )',
         $message->{'filename'},
         $message->{'smime_crypted'},
@@ -2518,7 +2518,7 @@ sub send_to_editor {
     ## Did we find a recipient?
     if ($#rcpt < 0) {
         Sympa::Log::Syslog::do_log(
-            'notice',
+            Sympa::Log::Syslog::NOTICE,
             "No editor found for list %s. Trying to proceed ignoring nomail option",
             $self
         );
@@ -2532,14 +2532,14 @@ sub send_to_editor {
         ## Could we find a recipient by ignoring the "nomail" option?
         if ($#rcpt >= 0) {
             Sympa::Log::Syslog::do_log(
-                'notice',
+                Sympa::Log::Syslog::NOTICE,
                 'All the intended recipients of message %s in list %s have set the "nomail" option. Ignoring it and sending it to all of them.',
                 $messageid,
                 $self
             );
         } else {
             Sympa::Log::Syslog::do_log(
-                'err',
+                Sympa::Log::Syslog::ERR,
                 'Impossible to send the moderation request for message %s to editors of list %s. Neither editor nor owner defined!',
                 $messageid,
                 $self
@@ -2828,7 +2828,7 @@ sub send_notify_to_owner {
 
     unless (@to) {
         Sympa::Log::Syslog::do_log(
-            'notice',
+            Sympa::Log::Syslog::NOTICE,
             'No owner defined or all of them use nomail option in list %s ; using listmasters as default',
             $self
         );
@@ -2866,7 +2866,7 @@ sub send_notify_to_owner {
                     )
                     ) {
                     Sympa::Log::Syslog::do_log(
-                        'notice',
+                        Sympa::Log::Syslog::NOTICE,
                         'Unable to send template "listowner_notification" to %s list owner %s',
                         $self,
                         $owner
@@ -2889,7 +2889,7 @@ sub send_notify_to_owner {
                     )
                     ) {
                     Sympa::Log::Syslog::do_log(
-                        'notice',
+                        Sympa::Log::Syslog::NOTICE,
                         'Unable to send template "listowner_notification" to %s list owner %s',
                         $self,
                         $owner
@@ -2911,7 +2911,7 @@ sub send_notify_to_owner {
                     )
                     ) {
                     Sympa::Log::Syslog::do_log(
-                        'notice',
+                        Sympa::Log::Syslog::NOTICE,
                         'Unable to send template "listowner_notification" to %s list owner %s',
                         $self,
                         $owner
@@ -2925,7 +2925,7 @@ sub send_notify_to_owner {
             unless ($self->send_file('listowner_notification', \@to, $param))
             {
                 Sympa::Log::Syslog::do_log(
-                    'notice',
+                    Sympa::Log::Syslog::NOTICE,
                     'Unable to send template "listowner_notification" to %s list owner',
                     $self
                 );
@@ -2945,7 +2945,7 @@ sub send_notify_to_owner {
         }
         unless ($self->send_file('listowner_notification', \@to, $data)) {
             Sympa::Log::Syslog::do_log(
-                'notice',
+                Sympa::Log::Syslog::NOTICE,
                 'Unable to send template "listowner_notification" to %s list owner',
                 $self
             );
@@ -2955,7 +2955,7 @@ sub send_notify_to_owner {
     } else {
 
         Sympa::Log::Syslog::do_log(
-            'err',
+            Sympa::Log::Syslog::ERR,
             'error on incoming parameter "$param", it must be a ref on HASH or a ref on ARRAY',
         );
         return undef;
@@ -3065,7 +3065,7 @@ sub send_notify_to_editor {
 
     unless (@to) {
         Sympa::Log::Syslog::do_log(
-            'notice',
+            Sympa::Log::Syslog::NOTICE,
             'Warning : no editor or owner defined or all of them use nomail option in list %s',
             $self
         );
@@ -3083,7 +3083,7 @@ sub send_notify_to_editor {
 
         unless ($self->send_file('listeditor_notification', \@to, $param)) {
             Sympa::Log::Syslog::do_log(
-                'notice',
+                Sympa::Log::Syslog::NOTICE,
                 'Unable to send template "listeditor_notification" to %s list editor',
                 $self
             );
@@ -3102,7 +3102,7 @@ sub send_notify_to_editor {
         }
         unless ($self->send_file('listeditor_notification', \@to, $data)) {
             Sympa::Log::Syslog::do_log(
-                'notice',
+                Sympa::Log::Syslog::NOTICE,
                 'Unable to send template "listeditor_notification" to %s list editor',
                 $self
             );
@@ -3111,7 +3111,7 @@ sub send_notify_to_editor {
 
     } else {
         Sympa::Log::Syslog::do_log(
-            'err',
+            Sympa::Log::Syslog::ERR,
             'error on incoming parameter "$param", it must be a ref on HASH or a ref on ARRAY',
         );
         return undef;
@@ -3539,7 +3539,7 @@ sub insert_delete_exclusion {
                     )
                     ) {
                     Sympa::Log::Syslog::do_log(
-                        'err',
+                        Sympa::Log::Syslog::ERR,
                         'Unable to remove entry %s for list %s from table exclusion_table',
                         $email,
                         $self
@@ -3850,7 +3850,7 @@ sub find_list_member_by_pattern_no_object {
         )
         ) {
         Sympa::Log::Syslog::do_log(
-            'err',
+            Sympa::Log::Syslog::ERR,
             'Unable to gather information corresponding to pattern %s for list %s@%s',
             $email_pattern,
             $name,
@@ -4205,7 +4205,7 @@ sub get_next_list_member {
                 parseCustomAttribute($user->{'custom_attribute'});
             unless (defined $custom_attr) {
                 Sympa::Log::Syslog::do_log(
-                    'err',
+                    Sympa::Log::Syslog::ERR,
                     "Failed to parse custom attributes for user %s, list %s",
                     $user->{'email'},
                     $self
@@ -4229,7 +4229,7 @@ sub get_next_list_admin {
 
     unless (defined $sth) {
         Sympa::Log::Syslog::do_log(
-            'err',
+            Sympa::Log::Syslog::ERR,
             'Statement handle not defined, get_first_list_admin(%s) was not run',
             $self
         );
@@ -4299,7 +4299,7 @@ sub get_next_bouncing_list_member {
 
     unless (defined $sth) {
         Sympa::Log::Syslog::do_log(
-            'err',
+            Sympa::Log::Syslog::ERR,
             'No handle defined, get_first_bouncing_list_member(%s) was not run',
             $self
         );
@@ -4333,7 +4333,7 @@ sub get_info {
 
     unless (open INFO, $self->dir . '/info') {
         Sympa::Log::Syslog::do_log(
-            'err',
+            Sympa::Log::Syslog::ERR,
             'Could not open %s : %s',
             $self->dir . '/info', $ERRNO
         );
@@ -4535,7 +4535,7 @@ sub update_list_member {
                     )
                     ) {
                     Sympa::Log::Syslog::do_log(
-                        'err',
+                        Sympa::Log::Syslog::ERR,
                         'Could not update information for user %s in table %s for list %s',
                         $who,
                         $table,
@@ -4555,7 +4555,7 @@ sub update_list_member {
                     )
                     ) {
                     Sympa::Log::Syslog::do_log(
-                        'err',
+                        Sympa::Log::Syslog::ERR,
                         'Could not update information for user %s in table %s for list %s',
                         $who,
                         $table,
@@ -4705,7 +4705,7 @@ sub update_list_admin {
                     )
                     ) {
                     Sympa::Log::Syslog::do_log(
-                        'err',
+                        Sympa::Log::Syslog::ERR,
                         'Could not update information for admin %s in table %s for list %s',
                         $who,
                         $table,
@@ -4726,7 +4726,7 @@ sub update_list_admin {
                     )
                     ) {
                     Sympa::Log::Syslog::do_log(
-                        'err',
+                        Sympa::Log::Syslog::ERR,
                         'Could not update information for admin %s in table %s for list %s',
                         $who,
                         $table,
@@ -4775,7 +4775,7 @@ sub add_list_member {
             or $self->max_list_members == 0) {
             $self->{'add_outcome'}{'errors'}{'max_list_members_exceeded'} = 1;
             Sympa::Log::Syslog::do_log(
-                'notice',
+                Sympa::Log::Syslog::NOTICE,
                 'Subscription of user %s failed: max number of subscribers (%s) reached',
                 $new_user->{'email'},
                 $self->max_list_members
@@ -4797,7 +4797,7 @@ sub add_list_member {
         $new_user->{'custom_attribute'} ||=
             createXMLCustomAttribute(\%custom_attr);
         Sympa::Log::Syslog::do_log(
-            'debug2',
+            Sympa::Log::Syslog::DEBUG2,
             'custom_attribute = %s',
             $new_user->{'custom_attribute'}
         );
@@ -4896,7 +4896,7 @@ sub add_list_member {
             )
             ) {
             Sympa::Log::Syslog::do_log(
-                'err',
+                Sympa::Log::Syslog::ERR,
                 'Unable to add subscriber %s to table subscriber_table for list %s',
                 $who,
                 $self
@@ -5728,7 +5728,7 @@ sub _include_users_remote_sympa_list {
     }
     unless ((-r $cert_file) && (-r $key_file)) {
         Sympa::Log::Syslog::do_log(
-            'err',
+            Sympa::Log::Syslog::ERR,
             'Include remote list https://%s:%s/%s using cert %s, unable to open %s or %s',
             $host,
             $port,
@@ -5913,7 +5913,7 @@ sub _include_users_file {
     while (<INCLUDE>) {
         if ($lines > 49 && $emails_found == 0) {
             Sympa::Log::Syslog::do_log(
-                'err',
+                Sympa::Log::Syslog::ERR,
                 'Too much errors in file %s (%s lines, %s emails found). Source file probably corrupted. Cancelling.',
                 $filename,
                 $lines,
@@ -6018,7 +6018,7 @@ sub _include_users_remote_file {
         foreach my $line (@remote_file) {
             if ($lines > 49 && $emails_found == 0) {
                 Sympa::Log::Syslog::do_log(
-                    'err',
+                    Sympa::Log::Syslog::ERR,
                     'Too much errors in file %s (%s lines, %s emails found). Source file probably corrupted. Cancelling.',
                     $url,
                     $lines,
@@ -6085,7 +6085,7 @@ sub _include_users_remote_file {
         }
     } else {
         Sympa::Log::Syslog::do_log(
-            'err',
+            Sympa::Log::Syslog::ERR,
             "Sympa::List::include_users_remote_file: Unable to fetch remote file $url : %s",
             $res->message()
         );
@@ -6134,7 +6134,7 @@ sub _include_users_ldap {
     );
     if ($fetch->code()) {
         Sympa::Log::Syslog::do_log(
-            'err',
+            Sympa::Log::Syslog::ERR,
             'LDAP search (single level) failed : %s (searching on server %s ; suffix %s ; filter %s ; attrs: %s)',
             $fetch->error(),
             $source->{'host'},
@@ -6287,7 +6287,7 @@ sub _include_users_ldap_2level {
     );
     if ($fetch->code()) {
         Sympa::Log::Syslog::do_log(
-            'err',
+            Sympa::Log::Syslog::ERR,
             'LDAP search (1st level) failed : %s (searching on server %s ; suffix %s ; filter %s ; attrs: %s)',
             $fetch->error(),
             $source->{'host'},
@@ -6347,7 +6347,7 @@ sub _include_users_ldap_2level {
         );
         if ($fetch->code()) {
             Sympa::Log::Syslog::do_log(
-                'err',
+                Sympa::Log::Syslog::ERR,
                 'LDAP search (2nd level) failed : %s. Node: %s (searching on server %s ; suffix %s ; filter %s ; attrs: %s)',
                 $fetch->error(),
                 $attr,
@@ -6479,7 +6479,7 @@ sub _include_sql_ca {
     return {} unless ($source->connect());
 
     Sympa::Log::Syslog::do_log(
-        'debug2',
+        Sympa::Log::Syslog::DEBUG2,
         '%s, email_entry = %s',
         $source->{'sql_query'},
         $source->{'email_entry'}
@@ -6505,7 +6505,7 @@ sub _include_ldap_ca {
     return {} unless ($source->connect());
 
     Sympa::Log::Syslog::do_log(
-        'debug2',
+        Sympa::Log::Syslog::DEBUG2,
         'server %s ; suffix %s ; filter %s ; attrs: %s',
         $source->{'host'},
         $source->{'suffix'},
@@ -6523,7 +6523,7 @@ sub _include_ldap_ca {
     );
     if ($results->code()) {
         Sympa::Log::Syslog::do_log(
-            'err',
+            Sympa::Log::Syslog::ERR,
             'LDAP search (single level) failed : %s (searching on server %s ; suffix %s ; filter %s ; attrs: %s)',
             $results->error(),
             $source->{'host'},
@@ -6555,7 +6555,7 @@ sub _include_ldap_level2_ca {
     return {};
 
     Sympa::Log::Syslog::do_log(
-        'debug2',
+        Sympa::Log::Syslog::DEBUG2,
         'server %s ; suffix %s ; filter %s ; attrs: %s',
         $source->{'host'},
         $source->{'suffix'},
@@ -6573,7 +6573,7 @@ sub _include_ldap_level2_ca {
     );
     if ($results->code()) {
         Sympa::Log::Syslog::do_log(
-            'err',
+            Sympa::Log::Syslog::ERR,
             'LDAP search (single level) failed : %s (searching on server %s ; suffix %s ; filter %s ; attrs: %s)',
             $results->error(),
             $source->{'host'},
@@ -6613,7 +6613,7 @@ sub _include_users_sql {
     unless ($source->connect() && ($source->do_query($source->{'sql_query'})))
     {
         Sympa::Log::Syslog::do_log(
-            'err',
+            Sympa::Log::Syslog::ERR,
             'Unable to connect to SQL datasource with parameters host: %s, database: %s',
             $source->{'host'},
             $source->{'db_name'}
@@ -6832,7 +6832,7 @@ sub _load_list_members_from_include {
                 $depend_on->{$name} = 1;
                 if (_inclusion_loop($name, $incl, $depend_on)) {
                     Sympa::Log::Syslog::do_log(
-                        'err',
+                        Sympa::Log::Syslog::ERR,
                         'loop detection in list inclusion : could not include again %s in %s',
                         $incl,
                         $name
@@ -6997,7 +6997,7 @@ sub _load_list_admin_from_include {
                     $depend_on->{$name} = 1;
                     if (_inclusion_loop($name, $incl, $depend_on)) {
                         Sympa::Log::Syslog::do_log(
-                            'err',
+                            Sympa::Log::Syslog::ERR,
                             'loop detection in list inclusion : could not include again %s in %s',
                             $incl,
                             $name
@@ -7059,7 +7059,7 @@ sub _load_include_admin_user_file {
             )
             ) {
             Sympa::Log::Syslog::do_log(
-                'err',
+                Sympa::Log::Syslog::ERR,
                 'Failed to parse %s',
                 $parsing->{'template'}
             );
@@ -7152,7 +7152,7 @@ sub _load_include_admin_user_file {
             ## This should be a paragraph
             unless ($#paragraph > 0) {
                 Sympa::Log::Syslog::do_log(
-                    'info',
+                    Sympa::Log::Syslog::INFO,
                     'Expecting a paragraph for "%s" parameter in %s, ignore it',
                     $pname,
                     $file
@@ -7453,7 +7453,7 @@ sub sync_include {
         ## Use DB cache instead and warn the listmaster.
         if (@errors) {
             Sympa::Log::Syslog::do_log(
-                'err',
+                Sympa::Log::Syslog::ERR,
                 'Errors occurred while synchronizing datasources for list %s',
                 $self
             );
@@ -7822,7 +7822,7 @@ sub sync_include_admin {
             # included and subscribed
             if (defined $new_admin_users_config->{$email}) {
                 my $param;
-                foreach my $p ('reception', 'visibility', 'gecos', 'info',
+                foreach my $p ('reception', 'visibility', 'gecos', Sympa::Log::Syslog::INFO,
                     'profile') {
 
                     #  config parameters have priority on include parameters
@@ -7846,7 +7846,7 @@ sub sync_include_admin {
                     if (defined $param_update) {
                         if (%{$param_update}) {
                             Sympa::Log::Syslog::do_log(
-                                'debug',
+                                Sympa::Log::Syslog::DEBUG,
                                 'List:sync_include_admin : updating %s %s to list %s',
                                 $role,
                                 $email,
@@ -7860,7 +7860,7 @@ sub sync_include_admin {
                                 )
                                 ) {
                                 Sympa::Log::Syslog::do_log(
-                                    'err',
+                                    Sympa::Log::Syslog::ERR,
                                     'List:sync_include_admin(%s): Failed to update %s %s',
                                     $name,
                                     $role,
@@ -7913,7 +7913,7 @@ sub sync_include_admin {
                     if (defined $param_update) {
                         if (%{$param_update}) {
                             Sympa::Log::Syslog::do_log(
-                                'debug',
+                                Sympa::Log::Syslog::DEBUG,
                                 'List:sync_include_admin : updating %s %s to list %s',
                                 $role,
                                 $email,
@@ -7927,7 +7927,7 @@ sub sync_include_admin {
                                 )
                                 ) {
                                 Sympa::Log::Syslog::do_log(
-                                    'err',
+                                    Sympa::Log::Syslog::ERR,
                                     'List:sync_include_admin(%s): Failed to update %s %s',
                                     $name,
                                     $role,
@@ -7974,7 +7974,7 @@ sub sync_include_admin {
                 if (defined $param_update) {
                     if (%{$param_update}) {
                         Sympa::Log::Syslog::do_log(
-                            'debug',
+                            Sympa::Log::Syslog::DEBUG,
                             'List:sync_include_admin : updating %s %s to list %s',
                             $role,
                             $email,
@@ -7988,7 +7988,7 @@ sub sync_include_admin {
                             )
                             ) {
                             Sympa::Log::Syslog::do_log(
-                                'err',
+                                Sympa::Log::Syslog::ERR,
                                 'List:sync_include_admin(%s): Failed to update %s %s',
                                 $name,
                                 $role,
@@ -8111,7 +8111,7 @@ sub is_update_param {
     Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, 'Sympa::List::is_update_param ');
 
     foreach my $p (
-        'reception', 'visibility', 'gecos',    'info',
+        'reception', 'visibility', 'gecos',    Sympa::Log::Syslog::INFO,
         'profile',   'id',         'included', 'subscribed'
         ) {
         if (defined $new_param->{$p}) {
@@ -8271,7 +8271,7 @@ sub store_digest {
             )
             ) {
             Sympa::Log::Syslog::do_log(
-                'err',
+                Sympa::Log::Syslog::ERR,
                 "could not update digest adding this message (digest spool entry key %s)",
                 $current_digest->{'messagekey'}
             );
@@ -8285,7 +8285,7 @@ sub store_digest {
             )
             ) {
             Sympa::Log::Syslog::do_log(
-                'err',
+                Sympa::Log::Syslog::ERR,
                 "could not store message in digest spool messafge digestkey %s",
                 $current_digest->{'messagekey'}
             );
@@ -8759,7 +8759,7 @@ sub get_lists {
                 }
                 unless ($sth) {
                     Sympa::Log::Syslog::do_log(
-                        'err',
+                        Sympa::Log::Syslog::ERR,
                         'failed to get lists with user %s as %s from database: %s',
                         $which_user,
                         $which_role,
@@ -9474,7 +9474,7 @@ sub _load_list_config_file {
             ## This should be a paragraph
             unless ($#paragraph > 0) {
                 Sympa::Log::Syslog::do_log(
-                    'err',
+                    Sympa::Log::Syslog::ERR,
                     'Expecting a paragraph for "%s" parameter in %s, ignore it',
                     $pname,
                     $config_file
@@ -9508,7 +9508,7 @@ sub _load_list_config_file {
                     ) {
                     chomp($paragraph[$i]);
                     Sympa::Log::Syslog::do_log(
-                        'err',
+                        Sympa::Log::Syslog::ERR,
                         'Bad entry "%s" for key "%s", paragraph "%s" in file "%s"',
                         $paragraph[$i],
                         $key,
@@ -9758,7 +9758,7 @@ sub _save_list_config_file {
     ## Write to file at last.
     unless (rename $config_file, $old_config_file) {
         Sympa::Log::Syslog::do_log(
-            'notice',     'Cannot rename %s to %s',
+            Sympa::Log::Syslog::NOTICE,     'Cannot rename %s to %s',
             $config_file, $old_config_file
         );
         return undef;
@@ -10086,7 +10086,7 @@ sub load_msg_topic {
     );
     unless ($topics_from_spool) {
         Sympa::Log::Syslog::do_log(
-            'debug',
+            Sympa::Log::Syslog::DEBUG,
             'No topic defined ; unable to find topic for message %s / list  %s',
             $msg_id,
             $self
@@ -10189,7 +10189,7 @@ sub modifying_msg_topic_for_list_members() {
                         )
                         ) {
                         Sympa::Log::Syslog::do_log(
-                            'err',
+                            Sympa::Log::Syslog::ERR,
                             '(%s) : impossible to send notify to user about "deleted_msg_topics"',
                             $self
                         );
@@ -10219,7 +10219,7 @@ sub modifying_msg_topic_for_list_members() {
 # select_list_members_for_topic
 ####################################################
 # Select users subscribed to a topic that is in
-# the topic list incoming when reception mode is 'mail', 'notice', 'not_me',
+# the topic list incoming when reception mode is 'mail', Sympa::Log::Syslog::NOTICE, 'not_me',
 # 'txt', 'html' or 'urlize', and the other
 # subscribers (recpetion mode different from 'mail'), 'mail' and no topic
 # subscription
@@ -10336,7 +10336,7 @@ sub get_subscription_requests {
 
         if (defined($user_entry) && ($user_entry->{'subscribed'} == 1)) {
             Sympa::Log::Syslog::do_log(
-                'err',
+                Sympa::Log::Syslog::ERR,
                 'User %s is subscribed to %s already. Deleting subscription request.',
                 $email,
                 $self
@@ -10347,7 +10347,7 @@ sub get_subscription_requests {
                 )
                 ) {
                 Sympa::Log::Syslog::do_log(
-                    'err',
+                    Sympa::Log::Syslog::ERR,
                     'Could not delete subrequest %s for list %s from %s',
                     $subrequest->{'messagekey'},
                     $self,
@@ -10417,7 +10417,7 @@ sub delete_subscription_request {
 
     unless ($removed > 0) {
         Sympa::Log::Syslog::do_log(
-            'debug2',
+            Sympa::Log::Syslog::DEBUG2,
             'No pending subscription was found for users %s',
             join(',', @list_of_email)
         );
@@ -10478,7 +10478,7 @@ sub get_signoff_requests {
 
         unless (defined $user_entry and $user_entry->{'subscribed'} == 1) {
             Sympa::Log::Syslog::do_log(
-                'err',
+                Sympa::Log::Syslog::ERR,
                 'User %s is unsubscribed from %s already. Deleting signoff request.',
                 $email,
                 $self
@@ -10489,7 +10489,7 @@ sub get_signoff_requests {
                 )
                 ) {
                 Sympa::Log::Syslog::do_log(
-                    'err',
+                    Sympa::Log::Syslog::ERR,
                     'Could not delete sigrequest %s for list %s from %s',
                     $sigrequest->{'messagekey'},
                     $self,
@@ -10541,7 +10541,7 @@ sub delete_signoff_request {
 
     unless ($removed > 0) {
         Sympa::Log::Syslog::do_log(
-            'debug2',
+            Sympa::Log::Syslog::DEBUG2,
             'No pending signoff was found for users %s',
             join(',', @list_of_email)
         );
@@ -10978,7 +10978,7 @@ sub move_message {
     close OUT;
     unless (rename "$dir/T.$filename", "$dir/$filename") {
         Sympa::Log::Syslog::do_log(
-            'err',              'Cannot rename file %s into %s',
+            Sympa::Log::Syslog::ERR,              'Cannot rename file %s into %s',
             "$dir/T.$filename", "$dir/$filename"
         );
         return undef;
@@ -11375,7 +11375,7 @@ sub AUTOLOAD {
         ## getter for unknwon list attributes.
         ## XXX This code would be removed later.
         Sympa::Log::Syslog::do_log(
-            'err',
+            Sympa::Log::Syslog::ERR,
             'Unconcerned object method "%s" via package "%s".  Though it may not be fatal, you might want to report it developer',
             $2,
             $1
@@ -11417,7 +11417,7 @@ sub _set_list_param_compound {
         unless (grep { $_ eq $self->default_user_options->{'reception'} }
             @{$self->{'admin'}{$attr}{'reception'}}) {
             Sympa::Log::Syslog::do_log(
-                'info',
+                Sympa::Log::Syslog::INFO,
                 'reception is not compatible between default_user_options and available_user_options of list %s',
                 $self
             );
@@ -11823,7 +11823,7 @@ sub user {
             $info->{'reception'}   ||= 'mail';
             $info->{'update_date'} ||= $info->{'date'};
             Sympa::Log::Syslog::do_log(
-                'debug3',
+                Sympa::Log::Syslog::DEBUG3,
                 'custom_attribute = (%s)',
                 $info->{custom_attribute}
             );
@@ -11992,7 +11992,7 @@ sub list_cache_fetch {
         eval { $config = Storable::thaw($l->{'config'}) };
         if ($EVAL_ERROR or !defined $config) {
             Sympa::Log::Syslog::do_log(
-                'err', 'Unable to deserialize binary config of %s: %s',
+                Sympa::Log::Syslog::ERR, 'Unable to deserialize binary config of %s: %s',
                 $self, $EVAL_ERROR || 'possible format error'
             );
             return undef;
@@ -12060,7 +12060,7 @@ sub list_cache_update_config {
         eval { Storable::store($self->config, $self->dir . '/config.bin') };
         if ($EVAL_ERROR) {
             Sympa::Log::Syslog::do_log(
-                'err',
+                Sympa::Log::Syslog::ERR,
                 'Failed to save the binary config %s. error: %s',
                 $self->dir . '/config.bin', $EVAL_ERROR
             );
@@ -12176,7 +12176,7 @@ sub list_cache_update_total {
             )
             ) {
             Sympa::Log::Syslog::do_log(
-                'err',
+                Sympa::Log::Syslog::ERR,
                 'Canot update subscriber count of list %s on database cache',
                 $self
             );

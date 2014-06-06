@@ -449,7 +449,7 @@ sub virus_infected {
     }
 
     ## if debug mode is active, the working directory is kept
-    unless ($main::options{'debug'}) {
+    unless ($main::options{Sympa::Log::Syslog::DEBUG}) {
         opendir(DIR, ${work_dir});
         my @list = readdir(DIR);
         closedir(DIR);

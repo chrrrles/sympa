@@ -106,7 +106,7 @@ sub reject_report_msg {
     my $send_to = ref $list eq "Sympa::List" ? $list : $robot;
     $send_to->send_file('message_report', $user, $param)
         or Sympa::Log::Syslog::do_log(
-        'notice',
+        Sympa::Log::Syslog::NOTICE,
         "Sympa::Report::reject_report_msg(): Unable to send template 'message_report' to '$user'"
         );
 

@@ -80,7 +80,7 @@ sub new {
     ### Document exist ?
     unless (-r $document->{'absolute_path'}) {
         Sympa::Log::Syslog::do_log(
-            'err',
+            Sympa::Log::Syslog::ERR,
             "SharedDocument::new : unable to read %s : no such file or directory",
             $document->{'absolute_path'}
         );
@@ -90,7 +90,7 @@ sub new {
     ### Document has non-size zero?
     unless (-s $document->{'absolute_path'}) {
         Sympa::Log::Syslog::do_log(
-            'err',
+            Sympa::Log::Syslog::ERR,
             "SharedDocument::new : unable to read %s : empty document",
             $document->{'absolute_path'}
         );
@@ -160,7 +160,7 @@ sub new {
             $desc_file = $1 . '.desc.' . $3;
         } else {
             Sympa::Log::Syslog::do_log(
-                'err',
+                Sympa::Log::Syslog::ERR,
                 "SharedDocument::new() : cannot determine desc file for %s",
                 $document->{'absolute_path'}
             );
@@ -242,7 +242,7 @@ sub new {
         # listing of all the shared documents of the directory
         unless (opendir DIR, $document->{'absolute_path'}) {
             Sympa::Log::Syslog::do_log(
-                'err',
+                Sympa::Log::Syslog::ERR,
                 "SharedDocument::new() : cannot open %s : %s",
                 $document->{'absolute_path'}, $ERRNO
             );

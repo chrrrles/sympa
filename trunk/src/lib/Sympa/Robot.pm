@@ -423,7 +423,7 @@ sub get_netidtoemail_db {
         )
         ) {
         Sympa::Log::Syslog::do_log(
-            'err',
+            Sympa::Log::Syslog::ERR,
             'Unable to get email address from netidmap_table for id %s, service %s, robot %s',
             $netid,
             $idpname,
@@ -466,7 +466,7 @@ sub set_netidtoemail_db {
         )
         ) {
         Sympa::Log::Syslog::do_log(
-            'err',
+            Sympa::Log::Syslog::ERR,
             'Unable to set email address %s in netidmap_table for id %s, service %s, robot %s',
             $email,
             $netid,
@@ -506,7 +506,7 @@ sub update_email_netidmap_db {
         )
         ) {
         Sympa::Log::Syslog::do_log(
-            'err',
+            Sympa::Log::Syslog::ERR,
             'Unable to set new email address %s in netidmap_table to replace old address %s for robot %s',
             $new_email,
             $old_email,

@@ -180,7 +180,7 @@ sub get_my_url {
 sub upload_file_to_server {
     my $param = shift;
     Sympa::Log::Syslog::do_log(
-        'debug',
+        Sympa::Log::Syslog::DEBUG,
         "Uploading file from field %s to destination %s",
         $param->{'file_field'},
         $param->{'destination'}
@@ -502,7 +502,7 @@ sub _load_create_list_conf {
     $file = $robot->get_etc_filename('create_list.conf');
     unless ($file) {
         Sympa::Log::Syslog::do_log(
-            'info',
+            Sympa::Log::Syslog::INFO,
             'unable to read %s',
             Sympa::Constants::DEFAULTDIR . '/create_list.conf'
         );

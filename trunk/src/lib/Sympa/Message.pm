@@ -832,13 +832,13 @@ sub smime_decrypt {
         my $status = $CHILD_ERROR >> 8;
         if ($status) {
             Sympa::Log::Syslog::do_log(
-                'err', 'Unable to decrypt S/MIME message: (%d) %s',
+                Sympa::Log::Syslog::ERR, 'Unable to decrypt S/MIME message: (%d) %s',
                 $status, ($openssl_errors{$status} || 'unknown reason')
             );
             next;
         }
 
-        unlink($temporary_file) unless ($main::options{'debug'});
+        unlink($temporary_file) unless ($main::options{Sympa::Log::Syslog::DEBUG});
 
         my $parser = MIME::Parser->new();
         $parser->output_to_core(1);
@@ -945,7 +945,7 @@ sub smime_encrypt {
         my $status = $CHILD_ERROR >> 8;
         if ($status) {
             Sympa::Log::Syslog::do_log(
-                'err', 'Unable to S/MIME encrypt message: (%d) %s',
+                Sympa::Log::Syslog::ERR, 'Unable to S/MIME encrypt message: (%d) %s',
                 $status, ($openssl_errors{$status} || 'unknown reason')
             );
             return undef;
@@ -973,7 +973,7 @@ sub smime_encrypt {
         }
         close NEWMSG;
 
-        unlink($temporary_file) unless ($main::options{'debug'});
+        unlink($temporary_file) unless ($main::options{Sympa::Log::Syslog::DEBUG});
 
         ## foreach header defined in  the incomming message but undefined in
         ## the
@@ -1074,7 +1074,7 @@ sub smime_sign {
         Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE, 'Unable to parse message');
         return undef;
     }
-    unlink($temporary_file) unless ($main::options{'debug'});
+    unlink($temporary_file) unless ($main::options{Sympa::Log::Syslog::DEBUG});
 
     ## foreach header defined in  the incoming message but undefined in the
     ## crypted message, add this header in the crypted form.
@@ -1135,7 +1135,7 @@ sub smime_sign_check {
     my $status = $CHILD_ERROR >> 8;
     if ($status) {
         Sympa::Log::Syslog::do_log(
-            'err', 'Unable to check S/MIME signature: (%d) %s',
+            Sympa::Log::Syslog::ERR, 'Unable to check S/MIME signature: (%d) %s',
             $status, ($openssl_errors{$status} || 'unknown reason')
         );
         return undef;
@@ -1149,9 +1149,9 @@ sub smime_sign_check {
     );
 
     unless ($signer->{'email'}{lc($message->{'sender'})}) {
-        unlink($temporary_file) unless ($main::options{'debug'});
+        unlink($temporary_file) unless ($main::options{Sympa::Log::Syslog::DEBUG});
         Sympa::Log::Syslog::do_log(
-            'err',
+            Sympa::Log::Syslog::ERR,
             "S/MIME signed message, sender(%s) does NOT match signer(%s)",
             $message->{'sender'},
             join(',', keys %{$signer->{'email'}})
@@ -1160,7 +1160,7 @@ sub smime_sign_check {
     }
 
     Sympa::Log::Syslog::do_log(
-        'debug',
+        Sympa::Log::Syslog::DEBUG,
         "S/MIME signed message, signature checked and sender match signer(%s)",
         join(',', keys %{$signer->{'email'}})
     );
@@ -1248,7 +1248,7 @@ sub smime_sign_check {
             }
 
             Sympa::Log::Syslog::do_log(
-                'debug2',
+                Sympa::Log::Syslog::DEBUG2,
                 "Found cert for <%s>",
                 join(',', keys %{$parsed->{'email'}})
             );
@@ -1274,7 +1274,7 @@ sub smime_sign_check {
     close(BUNDLE);
     if (!($certs{both} || ($certs{sign} || $certs{enc}))) {
         Sympa::Log::Syslog::do_log(
-            'err',
+            Sympa::Log::Syslog::ERR,
             "Could not extract certificate for %s",
             join(',', keys %{$signer->{'email'}})
         );
@@ -1304,7 +1304,7 @@ sub smime_sign_check {
         close(CERT);
     }
 
-    unless ($main::options{'debug'}) {
+    unless ($main::options{Sympa::Log::Syslog::DEBUG}) {
         unlink($temporary_file);
         unlink($tmpcert);
         unlink($certbundle);

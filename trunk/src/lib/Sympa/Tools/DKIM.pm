@@ -87,7 +87,7 @@ sub verifier {
     foreach my $signature ($dkim->signatures) {
         if ($signature->result_detail eq "pass") {
             Sympa::Log::Syslog::do_log(
-                'debug',
+                Sympa::Log::Syslog::DEBUG,
                 'Verification of signature from domain %s issued result "pass"',
                 $signature->domain,
             );
@@ -140,7 +140,7 @@ sub sign {
     my $dkim_privatekey = $data->{'dkim_privatekey'};
 
     Sympa::Log::Syslog::do_log(
-        'debug2',
+        Sympa::Log::Syslog::DEBUG2,
         'sign(msg:%s,dkim_d:%s,dkim_i%s,dkim_selector:%s,dkim_privatekey:%s)',
         substr($msg_as_string, 0, 30),
         $dkim_d,
@@ -250,7 +250,7 @@ sub sign {
         return ($msg_as_string);
     }
 
-    if ($main::options{'debug'}) {
+    if ($main::options{Sympa::Log::Syslog::DEBUG}) {
         Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG, 'Temporary file is %s',
             $temporary_file);
     } else {

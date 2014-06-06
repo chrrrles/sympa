@@ -174,7 +174,7 @@ sub establish_connection {
     ## Check if DBD is installed
     unless (eval "require DBD::$self->{'db_type'}") {
         Sympa::Log::Syslog::do_log(
-            'err',
+            Sympa::Log::Syslog::ERR,
             'No Database Driver installed for %s; you should download and install DBD::%s from CPAN',
             $self->{'db_type'},
             $self->{'db_type'}
@@ -256,14 +256,14 @@ sub establish_connection {
             }
             if ($self->{'reconnect_options'}{'keep_trying'}) {
                 Sympa::Log::Syslog::do_log(
-                    'err',
+                    Sympa::Log::Syslog::ERR,
                     'Can\'t connect to Database %s as %s, still trying...',
                     $self->{'connect_string'},
                     $self->{'db_user'}
                 );
             } else {
                 Sympa::Log::Syslog::do_log(
-                    'err',
+                    Sympa::Log::Syslog::ERR,
                     'Can\'t connect to Database %s as %s',
                     $self->{'connect_string'},
                     $self->{'db_user'}
@@ -290,7 +290,7 @@ sub establish_connection {
 
             if ($self->{'reconnect_options'}{'warn'}) {
                 Sympa::Log::Syslog::do_log(
-                    'notice',
+                    Sympa::Log::Syslog::NOTICE,
                     'Connection to Database %s restored.',
                     $self->{'connect_string'}
                 );
@@ -328,7 +328,7 @@ sub establish_connection {
                     ## or
                     ## both is earlier than MySQL 5.5.3.
                     Sympa::Log::Syslog::do_log(
-                        'notice',
+                        Sympa::Log::Syslog::NOTICE,
                         'Server-side character set of MySQL is "%s", not '
                             . 'either "utf8" nor "utf8mb4".  This means possible '
                             . 'data loss.',
@@ -413,7 +413,7 @@ sub establish_connection {
             $self->{'dbh'}->{LongTruncOk} = 0;
         }
         Sympa::Log::Syslog::do_log(
-            'debug3',
+            Sympa::Log::Syslog::DEBUG3,
             'Database driver seetings for this session: LongReadLen= %d, LongTruncOk= %d, RaiseError= %d',
             $self->{'dbh'}->{LongReadLen},
             $self->{'dbh'}->{LongTruncOk},
@@ -549,7 +549,7 @@ sub do_prepared_query {
             } else {
                 unless ($sth = $self->{'dbh'}->prepare($query)) {
                     Sympa::Log::Syslog::do_log(
-                        'err',
+                        Sympa::Log::Syslog::ERR,
                         'Unable to prepare SQL statement : %s',
                         $self->{'dbh'}->errstr
                     );
@@ -585,7 +585,7 @@ sub do_prepared_query {
                 } else {
                     unless ($sth = $self->{'dbh'}->prepare($query)) {
                         Sympa::Log::Syslog::do_log(
-                            'err',
+                            Sympa::Log::Syslog::ERR,
                             'Unable to prepare SQL statement : %s',
                             $self->{'dbh'}->errstr
                         );

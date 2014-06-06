@@ -245,7 +245,7 @@ unless ($options{'foreground'}) {
 if ($options{'log_level'}) {
     Sympa::Log::Syslog::set_log_level($options{'log_level'});
     Sympa::Log::Syslog::do_log(
-        'info',
+        Sympa::Log::Syslog::INFO,
         'Configuration file read, log level set using options : %s',
         $options{'log_level'}
     );
@@ -340,7 +340,7 @@ while (!$end) {
             if $spooled_bounce;
         unless ($bounce) {
             Sympa::Log::Syslog::do_log(
-                'err',
+                Sympa::Log::Syslog::ERR,
                 'Message %s: badly formatted bounce message. Ignoring.',
                 $spooled_bounce->{'messagekey'}
             );

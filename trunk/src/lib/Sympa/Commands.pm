@@ -47,7 +47,7 @@ my %comms = (
     'dis|distribute'                    => 'distribute',
     'get'                               => 'getfile',
     'hel|help|sos'                      => 'help',
-    'inf|info'                          => 'info',
+    'inf|info'                          => Sympa::Log::Syslog::INFO,
     'inv|invite'                        => 'invite',
     'ind|index'                         => 'index',
     'las|last'                          => 'last',
@@ -806,7 +806,7 @@ sub verify {
 
     if ($sign_mod) {
         Sympa::Log::Syslog::do_log(
-            'info',  'VERIFY successfull from %s',
+            Sympa::Log::Syslog::INFO,  'VERIFY successfull from %s',
             $sender, time - $time_command
         );
         if ($sign_mod eq 'smime') {
@@ -938,7 +938,7 @@ sub subscribe {
         Sympa::Report::reject_report_cmd('user', 'already_subscriber',
             {'email' => $sender, 'listname' => $list->name}, $cmd_line);
         Sympa::Log::Syslog::do_log(
-            'err',
+            Sympa::Log::Syslog::ERR,
             'User %s is subscribed to %s already. Ignoring subscription request.',
             $sender,
             $list
@@ -974,7 +974,7 @@ sub subscribe {
         }
         if ($list->store_subscription_request($sender, $comment)) {
             Sympa::Log::Syslog::do_log(
-                'info',
+                Sympa::Log::Syslog::INFO,
                 'SUB %s from %s forwarded to the owners of the list (%d seconds)',
                 $which,
                 $sender,
@@ -1066,7 +1066,7 @@ sub subscribe {
         if ($action =~ /notify/i) {
             unless (
                 $list->send_notify_to_owner(
-                    'notice',
+                    Sympa::Log::Syslog::NOTICE,
                     {   'who'     => $sender,
                         'gecos'   => $comment,
                         'command' => 'subscribe'
@@ -1080,7 +1080,7 @@ sub subscribe {
 
         }
         Sympa::Log::Syslog::do_log(
-            'info', 'SUB %s from %s accepted (%d seconds, %d subscribers)',
+            Sympa::Log::Syslog::INFO, 'SUB %s from %s accepted (%d seconds, %d subscribers)',
             $which, $sender, time - $time_command,
             $list->total
         );
@@ -1132,7 +1132,7 @@ sub info {
     Sympa::Language::SetLang($list->lang);
 
     my $auth_method = get_auth_method(
-        'info', '',
+        Sympa::Log::Syslog::INFO, '',
         {   'type' => 'auth_failed',
             'data' => {},
             'msg'  => "INFO $listname from $sender"
@@ -1145,7 +1145,7 @@ sub info {
         unless (defined $auth_method);
 
     my $result = Sympa::Scenario::request_action(
-        $list, 'info',
+        $list, Sympa::Log::Syslog::INFO,
         $auth_method,
         {   'sender'  => $sender,
             'message' => $message,
@@ -1424,7 +1424,7 @@ sub signoff {
         }
         if ($list->store_signoff_request($sender)) {
             Sympa::Log::Syslog::do_log(
-                'info',
+                Sympa::Log::Syslog::INFO,
                 'SIG %s from %s forwarded to the owners of the list (%d seconds)',
                 $which,
                 $sender,
@@ -1459,7 +1459,7 @@ sub signoff {
                     )
                     ) {
                     Sympa::Log::Syslog::do_log(
-                        'info',
+                        Sympa::Log::Syslog::INFO,
                         'Unable to send notify "warn-signoff" to %s list owner',
                         $which
                     );
@@ -1486,7 +1486,7 @@ sub signoff {
         if ($action =~ /notify/i) {
             unless (
                 $list->send_notify_to_owner(
-                    'notice',
+                    Sympa::Log::Syslog::NOTICE,
                     {   'who'     => $email,
                         'gecos'   => ($user_entry->{'gecos'} || ''),
                         'command' => 'signoff'
@@ -1508,7 +1508,7 @@ sub signoff {
         }
 
         Sympa::Log::Syslog::do_log(
-            'info', 'SIG %s from %s accepted (%d seconds, %d subscribers)',
+            Sympa::Log::Syslog::INFO, 'SIG %s from %s accepted (%d seconds, %d subscribers)',
             $which, $email, time - $time_command,
             $list->total
         );
@@ -1635,7 +1635,7 @@ sub add {
             Sympa::Report::reject_report_cmd('user', 'already_subscriber',
                 {'email' => $email, 'listname' => $which}, $cmd_line);
             Sympa::Log::Syslog::do_log(
-                'err',
+                Sympa::Log::Syslog::ERR,
                 "ADD command rejected ; user '%s' already member of list '%s'",
                 $email,
                 $which
@@ -1690,14 +1690,14 @@ sub add {
         }
 
         Sympa::Log::Syslog::do_log(
-            'info', 'ADD %s %s from %s accepted (%d seconds, %d subscribers)',
+            Sympa::Log::Syslog::INFO, 'ADD %s %s from %s accepted (%d seconds, %d subscribers)',
             $which, $email, $sender, time - $time_command,
             $list->total
         );
         if ($action =~ /notify/i) {
             unless (
                 $list->send_notify_to_owner(
-                    'notice',
+                    Sympa::Log::Syslog::NOTICE,
                     {   'who'     => $email,
                         'gecos'   => $comment,
                         'command' => 'add',
@@ -1833,7 +1833,7 @@ sub invite {
             Sympa::Report::reject_report_cmd('user', 'already_subscriber',
                 {'email' => $email, 'listname' => $which}, $cmd_line);
             Sympa::Log::Syslog::do_log(
-                'err',
+                Sympa::Log::Syslog::ERR,
                 "INVITE command rejected ; user '%s' already member of list '%s'",
                 $email,
                 $which
@@ -1887,7 +1887,7 @@ sub invite {
                     return undef;
                 }
                 Sympa::Log::Syslog::do_log(
-                    'info',
+                    Sympa::Log::Syslog::INFO,
                     'INVITE %s %s from %s accepted, auth requested (%d seconds, %d subscribers)',
                     $which,
                     $email,
@@ -1916,7 +1916,7 @@ sub invite {
                     return undef;
                 }
                 Sympa::Log::Syslog::do_log(
-                    'info',
+                    Sympa::Log::Syslog::INFO,
                     'INVITE %s %s from %s accepted,  (%d seconds, %d subscribers)',
                     $which,
                     $email,
@@ -1929,7 +1929,7 @@ sub invite {
 
             } elsif ($action =~ /reject/i) {
                 Sympa::Log::Syslog::do_log(
-                    'info',
+                    Sympa::Log::Syslog::INFO,
                     'INVITE %s %s from %s refused, not allowed (%d seconds, %d subscribers)',
                     $which,
                     $email,
@@ -2153,7 +2153,7 @@ sub remind {
             Sympa::Report::notice_report_cmd('remind',
                 {'total' => $total, 'listname' => $listname}, $cmd_line);
             Sympa::Log::Syslog::do_log(
-                'info',
+                Sympa::Log::Syslog::INFO,
                 'REMIND %s  from %s accepted, sent to %d subscribers (%d seconds)',
                 $listname,
                 $sender,
@@ -2255,7 +2255,7 @@ sub remind {
         }
     } else {
         Sympa::Log::Syslog::do_log(
-            'info',
+            Sympa::Log::Syslog::INFO,
             'REMIND %s  from %s aborted, unknown requested action in scenario',
             $listname,
             $sender
@@ -2418,14 +2418,14 @@ sub del {
         Sympa::Report::notice_report_cmd('removed',
             {'email' => $who, 'listname' => $which}, $cmd_line);
         Sympa::Log::Syslog::do_log(
-            'info', 'DEL %s %s from %s accepted (%d seconds, %d subscribers)',
+            Sympa::Log::Syslog::INFO, 'DEL %s %s from %s accepted (%d seconds, %d subscribers)',
             $which, $who, $sender, time - $time_command,
             $list->total
         );
         if ($action =~ /notify/i) {
             unless (
                 $list->send_notify_to_owner(
-                    'notice',
+                    Sympa::Log::Syslog::NOTICE,
                     {   'who'     => $who,
                         'gecos'   => "",
                         'command' => 'del',
@@ -2728,7 +2728,7 @@ sub distribute {
     }
     unless ($numsmtp) {
         Sympa::Log::Syslog::do_log(
-            'info',
+            Sympa::Log::Syslog::INFO,
             'Message %s for %s from %s accepted but all subscribers use digest,nomail or summary',
             $message,
             $list,
@@ -2736,7 +2736,7 @@ sub distribute {
         );
     }
     Sympa::Log::Syslog::do_log(
-        'info',
+        Sympa::Log::Syslog::INFO,
         'Message %s for list %s accepted by %s; %d seconds, %d sessions, %d subscribers, size=%d',
         $message,
         $list,
@@ -2828,7 +2828,7 @@ sub confirm {
 
     unless (defined $action) {
         Sympa::Log::Syslog::do_log(
-            'err',
+            Sympa::Log::Syslog::ERR,
             'message %s ignored because unable to evaluate scenario for list %s',
             $message,
             $list
@@ -2851,7 +2851,7 @@ sub confirm {
 
         unless (defined $key) {
             Sympa::Log::Syslog::do_log(
-                'err',
+                Sympa::Log::Syslog::ERR,
                 'Sympa::Commands::confirm(): Calling to send_to_editor() function failed for user %s in list %s',
                 $sender,
                 $name
@@ -2893,7 +2893,7 @@ sub confirm {
 
         unless (defined $key) {
             Sympa::Log::Syslog::do_log(
-                'err',
+                Sympa::Log::Syslog::ERR,
                 'Sympa::Commands::confirm(): Calling to send_to_editor() function failed for user %s in list %s',
                 $sender,
                 $name

@@ -83,8 +83,8 @@ my %syslog_levels = (
 sub fatal_err {
     my $m     = shift;
 
-    syslog('err', $m, @_);
-    syslog('err', "Exiting.");
+    syslog(Sympa::Log::Syslog::ERR, $m, @_);
+    syslog(Sympa::Log::Syslog::ERR, "Exiting.");
     $m =~ s/%m/$ERRNO/g;
 
     my $full_msg = sprintf $m, @_;

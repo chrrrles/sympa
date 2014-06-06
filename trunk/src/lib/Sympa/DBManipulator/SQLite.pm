@@ -535,7 +535,7 @@ sub get_indexes {
     unless ($sth =
         $self->do_query(q{PRAGMA index_list('%s')}, $param->{'table'})) {
         Sympa::Log::Syslog::do_log(
-            'err',
+            Sympa::Log::Syslog::ERR,
             'Could not get the list of indexes from table %s in database %s',
             $param->{'table'},
             $self->{'db_name'}
@@ -552,7 +552,7 @@ sub get_indexes {
         unless ($sth =
             $self->do_query(q{PRAGMA index_info('%s')}, $index_name)) {
             Sympa::Log::Syslog::do_log(
-                'err',
+                Sympa::Log::Syslog::ERR,
                 'Could not get the list of indexes from table %s in database %s',
                 $param->{'table'},
                 $self->{'db_name'}
@@ -613,7 +613,7 @@ sub set_index {
     my $sth;
     my $fields = join ',', @{$param->{'fields'}};
     Sympa::Log::Syslog::do_log(
-        'debug3',
+        Sympa::Log::Syslog::DEBUG3,
         'Setting index %s for table %s using fields %s',
         $param->{'index_name'},
         $param->{'table'}, $fields
@@ -625,7 +625,7 @@ sub set_index {
         )
         ) {
         Sympa::Log::Syslog::do_log(
-            'err',
+            Sympa::Log::Syslog::ERR,
             'Could not add index %s using field %s for table %s in database %s',
             $fields,
             $param->{'table'},
@@ -679,7 +679,7 @@ sub do_query {
     };
     if ($EVAL_ERROR or !$rc) {
         Sympa::Log::Syslog::do_log(
-            'err',
+            Sympa::Log::Syslog::ERR,
             'Could not unlock database: %s',
             $EVAL_ERROR || sprintf('(%s) %s',
                 $self->{'dbh'}->err, $self->{'dbh'}->errstr)
@@ -721,7 +721,7 @@ sub do_prepared_query {
     };
     if ($EVAL_ERROR or !$rc) {
         Sympa::Log::Syslog::do_log(
-            'err',
+            Sympa::Log::Syslog::ERR,
             'Could not unlock database: %s',
             $EVAL_ERROR || sprintf('(%s) %s',
                 $self->{'dbh'}->err, $self->{'dbh'}->errstr)
@@ -772,7 +772,7 @@ sub _get_field_type {
     $sth->finish;
 
     Sympa::Log::Syslog::do_log(
-        'err',
+        Sympa::Log::Syslog::ERR,
         'Could not gather information of field %s from table %s in database %s',
         $field,
         $table,

@@ -377,7 +377,7 @@ sub health_check {
     if ($options{'log_level'}) {
         Sympa::Log::Syslog::set_log_level($options{'log_level'});
         Sympa::Log::Syslog::do_log(
-            'info',
+            Sympa::Log::Syslog::INFO,
             'Configuration file read, log level set using options : %s',
             $options{'log_level'}
         );
@@ -483,7 +483,7 @@ sub import {
     ## The parameter should be a list address
     unless ($options{'import'} =~ /\@/) {
         Sympa::Log::Syslog::do_log(
-            'err',
+            Sympa::Log::Syslog::ERR,
             'Incorrect list address %s',
             $options{'import'}
         );

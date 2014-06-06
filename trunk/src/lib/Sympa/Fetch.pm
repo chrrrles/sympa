@@ -41,7 +41,7 @@ sub get_https {
     my $trusted_ca_path = $ssl_data->{'capath'};
 
     Sympa::Log::Syslog::do_log(
-        'debug',          'get_https (%s,%s,%s,%s,%s,%s,%s,%s)',
+        Sympa::Log::Syslog::DEBUG,          'get_https (%s,%s,%s,%s,%s,%s,%s,%s)',
         $host,            $port,
         $path,            $client_cert,
         $client_key,      $key_passwd,
@@ -111,7 +111,7 @@ sub get_https {
 
     #my ($buffer) = $ssl_socket->getlines;
     # print STDERR $buffer;
-    #Sympa::Log::Syslog::do_log ('debug',"return");
+    #Sympa::Log::Syslog::do_log (Sympa::Log::Syslog::DEBUG,"return");
     #return ;
 
     Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG, "get_https reading answer");
@@ -191,7 +191,7 @@ sub get_https2 {
     #	   my $issuer_name = $ssl_socket->peer_certificate("issuer");
     #	   my $cipher = $ssl_socket->get_cipher();
     #	   Sympa::Log::Syslog::do_log
-    #	   ('debug','ssl peer certificat %s issued by %s. Cipher used %s',
+    #	   (Sympa::Log::Syslog::DEBUG,'ssl peer certificat %s issued by %s. Cipher used %s',
     #	   $subject_name,$issuer_name,$cipher);
     #	}
 
@@ -202,7 +202,7 @@ sub get_https2 {
 
     #my ($buffer) = $ssl_socket->getlines;
     # print STDERR $buffer;
-    #Sympa::Log::Syslog::do_log ('debug',"return");
+    #Sympa::Log::Syslog::do_log (Sympa::Log::Syslog::DEBUG,"return");
     #return ;
 
     Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG, "get_https reading answer returns :");

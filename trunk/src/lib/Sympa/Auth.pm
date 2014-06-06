@@ -483,7 +483,7 @@ sub create_one_time_ticket {
         )
         ) {
         Sympa::Log::Syslog::do_log(
-            'err',
+            Sympa::Log::Syslog::ERR,
             'Unable to insert new one time ticket for user %s, robot %s in the database',
             $email,
             $robot

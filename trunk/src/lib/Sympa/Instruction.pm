@@ -291,7 +291,7 @@ sub _chk_cmd {
     my $self = shift;
 
     Sympa::Log::Syslog::do_log(
-        'debug2', 'chk_cmd(%s, %d, %s)',
+        Sympa::Log::Syslog::DEBUG2, 'chk_cmd(%s, %d, %s)',
         $self->{'command'},
         $self->{'line_number'},
         join(',', @{$self->{'Rarguments'}})
@@ -348,7 +348,7 @@ sub execute {
     my ($self, $task, $params) = @_;
 
     Sympa::Log::Syslog::do_log(
-        'debug',
+        Sympa::Log::Syslog::DEBUG,
         'Processing "%s" (line %d of task %s)',
         $self->{'line_as_string'},
         $self->{'line_number'},
@@ -778,7 +778,7 @@ sub _purge_one_time_ticket_table {
     croak "Failed to remove old tickets\n" unless $removed;
 
     Sympa::Log::Syslog::do_log(
-        'notice',
+        Sympa::Log::Syslog::NOTICE,
         'purge_one_time_ticket_table(): %s row removed in one_time_ticket_table',
         $removed
     );
@@ -942,7 +942,7 @@ sub _expire_bounce {
         # from 01 01 1970
         unless ($list->get_latest_distribution_date()) {
             Sympa::Log::Syslog::do_log(
-                'debug2',
+                Sympa::Log::Syslog::DEBUG2,
                 'bounce expiration : skipping list %s because could not get latest distribution date',
                 $listname
             );
@@ -986,7 +986,7 @@ sub _expire_bounce {
                     next;
                 }
                 Sympa::Log::Syslog::do_log(
-                    'info',
+                    Sympa::Log::Syslog::INFO,
                     'expire bounces for subscriber %s of list %s (last distribution %s, last bounce %s )',
                     $email,
                     $listname,

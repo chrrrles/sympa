@@ -242,7 +242,7 @@ sub casLogin {
         ($user, @proxies) = $cas->validatePT($robot->soap_url, $proxyTicket);
         unless (defined $user) {
             Sympa::Log::Syslog::do_log(
-                'err',
+                Sympa::Log::Syslog::ERR,
                 'CAS ticket %s not validated by server %s : %s',
                 $proxyTicket,
                 $auth_service->{'base_url'},
@@ -493,7 +493,7 @@ sub info {
     }
 
     my $result = Sympa::Scenario::request_action(
-        $list, 'info', 'md5',
+        $list, Sympa::Log::Syslog::INFO, 'md5',
         {   'sender'                  => $sender,
             'remote_application_name' => $ENV{'remote_application_name'}
         }
@@ -547,7 +547,7 @@ sub info {
         return SOAP::Data->value($result_item);
     }
     Sympa::Log::Syslog::do_log(
-        'info',
+        Sympa::Log::Syslog::INFO,
         'SOAP : info %s from %s aborted, unknown requested action in scenario',
         $listname,
         $sender
@@ -572,7 +572,7 @@ sub createList {
     my $remote_application_name = $ENV{'remote_application_name'};
 
     Sympa::Log::Syslog::do_log(
-        'info',
+        Sympa::Log::Syslog::INFO,
         'SOAP createList(list = %s\@%s,subject = %s,template = %s,description = %s,topics = %s) from %s via proxy application %s',
         $listname,
         $robot->domain,
@@ -787,7 +787,7 @@ sub add {
     my $remote_application_name = $ENV{'remote_application_name'};
 
     Sympa::Log::Syslog::do_log(
-        'info',
+        Sympa::Log::Syslog::INFO,
         'SOAP add(list = %s@%s,email = %s,quiet = %s) from %s via proxy application %s',
         $listname,
         $robot->domain,
@@ -862,7 +862,7 @@ sub add {
 
     if ($list->is_list_member($email)) {
         Sympa::Log::Syslog::do_log(
-            'err',
+            Sympa::Log::Syslog::ERR,
             'add %s@%s %s from %s : failed, user already member of the list',
             $listname,
             $robot->domain,
@@ -919,7 +919,7 @@ sub add {
     if ($action =~ /notify/i) {
         unless (
             $list->send_notify_to_owner(
-                'notice',
+                Sympa::Log::Syslog::NOTICE,
                 {   'who'     => $email,
                     'gecos'   => $gecos,
                     'command' => 'add',
@@ -944,7 +944,7 @@ sub del {
     my $remote_application_name = $ENV{'remote_application_name'};
 
     Sympa::Log::Syslog::do_log(
-        'info',
+        Sympa::Log::Syslog::INFO,
         'SOAP del(list = %s@%s,email = %s,quiet = %s) from %s via proxy application %s',
         $listname,
         $robot->domain,
@@ -1011,7 +1011,7 @@ sub del {
     unless ($action =~ /do_it/) {
         my $reason_string = get_reason_string($reason, $robot);
         Sympa::Log::Syslog::do_log(
-            'info',
+            Sympa::Log::Syslog::INFO,
             'SOAP : del %s@%s %s from %s by %srefused (not allowed)',
             $listname,
             $robot->domain,
@@ -1066,7 +1066,7 @@ sub del {
     if ($action =~ /notify/i) {
         unless (
             $list->send_notify_to_owner(
-                'notice',
+                Sympa::Log::Syslog::NOTICE,
                 {   'who'     => $email,
                     'gecos'   => "",
                     'command' => 'del',
@@ -1172,7 +1172,7 @@ sub review {
         return SOAP::Data->name('return')->value(\@resultSoap);
     }
     Sympa::Log::Syslog::do_log(
-        'info',
+        Sympa::Log::Syslog::INFO,
         'SOAP : review %s from %s aborted, unknown requested action in scenario',
         $listname,
         $sender
@@ -1361,7 +1361,7 @@ sub signoff {
     if ($action =~ /reject/i) {
         my $reason_string = get_reason_string($result->{'reason'}, $robot);
         Sympa::Log::Syslog::do_log(
-            'info',
+            Sympa::Log::Syslog::INFO,
             'SOAP : sign off from %s for the email %s of the user %s refused (not allowed)',
             $listname,
             $sender,
@@ -1408,7 +1408,7 @@ sub signoff {
                     )
                     ) {
                     Sympa::Log::Syslog::do_log(
-                        'err',
+                        Sympa::Log::Syslog::ERR,
                         'Unable to send notify "warn-signoff" to %s listowner',
                         $list
                     );
@@ -1429,7 +1429,7 @@ sub signoff {
         if ($action =~ /notify/i) {
             unless (
                 $list->send_notify_to_owner(
-                    'notice',
+                    Sympa::Log::Syslog::NOTICE,
                     {   'who'     => $sender,
                         'command' => 'signoff'
                     }
@@ -1454,7 +1454,7 @@ sub signoff {
     }
 
     Sympa::Log::Syslog::do_log(
-        'info',
+        Sympa::Log::Syslog::INFO,
         'SOAP : sign off %s from %s aborted, unknown requested action in scenario',
         $listname,
         $sender
@@ -1624,7 +1624,7 @@ sub subscribe {
         if ($action =~ /notify/i) {
             unless (
                 $list->send_notify_to_owner(
-                    'notice',
+                    Sympa::Log::Syslog::NOTICE,
                     {   'who'     => $sender,
                         'gecos'   => $gecos,
                         'command' => 'subscribe'
@@ -1643,7 +1643,7 @@ sub subscribe {
     }
 
     Sympa::Log::Syslog::do_log(
-        'info',
+        Sympa::Log::Syslog::INFO,
         'SOAP subscribe : %s from %s aborted, unknown requested action in scenario',
         $listname,
         $sender

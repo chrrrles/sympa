@@ -90,7 +90,7 @@ sub analyze_file_name {
     $data->{'task_model'}  = $3;
     $data->{'task_object'} = $4;
     Sympa::Log::Syslog::do_log(
-        'debug3',              'date %s, label %s, model %s, object %s',
+        Sympa::Log::Syslog::DEBUG3,              'date %s, label %s, model %s, object %s',
         $data->{'task_date'},  $data->{'task_label'},
         $data->{'task_model'}, $data->{'task_object'}
     );

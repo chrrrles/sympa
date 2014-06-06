@@ -210,7 +210,7 @@ sub create_list_old {
         || Sympa::List->new($param->{'listname'}, $robot, {'just_try' => 1}))
     {
         Sympa::Log::Syslog::do_log(
-            'err',
+            Sympa::Log::Syslog::ERR,
             'could not create already existing list %s on %s for %s',
             $param->{'listname'},
             $robot,
@@ -431,7 +431,7 @@ sub create_list {
 
     if ($res) {
         Sympa::Log::Syslog::do_log(
-            'err',
+            Sympa::Log::Syslog::ERR,
             'could not create already existing list %s on %s for %s',
             $param->{'listname'},
             $robot,
@@ -763,7 +763,7 @@ sub rename_list {
         (Sympa::List->new($param{'new_listname'}, $new_robot, {'just_try' => 1}))
         ) {
         Sympa::Log::Syslog::do_log(
-            'err',
+            Sympa::Log::Syslog::ERR,
             'Could not rename list %s: new list %s on %s already existing list',
             $list,
             $param{'new_listname'},
@@ -886,7 +886,7 @@ sub rename_list {
             )
             ) {
             Sympa::Log::Syslog::do_log(
-                'err',
+                Sympa::Log::Syslog::ERR,
                 'Unable to change admins in database while renaming list %s to %s@%s',
                 $list,
                 $param{'new_listname'},
@@ -1008,7 +1008,7 @@ sub rename_list {
                     )
                     ) {
                     Sympa::Log::Syslog::do_log(
-                        'err',
+                        Sympa::Log::Syslog::ERR,
                         "Unable to rename %s to %s : %s",
                         Sympa::Site->$spool . "/$file",
                         Sympa::Site->$spool . "/$newfile",
@@ -1034,7 +1034,7 @@ sub rename_list {
                 )
                 ) {
                 Sympa::Log::Syslog::do_log(
-                    'err',
+                    Sympa::Log::Syslog::ERR,
                     "Unable to rename %s to %s : %s",
                     Sympa::Site->queuedigest . "/$old_listname",
                     Sympa::Site->queuedigest . "/$param{'new_listname'}",
@@ -1051,7 +1051,7 @@ sub rename_list {
                 )
                 ) {
                 Sympa::Log::Syslog::do_log(
-                    'err',
+                    Sympa::Log::Syslog::ERR,
                     "Unable to rename %s to %s : %s",
                     Sympa::Site->queuedigest . "/$old_listname\@$robot",
                     Sympa::Site->queuedigest
@@ -1115,7 +1115,7 @@ sub clone_list_as_empty {
 
     unless (mkdir $new_dir, 0775) {
         Sympa::Log::Syslog::do_log(
-            'err',
+            Sympa::Log::Syslog::ERR,
             'Admin::clone_list_as_empty : failed to create directory %s : %s',
             $new_dir,
             $ERRNO
@@ -1132,7 +1132,7 @@ sub clone_list_as_empty {
                 )
                 ) {
                 Sympa::Log::Syslog::do_log(
-                    'err',
+                    Sympa::Log::Syslog::ERR,
                     'Admin::clone_list_as_empty :  failed to copy_directory %s : %s',
                     $new_dir . '/' . $subdir,
                     $ERRNO
@@ -1150,7 +1150,7 @@ sub clone_list_as_empty {
             )
             ) {
             Sympa::Log::Syslog::do_log(
-                'err',
+                Sympa::Log::Syslog::ERR,
                 'Admin::clone_list_as_empty : failed to copy %s : %s',
                 $new_dir . '/' . $file, $ERRNO
             );
@@ -1159,7 +1159,7 @@ sub clone_list_as_empty {
     }
 
     # copy optional files
-    foreach my $file ('message.footer', 'message.header', 'info', 'homepage')
+    foreach my $file ('message.footer', 'message.header', Sympa::Log::Syslog::INFO, 'homepage')
     {
         if (-f $list->dir . '/' . $file) {
             unless (
@@ -1169,7 +1169,7 @@ sub clone_list_as_empty {
                 )
                 ) {
                 Sympa::Log::Syslog::do_log(
-                    'err',
+                    Sympa::Log::Syslog::ERR,
                     'Admin::clone_list_as_empty : failed to copy %s : %s',
                     $new_dir . '/' . $file, $ERRNO
                 );
@@ -1421,7 +1421,7 @@ sub install_aliases {
 
     if ($status == 1) {
         Sympa::Log::Syslog::do_log(
-            'err',
+            Sympa::Log::Syslog::ERR,
             'Configuration file %s has errors : %s',
             Sympa::Conf::get_sympa_conf(),
             $error_output
@@ -1432,7 +1432,7 @@ sub install_aliases {
             $error_output);
     } elsif ($status == 3) {
         Sympa::Log::Syslog::do_log(
-            'err',
+            Sympa::Log::Syslog::ERR,
             'Could not read sympa config file, report to httpd error_log: %s',
             $error_output
         );
@@ -1600,7 +1600,7 @@ sub change_user_email {
                 );
                 push @failed_for, $list;
                 Sympa::Log::Syslog::do_log(
-                    'err',
+                    Sympa::Log::Syslog::ERR,
                     'could not change member email for list %s because member is included',
                     $list
                 );
@@ -1656,7 +1656,7 @@ sub change_user_email {
                 );
                 push @failed_for, $list;
                 Sympa::Log::Syslog::do_log(
-                    'err',
+                    Sympa::Log::Syslog::ERR,
                     'could not change %s email for list %s because admin is included',
                     $role,
                     $list

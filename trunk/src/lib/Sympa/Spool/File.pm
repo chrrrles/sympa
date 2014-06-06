@@ -397,7 +397,7 @@ sub get_file_content {
     my $fh;
     unless (open $fh, $self->{'dir'} . '/' . $key) {
         Sympa::Log::Syslog::do_log(
-            'err',
+            Sympa::Log::Syslog::ERR,
             'Unable to open file %s: %s',
             $self->{'dir'} . '/' . $key, $ERRNO
         );
@@ -463,7 +463,7 @@ sub refresh_spool_files_list {
     }
     unless (opendir SPOOLDIR, $self->{'dir'}) {
         Sympa::Log::Syslog::do_log(
-            'err',
+            Sympa::Log::Syslog::ERR,
             'Unable to access %s spool. Please check proper rights are set;',
             $self->{'dir'}
         );
@@ -485,7 +485,7 @@ sub refresh_spool_dirs_list {
     }
     unless (opendir SPOOLDIR, $self->{'dir'}) {
         Sympa::Log::Syslog::do_log(
-            'err',
+            Sympa::Log::Syslog::ERR,
             'Unable to access %s spool. Please check proper rights are set;',
             $self->{'dir'}
         );
@@ -533,7 +533,7 @@ sub move_to_bad {
         )
         ) {
         Sympa::Log::Syslog::do_log(
-            'err',
+            Sympa::Log::Syslog::ERR,
             'Could not move file %s to spool bad %s: %s',
             $self->{'dir'} . '/' . $key,
             $self->{'dir'} . '/bad', $ERRNO
@@ -656,7 +656,7 @@ sub remove_message {
 
     unless (unlink $self->{'dir'} . '/' . $key) {
         Sympa::Log::Syslog::do_log(
-            'err',
+            Sympa::Log::Syslog::ERR,
             'Unable to remove file %s: %s',
             $self->{'dir'} . '/' . $key, $ERRNO
         );
@@ -684,7 +684,7 @@ sub clean {
     my $self   = shift;
     my $filter = shift;
     Sympa::Log::Syslog::do_log(
-        'debug', 'Cleaning spool %s (%s), delay: %s',
+        Sympa::Log::Syslog::DEBUG, 'Cleaning spool %s (%s), delay: %s',
         $self->{'spoolname'}, $self->{'selection_status'},
         $filter->{'delay'}
     );

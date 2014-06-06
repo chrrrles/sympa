@@ -162,7 +162,7 @@ sub load_robots {
             )
             ) {
             Sympa::Log::Syslog::do_log(
-                'err',
+                Sympa::Log::Syslog::ERR,
                 'The config for robot %s contain errors: it could not be correctly loaded.',
                 $robot
             );
@@ -259,7 +259,7 @@ sub delete_binaries {
         if (-f $binary_file) {
             unless (unlink $binary_file) {
                 Sympa::Log::Syslog::do_log(
-                    'notice',
+                    Sympa::Log::Syslog::NOTICE,
                     'Could not remove file %s: %s. You should remove it manually to ensure the configuration used is valid.',
                     $binary_file,
                     $ERRNO
@@ -322,7 +322,7 @@ sub get_db_conf {
         )
         ) {
         Sympa::Log::Syslog::do_log(
-            'err',
+            Sympa::Log::Syslog::ERR,
             'Unable retrieve value of parameter %s for robot %s from the database',
             $label,
             $robot
@@ -359,7 +359,7 @@ sub set_robot_conf {
         )
         ) {
         Sympa::Log::Syslog::do_log(
-            'err',
+            Sympa::Log::Syslog::ERR,
             'Unable to check presence of parameter %s for robot %s in database',
             $label,
             $robot
@@ -380,7 +380,7 @@ sub set_robot_conf {
             )
             ) {
             Sympa::Log::Syslog::do_log(
-                'err',
+                Sympa::Log::Syslog::ERR,
                 'Unable add value %s for parameter %s in the robot %s DB conf',
                 $value,
                 $label,
@@ -400,7 +400,7 @@ sub set_robot_conf {
             )
             ) {
             Sympa::Log::Syslog::do_log(
-                'err',
+                Sympa::Log::Syslog::ERR,
                 'Unable set parameter %s value to %s in the robot %s DB conf',
                 $label,
                 $value,
@@ -498,7 +498,7 @@ sub checkfiles_as_root {
         || ($Conf{'sendmail_aliases'} =~ /^none$/i)) {
         unless (open ALIASES, ">$Conf{'sendmail_aliases'}") {
             Sympa::Log::Syslog::do_log(
-                'err',
+                Sympa::Log::Syslog::ERR,
                 'Failed to create aliases file %s',
                 $Conf{'sendmail_aliases'}
             );
@@ -511,7 +511,7 @@ sub checkfiles_as_root {
             "## You should edit your sendmail.mc or sendmail.cf file to declare it\n";
         close ALIASES;
         Sympa::Log::Syslog::do_log(
-            'notice',
+            Sympa::Log::Syslog::NOTICE,
             "Created missing file %s",
             $Conf{'sendmail_aliases'}
         );
@@ -524,7 +524,7 @@ sub checkfiles_as_root {
             )
             ) {
             Sympa::Log::Syslog::do_log(
-                'err',
+                Sympa::Log::Syslog::ERR,
                 'Unable to set rights on %s',
                 $Conf{'sendmail_aliases'}
             );
@@ -655,7 +655,7 @@ sub checkfiles {
     ## queuebounce and bounce_path pointing to the same directory
     if ($Conf{'queuebounce'} eq $wwsconf->{'bounce_path'}) {
         Sympa::Log::Syslog::do_log(
-            'err',
+            Sympa::Log::Syslog::ERR,
             'Error in config: queuebounce and bounce_path parameters pointing to the same directory (%s)',
             $Conf{'queuebounce'}
         );
@@ -673,7 +673,7 @@ sub checkfiles {
             unless (-f $dir . '/index.html') {
                 unless (open(FF, ">$dir" . '/index.html')) {
                     Sympa::Log::Syslog::do_log(
-                        'err',
+                        Sympa::Log::Syslog::ERR,
                         'Unable to create %s/index.html as an empty file to protect directory: %s',
                         $dir,
                         $ERRNO
@@ -698,7 +698,7 @@ sub checkfiles {
                     unless (-f $index_path) {
                         unless (open(FF, ">$index_path")) {
                             Sympa::Log::Syslog::do_log(
-                                'err',
+                                Sympa::Log::Syslog::ERR,
                                 'Unable to create %s as an empty file to protect directory',
                                 $index_path
                             );
@@ -748,7 +748,7 @@ sub checkfiles {
             if (!-f $dir . '/' . $css
                 || (stat($css_tt2_path))[9] > (stat($dir . '/' . $css))[9]) {
                 Sympa::Log::Syslog::do_log(
-                    'notice',
+                    Sympa::Log::Syslog::NOTICE,
                     'TT2 file %s has changed; updating static CSS file %s/%s ; previous file renamed',
                     $css_tt2_path,
                     $dir,
@@ -813,7 +813,7 @@ sub valid_robot {
     ## Missing etc directory
     unless (-d $Conf{'etc'} . '/' . $robot) {
         Sympa::Log::Syslog::do_log(
-            'err',  'Robot %s undefined ; no %s directory',
+            Sympa::Log::Syslog::ERR,  'Robot %s undefined ; no %s directory',
             $robot, $Conf{'etc'} . '/' . $robot
         ) unless ($options->{'just_try'});
         return undef;
@@ -822,7 +822,7 @@ sub valid_robot {
     ## Missing expl directory
     unless (-d $Conf{'home'} . '/' . $robot) {
         Sympa::Log::Syslog::do_log(
-            'err',  'Robot %s undefined ; no %s directory',
+            Sympa::Log::Syslog::ERR,  'Robot %s undefined ; no %s directory',
             $robot, $Conf{'home'} . '/' . $robot
         ) unless ($options->{'just_try'});
         return undef;
@@ -1049,7 +1049,7 @@ sub _load_auth {
                         AuthCAS->new(%{$cas_param});
                     unless (defined $current_paragraph->{'cas_server'}) {
                         Sympa::Log::Syslog::do_log(
-                            'err',
+                            Sympa::Log::Syslog::ERR,
                             'Failed to create CAS object for %s: %s',
                             $current_paragraph->{'base_url'},
                             AuthCAS::get_errors()
@@ -1144,7 +1144,7 @@ sub load_charset {
             my ($lang, $cset) = split(/\s+/, $_);
             unless ($cset) {
                 Sympa::Log::Syslog::do_log(
-                    'err',
+                    Sympa::Log::Syslog::ERR,
                     'Charset name is missing in configuration file %s line %d',
                     $config_file,
                     $.
@@ -1464,7 +1464,7 @@ sub load_generic_conf_file {
             ## This should be a paragraph
             unless ($#paragraph > 0) {
                 Sympa::Log::Syslog::do_log(
-                    'notice',
+                    Sympa::Log::Syslog::NOTICE,
                     'Expecting a paragraph for "%s" parameter in %s, ignore it',
                     $pname,
                     $config_file
@@ -1700,7 +1700,7 @@ sub _detect_unknown_parameters_in_config {
         if (defined $old_params{$parameter}) {
             if ($old_params{$parameter}) {
                 Sympa::Log::Syslog::do_log(
-                    'err',
+                    Sympa::Log::Syslog::ERR,
                     'Line %d of sympa.conf, parameter %s is no more available, read documentation for new parameter(s) %s',
                     $param->{'config_file_line_numbering_reference'}
                         {$parameter}[1],
@@ -1709,7 +1709,7 @@ sub _detect_unknown_parameters_in_config {
                 );
             } else {
                 Sympa::Log::Syslog::do_log(
-                    'err',
+                    Sympa::Log::Syslog::ERR,
                     'Line %d of sympa.conf, parameter %s is now obsolete',
                     $param->{'config_file_line_numbering_reference'}
                         {$parameter}[1],
@@ -1719,7 +1719,7 @@ sub _detect_unknown_parameters_in_config {
             }
         } else {
             Sympa::Log::Syslog::do_log(
-                'err',
+                Sympa::Log::Syslog::ERR,
                 'Line %d, unknown field: %s in sympa.conf',
                 $param->{'config_file_line_numbering_reference'}{$parameter}
                     [1],
@@ -1825,7 +1825,7 @@ sub _load_server_specific_secondary_config_files {
     ## wwsympa.conf exists
     if (-f get_wwsympa_conf()) {
         Sympa::Log::Syslog::do_log(
-            'notice',
+            Sympa::Log::Syslog::NOTICE,
             '%s was found but it is no longer loaded.  Please run sympa.pl --upgrade to migrate it.',
             get_wwsympa_conf()
         );
@@ -2081,7 +2081,7 @@ sub load_robot_conf {
             $Conf{'robot_by_soap_url'}{$url} = $conf->{'robot_name'};
         }
         Sympa::Log::Syslog::do_log(
-            'debug3',
+            Sympa::Log::Syslog::DEBUG3,
             'got %s from serialized data',
             ($robot ne '*') ? "config for robot $robot" : 'main conf'
         );
@@ -2089,7 +2089,7 @@ sub load_robot_conf {
         _load_config_file_to_hash({'config_file' => $config_file})) {
         %$conf = %{$result->{'config'}};
         Sympa::Log::Syslog::do_log(
-            'debug3',
+            Sympa::Log::Syslog::DEBUG3,
             'got %s from file',
             ($robot ne '*') ? "config for robot $robot" : 'main conf'
         );
@@ -2212,7 +2212,7 @@ sub _set_listmasters_entry {
                 $number_of_valid_email++;
             } else {
                 Sympa::Log::Syslog::do_log(
-                    'err',
+                    Sympa::Log::Syslog::ERR,
                     'Robot %s config: Listmaster address "%s" is not a valid email',
                     $param->{'config_hash'}{'host'},
                     $lismaster_address
@@ -2221,7 +2221,7 @@ sub _set_listmasters_entry {
         }
     } elsif ($param->{'robot'} eq '*') {
         Sympa::Log::Syslog::do_log(
-            'err',
+            Sympa::Log::Syslog::ERR,
             'Robot %s config: No listmaster defined. This is the main config. It MUST define at least one listmaster. Stopping here.',
             $param->{'config_hash'}{'domain'}
         );
@@ -2234,7 +2234,7 @@ sub _set_listmasters_entry {
     }
     if ($number_of_email_provided > $number_of_valid_email) {
         Sympa::Log::Syslog::do_log(
-            'err',
+            Sympa::Log::Syslog::ERR,
             'Robot %s config: All the listmasters addresses found were not valid. Out of %s addresses provided, %s only are valid email addresses.',
             $param->{'config_hash'}{'host'},
             $number_of_email_provided,
@@ -2260,7 +2260,7 @@ sub _check_double_url_usage {
         and $Conf{'robot_by_http_host'}{$host}{$path} ne
         $param->{'config_hash'}{'robot_name'}) {
         Sympa::Log::Syslog::do_log(
-            'err',
+            Sympa::Log::Syslog::ERR,
             'Error: two virtual hosts (%s and %s) are mapped via a single URL "%s%s"',
             $Conf{'robot_by_http_host'}{$host}{$path},
             $param->{'config_hash'}{'robot_name'},
@@ -2329,7 +2329,7 @@ sub _save_binary_cache {
     };
     if ($EVAL_ERROR) {
         Sympa::Log::Syslog::do_log(
-            'err',
+            Sympa::Log::Syslog::ERR,
             'Failed to change owner of the binary file %s. error: %s',
             $param->{'target_file'}, $EVAL_ERROR
         );
@@ -2384,7 +2384,7 @@ sub _save_config_hash_to_binary {
         )
         ) {
         Sympa::Log::Syslog::do_log(
-            'err',
+            Sympa::Log::Syslog::ERR,
             'Could not save main config %s',
             $param->{'config_hash'}{'source_file'}
         );
@@ -2513,7 +2513,7 @@ sub _load_wwsconf {
 
     if ($conf->{'bounce_path'} && (!-d $conf->{'bounce_path'})) {
         Sympa::Log::Syslog::do_log(
-            'err',
+            Sympa::Log::Syslog::ERR,
             "Missing directory '%s' (defined by 'bounce_path' parameter)",
             $conf->{'bounce_path'}
         );
