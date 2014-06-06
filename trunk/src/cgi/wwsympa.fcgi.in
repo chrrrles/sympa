@@ -1130,9 +1130,7 @@ while ($query = new_loop()) {
 
     $param->{'cookie_domain'} = $robot->cookie_domain;
 
-    $ip = $ENV{'REMOTE_HOST'};
-    $ip = $ENV{'REMOTE_ADDR'} unless ($ip);
-    $ip = 'undef' unless ($ip);
+    $ip = $ENV{'REMOTE_HOST'} || $ENV{'REMOTE_ADDR'};
     ## In case HTTP_HOST does not match cookie_domain
     my $http_host = get_header_field('HTTP_HOST');
     $http_host =~ s/:\d+$//;                    ## suppress port

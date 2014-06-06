@@ -216,9 +216,7 @@ my $digestsleep = 5;
 srand(time());
 
 my $daemon_name = 'sympa';
-my $ip;
-$ip = $ENV{'REMOTE_HOST'};
-$ip = $ENV{'REMOTE_ADDR'} unless ($ip);
+my $ip          = $ENV{'REMOTE_HOST'} || $ENV{'REMOTE_ADDR'};
 
 my %options;
 unless (
