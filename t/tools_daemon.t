@@ -12,10 +12,11 @@ use lib "$Bin/../src/lib";
 use English qw(-no_match_vars);
 use File::Temp;
 use Test::More;
+use Test::Exception;
 
 use Sympa::Tools::Daemon;
 
-plan tests => 23;
+plan tests => 24;
 
 my $piddir  = File::Temp->newdir(CLEANUP => $ENV{TEST_DEBUG} ? 0 : 1);
 my $name    = 'test';
@@ -139,6 +140,14 @@ is_deeply(
     undef,
     'pids list'
 );
+
+throws_ok {
+    Sympa::Tools::Daemon::drop_privileges(
+        user  => 'none',
+        group => 'none',
+    );
+} qr/^no such user none/,
+'invalid user';
 
 sub slurp_file {
     my ($file) = @_;

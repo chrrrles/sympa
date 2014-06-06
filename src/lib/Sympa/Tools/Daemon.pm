@@ -26,6 +26,7 @@ package Sympa::Tools::Daemon;
 use strict;
 use warnings;
 
+use Carp qw(croak);
 use English qw(-no_match_vars);
 use Proc::ProcessTable;
 
@@ -433,6 +434,45 @@ sub get_children_processes_list {
     }
     return @children;
 }
+
+=item drop_privileges(%parameters)
+
+Set effective UID and GID for the current process.
+
+Parameters:
+
+=over
+
+=item * I<user>: the target user
+
+=item * I<group>: the target group
+
+=back
+
+=cut
+
+sub drop_privileges {
+    my (%params) = @_;
+
+    my $uid = (getpwnam($params{user}))[2];
+    croak "no such user $params{user}\n" unless defined $uid;
+    my $gid = (getpwnam($params{group}))[2];
+    croak "no such group $params{group}\n" unless defined $gid;
+
+    # Set the User ID & Group ID for the process
+    $UID = $EUID = $uid;
+    $GID = $EGID = $gid;
+
+    # Required on FreeBSD to change ALL IDs:
+    # effective UID + real UID + saved UID
+    POSIX::setuid($uid);
+    POSIX::setgid($gid);
+
+    ## Check if the UID has correctly been set (useful on OS X)
+    croak "Failed to change process user ID and group ID. Note that on some OS Perl scripts can't change their real UID. In such circumstances Sympa should be run via sudo."
+        unless $UID == $uid && $GID == $gid;
+}
+
 
 sub _get_error_file {
     my (%params) = @_;
