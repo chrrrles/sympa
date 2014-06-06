@@ -199,21 +199,8 @@ unless (Sympa::DatabaseManager::check_db_connect()) {
     );
 }
 
-## Put ourselves in background if not in debug mode.
-unless ($options{'foreground'}) {
-    open(STDERR, ">> /dev/null");
-    open(STDOUT, ">> /dev/null");
-    if (open(TTY, "/dev/tty")) {
-        ioctl(TTY, 0x20007471, 0);
-        close(TTY);
-    }
-    setpgrp(0, 0);
-    if ((my $child_pid = fork) != 0) {
-        print STDOUT "Starting archive daemon, PID $_\n";
-
-        exit(0);
-    }
-}
+# put ourselves in background if not in debug mode.
+Sympa::Tools::Daemon::daemonize('archived') unless $options{'foreground'};
 
 # check presence of a PID file from a previous execution
 Sympa::Tools::Daemon::check_old_pid_file(

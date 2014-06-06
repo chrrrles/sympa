@@ -380,36 +380,9 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
     }
 
     if ($signal ne 'hup') {
-        ## Put ourselves in background if we're not in debug mode. That method
-        ## works on many systems, although, it seems that Unix conceptors have
-        ## decided that there won't be a single and easy way to detach a
-        ## process from its controlling TTY.
-        unless ($options{'foreground'}) {
-            if (open(TTY, "/dev/tty")) {
-                ioctl(TTY, 0x20007471, 0);    # XXX s/b &TIOCNOTTY
-                close(TTY);
-            }
-            open(STDIN,  ">> /dev/null");
-            open(STDOUT, ">> /dev/null");
-            open(STDERR, ">> /dev/null");
-
-            setpgrp(0, 0);
-
-            # start the main sympa.pl daemon
-
-            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG, 'Starting server %s', $0);
-            if ((my $child_pid = fork) != 0) {
-                Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::INFO, 'Server started %s PID %s',
-                    $0, $child_pid);
-                Sympa::Log::Syslog::do_log(
-                    Sympa::Log::Syslog::DEBUG,
-                    '%s server started, PID %s, exiting from initial process',
-                    $0,
-                    $child_pid
-                );
-                exit(0);
-            }
-        }
+        # put ourselves in background if not in debug mode.
+        Sympa::Tools::Daemon::daemonize('sympa')
+            unless $options{'foreground'};
 
         Sympa::Log::Syslog::do_openlog(Sympa::Site->syslog, 'sympa');
 

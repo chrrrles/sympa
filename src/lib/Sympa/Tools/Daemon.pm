@@ -474,6 +474,46 @@ sub drop_privileges {
         unless $UID == $uid && $GID == $gid;
 }
 
+=item daemonize(%parameters)
+
+Detach the current process from its terminal, fork it, and terminate the parent.
+
+Parameters:
+
+=over
+
+=item * I<name>: daemon name
+
+=back
+
+=cut
+
+sub daemonize {
+    my (%params) = @_;
+
+    my $name = $params{name};
+
+    open(STDERR, ">> /dev/null");
+    open(STDOUT, ">> /dev/null");
+
+    if (open(TTY, "/dev/tty")) {
+        ioctl(TTY, 0x20007471, 0);    #  s/b &TIOCNOTTY
+        close(TTY);
+    }
+
+    setpgrp(0, 0);
+
+    my $pid = fork();
+
+    if ($pid) {
+        # parent
+        Sympa::Log::Syslog::do_log(
+            Sympa::Log::Syslog::INFO,
+            'Server %s started as a daemon, with PID %s', $name, $pid
+        );
+        exit(0);
+    }
+}
 
 sub _get_error_file {
     my (%params) = @_;
