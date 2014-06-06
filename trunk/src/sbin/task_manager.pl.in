@@ -207,7 +207,7 @@ unless (chdir(Sympa::Site->home)) {
     exit(-1);
 }
 
-my $taskspool = Sympa::Spool::File::Task->new();
+my $spool = Sympa::Spool::File::Task->new();
 
 ## Catch SIGTERM, in order to exit cleanly, whenever possible.
 my $end = 0;
@@ -257,13 +257,13 @@ while (!$end) {
     # Process grouped notifications
     Sympa::Site->send_notify_to_listmaster(undef, undef, 1, undef);
 
-    $taskspool->create_required_tasks($current_date);
+    $spool->create_required_tasks($current_date);
 
     ## Execute existing tasks
     ## processing of tasks anterior to the current date
     Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2,
         'Processing tasks anterior to the current date');
-    foreach my $task ($taskspool->get_content) {
+    foreach my $task ($spool->get_content) {
         last if $end;
         next unless $task->{'date'} <= $current_date;
 
@@ -301,7 +301,7 @@ while (!$end) {
             }
         }
 
-        my $result = $taskspool->remove_message($task->{'messagekey'});
+        my $result = $spool->remove_message($task->{'messagekey'});
         unless ($result) {
             Sympa::Log::Syslog::do_log(
                 Sympa::Log::Syslog::ERR,
