@@ -26,7 +26,7 @@
 
 =head1 NAME
 
-archived, archived.pl - Daemon feeding mailing list archives
+rchived, archived.pl - Daemon feeding mailing list archives
 
 =head1 SYNOPSIS
 
@@ -159,6 +159,7 @@ use Sympa::Tools::Daemon;
 use Sympa::Tools::File;
 
 my $daemon_name = 'archived';
+my $ip          = $ENV{'REMOTE_HOST'} || $ENV{'REMOTE_ADDR'};
 
 my %options;
 unless (
@@ -543,7 +544,7 @@ sub remove {
             'operation' => 'remove archive',
             'parameter' => '',
             'mail'      => 'test@cru.fr',
-            'client'    => $ENV{'REMOTE_HOST'},
+            'client'    => $ip,
             'daemon'    => $daemon_name
         }
     );
@@ -559,7 +560,7 @@ sub remove {
                 'status'       => 'succes',
                 'error_type'   => '',
                 'user_email'   => '',
-                'client'       => $ENV{'REMOTE_HOST'},
+                'client'       => $ip,
                 'daemon'       => $daemon_name
             }
         )
