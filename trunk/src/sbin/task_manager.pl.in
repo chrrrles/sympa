@@ -90,7 +90,7 @@ L<sympa(8)>, L<wwsympa(8)>
 
 =cut
 
-use strict "vars";
+use strict;
 use warnings;
 use lib '--modulesdir--';
 
