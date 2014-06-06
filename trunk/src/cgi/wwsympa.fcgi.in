@@ -91,9 +91,6 @@ BEGIN {
     }
 }
 
-## WWSympa librairies
-my %options;
-
 # Used via the Sympa::Plugin interface
 our $list;
 our $param = {};
