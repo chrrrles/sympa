@@ -158,8 +158,7 @@ use Sympa::Message;
 use Sympa::Tools::Daemon;
 use Sympa::Tools::File;
 
-my $daemon_name = Sympa::Tools::Daemon::get_daemon_name($0);
-my $ip          = $ENV{'REMOTE_HOST'};
+my $daemon_name = 'archived';
 
 my %options;
 unless (
@@ -200,18 +199,19 @@ unless (Sympa::DatabaseManager::check_db_connect()) {
 }
 
 # put ourselves in background if not in debug mode.
-Sympa::Tools::Daemon::daemonize('archived') unless $options{'foreground'};
+Sympa::Tools::Daemon::daemonize(name => $daemon_name)
+    unless $options{'foreground'};
 
 # check presence of a PID file from a previous execution
 Sympa::Tools::Daemon::check_old_pid_file(
-    name   => 'archived',
+    name   => $daemon_name,
     piddir => Sympa::Constants::PIDDIR,
     tmpdir => Sympa::Site->tmpdir(),
 );
 
 # Create the PID file
 Sympa::Tools::Daemon::write_pid(
-    name   => 'archived',
+    name   => $daemon_name,
     pid    => $PID,
     piddir => Sympa::Constants::PIDDIR,
     user   => Sympa::Constants::USER,
@@ -241,7 +241,7 @@ if ($options{'log_level'}) {
         Sympa::Site->log_level);
 }
 
-Sympa::Log::Syslog::do_openlog(Sympa::Site->log_facility, 'archived');
+Sympa::Log::Syslog::do_openlog(Sympa::Site->log_facility, $daemon_name);
 
 eval {
     Sympa::Tools::Daemon::drop_privileges(
@@ -505,8 +505,9 @@ $mailer->reaper();
 
 Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE,
     'archived exited normally due to signal');
+
 Sympa::Tools::Daemon::remove_pid(
-    name   => 'archived',
+    name   => $daemon_name,
     pid    => $PID,
     piddir => Sympa::Constants::PIDDIR,
     tmpdir => Sympa::Site->tmpdir(),
@@ -542,7 +543,7 @@ sub remove {
             'operation' => 'remove archive',
             'parameter' => '',
             'mail'      => 'test@cru.fr',
-            'client'    => $ip,
+            'client'    => $ENV{'REMOTE_HOST'},
             'daemon'    => $daemon_name
         }
     );
@@ -558,7 +559,7 @@ sub remove {
                 'status'       => 'succes',
                 'error_type'   => '',
                 'user_email'   => '',
-                'client'       => $ip,
+                'client'       => $ENV{'REMOTE_HOST'},
                 'daemon'       => $daemon_name
             }
         )

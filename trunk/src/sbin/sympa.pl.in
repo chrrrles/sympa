@@ -218,7 +218,7 @@ srand(time());
 my $version_string =
     sprintf("Sympa version is %s\n", Sympa::Constants::VERSION);
 
-my $daemon_name = Sympa::Tools::Daemon::get_daemon_name($0);
+my $daemon_name = 'sympa';
 my $ip;
 $ip = $ENV{'REMOTE_HOST'};
 $ip = $ENV{'REMOTE_ADDR'} unless ($ip);
@@ -381,10 +381,10 @@ while ($signal ne 'term') {    #as long as a SIGTERM is not received }
 
     if ($signal ne 'hup') {
         # put ourselves in background if not in debug mode.
-        Sympa::Tools::Daemon::daemonize('sympa')
+        Sympa::Tools::Daemon::daemonize(name => $daemon_name)
             unless $options{'foreground'};
 
-        Sympa::Log::Syslog::do_openlog(Sympa::Site->syslog, 'sympa');
+        Sympa::Log::Syslog::do_openlog(Sympa::Site->syslog, $daemon_name);
 
         Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG, 'Running server %d', $PID);
 

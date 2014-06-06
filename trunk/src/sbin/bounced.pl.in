@@ -154,6 +154,8 @@ use Sympa::Site;
 use Sympa::Spool::File;
 use Sympa::Tools::Daemon;
 
+my $daemon_name = 'bounced';
+
 my %options;
 unless (
     GetOptions(
@@ -177,9 +179,6 @@ if ($options{'debug'}) {
 
 $options{'log_to_stderr'} = 1 if $options{'foreground'};
 
-my $daemon_name = Sympa::Tools::Daemon::get_daemon_name($0);
-my $ip          = $ENV{'REMOTE_HOST'};
-
 # Load sympa.conf
 unless (defined Sympa::Robot::get_robots()) {
     Sympa::Log::Syslog::fatal_err(
@@ -198,18 +197,19 @@ unless (Sympa::DatabaseManager::check_db_connect()) {
 }
 
 # put ourselves in background if not in debug mode.
-Sympa::Tools::Daemon::daemonize('bounced') unless $options{'foreground'};
+Sympa::Tools::Daemon::daemonize(name => $daemon_name)
+    unless $options{'foreground'};
 
 # check presence of a PID file from a previous execution
 Sympa::Tools::Daemon::check_old_pid_file(
-    name   => 'bounced',
+    name   => $daemon_name,
     piddir => Sympa::Constants::PIDDIR,
     tmpdir => Sympa::Site->tmpdir(),
 );
 
 # Create the PID file
 Sympa::Tools::Daemon::write_pid(
-    name   => 'bounced',
+    name   => $daemon_name,
     pid    => $PID,
     piddir => Sympa::Constants::PIDDIR,
     user   => Sympa::Constants::USER,
@@ -240,7 +240,7 @@ if ($options{'log_level'}) {
         Sympa::Site->log_level);
 }
 
-Sympa::Log::Syslog::do_openlog(Sympa::Site->log_facility, 'bounced');
+Sympa::Log::Syslog::do_openlog(Sympa::Site->log_facility, $daemon_name);
 
 eval {
     Sympa::Tools::Daemon::drop_privileges(
@@ -342,8 +342,9 @@ while (!$end) {
 Sympa::Site->send_notify_to_listmaster(undef, undef, undef, 1);
 
 Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE, 'bounced exited normally due to signal');
+
 Sympa::Tools::Daemon::remove_pid(
-    name   => 'bounced',
+    name   => $daemon_name,
     pid    => $PID,
     piddir => Sympa::Constants::PIDDIR,
     tmpdir => Sympa::Site->tmpdir(),
