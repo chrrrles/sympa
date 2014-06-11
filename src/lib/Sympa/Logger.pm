@@ -67,6 +67,7 @@ sub _new {
     my $self = {
         level => $params{level} || INFO
     };
+    bless $self, $class;
 
     return $self;
 }
