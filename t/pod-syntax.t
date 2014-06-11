@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 # -*- indent-tabs-mode: t; -*-
-# vim:ft=perl:noet:sw=8:textwidth=78
+# vim:ft=perl:et:sw=4
 # $Id: pod-syntax.t 8623 2013-02-11 14:52:18Z rousse $
 
 use strict;
