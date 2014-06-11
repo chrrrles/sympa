@@ -43,13 +43,13 @@ use Sys::Syslog;
 
 # map internal constants against syslog levels
 my %syslog_levels = (
-    ERR    => Sys::Syslog::LOG_ERR,
-    INFO   => Sys::Syslog::LOG_INFO,
-    NOTICE => Sys::Syslog::LOG_NOTICE,
-    TRACE  => Sys::Syslog::LOG_NOTICE,
-    DEBUG  => Sys::Syslog::LOG_DEBUG,
-    DEBUG2 => Sys::Syslog::LOG_DEBUG,
-    DEBUG3 => Sys::Syslog::LOG_DEBUG,
+    Sympa::Logger::ERR    => Sys::Syslog::LOG_ERR,
+    Sympa::Logger::INFO   => Sys::Syslog::LOG_INFO,
+    Sympa::Logger::NOTICE => Sys::Syslog::LOG_NOTICE,
+    Sympa::Logger::TRACE  => Sys::Syslog::LOG_NOTICE,
+    Sympa::Logger::DEBUG  => Sys::Syslog::LOG_DEBUG,
+    Sympa::Logger::DEBUG2 => Sys::Syslog::LOG_DEBUG,
+    Sympa::Logger::DEBUG3 => Sys::Syslog::LOG_DEBUG,
 );
 
 =head1 CLASS METHODS
