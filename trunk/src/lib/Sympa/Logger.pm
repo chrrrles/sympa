@@ -51,13 +51,13 @@ use English qw(-no_match_vars);
 
 # map internal constants against sympa 'log_level' directive
 my %sympa_levels = (
-    ERR    => 0,
-    INFO   => 0,
-    NOTICE => 0,
-    TRACE  => 0,
-    DEBUG  => 1,
-    DEBUG2 => 2,
-    DEBUG3 => 3,
+    Sympa::Logger::ERR    => 0,
+    Sympa::Logger::INFO   => 0,
+    Sympa::Logger::NOTICE => 0,
+    Sympa::Logger::TRACE  => 0,
+    Sympa::Logger::DEBUG  => 1,
+    Sympa::Logger::DEBUG2 => 2,
+    Sympa::Logger::DEBUG3 => 3,
 );
 
 # abstract constructor for subclasses
@@ -65,7 +65,7 @@ sub _new {
     my ($class, %params) = @_;
 
     my $self = {
-        level => $params{level} || INFO
+        level => $params{level} || 0
     };
     bless $self, $class;
 
