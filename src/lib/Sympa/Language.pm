@@ -50,11 +50,6 @@ BEGIN {
     Locale::Messages::bind_textdomain_codeset(web_help => 'utf-8');
 }
 
-INIT {
-    ## Initialize lang/locale.
-    SetLang('en');
-}
-
 ## The locale is the gettext catalog name; lang is the IETF language tag.
 ## Ex: locale = pt_BR ; lang = pt-BR
 my ($current_lang, $current_locale, $current_charset, @previous_lang);

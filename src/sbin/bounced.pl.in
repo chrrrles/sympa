@@ -217,6 +217,9 @@ our $mailer = Sympa::Mailer->new(
     nrcpt_by_domain => Sympa::Site->nrcpt_by_domain(),
 );
 
+# initialize i18n subsystem
+Sympa::Language::SetLang(Sympa::Site->lang || 'en');
+
 # put ourselves in background if not in debug mode.
 Sympa::Tools::Daemon::daemonize(name => $daemon_name)
     unless $options{'foreground'};

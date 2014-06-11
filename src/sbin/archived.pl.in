@@ -220,6 +220,9 @@ our $mailer = Sympa::Mailer->new(
     nrcpt_by_domain => Sympa::Site->nrcpt_by_domain(),
 );
 
+# initialize i18n subsystem
+Sympa::Language::SetLang(Sympa::Site->lang || 'en');
+
 # put ourselves in background if not in debug mode.
 Sympa::Tools::Daemon::daemonize(name => $daemon_name)
     unless $options{'foreground'};
@@ -283,8 +286,6 @@ unless (chdir(Sympa::Site->home)) {
     Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'unable to change directory');
     exit(-1);
 }
-
-Sympa::Language::SetLang(Sympa::Site->lang || 'en');
 
 ## Catch SIGTERM, in order to exit cleanly, whenever possible.
 my $end = 0;

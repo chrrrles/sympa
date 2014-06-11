@@ -970,7 +970,7 @@ my %filtering = (
 );
 
 ## Set locale configuration
-Sympa::Language::SetLang(Sympa::Site->lang);
+Sympa::Language::SetLang(Sympa::Site->lang || 'en');
 
 ## Important to leave this there because it defined defaults for
 ## user_data_source
