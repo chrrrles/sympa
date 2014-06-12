@@ -44,6 +44,7 @@ use Sympa::Conf;
 use Sympa::Constants;
 use Sympa::Language;
 use Sympa::List;
+use Sympa::Log::Database;
 use Sympa::Log::Syslog;
 use Sympa::Site;
 use Sympa::Tools;
@@ -313,7 +314,7 @@ sub create_list_old {
     #log in stat_table to make statistics
 
     if ($origin eq "web") {
-        Sympa::Log::Syslog::db_stat_log(
+        Sympa::Log::Database::db_stat_log(
             'robot'     => $robot_id,
             'list'      => $param->{'listname'},
             'operation' => 'create list',

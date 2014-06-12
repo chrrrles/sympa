@@ -539,7 +539,7 @@ sub remove {
     Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE, 'Removing %s in list %s section %s',
         $msgid, $adrlist, $arc);
 
-    Sympa::Log::Syslog::db_stat_log(
+    Sympa::Log::Database::db_stat_log(
         'robot'     => $robot,
         'list'      => $adrlist,
         'operation' => 'remove archive',
