@@ -475,9 +475,7 @@ sub delete_bouncer {
                 'robot'     => $self->{'list'}->domain,
                 'list'      => $self->{'list'}->name,
                 'operation' => 'auto_del',
-                'parameter' => '',
                 'mail'      => $self->{'who'},
-                'client'    => '',
                 'daemon'    => 'bounced.pl'
             );
 
@@ -1186,7 +1184,6 @@ sub update_subscriber_bounce_history {
             'action'       => 'get_bounce',
             'parameters'   => "address=$rcpt",
             'target_email' => $bouncefor,
-            'msg_id'       => '',
             'status'       => 'error',
             'error_type'   => $status,
             'daemon'       => 'bounced'
@@ -1202,7 +1199,6 @@ sub update_subscriber_bounce_history {
             'list'         => $list->name,
             'action'       => 'get_bounce',
             'target_email' => $bouncefor,
-            'msg_id'       => '',
             'status'       => 'error',
             'error_type'   => $status,
             'daemon'       => 'bounced'

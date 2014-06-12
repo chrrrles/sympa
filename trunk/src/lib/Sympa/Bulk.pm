@@ -373,7 +373,6 @@ sub store {
                     'operation' => 'send_mail',
                     'parameter' => $message->{'size'},
                     'mail'      => $message_sender,
-                    'client'    => '',
                     'daemon'    => 'sympa.pl'
                 );
             }

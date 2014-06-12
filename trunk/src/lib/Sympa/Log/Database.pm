@@ -68,15 +68,15 @@ sub get_log_date {
 sub db_log {
     my (%params) = @_;
 
-    my $list         = $params{'list'};
+    my $list         = $params{'list'} || '';
     my $robot        = $params{'robot'};
     my $action       = $params{'action'};
-    my $parameters   = $params{'parameters'};
-    my $target_email = $params{'target_email'};
-    my $msg_id       = Sympa::Tools::clean_msg_id($params{'msg_id'});
+    my $parameters   = $params{'parameters'} || '';
+    my $target_email = $params{'target_email'} || '';
+    my $msg_id       = Sympa::Tools::clean_msg_id($params{'msg_id'}) || '';
     my $status       = $params{'status'};
-    my $error_type   = $params{'error_type'};
-    my $user_email   = Sympa::Tools::clean_msg_id($params{'user_email'});
+    my $error_type   = $params{'error_type'} || '';
+    my $user_email   = Sympa::Tools::clean_msg_id($params{'user_email'}) || '';
     my $client       = $params{'client'};
     my $daemon       = $params{'daemon'};
     my $date         = Time::HiRes::time;
@@ -146,9 +146,9 @@ sub db_stat_log {
     my $date   = time;               #epoch time : time since 1st january 1970
     my $mail   = $params{'mail'};
     my $daemon = $params{'daemon'};
-    my $ip     = $params{'client'};
+    my $ip     = $params{'client'} || '';
     my $robot  = $params{'robot'};
-    my $parameter = $params{'parameter'};
+    my $parameter = $params{'parameter'} || '';
     my $random    = int(rand(1000000));
     my $id        = $date . $random;
     my $read      = 0;
