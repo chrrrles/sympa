@@ -36,6 +36,7 @@ This is a logger implementation sending every message to syslog daemon.
 package Sympa::Logger::Syslog;
 
 use strict;
+use base qw(Sympa::Logger);
 
 use English qw(-no_match_vars);
 
