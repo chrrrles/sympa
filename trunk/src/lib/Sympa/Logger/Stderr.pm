@@ -67,10 +67,10 @@ sub new {
 }
 
 sub _do_log {
-    my ($self, $level, $message) = @_;
+    my ($self, $level, $message, @args) = @_;
 
     $message =~ s/%m/$ERRNO/g;
-    printf STDERR $message . "\n";
+    printf STDERR $message . "\n", @args;
 }
 
 =back
