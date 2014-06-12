@@ -29,6 +29,7 @@ use base qw(Sympa::Message);
 
 use English qw(-no_match_vars);
 
+use Sympa::Log::Database;
 use Sympa::Log::Syslog;
 use Sympa::Site;
 use Sympa::Tracking;
@@ -470,7 +471,7 @@ sub delete_bouncer {
                 'error_type'   => 'welcome_bounced',
                 'daemon'       => 'bounced'
             );
-            Sympa::Log::Syslog::db_stat_log(
+            Sympa::Log::Database::db_stat_log(
                 'robot'     => $self->{'list'}->domain,
                 'list'      => $self->{'list'}->name,
                 'operation' => 'auto_del',
