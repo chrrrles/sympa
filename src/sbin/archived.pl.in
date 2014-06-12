@@ -543,7 +543,6 @@ sub remove {
         'robot'     => $robot,
         'list'      => $adrlist,
         'operation' => 'remove archive',
-        'parameter' => '',
         'mail'      => 'test@cru.fr',
         'client'    => $ip,
         'daemon'    => $daemon_name
@@ -555,11 +554,8 @@ sub remove {
             'list'         => $adrlist,
             'action'       => 'remove',
             'parameters'   => $msgid . ',' . $adrlist,
-            'target_email' => '',
             'msg_id'       => $msgid,
             'status'       => 'succes',
-            'error_type'   => '',
-            'user_email'   => '',
             'client'       => $ip,
             'daemon'       => $daemon_name
         )

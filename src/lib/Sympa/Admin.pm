@@ -318,9 +318,7 @@ sub create_list_old {
             'robot'     => $robot_id,
             'list'      => $param->{'listname'},
             'operation' => 'create list',
-            'parameter' => '',
             'mail'      => $user_mail,
-            'client'    => '',
             'daemon'    => 'wwsympa.fcgi'
         );
     }
