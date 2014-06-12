@@ -16,8 +16,19 @@ use Test::Exception;
 
 use Sympa::Logger;
 use Sympa::Logger::Memory;
+use Sympa::Task;
 
-plan tests => 26;
+my @sanitization_tests = (
+    [ 'foo',               'foo',       'scalar sanitization'  ],
+    [ [ 'foo' ],          '[...]',      'array ref sanitization' ],
+    [ { arg1 => 'foo' }, '{arg1}',      'hash ref sanitization' ],
+    [ qr/^foo$/,          '(?^:^foo$)', 'regexp ref sanitization' ],
+    [ Sympa::Task->new(model => 'foo', flavour => 'bar'),
+        'Sympa::Task::Global <foo.bar>', 'sympa object sanitization' ],
+);
+
+plan tests => 
+    scalar @sanitization_tests + 26;
 
 my $logger = Sympa::Logger::Memory->new();
 ok($logger, 'logger is defined');
@@ -93,3 +104,7 @@ like($logger->{messages}->[-1], qr/debug2$/, 'DEBUG2 message has been logged');
 
 $logger->do_log(Sympa::Logger::DEBUG3, 'debug3');
 like($logger->{messages}->[-1], qr/debug2$/, 'DEBUG3 message has not been logged');
+
+foreach my $test (@sanitization_tests) {
+    is(Sympa::Logger::_sanitize_arg($test->[0]), $test->[1], $test->[2]);
+}

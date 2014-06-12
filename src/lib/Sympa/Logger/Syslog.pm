@@ -96,9 +96,9 @@ sub DESTROY {
 }
 
 sub _do_log {
-    my ($self, $level, $message) = @_;
+    my ($self, $level, $message, @args) = @_;
 
-    Sys::Syslog::syslog($syslog_levels{$level}, $message);
+    Sys::Syslog::syslog($syslog_levels{$level}, $message, @args);
 }
 
 =back

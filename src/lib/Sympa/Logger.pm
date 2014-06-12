@@ -101,39 +101,13 @@ sub get_level {
 =cut
 
 sub do_log {
-    my ($self, $level, $message) = @_;
+    my ($self, $level, $message, @args) = @_;
 
     # do not log if log level is too high regarding the log requested by user
     return if $sympa_levels{$level} > $self->{level};
 
-    my @param   = ();
-
-    ## Do not display variables which are references.
-    my @n = ($message =~ /(%[^%])/g);
-    for (my $i = 0; $i < scalar @n; $i++) {
-        my $p = $_[$i];
-        unless (defined $p) {
-
-            # prevent 'Use of uninitialized value' warning
-            push @param, '';
-        } elsif (ref $p) {
-            if (ref $p eq 'ARRAY') {
-                push @param, '[...]';
-            } elsif (ref $p eq 'HASH') {
-                push @param, sprintf('{%s}', join('/', keys %{$p}));
-            } elsif (ref $p eq 'Regexp' or ref $p eq uc ref $p) {
-
-                # other unblessed references
-                push @param, ref $p;
-            } elsif ($p->can('get_id')) {
-                push @param, sprintf('%s <%s>', ref $p, $p->get_id);
-            } else {
-                push @param, ref $p;
-            }
-        } else {
-            push @param, $p;
-        }
-    }
+    # sanitize args
+    @args = map { _sanitize_arg($_) } @args;
 
     ## Determine calling function
     my $caller_string;
@@ -169,7 +143,33 @@ sub do_log {
 
     $message = $caller_string . ' ' . $message if ($caller_string);
 
-    $self->_do_log($level, $message);
+    $self->_do_log($level, $message, @args);
+}
+
+sub _sanitize_arg {
+    my ($arg) = @_;
+
+    # prevent 'Use of uninitialized value' warning
+    return '' if !defined $arg;
+    
+    my $type = ref $arg;
+
+    return $arg if !$type;
+
+    # array reference
+    return '[...]' if $type eq 'ARRAY';
+
+    # hash reference
+    return sprintf('{%s}', join('/', keys %{$arg})) if $type eq 'HASH';
+
+    # other unblessed references
+    return $arg if $type eq 'Regexp' or $type eq uc($type);
+
+    # object with get_id() method
+    return sprintf('%s <%s>', $type, $arg->get_id) if $arg->can('get_id');
+
+    # other kind of object
+    return $arg;
 }
 
 =back
