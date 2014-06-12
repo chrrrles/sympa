@@ -540,30 +540,28 @@ sub remove {
         $msgid, $adrlist, $arc);
 
     Sympa::Log::Syslog::db_stat_log(
-        {   'robot'     => $robot,
-            'list'      => $adrlist,
-            'operation' => 'remove archive',
-            'parameter' => '',
-            'mail'      => 'test@cru.fr',
-            'client'    => $ip,
-            'daemon'    => $daemon_name
-        }
+        'robot'     => $robot,
+        'list'      => $adrlist,
+        'operation' => 'remove archive',
+        'parameter' => '',
+        'mail'      => 'test@cru.fr',
+        'client'    => $ip,
+        'daemon'    => $daemon_name
     );
 
     unless (
         Sympa::Log::Database::db_log(
-            {   'robot'        => $robot,
-                'list'         => $adrlist,
-                'action'       => 'remove',
-                'parameters'   => $msgid . ',' . $adrlist,
-                'target_email' => '',
-                'msg_id'       => $msgid,
-                'status'       => 'succes',
-                'error_type'   => '',
-                'user_email'   => '',
-                'client'       => $ip,
-                'daemon'       => $daemon_name
-            }
+            'robot'        => $robot,
+            'list'         => $adrlist,
+            'action'       => 'remove',
+            'parameters'   => $msgid . ',' . $adrlist,
+            'target_email' => '',
+            'msg_id'       => $msgid,
+            'status'       => 'succes',
+            'error_type'   => '',
+            'user_email'   => '',
+            'client'       => $ip,
+            'daemon'       => $daemon_name
         )
         ) {
         Sympa::Log::Syslog::do_log('error',

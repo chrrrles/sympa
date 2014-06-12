@@ -66,19 +66,19 @@ sub get_log_date {
 
 # add log in RDBMS
 sub db_log {
-    my $arg = shift;
+    my (%params) = @_;
 
-    my $list         = $arg->{'list'};
-    my $robot        = $arg->{'robot'};
-    my $action       = $arg->{'action'};
-    my $parameters   = $arg->{'parameters'};
-    my $target_email = $arg->{'target_email'};
-    my $msg_id       = Sympa::Tools::clean_msg_id($arg->{'msg_id'});
-    my $status       = $arg->{'status'};
-    my $error_type   = $arg->{'error_type'};
-    my $user_email   = Sympa::Tools::clean_msg_id($arg->{'user_email'});
-    my $client       = $arg->{'client'};
-    my $daemon       = $arg->{'daemon'};
+    my $list         = $params{'list'};
+    my $robot        = $params{'robot'};
+    my $action       = $params{'action'};
+    my $parameters   = $params{'parameters'};
+    my $target_email = $params{'target_email'};
+    my $msg_id       = Sympa::Tools::clean_msg_id($params{'msg_id'});
+    my $status       = $params{'status'};
+    my $error_type   = $params{'error_type'};
+    my $user_email   = Sympa::Tools::clean_msg_id($params{'user_email'});
+    my $client       = $params{'client'};
+    my $daemon       = $params{'daemon'};
     my $date         = Time::HiRes::time;
     my $random       = int(rand(1000000));
     my $id           = int($date * 1000) . $random;
@@ -139,16 +139,16 @@ sub db_log {
 
 #insert data in stats table
 sub db_stat_log {
-    my $arg = shift;
+    my (%params) = @_;
 
-    my $list      = $arg->{'list'};
-    my $operation = $arg->{'operation'};
+    my $list      = $params{'list'};
+    my $operation = $params{'operation'};
     my $date   = time;               #epoch time : time since 1st january 1970
-    my $mail   = $arg->{'mail'};
-    my $daemon = $arg->{'daemon'};
-    my $ip     = $arg->{'client'};
-    my $robot  = $arg->{'robot'};
-    my $parameter = $arg->{'parameter'};
+    my $mail   = $params{'mail'};
+    my $daemon = $params{'daemon'};
+    my $ip     = $params{'client'};
+    my $robot  = $params{'robot'};
+    my $parameter = $params{'parameter'};
     my $random    = int(rand(1000000));
     my $id        = $date . $random;
     my $read      = 0;
@@ -186,15 +186,15 @@ sub db_stat_log {
 }    #end sub
 
 sub db_stat_counter_log {
-    my $arg = shift;
+    my (%params) = @_;
 
-    my $date_deb  = $arg->{'begin_date'};
-    my $date_fin  = $arg->{'end_date'};
-    my $data      = $arg->{'data'};
-    my $list      = $arg->{'list'};
-    my $variation = $arg->{'variation'};
-    my $total     = $arg->{'total'};
-    my $robot     = $arg->{'robot'};
+    my $date_deb  = $params{'begin_date'};
+    my $date_fin  = $params{'end_date'};
+    my $data      = $params{'data'};
+    my $list      = $params{'list'};
+    my $variation = $params{'variation'};
+    my $total     = $params{'total'};
+    my $robot     = $params{'robot'};
     my $random    = int(rand(1000000));
     my $id        = $date_deb . $random;
 
@@ -510,16 +510,15 @@ sub aggregate_data {
                     keys(%{$aggregated_data->{$key_op}->{$key_robot}})) {
 
                     db_stat_counter_log(
-                        {   'begin_date' => $begin_date,
-                            'end_date'   => $end_date,
-                            'data'       => $key_op,
-                            'list'       => $key_list,
-                            'variation' =>
-                                $aggregated_data->{$key_op}->{$key_robot}
-                                ->{$key_list}->{'count'},
-                            'total' => '',
-                            'robot' => $key_robot
-                        }
+                        'begin_date' => $begin_date,
+                        'end_date'   => $end_date,
+                        'data'       => $key_op,
+                        'list'       => $key_list,
+                        'variation' =>
+                            $aggregated_data->{$key_op}->{$key_robot}
+                            ->{$key_list}->{'count'},
+                        'total' => '',
+                        'robot' => $key_robot
                     );
 
                     #updating susbcriber_table
@@ -554,16 +553,15 @@ sub aggregate_data {
                     keys(%{$aggregated_data->{$key_op}->{$key_robot}})) {
 
                     db_stat_counter_log(
-                        {   'begin_date' => $begin_date,
-                            'end_date'   => $end_date,
-                            'data'       => $key_op,
-                            'list'       => $key_list,
-                            'variation' =>
-                                $aggregated_data->{$key_op}->{$key_robot}
-                                ->{$key_list}->{'count'},
-                            'total' => '',
-                            'robot' => $key_robot
-                        }
+                        'begin_date' => $begin_date,
+                        'end_date'   => $end_date,
+                        'data'       => $key_op,
+                        'list'       => $key_list,
+                        'variation' =>
+                            $aggregated_data->{$key_op}->{$key_robot}
+                            ->{$key_list}->{'count'},
+                        'total' => '',
+                        'robot' => $key_robot
                     );
                 }
             }
@@ -586,16 +584,15 @@ sub aggregate_data {
                         ) {
 
                         db_stat_counter_log(
-                            {   'begin_date' => $begin_date,
-                                'end_date'   => $end_date,
-                                'data'       => $key_param,
-                                'list'       => $key_list,
-                                'variation' =>
-                                    $aggregated_data->{$key_op}->{$key_robot}
-                                    ->{$key_list}->{$key_param},
-                                'total' => '',
-                                'robot' => $key_robot
-                            }
+                            'begin_date' => $begin_date,
+                            'end_date'   => $end_date,
+                            'data'       => $key_param,
+                            'list'       => $key_list,
+                            'variation' =>
+                                $aggregated_data->{$key_op}->{$key_robot}
+                                ->{$key_list}->{$key_param},
+                            'total' => '',
+                            'robot' => $key_robot
                         );
 
                     }
@@ -609,15 +606,14 @@ sub aggregate_data {
             foreach my $key_robot (keys(%{$aggregated_data->{$key_op}})) {
 
                 db_stat_counter_log(
-                    {   'begin_date' => $begin_date,
-                        'end_date'   => $end_date,
-                        'data'       => $key_op,
-                        'list'       => '',
-                        'variation' =>
-                            $aggregated_data->{$key_op}->{$key_robot},
-                        'total' => '',
-                        'robot' => $key_robot
-                    }
+                    'begin_date' => $begin_date,
+                    'end_date'   => $end_date,
+                    'data'       => $key_op,
+                    'list'       => '',
+                    'variation' =>
+                        $aggregated_data->{$key_op}->{$key_robot},
+                    'total' => '',
+                    'robot' => $key_robot
                 );
             }
         }
@@ -628,15 +624,14 @@ sub aggregate_data {
             foreach my $key_robot (keys(%{$aggregated_data->{$key_op}})) {
 
                 db_stat_counter_log(
-                    {   'begin_date' => $begin_date,
-                        'end_date'   => $end_date,
-                        'data'       => $key_op,
-                        'list'       => '',
-                        'variation' =>
-                            $aggregated_data->{$key_op}->{$key_robot},
-                        'total' => '',
-                        'robot' => $key_robot
-                    }
+                    'begin_date' => $begin_date,
+                    'end_date'   => $end_date,
+                    'data'       => $key_op,
+                    'list'       => '',
+                    'variation' =>
+                        $aggregated_data->{$key_op}->{$key_robot},
+                    'total' => '',
+                    'robot' => $key_robot
                 );
             }
         }
@@ -647,15 +642,14 @@ sub aggregate_data {
             foreach my $key_robot (keys(%{$aggregated_data->{$key_op}})) {
 
                 db_stat_counter_log(
-                    {   'begin_date' => $begin_date,
-                        'end_date'   => $end_date,
-                        'data'       => $key_op,
-                        'list'       => '',
-                        'variation' =>
-                            $aggregated_data->{$key_op}->{$key_robot},
-                        'total' => '',
-                        'robot' => $key_robot
-                    }
+                    'begin_date' => $begin_date,
+                    'end_date'   => $end_date,
+                    'data'       => $key_op,
+                    'list'       => '',
+                    'variation' =>
+                        $aggregated_data->{$key_op}->{$key_robot},
+                    'total' => '',
+                    'robot' => $key_robot
                 );
             }
         }
@@ -666,15 +660,14 @@ sub aggregate_data {
             foreach my $key_robot (keys(%{$aggregated_data->{$key_op}})) {
 
                 db_stat_counter_log(
-                    {   'begin_date' => $begin_date,
-                        'end_date'   => $end_date,
-                        'data'       => $key_op,
-                        'list'       => '',
-                        'variation' =>
-                            $aggregated_data->{$key_op}->{$key_robot},
-                        'total' => '',
-                        'robot' => $key_robot
-                    }
+                    'begin_date' => $begin_date,
+                    'end_date'   => $end_date,
+                    'data'       => $key_op,
+                    'list'       => '',
+                    'variation' =>
+                        $aggregated_data->{$key_op}->{$key_robot},
+                    'total' => '',
+                    'robot' => $key_robot
                 );
             }
         }
@@ -688,16 +681,15 @@ sub aggregate_data {
                     keys(%{$aggregated_data->{$key_op}->{$key_robot}})) {
 
                     db_stat_counter_log(
-                        {   'begin_date' => $begin_date,
-                            'end_date'   => $end_date,
-                            'data'       => $key_op,
-                            'list'       => $key_list,
-                            'variation' =>
-                                $aggregated_data->{$key_op}->{$key_robot}
-                                ->{$key_list},
-                            'total' => '',
-                            'robot' => $key_robot
-                        }
+                        'begin_date' => $begin_date,
+                        'end_date'   => $end_date,
+                        'data'       => $key_op,
+                        'list'       => $key_list,
+                        'variation' =>
+                            $aggregated_data->{$key_op}->{$key_robot}
+                            ->{$key_list},
+                        'total' => '',
+                        'robot' => $key_robot
                     );
                 }
             }
@@ -709,15 +701,14 @@ sub aggregate_data {
             foreach my $key_robot (keys(%{$aggregated_data->{$key_op}})) {
 
                 db_stat_counter_log(
-                    {   'begin_date' => $begin_date,
-                        'end_date'   => $end_date,
-                        'data'       => $key_op,
-                        'list'       => '',
-                        'variation' =>
-                            $aggregated_data->{$key_op}->{$key_robot},
-                        'total' => '',
-                        'robot' => $key_robot
-                    }
+                    'begin_date' => $begin_date,
+                    'end_date'   => $end_date,
+                    'data'       => $key_op,
+                    'list'       => '',
+                    'variation' =>
+                        $aggregated_data->{$key_op}->{$key_robot},
+                    'total' => '',
+                    'robot' => $key_robot
                 );
             }
         }
@@ -731,16 +722,15 @@ sub aggregate_data {
                     keys(%{$aggregated_data->{$key_op}->{$key_robot}})) {
 
                     db_stat_counter_log(
-                        {   'begin_date' => $begin_date,
-                            'end_date'   => $end_date,
-                            'data'       => $key_op,
-                            'list'       => $key_list,
-                            'variation' =>
-                                $aggregated_data->{$key_op}->{$key_robot}
-                                ->{$key_list},
-                            'total' => '',
-                            'robot' => $key_robot
-                        }
+                        'begin_date' => $begin_date,
+                        'end_date'   => $end_date,
+                        'data'       => $key_op,
+                        'list'       => $key_list,
+                        'variation' =>
+                            $aggregated_data->{$key_op}->{$key_robot}
+                            ->{$key_list},
+                        'total' => '',
+                        'robot' => $key_robot
                     );
                 }
             }
@@ -756,16 +746,15 @@ sub aggregate_data {
                     keys(%{$aggregated_data->{$key_op}->{$key_robot}})) {
 
                     db_stat_counter_log(
-                        {   'begin_date' => $begin_date,
-                            'end_date'   => $end_date,
-                            'data'       => $key_op,
-                            'list'       => $key_list,
-                            'variation' =>
-                                $aggregated_data->{$key_op}->{$key_robot}
-                                ->{$key_list},
-                            'total' => '',
-                            'robot' => $key_robot
-                        }
+                        'begin_date' => $begin_date,
+                        'end_date'   => $end_date,
+                        'data'       => $key_op,
+                        'list'       => $key_list,
+                        'variation' =>
+                            $aggregated_data->{$key_op}->{$key_robot}
+                            ->{$key_list},
+                        'total' => '',
+                        'robot' => $key_robot
                     );
                 }
             }
@@ -781,16 +770,15 @@ sub aggregate_data {
                     keys(%{$aggregated_data->{$key_op}->{$key_robot}})) {
 
                     db_stat_counter_log(
-                        {   'begin_date' => $begin_date,
-                            'end_date'   => $end_date,
-                            'data'       => $key_op,
-                            'list'       => $key_list,
-                            'variation' =>
-                                $aggregated_data->{$key_op}->{$key_robot}
-                                ->{$key_list},
-                            'total' => '',
-                            'robot' => $key_robot
-                        }
+                        'begin_date' => $begin_date,
+                        'end_date'   => $end_date,
+                        'data'       => $key_op,
+                        'list'       => $key_list,
+                        'variation' =>
+                            $aggregated_data->{$key_op}->{$key_robot}
+                            ->{$key_list},
+                        'total' => '',
+                        'robot' => $key_robot
                     );
                 }
             }
@@ -1151,26 +1139,27 @@ sub get_last_date_aggregation {
 }
 
 sub agregate_daily_data {
-    my $param = shift;
+    my (%params) = shift;
+
     Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, 'Agregating data');
     my $result;
-    my $first_date = $param->{'first_date'} || time;
-    my $last_date  = $param->{'last_date'}  || time;
-    foreach my $begin_date (sort keys %{$param->{'hourly_data'}}) {
+    my $first_date = $params{'first_date'} || time;
+    my $last_date  = $params{'last_date'}  || time;
+    foreach my $begin_date (sort keys %{$params{'hourly_data'}}) {
         my $reftime = Sympa::Tools::Time::get_midnight_time($begin_date);
-        unless (defined $param->{'first_date'}) {
+        unless (defined $params{'first_date'}) {
             $first_date = $reftime if ($reftime < $first_date);
         }
         next
             if ($begin_date < $first_date
-            || $param->{'hourly_data'}{$begin_date}{'end_date_counter'} >
+            || $params{'hourly_data'}{$begin_date}{'end_date_counter'} >
             $last_date);
         if (defined $result->{$reftime}) {
             $result->{$reftime} +=
-                $param->{'hourly_data'}{$begin_date}{'variation_counter'};
+                $params{'hourly_data'}{$begin_date}{'variation_counter'};
         } else {
             $result->{$reftime} =
-                $param->{'hourly_data'}{$begin_date}{'variation_counter'};
+                $params{'hourly_data'}{$begin_date}{'variation_counter'};
         }
     }
     for (my $date = $first_date; $date < $last_date; $date += 86400) {

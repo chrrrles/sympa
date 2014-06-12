@@ -314,14 +314,13 @@ sub create_list_old {
 
     if ($origin eq "web") {
         Sympa::Log::Syslog::db_stat_log(
-            {   'robot'     => $robot_id,
-                'list'      => $param->{'listname'},
-                'operation' => 'create list',
-                'parameter' => '',
-                'mail'      => $user_mail,
-                'client'    => '',
-                'daemon'    => 'wwsympa.fcgi'
-            }
+            'robot'     => $robot_id,
+            'list'      => $param->{'listname'},
+            'operation' => 'create list',
+            'parameter' => '',
+            'mail'      => $user_mail,
+            'client'    => '',
+            'daemon'    => 'wwsympa.fcgi'
         );
     }
 

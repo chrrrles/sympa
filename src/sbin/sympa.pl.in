@@ -638,17 +638,16 @@ sub process_message {
         Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
             'No sender found in message, skipping.');
         Sympa::Log::Database::db_log(
-            {   'robot'        => $robot_id,
-                'list'         => $listname,
-                'action'       => 'process_message',
-                'target_email' => "",
-                'msg_id'       => $msg_id,
-                'status'       => 'error',
-                'error_type'   => 'no_sender',
-                'user_email'   => $sender,
-                'client'       => $ip,
-                'daemon'       => $daemon_name
-            }
+            'robot'        => $robot_id,
+            'list'         => $listname,
+            'action'       => 'process_message',
+            'target_email' => "",
+            'msg_id'       => $msg_id,
+            'status'       => 'error',
+            'error_type'   => 'no_sender',
+            'user_email'   => $sender,
+            'client'       => $ip,
+            'daemon'       => $daemon_name
         );
         return undef;
     }
@@ -664,17 +663,16 @@ sub process_message {
         Sympa::Site->send_dsn($message,
             {'recipient' => sprintf('%s@%s', $listname, $robot_id)}, '5.1.2');
         Sympa::Log::Database::db_log(
-            {   'robot'        => $robot_id,
-                'list'         => $listname,
-                'action'       => 'process_message',
-                'target_email' => "",
-                'msg_id'       => $msg_id,
-                'status'       => 'error',
-                'error_type'   => 'unknown_robot',
-                'user_email'   => $sender,
-                'client'       => $ip,
-                'daemon'       => $daemon_name
-            }
+            'robot'        => $robot_id,
+            'list'         => $listname,
+            'action'       => 'process_message',
+            'target_email' => "",
+            'msg_id'       => $msg_id,
+            'status'       => 'error',
+            'error_type'   => 'unknown_robot',
+            'user_email'   => $sender,
+            'client'       => $ip,
+            'daemon'       => $daemon_name
         );
         return undef;
     }
@@ -708,17 +706,16 @@ sub process_message {
                 $robot->send_dsn($message, {'listname' => $listname},
                     '5.1.1');
                 Sympa::Log::Database::db_log(
-                    {   'robot'        => $robot_id,
-                        'list'         => $listname,
-                        'action'       => 'process_message',
-                        'target_email' => "",
-                        'msg_id'       => $msg_id,
-                        'status'       => 'error',
-                        'error_type'   => 'unknown_list',
-                        'user_email'   => $sender,
-                        'client'       => $ip,
-                        'daemon'       => $daemon_name
-                    }
+                    'robot'        => $robot_id,
+                    'list'         => $listname,
+                    'action'       => 'process_message',
+                    'target_email' => "",
+                    'msg_id'       => $msg_id,
+                    'status'       => 'error',
+                    'error_type'   => 'unknown_list',
+                    'user_email'   => $sender,
+                    'client'       => $ip,
+                    'daemon'       => $daemon_name
                 );
                 return undef;
             }
@@ -771,18 +768,17 @@ sub process_message {
                 $robot->send_dsn($message, {'listname' => $listname},
                     '5.3.5');
                 Sympa::Log::Database::db_log(
-                    {   'robot'        => $robot_id,
-                        'list'         => $listname,
-                        'action'       => 'process_message',
-                        'parameters'   => $msg_id,             # FIXME
-                        'target_email' => '',
-                        'msg_id'       => $msg_id,
-                        'status'       => 'error',
-                        'error_type'   => 'internal',
-                        'user_email'   => $sender,
-                        'client'       => $ip,
-                        'daemon'       => $daemon_name
-                    }
+                    'robot'        => $robot_id,
+                    'list'         => $listname,
+                    'action'       => 'process_message',
+                    'parameters'   => $msg_id,             # FIXME
+                    'target_email' => '',
+                    'msg_id'       => $msg_id,
+                    'status'       => 'error',
+                    'error_type'   => 'internal',
+                    'user_email'   => $sender,
+                    'client'       => $ip,
+                    'daemon'       => $daemon_name
                 );
                 return undef;
             }
@@ -881,17 +877,16 @@ sub process_message {
             $rc
         );
         Sympa::Log::Database::db_log(
-            {   'robot'        => $robot_id,
-                'list'         => $listname,
-                'action'       => 'process_message',
-                'target_email' => "",
-                'msg_id'       => $msg_id,
-                'status'       => 'error',
-                'error_type'   => 'virus',
-                'user_email'   => $sender,
-                'client'       => $ip,
-                'daemon'       => $daemon_name
-            }
+            'robot'        => $robot_id,
+            'list'         => $listname,
+            'action'       => 'process_message',
+            'target_email' => "",
+            'msg_id'       => $msg_id,
+            'status'       => 'error',
+            'error_type'   => 'virus',
+            'user_email'   => $sender,
+            'client'       => $ip,
+            'daemon'       => $daemon_name
         );
         return undef;
 
@@ -915,17 +910,16 @@ sub process_message {
 
                 #FIXME: Notify listmaster?
                 Sympa::Log::Database::db_log(
-                    {   'robot'        => $robot_id,
-                        'list'         => $listname,
-                        'action'       => 'process_message',
-                        'target_email' => "",
-                        'msg_id'       => $msg_id,
-                        'status'       => 'error',
-                        'error_type'   => 'dyn_cant_sync',
-                        'user_email'   => $sender,
-                        'client'       => $ip,
-                        'daemon'       => $daemon_name
-                    }
+                    'robot'        => $robot_id,
+                    'list'         => $listname,
+                    'action'       => 'process_message',
+                    'target_email' => "",
+                    'msg_id'       => $msg_id,
+                    'status'       => 'error',
+                    'error_type'   => 'dyn_cant_sync',
+                    'user_email'   => $sender,
+                    'client'       => $ip,
+                    'daemon'       => $daemon_name
                 );
 
                 # purge the unwanted empty automatic list
@@ -943,17 +937,16 @@ sub process_message {
                     $list, $dyn_list_family);
                 $list->send_dsn($message, {}, '4.2.4');
                 Sympa::Log::Database::db_log(
-                    {   'robot'        => $robot_id,
-                        'list'         => $listname,
-                        'action'       => 'process_message',
-                        'target_email' => "",
-                        'msg_id'       => $msg_id,
-                        'status'       => 'error',
-                        'error_type'   => 'list_unknown',
-                        'user_email'   => $sender,
-                        'client'       => $ip,
-                        'daemon'       => $daemon_name
-                    }
+                    'robot'        => $robot_id,
+                    'list'         => $listname,
+                    'action'       => 'process_message',
+                    'target_email' => "",
+                    'msg_id'       => $msg_id,
+                    'status'       => 'error',
+                    'error_type'   => 'list_unknown',
+                    'user_email'   => $sender,
+                    'client'       => $ip,
+                    'daemon'       => $daemon_name
                 );
 
                 # purge the unwanted empty automatic list
@@ -1047,18 +1040,17 @@ sub process_message {
         ## Send the reply message
         Sympa::Report::send_report_cmd($sender, $robot_id);
         Sympa::Log::Database::db_log(
-            {   'robot'        => $robot_id,
-                'list'         => $listname,
-                'action'       => 'process_message',
-                'parameters'   => '',
-                'target_email' => '',
-                'msg_id'       => $msg_id,
-                'status'       => 'success',
-                'error_type'   => '',
-                'user_email'   => $sender,
-                'client'       => $ip,
-                'daemon'       => $daemon_name
-            }
+            'robot'        => $robot_id,
+            'list'         => $listname,
+            'action'       => 'process_message',
+            'parameters'   => '',
+            'target_email' => '',
+            'msg_id'       => $msg_id,
+            'status'       => 'success',
+            'error_type'   => '',
+            'user_email'   => $sender,
+            'client'       => $ip,
+            'daemon'       => $daemon_name
         );
 
     }
@@ -1197,18 +1189,17 @@ sub DoForward {
                 $list
             );
             Sympa::Log::Database::db_log(
-                {   'robot'        => $robot->name,
-                    'list'         => $list->name,
-                    'action'       => 'DoForward',
-                    'parameters'   => $function,
-                    'target_email' => '',
-                    'msg_id'       => $messageid,
-                    'status'       => 'error',
-                    'error_type'   => 'internal',
-                    'user_email'   => $sender,
-                    'client'       => $ip,
-                    'daemon'       => $daemon_name
-                }
+                'robot'        => $robot->name,
+                'list'         => $list->name,
+                'action'       => 'DoForward',
+                'parameters'   => $function,
+                'target_email' => '',
+                'msg_id'       => $messageid,
+                'status'       => 'error',
+                'error_type'   => 'internal',
+                'user_email'   => $sender,
+                'client'       => $ip,
+                'daemon'       => $daemon_name
             );
             return undef;
         }
@@ -1245,34 +1236,32 @@ sub DoForward {
             $list
         );
         Sympa::Log::Database::db_log(
-            {   'robot'        => $robot->name,
-                'list'         => $listname,
-                'action'       => 'DoForward',
-                'parameters'   => $function,      #FIXME
-                'target_email' => '',
-                'msg_id'       => $messageid,
-                'status'       => 'error',
-                'error_type'   => 'internal',
-                'user_email'   => $sender,
-                'client'       => $ip,
-                'daemon'       => $daemon_name
-            }
+            'robot'        => $robot->name,
+            'list'         => $listname,
+            'action'       => 'DoForward',
+            'parameters'   => $function,      #FIXME
+            'target_email' => '',
+            'msg_id'       => $messageid,
+            'status'       => 'error',
+            'error_type'   => 'internal',
+            'user_email'   => $sender,
+            'client'       => $ip,
+            'daemon'       => $daemon_name
         );
         return undef;
     }
     Sympa::Log::Database::db_log(
-        {   'robot'        => $robot->name,
-            'list'         => $listname,
-            'action'       => 'DoForward',
-            'parameters'   => $function,
-            'target_email' => '',
-            'msg_id'       => $messageid,
-            'status'       => 'success',
-            'error_type'   => '',
-            'user_email'   => $sender,
-            'client'       => $ip,
-            'daemon'       => $daemon_name
-        }
+        'robot'        => $robot->name,
+        'list'         => $listname,
+        'action'       => 'DoForward',
+        'parameters'   => $function,
+        'target_email' => '',
+        'msg_id'       => $messageid,
+        'status'       => 'success',
+        'error_type'   => '',
+        'user_email'   => $sender,
+        'client'       => $ip,
+        'daemon'       => $daemon_name
     );
 
     return 1;
@@ -1329,18 +1318,17 @@ sub DoMessage {
             'Found known Message-ID, ignoring message which would cause a loop'
         );
         Sympa::Log::Database::db_log(
-            {   'robot'        => $robot->name,
-                'list'         => $list->name,
-                'action'       => 'DoMessage',
-                'parameters'   => $messageid,
-                'target_email' => '',
-                'msg_id'       => $messageid,
-                'status'       => 'error',
-                'error_type'   => 'known_message',
-                'user_email'   => $sender,
-                'client'       => $ip,
-                'daemon'       => $daemon_name
-            }
+            'robot'        => $robot->name,
+            'list'         => $list->name,
+            'action'       => 'DoMessage',
+            'parameters'   => $messageid,
+            'target_email' => '',
+            'msg_id'       => $messageid,
+            'status'       => 'error',
+            'error_type'   => 'known_message',
+            'user_email'   => $sender,
+            'client'       => $ip,
+            'daemon'       => $daemon_name
         );
         return undef;
     }
@@ -1355,18 +1343,17 @@ sub DoMessage {
                 {'message' => $message},
                 $robot, $msg_string, $list);
             Sympa::Log::Database::db_log(
-                {   'robot'        => $robot->name,
-                    'list'         => $list->name,
-                    'action'       => 'DoMessage',
-                    'parameters'   => $messageid,
-                    'target_email' => '',
-                    'msg_id'       => $messageid,
-                    'status'       => 'error',
-                    'error_type'   => 'routing_error',
-                    'user_email'   => $sender,
-                    'client'       => $ip,
-                    'daemon'       => $daemon_name
-                }
+                'robot'        => $robot->name,
+                'list'         => $list->name,
+                'action'       => 'DoMessage',
+                'parameters'   => $messageid,
+                'target_email' => '',
+                'msg_id'       => $messageid,
+                'status'       => 'error',
+                'error_type'   => 'routing_error',
+                'user_email'   => $sender,
+                'client'       => $ip,
+                'daemon'       => $daemon_name
             );
             return undef;
         }
@@ -1387,18 +1374,17 @@ sub DoMessage {
             '5.2.3'
         );
         Sympa::Log::Database::db_log(
-            {   'robot'        => $robot->name,
-                'list'         => $list->name,
-                'action'       => 'DoMessage',
-                'parameters'   => $messageid,
-                'target_email' => '',
-                'msg_id'       => $messageid,
-                'status'       => 'error',
-                'error_type'   => 'message_too_large',
-                'user_email'   => $sender,
-                'client'       => $ip,
-                'daemon'       => $daemon_name
-            }
+            'robot'        => $robot->name,
+            'list'         => $list->name,
+            'action'       => 'DoMessage',
+            'parameters'   => $messageid,
+            'target_email' => '',
+            'msg_id'       => $messageid,
+            'status'       => 'error',
+            'error_type'   => 'message_too_large',
+            'user_email'   => $sender,
+            'client'       => $ip,
+            'daemon'       => $daemon_name
         );
         return undef;
     }
@@ -1472,18 +1458,17 @@ sub DoMessage {
             $list
         );
         Sympa::Log::Database::db_log(
-            {   'robot'        => $robot->name,
-                'list'         => $list->name,
-                'action'       => 'DoMessage',
-                'parameters'   => $messageid,
-                'target_email' => '',
-                'msg_id'       => $messageid,
-                'status'       => 'error',
-                'error_type'   => 'internal',
-                'user_email'   => $sender,
-                'client'       => $ip,
-                'daemon'       => $daemon_name
-            }
+            'robot'        => $robot->name,
+            'list'         => $list->name,
+            'action'       => 'DoMessage',
+            'parameters'   => $messageid,
+            'target_email' => '',
+            'msg_id'       => $messageid,
+            'status'       => 'error',
+            'error_type'   => 'internal',
+            'user_email'   => $sender,
+            'client'       => $ip,
+            'daemon'       => $daemon_name
         );
         return undef;
     }
@@ -1541,18 +1526,17 @@ sub DoMessage {
                 {'msg_id' => $messageid, 'message' => $message},
                 $robot, $msg_string, $list);
             Sympa::Log::Database::db_log(
-                {   'robot'        => $robot->name,
-                    'list'         => $list->name,
-                    'action'       => 'DoMessage',
-                    'parameters'   => $messageid,
-                    'target_email' => '',
-                    'msg_id'       => $messageid,
-                    'status'       => 'error',
-                    'error_type'   => 'internal',
-                    'user_email'   => $sender,
-                    'client'       => $ip,
-                    'daemon'       => $daemon_name
-                }
+                'robot'        => $robot->name,
+                'list'         => $list->name,
+                'action'       => 'DoMessage',
+                'parameters'   => $messageid,
+                'target_email' => '',
+                'msg_id'       => $messageid,
+                'status'       => 'error',
+                'error_type'   => 'internal',
+                'user_email'   => $sender,
+                'client'       => $ip,
+                'daemon'       => $daemon_name
             );
             return undef;
         }
@@ -1599,18 +1583,17 @@ sub DoMessage {
                 $list
             );
             Sympa::Log::Database::db_log(
-                {   'robot'        => $robot->name,
-                    'list'         => $list->name,
-                    'action'       => 'DoMessage',
-                    'parameters'   => $messageid,
-                    'target_email' => '',
-                    'msg_id'       => $messageid,
-                    'status'       => 'error',
-                    'error_type'   => 'internal',
-                    'user_email'   => $sender,
-                    'client'       => $ip,
-                    'daemon'       => $daemon_name
-                }
+                'robot'        => $robot->name,
+                'list'         => $list->name,
+                'action'       => 'DoMessage',
+                'parameters'   => $messageid,
+                'target_email' => '',
+                'msg_id'       => $messageid,
+                'status'       => 'error',
+                'error_type'   => 'internal',
+                'user_email'   => $sender,
+                'client'       => $ip,
+                'daemon'       => $daemon_name
             );
             return undef;
         }
@@ -1618,18 +1601,17 @@ sub DoMessage {
             'Message %s for %s from %s kept for authentication with key %s',
             $message, $list, $sender, $key);
         Sympa::Log::Database::db_log(
-            {   'robot'        => $robot->name,
-                'list'         => $list->name,
-                'action'       => 'DoMessage',
-                'parameters'   => $messageid,
-                'target_email' => '',
-                'msg_id'       => $messageid,
-                'status'       => 'success',
-                'error_type'   => 'kept_for_auth',
-                'user_email'   => $sender,
-                'client'       => $ip,
-                'daemon'       => $daemon_name
-            }
+            'robot'        => $robot->name,
+            'list'         => $list->name,
+            'action'       => 'DoMessage',
+            'parameters'   => $messageid,
+            'target_email' => '',
+            'msg_id'       => $messageid,
+            'status'       => 'success',
+            'error_type'   => 'kept_for_auth',
+            'user_email'   => $sender,
+            'client'       => $ip,
+            'daemon'       => $daemon_name
         );
         return 1;
     } elsif ($action =~ /^editorkey((?:\s*,\s*quiet)?)/) {
@@ -1665,18 +1647,17 @@ sub DoMessage {
                 $list
             );
             Sympa::Log::Database::db_log(
-                {   'robot'        => $robot->name,
-                    'list'         => $list->name,
-                    'action'       => 'DoMessage',
-                    'parameters'   => $messageid,
-                    'target_email' => '',
-                    'msg_id'       => $messageid,
-                    'status'       => 'error',
-                    'error_type'   => 'internal',
-                    'user_email'   => $sender,
-                    'client'       => $ip,
-                    'daemon'       => $daemon_name
-                }
+                'robot'        => $robot->name,
+                'list'         => $list->name,
+                'action'       => 'DoMessage',
+                'parameters'   => $messageid,
+                'target_email' => '',
+                'msg_id'       => $messageid,
+                'status'       => 'error',
+                'error_type'   => 'internal',
+                'user_email'   => $sender,
+                'client'       => $ip,
+                'daemon'       => $daemon_name
             );
             return undef;
         }
@@ -1739,18 +1720,17 @@ sub DoMessage {
                 $list
             );
             Sympa::Log::Database::db_log(
-                {   'robot'        => $robot->name,
-                    'list'         => $list->name,
-                    'action'       => 'DoMessage',
-                    'parameters'   => $messageid,
-                    'target_email' => '',
-                    'msg_id'       => $messageid,
-                    'status'       => 'error',
-                    'error_type'   => 'internal',
-                    'user_email'   => $sender,
-                    'client'       => $ip,
-                    'daemon'       => $daemon_name
-                }
+                'robot'        => $robot->name,
+                'list'         => $list->name,
+                'action'       => 'DoMessage',
+                'parameters'   => $messageid,
+                'target_email' => '',
+                'msg_id'       => $messageid,
+                'status'       => 'error',
+                'error_type'   => 'internal',
+                'user_email'   => $sender,
+                'client'       => $ip,
+                'daemon'       => $daemon_name
             );
             return undef;
         }
@@ -1821,18 +1801,17 @@ sub DoMessage {
             }
         }
         Sympa::Log::Database::db_log(
-            {   'robot'        => $robot->name,
-                'list'         => $list->name,
-                'action'       => 'DoMessage',
-                'parameters'   => $messageid,
-                'target_email' => '',
-                'msg_id'       => $messageid,
-                'status'       => 'error',
-                'error_type'   => 'rejected_authorization',
-                'user_email'   => $sender,
-                'client'       => $ip,
-                'daemon'       => $daemon_name
-            }
+            'robot'        => $robot->name,
+            'list'         => $list->name,
+            'action'       => 'DoMessage',
+            'parameters'   => $messageid,
+            'target_email' => '',
+            'msg_id'       => $messageid,
+            'status'       => 'error',
+            'error_type'   => 'rejected_authorization',
+            'user_email'   => $sender,
+            'client'       => $ip,
+            'daemon'       => $daemon_name
         );
         return undef;
     } else {
@@ -1845,18 +1824,17 @@ sub DoMessage {
             $list
         );
         Sympa::Log::Database::db_log(
-            {   'robot'        => $robot->name,
-                'list'         => $list->name,
-                'action'       => 'DoMessage',
-                'parameters'   => $messageid,
-                'target_email' => '',
-                'msg_id'       => $messageid,
-                'status'       => 'error',
-                'error_type'   => 'internal',
-                'user_email'   => $sender,
-                'client'       => $ip,
-                'daemon'       => $daemon_name
-            }
+            'robot'        => $robot->name,
+            'list'         => $list->name,
+            'action'       => 'DoMessage',
+            'parameters'   => $messageid,
+            'target_email' => '',
+            'msg_id'       => $messageid,
+            'status'       => 'error',
+            'error_type'   => 'internal',
+            'user_email'   => $sender,
+            'client'       => $ip,
+            'daemon'       => $daemon_name
         );
         return undef;
     }
@@ -1907,18 +1885,17 @@ sub DoCommand {
             'Found known Message-ID, ignoring command which would cause a loop'
         );
         Sympa::Log::Database::db_log(
-            {   'robot'        => $robot->name,
-                'list'         => $list->name,
-                'action'       => 'DoCommand',
-                'parameters'   => $command,                     #FIXME
-                'target_email' => '',
-                'msg_id'       => $messageid,
-                'status'       => 'error',
-                'error_type'   => 'known_message',
-                'user_email'   => $sender,
-                'client'       => $ip,
-                'daemon'       => $daemon_name
-            }
+            'robot'        => $robot->name,
+            'list'         => $list->name,
+            'action'       => 'DoCommand',
+            'parameters'   => $command,                     #FIXME
+            'target_email' => '',
+            'msg_id'       => $messageid,
+            'status'       => 'error',
+            'error_type'   => 'known_message',
+            'user_email'   => $sender,
+            'client'       => $ip,
+            'daemon'       => $daemon_name
         );
         return undef;
     }    ## Clean old files from spool
@@ -1943,18 +1920,17 @@ sub DoCommand {
             sprintf('%s %s', $command, $list->name),
             $auth_level, $message);
         Sympa::Log::Database::db_log(
-            {   'robot'        => $robot->name,
-                'list'         => $list->name,
-                'action'       => 'DoCommand',
-                'parameters'   => $command,       # FIXME
-                'target_email' => '',
-                'msg_id'       => $messageid,
-                'status'       => 'success',
-                'error_type'   => '',
-                'user_email'   => $sender,
-                'client'       => $ip,
-                'daemon'       => $daemon_name
-            }
+            'robot'        => $robot->name,
+            'list'         => $list->name,
+            'action'       => 'DoCommand',
+            'parameters'   => $command,       # FIXME
+            'target_email' => '',
+            'msg_id'       => $messageid,
+            'status'       => 'success',
+            'error_type'   => '',
+            'user_email'   => $sender,
+            'client'       => $ip,
+            'daemon'       => $daemon_name
         );
         return 1;
     }
@@ -1991,18 +1967,17 @@ sub DoCommand {
                 'Could not change multipart to singlepart');
             Sympa::Report::global_report_cmd('user', 'error_content_type', {});
             Sympa::Log::Database::db_log(
-                {   'robot'        => $robot->name,
-                    'list'         => '',
-                    'action'       => 'DoCommand',
-                    'parameters'   => $command,               #FIXME
-                    'target_email' => '',
-                    'msg_id'       => $messageid,
-                    'status'       => 'error',
-                    'error_type'   => 'error_content_type',
-                    'user_email'   => $sender,
-                    'client'       => $ip,
-                    'daemon'       => $daemon_name
-                }
+                'robot'        => $robot->name,
+                'list'         => '',
+                'action'       => 'DoCommand',
+                'parameters'   => $command,               #FIXME
+                'target_email' => '',
+                'msg_id'       => $messageid,
+                'status'       => 'error',
+                'error_type'   => 'error_content_type',
+                'user_email'   => $sender,
+                'client'       => $ip,
+                'daemon'       => $daemon_name
             );
             return undef;
         }
@@ -2048,18 +2023,17 @@ sub DoCommand {
                 $content_type);
             Sympa::Report::global_report_cmd('user', 'error_content_type', {});
             Sympa::Log::Database::db_log(
-                {   'robot'        => $robot->name,
-                    'list'         => '',
-                    'action'       => 'DoCommand',
-                    'parameters'   => $command,
-                    'target_email' => '',
-                    'msg_id'       => $messageid,
-                    'status'       => 'error',
-                    'error_type'   => 'error_content_type',
-                    'user_email'   => $sender,
-                    'client'       => $ip,
-                    'daemon'       => $daemon_name
-                }
+                'robot'        => $robot->name,
+                'list'         => '',
+                'action'       => 'DoCommand',
+                'parameters'   => $command,
+                'target_email' => '',
+                'msg_id'       => $messageid,
+                'status'       => 'error',
+                'error_type'   => 'error_content_type',
+                'user_email'   => $sender,
+                'client'       => $ip,
+                'daemon'       => $daemon_name
             );
             return $success;
         }
@@ -2087,18 +2061,17 @@ sub DoCommand {
                     "Unknown command found :%s", $i);
                 Sympa::Report::reject_report_cmd('user', 'not_understood', {}, $i);
                 Sympa::Log::Database::db_log(
-                    {   'robot'        => $robot->name,
-                        'list'         => '',
-                        'action'       => 'DoCommand',
-                        'parameters'   => $i,                 #FIXME
-                        'target_email' => '',
-                        'msg_id'       => $messageid,
-                        'status'       => 'error',
-                        'error_type'   => 'not_understood',
-                        'user_email'   => $sender,
-                        'client'       => $ip,
-                        'daemon'       => $daemon_name
-                    }
+                    'robot'        => $robot->name,
+                    'list'         => '',
+                    'action'       => 'DoCommand',
+                    'parameters'   => $i,                 #FIXME
+                    'target_email' => '',
+                    'msg_id'       => $messageid,
+                    'status'       => 'error',
+                    'error_type'   => 'not_understood',
+                    'user_email'   => $sender,
+                    'client'       => $ip,
+                    'daemon'       => $daemon_name
                 );
                 last;
             }
@@ -2116,18 +2089,17 @@ sub DoCommand {
             $message);
         Sympa::Report::global_report_cmd('user', 'no_cmd_found', {});
         Sympa::Log::Database::db_log(
-            {   'robot'        => $robot->name,
-                'list'         => '',
-                'action'       => 'DoCommand',
-                'parameters'   => $command,
-                'target_email' => '',
-                'msg_id'       => $messageid,
-                'status'       => 'error',
-                'error_type'   => 'no_cmd_found',
-                'user_email'   => $sender,
-                'client'       => $ip,
-                'daemon'       => $daemon_name
-            }
+            'robot'        => $robot->name,
+            'list'         => '',
+            'action'       => 'DoCommand',
+            'parameters'   => $command,
+            'target_email' => '',
+            'msg_id'       => $messageid,
+            'status'       => 'error',
+            'error_type'   => 'no_cmd_found',
+            'user_email'   => $sender,
+            'client'       => $ip,
+            'daemon'       => $daemon_name
         );
         return undef;
     }
@@ -2166,18 +2138,17 @@ sub SendDigest {
                 $digest->{'messagekey'}
             );
             Sympa::Log::Database::db_log(
-                {   'robot'        => $digest->{'robot'},
-                    'list'         => $digest->{'list'},
-                    'action'       => 'SendDigest',
-                    'parameters'   => "$digest->{'messagekey'}",
-                    'target_email' => '',
-                    'msg_id'       => '',
-                    'status'       => 'error',
-                    'error_type'   => 'unknown_list',
-                    'user_email'   => '',
-                    'client'       => $ip,
-                    'daemon'       => $daemon_name
-                }
+                'robot'        => $digest->{'robot'},
+                'list'         => $digest->{'list'},
+                'action'       => 'SendDigest',
+                'parameters'   => "$digest->{'messagekey'}",
+                'target_email' => '',
+                'msg_id'       => '',
+                'status'       => 'error',
+                'error_type'   => 'unknown_list',
+                'user_email'   => '',
+                'client'       => $ip,
+                'daemon'       => $daemon_name
             );
             $digestspool->remove_message(
                 {'messagekey' => $digest->{'messagekey'}});
@@ -2197,18 +2168,17 @@ sub SendDigest {
                 'Digest of the list %s sent (%d seconds)',
                 $list, time - $start_time);
             Sympa::Log::Database::db_log(
-                {   'robot'        => $list->{'robot'},
-                    'list'         => $list->name,
-                    'action'       => 'SendDigest',
-                    'parameters'   => "",
-                    'target_email' => '',
-                    'msg_id'       => '',
-                    'status'       => 'success',
-                    'error_type'   => '',
-                    'user_email'   => '',
-                    'client'       => $ip,
-                    'daemon'       => $daemon_name
-                }
+                'robot'        => $list->{'robot'},
+                'list'         => $list->name,
+                'action'       => 'SendDigest',
+                'parameters'   => "",
+                'target_email' => '',
+                'msg_id'       => '',
+                'status'       => 'success',
+                'error_type'   => '',
+                'user_email'   => '',
+                'client'       => $ip,
+                'daemon'       => $daemon_name
             );
             $digestspool->remove_message(
                 {'messagekey' => $digest->{'messagekey'}});

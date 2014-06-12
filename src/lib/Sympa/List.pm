@@ -3279,14 +3279,13 @@ sub delete_list_member {
 
         #log in stat_table to make statistics
         Sympa::Log::Syslog::db_stat_log(
-            {   'robot'     => $self->domain,
-                'list'      => $name,
-                'operation' => 'del subscriber',
-                'parameter' => $parameter,
-                'mail'      => $who,
-                'client'    => '',
-                'daemon'    => $daemon_name
-            }
+            'robot'     => $self->domain,
+            'list'      => $name,
+            'operation' => 'del subscriber',
+            'parameter' => $parameter,
+            'mail'      => $who,
+            'client'    => '',
+            'daemon'    => $daemon_name
         );
 
         $total--;
@@ -4842,14 +4841,13 @@ sub add_list_member {
 
         #Log in stat_table to make statistics
         Sympa::Log::Syslog::db_stat_log(
-            {   'robot'     => $self->domain,
-                'list'      => $self->name,
-                'operation' => 'add subscriber',
-                'parameter' => '',
-                'mail'      => $new_user->{'email'},
-                'client'    => '',
-                'daemon'    => $daemon
-            }
+            'robot'     => $self->domain,
+            'list'      => $self->name,
+            'operation' => 'add subscriber',
+            'parameter' => '',
+            'mail'      => $new_user->{'email'},
+            'client'    => '',
+            'daemon'    => $daemon
         );
 
         ## Update Subscriber Table
@@ -10763,14 +10761,13 @@ sub close_list {
 
     #log in stat_table to make staistics
     Sympa::Log::Syslog::db_stat_log(
-        {   'robot'     => $self->domain,
-            'list'      => $self->name,
-            'operation' => 'close_list',
-            'parameter' => '',
-            'mail'      => $email,
-            'client'    => '',
-            'daemon'    => 'damon_name'
-        }
+        'robot'     => $self->domain,
+        'list'      => $self->name,
+        'operation' => 'close_list',
+        'parameter' => '',
+        'mail'      => $email,
+        'client'    => '',
+        'daemon'    => 'damon_name'
     );    #FIXME: unknown daemon
 
     return 1;
@@ -10819,14 +10816,13 @@ sub purge {
 
     #log ind stat table to make statistics
     Sympa::Log::Syslog::db_stat_log(
-        {   'robot'     => $self->domain,
-            'list'      => $self->name,
-            'operation' => 'purge list',
-            'parameter' => '',
-            'mail'      => $email,
-            'client'    => '',
-            'daemon'    => 'daemon_name'
-        }
+        'robot'     => $self->domain,
+        'list'      => $self->name,
+        'operation' => 'purge list',
+        'parameter' => '',
+        'mail'      => $email,
+        'client'    => '',
+        'daemon'    => 'daemon_name'
     );
 
     return 1;
