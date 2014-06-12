@@ -462,24 +462,22 @@ sub delete_bouncer {
                 $self->{'list'}
             );
             Sympa::Log::Database::db_log(
-                {   'robot'        => $self->{'list'}->domain,
-                    'list'         => $self->{'list'}->name,
-                    'action'       => 'del',
-                    'target_email' => $self->{'who'},
-                    'status'       => 'error',
-                    'error_type'   => 'welcome_bounced',
-                    'daemon'       => 'bounced'
-                }
+                'robot'        => $self->{'list'}->domain,
+                'list'         => $self->{'list'}->name,
+                'action'       => 'del',
+                'target_email' => $self->{'who'},
+                'status'       => 'error',
+                'error_type'   => 'welcome_bounced',
+                'daemon'       => 'bounced'
             );
             Sympa::Log::Syslog::db_stat_log(
-                {   'robot'     => $self->{'list'}->domain,
-                    'list'      => $self->{'list'}->name,
-                    'operation' => 'auto_del',
-                    'parameter' => '',
-                    'mail'      => $self->{'who'},
-                    'client'    => '',
-                    'daemon'    => 'bounced.pl'
-                }
+                'robot'     => $self->{'list'}->domain,
+                'list'      => $self->{'list'}->name,
+                'operation' => 'auto_del',
+                'parameter' => '',
+                'mail'      => $self->{'who'},
+                'client'    => '',
+                'daemon'    => 'bounced.pl'
             );
 
             if ($action =~ /notify/) {
@@ -1182,16 +1180,15 @@ sub update_subscriber_bounce_history {
             }
         );
         Sympa::Log::Database::db_log(
-            {   'robot'        => $list->domain,
-                'list'         => $list->name,
-                'action'       => 'get_bounce',
-                'parameters'   => "address=$rcpt",
-                'target_email' => $bouncefor,
-                'msg_id'       => '',
-                'status'       => 'error',
-                'error_type'   => $status,
-                'daemon'       => 'bounced'
-            }
+            'robot'        => $list->domain,
+            'list'         => $list->name,
+            'action'       => 'get_bounce',
+            'parameters'   => "address=$rcpt",
+            'target_email' => $bouncefor,
+            'msg_id'       => '',
+            'status'       => 'error',
+            'error_type'   => $status,
+            'daemon'       => 'bounced'
         );
     } else {
         $list->update_list_member($bouncefor,
@@ -1200,15 +1197,14 @@ sub update_subscriber_bounce_history {
             'Received bounce for email address %s, list %s',
             $bouncefor, $list);
         Sympa::Log::Database::db_log(
-            {   'robot'        => $list->domain,
-                'list'         => $list->name,
-                'action'       => 'get_bounce',
-                'target_email' => $bouncefor,
-                'msg_id'       => '',
-                'status'       => 'error',
-                'error_type'   => $status,
-                'daemon'       => 'bounced'
-            }
+            'robot'        => $list->domain,
+            'list'         => $list->name,
+            'action'       => 'get_bounce',
+            'target_email' => $bouncefor,
+            'msg_id'       => '',
+            'status'       => 'error',
+            'error_type'   => $status,
+            'daemon'       => 'bounced'
         );
     }
 }

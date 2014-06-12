@@ -367,14 +367,13 @@ sub store {
 
                 #ignore messages of requests
                 Sympa::Log::Syslog::db_stat_log(
-                    {   'robot'     => $robot->name,
-                        'list'      => $listname,
-                        'operation' => 'send_mail',
-                        'parameter' => $message->{'size'},
-                        'mail'      => $message_sender,
-                        'client'    => '',
-                        'daemon'    => 'sympa.pl'
-                    }
+                    'robot'     => $robot->name,
+                    'list'      => $listname,
+                    'operation' => 'send_mail',
+                    'parameter' => $message->{'size'},
+                    'mail'      => $message_sender,
+                    'client'    => '',
+                    'daemon'    => 'sympa.pl'
                 );
             }
         }

@@ -2087,7 +2087,7 @@ sub web_db_log {
     ## Default email is the user email
     $data->{'target_email'} ||= $data->{'user_email'};
 
-    unless (Sympa::Log::Database::db_log($data)) {
+    unless (Sympa::Log::Database::db_log(%$data)) {
         wwslog(Sympa::Log::Syslog::ERR, 'web_db_log: failed to log in database');
         return undef;
     }
@@ -2107,7 +2107,7 @@ sub web_db_stat_log {
     $data->{'client'} = $param->{'remote_addr'};
     $data->{'robot'} ||= $robot_id;
 
-    unless (Sympa::Log::Database::db_stat_log($data)) {
+    unless (Sympa::Log::Database::db_stat_log(%$data)) {
         wwslog(Sympa::Log::Syslog::ERR, 'web_db_stat_log: failed to log in database');
         return undef;
     }
@@ -22638,7 +22638,8 @@ sub do_stats {
         ) {
         my $raw_data = Sympa::List::get_data($operation, $robot_id, $in{'list'});
         my $data = Sympa::Log::Database::agregate_daily_data(
-            {'hourly_data' => $raw_data});
+            'hourly_data' => $raw_data
+        );
         my @key_counter = keys %{$data};
         if ($#key_counter > -1) {
             $stats->{$operation}{'stats_values'} = "[";
