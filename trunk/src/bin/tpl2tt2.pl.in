@@ -59,7 +59,7 @@ if (Sympa::Site->db_name and Sympa::Site->db_type) {
 }
 
 our $logger = Sympa::Logger::Stderr->new(
-    level => Sympa::Site->log_level();
+    level => Sympa::Site->log_level()
 );
 
 ## We have a parameter that should be a template to convert
