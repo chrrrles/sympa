@@ -236,7 +236,7 @@ $SIG{'TERM'} = sub {
 
 # Catch fatal errors, to generate traceback.
 $SIG{'__DIE__'} = sub {
-    return if $^S;    # invoked from inside eval.
+    return if $EXCEPTIONS_BEING_CAUGHT;    # invoked from inside eval.
     Sympa::Tools::Daemon::terminate_on_unexpected_error(@_);
 };
 
