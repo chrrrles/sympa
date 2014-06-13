@@ -192,7 +192,6 @@ Sympa::Tools::Daemon::terminate_on_expected_error($EVAL_ERROR) if $EVAL_ERROR;
 # Redirect STDERR to a file, unless the process is running in foreground
 unless ($options{'foreground'}) {
     Sympa::Tools::Daemon::direct_stderr_to_file(
-        pid    => $PID,
         tmpdir => Sympa::Site->tmpdir(),
         user   => Sympa::Constants::USER,
         group  => Sympa::Constants::GROUP,

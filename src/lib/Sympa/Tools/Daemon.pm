@@ -270,8 +270,6 @@ Parameters:
 
 =over
 
-=item * I<pid>: current process PID
-
 =item * I<tmpdir>: STDERR file directory
 
 =item * I<user>: STDERR file user
@@ -285,12 +283,11 @@ Parameters:
 sub direct_stderr_to_file {
     my (%params) = @_;
 
-    my $pid    = $params{pid};
     my $tmpdir = $params{tmpdir};
     my $user   = $params{user};
     my $group  = $params{group};
 
-    my $err_file = _get_error_file(%params);
+    my $err_file = _get_error_file(%params, pid => $PID);
 
     open(STDERR, '>>', $err_file);
     unless (
