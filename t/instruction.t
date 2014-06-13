@@ -15,6 +15,7 @@ use Test::More;
 use Test::Exception;
 
 use Sympa::Instruction;
+use Sympa::Logger::Memory;
 use Sympa::Task;
 
 my @tests_nok = (
@@ -60,6 +61,8 @@ plan tests =>
     scalar @tests_ok_nocontent * 2 +
     scalar @tests_ok_content   * 3 +
     2;
+
+our $logger = Sympa::Logger::Memory->new();
 
 foreach my $test (@tests_nok) {
     my $instruction;

@@ -11,6 +11,7 @@ use lib "$Bin/../src/lib";
 
 use Test::More;
 
+use Sympa::Logger::Memory;
 use Sympa::Tools::Data;
 
 my @array_from_string_tests = (
@@ -106,6 +107,8 @@ plan tests =>
     @smart_lessthan_nok_tests      +
     @diff_on_arrays_tests          +
     @recursive_transformation_tests ;
+
+our $logger = Sympa::Logger::Memory->new();
 
 foreach my $test (@array_from_string_tests) {
     is_deeply(
