@@ -72,7 +72,7 @@ sub remove_pid {
     my $tmpdir           = $params{tmpdir};
     my $multiple_process = $params{multiple_process};
 
-    my $pidfile = _get_pid_file(%params);
+    my $pidfile = _get_pid_file(dir => $piddir, name => $name);
 
     my @pids;
 
@@ -112,7 +112,7 @@ sub remove_pid {
             $lock_fh->close;
             return undef;
         }
-        my $err_file = _get_error_file(%params);
+        my $err_file = _get_error_file(dir => $tmpdir, pid => $pid);
         if (-f $err_file) {
             unless (unlink $err_file) {
                 Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, "Failed to remove %s: %s",
@@ -193,7 +193,7 @@ sub write_pid {
     my $group            = $params{group};
     my $multiple_process = $params{multiple_process};
 
-    my $pidfile = _get_pid_file(%params);
+    my $pidfile = _get_pid_file(dir => $piddir, name => $name);
 
     ## Create piddir
     mkdir($piddir, 0755) unless (-d $piddir);
@@ -287,7 +287,7 @@ sub direct_stderr_to_file {
     my $user   = $params{user};
     my $group  = $params{group};
 
-    my $err_file = _get_error_file(%params, pid => $PID);
+    my $err_file = _get_error_file(dir => $tmpdir, pid => $PID);
 
     open(STDERR, '>>', $err_file);
     unless (
@@ -335,7 +335,7 @@ sub send_crash_report {
     Sympa::Log::Syslog::do_log(
         Sympa::Log::Syslog::DEBUG, 'Sending crash report for process %s', $pid
     );
-    my $err_file = _get_error_file(%params);
+    my $err_file = _get_error_file(dir => $tmpdir, pid => $pid);
 
     my (@err_output, $err_date);
     if (-f $err_file) {
@@ -387,7 +387,10 @@ Parameters:
 sub get_pids_in_pid_file {
     my (%params) = @_;
 
-    my $pidfile = _get_pid_file(%params);
+    my $name             = $params{name};
+    my $piddir           = $params{piddir};
+
+    my $pidfile = _get_pid_file(dir => $piddir, name => $name);
 
     my $lock_fh = Sympa::LockedFile->new($pidfile, 5, '<');
     unless ($lock_fh) {
@@ -500,13 +503,13 @@ sub daemonize {
 sub _get_error_file {
     my (%params) = @_;
 
-    return $params{tmpdir} . '/' . $params{pid} . '.stderr';
+    return $params{dir} . '/' . $params{pid} . '.stderr';
 }
 
 sub _get_pid_file {
     my (%params) = @_;
 
-    return $params{piddir} . '/' . $params{name} . '.pid';
+    return $params{dir} . '/' . $params{name} . '.pid';
 }
 
 sub terminate_on_expected_error {
