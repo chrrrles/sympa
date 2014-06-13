@@ -47,7 +47,7 @@ my %comms = (
     'dis|distribute'                    => 'distribute',
     'get'                               => 'getfile',
     'hel|help|sos'                      => 'help',
-    'inf|info'                          => Sympa::Logger::INFO,
+    'inf|info'                          => 'info',
     'inv|invite'                        => 'invite',
     'ind|index'                         => 'index',
     'las|last'                          => 'last',
@@ -1145,7 +1145,7 @@ sub info {
         unless (defined $auth_method);
 
     my $result = Sympa::Scenario::request_action(
-        $list, Sympa::Logger::INFO,
+        $list, 'info',
         $auth_method,
         {   'sender'  => $sender,
             'message' => $message,

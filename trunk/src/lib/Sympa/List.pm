@@ -7818,7 +7818,7 @@ sub sync_include_admin {
             # included and subscribed
             if (defined $new_admin_users_config->{$email}) {
                 my $param;
-                foreach my $p ('reception', 'visibility', 'gecos', Sympa::Logger::INFO,
+                foreach my $p ('reception', 'visibility', 'gecos', 'info',
                     'profile') {
 
                     #  config parameters have priority on include parameters
@@ -8107,7 +8107,7 @@ sub is_update_param {
     $main::logger->do_log(Sympa::Logger::DEBUG2, 'Sympa::List::is_update_param ');
 
     foreach my $p (
-        'reception', 'visibility', 'gecos',    Sympa::Logger::INFO,
+        'reception', 'visibility', 'gecos',    'info',
         'profile',   'id',         'included', 'subscribed'
         ) {
         if (defined $new_param->{$p}) {
@@ -10215,7 +10215,7 @@ sub modifying_msg_topic_for_list_members() {
 # select_list_members_for_topic
 ####################################################
 # Select users subscribed to a topic that is in
-# the topic list incoming when reception mode is 'mail', Sympa::Logger::NOTICE, 'not_me',
+# the topic list incoming when reception mode is 'mail', 'notice', 'not_me',
 # 'txt', 'html' or 'urlize', and the other
 # subscribers (recpetion mode different from 'mail'), 'mail' and no topic
 # subscription

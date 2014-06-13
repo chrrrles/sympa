@@ -11042,7 +11042,7 @@ sub do_create_list {
     ## Check that all the needed arguments are present.
     ## This is checked here because it requires to return the incomplete form
     ## to the user
-    foreach my $arg ('listname', 'subject', 'template', Sympa::Logger::INFO, 'topics') {
+    foreach my $arg ('listname', 'subject', 'template', 'info', 'topics') {
         unless ($in{$arg}) {
             Sympa::Report::reject_report_web('user', 'missing_arg',
                 {'argument' => $arg},

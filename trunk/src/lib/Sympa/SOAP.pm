@@ -493,7 +493,7 @@ sub info {
     }
 
     my $result = Sympa::Scenario::request_action(
-        $list, Sympa::Logger::INFO, 'md5',
+        $list, 'info', 'md5',
         {   'sender'                  => $sender,
             'remote_application_name' => $ENV{'remote_application_name'}
         }

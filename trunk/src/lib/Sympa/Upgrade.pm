@@ -646,7 +646,7 @@ sub upgrade {
         my $all_lists = Sympa::List::get_lists('Site');
         foreach my $list (@$all_lists) {
             foreach my $f (
-                'config',   Sympa::Logger::INFO,
+                'config', 'info',
                 'homepage', 'message.header',
                 'message.footer'
                 ) {
