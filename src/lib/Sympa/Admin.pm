@@ -1157,7 +1157,7 @@ sub clone_list_as_empty {
     }
 
     # copy optional files
-    foreach my $file ('message.footer', 'message.header', Sympa::Logger::INFO, 'homepage')
+    foreach my $file ('message.footer', 'message.header', 'info', 'homepage')
     {
         if (-f $list->dir . '/' . $file) {
             unless (
