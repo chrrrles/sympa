@@ -398,7 +398,6 @@ while ($signal ne 'term') {
         # Create the PID file
         Sympa::Tools::Daemon::write_pid(
             name   => 'sympa',
-            pid    => $PID,
             piddir => Sympa::Constants::PIDDIR,
             user   => Sympa::Constants::USER,
             group  => Sympa::Constants::GROUP,
@@ -602,7 +601,6 @@ Sympa::Log::Syslog::do_log(
 
 Sympa::Tools::Daemon::remove_pid(
     name   => $daemon_name,
-    pid    => $PID,
     piddir => Sympa::Constants::PIDDIR,
     tmpdir => Sympa::Site->tmpdir(),
 );
