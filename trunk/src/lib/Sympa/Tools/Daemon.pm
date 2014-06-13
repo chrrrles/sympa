@@ -59,6 +59,8 @@ Parameters:
 
 =back
 
+Raise an exception in case of failure.
+
 =cut
 
 sub remove_pid {
@@ -76,9 +78,8 @@ sub remove_pid {
 
     # Lock pid file
     my $lock_fh = Sympa::LockedFile->new($pidfile, 5, '+<');
-    terminate_on_expected_error(
-        "Unable to lock $pidfile file in write mode, exiting"
-    ) unless $lock_fh;
+    croak "Unable to lock $pidfile file in write mode\n"
+        unless $lock_fh;
 
     ## If in multi_process mode (bulk.pl for instance can have child
     ## processes) then the PID file contains a list of space-separated PIDs
@@ -178,6 +179,8 @@ Parameters:
 
 =back
 
+Raise an exception in case of failure.
+
 =cut
 
 sub write_pid {
@@ -202,18 +205,16 @@ sub write_pid {
             group => $group,
         )
         ) {
-        terminate_on_expected_error('Unable to set rights on %s. Exiting.',
-            $piddir);
+        croak "Unable to set rights on $piddir\n";
     }
 
     my @pids;
 
     # Lock pid file
     my $lock_fh = Sympa::LockedFile->new($pidfile, 5, '+>>');
-    unless ($lock_fh) {
-        terminate_on_expected_error(
-            'Unable to lock %s file in write mode. Exiting.', $pidfile);
-    }
+    croak "Unable to lock $pidfile file in write mode\n"
+        unless $lock_fh;
+
     ## If pidfile exists, read the PIDs
     if (-s $pidfile) {
 
@@ -237,8 +238,7 @@ sub write_pid {
         unless (truncate $lock_fh, 0) {
             ## Unlock pid file
             $lock_fh->close();
-            terminate_on_expected_error('Could not truncate %s, exiting.',
-                $pidfile);
+            croak "Could not truncate $pidfile\n";
         }
 
         print $lock_fh $pid . "\n";
@@ -253,7 +253,7 @@ sub write_pid {
         ) {
         ## Unlock pid file
         $lock_fh->close();
-        terminate_on_expected_error('Unable to set rights on %s', $pidfile);
+        croak "Unable to set rights on $pidfile\n";
     }
     ## Unlock pid file
     $lock_fh->close();

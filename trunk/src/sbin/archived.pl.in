@@ -243,6 +243,7 @@ Sympa::Tools::Daemon::write_pid(
     user   => Sympa::Constants::USER,
     group  => Sympa::Constants::GROUP,
 );
+Sympa::Tools::Daemon::terminate_on_expected_error($EVAL_ERROR) if $EVAL_ERROR;
 
 # Redirect STDERR to a file, unless the process is running in foreground
 unless ($options{'foreground'}) {
@@ -515,6 +516,7 @@ Sympa::Tools::Daemon::remove_pid(
     piddir => Sympa::Constants::PIDDIR,
     tmpdir => Sympa::Site->tmpdir(),
 );
+Sympa::Tools::Daemon::terminate_on_expected_error($EVAL_ERROR) if $EVAL_ERROR;
 
 exit(0);
 
