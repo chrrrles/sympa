@@ -76,10 +76,9 @@ sub remove_pid {
 
     # Lock pid file
     my $lock_fh = Sympa::LockedFile->new($pidfile, 5, '+<');
-    unless ($lock_fh) {
-        Sympa::Log::fatal_err(
-            'Unable to lock %s file in write mode. Exiting.', $pidfile);
-    }
+    terminate_on_expected_error(
+        "Unable to lock $pidfile file in write mode, exiting"
+    ) unless $lock_fh;
 
     ## If in multi_process mode (bulk.pl for instance can have child
     ## processes) then the PID file contains a list of space-separated PIDs
@@ -203,7 +202,7 @@ sub write_pid {
             group => $group,
         )
         ) {
-        Sympa::Log::fatal_err('Unable to set rights on %s. Exiting.',
+        terminate_on_expected_error('Unable to set rights on %s. Exiting.',
             $piddir);
     }
 
@@ -212,7 +211,7 @@ sub write_pid {
     # Lock pid file
     my $lock_fh = Sympa::LockedFile->new($pidfile, 5, '+>>');
     unless ($lock_fh) {
-        Sympa::Log::fatal_err(
+        terminate_on_expected_error(
             'Unable to lock %s file in write mode. Exiting.', $pidfile);
     }
     ## If pidfile exists, read the PIDs
@@ -238,7 +237,7 @@ sub write_pid {
         unless (truncate $lock_fh, 0) {
             ## Unlock pid file
             $lock_fh->close();
-            Sympa::Log::fatal_err('Could not truncate %s, exiting.',
+            terminate_on_expected_error('Could not truncate %s, exiting.',
                 $pidfile);
         }
 
@@ -254,7 +253,7 @@ sub write_pid {
         ) {
         ## Unlock pid file
         $lock_fh->close();
-        Sympa::Log::fatal_err('Unable to set rights on %s', $pidfile);
+        terminate_on_expected_error('Unable to set rights on %s', $pidfile);
     }
     ## Unlock pid file
     $lock_fh->close();
@@ -511,6 +510,23 @@ sub _get_pid_file {
     my (%params) = @_;
 
     return $params{piddir} . '/' . $params{name} . '.pid';
+}
+
+sub terminate_on_expected_error {
+    my ($message, @args) = @_;
+
+    # notify
+    my $full_message = sprintf $message, @args;
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, $full_message);
+    Sympa::Site->send_notify_to_listmaster('sympa_died', [$full_message]);
+    print STDERR $full_message . "\n"; 
+
+    # free resources
+    eval { Sympa::Site->send_notify_to_listmaster(undef, undef, undef, 1); };
+    eval { Sympa::DatabaseManager::db_disconnect(); };    # unlock database
+    Sys::Syslog::closelog();           # flush log
+
+    exit(1);
 }
 
 =back

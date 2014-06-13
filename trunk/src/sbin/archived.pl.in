@@ -186,14 +186,15 @@ $options{'log_to_stderr'} = 1 if $options{'foreground'};
 
 # load configuration
 unless (defined Sympa::Robot::get_robots()) {
-    Sympa::Log::Syslog::fatal_err(
+    Sympa::Tools::Daemon::terminate_on_expected_error(
         'Unable to load sympa configuration, file %s has errors.',
-        Sympa::Conf::get_sympa_conf());
+        Sympa::Conf::get_sympa_conf()
+    );
 }
 
 # initialize database access
 unless (Sympa::DatabaseManager::check_db_connect()) {
-    Sympa::Log::Syslog::fatal_err(
+    Sympa::Tools::Daemon::terminate_on_expected_error(
         'Database %s defined in sympa.conf has not the right structure or is unreachable.',
         Sympa::Site->db_name
     );
@@ -259,7 +260,7 @@ eval {
         group => Sympa::Constants::GROUP
     );
 };
-Sympa::Log::Syslog::fatal_err($EVAL_ERROR) if $EVAL_ERROR;
+Sympa::Tools::Daemon::terminate_on_expected_error($EVAL_ERROR) if $EVAL_ERROR;
 
 ## Sets the UMASK
 umask(oct(Sympa::Site->umask));
@@ -945,8 +946,10 @@ sub mail2arc {
         ## fetch next message number in archive arctxt .
         if (-f $monthdir . "/index") {
             open(IDX, '<', "$monthdir/index")
-                or Sympa::Log::Syslog::fatal_err("couldn't read index for %s",
-                $list->name);
+                or Sympa::Tools::Daemon::terminate_on_expected_error(
+                    "couldn't read index for %s",
+                    $list->name
+                );
             $newfile = <IDX>;
             chomp($newfile);
             $newfile++;
@@ -1045,7 +1048,9 @@ sub save_idx {
     #    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE, "save_idx($index,$lst)");
 
     open(INDEXF, ">$index")
-        || Sympa::Log::Syslog::fatal_err("couldn't overwrite index $index");
+        or Sympa::Tools::Daemon::terminate_on_expected_error(
+            "couldn't overwrite index $index"
+        );
     print INDEXF "$lst\n";
     close INDEXF;
 
