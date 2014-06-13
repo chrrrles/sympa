@@ -9,12 +9,12 @@ use warnings;
 use FindBin qw($Bin);
 use lib "$Bin/../src/lib";
 
-use POSIX qw(setlocale LC_ALL LC_CTYPE);
+use POSIX qw(LC_ALL);
 use Test::More;
 
 use Sympa::Tools::Time;
 
-setlocale(LC_ALL, 'C');
+POSIX::setlocale(LC_ALL, 'C');
 
 # Fix our time zone for localtime().
 $ENV{'TZ'} = 'CEST-2';
