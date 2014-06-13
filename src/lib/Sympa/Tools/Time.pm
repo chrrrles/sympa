@@ -131,8 +131,13 @@ sub duration_conv {
         (?:(\d+) min)?
         (?:(\d+) sec)?
         $/xi;
-    my ($years, $monthes, $weeks, $days, $hours, $minutes, $seconds) =
-        ($1, $2, $3, $4, $5, $6, $7);
+    my $years   = $1 || 0,
+    my $monthes = $2 || 0;
+    my $weeks   = $3 || 0;
+    my $days    = $4 || 0;
+    my $hours   = $5 || 0;
+    my $minutes = $6 || 0;
+    my $seconds = $7 || 0;
 
     my $duration =
         $seconds +
