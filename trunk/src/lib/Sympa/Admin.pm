@@ -45,7 +45,7 @@ use Sympa::Constants;
 use Sympa::Language;
 use Sympa::List;
 use Sympa::Log::Database;
-use Sympa::Log::Syslog;
+use Sympa::Logger;
 use Sympa::Site;
 use Sympa::Tools;
 use Sympa::Tools::File;
@@ -135,7 +135,7 @@ Creates a list. Used by the create_list() sub in sympa.pl and the do_create_list
 #           are not installed or 1(in status open)
 #######################################################
 sub create_list_old {
-    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, '(%s, %s, %s, %s, %s)', @_);
+    $main::logger->do_log(Sympa::Logger::DEBUG2, '(%s, %s, %s, %s, %s)', @_);
     my ($param, $template, $robot, $origin, $user_mail) = @_;
 
     $robot = Sympa::Robot::clean_robot($robot);
@@ -144,7 +144,7 @@ sub create_list_old {
     ## obligatory list parameters
     foreach my $arg ('listname', 'subject') {
         unless ($param->{$arg}) {
-            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+            $main::logger->do_log(Sympa::Logger::ERR,
                 'create_list_old : missing list param %s', $arg);
             return undef;
         }
@@ -153,7 +153,7 @@ sub create_list_old {
     # owner.email || owner_include.source
     unless (check_owner_defined($param->{'owner'}, $param->{'owner_include'}))
     {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+        $main::logger->do_log(Sympa::Logger::ERR,
             'create_list_old : problem in owner definition in this list creation'
         );
         return undef;
@@ -161,13 +161,13 @@ sub create_list_old {
 
     # template
     unless ($template) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'missing param "template"');
+        $main::logger->do_log(Sympa::Logger::ERR, 'missing param "template"');
         return undef;
     }
 
     # robot
     unless ($robot) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'missing param "robot"');
+        $main::logger->do_log(Sympa::Logger::ERR, 'missing param "robot"');
         return undef;
     }
 
@@ -176,7 +176,7 @@ sub create_list_old {
     my $listname_regexp = Sympa::Tools::get_regexp('listname');
 
     unless ($param->{'listname'} =~ /^$listname_regexp$/i) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+        $main::logger->do_log(Sympa::Logger::ERR,
             'create_list_old : incorrect listname %s',
             $param->{'listname'});
         return undef;
@@ -184,14 +184,14 @@ sub create_list_old {
 
     my (undef, $type) = $robot->split_listname($param->{'listname'});
     if ($type) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+        $main::logger->do_log(Sympa::Logger::ERR,
             'incorrect listname %s matches one of service aliases',
             $param->{'listname'});
         return undef;
     }
 
     if ($param->{'listname'} eq $robot->email) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+        $main::logger->do_log(Sympa::Logger::ERR,
             'incorrect listname %s matches one of service aliases',
             $param->{'listname'});
         return undef;
@@ -200,7 +200,7 @@ sub create_list_old {
     ## Check listname on SMTP server
     my $res = list_check_smtp($param->{'listname'}, $robot);
     unless (defined $res) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+        $main::logger->do_log(Sympa::Logger::ERR,
             "create_list_old : can't check list %.128s on %s",
             $param->{'listname'}, $robot);
         return undef;
@@ -210,8 +210,8 @@ sub create_list_old {
     if ($res
         || Sympa::List->new($param->{'listname'}, $robot, {'just_try' => 1}))
     {
-        Sympa::Log::Syslog::do_log(
-            Sympa::Log::Syslog::ERR,
+        $main::logger->do_log(
+            Sympa::Logger::ERR,
             'could not create already existing list %s on %s for %s',
             $param->{'listname'},
             $robot,
@@ -224,7 +224,7 @@ sub create_list_old {
     my $template_file = $robot->get_etc_filename(
         'create_list_templates/' . $template . '/config.tt2');
     unless (defined $template_file) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'no template %s found', $template);
+        $main::logger->do_log(Sympa::Logger::ERR, 'no template %s found', $template);
         return undef;
     }
 
@@ -233,7 +233,7 @@ sub create_list_old {
 
     ## Check the privileges on the list directory
     unless (mkdir($list_dir, 0777)) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+        $main::logger->do_log(Sympa::Logger::ERR,
             'create_list_old : unable to create %s : %s',
             $list_dir, $CHILD_ERROR);
         return undef;
@@ -242,7 +242,7 @@ sub create_list_old {
     ## Check topics
     if ($param->{'topics'}) {
         unless ($robot->is_available_topic($param->{'topics'})) {
-            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+            $main::logger->do_log(Sympa::Logger::ERR,
                 'topics param %s not defined in topics.conf',
                 $param->{'topics'});
         }
@@ -263,7 +263,7 @@ sub create_list_old {
     ## Lock config before openning the config file
     my $lock_fh = Sympa::LockedFile->new($list_dir . '/config', 5, '>');
     unless ($lock_fh) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+        $main::logger->do_log(Sympa::Logger::ERR,
             'Impossible to create %s/config : %s',
             $list_dir, $ERRNO);
         return undef;
@@ -286,7 +286,7 @@ sub create_list_old {
 
     ## info file creation.
     unless (open INFO, '>', "$list_dir/info") {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'Impossible to create %s/info : %s',
+        $main::logger->do_log(Sympa::Logger::ERR, 'Impossible to create %s/info : %s',
             $list_dir, $ERRNO);
     }
     if (defined $param->{'description'}) {
@@ -299,7 +299,7 @@ sub create_list_old {
     ## Create list object
     my $list;
     unless ($list = Sympa::List->new($param->{'listname'}, $robot)) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+        $main::logger->do_log(Sympa::Logger::ERR,
             'unable to create list %s for robot %s',
             $param->{'listname'}, $robot);
         return undef;
@@ -334,7 +334,7 @@ sub create_list_old {
 
     ## Synchronize list members if required
     if ($list->has_include_data_sources()) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE, "Synchronizing list members...");
+        $main::logger->do_log(Sympa::Logger::NOTICE, "Synchronizing list members...");
         $list->sync_include();
     }
 
@@ -369,28 +369,28 @@ sub create_list_old {
 #######################################################
 sub create_list {
     my ($param, $family, $robot, $abort_on_error) = @_;
-    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::INFO,
+    $main::logger->do_log(Sympa::Logger::INFO,
         'Creating a list; listname=%s, family=%s, subject=%s',
         $param->{'listname'}, $family, $param->{'subject'});
 
     ## mandatory list parameters
     foreach my $arg ('listname') {
         unless ($param->{$arg}) {
-            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'missing list param "%s"',
+            $main::logger->do_log(Sympa::Logger::ERR, 'missing list param "%s"',
                 $arg);
             return undef;
         }
     }
 
     unless ($family) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'missing param "family"');
+        $main::logger->do_log(Sympa::Logger::ERR, 'missing param "family"');
         return undef;
     }
 
     #robot
     $robot = $family->robot;
     unless ($robot) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'missing param "robot"');
+        $main::logger->do_log(Sympa::Logger::ERR, 'missing param "robot"');
         return undef;
     }
 
@@ -399,20 +399,20 @@ sub create_list {
     my $listname_regexp = Sympa::Tools::get_regexp('listname');
 
     unless ($param->{'listname'} =~ /^$listname_regexp$/i) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'incorrect listname %s',
+        $main::logger->do_log(Sympa::Logger::ERR, 'incorrect listname %s',
             $param->{'listname'});
         return undef;
     }
 
     my ($name, $type) = $robot->split_listname($param->{'listname'});
     if ($type) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+        $main::logger->do_log(Sympa::Logger::ERR,
             'incorrect listname %s matches one of service aliases',
             $param->{'listname'});
         return undef;
     }
     if ($param->{'listname'} eq $robot->email) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+        $main::logger->do_log(Sympa::Logger::ERR,
             'incorrect listname %s matches one of service aliases',
             $param->{'listname'});
         return undef;
@@ -421,15 +421,15 @@ sub create_list {
     ## Check listname on SMTP server
     my $res = list_check_smtp($param->{'listname'}, $robot);
     unless (defined $res) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+        $main::logger->do_log(Sympa::Logger::ERR,
             'can\'t check list %.128s on robot %s',
             $param->{'listname'}, $robot);
         return undef;
     }
 
     if ($res) {
-        Sympa::Log::Syslog::do_log(
-            Sympa::Log::Syslog::ERR,
+        $main::logger->do_log(
+            Sympa::Logger::ERR,
             'could not create already existing list %s on %s for %s',
             $param->{'listname'},
             $robot,
@@ -441,7 +441,7 @@ sub create_list {
     ## template file
     my $template_file = $family->get_etc_filename('config.tt2');
     unless (defined $template_file) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'no config template from family %s',
+        $main::logger->do_log(Sympa::Logger::ERR, 'no config template from family %s',
             $family);
         return undef;
     }
@@ -453,7 +453,7 @@ sub create_list {
         Sympa::Template::parse_tt2($param, 'config.tt2', \$conf,
         [$family->dir]);
     unless (defined $tt_result || !$abort_on_error) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+        $main::logger->do_log(Sympa::Logger::ERR,
             'abort on tt2 error. List %s from family %s',
             $param->{'listname'}, $family);
         return undef;
@@ -463,7 +463,7 @@ sub create_list {
     my $list_dir = $robot->home . '/' . $param->{'listname'};
 
     unless (-r $list_dir || mkdir($list_dir, 0777)) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'unable to create %s : %s',
+        $main::logger->do_log(Sympa::Logger::ERR, 'unable to create %s : %s',
             $list_dir, $CHILD_ERROR);
         return undef;
     }
@@ -471,7 +471,7 @@ sub create_list {
     ## Check topics
     if (defined $param->{'topics'}) {
         unless ($robot->is_available_topic($param->{'topics'})) {
-            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+            $main::logger->do_log(Sympa::Logger::ERR,
                 'topics param %s not defined in topics.conf',
                 $param->{'topics'});
         }
@@ -480,7 +480,7 @@ sub create_list {
     ## Lock config before openning the config file
     my $lock_fh = Sympa::LockedFile->new($list_dir . '/config', 5, '>');
     unless ($lock_fh) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'Impossible to create %s/config : %s',
+        $main::logger->do_log(Sympa::Logger::ERR, 'Impossible to create %s/config : %s',
             $list_dir, $!);
         return undef;
     }
@@ -495,7 +495,7 @@ sub create_list {
     $param->{'description'} =~ s/\r\n|\r/\n/g;
 
     unless (open INFO, '>', "$list_dir/info") {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'Impossible to create %s/info : %s',
+        $main::logger->do_log(Sympa::Logger::ERR, 'Impossible to create %s/info : %s',
             $list_dir, $ERRNO);
     }
     if (defined $param->{'description'}) {
@@ -515,12 +515,12 @@ sub create_list {
             my $tt_result = Sympa::Template::parse_tt2($param, $file . ".tt2",
                 \$file_content, [$family->dir]);
             unless (defined $tt_result) {
-                Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+                $main::logger->do_log(Sympa::Logger::ERR,
                     'tt2 error. List %s from family %s, file %s',
                     $param->{'listname'}, $family, $file);
             }
             unless (open FILE, '>', "$list_dir/$file") {
-                Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+                $main::logger->do_log(Sympa::Logger::ERR,
                     'Impossible to create %s/%s : %s',
                     $list_dir, $file, $ERRNO);
             }
@@ -532,7 +532,7 @@ sub create_list {
     ## Create list object
     my $list;
     unless ($list = Sympa::List->new($param->{'listname'}, $robot)) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'unable to create list %s',
+        $main::logger->do_log(Sympa::Logger::ERR, 'unable to create list %s',
             $param->{'listname'});
         return undef;
     }
@@ -569,7 +569,7 @@ sub create_list {
 
     ## Synchronize list members if required
     if ($list->has_include_data_sources()) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE, "Synchronizing list members...");
+        $main::logger->do_log(Sympa::Logger::NOTICE, "Synchronizing list members...");
         $list->sync_include();
     }
 
@@ -598,14 +598,14 @@ sub create_list {
 #######################################################
 sub update_list {
     my ($list, $param, $family, $robot) = @_;
-    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::INFO,
+    $main::logger->do_log(Sympa::Logger::INFO,
         '(listname=%s, family=<%s>, subject=%s)',
         $param->{'listname'}, $family->get_id(), $param->{'subject'});
 
     ## mandatory list parameters
     foreach my $arg ('listname') {
         unless ($param->{$arg}) {
-            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+            $main::logger->do_log(Sympa::Logger::ERR,
                 'update_list : missing list param %s', $arg);
             return undef;
         }
@@ -614,7 +614,7 @@ sub update_list {
     ## template file
     my $template_file = $family->get_etc_filename('config.tt2');
     unless (defined $template_file) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+        $main::logger->do_log(Sympa::Logger::ERR,
             'update_list : no config template from family %s', $family);
         return undef;
     }
@@ -622,7 +622,7 @@ sub update_list {
     ## Check topics
     if (defined $param->{'topics'}) {
         unless ($robot->is_available_topic($param->{'topics'})) {
-            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+            $main::logger->do_log(Sympa::Logger::ERR,
                 'topics param %s not defined in topics.conf',
                 $param->{'topics'});
         }
@@ -631,7 +631,7 @@ sub update_list {
     ## Lock config before openning the config file
     my $lock_fh = Sympa::LockedFile->new($list->{'dir'} . '/config', 5, '>');
     unless ($lock_fh) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'Impossible to create %s/config : %s',
+        $main::logger->do_log(Sympa::Logger::ERR, 'Impossible to create %s/config : %s',
             $list->{'dir'}, $!);
         return undef;
     }
@@ -642,7 +642,7 @@ sub update_list {
 
     ## Create list object
     unless ($list = Sympa::List->new($param->{'listname'}, $robot)) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+        $main::logger->do_log(Sympa::Logger::ERR,
             'create_list : unable to create list %s',
             $param->{'listname'});
         return undef;
@@ -665,7 +665,7 @@ sub update_list {
 
     ## Synchronize list members if required
     if ($list->has_include_data_sources()) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE, "Synchronizing list members...");
+        $main::logger->do_log(Sympa::Logger::NOTICE, "Synchronizing list members...");
         $list->sync_include();
     }
 
@@ -698,7 +698,7 @@ sub update_list {
 #######################################################
 sub rename_list {
     my (%param) = @_;
-    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::INFO, '',);
+    $main::logger->do_log(Sympa::Logger::INFO, '',);
 
     my $list         = $param{'list'};
     my $robot        = $list->domain;
@@ -709,7 +709,7 @@ sub rename_list {
     my $listname_regexp = Sympa::Tools::get_regexp('listname');
 
     unless ($new_listname =~ /^$listname_regexp$/i) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'incorrect listname %s',
+        $main::logger->do_log(Sympa::Logger::ERR, 'incorrect listname %s',
             $new_listname);
         return 'incorrect_listname';
     }
@@ -718,7 +718,7 @@ sub rename_list {
     my $new_robot    = Sympa::Robot->new($new_robot_id);
 
     unless ($new_robot) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'incorrect robot %s',
+        $main::logger->do_log(Sympa::Logger::ERR, 'incorrect robot %s',
             $new_robot_id);
         return 'unknown_robot';
     }
@@ -742,7 +742,7 @@ sub rename_list {
         }
 
         unless ($r_action =~ /do_it|listmaster/) {
-            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'authorization error');
+            $main::logger->do_log(Sympa::Logger::ERR, 'authorization error');
             return 'authorization';
         }
     }
@@ -750,7 +750,7 @@ sub rename_list {
     ## Check listname on SMTP server
     my $res = list_check_smtp($param{'new_listname'}, $new_robot);
     unless (defined($res)) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, "can't check list %.128s on %s",
+        $main::logger->do_log(Sympa::Logger::ERR, "can't check list %.128s on %s",
             $param{'new_listname'}, $new_robot);
         return 'internal';
     }
@@ -760,8 +760,8 @@ sub rename_list {
         &&    ## Do not test if listname did not change
         (Sympa::List->new($param{'new_listname'}, $new_robot, {'just_try' => 1}))
         ) {
-        Sympa::Log::Syslog::do_log(
-            Sympa::Log::Syslog::ERR,
+        $main::logger->do_log(
+            Sympa::Logger::ERR,
             'Could not rename list %s: new list %s on %s already existing list',
             $list,
             $param{'new_listname'},
@@ -772,7 +772,7 @@ sub rename_list {
 
     my (undef, $type) = $new_robot->split_listname($param{'new_listname'});
     if ($type) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+        $main::logger->do_log(Sympa::Logger::ERR,
             'Incorrect listname %s matches one of service aliases',
             $param{'new_listname'});
         return 'incorrect_listname';
@@ -800,7 +800,7 @@ sub rename_list {
                 $param{'user_email'}
             )
             ) {
-            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+            $main::logger->do_log(Sympa::Logger::ERR,
                 "Unable to load $param{'new_listname'} while renaming");
             return 'internal';
         }
@@ -827,7 +827,7 @@ sub rename_list {
     ## This code should be in Sympa::List::rename()
     unless ($param{'mode'} eq 'copy') {
         unless (move($list->dir, $new_dir)) {
-            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+            $main::logger->do_log(Sympa::Logger::ERR,
                 'Unable to rename %s to %s : %s',
                 $list->dir, $new_dir, $ERRNO);
             return 'internal';
@@ -841,7 +841,7 @@ sub rename_list {
             . $param{'new_robot'};
         if (-d $arc_dir && $arc_dir ne $new_arc_dir) {
             unless (move($arc_dir, $new_arc_dir)) {
-                Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+                $main::logger->do_log(Sympa::Logger::ERR,
                     "Unable to rename archive $arc_dir");
 
                 # continue even if there is some troubles with archives
@@ -857,7 +857,7 @@ sub rename_list {
             . $param{'new_robot'};
         if (-d $bounce_dir && $bounce_dir ne $new_bounce_dir) {
             unless (move($bounce_dir, $new_bounce_dir)) {
-                Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+                $main::logger->do_log(Sympa::Logger::ERR,
                     "Unable to rename bounces from $bounce_dir to $new_bounce_dir"
                 );
             }
@@ -871,7 +871,7 @@ sub rename_list {
                 $list->name,            $list->domain
             )
             ) {
-            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+            $main::logger->do_log(Sympa::Logger::ERR,
                 'Unable to rename list %s to %s@%s in the database',
                 $list, $param{'new_listname'}, $param{'new_robot'});
             return 'internal';
@@ -883,8 +883,8 @@ sub rename_list {
                 $list->name,            $list->domain
             )
             ) {
-            Sympa::Log::Syslog::do_log(
-                Sympa::Log::Syslog::ERR,
+            $main::logger->do_log(
+                Sympa::Logger::ERR,
                 'Unable to change admins in database while renaming list %s to %s@%s',
                 $list,
                 $param{'new_listname'},
@@ -906,7 +906,7 @@ sub rename_list {
             Sympa::DatabaseManager::quote($robot)
         )
         ) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+        $main::logger->do_log(Sympa::Logger::ERR,
             'Unable to transfer stats from list %s@%s to list %s',
             $param{'new_listname'}, $param{'new_robot'}, $list);
     }
@@ -921,7 +921,7 @@ sub rename_list {
             Sympa::DatabaseManager::quote($robot)
         )
         ) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+        $main::logger->do_log(Sympa::Logger::ERR,
             'Unable to transfer stat counter from list %s@%s to list %s',
             $param{'new_listname'}, $param{'new_robot'}, $list);
     }
@@ -935,7 +935,7 @@ sub rename_list {
             {'reload_config' => 1}
         )
         ) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+        $main::logger->do_log(Sympa::Logger::ERR,
             "Unable to load $param{'new_listname'} while renaming");
         return 'internal';
     }
@@ -966,7 +966,7 @@ sub rename_list {
             'queuesubscribe', 'queueautomatic'
             ) {
             unless (opendir(DIR, Sympa::Site->$spool)) {
-                Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+                $main::logger->do_log(Sympa::Logger::ERR,
                     "Unable to open '%s' spool : %s",
                     Sympa::Site->$spool, $ERRNO);
             }
@@ -1005,8 +1005,8 @@ sub rename_list {
                         Sympa::Site->$spool . "/$newfile"
                     )
                     ) {
-                    Sympa::Log::Syslog::do_log(
-                        Sympa::Log::Syslog::ERR,
+                    $main::logger->do_log(
+                        Sympa::Logger::ERR,
                         "Unable to rename %s to %s : %s",
                         Sympa::Site->$spool . "/$file",
                         Sympa::Site->$spool . "/$newfile",
@@ -1031,8 +1031,8 @@ sub rename_list {
                     Sympa::Site->queuedigest . "/$param{'new_listname'}"
                 )
                 ) {
-                Sympa::Log::Syslog::do_log(
-                    Sympa::Log::Syslog::ERR,
+                $main::logger->do_log(
+                    Sympa::Logger::ERR,
                     "Unable to rename %s to %s : %s",
                     Sympa::Site->queuedigest . "/$old_listname",
                     Sympa::Site->queuedigest . "/$param{'new_listname'}",
@@ -1048,8 +1048,8 @@ sub rename_list {
                         . "/$param{'new_listname'}\@$param{'new_robot'}"
                 )
                 ) {
-                Sympa::Log::Syslog::do_log(
-                    Sympa::Log::Syslog::ERR,
+                $main::logger->do_log(
+                    Sympa::Logger::ERR,
                     "Unable to rename %s to %s : %s",
                     Sympa::Site->queuedigest . "/$old_listname\@$robot",
                     Sympa::Site->queuedigest
@@ -1089,13 +1089,13 @@ sub clone_list_as_empty {
 
     my $list;
     unless ($list = Sympa::List->new($source_list_name, $source_robot)) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+        $main::logger->do_log(Sympa::Logger::ERR,
             'Admin::clone_list_as_empty : new list failed %s %s',
             $source_list_name, $source_robot);
         return undef;
     }
 
-    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::INFO,
+    $main::logger->do_log(Sympa::Logger::INFO,
         "Admin::clone_list_as_empty ($source_list_name, $source_robot,$new_listname,$new_robot_id,$email)"
     );
 
@@ -1106,14 +1106,14 @@ sub clone_list_as_empty {
     } elsif ($new_robot_id eq Sympa::Site->domain) {
         $new_dir = Sympa::Site->home . '/' . $new_listname;
     } else {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+        $main::logger->do_log(Sympa::Logger::ERR,
             "Admin::clone_list_as_empty : unknown robot $new_robot_id");
         return undef;
     }
 
     unless (mkdir $new_dir, 0775) {
-        Sympa::Log::Syslog::do_log(
-            Sympa::Log::Syslog::ERR,
+        $main::logger->do_log(
+            Sympa::Logger::ERR,
             'Admin::clone_list_as_empty : failed to create directory %s : %s',
             $new_dir,
             $ERRNO
@@ -1129,8 +1129,8 @@ sub clone_list_as_empty {
                     $new_dir . '/' . $subdir
                 )
                 ) {
-                Sympa::Log::Syslog::do_log(
-                    Sympa::Log::Syslog::ERR,
+                $main::logger->do_log(
+                    Sympa::Logger::ERR,
                     'Admin::clone_list_as_empty :  failed to copy_directory %s : %s',
                     $new_dir . '/' . $subdir,
                     $ERRNO
@@ -1147,8 +1147,8 @@ sub clone_list_as_empty {
                 $list->dir . '/' . $file, $new_dir . '/' . $file
             )
             ) {
-            Sympa::Log::Syslog::do_log(
-                Sympa::Log::Syslog::ERR,
+            $main::logger->do_log(
+                Sympa::Logger::ERR,
                 'Admin::clone_list_as_empty : failed to copy %s : %s',
                 $new_dir . '/' . $file, $ERRNO
             );
@@ -1157,7 +1157,7 @@ sub clone_list_as_empty {
     }
 
     # copy optional files
-    foreach my $file ('message.footer', 'message.header', Sympa::Log::Syslog::INFO, 'homepage')
+    foreach my $file ('message.footer', 'message.header', Sympa::Logger::INFO, 'homepage')
     {
         if (-f $list->dir . '/' . $file) {
             unless (
@@ -1166,8 +1166,8 @@ sub clone_list_as_empty {
                     $new_dir . '/' . $file
                 )
                 ) {
-                Sympa::Log::Syslog::do_log(
-                    Sympa::Log::Syslog::ERR,
+                $main::logger->do_log(
+                    Sympa::Logger::ERR,
                     'Admin::clone_list_as_empty : failed to copy %s : %s',
                     $new_dir . '/' . $file, $ERRNO
                 );
@@ -1184,7 +1184,7 @@ sub clone_list_as_empty {
             $new_listname, $new_robot_id, {'reload_config' => 1}
         )
         ) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::INFO,
+        $main::logger->do_log(Sympa::Logger::INFO,
             "Admin::clone_list_as_empty : unable to load $new_listname while renamming"
         );
         return undef;
@@ -1225,18 +1225,18 @@ sub clone_list_as_empty {
 #########################################################
 sub check_owner_defined {
     my ($owner, $owner_include) = @_;
-    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, "check_owner_defined()");
+    $main::logger->do_log(Sympa::Logger::DEBUG2, "check_owner_defined()");
 
     if (ref($owner) eq "ARRAY") {
         if (ref($owner_include) eq "ARRAY") {
             if (($#{$owner} < 0) && ($#{$owner_include} < 0)) {
-                Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+                $main::logger->do_log(Sympa::Logger::ERR,
                     'missing list param owner or owner_include');
                 return undef;
             }
         } else {
             if (($#{$owner} < 0) && !($owner_include)) {
-                Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+                $main::logger->do_log(Sympa::Logger::ERR,
                     'missing list param owner or owner_include');
                 return undef;
             }
@@ -1244,13 +1244,13 @@ sub check_owner_defined {
     } else {
         if (ref($owner_include) eq "ARRAY") {
             if (!($owner) && ($#{$owner_include} < 0)) {
-                Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+                $main::logger->do_log(Sympa::Logger::ERR,
                     'missing list param owner or owner_include');
                 return undef;
             }
         } else {
             if (!($owner) && !($owner_include)) {
-                Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+                $main::logger->do_log(Sympa::Logger::ERR,
                     'missing list param owner or owner_include');
                 return undef;
             }
@@ -1260,23 +1260,23 @@ sub check_owner_defined {
     if (ref($owner) eq "ARRAY") {
         foreach my $o (@{$owner}) {
             unless ($o) {
-                Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'empty param "owner"');
+                $main::logger->do_log(Sympa::Logger::ERR, 'empty param "owner"');
                 return undef;
             }
             unless ($o->{'email'}) {
-                Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+                $main::logger->do_log(Sympa::Logger::ERR,
                     'missing sub param "email" for param "owner"');
                 return undef;
             }
         }
     } elsif (ref($owner) eq "HASH") {
         unless ($owner->{'email'}) {
-            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+            $main::logger->do_log(Sympa::Logger::ERR,
                 'missing sub param "email" for param "owner"');
             return undef;
         }
     } elsif (defined $owner) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+        $main::logger->do_log(Sympa::Logger::ERR,
             'missing sub param "email" for param "owner"');
         return undef;
     }
@@ -1284,24 +1284,24 @@ sub check_owner_defined {
     if (ref($owner_include) eq "ARRAY") {
         foreach my $o (@{$owner_include}) {
             unless ($o) {
-                Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+                $main::logger->do_log(Sympa::Logger::ERR,
                     'empty param "owner_include"');
                 return undef;
             }
             unless ($o->{'source'}) {
-                Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+                $main::logger->do_log(Sympa::Logger::ERR,
                     'missing sub param "source" for param "owner_include"');
                 return undef;
             }
         }
     } elsif (ref($owner_include) eq "HASH") {
         unless ($owner_include->{'source'}) {
-            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+            $main::logger->do_log(Sympa::Logger::ERR,
                 'missing sub param "source" for param "owner_include"');
             return undef;
         }
     } elsif (defined $owner_include) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+        $main::logger->do_log(Sympa::Logger::ERR,
             'missing sub param "source" for param "owner_include"');
         return undef;
     }
@@ -1319,7 +1319,7 @@ sub check_owner_defined {
 # OUT : - Net::SMTP object or 0
 #####################################################
 sub list_check_smtp {
-    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, '(%s, %s)', @_);
+    $main::logger->do_log(Sympa::Logger::DEBUG2, '(%s, %s)', @_);
     my $list  = shift;
     my $robot = Sympa::Robot::clean_robot(shift);
 
@@ -1344,7 +1344,7 @@ sub list_check_smtp {
 
     eval { require Net::SMTP; };
     if ($EVAL_ERROR) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+        $main::logger->do_log(Sympa::Logger::ERR,
             'Unable to use Net library, Net::SMTP required, install it (CPAN) first'
         );
         return undef;
@@ -1377,7 +1377,7 @@ sub list_check_smtp {
 #         1 (if ok) or
 ##########################################################
 sub install_aliases {
-    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG3, '(%s)', @_);
+    $main::logger->do_log(Sympa::Logger::DEBUG3, '(%s)', @_);
     my $list = shift;
 
     return 1
@@ -1387,11 +1387,11 @@ sub install_aliases {
     my $output_file   = Sympa::Site->tmpdir . '/aliasmanager.stdout.' . $PID;
     my $error_output_file =
         Sympa::Site->tmpdir . '/aliasmanager.stderr.' . $PID;
-    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG3, '%s add alias %s@%s for list %s',
+    $main::logger->do_log(Sympa::Logger::DEBUG3, '%s add alias %s@%s for list %s',
         $alias_manager, $list->name, $list->host, $list);
 
     unless (-x $alias_manager) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'Failed to install aliases: %s',
+        $main::logger->do_log(Sympa::Logger::ERR, 'Failed to install aliases: %s',
             $ERRNO);
         return undef;
     }
@@ -1403,7 +1403,7 @@ sub install_aliases {
     system($cmd);
     my $status = $CHILD_ERROR >> 8;
     if ($status == 0) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::INFO,
+        $main::logger->do_log(Sympa::Logger::INFO,
             'Aliases installed successfully: list %s', $list);
         return 1;
     }
@@ -1418,57 +1418,57 @@ sub install_aliases {
     unlink $error_output_file;
 
     if ($status == 1) {
-        Sympa::Log::Syslog::do_log(
-            Sympa::Log::Syslog::ERR,
+        $main::logger->do_log(
+            Sympa::Logger::ERR,
             'Configuration file %s has errors : %s',
             Sympa::Conf::get_sympa_conf(),
             $error_output
         );
     } elsif ($status == 2) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+        $main::logger->do_log(Sympa::Logger::ERR,
             'Internal error : Incorrect call to alias_manager : %s',
             $error_output);
     } elsif ($status == 3) {
-        Sympa::Log::Syslog::do_log(
-            Sympa::Log::Syslog::ERR,
+        $main::logger->do_log(
+            Sympa::Logger::ERR,
             'Could not read sympa config file, report to httpd error_log: %s',
             $error_output
         );
     } elsif ($status == 4) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+        $main::logger->do_log(Sympa::Logger::ERR,
             'Could not get default domain, report to httpd error_log: %s',
             $error_output);
     } elsif ($status == 5) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+        $main::logger->do_log(Sympa::Logger::ERR,
             'Unable to append to alias file: %s',
             $error_output);
     } elsif ($status == 6) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'Unable to run newaliases: %s',
+        $main::logger->do_log(Sympa::Logger::ERR, 'Unable to run newaliases: %s',
             $error_output);
     } elsif ($status == 7) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+        $main::logger->do_log(Sympa::Logger::ERR,
             'Unable to read alias file, report to httpd error_log: %s',
             $error_output);
     } elsif ($status == 8) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+        $main::logger->do_log(Sympa::Logger::ERR,
             'Could not create temporay file, report to httpd error_log: %s',
             $error_output);
     } elsif ($status == 13) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::INFO,
+        $main::logger->do_log(Sympa::Logger::INFO,
             'Some of list aliases already exist: %s',
             $error_output);
     } elsif ($status == 14) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+        $main::logger->do_log(Sympa::Logger::ERR,
             'Can not open lock file, report to httpd error_log: %s',
             $error_output);
     } elsif ($status == 15) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+        $main::logger->do_log(Sympa::Logger::ERR,
             'The parser returned empty aliases: %s',
             $error_output);
     } elsif ($status == 16) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'Unknown robot: %s', $error_output);
+        $main::logger->do_log(Sympa::Logger::ERR, 'Unknown robot: %s', $error_output);
     } else {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+        $main::logger->do_log(Sympa::Logger::ERR,
             "Unknown error %s while running alias manager %s : %s",
             $status, $alias_manager, $error_output);
     }
@@ -1489,7 +1489,7 @@ sub install_aliases {
 #########################################################
 
 sub remove_aliases {
-    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG3, '(%s)', @_);
+    $main::logger->do_log(Sympa::Logger::DEBUG3, '(%s)', @_);
     my $list = shift;
 
     return 1
@@ -1500,7 +1500,7 @@ sub remove_aliases {
     my $aliases;
 
     unless ($status == 1) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+        $main::logger->do_log(Sympa::Logger::ERR,
             'Failed to remove aliases for list %s', $list);
 
         ## build a list of required aliases the listmaster should install
@@ -1518,7 +1518,7 @@ EOF
         return $aliases;
     }
 
-    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::INFO, 'Aliases removed successfully');
+    $main::logger->do_log(Sympa::Logger::INFO, 'Aliases removed successfully');
 
     return 1;
 }
@@ -1555,7 +1555,7 @@ sub change_user_email {
     my @failed_for;
 
     unless ($in{'current_email'} && $in{'new_email'} && $in{'robot'}) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'Missing incoming parameter');
+        $main::logger->do_log(Sympa::Logger::ERR, 'Missing incoming parameter');
         return undef;
     }
 
@@ -1597,8 +1597,8 @@ sub change_user_email {
                     }
                 );
                 push @failed_for, $list;
-                Sympa::Log::Syslog::do_log(
-                    Sympa::Log::Syslog::ERR,
+                $main::logger->do_log(
+                    Sympa::Logger::ERR,
                     'could not change member email for list %s because member is included',
                     $list
                 );
@@ -1613,7 +1613,7 @@ sub change_user_email {
                 $list->delete_list_member('users' => [$in{'current_email'}]))
             {
                 push @failed_for, $list;
-                Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::INFO,
+                $main::logger->do_log(Sympa::Logger::INFO,
                     'could not remove email from list %s', $l);
             }
 
@@ -1626,7 +1626,7 @@ sub change_user_email {
                 )
                 ) {
                 push @failed_for, $list;
-                Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+                $main::logger->do_log(Sympa::Logger::ERR,
                     'could not change email for list %s', $l);
             }
         }
@@ -1653,8 +1653,8 @@ sub change_user_email {
                     }
                 );
                 push @failed_for, $list;
-                Sympa::Log::Syslog::do_log(
-                    Sympa::Log::Syslog::ERR,
+                $main::logger->do_log(
+                    Sympa::Logger::ERR,
                     'could not change %s email for list %s because admin is included',
                     $role,
                     $list
@@ -1699,7 +1699,7 @@ sub change_user_email {
         $in{'current_email'}, Sympa::Site->db_additional_user_fields
     );
     unless ($u and $u->moveto($in{'new_mail'})) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'change_email: update failed');
+        $main::logger->do_log(Sympa::Logger::ERR, 'change_email: update failed');
         return undef;
     }
 
@@ -1709,7 +1709,7 @@ sub change_user_email {
             $in{'current_email'}, $in{'new_email'}
         )
         ) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'change_email: update failed');
+        $main::logger->do_log(Sympa::Logger::ERR, 'change_email: update failed');
         return undef;
     }
 

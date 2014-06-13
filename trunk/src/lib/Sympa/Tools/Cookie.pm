@@ -28,21 +28,21 @@ use strict;
 use Digest::MD5;
 use CGI::Cookie;
 
-use Sympa::Log::Syslog;
+use Sympa::Logger;
 
 ## returns Message Authentication Check code
 sub get_mac {
     my $email  = shift;
     my $secret = shift;
-    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG3, "get_mac($email, $secret)");
+    $main::logger->do_log(Sympa::Logger::DEBUG3, "get_mac($email, $secret)");
 
     unless ($secret) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+        $main::logger->do_log(Sympa::Logger::ERR,
             'get_mac : failure missing server secret for cookie MD5 digest');
         return undef;
     }
     unless ($email) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+        $main::logger->do_log(Sympa::Logger::ERR,
             'get_mac : failure missing email adresse or cookie MD5 digest');
         return undef;
     }
@@ -78,7 +78,7 @@ sub set_cookie_extern {
     ## Send cookie to the client
     printf "Set-Cookie: %s\n", $cookie->as_string;
 
-    #Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE,"set_cookie_extern : %s",$cookie->as_string);
+    #$main::logger->do_log(Sympa::Logger::NOTICE,"set_cookie_extern : %s",$cookie->as_string);
     return 1;
 }
 

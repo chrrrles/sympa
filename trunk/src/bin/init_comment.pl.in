@@ -26,10 +26,15 @@ use strict;
 use lib '--modulesdir--';
 
 use Sympa::DatabaseManager;
+use Sympa::Logger::Stderr;
 use Sympa::Site;
 
 ## Load sympa config
 Sympa::Site->load or die 'config_error';
+
+our $logger = Sympa::Logger::Stderr->new(
+    level => Sympa::Site->log_level()
+);
 
 chdir Sympa::Site->home;
 

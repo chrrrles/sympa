@@ -29,7 +29,7 @@ use warnings;
 use English qw(-no_match_vars);
 use MIME::Parser;
 
-use Sympa::Log::Syslog;
+use Sympa::Logger;
 use Sympa::Message;
 
 # input a msg as string, output the dkim status
@@ -38,36 +38,36 @@ sub verifier {
     my $tmpdir = shift;
     my $dkim;
 
-    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG, "DKIM verifier");
+    $main::logger->do_log(Sympa::Logger::DEBUG, "DKIM verifier");
     unless (eval "require Mail::DKIM::Verifier") {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+        $main::logger->do_log(Sympa::Logger::ERR,
             "Failed to load Mail::DKIM::Verifier Perl module, ignoring DKIM signature"
         );
         return undef;
     }
 
     unless ($dkim = Mail::DKIM::Verifier->new()) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+        $main::logger->do_log(Sympa::Logger::ERR,
             'Could not create Mail::DKIM::Verifier');
         return undef;
     }
 
     my $temporary_file = $tmpdir . "/dkim." . $PID;
     if (!open(MSGDUMP, "> $temporary_file")) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'Can\'t store message in file %s',
+        $main::logger->do_log(Sympa::Logger::ERR, 'Can\'t store message in file %s',
             $temporary_file);
         return undef;
     }
     print MSGDUMP $msg_as_string;
 
     unless (close(MSGDUMP)) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+        $main::logger->do_log(Sympa::Logger::ERR,
             "unable to dump message in temporary file $temporary_file");
         return undef;
     }
 
     unless (open(MSGDUMP, "$temporary_file")) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'Can\'t read message in file %s',
+        $main::logger->do_log(Sympa::Logger::ERR, 'Can\'t read message in file %s',
             $temporary_file);
         return undef;
     }
@@ -86,14 +86,14 @@ sub verifier {
 
     foreach my $signature ($dkim->signatures) {
         if ($signature->result_detail eq "pass") {
-            Sympa::Log::Syslog::do_log(
-                Sympa::Log::Syslog::DEBUG,
+            $main::logger->do_log(
+                Sympa::Logger::DEBUG,
                 'Verification of signature from domain %s issued result "pass"',
                 $signature->domain,
             );
             return 1;
         } else {
-            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG,
+            $main::logger->do_log(Sympa::Logger::DEBUG,
                 'Verification of signature from domain %s issued result %s',
                 $signature->domain, $signature->result_detail);
         }
@@ -103,7 +103,7 @@ sub verifier {
 
 # input a msg as string, output idem without signature if invalid
 sub remove_invalid_signature {
-    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG, "removing invalid DKIM signature");
+    $main::logger->do_log(Sympa::Logger::DEBUG, "removing invalid DKIM signature");
     my $msg_as_string = shift;
 
     unless (verifier($msg_as_string)) {
@@ -114,11 +114,11 @@ sub remove_invalid_signature {
         $parser->output_to_core(1);
         my $entity = $parser->parse_data($msg_as_string);
         unless ($entity) {
-            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'could not parse message');
+            $main::logger->do_log(Sympa::Logger::ERR, 'could not parse message');
             return $msg_as_string;
         }
         $entity->head->delete('DKIM-Signature');
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG,
+        $main::logger->do_log(Sympa::Logger::DEBUG,
             'Removing invalid DKIM signature header');
         return $entity->head->as_string() . "\n" . $body_as_string;
     } else {
@@ -139,8 +139,8 @@ sub sign {
     my $dkim_selector   = $data->{'dkim_selector'};
     my $dkim_privatekey = $data->{'dkim_privatekey'};
 
-    Sympa::Log::Syslog::do_log(
-        Sympa::Log::Syslog::DEBUG2,
+    $main::logger->do_log(
+        Sympa::Logger::DEBUG2,
         'sign(msg:%s,dkim_d:%s,dkim_i%s,dkim_selector:%s,dkim_privatekey:%s)',
         substr($msg_as_string, 0, 30),
         $dkim_d,
@@ -150,24 +150,24 @@ sub sign {
     );
 
     unless ($dkim_selector) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+        $main::logger->do_log(Sympa::Logger::ERR,
             "DKIM selector is undefined, could not sign message");
         return $msg_as_string;
     }
     unless ($dkim_privatekey) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+        $main::logger->do_log(Sympa::Logger::ERR,
             "DKIM key file is undefined, could not sign message");
         return $msg_as_string;
     }
     unless ($dkim_d) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+        $main::logger->do_log(Sympa::Logger::ERR,
             "DKIM d= tag is undefined, could not sign message");
         return $msg_as_string;
     }
 
     my $temporary_keyfile = $tmpdir . "/dkimkey." . $PID;
     if (!open(MSGDUMP, "> $temporary_keyfile")) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'Can\'t store key in file %s',
+        $main::logger->do_log(Sympa::Logger::ERR, 'Can\'t store key in file %s',
             $temporary_keyfile);
         return $msg_as_string;
     }
@@ -175,13 +175,13 @@ sub sign {
     close(MSGDUMP);
 
     unless (eval "require Mail::DKIM::Signer") {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+        $main::logger->do_log(Sympa::Logger::ERR,
             "Failed to load Mail::DKIM::Signer Perl module, ignoring DKIM signature"
         );
         return ($msg_as_string);
     }
     unless (eval "require Mail::DKIM::TextWrap") {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+        $main::logger->do_log(Sympa::Logger::ERR,
             "Failed to load Mail::DKIM::TextWrap Perl module, signature will not be pretty"
         );
     }
@@ -207,12 +207,12 @@ sub sign {
         );
     }
     unless ($dkim) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'Can\'t create Mail::DKIM::Signer');
+        $main::logger->do_log(Sympa::Logger::ERR, 'Can\'t create Mail::DKIM::Signer');
         return ($msg_as_string);
     }
     my $temporary_file = $tmpdir . "/dkim." . $PID;
     if (!open(MSGDUMP, "> $temporary_file")) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'Can\'t store message in file %s',
+        $main::logger->do_log(Sympa::Logger::ERR, 'Can\'t store message in file %s',
             $temporary_file);
         return ($msg_as_string);
     }
@@ -220,7 +220,7 @@ sub sign {
     close(MSGDUMP);
 
     unless (open(MSGDUMP, $temporary_file)) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'Can\'t read temporary file %s',
+        $main::logger->do_log(Sympa::Logger::ERR, 'Can\'t read temporary file %s',
             $temporary_file);
         return undef;
     }
@@ -236,7 +236,7 @@ sub sign {
     }
     close MSGDUMP;
     unless ($dkim->CLOSE) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'Cannot sign (DKIM) message');
+        $main::logger->do_log(Sympa::Logger::ERR, 'Cannot sign (DKIM) message');
         return ($msg_as_string);
     }
     my $message = Sympa::Message->new(
@@ -244,14 +244,14 @@ sub sign {
         'noxsympato' => 'noxsympato'
     );
     unless ($message) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+        $main::logger->do_log(Sympa::Logger::ERR,
             'Unable to load %s as a message object',
             $temporary_file);
         return ($msg_as_string);
     }
 
-    if ($main::options{Sympa::Log::Syslog::DEBUG}) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG, 'Temporary file is %s',
+    if ($main::options{Sympa::Logger::DEBUG}) {
+        $main::logger->do_log(Sympa::Logger::DEBUG, 'Temporary file is %s',
             $temporary_file);
     } else {
         unlink $temporary_file;

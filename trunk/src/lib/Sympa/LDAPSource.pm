@@ -28,13 +28,13 @@ use base qw(Sympa::Datasource);
 
 use Carp;
 
-use Sympa::Log::Syslog;
+use Sympa::Logger;
 
 sub new {
     my $pkg   = shift;
     my $param = shift;
     my $self  = $param;
-    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG, 'Creating new LDAPSource object');
+    $main::logger->do_log(Sympa::Logger::DEBUG, 'Creating new LDAPSource object');
     ## Map equivalent parameters (depends on the calling context : included
     ## members, scenario, authN
     ## Also set defaults
@@ -56,7 +56,7 @@ sub new {
     bless $self, $pkg;
 
     unless (eval "require Net::LDAP") {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+        $main::logger->do_log(Sympa::Logger::ERR,
             "Unable to use LDAP library, Net::LDAP required, install perl-ldap (CPAN) first"
         );
         return undef;
@@ -64,7 +64,7 @@ sub new {
     require Net::LDAP;
 
     unless (eval "require Net::LDAP::Entry") {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+        $main::logger->do_log(Sympa::Logger::ERR,
             "Unable to use LDAP library,Net::LDAP::Entry required install perl-ldap (CPAN) first"
         );
         return undef;
@@ -72,7 +72,7 @@ sub new {
     require Net::LDAP::Entry;
 
     unless (eval "require Net::LDAP::Message") {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+        $main::logger->do_log(Sympa::Logger::ERR,
             "Unable to use LDAP library,Net::LDAP::Entry required install perl-ldap (CPAN) first"
         );
         return undef;
@@ -102,7 +102,7 @@ sub connect {
     ## Do we have all required parameters
     foreach my $ldap_param ('ldap_host') {
         unless ($self->{$ldap_param}) {
-            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::INFO,
+            $main::logger->do_log(Sympa::Logger::INFO,
                 'Missing parameter %s for LDAP connection', $ldap_param);
             return undef;
         }
@@ -127,7 +127,7 @@ sub connect {
                 if ($self->{'ldap_ssl_ciphers'});
 
             unless (eval "require Net::LDAPS") {
-                Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+                $main::logger->do_log(Sympa::Logger::ERR,
                     "Unable to use LDAPS library, Net::LDAPS required");
                 return undef;
             }
@@ -146,7 +146,7 @@ sub connect {
     }
 
     unless (defined $self->{'ldap_handler'}) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+        $main::logger->do_log(Sympa::Logger::ERR,
             "Unable to connect to the LDAP server '%s'",
             $self->{'ldap_host'});
         return undef;
@@ -185,8 +185,8 @@ sub connect {
     }
 
     unless (defined($cnx) && ($cnx->code() == 0)) {
-        Sympa::Log::Syslog::do_log(
-            Sympa::Log::Syslog::ERR,
+        $main::logger->do_log(
+            Sympa::Logger::ERR,
             "Failed to bind to LDAP server : '%s', LDAP server error : '%s'",
             $host_entry,
             $cnx->error,
@@ -195,9 +195,9 @@ sub connect {
         $self->{'ldap_handler'}->unbind;
         return undef;
     }
-    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG, "Bound to LDAP host '$host_entry'");
+    $main::logger->do_log(Sympa::Logger::DEBUG, "Bound to LDAP host '$host_entry'");
 
-    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG, 'Connected to Database %s',
+    $main::logger->do_log(Sympa::Logger::DEBUG, 'Connected to Database %s',
         $self->{'db_name'});
     return $self->{'ldap_handler'};
 
@@ -206,15 +206,15 @@ sub connect {
 sub query {
     my ($self, $sql_query) = @_;
     unless ($self->{'sth'} = $self->{'dbh'}->prepare($sql_query)) {
-        Sympa::Log::Syslog::do_log(
-            Sympa::Log::Syslog::ERR,
+        $main::logger->do_log(
+            Sympa::Logger::ERR,
             'Unable to prepare SQL query : %s',
             $self->{'dbh'}->errstr
         );
         return undef;
     }
     unless ($self->{'sth'}->execute) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+        $main::logger->do_log(Sympa::Logger::ERR,
             'Unable to perform SQL query %s : %s ',
             $sql_query, $self->{'dbh'}->errstr);
         return undef;

@@ -27,10 +27,10 @@ use strict;
 use warnings;
 use base qw(Sympa::Spool::File);
 
-use Sympa::Log::Syslog;
+use Sympa::Logger;
 
 sub new {
-    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, '(%s, %s)', @_);
+    $main::logger->do_log(Sympa::Logger::DEBUG2, '(%s, %s)', @_);
     return shift->SUPER::new('subscribe', shift);
 }
 
@@ -38,7 +38,7 @@ sub sub_request_exists {
     my $self     = shift;
     my $selector = shift;
     if ($self->get_message($selector)) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE,
+        $main::logger->do_log(Sympa::Logger::NOTICE,
             'Subscription already requested by %s',
             $selector->{'sender'});
         return 1;
@@ -55,7 +55,7 @@ sub get_subscription_request_details {
         $result->{'gecos'}            = $2;
         $result->{'customattributes'} = $3;
     } else {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+        $main::logger->do_log(Sympa::Logger::ERR,
             "Failed to parse subscription request %s", $string);
     }
     return $result;
@@ -69,7 +69,7 @@ sub get_additional_details {
     my $details;
     unless ($details =
         $self->get_subscription_request_details($data->{'messageasstring'})) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+        $main::logger->do_log(Sympa::Logger::ERR,
             'File %s exists but its content is unparsable', $key);
         return undef;
     }

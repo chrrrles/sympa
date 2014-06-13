@@ -12,13 +12,15 @@ use English qw(-no_match_vars);
 use Sympa::Conf;
 use Sympa::DatabaseManager;
 use Sympa::Robot;
-use Sympa::Log::Syslog;
+use Sympa::Logger;
+use Sympa::Logger::Syslog;
 use Sympa::List;
 use Sympa::Mailer;
 use Sympa::SOAP;
 use Sympa::Transport;
 
 my $birthday = time;
+my $daemon_name = 'soap';
 
 ## Load sympa config
 unless (defined Sympa::Robot::get_robots()) {
@@ -28,11 +30,13 @@ unless (defined Sympa::Robot::get_robots()) {
     );
 }
 
-Sympa::Log::Syslog::set_log_level(Sympa::Site->log_level);
+our $logger = Sympa::Logger::Syslog->new(
+    level    => Sympa::Site->log_level(),
+    facility => Sympa::Site->log_facility(),
+    service  => $daemon_name
+);
 
-## Open log
-Sympa::Log::Syslog::do_openlog(Sympa::Site->log_facility, 'soap');
-Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::INFO, 'SOAP server launched');
+$logger->do_log(Sympa::Logger::INFO, 'SOAP server launched');
 
 ## We set the real UID with the effective UID value
 ## It is usefull to allow execution of scripts like alias_manager
@@ -41,7 +45,7 @@ $UID = $EUID;    ## UID
 $GID = $);    ## GID
 
 unless (Sympa::DatabaseManager::check_db_connect()) {
-    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'SOAP server requires a RDBMS to run');
+    $logger->do_log(Sympa::Logger::ERR, 'SOAP server requires a RDBMS to run');
 }
 
 ## The process should not fork for sending mail

@@ -63,11 +63,16 @@ use Pod::Usage;
 
 use Sympa::DatabaseManager;
 use Sympa::List;
+use Sympa::Logger::Stderr;
 use Sympa::Robot;
 use Sympa::Site;
 
 ## Load sympa config
 Sympa::Site->load or die 'config_error';
+
+our $logger = Sympa::Logger::Stderr->new(
+    level => Sympa::Site->log_level();
+);
 
 ## Probe Db if defined
 if (Sympa::Site->db_name and Sympa::Site->db_type) {
@@ -88,7 +93,7 @@ my $etc_dir    = Sympa::Site->etc;
 my %options;
 GetOptions(\%options, 'pkcs12=s', 'listname=s', 'robot=s', 'help|h');
 
-$options{'foreground'} = 1;
+
 my $listname = $options{'listname'};
 my $robot_id = $options{'robot'};
 my $p12input = $options{'pkcs12'};

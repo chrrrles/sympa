@@ -29,14 +29,14 @@ use Fcntl qw(LOCK_EX LOCK_NB LOCK_SH);
 use File::NFSLock;
 $File::NFSLock::LOCK_EXTENSION = '.lock';
 
-use Sympa::Log::Syslog;
+use Sympa::Logger;
 
 our %lock_of;
 my $default_timeout    = 30;
 my $stale_lock_timeout = 20 * 60;    # TODO should become a config parameter
 
 sub open {
-    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, '(%s, %s, %s, %s)', @_);
+    $main::logger->do_log(Sympa::Logger::DEBUG2, '(%s, %s, %s, %s)', @_);
     my $self             = shift;
     my $file             = shift;
     my $blocking_timeout = shift || $default_timeout;
@@ -60,12 +60,12 @@ sub open {
         }
     );
     unless ($lock) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'Failed locking %s: %s', $file, $!);
+        $main::logger->do_log(Sympa::Logger::ERR, 'Failed locking %s: %s', $file, $!);
         return undef;
     }
 
     unless ($self->SUPER::open($file, $mode)) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'Failed opening %s: %s', $file, $!);
+        $main::logger->do_log(Sympa::Logger::ERR, 'Failed opening %s: %s', $file, $!);
         $lock->unlock;    # make sure unlock to occur immediately.
         return undef;
     }
@@ -75,7 +75,7 @@ sub open {
 }
 
 sub close {
-    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, '(%s)', @_);
+    $main::logger->do_log(Sympa::Logger::DEBUG2, '(%s)', @_);
     my $self = shift;
 
     my $ret = $self->SUPER::close;

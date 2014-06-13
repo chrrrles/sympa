@@ -39,7 +39,7 @@ package Sympa::Task::Global;
 use strict;
 use base qw(Sympa::Task);
 
-use Sympa::Log::Syslog;
+use Sympa::Logger;
 use Sympa::Site;
 
 sub new {

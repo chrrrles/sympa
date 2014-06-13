@@ -27,7 +27,7 @@ use strict;
 
 use SOAP::Transport::HTTP;
 
-use Sympa::Log::Syslog;
+use Sympa::Logger;
 use Sympa::Robot;
 use Sympa::Session;
 use Sympa::Site;
@@ -44,10 +44,10 @@ sub request {
             $ENV{'SYMPA_ROBOT'} =
                 Sympa::Site->robot_by_soap_url->{$ENV{'SERVER_NAME'}
                     . $ENV{'SCRIPT_NAME'}};
-            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, 'Robot : %s',
+            $main::logger->do_log(Sympa::Logger::DEBUG2, 'Robot : %s',
                 $ENV{'SYMPA_ROBOT'});
         } else {
-            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, 'URL : %s',
+            $main::logger->do_log(Sympa::Logger::DEBUG2, 'URL : %s',
                 $ENV{'SERVER_NAME'} . $ENV{'SCRIPT_NAME'});
             $ENV{'SYMPA_ROBOT'} = Sympa::Site->domain;
         }

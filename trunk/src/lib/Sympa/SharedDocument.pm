@@ -28,14 +28,14 @@ use strict;
 use English qw(-no_match_vars);
 
 use Sympa::Language;
-use Sympa::Log::Syslog;
+use Sympa::Logger;
 use Sympa::Scenario;
 use Sympa::Tools;
 use Sympa::Tools::Data;
 
 ## Creates a new object
 sub new {
-    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, '(%s, %s, %s, %s)', @_);
+    $main::logger->do_log(Sympa::Logger::DEBUG2, '(%s, %s, %s, %s)', @_);
     my ($pkg, $list, $path, $param, $icon_base) = @_;
 
     my $email = $param->{'user'}{'email'};
@@ -44,7 +44,7 @@ sub new {
     my $document = {};
 
     unless (ref($list) =~ /List/i) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+        $main::logger->do_log(Sympa::Logger::ERR,
             'SharedDocument::new : incorrect list parameter');
         return undef;
     }
@@ -57,7 +57,7 @@ sub new {
 
     ### Document isn't a description file
     if ($document->{'path'} =~ /\.desc/) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+        $main::logger->do_log(Sympa::Logger::ERR,
             "SharedDocument::new : %s : description file",
             $document->{'path'});
         return undef;
@@ -79,8 +79,8 @@ sub new {
 
     ### Document exist ?
     unless (-r $document->{'absolute_path'}) {
-        Sympa::Log::Syslog::do_log(
-            Sympa::Log::Syslog::ERR,
+        $main::logger->do_log(
+            Sympa::Logger::ERR,
             "SharedDocument::new : unable to read %s : no such file or directory",
             $document->{'absolute_path'}
         );
@@ -89,8 +89,8 @@ sub new {
 
     ### Document has non-size zero?
     unless (-s $document->{'absolute_path'}) {
-        Sympa::Log::Syslog::do_log(
-            Sympa::Log::Syslog::ERR,
+        $main::logger->do_log(
+            Sympa::Logger::ERR,
             "SharedDocument::new : unable to read %s : empty document",
             $document->{'absolute_path'}
         );
@@ -159,8 +159,8 @@ sub new {
         if ($document->{'absolute_path'} =~ /^(([^\/]*\/)*)([^\/]+)$/) {
             $desc_file = $1 . '.desc.' . $3;
         } else {
-            Sympa::Log::Syslog::do_log(
-                Sympa::Log::Syslog::ERR,
+            $main::logger->do_log(
+                Sympa::Logger::ERR,
                 "SharedDocument::new() : cannot determine desc file for %s",
                 $document->{'absolute_path'}
             );
@@ -241,8 +241,8 @@ sub new {
 
         # listing of all the shared documents of the directory
         unless (opendir DIR, $document->{'absolute_path'}) {
-            Sympa::Log::Syslog::do_log(
-                Sympa::Log::Syslog::ERR,
+            $main::logger->do_log(
+                Sympa::Logger::ERR,
                 "SharedDocument::new() : cannot open %s : %s",
                 $document->{'absolute_path'}, $ERRNO
             );
@@ -335,7 +335,7 @@ sub check_access_control {
 
     my $list = $self->{'list'};
 
-    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG, "check_access_control(%s)",
+    $main::logger->do_log(Sympa::Logger::DEBUG, "check_access_control(%s)",
         $self->{'path'});
 
     # Control for editing

@@ -32,7 +32,8 @@ use Sympa::Language;
 use Sympa::Template;
 use Sympa::Constants;
 use Sympa::List;
-use Sympa::Log::Syslog;
+use Sympa::Logger;
+use Sympa::Logger::Stderr;
 use Sympa::Tools::File;
 
 my %options;
@@ -56,6 +57,10 @@ if (Sympa::Site->db_name and Sympa::Site->db_type) {
             Sympa::Site->db_name;
     }
 }
+
+our $logger = Sympa::Logger::Stderr->new(
+    level => Sympa::Site->log_level();
+);
 
 ## We have a parameter that should be a template to convert
 ## Output is sent to stdout
@@ -222,7 +227,7 @@ foreach my $tpl (@templates) {
                 mode  => 0755,
             )
             ) {
-            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'Unable to set rights on %s',
+            $logger->do_log(Sympa::Logger::ERR, 'Unable to set rights on %s',
                 Sympa::Site->db_name);
             next;
         }
@@ -278,7 +283,7 @@ sub convert {
             group => Sympa::Constants::GROUP
         )
         ) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'Unable to set rights on %s',
+        $logger->do_log(Sympa::Logger::ERR, 'Unable to set rights on %s',
             $Sympa::Conf::Conf{'db_name'});
         return undef;
     }

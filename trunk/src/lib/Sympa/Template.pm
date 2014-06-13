@@ -34,7 +34,7 @@ use Template;
 
 use Sympa::Constants;
 use Sympa::Language;
-use Sympa::Log::Syslog;
+use Sympa::Logger;
 use Sympa::Tools::Text;
 
 my $current_lang;
@@ -131,7 +131,7 @@ sub maketext {
 
     ## Strangely the path is sometimes empty...
     ## TODO : investigate
-    #    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE, "PATH: $path ; $template_name");
+    #    $main::logger->do_log(Sympa::Logger::NOTICE, "PATH: $path ; $template_name");
 
     ## Sample code to dump the STASH
     # my $s = $stash->_dump();
@@ -300,10 +300,10 @@ sub parse_tt2 {
 
     unless ($tt2->process($template, $data, $output)) {
         $last_error = $tt2->error();
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'Failed to parse %s : %s',
+        $main::logger->do_log(Sympa::Logger::ERR, 'Failed to parse %s : %s',
             $template, "$last_error");
-        Sympa::Log::Syslog::do_log(
-            Sympa::Log::Syslog::ERR,
+        $main::logger->do_log(
+            Sympa::Logger::ERR,
             'Looking for TT2 files in %s',
             join(',', @{$include_path})
         );

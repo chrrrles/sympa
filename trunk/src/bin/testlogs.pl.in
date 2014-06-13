@@ -28,7 +28,8 @@ use lib '--modulesdir--';
 use Getopt::Long;
 
 use Sympa::Constants;
-use Sympa::Log::Syslog;
+use Sympa::Logger;
+use Sympa::Logger::Syslog;
 use Sympa::Site;
 use Sympa::Tools::Daemon;
 
@@ -44,19 +45,15 @@ unless (Sympa::Site->load('config_file' => $config_file)) {
     );
 }
 
-## Open the syslog and say we're read out stuff.
-Sympa::Log::Syslog::do_openlog(Sympa::Site->syslog, 'sympa');
+my $log_level = $options{'log_level'} || Sympa::Site->log_level;
+our $logger = Sympa::Logger::Syslog->new(
+    level    => $log_level,
+    service  => 'sympa',
+    facility => Sympa::Site->log_facility(),
+);
+$logger->do_log(
+    Sympa::Logger::INFO,
+    "Logger initialized, with log level $log_level"
+);
 
-# setting log_level using conf unless it is set by calling option
-if ($options{'log_level'}) {
-    Sympa::Log::Syslog::do_log(
-        Sympa::Log::Syslog::INFO,
-        'Logs seems OK, log level set using options : %s',
-        $options{'log_level'}
-    );
-} else {
-    Sympa::Log::Syslog::set_log_level(Sympa::Site->log_level);
-    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::INFO, 'Logs seems OK, default log level %s',
-        Sympa::Site->log_level);
-}
 print "Ok, now check logs \n";

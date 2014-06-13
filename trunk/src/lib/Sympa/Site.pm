@@ -37,7 +37,7 @@ use Carp qw(croak carp);
 use Sympa::Conf;
 use Sympa::ConfDef;
 use Sympa::Language;
-use Sympa::Log::Syslog;
+use Sympa::Logger;
 
 ####
 #### global variables
@@ -78,7 +78,7 @@ our $AUTOLOAD;
 sub DESTROY;
 
 sub AUTOLOAD {
-    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG3, 'Autoloading %s', $AUTOLOAD);
+    $main::logger->do_log(Sympa::Logger::DEBUG3, 'Autoloading %s', $AUTOLOAD);
     $AUTOLOAD =~ m/^(.*)::(.*)/;
     my $pkg  = $1;
     my $attr = $2;
@@ -112,8 +112,8 @@ sub AUTOLOAD {
             and ((ref $_[0] and exists $_[0]->{$attr})
                 or exists $Sympa::Conf::Conf{$attr})
             ) {
-            Sympa::Log::Syslog::do_log(
-                Sympa::Log::Syslog::ERR,
+            $main::logger->do_log(
+                Sympa::Logger::ERR,
                 'Unconcerned object method "%s" via package "%s".  Though it may not be fatal, you might want to report it developer',
                 $attr,
                 $pkg
