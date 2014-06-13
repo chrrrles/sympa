@@ -263,7 +263,7 @@ sub edit_configuration {
     unless (
         defined Sympa::Robot::get_robots('config_file' => $sympa_conf,
             'no_db' => 1)) {
-        Sympa::Log::Syslog::fatal_err(
+        Sympa::Tools::Daemon::terminate_on_expected_error(
             Sympa::Language::gettext(
                 'Unable to load sympa configuration.  File %s or one of the virtual host robot.conf files contain errors.'
             ),

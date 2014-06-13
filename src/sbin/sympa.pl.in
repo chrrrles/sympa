@@ -350,7 +350,7 @@ while ($signal ne 'term') {
     Sympa::Tools::Password::ciphersaber_installed();
 
     if (Sympa::Tools::cookie_changed(Sympa::Site->cookie)) {
-        Sympa::Log::Syslog::fatal_err(
+        Sympa::Tools::Daemon::terminate_on_expected_error(
             'sympa.conf/cookie parameter has changed. You may have severe inconsitencies into password storage. Restore previous cookie or write some tool to re-encrypt password in database and check spools contents (look at %s/cookies.history file)',
             Sympa::Site->etc
         );
@@ -365,14 +365,17 @@ while ($signal ne 'term') {
 
     ## Main program
     if (!chdir(Sympa::Site->home)) {
-        Sympa::Log::Syslog::fatal_err("Can't chdir to %s: %m", Sympa::Site->home);
+        Sympa::Tools::Daemon::terminate_on_expected_error(
+            "Can't chdir to %s: %m", Sympa::Site->home
+        );
         ## Function never returns.
     }
 
     ## Check for several files.
     unless (Sympa::Conf::checkfiles_as_root()) {
-        Sympa::Log::Syslog::fatal_err(
-            "output checkfiles_as_root : Missing files. Aborting.");
+        Sympa::Tools::Daemon::terminate_on_expected_error(
+            "output checkfiles_as_root : Missing files. Aborting."
+        );
         ## No return.
     }
 
@@ -416,7 +419,8 @@ while ($signal ne 'term') {
                 group => Sympa::Constants::GROUP
             );
         };
-        Sympa::Log::Syslog::fatal_err($EVAL_ERROR) if $EVAL_ERROR;
+        Sympa::Tools::Daemon::terminate_on_expected_error($EVAL_ERROR)
+            if $EVAL_ERROR;
 
         # Sets the UMASK
         umask(oct(Sympa::Site->umask));
@@ -431,7 +435,9 @@ while ($signal ne 'term') {
     }
 
     unless (Sympa::Conf::checkfiles()) {
-        Sympa::Log::Syslog::fatal_err("Missing files. Aborting.");
+        Sympa::Tools::Daemon::terminate_on_expected_error(
+            "Missing files. Aborting."
+        );
     }
 
     ## Do we have right access in the directory

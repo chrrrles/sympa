@@ -181,14 +181,15 @@ $options{'log_to_stderr'} = 1 if $options{'foreground'};
 
 # load configuration
 unless (defined Sympa::Robot::get_robots()) {
-    Sympa::Log::Syslog::fatal_err(
+    Sympa::Tools::Daemon::terminate_on_expected_error(
         'Unable to load sympa configuration, file %s has errors.',
-        Sympa::Conf::get_sympa_conf());
+        Sympa::Conf::get_sympa_conf()
+    );
 }
 
 # initialize database access
 unless (Sympa::DatabaseManager::check_db_connect()) {
-    Sympa::Log::Syslog::fatal_err(
+    Sympa::Tools::Daemon::terminate_on_expected_error(
         'Database %s defined in sympa.conf has not the right structure or is unreachable.',
         Sympa::Site->db_name
     );
@@ -256,7 +257,7 @@ eval {
         group => Sympa::Constants::GROUP
     );
 };
-Sympa::Log::Syslog::fatal_err($EVAL_ERROR) if $EVAL_ERROR;
+Sympa::Tools::Daemon::terminate_on_expected_error($EVAL_ERROR) if $EVAL_ERROR;
 
 ## Sets the UMASK
 umask(oct(Sympa::Site->umask));

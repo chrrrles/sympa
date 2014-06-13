@@ -256,6 +256,7 @@ use Sympa::Robot;
 use Sympa::Site;
 use Sympa::Spool::SQL;
 use Sympa::Tools;
+use Sympa::Tools::Daemon;
 use Sympa::Upgrade;
 
 ## Init random engine
@@ -491,7 +492,7 @@ sub import {
     }
 
     unless ($list = Sympa::List->new($options{'import'})) {
-        Sympa::Log::Syslog::fatal_err('Unknown list name %s',
+        Sympa::Tools::Daemon::terminate_on_expected_error('Unknown list name %s',
             $options{'import'});
     }
 
@@ -529,7 +530,7 @@ sub import {
 sub md5_encore_password {
 
     unless ($Sympa::Site::use_db) {
-        Sympa::Log::Syslog::fatal_err(
+        Sympa::Tools::Daemon::terminate_on_expected_error(
             "You don't have a database setup, can't lowercase email addresses"
         );
     }
@@ -540,7 +541,7 @@ sub md5_encore_password {
 
 sub lowercase {
     unless ($Sympa::Site::use_db) {
-        Sympa::Log::Syslog::fatal_err(
+        Sympa::Tools::Daemon::terminate_on_expected_error(
             "You don't have a database setup, can't lowercase email addresses"
         );
     }
@@ -553,7 +554,9 @@ sub lowercase {
         Sympa::List::lowercase_field('subscriber_table', 'user_subscriber');
 
     unless (defined $total) {
-        Sympa::Log::Syslog::fatal_err("Could not work on database");
+        Sympa::Tools::Daemon::terminate_on_expected_error(
+            "Could not work on database"
+        );
     }
 
     printf STDERR "Total lowercased rows: %d\n", $total;

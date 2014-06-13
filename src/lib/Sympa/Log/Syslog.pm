@@ -74,32 +74,6 @@ my %syslog_levels = (
     DEBUG3 => Sys::Syslog::LOG_DEBUG,
 );
 
-##sub import {
-##my @call = caller(1);
-##printf "Import from $call[3]\n";
-##Log->export_to_level(1, @_);
-##}
-##
-sub fatal_err {
-    my $m     = shift;
-
-    syslog(Sympa::Log::Syslog::ERR, $m, @_);
-    syslog(Sympa::Log::Syslog::ERR, "Exiting.");
-    $m =~ s/%m/$ERRNO/g;
-
-    my $full_msg = sprintf $m, @_;
-
-    ## Notify listmaster
-    Sympa::Site->send_notify_to_listmaster('sympa_died', [$full_msg]);
-
-    eval { Sympa::Site->send_notify_to_listmaster(undef, undef, undef, 1); };
-    eval { Sympa::DatabaseManager::db_disconnect(); };    # unlock database
-    Sys::Syslog::closelog();           # flush log
-
-    printf STDERR "$m\n", @_;
-    exit(1);
-}
-
 sub do_log {
     my $level = shift;
 
