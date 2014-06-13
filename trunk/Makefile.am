@@ -24,9 +24,9 @@ check_SCRIPTS = t/compile_modules.t \
 		t/compile_executables.t \
 		t/Language.t \
 		t/LockedFile.t \
-		t/tools_data.t \
-		t/tools_file.t \
-		t/tools_time.t
+		t/Tools_Data.t \
+		t/Tools_File.t \
+		t/Tools_Time.t
 check_DATA = t/locale/cs/LC_MESSAGES/sympa.mo \
 	     t/locale/cs/LC_MESSAGES/web_help.mo \
 	     t/locale/zh_TW/LC_MESSAGES/sympa.mo
