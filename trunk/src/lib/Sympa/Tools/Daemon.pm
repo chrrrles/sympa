@@ -529,6 +529,37 @@ sub terminate_on_expected_error {
     exit(1);
 }
 
+sub terminate_on_unexpected_error {
+    my ($message) = @_;
+
+    # notify
+    chomp $message;
+    my $full_message = sprintf('DIED: %s', $message);
+
+    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, $full_message);
+
+    ## gather traceback information
+    my @calls;
+    my @f;
+    $_[0] =~ /.+ at (.+? line \d+\.)\n$/s;
+    @calls = ($1) if $1;
+    for (my $i = 1; @f = caller($i); $i++) {
+        $calls[0] = "In $f[3] at $calls[0]" if @calls;
+        unshift @calls, "$f[1] line $f[2].";
+    }
+    $calls[0] = "In (top-level) at $calls[0]";
+
+    print STDERR $full_message . "\n";
+    print STDERR join "\n", @calls;
+    print STDERR "\n";
+    
+    # free resources
+    eval { Sympa::Site->send_notify_to_listmaster(undef, undef, undef, 1); };
+    eval { Sympa::DatabaseManager::db_disconnect(); };    # unlock database
+
+    exit 255;
+}
+
 =back
 
 =cut
