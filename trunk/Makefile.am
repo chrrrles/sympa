@@ -22,9 +22,15 @@ SUBDIRS = src default doc po www
 
 check_SCRIPTS = t/compile_modules.t \
 		t/compile_executables.t \
+		t/pod_syntax.t \
+		t/pod_spelling.t \
+		t/pod_coverage.t \
+		t/Instruction.t \
 		t/Language.t \
 		t/LockedFile.t \
+		t/Logger.t \
 		t/Tools_Data.t \
+		t/Tools_Daemon.t \
 		t/Tools_File.t \
 		t/Tools_Time.t
 check_DATA = t/locale/cs/LC_MESSAGES/sympa.mo \
