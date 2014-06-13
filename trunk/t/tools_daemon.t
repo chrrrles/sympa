@@ -14,9 +14,12 @@ use File::Temp;
 use Test::More;
 use Test::Exception;
 
+use Sympa::Logger::Memory;
 use Sympa::Tools::Daemon;
 
 plan tests => 24;
+
+our $logger = Sympa::Logger::Memory->new();
 
 my $piddir  = File::Temp->newdir(CLEANUP => $ENV{TEST_DEBUG} ? 0 : 1);
 my $name    = 'test';

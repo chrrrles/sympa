@@ -16,9 +16,12 @@ use File::Temp;
 use File::stat;
 use Fcntl qw(:mode);
 
+use Sympa::Logger::Memory;
 use Sympa::Tools::File;
 
 plan tests => 26;
+
+our $logger = Sympa::Logger::Memory->new();
 
 my $user  = getpwuid($UID);
 my $group = getgrgid($GID);

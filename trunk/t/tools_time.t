@@ -12,6 +12,7 @@ use lib "$Bin/../src/lib";
 use POSIX qw(LC_ALL);
 use Test::More;
 
+use Sympa::Logger::Memory;
 use Sympa::Tools::Time;
 
 POSIX::setlocale(LC_ALL, 'C');
@@ -62,6 +63,8 @@ plan tests =>
     @date_conv_tests             +
     @duration_conv_tests         +
     @epoch_conv_tests            ;
+
+our $logger = Sympa::Logger::Memory->new();
 
 foreach my $test (@adate_tests) {
     is(
