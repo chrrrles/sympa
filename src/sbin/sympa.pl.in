@@ -403,6 +403,9 @@ while ($signal ne 'term') {
             user   => Sympa::Constants::USER,
             group  => Sympa::Constants::GROUP,
         );
+        Sympa::Tools::Daemon::terminate_on_expected_error($EVAL_ERROR)
+            if $EVAL_ERROR;
+
         # redirect STDERR to a file, unless the process is running in foreground
         unless ($options{'foreground'}) {
             Sympa::Tools::Daemon::direct_stderr_to_file(
@@ -604,6 +607,7 @@ Sympa::Tools::Daemon::remove_pid(
     piddir => Sympa::Constants::PIDDIR,
     tmpdir => Sympa::Site->tmpdir(),
 );
+Sympa::Tools::Daemon::terminate_on_expected_error($EVAL_ERROR) if $EVAL_ERROR;
 
 exit(0);
 

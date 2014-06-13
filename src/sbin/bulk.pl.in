@@ -199,6 +199,7 @@ Sympa::Tools::Daemon::write_pid(
     user   => Sympa::Constants::USER,
     group  => Sympa::Constants::GROUP,
 );
+Sympa::Tools::Daemon::terminate_on_expected_error($EVAL_ERROR) if $EVAL_ERROR;
 
 # redirect STDERR to a file, unless the process is running in foreground
 unless ($options{'foreground'}) {
@@ -216,8 +217,7 @@ eval {
         group => Sympa::Constants::GROUP
     );
 };
-Sympa::Tools::Daemon::terminate_on_expected_error($EVAL_ERROR)
-    if $EVAL_ERROR;
+Sympa::Tools::Daemon::terminate_on_expected_error($EVAL_ERROR) if $EVAL_ERROR;
 
 ## Sets the UMASK
 umask(oct(Sympa::Site->umask));
@@ -335,6 +335,10 @@ while (!$end) {
                             tmpdir           => Sympa::Site->tmpdir(),
                             multiple_process => 1
                         );
+                        Sympa::Tools::Daemon::terminate_on_expected_error(
+                            $EVAL_ERROR
+                        ) if $EVAL_ERROR;
+
                         delete $dead_children{$fpid};
                         push @dc, $fpid;
                     }
@@ -354,6 +358,9 @@ while (!$end) {
                     group            => Sympa::Constants::GROUP,
                     multiple_process => 1
                 );
+                Sympa::Tools::Daemon::terminate_on_expected_error($EVAL_ERROR)
+                    if $EVAL_ERROR;
+
                 close STDERR;
                 Sympa::Tools::Daemon::direct_stderr_to_file(
                     pid    => $PID,
@@ -405,6 +412,10 @@ while (!$end) {
                                 group            => Sympa::Constants::GROUP,
                                 multiple_process => 1
                             );
+                            Sympa::Tools::Daemon::terminate_on_expected_error(
+                                $EVAL_ERROR
+                            ) if $EVAL_ERROR;
+
                             $created_children{$child_pid} = 1;
                             sleep 1;
                         } else {
@@ -686,6 +697,7 @@ Sympa::Tools::Daemon::remove_pid(
     tmpdir           => Sympa::Site->tmpdir(),
     multiple_process => 1
 );
+Sympa::Tools::Daemon::terminate_on_expected_error($EVAL_ERROR) if $EVAL_ERROR;
 
 exit(0);
 
