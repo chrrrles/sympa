@@ -67,11 +67,42 @@ use Sympa::Logger::Stderr;
 use Sympa::Robot;
 use Sympa::Site;
 
+my %options;
+GetOptions(
+    \%options,
+    'pkcs12=s',
+    'listname=s',
+    'robot=s',
+    'help|h'
+) or pod2usage(-exitval => 1, -output => \*STDERR);
+
+if ($options{'help'}) {
+    pod2usage(0);
+}
+
+my $listname = $options{'listname'};
+my $robot_id = $options{'robot'};
+my $p12input = $options{'pkcs12'};
+
+if (!-r $p12input) {
+    pod2usage(
+        -message => "unreadable $p12input file\n"
+        -exitval => 1,
+    );
+}
+
+if ($listname and $robot_id) {
+    pod2usage(
+        -message => "incompatible options: listname and robot\n"
+        -exitval => 1,
+    );
+}
+
 ## Load sympa config
 Sympa::Site->load or die 'config_error';
 
 our $logger = Sympa::Logger::Stderr->new(
-    level => Sympa::Site->log_level();
+    level => Sympa::Site->log_level()
 );
 
 ## Probe Db if defined
@@ -89,79 +120,66 @@ my $home_sympa = Sympa::Site->home;
 my $outpass    = Sympa::Site->key_passwd;
 my $etc_dir    = Sympa::Site->etc;
 
-## Check option
-my %options;
-GetOptions(\%options, 'pkcs12=s', 'listname=s', 'robot=s', 'help|h');
-
-
-my $listname = $options{'listname'};
-my $robot_id = $options{'robot'};
-my $p12input = $options{'pkcs12'};
-
 my ($cert, $privatekey, $inpass, $key);
 
-if ($options{'help'} or !-r $p12input or ($listname and $robot_id)) {
-    pod2usage(0);
-} else {
-    if ($listname) {
-        my $list = Sympa::List->new($listname);
-        unless ($list) {
-            printf "unknown list %s\n", $listname;
-            die;
-        }
-        $cert       = $list->dir . '/cert.pem';
-        $privatekey = $list->dir . '/private_key';
-    } elsif ($robot_id) {
-        my $robot = Sympa::Robot->new($robot_id);
-        unless ($robot) {
-            printf "unknown robot %s\n", $robot_id;
-            die;
-        }
-        $cert       = $robot->etc . '/cert.pem';
-        $privatekey = $robot->etc . '/private_key';
-    }
-
-    if (-r "$cert") {
-        printf "certificate %s already exists\n", $cert;
+if ($listname) {
+    my $list = Sympa::List->new($listname);
+    unless ($list) {
+        printf "unknown list %s\n", $listname;
         die;
     }
-    if (-r "$privatekey") {
-        printf "private key %s already exists\n", $privatekey;
+    $cert       = $list->dir . '/cert.pem';
+    $privatekey = $list->dir . '/private_key';
+} elsif ($robot_id) {
+    my $robot = Sympa::Robot->new($robot_id);
+    unless ($robot) {
+        printf "unknown robot %s\n", $robot_id;
         die;
     }
+    $cert       = $robot->etc . '/cert.pem';
+    $privatekey = $robot->etc . '/private_key';
+}
 
-    unless ($openssl) {
-        print
-            "You must first configure Sympa to use openssl. Check the parameter openssl in sympa.conf\n";
-        die;
-    }
+if (-r "$cert") {
+    printf "certificate %s already exists\n", $cert;
+    die;
+}
+if (-r "$privatekey") {
+    printf "private key %s already exists\n", $privatekey;
+    die;
+}
 
+unless ($openssl) {
+    print
+        "You must first configure Sympa to use openssl. Check the parameter openssl in sympa.conf\n";
+    die;
+}
+
+system 'stty', '-echo';
+printf "password to access to %s :", $p12input;
+chop($inpass = <STDIN>);
+print "\n";
+system 'stty', 'echo';
+open PASS,
+    "| $openssl pkcs12 -in $p12input -out $cert -nokeys -clcerts -passin stdin";
+print PASS "$inpass\n";
+close PASS;
+
+unless ($outpass) {
     system 'stty', '-echo';
-    printf "password to access to %s :", $p12input;
-    chop($inpass = <STDIN>);
+    printf "Sympa password to protect list private key %s:", $key;
+    chop($outpass = <STDIN>);
     print "\n";
     system 'stty', 'echo';
-    open PASS,
-        "| $openssl pkcs12 -in $p12input -out $cert -nokeys -clcerts -passin stdin";
-    print PASS "$inpass\n";
-    close PASS;
-
-    unless ($outpass) {
-        system 'stty', '-echo';
-        printf "Sympa password to protect list private key %s:", $key;
-        chop($outpass = <STDIN>);
-        print "\n";
-        system 'stty', 'echo';
-    }
-    open PASS,
-        "| $openssl pkcs12 -in $p12input -out $privatekey -nocerts -passin stdin -des3 -passout stdin";
-    print PASS "$inpass\n$outpass\n";
-    close PASS;
-
-    printf "private key %s and certificate %s were created.\n", $privatekey,
-        $cert;
-    exit;
 }
+open PASS,
+    "| $openssl pkcs12 -in $p12input -out $privatekey -nocerts -passin stdin -des3 -passout stdin";
+print PASS "$inpass\n$outpass\n";
+close PASS;
+
+printf "private key %s and certificate %s were created.\n", $privatekey,
+    $cert;
+exit;
 
 unless ($outpass) {
     print <<"EOF";
