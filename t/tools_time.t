@@ -37,7 +37,7 @@ my @date_conv_tests = (
     [ [ '2012y10m18d09h',           undef ] => 1350543600 ],
     [ [ '2012y10m18d',              undef ] => 1350511200 ],
     [ [ '2012y10m',                 undef ] => 1349042400 ],
-    [ [ '2012y',                    undef ] => 1325372400 ],
+    [ [ '2012y',                    undef ] => 1325368800 ],
 );
 
 my @duration_conv_tests = (
