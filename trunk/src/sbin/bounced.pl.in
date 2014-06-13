@@ -235,7 +235,6 @@ Sympa::Tools::Daemon::check_old_pid_file(
 # Create the PID file
 Sympa::Tools::Daemon::write_pid(
     name   => $daemon_name,
-    pid    => $PID,
     piddir => Sympa::Constants::PIDDIR,
     user   => Sympa::Constants::USER,
     group  => Sympa::Constants::GROUP,
@@ -351,7 +350,6 @@ Sympa::Log::Syslog::do_log(
 
 Sympa::Tools::Daemon::remove_pid(
     name   => $daemon_name,
-    pid    => $PID,
     piddir => Sympa::Constants::PIDDIR,
     tmpdir => Sympa::Site->tmpdir(),
 );

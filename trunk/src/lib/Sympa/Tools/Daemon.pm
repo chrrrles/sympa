@@ -49,7 +49,7 @@ Parameters:
 
 =item * I<name>: process name
 
-=item * I<pid>: process PID
+=item * I<pid>: process PID (default: current PID)
 
 =item * I<piddir>: PID file directory
 
@@ -67,7 +67,7 @@ sub remove_pid {
     my (%params) = @_;
 
     my $name             = $params{name};
-    my $pid              = $params{pid};
+    my $pid              = $params{pid} || $PID;
     my $piddir           = $params{piddir};
     my $tmpdir           = $params{tmpdir};
     my $multiple_process = $params{multiple_process};
@@ -165,7 +165,7 @@ Parameters:
 
 =item * I<name>: process name
 
-=item * I<pid>: process PID
+=item * I<pid>: process PID (default: current PID)
 
 =item * I<piddir>: PID file directory
 
@@ -187,7 +187,7 @@ sub write_pid {
     my (%params) = @_;
 
     my $name             = $params{name};
-    my $pid              = $params{pid};
+    my $pid              = $params{pid} || $PID;
     my $piddir           = $params{piddir};
     my $user             = $params{user};
     my $group            = $params{group};
