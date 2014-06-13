@@ -483,7 +483,7 @@ sub _next_cmd {
     }
     $main::logger->do_log(Sympa::Logger::DEBUG2, 'Will create next task');
     
-    my $task = Sympa::Task->new(
+    my $new_task = Sympa::Task->new(
         'date'          => $date,
         'label'         => $tab[1],
         'model'         => $model,
@@ -491,11 +491,11 @@ sub _next_cmd {
         'data'          => \%data
     );
     croak "error in create command : Failed to create task $model.$flavour\n"
-        unless $task && $task->init();
+        unless $new_task && $new_task->init();
 
     Sympa::Spool::File::Task->new()->store(
-        $task->{'messageastring'},
-        $task->get_metadata()
+        $new_task->{'messageastring'},
+        $new_task->get_metadata()
     );
 
     my $human_date = Sympa::Tools::Time::adate($date);
@@ -575,20 +575,20 @@ sub _delete_subs_cmd {
 
     foreach my $email (keys %{$params->{$var}}) {
         $main::logger->do_log(Sympa::Logger::NOTICE, "email : $email");
-        my $result = Sympa::Scenario::request_action(
+        my $request = Sympa::Scenario::request_action(
             $list, 'del', 'smime',
             {   'sender' => Sympa::Site->listmaster,
                 'email'  => $email,
             }
         );
         my $action;
-        $action = $result->{'action'} if (ref($result) eq 'HASH');
+        $action = $request->{'action'} if (ref($request) eq 'HASH');
         croak "Deletion of $email not allowed\n"
             if $action =~ /reject/i;
 
-        my $result = $list->delete_list_member($email);
+        my $deletion = $list->delete_list_member($email);
         croak "Deletion of $email from list $listname failed\n"
-            unless $result;
+            unless $deletion;
 
         $main::logger->do_log(Sympa::Logger::NOTICE, "--> $email deleted");
         $selection{$email} = {};
@@ -966,12 +966,12 @@ sub _expire_bounce {
                     next;
                 }
 
-                my $result = $list->update_list_member(
+                my $update = $list->update_list_member(
                     $email,
                     {'bounce'         => 'NULL'},
                     {'bounce_address' => 'NULL'}
                 );
-                if (!$result) {
+                if (!$update) {
                     push @errors, "failed update database for $email\n";
                     next;
                 }
@@ -980,8 +980,8 @@ sub _expire_bounce {
                 my $escaped_email = Sympa::Tools::escape_chars($email);
                 my $file = $bounce_dir . '/' . $escaped_email;
 
-                my $result = unlink($file);
-                if (!$result) {
+                my $unlink = unlink($file);
+                if (!$unlink) {
                     push @errors, "failed deleting $file\n";
                     next;
                 }
