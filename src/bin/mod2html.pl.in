@@ -35,6 +35,7 @@ use Sympa::DatabaseManager;
 use Sympa::List;
 use Sympa::Logger;
 use Sympa::Logger::Stderr;
+use Sympa::Tools::Daemon;
 
 unless (Sympa::Conf::load(Sympa::Constants::CONFIG)) {
     die "Can't load Sympa configuration file";
@@ -50,9 +51,12 @@ if ($Sympa::Conf::Conf{'db_name'} and $Sympa::Conf::Conf{'db_type'}) {
     }
 }    #  to check availabity of Sympa database
 
-# Set the UserID & GroupID for the process
-$GID = $EGID = (getgrnam(Sympa::Constants::GROUP))[2];
-$UID = $EUID = (getpwnam(Sympa::Constants::USER))[2];
+eval {
+    Sympa::Tools::Daemon::drop_privileges(
+        user  => Sympa::Constants::USER,
+        group => Sympa::Constants::GROUP
+    );
+};
 
 # Sets the UMASK
 umask(oct($Sympa::Conf::Conf{'umask'}));
