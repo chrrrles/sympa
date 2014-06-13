@@ -101,7 +101,7 @@ use Pod::Usage;
 use Sympa::Conf;
 use Sympa::Constants;
 use Sympa::List;
-use Sympa::Log::Syslog;
+use Sympa::Logger;
 use Sympa::Mailer;
 use Sympa::Site;
 use Sympa::Spool::File::Task;
@@ -132,8 +132,6 @@ if ($options{'debug'}) {
     $options{'foreground'} = 1;
 }
 
-$options{'log_to_stderr'} = 1 if $options{'foreground'};
-
 # load configuration
 unless (Sympa::Robot::get_robots()) {
     printf STDERR
@@ -143,21 +141,25 @@ unless (Sympa::Robot::get_robots()) {
 }
 
 # initialize logging subsystem
-Sympa::Log::Syslog::do_openlog(Sympa::Site->log_facility, $daemon_name);
-
-if ($options{'log_level'}) {
-    Sympa::Log::Syslog::set_log_level($options{'log_level'});
-    Sympa::Log::Syslog::do_log(
-        Sympa::Log::Syslog::INFO,
-        'Configuration file read, log level set using options : %s',
-        $options{'log_level'}
+our $logger;
+my $log_level = $options{'log_level'} || Sympa::Site->log_level;
+if ($options{'foreground'}) {
+    require Sympa::logger::Stderr;
+    $logger = Sympa::Logger::Stderr->new(
+        level => $log_level
     );
 } else {
-    Sympa::Log::Syslog::set_log_level(Sympa::Site->log_level);
-    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::INFO,
-        'Configuration file read, default log level %s',
-        Sympa::Site->log_level);
+    require Sympa::logger::Syslog;
+    $logger = Sympa::Logger::Syslog->new(
+        level    => $log_level,
+        service  => $daemon_name,
+        facility => Sympa::Site->log_facility(),
+    );
 }
+$logger->do_log(
+    Sympa::Logger::INFO,
+    "Logger initialized, with log level $log_level"
+);
 
 # initialize SMTP subsystem
 our $mailer = Sympa::Mailer->new(
@@ -209,7 +211,7 @@ umask(oct(Sympa::Site->umask));
 
 ## Change to list root
 unless (chdir(Sympa::Site->home)) {
-    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+    $logger->do_log(Sympa::Logger::ERR,
         'error : unable to change to directory %s', Sympa::Site->home);
     exit(-1);
 }
@@ -226,7 +228,7 @@ $SIG{'__DIE__'} = sub {
 
 my $spool = Sympa::Spool::File::Task->new();
 
-Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE, "task_manager started");
+$logger->do_log(Sympa::Logger::NOTICE, "task_manager started");
 
 # infinite loop, until a sig TERM is received
 while (!$end) {
@@ -243,7 +245,7 @@ while (!$end) {
 
     ## Execute existing tasks
     ## processing of tasks anterior to the current date
-    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2,
+    $logger->do_log(Sympa::Logger::DEBUG2,
         'Processing tasks anterior to the current date');
     foreach my $task ($spool->get_content) {
         last if $end;
@@ -255,7 +257,7 @@ while (!$end) {
         my $validity = $task->check_validity();
 
         if ($validity) {
-            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, 'Processing task %s', $task);
+            $logger->do_log(Sympa::Logger::DEBUG2, 'Processing task %s', $task);
 
             eval {
                 $task->execute();
@@ -268,15 +270,15 @@ while (!$end) {
                 if ($task->isa('Sympa::Task::List')) {
                     $data->{'list'} = $task->{'list'};
                 }
-                Sympa::Log::Syslog::do_log(
-                    Sympa::Log::Syslog::ERR,
+                $logger->do_log(
+                    Sympa::Logger::ERR,
                     'Execution of task %s failed, sending detailed report to listmaster',
                     $task->get_description()
                 );
                 Sympa::Site->send_notify_to_listmaster('task_error', $data);
             } else {
-                Sympa::Log::Syslog::do_log(
-                    Sympa::Log::Syslog::NOTICE,
+                $logger->do_log(
+                    Sympa::Logger::NOTICE,
                     'Execution of task %s suceeded',
                     $task->get_description,
                 );
@@ -285,8 +287,8 @@ while (!$end) {
 
         my $result = $spool->remove_message($task->{'messagekey'});
         unless ($result) {
-            Sympa::Log::Syslog::do_log(
-                Sympa::Log::Syslog::ERR,
+            $logger->do_log(
+                Sympa::Logger::ERR,
                 'Unable to remove task (messagekey = %s)',
                 $task->{'messagekey'}
             );
@@ -300,7 +302,7 @@ while (!$end) {
 # Purge grouped notifications
 Sympa::Site->send_notify_to_listmaster(undef, undef, undef, 1);
 
-Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE,
+$logger->do_log(Sympa::Logger::NOTICE,
     'task_manager exited normally due to signal');
 
 Sympa::Tools::Daemon::remove_pid(

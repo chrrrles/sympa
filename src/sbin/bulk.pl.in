@@ -106,8 +106,8 @@ use Sympa::Bulk;
 use Sympa::Conf;
 use Sympa::Constants;
 use Sympa::List;
+use Sympa::Logger;
 use Sympa::Mailer;
-use Sympa::Log::Syslog;
 use Sympa::Site;
 use Sympa::Spool::SQL;
 use Sympa::Tools::DKIM;
@@ -137,8 +137,6 @@ if ($options{'debug'}) {
     $options{'foreground'} = 1;
 }
 
-$options{'log_to_stderr'} = 1 if $options{'foreground'};
-
 if ($options{'help'}) {
     pod2usage(0);
 }
@@ -152,21 +150,25 @@ unless (Sympa::Robot::get_robots()) {
 }
 
 # initialize logging subsystem
-Sympa::Log::Syslog::do_openlog(Sympa::Site->syslog, $daemon_name);
-
-if ($options{'log_level'}) {
-    Sympa::Log::Syslog::set_log_level($options{'log_level'});
-    Sympa::Log::Syslog::do_log(
-        Sympa::Log::Syslog::INFO,
-        'Configuration file read, log level set using options : %s',
-        $options{'log_level'}
+our $logger;
+my $log_level = $options{'log_level'} || Sympa::Site->log_level;
+if ($options{'foreground'}) {
+    require Sympa::logger::Stderr;
+    $logger = Sympa::Logger::Stderr->new(
+        level => $log_level
     );
 } else {
-    Sympa::Log::Syslog::set_log_level(Sympa::Site->log_level);
-    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::INFO,
-        'Configuration file read, default log level %s',
-        Sympa::Site->log_level);
+    require Sympa::logger::Syslog;
+    $logger = Sympa::Logger::Syslog->new(
+        level    => $log_level,
+        service  => $daemon_name,
+        facility => Sympa::Site->log_facility(),
+    );
 }
+$logger->do_log(
+    Sympa::Logger::INFO,
+    "Logger initialized, with log level $log_level"
+);
 
 # initialize SMTP subsystem
 our $mailer = Sympa::Mailer->new(
@@ -222,14 +224,14 @@ umask(oct(Sympa::Site->umask));
 
 ## Change to list root
 unless (chdir(Sympa::Site->home)) {
-    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'unable to change directory');
+    $logger->do_log(Sympa::Logger::ERR, 'unable to change directory');
     exit(-1);
 }
 
 ## Catch SIGTERM, in order to exit cleanly, whenever possible.
 my $end = 0;
 $SIG{'TERM'} = sub {
-    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE,
+    $logger->do_log(Sympa::Logger::NOTICE,
         'signal TERM received, still processing current task');
     $end = 1;
 };
@@ -252,7 +254,7 @@ $Sympa::Conf::Conf{'maxsmtp'} = int(Sympa::Site->maxsmtp / Sympa::Site->bulk_max
 
 my $spool = Sympa::Spool::SQL->new('bulk');
 
-Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE, "bulk started");
+$logger->do_log(Sympa::Logger::NOTICE, "bulk started");
 
 # infinite loop, until a sig TERM is received
 while (!$end) {
@@ -287,7 +289,7 @@ while (!$end) {
             my @pids_leftover = keys %dead_children;
             if ($#pids_leftover > -1) {
                 my @dc;
-                Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2,
+                $logger->do_log(Sympa::Logger::DEBUG2,
                     'Some childs of current process disappeared. Checking whether they shut down cleanly or not.'
                 );
                 my $pids_in_pfile = Sympa::Tools::Daemon::get_pids_in_pid_file(
@@ -296,8 +298,8 @@ while (!$end) {
                 );
                 foreach my $fpid (@{$pids_in_pfile}) {
                     if (defined $dead_children{$fpid}) {
-                        Sympa::Log::Syslog::do_log(
-                            Sympa::Log::Syslog::ERR,
+                        $logger->do_log(
+                            Sympa::Logger::ERR,
                             'The %s child exists in the PID file but is no longer running. Removing it and notyfying listmaster.',
                             $fpid
                         );
@@ -361,8 +363,8 @@ while (!$end) {
                 Sympa::DatabaseManager::db_disconnect();
 
                 if (Sympa::Site->bulk_max_count > 1) {
-                    Sympa::Log::Syslog::do_log(
-                        Sympa::Log::Syslog::INFO,
+                    $logger->do_log(
+                        Sympa::Logger::INFO,
                         'Important workload: %s packets to process. Creating %s child bulks to increase sending rate.',
                         $r_packets,
                         Sympa::Site->bulk_max_count- ($#remaining_children + 1)
@@ -370,10 +372,10 @@ while (!$end) {
                     for my $process_count (
                         1 .. Sympa::Site->bulk_max_count- ($#remaining_children + 1))
                     {
-                        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::INFO, "Will fork: %s",
+                        $logger->do_log(Sympa::Logger::INFO, "Will fork: %s",
                             $process_count);
                         if ((my $child_pid = fork) != 0) {
-                            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::INFO,
+                            $logger->do_log(Sympa::Logger::INFO,
                                 "Starting bulk child daemon, PID %s",
                                 $child_pid);
 
@@ -406,7 +408,7 @@ while (!$end) {
                                 'DAEMON_SLAVE';    # automatic lists creation
                             Sympa::Log::Syslog::do_openlog(Sympa::Site->syslog,
                                 $daemon_name);
-                            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::INFO,
+                            $logger->do_log(Sympa::Logger::INFO,
                                 "Bulk slave daemon started with PID %s", $PID);
                             last;
                         }
@@ -421,7 +423,7 @@ while (!$end) {
     if (   ($daemon_usage eq 'DAEMON_SLAVE')
         && (time() - $date_of_last_activity > Sympa::Site->bulk_lazytime)
         && !(my $r_packets = Sympa::Bulk::there_is_too_much_remaining_packets())) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::INFO,
+        $logger->do_log(Sympa::Logger::INFO,
             "Process %s didn't send any message since %s seconds, exiting.",
             $PID, Sympa::Site->bulk_lazytime);
         last;
@@ -443,14 +445,14 @@ while (!$end) {
             $message = Sympa::Message->new(%$message_from_spool)
                 if $message_from_spool;
             unless ($message) {
-                Sympa::Log::Syslog::do_log(
-                    Sympa::Log::Syslog::ERR,
+                $logger->do_log(
+                    Sympa::Logger::ERR,
                     'Internal error: current packet (messagekey=%s) refers to a null message',
                     $messagekey
                 );
                 unless (Sympa::Bulk::remove($messagekey, $bulk->{'packetid'})) {
-                    Sympa::Log::Syslog::do_log(
-                        Sympa::Log::Syslog::ERR,
+                    $logger->do_log(
+                        Sympa::Logger::ERR,
                         'Failed to remove processed packet "%s", messagekey "%s"',
                         $messagekey,
                         $bulk->{'packetid'}
@@ -462,8 +464,8 @@ while (!$end) {
             # Get message as string without meta information.
             $messageasstring_init = $message->as_string();
 
-            Sympa::Log::Syslog::do_log(
-                Sympa::Log::Syslog::NOTICE,
+            $logger->do_log(
+                Sympa::Logger::NOTICE,
                 'Start sending message "%s" (key "%s") to list "%s@%s" (priority %s) (starting %s seconds after scheduled expedition date)',
                 $bulk->{'messageid'},
                 $messagekey,
@@ -548,7 +550,7 @@ while (!$end) {
                     if ($message->personalize($list, $rcpt)) {
                         $messageasstring = $message->as_string();
                     } else {
-                        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+                        $logger->do_log(Sympa::Logger::ERR,
                             'Erreur d appel personalize()');
                         $list->robot->send_notify_to_listmaster(
                             'bulk_failed',
@@ -630,14 +632,14 @@ while (!$end) {
 
         ## Remove packet once it has been processed
         unless (Sympa::Bulk::remove($bulk->{'messagekey'}, $bulk->{'packetid'})) {
-            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+            $logger->do_log(Sympa::Logger::ERR,
                 "failed to remove processed packet '%s', messagekey '%s'",
                 $bulk->{'messagekey'}, $bulk->{'packetid'});
         }
 
         if ($bulk->{'priority_packet'} == Sympa::Site->sympa_packet_priority + 5) {
-            Sympa::Log::Syslog::do_log(
-                Sympa::Log::Syslog::NOTICE,
+            $logger->do_log(
+                Sympa::Logger::NOTICE,
                 'Done sending message "%s" (key "%s") to list "%s@%s" (priority %s) in %s seconds since scheduled expedition date.',
                 $bulk->{'messageid'},
                 $bulk->{'messagekey'},
@@ -659,8 +661,8 @@ while (!$end) {
 # Purge grouped notifications
 Sympa::Site->send_notify_to_listmaster(undef, undef, undef, 1);
 
-Sympa::Log::Syslog::do_log(
-    Sympa::Log::Syslog::NOTICE,
+$logger->do_log(
+    Sympa::Logger::NOTICE,
     'bulk exited normally due to signal'
 );
 
@@ -690,7 +692,7 @@ sub trace_smime {
                 . " smime -verify  $trusted_ca_options > /dev/null"
         )
         ) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+        $logger->do_log(Sympa::Logger::ERR,
             'unable to verify S/MIME signature');
         return undef;
     }
@@ -701,10 +703,10 @@ sub trace_smime {
 
     my $status = $CHILD_ERROR / 256;
     unless ($status == 0) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG, 'S/MIME signature NOT OK (%s)',
+        $logger->do_log(Sympa::Logger::DEBUG, 'S/MIME signature NOT OK (%s)',
             $where);
     } else {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG, 'S/MIME signature OK     (%s)',
+        $logger->do_log(Sympa::Logger::DEBUG, 'S/MIME signature OK     (%s)',
             $where);
     }
 }

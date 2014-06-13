@@ -41,7 +41,7 @@ use base qw(Sympa::Task);
 
 use Carp qw(croak);
 
-use Sympa::Log::Syslog;
+use Sympa::Logger;
 
 sub new {
     my ($class, %params) = @_;
@@ -97,8 +97,8 @@ sub check_validity {
 
     ## Skip closed lists
     if ($list->status ne 'open') {
-        Sympa::Log::Syslog::do_log(
-            Sympa::Log::Syslog::NOTICE,
+        $main::logger->do_log(
+            Sympa::Logger::NOTICE,
             'Removing task %s, label %s (messageid = %s) because list %s is closed',
             $model,
             $self->{'label'},
@@ -113,8 +113,8 @@ sub check_validity {
         if ($list->has_include_data_sources()) {
             return 1;
         } else {
-            Sympa::Log::Syslog::do_log(
-                Sympa::Log::Syslog::NOTICE,
+            $main::logger->do_log(
+                Sympa::Logger::NOTICE,
                 'Removing task %s, label %s (messageid = %s) because list does not use any inclusion',
                 $model,
                 $self->{'label'},
@@ -125,8 +125,8 @@ sub check_validity {
         }
     } else {
         unless (%{$list->$model} and defined $list->$model->{'name'}) {
-            Sympa::Log::Syslog::do_log(
-                Sympa::Log::Syslog::NOTICE,
+            $main::logger->do_log(
+                Sympa::Logger::NOTICE,
                 'Removing task %s, label %s (messageid = %s) because it is not defined in list %s configuration',
                 $model,
                 $self->{'label'},

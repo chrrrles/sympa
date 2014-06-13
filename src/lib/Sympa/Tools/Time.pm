@@ -28,7 +28,7 @@ use strict;
 use DateTime;
 use Time::Local qw();
 
-use Sympa::Log::Syslog;
+use Sympa::Logger;
 
 # convert an epoch date into a readable date scalar
 sub adate {
@@ -53,7 +53,7 @@ sub epoch_conv {
     my $arg = $_[0];             # argument date to convert
     my $time = $_[1] || time;    # the epoch current date
 
-    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG3, 'Sympa::Tools::Time::epoch_conv(%s, %d)',
+    $main::logger->do_log(Sympa::Logger::DEBUG3, 'Sympa::Tools::Time::epoch_conv(%s, %d)',
         $arg, $time);
 
     my $result;

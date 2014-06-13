@@ -32,7 +32,7 @@ use POSIX qw();
 use Proc::ProcessTable;
 
 use Sympa::LockedFile;
-use Sympa::Log::Syslog;
+use Sympa::Logger;
 use Sympa::Tools::File;
 
 =head1 FUNCTIONS
@@ -95,7 +95,7 @@ sub remove_pid {
         unless (@pids) {
             ## Release the lock
             unless (unlink $pidfile) {
-                Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, "Failed to remove %s: %s",
+                $main::logger->do_log(Sympa::Logger::ERR, "Failed to remove %s: %s",
                     $pidfile, $ERRNO);
                 $lock_fh->close;
                 return undef;
@@ -107,7 +107,7 @@ sub remove_pid {
         }
     } else {
         unless (unlink $pidfile) {
-            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, "Failed to remove %s: %s", $pidfile,
+            $main::logger->do_log(Sympa::Logger::ERR, "Failed to remove %s: %s", $pidfile,
                 $ERRNO);
             $lock_fh->close;
             return undef;
@@ -115,7 +115,7 @@ sub remove_pid {
         my $err_file = _get_error_file(dir => $tmpdir, pid => $pid);
         if (-f $err_file) {
             unless (unlink $err_file) {
-                Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, "Failed to remove %s: %s",
+                $main::logger->do_log(Sympa::Logger::ERR, "Failed to remove %s: %s",
                     $err_file, $ERRNO);
                 $lock_fh->close;
                 return undef;
@@ -142,8 +142,8 @@ sub check_old_pid_file {
 
     my $pid = $pids->[0];
 
-    Sympa::Log::Syslog::do_log(
-        Sympa::Log::Syslog::NOTICE,
+    $main::logger->do_log(
+        Sympa::Logger::NOTICE,
         "Previous process %s died suddenly ; notifying listmaster",
         $pid
     );
@@ -297,8 +297,8 @@ sub direct_stderr_to_file {
             group => $group,
         )
         ) {
-        Sympa::Log::Syslog::do_log(
-            Sympa::Log::Syslog::ERR,
+        $main::logger->do_log(
+            Sympa::Logger::ERR,
             'Unable to set rights on %s',
             $err_file
         );
@@ -332,8 +332,8 @@ sub send_crash_report {
     my $pname  = $params{pname};
     my $tmpdir = $params{tmpdir};
 
-    Sympa::Log::Syslog::do_log(
-        Sympa::Log::Syslog::DEBUG, 'Sending crash report for process %s', $pid
+    $main::logger->do_log(
+        Sympa::Logger::DEBUG, 'Sending crash report for process %s', $pid
     );
     my $err_file = _get_error_file(dir => $tmpdir, pid => $pid);
 
@@ -394,7 +394,7 @@ sub get_pids_in_pid_file {
 
     my $lock_fh = Sympa::LockedFile->new($pidfile, 5, '<');
     unless ($lock_fh) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, "unable to open pidfile %s:%s",
+        $main::logger->do_log(Sympa::Logger::ERR, "unable to open pidfile %s:%s",
             $pidfile, $ERRNO);
         return undef;
     }
@@ -411,7 +411,7 @@ Returns the list of PID for childrend of the current process.
 =cut
 
 sub get_children_processes_list {
-    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG3, '');
+    $main::logger->do_log(Sympa::Logger::DEBUG3, '');
     my @children;
     for my $p (@{Proc::ProcessTable->new()->table()}) {
         if ($p->ppid == $PID) {
@@ -492,8 +492,8 @@ sub daemonize {
 
     if ($pid) {
         # parent
-        Sympa::Log::Syslog::do_log(
-            Sympa::Log::Syslog::INFO,
+        $main::logger->do_log(
+            Sympa::Logger::INFO,
             'Server %s started as a daemon, with PID %s', $name, $pid
         );
         exit(0);
@@ -517,14 +517,13 @@ sub terminate_on_expected_error {
 
     # notify
     my $full_message = sprintf $message, @args;
-    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, $full_message);
+    $main::logger->do_log(Sympa::Logger::ERR, $full_message);
     Sympa::Site->send_notify_to_listmaster('sympa_died', [$full_message]);
     print STDERR $full_message . "\n"; 
 
     # free resources
     eval { Sympa::Site->send_notify_to_listmaster(undef, undef, undef, 1); };
     eval { Sympa::DatabaseManager::db_disconnect(); };    # unlock database
-    Sys::Syslog::closelog();           # flush log
 
     exit(1);
 }
@@ -536,7 +535,7 @@ sub terminate_on_unexpected_error {
     chomp $message;
     my $full_message = sprintf('DIED: %s', $message);
 
-    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, $full_message);
+    $main::logger->do_log(Sympa::Logger::ERR, $full_message);
 
     ## gather traceback information
     my @calls;

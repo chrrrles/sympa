@@ -33,12 +33,16 @@ use Sympa::Conf;
 use Sympa::Constants;
 use Sympa::DatabaseManager;
 use Sympa::List;
-use Sympa::Log::Syslog;
+use Sympa::Logger;
+use Sympa::Logger::Stderr;
 
 unless (Sympa::Conf::load(Sympa::Constants::CONFIG)) {
     die "Can't load Sympa configuration file";
 }
-Sympa::Log::Syslog::do_openlog($Sympa::Conf::Conf{'syslog'}, 'sympa');
+
+our $logger = Sympa::Logger::Stderr->new(
+    level => Sympa::Site->log_level()
+);
 
 if ($Sympa::Conf::Conf{'db_name'} and $Sympa::Conf::Conf{'db_type'}) {
     unless (Sympa::DatabaseManager::probe_db()) {

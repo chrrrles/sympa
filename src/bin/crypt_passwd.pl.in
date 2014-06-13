@@ -26,6 +26,7 @@ use strict;
 use lib '--modulesdir--';
 
 use Sympa::DatabaseManager;
+use Sympa::Logger::Stderr;
 use Sympa::Site;
 use Sympa::Tools::Password;
 
@@ -35,6 +36,10 @@ unless (require Crypt::CipherSaber) {
 
 ## Load sympa config
 Sympa::Site->load or die 'config_error';
+
+our $logger = Sympa::Logger::Stderr->new(
+    level => Sympa::Site->log_level()
+);
 
 Sympa::Site->home;
 

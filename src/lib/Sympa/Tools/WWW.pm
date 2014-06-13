@@ -28,7 +28,7 @@ use strict;
 use English qw(-no_match_vars);
 
 use Sympa::Constants;
-use Sympa::Log::Syslog;
+use Sympa::Logger;
 use Sympa::Language;
 use Sympa::Site;
 
@@ -179,21 +179,21 @@ sub get_my_url {
 # Uploade source file to the destination on the server
 sub upload_file_to_server {
     my $param = shift;
-    Sympa::Log::Syslog::do_log(
-        Sympa::Log::Syslog::DEBUG,
+    $main::logger->do_log(
+        Sympa::Logger::DEBUG,
         "Uploading file from field %s to destination %s",
         $param->{'file_field'},
         $param->{'destination'}
     );
     my $fh;
     unless ($fh = $param->{'query'}->upload($param->{'file_field'})) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG,
+        $main::logger->do_log(Sympa::Logger::DEBUG,
             "Cannot upload file from field $param->{'file_field'}");
         return undef;
     }
 
     unless (open FILE, ">:bytes", $param->{'destination'}) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG,
+        $main::logger->do_log(Sympa::Logger::DEBUG,
             "Cannot open file $param->{'destination'} : $ERRNO");
         return undef;
     }
@@ -501,8 +501,8 @@ sub _load_create_list_conf {
 
     $file = $robot->get_etc_filename('create_list.conf');
     unless ($file) {
-        Sympa::Log::Syslog::do_log(
-            Sympa::Log::Syslog::INFO,
+        $main::logger->do_log(
+            Sympa::Logger::INFO,
             'unable to read %s',
             Sympa::Constants::DEFAULTDIR . '/create_list.conf'
         );
@@ -510,7 +510,7 @@ sub _load_create_list_conf {
     }
 
     unless (open(FILE, $file)) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::INFO, 'Unable to open config file %s',
+        $main::logger->do_log(Sympa::Logger::INFO, 'Unable to open config file %s',
             $file);
         return undef;
     }
@@ -521,7 +521,7 @@ sub _load_create_list_conf {
         if (/^\s*(\S+)\s+(read|hidden)\s*$/i) {
             $conf->{$1} = lc($2);
         } else {
-            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::INFO,
+            $main::logger->do_log(Sympa::Logger::INFO,
                 'unknown parameter in %s  (Ignored) %s',
                 $file, $_);
             next;
@@ -585,10 +585,10 @@ sub get_templates_list {
 
     my $listdir;
 
-    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG,
+    $main::logger->do_log(Sympa::Logger::DEBUG,
         "get_templates_list ($type, $robot, $list)");
     unless (($type eq 'web') || ($type eq 'mail')) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::INFO,
+        $main::logger->do_log(Sympa::Logger::INFO,
             'get_templates_list () : internal error incorrect parameter');
     }
 
@@ -668,7 +668,7 @@ sub get_templates_list {
 
 # return the path for a specific template
 sub get_template_path {
-    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, '(%s, %s. %s, %s, %s, %s)', @_);
+    $main::logger->do_log(Sympa::Logger::DEBUG2, '(%s, %s. %s, %s, %s, %s)', @_);
     my $type  = shift;
     my $robot = shift;
     my $scope = shift;
@@ -682,7 +682,7 @@ sub get_template_path {
         unless $lang eq 'default';
 
     unless ($type eq 'web' or $type eq 'mail') {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::INFO,
+        $main::logger->do_log(Sympa::Logger::INFO,
             'internal error incorrect parameter');
         return undef;
     }
@@ -690,7 +690,7 @@ sub get_template_path {
     my $dir;
     if ($scope eq 'list') {
         unless (ref $list) {
-            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'missing parameter "list"');
+            $main::logger->do_log(Sympa::Logger::ERR, 'missing parameter "list"');
             return undef;
         }
         $dir = $list->dir;

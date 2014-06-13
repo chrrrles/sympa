@@ -30,7 +30,7 @@ use base qw(Sympa::Message);
 use English qw(-no_match_vars);
 
 use Sympa::Log::Database;
-use Sympa::Log::Syslog;
+use Sympa::Logger;
 use Sympa::Site;
 use Sympa::Tracking;
 
@@ -60,7 +60,7 @@ our %equiv = (
 
 ## Creates a new object
 sub new {
-    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, '(%s, %s)', @_);
+    $main::logger->do_log(Sympa::Logger::DEBUG2, '(%s, %s)', @_);
     my $pkg   = shift;
     my $datas = shift;
     my $self;
@@ -68,7 +68,7 @@ sub new {
     return undef
         unless $self = $pkg->SUPER::new($datas);
     unless ($self->as_string()) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE,
+        $main::logger->do_log(Sympa::Logger::NOTICE,
             'Ignoring bounce %s, because it is empty', $self);
         return undef;
     }
@@ -89,8 +89,8 @@ sub new {
 sub process {
     my $self = shift;
 
-    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::INFO, 'Processing bounce %s', $self);
-    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG3,
+    $main::logger->do_log(Sympa::Logger::INFO, 'Processing bounce %s', $self);
+    $main::logger->do_log(Sympa::Logger::DEBUG3,
         'Bounce for :%s:  Sympa::Site->bounce_email_prefix=%s',
         $self->{'to'}, Sympa::Site->bounce_email_prefix);
 
@@ -100,14 +100,14 @@ sub process {
 
             # in this case the bounce result from a remind or a welcome
             # message; so try to remove the subscriber
-            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG3,
+            $main::logger->do_log(Sympa::Logger::DEBUG3,
                 'VERP for a service message, trying to remove the subscriber'
             );
             unless (
                 $self->update_list($self->{'listname'}, $self->{'robotname'}))
             {
-                Sympa::Log::Syslog::do_log(
-                    Sympa::Log::Syslog::ERR,
+                $main::logger->do_log(
+                    Sympa::Logger::ERR,
                     'Skipping bounce where messagekey = %s for unknown list %s@%s',
                     $self->{'messagekey'},
                     $self->{'listname'},
@@ -116,8 +116,8 @@ sub process {
                 return undef;
             }
             unless ($self->delete_bouncer) {
-                Sympa::Log::Syslog::do_log(
-                    Sympa::Log::Syslog::ERR,
+                $main::logger->do_log(
+                    Sympa::Logger::ERR,
                     'Unable to remove %s from %s@%s (welcome message bounced but del is closed)',
                     $self->{'who'},
                     $self->{'listname'},
@@ -134,12 +134,12 @@ sub process {
     # will be inserted in the database
     if ($self->is_dsn and $self->tracking_is_used) {
         if ($self->process_dsn) {
-            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE,
+            $main::logger->do_log(Sympa::Logger::NOTICE,
                 'DSN %s Correctly treated. DSN status is "%s"',
                 $self, $self->{'dsn'}{'status'});
         } else {
-            Sympa::Log::Syslog::do_log(
-                Sympa::Log::Syslog::ERR,
+            $main::logger->do_log(
+                Sympa::Logger::ERR,
                 'Delivery status notification processing for bounce %s (key %s) failed. Stopping here.',
                 $self,
                 $self->{'messagekey'}
@@ -158,11 +158,11 @@ sub process {
     # will be inserted in the database
     if ($self->is_mdn and $self->tracking_is_used) {
         if ($self->process_mdn) {
-            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE, 'MDN %s Correctly treated.',
+            $main::logger->do_log(Sympa::Logger::NOTICE, 'MDN %s Correctly treated.',
                 $self);
             return 1;
         } else {
-            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'Failed to treat MDN %s',
+            $main::logger->do_log(Sympa::Logger::ERR, 'Failed to treat MDN %s',
                 $self);
             return undef;
         }
@@ -173,8 +173,8 @@ sub process {
         # this case a report Email Feedback Reports
         # http://tools.ietf.org/html/rfc6650 mainly used by AOL
         if ($self->process_email_feedback_report) {
-            Sympa::Log::Syslog::do_log(
-                Sympa::Log::Syslog::NOTICE,
+            $main::logger->do_log(
+                Sympa::Logger::NOTICE,
                 'Feedback Report %s correctly treated. type: %s, original_rcpt: %s, listname: %s@%s)',
                 $self,
                 $self->{'feedback_type'},
@@ -184,8 +184,8 @@ sub process {
             );
             return 1;
         } else {
-            Sympa::Log::Syslog::do_log(
-                Sympa::Log::Syslog::ERR,
+            $main::logger->do_log(
+                Sympa::Logger::ERR,
                 'Ignoring Feedback Report %s : Unknown format (bounce where messagekey=%s), original_rcpt: %s, listname: %s@%s)',
                 $self,
                 $self->{'feedback_type'},
@@ -198,13 +198,13 @@ sub process {
     }
 
     if ($self->process_ndn) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE,
+        $main::logger->do_log(Sympa::Logger::NOTICE,
             'Bounce %s from %s to list %s correctly treated.',
             $self, $self->{'who'}, $self->{'list'});
         return 1;
     } else {
-        Sympa::Log::Syslog::do_log(
-            Sympa::Log::Syslog::ERR,
+        $main::logger->do_log(
+            Sympa::Logger::ERR,
             'Could not correctly process bounce %s from %s to list %s@%s. Ignoring.',
             $self,
             $self->{'who'},
@@ -217,7 +217,7 @@ sub process {
 }
 
 sub analyze_verp_header {
-    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, '(%s)', @_);
+    $main::logger->do_log(Sympa::Logger::DEBUG2, '(%s)', @_);
     my $self = shift;
 
     if ($self->is_verp_in_use) {
@@ -227,7 +227,7 @@ sub analyze_verp_header {
             $self->{'listname'}        = $3;
             $self->{'distribution_id'} = $5;
         } else {
-            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+            $main::logger->do_log(Sympa::Logger::ERR,
                 'Unable to analyze VERP address %s for bounce %s',
                 $self->{'to'}, $self);
             return undef;
@@ -239,7 +239,7 @@ sub analyze_verp_header {
         }
         undef $self->{'distribution_id'}
             unless ($self->{'distribution_id'} =~ /^[0-9]+$/);
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG3,
+        $main::logger->do_log(Sympa::Logger::DEBUG3,
             'VERP in use : bounce %s related to %s for list %s',
             $self, $self->{'who'}, $self->{'list'});
         return 1;
@@ -249,17 +249,17 @@ sub analyze_verp_header {
 
 sub is_verp_in_use {
     my $self = shift;
-    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, '(%s, to=%s, prefix=%s)',
+    $main::logger->do_log(Sympa::Logger::DEBUG2, '(%s, to=%s, prefix=%s)',
         $self, $self->{'to'}, Sympa::Site->bounce_email_prefix);
     return $self->{'verp'}{'is_used'} if (defined $self->{'verp'}{'is_used'});
     my $bounce_email_prefix = Sympa::Site->bounce_email_prefix;
     if ($self->{'to'} =~ /^$bounce_email_prefix\+(.*)\@(.*)$/) {
         $self->{'local_part'} = $1;
         $self->{'robotname'}  = $2;
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG3, 'Message %s uses VERP', $self);
+        $main::logger->do_log(Sympa::Logger::DEBUG3, 'Message %s uses VERP', $self);
         $self->{'verp'}{'is_used'} = 1;
     } else {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG3, 'Message %s does not use VERP',
+        $main::logger->do_log(Sympa::Logger::DEBUG3, 'Message %s does not use VERP',
             $self);
         $self->{'verp'}{'is_used'} = 0;
     }
@@ -267,7 +267,7 @@ sub is_verp_in_use {
 }
 
 sub is_dsn {
-    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, '(%s)', @_);
+    $main::logger->do_log(Sympa::Logger::DEBUG2, '(%s)', @_);
     my $self = shift;
 
     return $self->{'dsn'}{'is_dsn'} if (defined $self->{'dsn'}{'is_dsn'});
@@ -277,17 +277,17 @@ sub is_dsn {
         && ($self->get_mime_message->head->get('Content-type') =~
             /report\-type\=delivery-status/i)
         ) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG3, 'Bounce %s is a DSN', $self);
+        $main::logger->do_log(Sympa::Logger::DEBUG3, 'Bounce %s is a DSN', $self);
         $self->{'dsn'}{'is_dsn'} = 1;
     } else {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG3, 'Bounce %s is not a DSN', $self);
+        $main::logger->do_log(Sympa::Logger::DEBUG3, 'Bounce %s is not a DSN', $self);
         $self->{'dsn'}{'is_dsn'} = 0;
     }
     return $self->{'dsn'}{'is_dsn'};
 }
 
 sub is_mdn {
-    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, '(%s)', @_);
+    $main::logger->do_log(Sympa::Logger::DEBUG2, '(%s)', @_);
     my $self = shift;
 
     return $self->{'mdn'}{'is_mdn'} if (defined $self->{'mdn'}{'is_mdn'});
@@ -297,10 +297,10 @@ sub is_mdn {
         && ($self->get_mime_message->head->get('Content-type') =~
             /report\-type\=disposition-notification/i)
         ) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG3, 'Message %s is an MDN', $self);
+        $main::logger->do_log(Sympa::Logger::DEBUG3, 'Message %s is an MDN', $self);
         $self->{'mdn'}{'is_mdn'} = 1;
     } else {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG3, 'Message %s is not an MDN',
+        $main::logger->do_log(Sympa::Logger::DEBUG3, 'Message %s is not an MDN',
             $self);
         $self->{'mdn'}{'is_mdn'} = 0;
     }
@@ -308,7 +308,7 @@ sub is_mdn {
 }
 
 sub is_email_feedback_report {
-    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, '(%s)', @_);
+    $main::logger->do_log(Sympa::Logger::DEBUG2, '(%s)', @_);
     my $self = shift;
 
     return $self->{'efr'}{'is_efr'} if (defined $self->{'efr'}{'is_efr'});
@@ -318,11 +318,11 @@ sub is_email_feedback_report {
         && ($self->get_mime_message->head->get('Content-type') =~
             /report\-type\=feedback-report/)
         ) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG3,
+        $main::logger->do_log(Sympa::Logger::DEBUG3,
             'Bounce %s is an email feedback report', $self);
         $self->{'efr'}{'is_efr'} = 1;
     } else {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG3,
+        $main::logger->do_log(Sympa::Logger::DEBUG3,
             'Bounce %s is not an email feedback report', $self);
         $self->{'efr'}{'is_efr'} = 0;
     }
@@ -331,7 +331,7 @@ sub is_email_feedback_report {
 
 sub tracking_is_used {
     my $self = shift;
-    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, '(%s, list=%s)',
+    $main::logger->do_log(Sympa::Logger::DEBUG2, '(%s, list=%s)',
         $self, $self->{'list'});
 
     return $self->{'tracking'}{'is_used'}
@@ -345,12 +345,12 @@ sub tracking_is_used {
             or $list->tracking->{'message_delivery_notification'} eq
             'on_demand')
         ) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG3,
+        $main::logger->do_log(Sympa::Logger::DEBUG3,
             'List %s for Message %s uses tracking',
             $list, $self);
         $self->{'tracking'}{'is_used'} = 1;
     } else {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG3,
+        $main::logger->do_log(Sympa::Logger::DEBUG3,
             'List %s for Message %s does not use tracking',
             $list, $self);
         $self->{'tracking'}{'is_used'} = 0;
@@ -359,15 +359,15 @@ sub tracking_is_used {
 }
 
 sub failed_on_first_try {
-    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, '(%s)', @_);
+    $main::logger->do_log(Sympa::Logger::DEBUG2, '(%s)', @_);
     my $self = shift;
 
     if ($self->{'unique'} and $self->{'unique'} =~ /[wr]/) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG3,
+        $main::logger->do_log(Sympa::Logger::DEBUG3,
             'Bounce %s comes from a service message.', $self);
         return 1;
     }
-    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG3,
+    $main::logger->do_log(Sympa::Logger::DEBUG3,
         'Bounce %s does not come from a service message.', $self);
     return 0;
 }
@@ -376,7 +376,7 @@ sub change_listname {
     my $self         = shift;
     my $new_listname = shift;
 
-    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG3,
+    $main::logger->do_log(Sympa::Logger::DEBUG3,
         'Changing listname from %s to %s for bounce %s',
         $self->{'listname'}, $new_listname, $self);
     $self->{'old_listname'} = $self->{'listname'};
@@ -387,7 +387,7 @@ sub change_robotname {
     my $self          = shift;
     my $new_robotname = shift;
 
-    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG3,
+    $main::logger->do_log(Sympa::Logger::DEBUG3,
         'Changing robotname from %s to %s for bounce %s',
         $self->{'robotname'}, $new_robotname, $self);
     $self->{'old_robotname'} = $self->{'robotname'};
@@ -399,14 +399,14 @@ sub update_list {
     my $new_listname  = shift;
     my $new_robotname = shift;
 
-    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG3, 'Updating list for bounce %s',
+    $main::logger->do_log(Sympa::Logger::DEBUG3, 'Updating list for bounce %s',
         $self);
     $self->update_robot($new_robotname);
     $self->change_listname($new_listname);
 
     my $list = Sympa::List->new($self->{'listname'}, $self->{'robot'});
     unless ($list) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+        $main::logger->do_log(Sympa::Logger::ERR,
             'Unable to set list object for unknown list %s@%s (bounce %s)',
             $self->{'listname'}, $self->{'robotname'}, $self);
         return undef;
@@ -417,7 +417,7 @@ sub update_list {
 }
 
 sub update_robot {
-    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG3, '(%s, %s)', @_);
+    $main::logger->do_log(Sympa::Logger::DEBUG3, '(%s, %s)', @_);
     my $self          = shift;
     my $new_robotname = shift;
 
@@ -425,7 +425,7 @@ sub update_robot {
 
     my $robot = Sympa::Robot->new($self->{'robotname'});
     unless ($robot) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+        $main::logger->do_log(Sympa::Logger::ERR,
             'Unable to set robot object for unknown robot %s (bounce %s)',
             $self->{'robotname'}, $self);
         return undef;
@@ -438,7 +438,7 @@ sub update_robot {
 sub delete_bouncer {
     my $self = shift;
 
-    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, 'Deleting bouncing user %s',
+    $main::logger->do_log(Sympa::Logger::DEBUG2, 'Deleting bouncing user %s',
         $self->{'who'});
     my $result = Sympa::Scenario::request_action(
         $self->{'list'},
@@ -456,8 +456,8 @@ sub delete_bouncer {
                 'users'   => [$self->{'who'}],
                 'exclude' => ' 1'
             );
-            Sympa::Log::Syslog::do_log(
-                Sympa::Log::Syslog::NOTICE,
+            $main::logger->do_log(
+                Sympa::Logger::NOTICE,
                 '%s has been removed from %s because welcome message bounced',
                 $self->{'who'},
                 $self->{'list'}
@@ -490,7 +490,7 @@ sub delete_bouncer {
                     )
                     ) {
                     wwslog(
-                        Sympa::Log::Syslog::ERR,
+                        Sympa::Logger::ERR,
                         'Unable to send notify "automatic_del" to %s list owner',
                         $self->{'list'}
                     );
@@ -498,7 +498,7 @@ sub delete_bouncer {
             }
         }
     } else {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+        $main::logger->do_log(Sympa::Logger::ERR,
             'Authorization to delete user %s from liste %s denied',
             $self->{'who'}, $self->{'list'});
         return undef;
@@ -509,7 +509,7 @@ sub delete_bouncer {
 sub process_dsn {
     my $self = shift;
 
-    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG, 'processing  DSN %s',
+    $main::logger->do_log(Sympa::Logger::DEBUG, 'processing  DSN %s',
         $self->get_msg_id);
     my @parts = $self->get_mime_message->parts();
     my $original_rcpt;
@@ -574,19 +574,19 @@ sub process_dsn {
         ($msg_id) = $msg_id =~ /<(\S+\@\S+)>/;
     }
 
-    Sympa::Log::Syslog::do_log(
-        Sympa::Log::Syslog::DEBUG2,
+    $main::logger->do_log(
+        Sympa::Logger::DEBUG2,
         'FINAL DSN Action Detected, value : %s',
         $self->{'dsn'}{'status'}
     );
-    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2,
+    $main::logger->do_log(Sympa::Logger::DEBUG2,
         'FINAL DSN Recipient Detected, value : %s',
         $original_rcpt);
-    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2,
+    $main::logger->do_log(Sympa::Logger::DEBUG2,
         'FINAL DSN final Recipient Detected, value : %s', $final_rcpt);
-    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2,
+    $main::logger->do_log(Sympa::Logger::DEBUG2,
         'FINAL DSN Message-Id Detected, value : %s', $msg_id);
-    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2,
+    $main::logger->do_log(Sympa::Logger::DEBUG2,
         'FINAL DSN Arrival Date Detected, value : %s',
         $arrival_date);
 
@@ -595,29 +595,29 @@ sub process_dsn {
         # DSN with status 'failed' should not be removed because they must be
         # processed for classical bounce managment (not only for tracking
         # feature)
-        Sympa::Log::Syslog::do_log(
-            Sympa::Log::Syslog::DEBUG2,
+        $main::logger->do_log(
+            Sympa::Logger::DEBUG2,
             'Non failed DSN status "%s"',
             $self->{'dsn'}{'status'}
         );
         unless ($self->{'distribution_id'}) {
-            Sympa::Log::Syslog::do_log(
-                Sympa::Log::Syslog::ERR,
+            $main::logger->do_log(
+                Sympa::Logger::ERR,
                 'error: Id not found in destination address "%s". Will ignore',
                 $self->{'to'}
             );
             return undef;
         }
         unless ($original_rcpt) {
-            Sympa::Log::Syslog::do_log(
-                Sympa::Log::Syslog::ERR,
+            $main::logger->do_log(
+                Sympa::Logger::ERR,
                 'error: original recipient not found in DSN: "%s". Will ignore',
                 $msg_id
             );
             return undef;
         }
         unless ($msg_id) {
-            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+            $main::logger->do_log(Sympa::Logger::ERR,
                 'error: message_id not found in DSN. Will ignore');
             return undef;
         }
@@ -629,12 +629,12 @@ sub process_dsn {
             $self->get_message_as_string
         )
         ) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG,
+        $main::logger->do_log(Sympa::Logger::DEBUG,
             'DSN for "%s" inserted into database for further consultation.',
             $self->{'who'});
     } else {
-        Sympa::Log::Syslog::do_log(
-            Sympa::Log::Syslog::ERR,
+        $main::logger->do_log(
+            Sympa::Logger::ERR,
             'Not able to fill database with notification data for DSN to "%s"',
             $self->{'who'}
         );
@@ -645,7 +645,7 @@ sub process_dsn {
 
 sub process_mdn {
     my $self = shift;
-    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG, 'processing  MDN %s',
+    $main::logger->do_log(Sympa::Logger::DEBUG, 'processing  MDN %s',
         $self->get_msg_id);
     my @parts = $self->get_mime_message->parts();
 
@@ -713,56 +713,56 @@ sub process_mdn {
     # let's use VERP
     $self->{'mdn'}{'original_rcpt'} = $self->{'who'};
 
-    Sympa::Log::Syslog::do_log(
-        Sympa::Log::Syslog::DEBUG2,
+    $main::logger->do_log(
+        Sympa::Logger::DEBUG2,
         'FINAL MDN Disposition Detected, value : %s',
         $self->{'mdn'}{'status'}
     );
-    Sympa::Log::Syslog::do_log(
-        Sympa::Log::Syslog::DEBUG2,
+    $main::logger->do_log(
+        Sympa::Logger::DEBUG2,
         'FINAL MDN Recipient Detected, value : %s',
         $self->{'mdn'}{'original_rcpt'}
     );
-    Sympa::Log::Syslog::do_log(
-        Sympa::Log::Syslog::DEBUG2,
+    $main::logger->do_log(
+        Sympa::Logger::DEBUG2,
         'FINAL MDN Message-Id Detected, value : %s',
         $self->{'mdn'}{'msg_id'}
     );
-    Sympa::Log::Syslog::do_log(
-        Sympa::Log::Syslog::DEBUG2,
+    $main::logger->do_log(
+        Sympa::Logger::DEBUG2,
         'FINAL MDN Date Detected, value : %s',
         $self->{'mdn'}{'date'}
     );
 
     unless ($self->{'distribution_id'}) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+        $main::logger->do_log(Sympa::Logger::ERR,
             'error: Id not found in to address %s, will ignore',
             $self->{'to'});
         return undef;
     }
     unless ($self->{'mdn'}{'original_rcpt'}) {
-        Sympa::Log::Syslog::do_log(
-            Sympa::Log::Syslog::ERR,
+        $main::logger->do_log(
+            Sympa::Logger::ERR,
             'error: original recipient not found in MDN "%s". Will ignore',
             $self->{'mdn'}{'msg_id'}
         );
         return undef;
     }
     unless ($self->{'mdn'}{'msg_id'}) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+        $main::logger->do_log(Sympa::Logger::ERR,
             'error: message_id not found in MDN. Will ignore');
         return undef;
     }
     unless ($self->{'mdn'}{'status'}) {
-        Sympa::Log::Syslog::do_log(
-            Sympa::Log::Syslog::ERR,
+        $main::logger->do_log(
+            Sympa::Logger::ERR,
             'error: MDN status not found in MDN "%s". Will ignore',
             $self->{'mdn'}{'msg_id'}
         );
         return undef;
     }
 
-    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, 'Save in database...');
+    $main::logger->do_log(Sympa::Logger::DEBUG2, 'Save in database...');
     unless (
         Sympa::Tracking::db_insert_notification(
             $self->{'distribution_id'}, 'MDN',
@@ -770,7 +770,7 @@ sub process_mdn {
             $self->get_message_as_string
         )
         ) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+        $main::logger->do_log(Sympa::Logger::ERR,
             'Not able to fill database with notification data for MDN %s',
             $self->get_msg_id);
         return undef;
@@ -781,7 +781,7 @@ sub process_mdn {
 sub process_email_feedback_report {
     my $self = shift;
 
-    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG,
+    $main::logger->do_log(Sympa::Logger::DEBUG,
         'processing  Email Feedback Report %s',
         $self->get_msg_id);
     my @parts = $self->get_mime_message->parts();
@@ -833,12 +833,12 @@ sub process_email_feedback_report {
         && (defined $self->{'efr'}{'user_agent'})
         ) {
 
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG,
+        $main::logger->do_log(Sympa::Logger::DEBUG,
             'Email Feedback Report: %s feedback-type: %s',
             $self->{'listname'}, $self->{'efr'}{'feedback_type'});
         if (defined $self->{'efr'}{'original_rcpt'}) {
-            Sympa::Log::Syslog::do_log(
-                Sympa::Log::Syslog::DEBUG,
+            $main::logger->do_log(
+                Sympa::Logger::DEBUG,
                 'Recognized user : %s list',
                 $self->{'efr'}{'original_rcpt'}
             );
@@ -854,8 +854,8 @@ sub process_email_feedback_report {
                 my $list =
                     Sympa::List->new($self->{'listname'}, $self->{'robotname'});
                 unless ($list) {
-                    Sympa::Log::Syslog::do_log(
-                        Sympa::Log::Syslog::ERR,
+                    $main::logger->do_log(
+                        Sympa::Logger::ERR,
                         'Skipping Feedback Report (spool bounce, messagekey =%s) for unknown list %s@%s',
                         $self->{'messagekey'},
                         $self->{'listname'},
@@ -869,8 +869,8 @@ sub process_email_feedback_report {
                 @lists = Sympa::List::get_which($self->{'efr'}{'original_rcpt'},
                     $self->{'robotname'}, 'member');
             } else {
-                Sympa::Log::Syslog::do_log(
-                    Sympa::Log::Syslog::NOTICE,
+                $main::logger->do_log(
+                    Sympa::Logger::NOTICE,
                     'Ignoring Feedback Report (bounce where messagekey=%s) : Nothing to do for this feedback type.(feedback_type:%s, original_rcpt:%s, listname:%s)',
                     $self->{'messagekey'},
                     $self->{'efr'}{'feedback_type'},
@@ -895,8 +895,8 @@ sub process_email_feedback_report {
                             'exclude' => ' 1'
                         );
 
-                        Sympa::Log::Syslog::do_log(
-                            Sympa::Log::Syslog::NOTICE,
+                        $main::logger->do_log(
+                            Sympa::Logger::NOTICE,
                             '%s has been removed from %s because abuse feedback report',
                             $self->{'efr'}{'original_rcpt'},
                             $list->name
@@ -909,15 +909,15 @@ sub process_email_feedback_report {
                                 }
                             )
                             ) {
-                            Sympa::Log::Syslog::do_log(
-                                Sympa::Log::Syslog::NOTICE,
+                            $main::logger->do_log(
+                                Sympa::Logger::NOTICE,
                                 'Unable to send notify "automatic_del" to %s list owner',
                                 $list->name
                             );
                         }
                     } else {
-                        Sympa::Log::Syslog::do_log(
-                            Sympa::Log::Syslog::ERR,
+                        $main::logger->do_log(
+                            Sympa::Logger::ERR,
                             'Ignore Feedback Report (bounce where messagekey =%s) for list %s@%s : user %s not subscribed',
                             $self->{'messagekey'},
                             $list->name,
@@ -930,8 +930,8 @@ sub process_email_feedback_report {
                                 {'who' => $self->{'efr'}{'original_rcpt'}}
                             )
                             ) {
-                            Sympa::Log::Syslog::do_log(
-                                Sympa::Log::Syslog::NOTICE,
+                            $main::logger->do_log(
+                                Sympa::Logger::NOTICE,
                                 'Unable to send notify "warn-signoff" to %s list owner',
                                 $list
                             );
@@ -939,8 +939,8 @@ sub process_email_feedback_report {
                     }
                 } else {
                     $forward = 'request';
-                    Sympa::Log::Syslog::do_log(
-                        Sympa::Log::Syslog::ERR,
+                    $main::logger->do_log(
+                        Sympa::Logger::ERR,
                         'Ignore Feedback Report (bounce where messagekey=%s) for list %s : user %s is not allowed to unsubscribe',
                         $self->{'messagekey'},
                         $list,
@@ -949,8 +949,8 @@ sub process_email_feedback_report {
                 }
             }
         } else {
-            Sympa::Log::Syslog::do_log(
-                Sympa::Log::Syslog::ERR,
+            $main::logger->do_log(
+                Sympa::Logger::ERR,
                 'Ignoring Feedback Report (bounce where messagekey=%s) : Unknown Original-Rcpt-To field. Can\'t do anything. (feedback_type:%s, listname:%s)',
                 $self->{'messagekey'},
                 $self->{'efr'}{'feedback_type'},
@@ -965,16 +965,16 @@ sub process_email_feedback_report {
 }
 
 sub process_ndn {
-    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG3, '(%s)', @_);
+    $main::logger->do_log(Sympa::Logger::DEBUG3, '(%s)', @_);
     my $self = shift;
 
     unless (ref $self->{'list'} and $self->{'list'}->isa('Sympa::List')) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+        $main::logger->do_log(Sympa::Logger::ERR,
             'Skipping bounce %s for unknown list %s@%s',
             $self, $self->{'listname'}, $self->{'robotname'});
         return undef;
     } else {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG3,
+        $main::logger->do_log(Sympa::Logger::DEBUG3,
             'Processing bounce %s for list %s',
             $self->{'messagekey'}, $self->{'list'});
 
@@ -1001,8 +1001,8 @@ sub process_ndn {
                             "Failed to list create bounce directory $bounce_dir"
                     }
                 );
-                Sympa::Log::Syslog::do_log(
-                    Sympa::Log::Syslog::ERR,
+                $main::logger->do_log(
+                    Sympa::Logger::ERR,
                     'Could not create %s: %s bounced dir, check bounce_path in wwsympa.conf',
                     $bounce_dir,
                     $ERRNO
@@ -1024,7 +1024,7 @@ sub process_ndn {
             $bouncefor ||= $rcpt;
 
             unless ($self->store_bounce($bounce_dir, $bouncefor)) {
-                Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+                $main::logger->do_log(Sympa::Logger::ERR,
                     'Unable to store bounce %s. Aborting.',
                     $self->get_msg_id);
                 return undef;
@@ -1034,8 +1034,8 @@ sub process_ndn {
                     $rcpt, $bouncefor, canonicalize_status($status)
                 )
                 ) {
-                Sympa::Log::Syslog::do_log(
-                    Sympa::Log::Syslog::ERR,
+                $main::logger->do_log(
+                    Sympa::Logger::ERR,
                     'Unable to update bounce history for user %s, bounce %s. Aborting.',
                     $bouncefor,
                     $self->get_msg_id
@@ -1051,7 +1051,7 @@ sub process_ndn {
 
                 # rcpt not recognized in the bounce but VERP was used
                 unless ($self->store_bounce($bounce_dir, $self->{'who'})) {
-                    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+                    $main::logger->do_log(Sympa::Logger::ERR,
                         'Unable to store bounce %s. Aborting.',
                         $self->get_msg_id);
                     return undef;
@@ -1061,8 +1061,8 @@ sub process_ndn {
                         'unknown', $self->{'who'}
                     )
                     ) {
-                    Sympa::Log::Syslog::do_log(
-                        Sympa::Log::Syslog::ERR,
+                    $main::logger->do_log(
+                        Sympa::Logger::ERR,
                         'Unable to update bounce history for user %s, bounce %s. Aborting.',
                         $self->{'who'},
                         $self->get_msg_id
@@ -1070,8 +1070,8 @@ sub process_ndn {
                     return undef;
                 }
             } else {    # no VERP and no rcpt recognized
-                Sympa::Log::Syslog::do_log(
-                    Sympa::Log::Syslog::INFO,
+                $main::logger->do_log(
+                    Sympa::Logger::INFO,
                     'error: no address found in message from %s for list %s',
                     $from,
                     $self->{'list'}
@@ -1090,13 +1090,13 @@ sub store_bounce {
     my $bounce_dir = shift;
     my $rcpt       = shift;
 
-    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG, 'store_bounce(%s,%s,%s)', $self,
+    $main::logger->do_log(Sympa::Logger::DEBUG, 'store_bounce(%s,%s,%s)', $self,
         $bounce_dir, $rcpt);
 
     my $filename = Sympa::Tools::escape_chars($rcpt);
 
     unless (open ARC, ">$bounce_dir/$filename") {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE,
+        $main::logger->do_log(Sympa::Logger::NOTICE,
             "Unable to write $bounce_dir/$filename");
         return undef;
     }
@@ -1111,7 +1111,7 @@ sub canonicalize_status {
 
     my $status = shift;
 
-    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, 'Canonicalizing status %s', $status);
+    $main::logger->do_log(Sympa::Logger::DEBUG2, 'Canonicalizing status %s', $status);
 
     if ($status !~ /^\d+\.\d+\.\d+$/) {
         if ($equiv{$status}) {
@@ -1135,7 +1135,7 @@ sub update_subscriber_bounce_history {
     my $rcpt      = shift;
     my $bouncefor = shift;
     my $status    = shift;
-    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, '(%s, %s, %s, %s, list=%s)',
+    $main::logger->do_log(Sympa::Logger::DEBUG2, '(%s, %s, %s, %s, list=%s)',
         $self, $rcpt, $bouncefor, $status, $list);
 
     my $first = my $last = time;
@@ -1144,7 +1144,7 @@ sub update_subscriber_bounce_history {
     my $user = $list->get_list_member($bouncefor);
 
     unless ($user) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+        $main::logger->do_log(Sympa::Logger::ERR,
             'Subscriber %s not found in list %s : %s',
             $bouncefor, $list);
         return undef;
@@ -1155,15 +1155,15 @@ sub update_subscriber_bounce_history {
     }
     $count++;
     if ($rcpt ne $bouncefor) {
-        Sympa::Log::Syslog::do_log(
-            Sympa::Log::Syslog::NOTICE,
+        $main::logger->do_log(
+            Sympa::Logger::NOTICE,
             'Bouncing address identified with VERP: actual rcpt: %s / subscriber address: %s (bounce %s)',
             $rcpt,
             $bouncefor,
             $self->get_msg_id
         );
-        Sympa::Log::Syslog::do_log(
-            Sympa::Log::Syslog::DEBUG,
+        $main::logger->do_log(
+            Sympa::Logger::DEBUG,
             'update_subscribe (%s, bounce-> %s %s %s %s,bounce_address->%s)',
             $bouncefor,
             $first,
@@ -1191,7 +1191,7 @@ sub update_subscriber_bounce_history {
     } else {
         $list->update_list_member($bouncefor,
             {'bounce' => "$first $last $count $status"});
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::NOTICE,
+        $main::logger->do_log(Sympa::Logger::NOTICE,
             'Received bounce for email address %s, list %s',
             $bouncefor, $list);
         Sympa::Log::Database::db_log(
@@ -1211,14 +1211,14 @@ sub rfc1891 {
     my ($self, $result) = @_;
     local $RS = "\n";
 
-    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2,
+    $main::logger->do_log(Sympa::Logger::DEBUG2,
         'RFC 1891 compliance check for bounce %s',
         $self->get_msg_id);
     my $nbrcpt;
 
     my $entity = $self->get_mime_message;
     unless ($entity) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+        $main::logger->do_log(Sympa::Logger::ERR,
             'No message object to process. Aborting.');
         return undef;
     }
@@ -1283,7 +1283,7 @@ sub corrige {
 
     my ($adr, $from) = @_;
 
-    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG3, 'Fixing address %s using from %s',
+    $main::logger->do_log(Sympa::Logger::DEBUG3, 'Fixing address %s using from %s',
         $adr, $from);
     ## adresse X400
     if ($adr =~ /^\//) {
@@ -1335,7 +1335,7 @@ sub anabounce {
 
     my ($self, $result, $from) = @_;
 
-    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, 'Analyzing bounce %s',
+    $main::logger->do_log(Sympa::Logger::DEBUG2, 'Analyzing bounce %s',
         $self->get_msg_id);
 
     # this old subroutine do not use message object but parse the message
@@ -1346,13 +1346,13 @@ sub anabounce {
     my $tmpfile = Sympa::Site->tmpdir . '/bounce.' . $PID;
     my $fh;
     unless (open $fh, '>', $tmpfile) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'Could not create %s', $tmpfile);
+        $main::logger->do_log(Sympa::Logger::ERR, 'Could not create %s', $tmpfile);
         return undef;
     }
     print $fh $self->as_string();    # raw message
     close $fh;
     unless (open BOUNCE, '<', $tmpfile) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'Could not read %s', $tmpfile);
+        $main::logger->do_log(Sympa::Logger::ERR, 'Could not read %s', $tmpfile);
         return undef;
     }
 

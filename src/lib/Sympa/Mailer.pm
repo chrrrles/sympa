@@ -33,7 +33,7 @@ use POSIX qw();
 
 use Sympa::Bulk;
 use Sympa::Constants;
-use Sympa::Log::Syslog;
+use Sympa::Logger;
 
 my $max_arg;
 eval {
@@ -129,15 +129,15 @@ sub distribute_message {
     my $robot       = $list->robot;
 
     unless (ref $message and $message->isa('Sympa::Message')) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'Invalid message parameter');
+        $main::logger->do_log(Sympa::Logger::ERR, 'Invalid message parameter');
         return undef;
     }
 
     # normal return_path (ie used if verp is not enabled)
     my $from = $list->get_address('return_path');
 
-    Sympa::Log::Syslog::do_log(
-        Sympa::Log::Syslog::DEBUG2,
+    $main::logger->do_log(
+        Sympa::Logger::DEBUG2,
         '(from=%s, message=%s, encrypt=%s, verp=%s, %d rcpt, tag_as_last=%s)',
         $from,
         $message,
@@ -196,7 +196,7 @@ sub distribute_message {
             chomp $dom;
         }
         $rcpt_by_dom{$dom} += 1;
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG3,
+        $main::logger->do_log(Sympa::Logger::DEBUG3,
             'domain: %s ; rcpt by dom: %s ; limit for this domain: %s',
             $dom, $rcpt_by_dom{$dom}, $self->{nrcpt_by_domain}->{$dom});
 
@@ -260,13 +260,13 @@ sub distribute_message {
         foreach my $bulk_of_rcpt (@sendtobypacket) {
             foreach my $email (@{$bulk_of_rcpt}) {
                 if ($email !~ /@/) {
-                    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+                    $main::logger->do_log(Sympa::Logger::ERR,
                         "incorrect call for encrypt with incorrect number of recipient"
                     );
                     return undef;
                 }
                 unless ($message->smime_encrypt($email)) {
-                    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+                    $main::logger->do_log(Sympa::Logger::ERR,
                         "Failed to encrypt message");
                     return undef;
                 }
@@ -333,7 +333,7 @@ Returns a true value on success, I<undef> on failure.
 sub forward_message {
     my ($self, %params) = @_;
 
-    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, '(%s, %s, %s, %s)', @_);
+    $main::logger->do_log(Sympa::Logger::DEBUG2, '(%s, %s, %s, %s)', @_);
 
     my $message = $params{'message'};
     my $from    = $params{'from'};
@@ -341,7 +341,7 @@ sub forward_message {
     my $robot   = Sympa::Robot::clean_robot($params{'robot'}, 1);    #FIXME: may be Site?
 
     unless (ref $message and $message->isa('Sympa::Message')) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR, 'Unexpected parameter type: %s',
+        $main::logger->do_log(Sympa::Logger::ERR, 'Unexpected parameter type: %s',
             ref $message);
         return undef;
     }
@@ -361,7 +361,7 @@ sub forward_message {
     );
 
     unless ($result) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+        $main::logger->do_log(Sympa::Logger::ERR,
             'Impossible to send message %s from %s',
             $message, $from);
         return undef;
@@ -394,15 +394,15 @@ sub reaper {
     while (($i = waitpid(-1, $block ? POSIX::WNOHANG : 0)) > 0) {
         $block = 1;
         if (!defined($self->{pids}->{$i})) {
-            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2,
+            $main::logger->do_log(Sympa::Logger::DEBUG2,
                 "Reaper waited $i, unknown process to me");
             next;
         }
         $self->{opensmtp}--;
         delete($self->{pids}->{$i});
     }
-    Sympa::Log::Syslog::do_log(
-        Sympa::Log::Syslog::DEBUG2,
+    $main::logger->do_log(
+        Sympa::Logger::DEBUG2,
         "Reaper unwaited PIDs : %s\nOpen = %s\n",
         join(' ', sort keys %{$self->{pids}}), $self->{opensmtp}
     );
@@ -474,9 +474,9 @@ sub send_message {
     my $signed_msg;    # if signing
 
     if ($sign_mode and $sign_mode eq 'smime') {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, 'Will sign message');
+        $main::logger->do_log(Sympa::Logger::DEBUG2, 'Will sign message');
         unless ($message->smime_sign()) {
-            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+            $main::logger->do_log(Sympa::Logger::ERR,
                 'Unable to sign message from %s', $listname);
             return undef;
         }
@@ -496,8 +496,8 @@ sub send_message {
         unless ($use_bulk) {
 
             # in context wwsympa.fcgi store directly to spool.
-            Sympa::Log::Syslog::do_log(
-                Sympa::Log::Syslog::INFO,
+            $main::logger->do_log(
+                Sympa::Logger::INFO,
                 'USING BULK AS OUTGOING SPOOL: rcpt: %s, from: %s, message: %s',
                 $rcpt,
                 $from,
@@ -523,7 +523,7 @@ sub send_message {
         );
 
         unless (defined $bulk_code) {
-            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+            $main::logger->do_log(Sympa::Logger::ERR,
                 'Failed to store message for list %s', $listname);
             $robot->send_notify_to_listmaster('bulk_error',
                 {'listname' => $listname});
@@ -532,7 +532,7 @@ sub send_message {
     } else {
 
         # send it now
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::INFO, 'NOT USING BULK');
+        $main::logger->do_log(Sympa::Logger::INFO, 'NOT USING BULK');
 
         # Get message as string without meta information.
         my $string_to_send;
@@ -549,7 +549,7 @@ sub send_message {
         );
         print $handle $string_to_send;
         unless (close $handle) {
-            Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+            $main::logger->do_log(Sympa::Logger::ERR,
                 'could not close safefork to sendmail');
             return undef;
         }
@@ -587,7 +587,7 @@ Returns a file handle on sendmail process on success, I<undef> on failure.
 sub get_sendmail_handle {
     my ($self, %params) = @_;
 
-    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, '(%s, %s, %s, %s, %s)', @_);
+    $main::logger->do_log(Sympa::Logger::DEBUG2, '(%s, %s, %s, %s, %s)', @_);
 
     my $from      = $params{from};
     my $rcpt      = $params{rcpt};
@@ -596,15 +596,15 @@ sub get_sendmail_handle {
     my $sign_mode = $params{sign_mode};
 
     unless ($from) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+        $main::logger->do_log(Sympa::Logger::ERR,
             'Missing Return-Path in Sympa::Mail::smtpto()');
     }
 
     if (ref($rcpt) eq 'SCALAR') {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, 'Sympa::Mail::smtpto(%s, %s, %s )',
+        $main::logger->do_log(Sympa::Logger::DEBUG2, 'Sympa::Mail::smtpto(%s, %s, %s )',
             $from, $$rcpt, $sign_mode);
     } elsif (ref($rcpt) eq 'ARRAY') {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, 'Sympa::Mail::smtpto(%s, %s, %s)',
+        $main::logger->do_log(Sympa::Logger::DEBUG2, 'Sympa::Mail::smtpto(%s, %s, %s)',
             $from, join(',', @{$rcpt}), $sign_mode);
     }
 
@@ -623,9 +623,9 @@ sub get_sendmail_handle {
     ## Check how many open smtp's we have, if too many wait for a few
     ## to terminate and then do our job.
 
-    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG3, "Open = $self->{opensmtp}");
+    $main::logger->do_log(Sympa::Logger::DEBUG3, "Open = $self->{opensmtp}");
     while ($self->{opensmtp} > $robot->maxsmtp) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG3,
+        $main::logger->do_log(Sympa::Logger::DEBUG3,
             "Sympa::Mail::smtpto: too many open SMTP ($self->{opensmtp}), calling reaper");
         last if ($self->reaper(0) == -1);    ## Blocking call to the reaper.
     }
@@ -675,14 +675,14 @@ sub get_sendmail_handle {
         } else {
             $r = join(' ', @$rcpt);
         }
-        Sympa::Log::Syslog::do_log(
-            Sympa::Log::Syslog::DEBUG3, 'safefork: %s %s -f \'%s\' %s',
+        $main::logger->do_log(
+            Sympa::Logger::DEBUG3, 'safefork: %s %s -f \'%s\' %s',
             $sendmail, join(' ', @sendmail_args),
             $from, $r
         );
     }
     unless (close($in)) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+        $main::logger->do_log(Sympa::Logger::ERR,
             "Sympa::Mail::smtpto: could not close safefork");
         return undef;
     }
@@ -703,7 +703,7 @@ sub _safefork {
         return $pid if (defined($pid));
 
         $err = $ERRNO;
-        Sympa::Log::Syslog::do_log('warn',
+        $main::logger->do_log('warn',
             'Cannot create new process in safefork: %s', $err);
         ## FIXME:should send a mail to the listmaster
         sleep(10 * $i);

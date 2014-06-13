@@ -139,7 +139,7 @@ use POSIX qw();
 
 use Sympa::Conf;
 use Sympa::Constants;
-use Sympa::Log::Syslog;
+use Sympa::Logger;
 use Sympa::Robot;
 use Sympa::Site;
 use Sympa::Template;

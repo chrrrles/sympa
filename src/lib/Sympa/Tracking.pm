@@ -27,7 +27,7 @@ use strict;
 
 use MIME::Base64;
 
-use Sympa::Log::Syslog;
+use Sympa::Logger;
 use Sympa::DatabaseManager;
 
 ##############################################
@@ -43,7 +43,7 @@ use Sympa::DatabaseManager;
 #
 ##############################################
 sub get_recipients_status {
-    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, '(%s, %s)', @_);
+    $main::logger->do_log(Sympa::Logger::DEBUG2, '(%s, %s)', @_);
     my $list     = shift;
     my $msgid    = shift;
     my $listname = $list->name;
@@ -71,8 +71,8 @@ sub get_recipients_status {
             Sympa::DatabaseManager::quote('<' . $msgid . '>')
         )
         ) {
-        Sympa::Log::Syslog::do_log(
-            Sympa::Log::Syslog::ERR,
+        $main::logger->do_log(
+            Sympa::Logger::ERR,
             'Unable to retrieve tracking informations for message %s, list %s',
             $msgid,
             $list
@@ -117,7 +117,7 @@ sub db_init_notification_table {
     my $reception_option = $params{'reception_option'};
     my @rcpt             = @{$params{'rcpt'}};
 
-    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2,
+    $main::logger->do_log(Sympa::Logger::DEBUG2,
         '(%s, msgid=%s, reception_option=%s)',
         $list, $msgid, $reception_option);
 
@@ -137,8 +137,8 @@ sub db_init_notification_table {
                 $listname, $robot_id, $time
             )
             ) {
-            Sympa::Log::Syslog::do_log(
-                Sympa::Log::Syslog::ERR,
+            $main::logger->do_log(
+                Sympa::Logger::ERR,
                 'Unable to prepare notification table for user %s, message %s, list %s',
                 $email,
                 $msgid,
@@ -175,7 +175,7 @@ sub db_init_notification_table {
 #
 ##############################################
 sub db_insert_notification {
-    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, '(%s, %s, %s, %s, ...)', @_);
+    $main::logger->do_log(Sympa::Logger::DEBUG2, '(%s, %s, %s, %s, ...)', @_);
     my ($notification_id, undef, $status, $arrival_date,
         $notification_as_string)
         = @_;
@@ -192,7 +192,7 @@ sub db_insert_notification {
             $status, $arrival_date, $notification_as_string, $notification_id
         )
         ) {
-        Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::ERR,
+        $main::logger->do_log(Sympa::Logger::ERR,
             'Unable to update notification %s in database',
             $notification_id);
         return undef;
@@ -218,7 +218,7 @@ sub find_notification_id_by_message {
     my $listname = shift;
     my $robot_id = shift;
 
-    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2,
+    $main::logger->do_log(Sympa::Logger::DEBUG2,
         'find_notification_id_by_message(%s,%s,%s,%s)',
         $recipient, $msgid, $listname, $robot_id);
 
@@ -237,8 +237,8 @@ sub find_notification_id_by_message {
             Sympa::DatabaseManager::quote('<' . $msgid . '>')
         )
         ) {
-        Sympa::Log::Syslog::do_log(
-            Sympa::Log::Syslog::ERR,
+        $main::logger->do_log(
+            Sympa::Logger::ERR,
             'Unable to retrieve the tracking informations for user %s, message %s, list %s@%s',
             $recipient,
             $msgid,
@@ -250,8 +250,8 @@ sub find_notification_id_by_message {
 
     my @pk_notifications = $sth->fetchrow_array;
     if ($#pk_notifications > 0) {
-        Sympa::Log::Syslog::do_log(
-            Sympa::Log::Syslog::ERR,
+        $main::logger->do_log(
+            Sympa::Logger::ERR,
             'Found more then one pk_notification maching  (recipient=%s,msgis=%s,listname=%s,robot%s)',
             $recipient,
             $msgid,
@@ -277,7 +277,7 @@ sub find_notification_id_by_message {
 #
 ##############################################
 sub remove_message_by_id {
-    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, '(%s, %s)', @_);
+    $main::logger->do_log(Sympa::Logger::DEBUG2, '(%s, %s)', @_);
     my $list  = shift;
     my $msgid = shift;
 
@@ -293,8 +293,8 @@ sub remove_message_by_id {
             $msgid, $listname, $robot_id
         )
         ) {
-        Sympa::Log::Syslog::do_log(
-            Sympa::Log::Syslog::ERR,
+        $main::logger->do_log(
+            Sympa::Logger::ERR,
             'Unable to remove the tracking informations for message %s, list %s',
             $msgid,
             $listname,
@@ -318,7 +318,7 @@ sub remove_message_by_id {
 #
 ##############################################
 sub remove_message_by_period {
-    Sympa::Log::Syslog::do_log(Sympa::Log::Syslog::DEBUG2, '(%s, %s)', @_);
+    $main::logger->do_log(Sympa::Logger::DEBUG2, '(%s, %s)', @_);
     my $list   = shift;
     my $period = shift;
 
@@ -337,8 +337,8 @@ sub remove_message_by_period {
             $limit, $listname, $robot_id
         )
         ) {
-        Sympa::Log::Syslog::do_log(
-            Sympa::Log::Syslog::ERR,
+        $main::logger->do_log(
+            Sympa::Logger::ERR,
             'Unable to remove the tracking informations older than %s days for list %s',
             $limit,
             $list
