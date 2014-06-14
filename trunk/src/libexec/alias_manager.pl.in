@@ -140,6 +140,7 @@ use POSIX qw();
 use Sympa::Conf;
 use Sympa::Constants;
 use Sympa::Logger;
+use Sympa::Logger::Syslog;
 use Sympa::Robot;
 use Sympa::Site;
 use Sympa::Template;
@@ -158,8 +159,11 @@ unless (Sympa::Site->load('no_db' => 1)) {
     exit 1;
 }
 
-Sympa::Log::Syslog::set_log_level(Sympa::Site->log_level);
-Sympa::Log::Syslog::do_openlog(Sympa::Site->syslog, 'alias_manager');
+our $logger = Sympa::Logger::Syslog->new(
+    service  => 'alias_manager',
+    level    => Sympa::Site->log_level(),
+    facility => Sympa::Site->log_facility(),
+);
 
 my $tmp_alias_file = Sympa::Site->tmpdir . '/sympa_aliases.' . time;
 

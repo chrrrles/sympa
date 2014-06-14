@@ -51,6 +51,8 @@ use Net::LDAP;
 use Net::LDAPS;
 use POSIX qw();
 
+use Sympa::Logger;
+use Sympa::Logger::Syslog;
 #use Conf; # load in Site - Robot
 #use Sympa::Tools; # load in Conf - Robot
 use Sympa::Template;
@@ -65,8 +67,11 @@ unless (Sympa::Site->load('no_db' => 1)) {
     exit 1;
 }
 
-Sympa::Log::Syslog::set_log_level(Sympa::Site->log_level);
-Sympa::Log::Syslog::do_openlog(Sympa::Site->syslog, 'alias_manager');
+our $logger = Sympa::Logger::Syslog->new(
+    service  => 'alias_manager',
+    level    => Sympa::Site->log_level(),
+    facility => Sympa::Site->log_facility(),
+);
 
 my $manager_conf_file = Sympa::Site->etc . '/ldap_alias_manager.conf';
 

@@ -406,8 +406,6 @@ while (!$end) {
                             $date_of_last_activity = time();
                             $daemon_usage =
                                 'DAEMON_SLAVE';    # automatic lists creation
-                            Sympa::Log::Syslog::do_openlog(Sympa::Site->syslog,
-                                $daemon_name);
                             $logger->do_log(Sympa::Logger::INFO,
                                 "Bulk slave daemon started with PID %s", $PID);
                             last;
