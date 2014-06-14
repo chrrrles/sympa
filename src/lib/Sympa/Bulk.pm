@@ -303,7 +303,7 @@ sub store {
     my $dkim        = $data{'dkim'};
     my $tag_as_last = $data{'tag_as_last'};
 
-    #$main::logger->do_log(Sympa::Log::Syslog::TRACE,
+    #$main::logger->do_log(Sympa::Logger::TRACE,
     #    'Sympa::Bulk::store(<msg>,rcpts: %s,from = %s,robot = %s,listname=
     #    %s,priority_message = %s, delivery_date= %s,verp = %s, tracking = %s,
     #    merge = %s, dkim: d= %s i=%s, last: %s)',

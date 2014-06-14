@@ -365,8 +365,6 @@ while ($signal ne 'term') {
         Sympa::Tools::Daemon::daemonize(name => $daemon_name)
             unless $options{'foreground'};
 
-        Sympa::Log::Syslog::do_openlog(Sympa::Site->syslog, $daemon_name);
-
         $logger->do_log(Sympa::Logger::DEBUG, 'Running server %d', $PID);
 
         # check presence of a PID file from a previous execution
@@ -665,7 +663,7 @@ sub process_message {
 
     # setting log_level using conf unless it is set by calling option
     unless ($options{'log_level'}) {
-        Sympa::Log::Syslog::set_log_level($robot->log_level);
+        $logger->set_log_level($robot->log_level);
         $logger->do_log(
             Sympa::Logger::DEBUG,
             'Setting log level with robot %s configuration (or sympa.conf) : %d',

@@ -1029,7 +1029,7 @@ while ($query = new_loop()) {
     undef $ajax;
     undef $session;
 
-    Sympa::Log::Syslog::set_log_level(Sympa::Site->log_level);
+    $logger->set_log_level(Sympa::Site->log_level);
 
     # auto-detect browsers' lang.
     Sympa::Language::SetLang(Sympa::Site->best_language());
@@ -1133,7 +1133,7 @@ while ($query = new_loop()) {
         );
         $param->{'cookie_domain'} = $http_host;
     }
-    Sympa::Log::Syslog::set_log_level($robot->log_level);
+    $logger->set_log_level($robot->log_level);
 
     ## Set $param->{'conf'}
     get_safe_robot_conf();
@@ -1294,7 +1294,7 @@ while ($query = new_loop()) {
 
     $param->{'session'} = $session->as_hashref();
 
-    Sympa::Log::Syslog::set_log_level($session->{'log_level'})
+    $logger->set_log_level($session->{'log_level'})
         if ($session->{'log_level'});
     $param->{'restore_email'}         = $session->{'restore_email'};
     $param->{'dumpvars'}              = $session->{'dumpvars'};
@@ -2128,8 +2128,6 @@ sub crash_handler {
     wwslog(Sympa::Logger::ERR, 'DIED: %s', $msg);
     eval { Sympa::Site->send_notify_to_listmaster(undef, undef, undef, 1); };
     eval { Sympa::DatabaseManager::db_disconnect(); };    # unlock database
-    Sys::Syslog::closelog();                  # flush log
-    Sympa::Log::Syslog::set_log_level(-1);    # disable log
 
     ## gather traceback information
     my @calls;
