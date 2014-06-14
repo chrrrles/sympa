@@ -2205,20 +2205,6 @@ sub _split_params {
         shift @params;
     }
 
-    ## debug mode
-    if ($params[0] =~ /debug(\d)?/) {
-        shift @params;
-        if ($1) {
-            $options{'debug_level'} = $1 if ($1);
-        } else {
-            $options{'debug_level'} = 1;
-        }
-    } else {
-        $options{'debug_level'} = 0;
-    }
-    $logger->do_log(Sympa::Logger::DEBUG2,
-        "debug level $options{'debug_level'}");
-
     ## rss mode
     if ($params[0] eq 'rss') {
         shift @params;
@@ -2513,20 +2499,6 @@ sub get_parameters_old {
                 '/nomenu';    ## other links should keep the nomenu attribute
             shift @params;
         }
-
-        ## debug mode
-        if ($params[0] =~ /debug(\d)?/) {
-            shift @params;
-            if ($1) {
-                $options{'debug_level'} = $1 if ($1);
-            } else {
-                $options{'debug_level'} = 1;
-            }
-        } else {
-            $options{'debug_level'} = 0;
-        }
-        $logger->do_log(Sympa::Logger::DEBUG2,
-            "debug level $options{'debug_level'}");
 
         ## rss mode
 ########### /^rss$/ ???
@@ -3170,7 +3142,7 @@ sub check_param_in {
                 'remote_addr' => $param->{'remote_addr'}
             }
         );
-        $action = $result->{'action'} if (ref($result) eq 'HASH');
+        my $action = $result->{'action'} if (ref($result) eq 'HASH');
 
         if (!$param->{'user'}{'email'}) {
             $param->{'may_signoff'} = 1
@@ -3484,7 +3456,7 @@ sub check_param_out {
                 'remote_addr' => $param->{'remote_addr'}
             }
         );
-        $action = $result->{'action'} if (ref($result) eq 'HASH');
+        my $action = $result->{'action'} if (ref($result) eq 'HASH');
 
         if (!$param->{'user'}{'email'}) {
             $param->{'may_signoff'} = 1
