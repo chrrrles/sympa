@@ -119,10 +119,11 @@ sub do_log {
         my @calls;
 
         my @f = caller($go_back);
-        if ($f[3] =~ /wwslog$/) {   ## If called via wwslog, go one step ahead
+        if ($f[3] && $f[3] =~ /wwslog$/) {
+            ## If called via wwslog, go one step ahead
             @f = caller(++$go_back);
         }
-        @calls = ('#' . $f[2]);
+        @calls = ('#' . $f[2]) if $f[2];
         while (@f = caller(++$go_back)) {
             $calls[0] = $f[3] . $calls[0];
             unshift @calls, '#' . $f[2];
