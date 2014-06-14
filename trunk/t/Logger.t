@@ -22,7 +22,9 @@ my @sanitization_tests = (
     [ 'foo',               'foo',       'scalar sanitization'  ],
     [ [ 'foo' ],          '[...]',      'array ref sanitization' ],
     [ { arg1 => 'foo' }, '{arg1}',      'hash ref sanitization' ],
-    [ qr/^foo$/,          '(?^:^foo$)', 'regexp ref sanitization' ],
+    [ qr/^foo$/,
+        $PERL_VERSION ge v5.14 ? '(?^:^foo$)' : '(?-xism:^foo$)',
+        'regexp ref sanitization' ],
     [ Sympa::Task->new(model => 'foo', flavour => 'bar'),
         'Sympa::Task::Global <foo.bar>', 'sympa object sanitization' ],
 );
