@@ -2209,15 +2209,15 @@ sub _split_params {
     if ($params[0] =~ /debug(\d)?/) {
         shift @params;
         if ($1) {
-            $main::options{'debug_level'} = $1 if ($1);
+            $options{'debug_level'} = $1 if ($1);
         } else {
-            $main::options{'debug_level'} = 1;
+            $options{'debug_level'} = 1;
         }
     } else {
-        $main::options{'debug_level'} = 0;
+        $options{'debug_level'} = 0;
     }
     $logger->do_log(Sympa::Logger::DEBUG2,
-        "debug level $main::options{'debug_level'}");
+        "debug level $options{'debug_level'}");
 
     ## rss mode
     if ($params[0] eq 'rss') {
@@ -2518,15 +2518,15 @@ sub get_parameters_old {
         if ($params[0] =~ /debug(\d)?/) {
             shift @params;
             if ($1) {
-                $main::options{'debug_level'} = $1 if ($1);
+                $options{'debug_level'} = $1 if ($1);
             } else {
-                $main::options{'debug_level'} = 1;
+                $options{'debug_level'} = 1;
             }
         } else {
-            $main::options{'debug_level'} = 0;
+            $options{'debug_level'} = 0;
         }
         $logger->do_log(Sympa::Logger::DEBUG2,
-            "debug level $main::options{'debug_level'}");
+            "debug level $options{'debug_level'}");
 
         ## rss mode
 ########### /^rss$/ ???
@@ -3170,15 +3170,15 @@ sub check_param_in {
                 'remote_addr' => $param->{'remote_addr'}
             }
         );
-        $main::action = $result->{'action'} if (ref($result) eq 'HASH');
+        $action = $result->{'action'} if (ref($result) eq 'HASH');
 
         if (!$param->{'user'}{'email'}) {
             $param->{'may_signoff'} = 1
-                if ($main::action =~ /do_it|owner|request_auth/);
+                if ($action =~ /do_it|owner|request_auth/);
 
         } elsif ($param->{'is_subscriber'}) {
             $param->{'may_signoff'} = 1
-                if ($main::action =~ /do_it|owner|request_auth/);
+                if ($action =~ /do_it|owner|request_auth/);
             $param->{'may_suboptions'} = 1;
         }
 
@@ -3192,10 +3192,10 @@ sub check_param_in {
                 'remote_addr' => $param->{'remote_addr'}
             }
         );
-        $main::action = $result->{'action'} if (ref($result) eq 'HASH');
+        $action = $result->{'action'} if (ref($result) eq 'HASH');
 
         $param->{'may_subscribe'} = 1
-            if ($main::action =~ /do_it|owner|request_auth/);
+            if ($action =~ /do_it|owner|request_auth/);
 
         ## Check if the current user can read the shared documents.
         my %mode;
@@ -3484,16 +3484,16 @@ sub check_param_out {
                 'remote_addr' => $param->{'remote_addr'}
             }
         );
-        $main::action = $result->{'action'} if (ref($result) eq 'HASH');
+        $action = $result->{'action'} if (ref($result) eq 'HASH');
 
         if (!$param->{'user'}{'email'}) {
             $param->{'may_signoff'} = 1
-                if ($main::action =~ /do_it|owner|request_auth/);
+                if ($action =~ /do_it|owner|request_auth/);
 
         } elsif ($param->{'is_subscriber'}
             && ($param->{'subscriber'}{'subscribed'} == 1)) {
             $param->{'may_signoff'} = 1
-                if ($main::action =~ /do_it|owner|request_auth/);
+                if ($action =~ /do_it|owner|request_auth/);
             $param->{'may_suboptions'} = 1;
         }
 
@@ -3507,10 +3507,10 @@ sub check_param_out {
                 'remote_addr' => $param->{'remote_addr'}
             }
         );
-        $main::action = $result->{'action'} if (ref($result) eq 'HASH');
+        $action = $result->{'action'} if (ref($result) eq 'HASH');
 
         $param->{'may_subscribe'} = 1
-            if ($main::action =~ /do_it|owner|request_auth/);
+            if ($action =~ /do_it|owner|request_auth/);
 
         ## Archives Access control
         if (defined $list->web_archive) {
