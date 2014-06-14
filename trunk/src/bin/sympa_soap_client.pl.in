@@ -22,67 +22,89 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+=encoding utf-8
+
+=head1 NAME
+
+sympa_soap_client.pl
+
+=head1 SYNOPSIS
+
+B<sympa_soap_client.pl>
+    B<--soap_url>=I<URL> 
+    B<--service>=I<service>
+    B<--trusted_application>=I<app name>
+    B<--trusted_application_password>=I<password>
+    B<--proxy_vars>=I<id=value,id2=value2>
+    B<--service_parameters>=I<value1,value2,value3>
+
+B<sympa_soap_client.pl>
+    B<--soap_url>=I<URL> 
+    B<--service>=I<service>
+    B<--user_email>=I<email>
+    B<--user_password>=I<password>
+    B<--session_id>=I<session ID>
+    B<--service_parameters>=I<value1,value2,value3>
+
+B<sympa_soap_client.pl>
+    B<--soap_url>=I<URL>
+    B<--cookie>=I<cookie>
+
+=head1 EXAMPLES
+
+B<sympa_soap_client.pl> --soap_url=https://sympa.domain.tld --cookie=sympauser=someone\@cru.fr
+
+=head1 DESCRIPTION
+
+sympa_soap_client.pl is a Perl SOAP client for Sympa for TEST ONLY. Use it to
+illustrate how to code access to features of Sympa SOAP server. Authentication
+can be done via user/password or user cookie or as a trusted remote application
+
+=cut
+
 use strict;
 use lib '--modulesdir--';
 
 use Getopt::Long;
 use HTTP::Cookies;
+use Pod::Usage;
 use SOAP::Lite;
 
 use Sympa::Tools::Data;
 
 my ($reponse, @ret, $val, %fault);
 
-my $usage =
-    "$0 is a Perl SOAP client for Sympa for TEST ONLY. Use it to illustrate how to
-code access to features of Sympa SOAP server. Authentication can be done via
-user/password or user cookie or as a trusted remote application
-
-Usage: $0 <with the following options:>
---soap_url=<SOAP Sympa server URL>
---service=<a Sympa service>
---trusted_application=<app name>
---trusted_application_password=<password>
---proxy_vars=<id=value,id2=value2>
---service_parameters=<value1,value2,value3>
-
-
-OR usage: $0 <with the following options:>
---soap_url=<SOAP Sympa server URL>
---user_email=<email>
---user_password=<password>
---session_id=<session ID>
---service=<a Sympa service>
---service_parameters=<value1,value2,value3>
-
-
-OR usage: $0 <with the following options:>
---soap_url=<SOAP Sympa server URL>
---cookie=<Sympa user cookie string>
-
-Example:
-$0 --soap_url=<SOAP Sympa server URL> --cookie=sympauser=someone\@cru.fr
-";
 
 my %options;
 unless (
     GetOptions(
-        \%options,                  'soap_url=s',
-        'service=s',                      'trusted_application=s',
-        'trusted_application_password=s', 'user_email=s',
-        'user_password=s',                'cookie=s',
-        'proxy_vars=s',                   'service_parameters=s',
-        'session_id=s'
+        \%options,
+        'soap_url=s',
+        'service=s',
+        'trusted_application=s',
+        'trusted_application_password=s',
+        'user_email=s',
+        'user_password=s',
+        'cookie=s',
+        'proxy_vars=s',
+        'service_parameters=s',
+        'session_id=s',
+        'help|h'
     )
     ) {
-    print "";
+        pod2usage(-exitval => 1, -output => \*STDERR);
+}
+
+if ($options{'help'}) {
+    pod2usage(0);
 }
 
 my $soap_url = $options{'soap_url'};
-unless (defined $soap_url) {
-    print "error : missing soap_url parameter\n";
-    print $usage;
-    exit;
+unless ($soap_url) {
+    pod2usage(
+        -message => "missing soap_url parameter\n",
+        -exitval => 1,
+    );
 }
 
 my $user_email          = $options{'user_email'};
@@ -98,19 +120,22 @@ my $cookie             = $options{'cookie'};
 
 if (defined $trusted_application) {
     unless (defined $trusted_application_password) {
-        print "error : missing trusted_application_password parameter\n";
-        print $usage;
-        exit;
+        pod2usage(
+            -message => "missing trusted_application_password parameter\n",
+            -exitval => 1,
+        );
     }
     unless (defined $service) {
-        print "error : missing service parameter\n";
-        print $usage;
-        exit;
+        pod2usage(
+            -message => "missing service parameter\n",
+            -exitval => 1,
+        );
     }
     unless (defined $proxy_vars) {
-        print "error : missing proxy_vars parameter\n";
-        print $usage;
-        exit;
+        pod2usage(
+            -message => "missing proxy_vars parameter\n",
+            -exitval => 1,
+        );
     }
 
     play_soap_as_trusted($soap_url, $trusted_application,
@@ -130,10 +155,10 @@ if (defined $trusted_application) {
 } else {
     unless (defined $session_id
         || (defined $user_email && defined $user_password)) {
-        print
-            "error : missing session_id OR user_email+user_passwors  parameters\n";
-        print $usage;
-        exit;
+        pod2usage(
+            -message => "missing session_id OR user_email+user_passwors  parameters\n",
+            -exitval => 1,
+        );
     }
 
     play_soap(
