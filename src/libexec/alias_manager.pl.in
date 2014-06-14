@@ -146,9 +146,9 @@ use Sympa::Site;
 use Sympa::Template;
 
 my %options;
-GetOptions(\%main::options, 'help|h');
+GetOptions(\%options, 'help|h');
 
-if ($main::options{'help'}) {
+if ($options{'help'}) {
     pod2usage(0);
 }
 
