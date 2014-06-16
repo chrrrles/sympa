@@ -48,11 +48,12 @@ MSGFMT=@MSGFMT@
 
 check-local:
 	[ -z "$(TEST_FILES)" ] && TEST_FILES="$(check_SCRIPTS)"; \
-	$(PERL) -I src/lib -MTest::Harness -e 'runtests @ARGV' $$TEST_FILES
+	$(PROVE) -I src/lib $$TEST_FILES
 
-check-local-junit:
+check-local-jenkins:
+	[ ! -d out ] && mkdir out; \
 	[ -z "$(TEST_FILES)" ] && TEST_FILES="$(check_SCRIPTS)"; \
-	HARNESS_OPTIONS=fTAP-Formatter-JUnit $(PERL) -I src/lib -MTest::Harness -e 'runtests @ARGV' $$TEST_FILES
+	$(PROVE) -I src/lib --archive out $$TEST_FILES
 
 install-data-hook: installdir installconfig nextstep importantchanges
 
