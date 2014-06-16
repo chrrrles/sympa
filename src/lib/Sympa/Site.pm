@@ -343,8 +343,4 @@ sub supported_languages {
     return \@lang_list;
 }
 
-=over 4
-
-=cut
-
 1;
