@@ -50,7 +50,7 @@ sub qencode {
     return MIME::EncWords::encode_mimewords(
         Encode::decode('utf8', $string),
         Encoding => 'A',
-        Charset  => Sympa::Language::GetCharset(),
+        Charset  => Sympa::Language::get_charset(),
         Field    => "message-id"
     );
 }
@@ -254,7 +254,7 @@ sub parse_tt2 {
         $template = \join('', @$template);
     }
 
-    Sympa::Language::SetLang($data->{lang}) if ($data->{'lang'});
+    Sympa::Language::set_lang($data->{lang}) if ($data->{'lang'});
 
     my $config = {
         # ABSOLUTE => 1,

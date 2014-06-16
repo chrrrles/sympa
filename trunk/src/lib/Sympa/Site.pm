@@ -268,7 +268,7 @@ sub lang {
     }
 
     if ($lang) {
-        $lang = Sympa::Language::CanonicLang($lang) || $lang;
+        $lang = Sympa::Language::canonic_lang($lang) || $lang;
     }
     return $lang;
 }
@@ -332,11 +332,11 @@ sub supported_languages {
     my $self           = shift;
     my $supported_lang = $self->supported_lang;
 
-    my $saved_lang = Sympa::Language::GetLang();
+    my $saved_lang = Sympa::Language::get_lang();
     my @lang_list =
-        grep { $_ and $_ = Sympa::Language::SetLang($_) }
+        grep { $_ and $_ = Sympa::Language::set_lang($_) }
         split /\s*,\s*/, $supported_lang;
-    Sympa::Language::SetLang($saved_lang);
+    Sympa::Language::set_lang($saved_lang);
 
     @lang_list = ('en') unless @lang_list;
     return @lang_list if wantarray;

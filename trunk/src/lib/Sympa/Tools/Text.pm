@@ -45,7 +45,7 @@ sub wrap_text {
     return $text unless $cols;
 
     $text = Text::LineFold->new(
-        Language      => Sympa::Language::GetLang(),
+        Language      => Sympa::Language::get_lang(),
         OutputCharset => (Encode::is_utf8($text) ? '_UNICODE_' : 'utf8'),
         Prep          => 'NONBREAKURI',
         ColumnsMax    => $cols

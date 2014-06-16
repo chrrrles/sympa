@@ -554,8 +554,8 @@ sub get_list_list_tpl {
                 $list_templates->{$template}{'path'} = $dir;
 
                 my $locale =
-                    Sympa::Language::Lang2Locale_old(
-                    Sympa::Language::GetLang());
+                    Sympa::Language::lang2locale_old(
+                    Sympa::Language::get_lang());
                 ## FIXME: lang should be used instead of "locale".
                 ## Look for a comment.tt2 in the appropriate locale first
                 if (  -r $dir . '/'
@@ -619,7 +619,7 @@ sub get_templates_list {
             ## Subdirectory for a lang
             if (-d $dir . '/' . $file) {
                 my $lang_dir = $file;
-                my $lang     = Sympa::Language::CanonicLang($lang_dir);
+                my $lang     = Sympa::Language::canonic_lang($lang_dir);
                 next unless $lang;
                 next unless opendir(LANGDIR, $dir . '/' . $lang_dir);
 
@@ -678,7 +678,7 @@ sub get_template_path {
 
     ##FIXME: path is fixed to older "locale".
     my $locale;
-    $locale = Sympa::Language::Lang2Locale_old($lang)
+    $locale = Sympa::Language::lang2locale_old($lang)
         unless $lang eq 'default';
 
     unless ($type eq 'web' or $type eq 'mail') {

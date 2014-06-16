@@ -129,7 +129,7 @@ if ($modfail) {
     my $lang = $ENV{'LANGUAGE'} || $ENV{'LC_ALL'} || $ENV{'LANG'};
     $lang =~ s/\..*// if $lang;
     $lang = 'en' unless $lang and $lang ne 'C' and $lang ne 'POSIX';
-    Sympa::Language::SetLang($lang);
+    Sympa::Language::set_lang($lang);
 }
 
 ## sympa configuration file

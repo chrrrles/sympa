@@ -1151,7 +1151,7 @@ sub load_charset {
                 );
                 next;
             }
-            unless ($lang and $lang = Sympa::Language::CanonicLang($lang)) {
+            unless ($lang and $lang = Sympa::Language::canonic_lang($lang)) {
                 $main::logger->do_log(Sympa::Logger::ERR,
                     'Illegal lang name in configuration file %s line %d',
                     $config_file, $.);
