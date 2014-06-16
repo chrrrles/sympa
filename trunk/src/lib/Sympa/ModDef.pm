@@ -174,11 +174,6 @@ our %cpan_modules = (
         mandatory        => 1,
         'gettext_id'     => 'internal use for filehandle processing',
     },
-    'IO::Scalar' => {
-        package_name => 'IO-stringy',
-        mandatory    => 1,
-        'gettext_id' => 'internal use for string processing',
-    },
     'IO::Socket::SSL' => {
         required_version => '0.90',
         package_name     => 'IO-Socket-SSL',
