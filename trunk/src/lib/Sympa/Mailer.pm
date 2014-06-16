@@ -71,6 +71,7 @@ sub new {
 
     # FIXME: to be done in db-specific code
     my $max_length =
+        !$params{db_type}            ?   500 :
         $params{db_type} eq 'mysql'  ? 65535 :
         $params{db_type} eq 'SQLite' ?     0 :
                                          500 ;
