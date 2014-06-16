@@ -360,11 +360,7 @@ sub remove_dir {
 
     $main::logger->do_log(Sympa::Logger::DEBUG2, 'remove_dir()');
 
-    foreach my $current_dir (@_) {
-        finddepth({wanted => \&del, no_chdir => 1}, $current_dir);
-    }
-
-    sub del {
+    my $callback = sub {
         my $name = $File::Find::name;
 
         if (!-l && -d _) {
@@ -378,7 +374,12 @@ sub remove_dir {
                     'Error while removing file  %s', $name);
             }
         }
+    };
+
+    foreach my $current_dir (@_) {
+        finddepth({wanted => $callback, no_chdir => 1}, $current_dir);
     }
+
     return 1;
 }
 
