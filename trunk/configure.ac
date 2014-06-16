@@ -220,6 +220,11 @@ if test -z "$POD2MAN"; then
     AC_MSG_ERROR([pod2man required])
 fi
 
+AC_PATH_PROG(PROVE, prove)
+if test -z "$PROVE"; then
+    AC_MSG_WARN([prove required for testing])
+fi
+
 USER=sympa
 AC_ARG_WITH(
     [user],
