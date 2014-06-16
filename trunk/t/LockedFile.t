@@ -12,6 +12,7 @@ use lib "$Bin/../src/lib";
 use English qw(-no_match_vars);
 use File::Temp;
 use Test::More;
+use Test::Exception;
 
 use Sympa::LockedFile;
 use Sympa::Logger::Memory;
@@ -25,29 +26,28 @@ my $temp_dir = File::Temp->newdir(CLEANUP => $ENV{TEST_DEBUG} ? 0 : 1);
 my $main_file = $temp_dir . '/file';
 my $lock_file = $main_file . '.lock';
 
-eval {
+throws_ok {
     $lock = Sympa::LockedFile->new();
     $lock->open();
-};
-like($@, qr/^Usage: /, 'Usage: ');
+} qr/^Usage: /,
+'Usage: ';
 
-eval {
+throws_ok {
     $lock = Sympa::LockedFile->new(
         $main_file, 0, 'something'
     );
-};
-like($@, qr/^IO::Handle: bad open mode/, 'IO::Handle: bad open mode');
+} qr/^IO::Handle: bad open mode/,
+'IO::Handle: bad open mode';
 
 ok(!-f $lock_file, "underlying lock file doesn't exist");
 
 open my $fh, '>', $main_file;
 close $fh;
-eval {
+lives_ok {
     $lock = Sympa::LockedFile->new(
         $main_file
     );
-};
-ok(!$@, 'all parameters OK');
+} 'all parameters OK';
 
 isa_ok($lock, 'Sympa::LockedFile');
 can_ok($lock, 'open');
