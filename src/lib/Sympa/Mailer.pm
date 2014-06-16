@@ -126,12 +126,18 @@ sub distribute_message {
     my @rcpt        = @{$params{'rcpt'} || []};
     my $dkim        = $params{'dkim'};
     my $tag_as_last = $params{'tag_as_last'};
-    my $robot       = $list->robot;
 
     unless (ref $message and $message->isa('Sympa::Message')) {
         $main::logger->do_log(Sympa::Logger::ERR, 'Invalid message parameter');
         return undef;
     }
+
+    unless (ref $list and $list->isa('Sympa::List')) {
+        $main::logger->do_log(Sympa::Logger::ERR, 'Invalid list parameter');
+        return undef;
+    }
+
+    my $robot       = $list->robot;
 
     # normal return_path (ie used if verp is not enabled)
     my $from = $list->get_address('return_path');
