@@ -2263,8 +2263,8 @@ sub _urlize_part {
     $parser->output_to_core(1);
     my $new_part;
 
-    my $lang    = Sympa::Language::GetLang();
-    my $charset = Sympa::Language::GetCharset();
+    my $lang    = Sympa::Language::get_lang();
+    my $charset = Sympa::Language::get_charset();
 
     my $tt2_include_path = $list->get_etc_include_path('mail_tt2', $lang);
 

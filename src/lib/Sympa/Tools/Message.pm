@@ -881,9 +881,9 @@ sub parse_tt2_messageasstring {
     }
 
     ## Charset for encoding
-    Sympa::Language::PushLang($data->{'lang'}) if defined $data->{'lang'};
-    $data->{'charset'} ||= Sympa::Language::GetCharset();
-    Sympa::Language::PopLang() if defined $data->{'lang'};
+    Sympa::Language::push_lang($data->{'lang'}) if defined $data->{'lang'};
+    $data->{'charset'} ||= Sympa::Language::get_charset();
+    Sympa::Language::pop_lang() if defined $data->{'lang'};
 
     if ($filename =~ /\.tt2$/) {
 
@@ -891,9 +891,9 @@ sub parse_tt2_messageasstring {
         my $output;
         my @path = split /\//, $filename;
 
-        Sympa::Language::PushLang($data->{'lang'}) if defined $data->{'lang'};
+        Sympa::Language::push_lang($data->{'lang'}) if defined $data->{'lang'};
         Sympa::Template::parse_tt2($data, $path[$#path], \$output);
-        Sympa::Language::PopLang() if defined $data->{'lang'};
+        Sympa::Language::pop_lang() if defined $data->{'lang'};
 
         $message_as_string .= join('', $output);
         $header_possible = 1;

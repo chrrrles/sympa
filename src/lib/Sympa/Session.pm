@@ -217,7 +217,7 @@ sub load {
     my %datas = Sympa::Tools::Data::string_2_hash($session->{'data'});
 
     ## canonicalize lang if possible.
-    $datas{'lang'} = Sympa::Language::CanonicLang($datas{'lang'}) || $datas{'lang'}
+    $datas{'lang'} = Sympa::Language::canonic_lang($datas{'lang'}) || $datas{'lang'}
         if $datas{'lang'};
 
     foreach my $key (keys %datas) { $self->{$key} = $datas{$key}; }

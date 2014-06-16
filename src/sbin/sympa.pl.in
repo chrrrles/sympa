@@ -342,7 +342,7 @@ while ($signal ne 'term') {
     $options{'lang'} =~ s/\.cat$//
         if defined $options{'lang'};
     $default_lang = $options{'lang'} || Sympa::Site->lang;
-    Sympa::Language::SetLang($default_lang);
+    Sympa::Language::set_lang($default_lang);
 
     ## Main program
     if (!chdir(Sympa::Site->home)) {
@@ -448,7 +448,7 @@ while ($signal ne 'term') {
     ## them, sleeps a while and continues the good job.
     while (!$signal) {
 
-        Sympa::Language::SetLang($default_lang);
+        Sympa::Language::set_lang($default_lang);
 
         Sympa::List::init_list_cache();
 
@@ -526,7 +526,7 @@ while ($signal ne 'term') {
 
         ## Set NLS default lang for current message
         $default_lang = $options{'lang'} || $message->get_robot()->lang;
-        Sympa::Language::SetLang($default_lang);
+        Sympa::Language::set_lang($default_lang);
 
         my $status = process_message($message);
 
@@ -1278,7 +1278,7 @@ sub DoMessage {
 
     my ($listname, $host) = ($list->name, $list->host);
     my $start_time = time;
-    Sympa::Language::SetLang($list->lang);
+    Sympa::Language::set_lang($list->lang);
 
     ## Now check if the sender is an authorized address.
 
@@ -2105,7 +2105,7 @@ sub SendDigest {
             next;
         }
 
-        Sympa::Language::SetLang($list->lang);
+        Sympa::Language::set_lang($list->lang);
 
         if ($list->get_nextdigest($digest->{'date'})) {
             ## Blindly send the message to all users.

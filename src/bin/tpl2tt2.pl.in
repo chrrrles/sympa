@@ -204,7 +204,7 @@ foreach my $tpl (@templates) {
     if ($dest_file =~ /^([\w\-]+)\.(\w+)\.tt2$/) {
         my $lang = $2;
         $dest_file =~ s/^([\w\-]+)\.(\w+)\.tt2$/$1\.tt2/;
-        $dest_path .= '/' . Sympa::Language::Lang2Locale($lang);
+        $dest_path .= '/' . Sympa::Language::lang2locale($lang);
     }
 
     ## If file has no extension

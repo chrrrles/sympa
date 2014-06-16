@@ -568,7 +568,7 @@ sub upgrade {
         $main::logger->do_log(Sympa::Logger::NOTICE,
             'Q-Encoding web documents filenames...');
 
-        Sympa::Language::PushLang(Sympa::Site->lang);
+        Sympa::Language::push_lang(Sympa::Site->lang);
         my $all_lists = Sympa::List::get_lists('Site');
         foreach my $list (@$all_lists) {
             if (-d $list->dir . '/shared') {
@@ -578,8 +578,8 @@ sub upgrade {
                 ## Determine default lang for this list
                 ## It should tell us what character encoding was used for
                 ## filenames
-                Sympa::Language::SetLang($list->lang);
-                my $list_encoding = Sympa::Language::GetCharset();
+                Sympa::Language::set_lang($list->lang);
+                my $list_encoding = Sympa::Language::get_charset();
 
                 my $count = Sympa::Tools::qencode_hierarchy($list->dir . '/shared',
                     $list_encoding);
@@ -591,7 +591,7 @@ sub upgrade {
                 }
             }
         }
-        Sympa::Language::PopLang();
+        Sympa::Language::pop_lang();
     }
 
     ## We now support UTF-8 only for custom templates, config files, headers
@@ -1232,7 +1232,7 @@ sub upgrade {
         );
 
         ## Set language of new file content
-        Sympa::Language::PushLang(Sympa::Site->lang);
+        Sympa::Language::push_lang(Sympa::Site->lang);
         $date =
             Sympa::Language::gettext_strftime("%d.%b.%Y-%H.%M.%S", localtime time);
 
@@ -1403,7 +1403,7 @@ sub upgrade {
         }
 
         ## Restore language
-        Sympa::Language::PopLang();
+        Sympa::Language::pop_lang();
 
         if (%migrated) {
             warn sprintf("Unable to rename %s : %s", $sympa_conf, $ERRNO)
@@ -1468,9 +1468,9 @@ sub to_utf8 {
             ($Sympa::Conf::Ignored_Conf{'filesystem_encoding'} ne 'utf-8')) {
             $charset = $Sympa::Conf::Ignored_Conf{'filesystem_encoding'};
         } else {
-            Sympa::Language::PushLang($lang);
-            $charset = Sympa::Language::GetCharset;
-            Sympa::Language::PopLang;
+            Sympa::Language::push_lang($lang);
+            $charset = Sympa::Language::get_charset;
+            Sympa::Language::pop_lang;
         }
 
         # Add X-Sympa-Attach: headers if required.

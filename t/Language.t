@@ -212,72 +212,72 @@ plan tests =>
     scalar @gettext_strftime_tests;
 
 foreach my $test (@lang2locale_tests) {
-    is( Sympa::Language::Lang2Locale($test->[0]),
+    is( Sympa::Language::lang2locale($test->[0]),
         $test->[1],
         (   defined $test->[0]
-            ? "Lang2Locale($test->[0])"
-            : 'Lang2Locale(undef)'
+            ? "lang2locale($test->[0])"
+            : 'lang2locale(undef)'
             )
             . ($test->[2] ? ": $test->[2]" : '')
     );
 }
 
 foreach my $test (@lang2locale_old_tests) {
-    is(Sympa::Language::Lang2Locale_old($test->[0]),
+    is(Sympa::Language::lang2locale_old($test->[0]),
         $test->[1],
-        "Lang2Locale_old($test->[0])" . ($test->[2] ? ": $test->[2]" : ''));
+        "lang2locale_old($test->[0])" . ($test->[2] ? ": $test->[2]" : ''));
 }
 
 foreach my $test (@canonic_lang_tests) {
-    is( Sympa::Language::CanonicLang($test->[0]),
+    is( Sympa::Language::canonic_lang($test->[0]),
         $test->[1],
         (   defined $test->[0]
-            ? "CanonicLang($test->[0])"
-            : 'CanonicLang(undef)'
+            ? "canonic_lang($test->[0])"
+            : 'canonic_lang(undef)'
             )
             . ($test->[2] ? ": $test->[2]" : '')
     );
 }
 
 foreach my $test (@implicated_langs_tests) {
-    is_deeply([Sympa::Language::ImplicatedLangs($test->[0])],
+    is_deeply([Sympa::Language::implicated_langs($test->[0])],
         $test->[1],
-        "ImplicatedLangs($test->[0])" . ($test->[2] ? ": $test->[2]" : ''));
+        "implicated_langs($test->[0])" . ($test->[2] ? ": $test->[2]" : ''));
 }
 
 foreach my $test (@negotiate_lang_tests) {
-    is(Sympa::Language::NegotiateLang(@{$test->[0]}), $test->[1],
-              "NegotiateLang("
+    is(Sympa::Language::negotiate_lang(@{$test->[0]}), $test->[1],
+              "negotiate_lang("
             . join(' ', @{$test->[0]}) . ')'
             . ($test->[2] ? ": $test->[2]" : ''));
 }
 
 foreach my $test (@set_lang_tests) {
-    is(Sympa::Language::SetLang($test->[0]), $test->[1],
-              (defined $test->[0] ? "SetLang($test->[0])" : 'SetLang(undef)')
+    is(Sympa::Language::set_lang($test->[0]), $test->[1],
+              (defined $test->[0] ? "set_lang($test->[0])" : 'set_lang(undef)')
             . ($test->[2]         ? ": $test->[2]"        : ''));
 }
 
-Sympa::Language::SetLang('cs');
+Sympa::Language::set_lang('cs');
 foreach my $test (@get_lang_name_tests) {
-    is( Sympa::Language::GetLangName($test->[0]),
+    is( Sympa::Language::get_lang_name($test->[0]),
         $test->[1],
         (   defined $test->[0]
-            ? "GetLangName($test->[0])"
-            : 'GetLangName(undef)'
+            ? "get_lang_name($test->[0])"
+            : 'get_lang_name(undef)'
             )
             . ($test->[2] ? ": $test->[2]" : '')
     );
 }
 
-Sympa::Language::SetLang('cs');
+Sympa::Language::set_lang('cs');
 foreach my $test (@gettext_tests) {
     is(Sympa::Language::gettext($test->[0]), $test->[1],
               (defined $test->[0] ? "gettext($test->[0])" : 'gettext(undef)')
             . ($test->[2]         ? ": $test->[2]"        : ''));
 }
 
-Sympa::Language::SetLang('cs');
+Sympa::Language::set_lang('cs');
 foreach my $test (@dgettext_tests) {
     is( Sympa::Language::dgettext(@{$test->[0]}),
         $test->[1],
@@ -289,7 +289,7 @@ foreach my $test (@dgettext_tests) {
     );
 }
 
-Sympa::Language::SetLang('en');
+Sympa::Language::set_lang('en');
 foreach my $test (@strftime_tests) {
     is( Sympa::Language::gettext_strftime($test->[0], gmtime 0),
         $test->[1],
@@ -297,7 +297,7 @@ foreach my $test (@strftime_tests) {
     );
 }
 
-Sympa::Language::SetLang('cs');
+Sympa::Language::set_lang('cs');
 POSIX::setlocale(POSIX::LC_TIME(), 'C');
 foreach my $test (@gettext_strftime_tests) {
     is( Sympa::Language::gettext_strftime($test->[0], gmtime 0),
