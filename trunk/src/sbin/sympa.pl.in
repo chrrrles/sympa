@@ -489,7 +489,7 @@ while ($signal ne 'term') {
                 {'delay' => Sympa::Site->clean_delay_queueautomatic});
 
             # this is not a message spool
-            Sympa::Tools::File::CleanDir(Sympa::Site->tmpdir, Sympa::Site->clean_delay_tmpdir);
+            Sympa::Tools::File::clean_dir(Sympa::Site->tmpdir, Sympa::Site->clean_delay_tmpdir);
         }
         ## Cleanup in-memory msgid table, only in a while
         if (time >
