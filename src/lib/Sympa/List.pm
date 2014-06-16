@@ -32,13 +32,11 @@ use Data::Dumper;
 use Digest::MD5;
 use Encode qw();
 use English;    # FIXME: drop $PREMATCH usage
-use IO::Scalar;
 use LWP::UserAgent;
 use MIME::EncWords;
 use POSIX qw();
 use Storable qw(dclone);
 use Time::Local qw();
-
 
 use Sympa::Archive;
 use Sympa::Constants;
@@ -9725,7 +9723,7 @@ sub _save_list_config_file {
 
     ## Now build textized configuration
     my $config_text = '';
-    my $fd          = IO::Scalar->new(\$config_text);
+    open(my $fd, '>', \$config_text);
 
     foreach my $c (@{$config->{'comment'} || []}) {
         $fd->print(sprintf "%s\n", $c);
@@ -9750,6 +9748,7 @@ sub _save_list_config_file {
         }
     }
     close OUT;
+    close ($fd);
 
     ## Write to file at last.
     unless (rename $config_file, $old_config_file) {
