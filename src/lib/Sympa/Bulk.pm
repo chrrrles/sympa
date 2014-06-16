@@ -29,7 +29,6 @@ use constant MAX => 100_000;
 
 use Digest::MD5;
 use English qw(-no_match_vars);
-use MIME::Base64;
 use Sys::Hostname;
 
 use Sympa::DatabaseManager;
@@ -208,78 +207,6 @@ sub remove {
         return undef;
     }
     return $sth;
-}
-
-## No longer used.
-sub messageasstring {
-    my $messagekey = shift;
-    $main::logger->do_log(Sympa::Logger::DEBUG, 'Sympa::Bulk::messageasstring(%s)',
-        $messagekey);
-
-    unless (
-        $sth = Sympa::DatabaseManager::do_query(
-            "SELECT message_bulkspool AS message FROM bulkspool_table WHERE messagekey_bulkspool = %s",
-            Sympa::DatabaseManager::quote($messagekey)
-        )
-        ) {
-        $main::logger->do_log(
-            Sympa::Logger::ERR,
-            'Unable to retrieve message %s text representation from database',
-            $messagekey
-        );
-        return undef;
-    }
-
-    my $messageasstring = $sth->fetchrow_hashref('NAME_lc');
-
-    unless ($messageasstring) {
-        $main::logger->do_log(Sympa::Logger::ERR,
-            "could not fetch message $messagekey from spool");
-        return undef;
-    }
-    my $msg = MIME::Base64::decode($messageasstring->{'message'});
-    unless ($msg) {
-        $main::logger->do_log(Sympa::Logger::ERR,
-            "could not decode message $messagekey extracted from spool (base64)"
-        );
-        return undef;
-    }
-    return $msg;
-}
-#################################"
-# fetch message from bulkspool_table by key
-#
-## No longer used
-sub message_from_spool {
-    my $messagekey = shift;
-    $main::logger->do_log(Sympa::Logger::DEBUG, '(messagekey : %s)', $messagekey);
-
-    unless (
-        $sth = Sympa::DatabaseManager::do_query(
-            "SELECT message_bulkspool AS message, messageid_bulkspool AS messageid, dkim_d_bulkspool AS  dkim_d,  dkim_i_bulkspool AS  dkim_i, dkim_privatekey_bulkspool AS dkim_privatekey, dkim_selector_bulkspool AS dkim_selector FROM bulkspool_table WHERE messagekey_bulkspool = %s",
-            Sympa::DatabaseManager::quote($messagekey)
-        )
-        ) {
-        $main::logger->do_log(Sympa::Logger::ERR,
-            'Unable to retrieve message %s full data from database',
-            $messagekey);
-        return undef;
-    }
-
-    my $message_from_spool = $sth->fetchrow_hashref('NAME_lc');
-    $sth->finish;
-
-    return (
-        {   'messageasstring' =>
-                MIME::Base64::decode($message_from_spool->{'message'}),
-            'messageid'       => $message_from_spool->{'messageid'},
-            'dkim_d'          => $message_from_spool->{'dkim_d'},
-            'dkim_i'          => $message_from_spool->{'dkim_i'},
-            'dkim_selector'   => $message_from_spool->{'dkim_selector'},
-            'dkim_privatekey' => $message_from_spool->{'dkim_privatekey'},
-        }
-    );
-
 }
 
 sub store {
