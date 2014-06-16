@@ -31,7 +31,6 @@ use English qw(-no_match_vars);
 use IO::Handle;
 use POSIX qw();
 
-use Sympa::Bulk;
 use Sympa::Constants;
 use Sympa::Logger;
 
@@ -506,6 +505,7 @@ sub send_message {
         }
 
         ##Bulk package determine robots or site.
+        require Sympa::Bulk;
         my $bulk_code = Sympa::Bulk::store(
             'message'          => $message,
             'rcpts'            => $rcpt,
