@@ -21,6 +21,18 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+=encoding utf-8
+
+=head1 NAME
+
+Sympa::Tools::DKIM - DKIM-related functions
+
+=head1 DESCRIPTION
+
+This package provides DKIM-related functions.
+
+=cut
+
 package Sympa::Tools::DKIM;
 
 use strict;
@@ -32,7 +44,26 @@ use MIME::Parser;
 use Sympa::Logger;
 use Sympa::Message;
 
-# input a msg as string, output the dkim status
+=head1 FUNCTIONS
+
+=over
+
+=item verifier($msg_as_string, $tpmdir)
+
+Input a msg as string, output the dkim status.
+
+Parameters:
+
+=over
+
+=item * I<$msg_as_string>: FIXME
+
+=item * I<tmpdir>: FIXME
+
+=back
+
+=cut
+
 sub verifier {
     my $msg_as_string = shift;
     my $tmpdir = shift;
@@ -101,7 +132,20 @@ sub verifier {
     return undef;
 }
 
-# input a msg as string, output idem without signature if invalid
+=item remove_invalid_signature($msg_as_string)
+
+Input a msg as string, output idem without signature if invalid.
+
+Parameters:
+
+=over
+
+=item * I<$msg_as_string>: FIXME
+
+=back
+
+=cut
+
 sub remove_invalid_signature {
     $main::logger->do_log(Sympa::Logger::DEBUG, "removing invalid DKIM signature");
     my $msg_as_string = shift;
@@ -126,7 +170,24 @@ sub remove_invalid_signature {
     }
 }
 
-# input object msg and listname, output signed message object
+=item sign($msg_as_string, $data, $tmpdir)
+
+Input object msg and listname, output signed message object.
+
+Parameters:
+
+=over
+
+=item * I<$msg_as_string>: FIXME
+
+=item * I<$data>: FIXME
+
+=item * I<$tmpdir>: FIXME
+
+=back
+
+=cut
+
 sub sign {
 
     # in case of any error, this proc MUST return $msg_as_string NOT undef ;
@@ -264,5 +325,9 @@ sub sign {
     return $message->as_entity()->head->as_string() . "\n"
         . Sympa::Message::get_body_from_msg_as_string($msg_as_string);
 }
+
+=back
+
+=cut
 
 1;

@@ -21,6 +21,18 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+=encoding utf-8
+
+=head1 NAME
+
+Sympa::Tools::Cookie - Cookie-related functions
+
+=head1 DESCRIPTION
+
+This package provides cookie-related functions.
+
+=cut
+
 package Sympa::Tools::Cookie;
 
 use strict;
@@ -30,7 +42,26 @@ use CGI::Cookie;
 
 use Sympa::Logger;
 
-## returns Message Authentication Check code
+=head1 FUNCTIONS
+
+=over
+
+=item get_mac($email, $secret)
+
+Returns Message Authentication Check code.
+
+Parameters:
+
+=over
+
+=item * I<$timestamp>: FIXME
+
+=item * I<$secret>: FIXME
+
+=back
+
+=cut
+
 sub get_mac {
     my $email  = shift;
     my $secret = shift;
@@ -49,6 +80,24 @@ sub get_mac {
 
     return substr(Digest::MD5::md5_hex($email . $secret), -8);
 }
+
+=item set_cookie_extern($secret, $http_domain, %alt_emails)
+
+FIXME.
+
+Parameters:
+
+=over
+
+=item * I<$secret>: FIXME
+
+=item * I<$http_domain>: FIXME
+
+=item * I<$alt_emails>: FIXME
+
+=back
+
+=cut
 
 sub set_cookie_extern {
     my ($secret, $http_domain, %alt_emails) = @_;
@@ -82,11 +131,22 @@ sub set_cookie_extern {
     return 1;
 }
 
-###############################
-# Subroutines to read cookies #
-###############################
+=item generic_get_cookie($http_cookie, $cookie_name)
 
-## Generic subroutine to get a cookie value
+Generic subroutine to get a cookie value.
+
+Parameters:
+
+=over
+
+=item * I<$http_cookie>: FIXME
+
+=item * I<$cookie_name>: FIXME
+
+=back
+
+=cut
+
 sub generic_get_cookie {
     my $http_cookie = shift;
     my $cookie_name = shift;
@@ -101,6 +161,24 @@ sub generic_get_cookie {
     }
     return (undef);
 }
+
+=item check_cookie_extern($http_cookie, $secret, $user_email)
+
+FIXME
+
+Parameters:
+
+=over
+
+=item * I<$http_cookie>: FIXME
+
+=item * I<$secret>: FIXME
+
+=item * I<$user_email>: FIXME
+
+=back
+
+=cut
 
 sub check_cookie_extern {
     my ($http_cookie, $secret, $user_email) = @_;
@@ -124,5 +202,9 @@ sub check_cookie_extern {
     }
     return undef;
 }
+
+=back
+
+=cut
 
 1;

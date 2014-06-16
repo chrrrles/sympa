@@ -21,6 +21,18 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+=encoding utf-8
+
+=head1 NAME
+
+Sympa::Tools::Password - Password-related functions
+
+=head1 DESCRIPTION
+
+This package provides password-related functions.
+
+=cut
+
 package Sympa::Tools::Password;
 
 use strict;
@@ -34,6 +46,16 @@ use Sympa::Logger;
 ## global var to store a CipherSaber object
 my $cipher;
 
+=head1 FUNCTIONS
+
+=over
+
+=item tmp_passwd($email)
+
+FIXME
+
+=cut
+
 sub tmp_passwd {
     my $email = shift;
 
@@ -45,7 +67,12 @@ sub tmp_passwd {
     );
 }
 
-# create a cipher
+=item ciphersaber_installed()
+
+Create a cipher.
+
+=cut
+
 sub ciphersaber_installed {
     return $cipher if defined $cipher;
 
@@ -58,7 +85,12 @@ sub ciphersaber_installed {
     return $cipher;
 }
 
-## encrypt a password
+=item crypt_password($inpasswd)
+
+Encrypt a password.
+
+=cut
+
 sub crypt_password {
     my $inpasswd = shift;
 
@@ -67,7 +99,12 @@ sub crypt_password {
     return ("crypt." . MIME::Base64::encode($cipher->encrypt($inpasswd)));
 }
 
-## decrypt a password
+=item decrypt_password($inpasswd)
+
+Decrypt a password.
+
+=cut
+
 sub decrypt_password {
     my $inpasswd = shift;
     $main::logger->do_log(Sympa::Logger::DEBUG2,
@@ -84,5 +121,9 @@ sub decrypt_password {
     }
     return ($cipher->decrypt(MIME::Base64::decode($inpasswd)));
 }
+
+=back
+
+=cut
 
 1;

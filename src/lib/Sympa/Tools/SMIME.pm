@@ -21,6 +21,18 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+=encoding utf-8
+
+=head1 NAME
+
+Sympa::Tools::SMIME - S/MIME-related functions
+
+=head1 DESCRIPTION
+
+This package provides S/MIME-related functions.
+
+=cut
+
 package Sympa::Tools::SMIME;
 
 use strict;
@@ -30,15 +42,38 @@ use English qw(-no_match_vars);
 
 use Sympa::Logger;
 
-## find the appropriate S/MIME keys/certs for $oper in $dir.
-## $oper can be:
-## 'sign' -> return the preferred signing key/cert
-## 'decrypt' -> return a list of possible decryption keys/certs
-## 'encrypt' -> return the preferred encryption key/cert
-## returns ($certs, $keys)
-## for 'sign' and 'encrypt', these are strings containing the absolute file
-## name
-## for 'decrypt', these are arrayrefs containing absolute file names
+=head1 FUNCTIONS
+
+=over
+
+=item find_keys($directory, $operation)
+
+Find the appropriate S/MIME key and certificate files for given operation in
+given directory.
+
+=over
+
+=item * I<$directory>: FIXME
+
+=item * I<$operation>: one of the following values:
+
+=over
+
+=item - sign: return the preferred signing key/cert
+
+=item - decrypt: return a list of possible decryption keys/certs
+
+=item - encrypt: return the preferred encryption key/cert
+
+=back
+
+=back
+
+Returns a pair of two strings, corresponding to the absolute file names of
+certificate and key.
+
+=cut
+
 sub find_keys {
     my ($dir, $oper) = @_;
     $main::logger->do_log(Sympa::Logger::DEBUG,
@@ -103,15 +138,44 @@ sub find_keys {
     return ($certs, $keys);
 }
 
-# IN: hashref:
-# file => filename
-# text => PEM-encoded cert
-# OUT: hashref
-# email => email address from cert
-# subject => distinguished name
-# purpose => hashref
-#  enc => true if v3 purpose is encryption
-#  sign => true if v3 purpose is signing
+=item parse_cert(%parameters)
+
+FIXME.
+
+=over
+
+=item * I<file>: FIXME
+
+=item * I<text>: FIXME
+
+=item * I<tmpdir>: FIXME
+
+=item * I<openssl>: FIXME
+
+=back
+
+Returns an hashref with the following keys:
+
+=over
+
+=item * I<email>: email address from cert
+
+=item * I<subject>: distinguished name
+
+=item * I<purpose>: hashref with following keys:
+
+=over
+
+=item - enc: true if v3 purpose is encryption
+
+=item - sign: true if v3 purpose is signing
+
+=back
+
+=back
+
+=cut
+
 sub parse_cert {
     my (%params) = @_;
 
@@ -203,6 +267,22 @@ sub parse_cert {
     return \%res;
 }
 
+=item extract_certs($mime, $outfile, $openssl)
+
+FIXME.
+
+=over
+
+=item * I<mime>: FIXME
+
+=item * I<outfile>: FIXME
+
+=item * I<openssl>: FIXME
+
+=back
+
+=cut
+
 sub extract_certs {
     my ($mime, $outfile, $openssl) = @_;
     $main::logger->do_log(Sympa::Logger::DEBUG2,
@@ -229,5 +309,9 @@ sub extract_certs {
         return 1;
     }
 }
+
+=back
+
+=cut
 
 1;

@@ -21,6 +21,18 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+=encoding utf-8
+
+=head1 NAME
+
+Sympa::Tools::Message - Message-related functions
+
+=head1 DESCRIPTION
+
+This package provides message-related functions.
+
+=cut
+
 package Sympa::Tools::Message;
 
 use strict;
@@ -186,7 +198,7 @@ sub split_mail {
     return 1;
 }
 
-=item virus_infectd($message)
+=item virus_infected($message)
 
 FIXME: missing description
 
