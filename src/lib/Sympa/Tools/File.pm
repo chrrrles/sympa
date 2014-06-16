@@ -432,7 +432,7 @@ sub a_is_older_than_b {
     return $answer;
 }
 
-=item CleanDir($dir, $delay)
+=item clean_dir($dir, $delay)
 
 Cleans old files from a directory.
 
@@ -450,7 +450,7 @@ Returns a true value on success, I<undef> on failure.
 
 =cut 
 
-sub CleanDir {
+sub clean_dir {
     my ($dir, $clean_delay) = @_;
     $main::logger->do_log(Sympa::Logger::DEBUG, 'CleanSpool(%s,%s)', $dir,
         $clean_delay);
