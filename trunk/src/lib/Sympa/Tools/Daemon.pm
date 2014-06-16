@@ -21,6 +21,18 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+=encoding utf-8
+
+=head1 NAME
+
+Sympa::Tools::Daemon - Daemon-related functions
+
+=head1 DESCRIPTION
+
+This package provides daemon-related functions.
+
+=cut
+
 package Sympa::Tools::Daemon;
 
 use strict;
@@ -127,8 +139,13 @@ sub remove_pid {
     return 1;
 }
 
-## The previous process died suddenly, without pidfile cleanup
-## Send a notice to listmaster with STDERR of the previous process
+=item check_old_pid_file(%parameters)
+
+The previous process died suddenly, without pidfile cleanup
+Send a notice to listmaster with STDERR of the previous process
+
+=cut
+
 
 sub check_old_pid_file {
     my (%params) = @_;
@@ -368,7 +385,7 @@ sub get_lockname () {
     return substr(substr(hostname(), 0, 20) . $PID, 0, 30);
 }
 
-=item get_pids_in_pidfile(%parameters)
+=item get_pids_in_pid_file(%parameters)
 
 Returns the list of PID in the PID file.
 
@@ -512,6 +529,22 @@ sub _get_pid_file {
     return $params{dir} . '/' . $params{name} . '.pid';
 }
 
+=item terminate_on_expected_error($message, @args)
+
+Notify the error, free resources, and terminate current process.
+
+Parameters:
+
+=over
+
+=item * I<$message>: error message, as sprintf format
+
+=item * I<@args>: values to substitute in the precedent string
+
+=back
+
+=cut
+
 sub terminate_on_expected_error {
     my ($message, @args) = @_;
 
@@ -527,6 +560,20 @@ sub terminate_on_expected_error {
 
     exit(1);
 }
+
+=item terminate_on_unexpected_error($message)
+
+Notify the error, free resources, and terminate current process.
+
+Parameters:
+
+=over
+
+=item * I<$message>: error message
+
+=back
+
+=cut
 
 sub terminate_on_unexpected_error {
     my ($message) = @_;

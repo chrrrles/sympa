@@ -21,6 +21,18 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+=encoding utf-8
+
+=head1 NAME
+
+Sympa::Tools::Time - Time-related functions
+
+=head1 DESCRIPTION
+
+This package provides time-related functions.
+
+=cut
+
 package Sympa::Tools::Time;
 
 use strict;
@@ -30,7 +42,24 @@ use Time::Local qw();
 
 use Sympa::Logger;
 
-# convert an epoch date into a readable date scalar
+=head1 FUNCTIONS
+
+=over
+
+=item adate($timestamp)
+
+Convert a date, as a timestamp, into a formatted string.
+
+Parameters:
+
+=over
+
+=item * I<$timestamp>: the date, as a timestamp
+
+=back
+
+=cut
+
 sub adate {
     my ($timestamp) = @_;
 
@@ -38,8 +67,20 @@ sub adate {
     return $time->strftime("%e %a %b %Y  %H h %M min %S s");
 }
 
-## Return the epoch date corresponding to the last midnight before date given
-## as argument.
+=item get_midnight_time($timestamp)
+
+Return the date, as a timestamp, corresponding to the last midnight before the given date.
+
+Parameters:
+
+=over
+
+=item * I<$timestamp>: the date, as a timestamp
+
+=back
+
+=cut
+
 sub get_midnight_time {
     my ($timestamp) = @_;
 
@@ -47,7 +88,12 @@ sub get_midnight_time {
     return $time->truncate(to => 'day')->epoch();
 }
 
-## convert a human format date into an epoch date
+=item epoch_conv($a, $b)
+
+FIXME.
+
+=cut
+
 sub epoch_conv {
 
     my $arg = $_[0];             # argument date to convert
@@ -83,6 +129,12 @@ sub epoch_conv {
     return $result;
 }
 
+=item date_conv($a)
+
+FIXME.
+
+=cut
+
 sub date_conv {
 
     my $arg  = $_[0];
@@ -114,6 +166,12 @@ sub date_conv {
 
     return time;
 }
+
+=item duration_conv($a, $b)
+
+FIXME.
+
+=cut
 
 sub duration_conv {
 
@@ -159,5 +217,9 @@ sub duration_conv {
 
     return $duration;
 }
+
+=back
+
+=cut
 
 1;

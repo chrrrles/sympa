@@ -31,11 +31,30 @@ use Text::LineFold;
 
 use Sympa::Language;
 
-#*******************************************
-# Function : wrap_text
-# Description : return line-wrapped text.
-## IN : text, init, subs, cols
-#*******************************************
+=head1 FUNCTIONS
+
+=over
+
+=item wrap_text($text, $init, $subs, $cols)
+
+Return line-wrapped text.
+
+Parameters:
+
+=over
+
+=item * I<$text>: FIXME
+
+=item * I<$init>: FIXME
+
+=item * I<$subs>: FIXME
+
+=item * I<$cols>: FIXME
+
+=back
+
+=cut
+
 sub wrap_text {
     my $text = shift;
     my $init = shift;
@@ -54,12 +73,20 @@ sub wrap_text {
     return $text;
 }
 
-#*******************************************
-## Function : foldcase
-## Description : returns "fold-case" string suitable for case-insensitive
-## match.
-### IN : str
-##*******************************************
+=item foldcase($text)
+
+Returns "fold-case" string suitable for case-insensitive match.
+
+Parameters:
+
+=over
+
+=item * I<$text>: FIXME
+
+=back
+
+=cut
+
 sub foldcase {
     my $str = shift;
     return '' unless defined $str and length $str;
@@ -74,5 +101,9 @@ sub foldcase {
         return Encode::encode_utf8(fc(Encode::decode_utf8($str)));
     }
 }
+
+=back
+
+=cut
 
 1;

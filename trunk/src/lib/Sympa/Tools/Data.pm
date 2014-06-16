@@ -21,6 +21,18 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+=encoding utf-8
+
+=head1 NAME
+
+Sympa::Tools::Data - Data-related functions
+
+=head1 DESCRIPTION
+
+This package provides data-related functions.
+
+=cut
+
 package Sympa::Tools::Data;
 
 use strict;
@@ -29,8 +41,27 @@ use warnings;
 use English qw(-no_match_vars);
 use POSIX qw();
 
-## This applies recursively to a data structure
-## The transformation subroutine is passed as a ref
+=head1 FUNCTIONS
+
+=over
+
+=item recursive_transformation($var, $subref)
+
+This applies recursively to a data structure.
+The transformation subroutine is passed as a ref
+
+Parameters:
+
+=over
+
+=item * I<$var>: FIXME
+
+=item * I<$subref>: FIXME
+
+=back
+
+=cut
+
 sub recursive_transformation {
     my ($var, $subref) = @_;
 
@@ -57,7 +88,24 @@ sub recursive_transformation {
     return;
 }
 
-## Dump a variable's content
+=item dump_var($var, $level, $fd)
+
+Dump a variable's content
+
+Parameters:
+
+=over
+
+=item * I<$var>: FIXME
+
+=item * I<$level>: FIXME
+
+=item * I<$fd>: FIXME
+
+=back
+
+=cut
+
 sub dump_var {
     my ($var, $level, $fd) = @_;
 
@@ -89,7 +137,20 @@ sub dump_var {
     }
 }
 
-## Dump a variable's content
+=item dump_html_var($var)
+
+Dump a variable's content
+
+Parameters:
+
+=over
+
+=item * I<$var>: FIXME
+
+=back
+
+=cut
+
 sub dump_html_var {
     my ($var) = shift;
     my $html = '';
@@ -127,7 +188,20 @@ sub dump_html_var {
     return $html;
 }
 
-## Duplicate a complex variable
+=item dup_var($var)
+
+Duplicate a complex variable
+
+Parameters:
+
+=over
+
+=item * I<$var>: FIXME
+
+=back
+
+=cut
+
 sub dup_var {
     my ($var) = @_;
 
@@ -150,18 +224,21 @@ sub dup_var {
     return $var;
 }
 
-####################################################
-# get_array_from_splitted_string
-####################################################
-# return an array made on a string split by ','.
-# It removes spaces.
-#
-#
-# IN : -$string (+): string to split
-#
-# OUT : -ref(ARRAY)
-#
-######################################################
+=item get_array_from_splitted_string($string)
+
+Return an array made on a string split by ','.
+It removes spaces.
+
+Parameters:
+
+=over
+
+=item * I<$string>: string to split
+
+=back
+
+=cut
+
 sub get_array_from_splitted_string {
     my ($string) = @_;
     my @array;
@@ -175,22 +252,36 @@ sub get_array_from_splitted_string {
     return \@array;
 }
 
-####################################################
-# diff_on_arrays
-####################################################
-# Makes set operation on arrays (seen as set, with no double) :
-#  - deleted : A \ B
-#  - added : B \ A
-#  - intersection : A /\ B
-#  - union : A \/ B
-#
-# IN : -$setA : ref(ARRAY) - set
-#      -$setB : ref(ARRAY) - set
-#
-# OUT : -ref(HASH) with keys :
-#          deleted, added, intersection, union
-#
-#######################################################
+=item diff_on_arrays($setA, $setB)
+
+Compute set arithmetic on the two given lists.
+
+Parameters:
+
+=over
+
+=item * I<$setA>: first set
+
+=item * I<$setA>: second set
+
+=back
+
+Returns an hashref with the following keys:
+
+=over
+
+=item * I<deleted>: FIXME
+
+=item * I<added>: FIXME
+
+=item * I<intersection>: FIXME
+
+=item * I<union>: FIXME
+
+=back
+
+=cut
+
 sub diff_on_arrays {
     my ($setA, $setB) = @_;
     my $result = {
@@ -252,16 +343,24 @@ sub diff_on_arrays {
 
 }
 
-####################################################
-# is_in_array
-####################################################
-# Test if a value is on an array
-#
-# IN : -$setA : ref(ARRAY) - set
-#      -$value : a serached value
-#
-# OUT : boolean
-#######################################################
+=item is_in_array($setA, $value)
+
+Test if a value is on an array
+
+Parameters:
+
+=over
+
+=item * I<$setA>: set
+
+=item * I<$value>: searched value
+
+=back
+
+Returns a boolean value.
+
+=cut
+
 sub is_in_array {
     my ($set, $value) = @_;
 
@@ -271,11 +370,24 @@ sub is_in_array {
     return undef;
 }
 
-## convert a string formatted as var1="value1";var2="value2"; into a hash.
-## Used when extracting from session table some session properties or when
-## extracting users preference from user table
-## Current encoding is NOT compatible with encoding of values with '"'
-##
+=item string_2_hash($string)
+
+Convert a string formatted as var1="value1";var2="value2"; into a hash.
+
+Current encoding is NOT compatible with encoding of values with '"'
+
+Parameters:
+
+=over
+
+=item * I<$string>: the string to convert
+
+=back
+
+Returns an hash ref.
+
+=cut
+
 sub string_2_hash {
     my $data = shift;
     my %hash;
@@ -290,8 +402,23 @@ sub string_2_hash {
     return (%hash);
 
 }
-## convert a hash into a string formated as var1="value1";var2="value2"; into
-## a hash
+
+=item hash_2_string($hash)
+
+Convert an hash into a string formated as var1="value1";var2="value2";.
+
+Parameters:
+
+=over
+
+=item * I<$hash>: the hash to convert
+
+=back
+
+Returns a string.
+
+=cut
+
 sub hash_2_string {
     my $refhash = shift;
 
@@ -307,7 +434,24 @@ sub hash_2_string {
     return ($data_string);
 }
 
-## compare 2 scalars, string/numeric independent
+=item smart_lessthan($stra, $strb)
+
+Compare 2 scalars, string/numeric independent.
+
+Parameters:
+
+=over
+
+=item * I<$stra>: first scalar
+
+=item * I<$stab>: second scalar
+
+=back
+
+Returns a boolean.
+
+=cut
+
 sub smart_lessthan {
     my ($stra, $strb) = @_;
     $stra =~ s/^\s+//;
@@ -326,5 +470,9 @@ sub smart_lessthan {
         return $stra < $strb;
     }
 }
+
+=back
+
+=cut
 
 1;
