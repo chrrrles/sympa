@@ -272,8 +272,6 @@ sub _load {
     # FIXME: These processes are needed for incoming messages only.
     return undef unless $self->get_sender_email;
 
-    $self->get_subject;
-
     #    $self->get_recipient;
     $self->check_dkim_signature;
 
@@ -465,52 +463,65 @@ sub get_sender_gecos {
     return $self->{'gecos'};
 }
 
-sub get_subject {
-    my $self = shift;
+sub get_decoded_subject {
+    my ($self) = @_;
 
-    unless ($self->{'decoded_subject'}) {
-        my $hdr = $self->as_entity()->head;
-        ## Store decoded subject and its original charset
-        my $subject = $hdr->get('Subject');
-        if (defined $subject and $subject =~ /\S/) {
-            my @decoded_subject = MIME::EncWords::decode_mimewords($subject);
-            $self->{'subject_charset'} = 'US-ASCII';
-            foreach my $token (@decoded_subject) {
-                unless ($token->[1]) {
+    $self->_set_decoded_subject() unless $self->{'decoded_subject'};
 
-                    # don't decode header including raw 8-bit bytes.
-                    if ($token->[0] =~ /[^\x00-\x7F]/) {
-                        $self->{'subject_charset'} = undef;
-                        last;
-                    }
-                    next;
-                }
-                my $cset = MIME::Charset->new($token->[1]);
+    return $self->{'decoded_subject'};
+}
 
-                # don't decode header encoded with unknown charset.
-                unless ($cset->decoder) {
+sub get_subject_charset {
+    my ($self) = @_;
+
+    $self->_set_decoded_subject() unless $self->{'subject_charset'};
+
+    return $self->{'subject_charset'};
+}
+
+sub _set_decoded_subject {
+    my ($self) = @_;
+
+    my $hdr = $self->as_entity()->head;
+    ## Store decoded subject and its original charset
+    my $subject = $hdr->get('Subject');
+    if (defined $subject and $subject =~ /\S/) {
+        my @decoded_subject = MIME::EncWords::decode_mimewords($subject);
+        $self->{'subject_charset'} = 'US-ASCII';
+        foreach my $token (@decoded_subject) {
+            unless ($token->[1]) {
+
+                # don't decode header including raw 8-bit bytes.
+                if ($token->[0] =~ /[^\x00-\x7F]/) {
                     $self->{'subject_charset'} = undef;
                     last;
                 }
-                unless ($cset->output_charset eq 'US-ASCII') {
-                    $self->{'subject_charset'} = $token->[1];
-                }
+                next;
             }
-        } else {
-            $self->{'subject_charset'} = undef;
-        }
-        if ($self->{'subject_charset'}) {
-            $self->{'decoded_subject'} =
-                Sympa::Tools::Message::decode_header($self, 'Subject');
-        } else {
-            if ($subject) {
-                chomp $subject;
-                $subject =~ s/(\r\n|\r|\n)([ \t])/$2/g;
+            my $cset = MIME::Charset->new($token->[1]);
+
+            # don't decode header encoded with unknown charset.
+            unless ($cset->decoder) {
+                $self->{'subject_charset'} = undef;
+                last;
             }
-            $self->{'decoded_subject'} = $subject;
+            unless ($cset->output_charset eq 'US-ASCII') {
+                $self->{'subject_charset'} = $token->[1];
+            }
         }
+    } else {
+        $self->{'subject_charset'} = undef;
     }
-    return $self->{'decoded_subject'};
+    if ($self->{'subject_charset'}) {
+        $self->{'decoded_subject'} =
+            Sympa::Tools::Message::decode_header($self, 'Subject');
+    } else {
+        if ($subject) {
+            chomp $subject;
+            $subject =~ s/(\r\n|\r|\n)([ \t])/$2/g;
+        }
+        $self->{'decoded_subject'} = $subject;
+    }
 }
 
 =item $message->get_spam_status()
