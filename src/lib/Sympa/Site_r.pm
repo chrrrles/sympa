@@ -605,8 +605,8 @@ sub send_dsn {
         return undef;
     }
 
-    my $sender;
-    if (defined($sender = $message->{'envelope_sender'})) {
+    my $sender = $message->get_envelope_sender();
+    if (defined($sender)) {
         ## Won't reply to message with null envelope sender.
         return 0 if $sender eq '<>';
     } elsif (!defined($sender = $message->{'sender'})) {
