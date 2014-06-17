@@ -802,7 +802,7 @@ sub process_message {
     }
 
     ## Q- and B-decode subject
-    my $subject_field = $message->{'decoded_subject'};
+    my $subject_field = $message->get_decoded_subject();
 
     ## Loop prevention
     my $loop;
@@ -1893,7 +1893,7 @@ sub DoCommand {
 
     ## Process the Subject of the message
     ## Search and process a command in the Subject field
-    my $subject_field = $message->{'decoded_subject'};
+    my $subject_field = $message->get_decoded_subject();
     my $re_regexp     = Sympa::Tools::get_regexp('re');
     $subject_field =~ s/^\s*(?:$re_regexp)?\s*(.*)\s*$/$1/i
         if $subject_field;

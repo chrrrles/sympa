@@ -1510,7 +1510,7 @@ sub distribute_msg {
 
     ## Add Custom Subject
     if ($self->custom_subject) {
-        my $subject_field = $message->{'decoded_subject'};
+        my $subject_field = $message->get_decoded_subject();
         $subject_field =~
             s/^\s*(.*)\s*$/$1/;    ## Remove leading and trailing blanks
 
@@ -1573,12 +1573,13 @@ sub distribute_msg {
         ## Encode subject using initial charset
 
         ## Don't try to encode the subject if it was not originally encoded.
-        if ($message->{'subject_charset'}) {
+        my $charset = $message->get_subject_charset();
+        if ($charset) {
             $subject_field = MIME::EncWords::encode_mimewords(
                 Encode::decode_utf8(
                     $before_tag . '[' . $parsed_tag . '] ' . $after_tag
                 ),
-                Charset     => $message->{'subject_charset'},
+                Charset     => $charset,
                 Encoding    => 'A',
                 Field       => 'Subject',
                 Replacement => 'FALLBACK'
@@ -9963,7 +9964,7 @@ sub compute_topic {
     # We convert it to UTF-8 for case-ignore match with non-ASCII keywords.
     my $mail_string = '';
     if (index($self->msg_topic_keywords_apply_on, 'subject') >= 0) {
-        $mail_string = $message->{'decoded_subject'} . "\n";
+        $mail_string = $message->get_decoded_subject() . "\n";
     }
     unless ($self->msg_topic_keywords_apply_on eq 'subject') {
 
