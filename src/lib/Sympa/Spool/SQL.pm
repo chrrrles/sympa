@@ -515,7 +515,7 @@ sub store {
     }
 
     if ($message) {
-        $metadata->{'spam_status'} = $message->{'spam_status'};
+        $metadata->{'spam_status'} = $message->get_spam_status();
         $metadata->{'subject'}     = $message->get_header('Subject');
         $metadata->{'subject'}     = substr $metadata->{'subject'}, 0, 109
             if defined $metadata->{'subject'};

@@ -272,7 +272,6 @@ sub _load {
     # FIXME: These processes are needed for incoming messages only.
     $self->get_envelope_sender;
     return undef unless $self->get_sender_email;
-    $self->check_spam_status;
 
     $self->get_subject;
 
@@ -504,27 +503,34 @@ sub get_subject {
     return $self->{'decoded_subject'};
 }
 
+=item $message->get_spam_status()
 
-#FIXME: This should be moved to Messagespool.
-sub check_spam_status {
-    my $self = shift;
+Gets the spam status of this message.
 
-    return $self->{'spam_status'} if $self->{'spam_status'};
+=cut
 
-    return undef unless ref $self->robot eq 'Sympa::Robot';
+sub get_spam_status {
+    my ($self) = @_;
 
-    my $spam_status =
-        Sympa::Scenario::request_action($self->robot, 'spam_status', 'smtp',
-        {'message' => $self});
-    $self->{'spam_status'} = 'unknown';
-    if (defined $spam_status) {
-        if (ref $spam_status eq 'HASH') {
-            $self->{'spam_status'} = $spam_status->{'action'};
-        } else {
-            $self->{'spam_status'} = $spam_status;
-        }
-    }
+    $self->_set_spam_status() unless $self->{'spam_status'};
+
     return $self->{'spam_status'};
+}
+
+sub _set_spam_status {
+    my ($self) = @_;
+
+    return unless $self->{robot};
+
+    require Sympa::Scenario;
+    my $action = Sympa::Scenario::request_action(
+        $self->{robot}, 'spam_status', 'smtp', {'message' => $self}
+    );
+
+    $self->{'spam_status'} =
+        !defined $action      ? 'unknown'           :
+        ref $action eq 'HASH' ? $action->{'action'} :
+                                $action             ;
 }
 
 ## This should be moved to Messagespool.

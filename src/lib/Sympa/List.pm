@@ -2553,7 +2553,7 @@ sub send_to_editor {
         'boundary'       => $boundary,
         'msg_from'       => $message->{'sender'},
         'subject'        => $subject,
-        'spam_status'    => $message->{'spam_status'},
+        'spam_status'    => $message->get_spam_status(),
         'mod_spool_size' => $self->get_mod_spool_size,
         'method'         => $method
     };
