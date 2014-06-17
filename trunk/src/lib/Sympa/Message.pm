@@ -270,7 +270,6 @@ sub _load {
     # Get envelope sender, actual sender according to sender_headers site
     # parameter and spam status according to spam_status scenario.
     # FIXME: These processes are needed for incoming messages only.
-    $self->get_envelope_sender;
     return undef unless $self->get_sender_email;
 
     $self->get_subject;
@@ -368,35 +367,46 @@ sub get_header {
     }
 }
 
-sub get_envelope_sender {
-    my $self = shift;
+=item $message->get_envelope_sender()
 
-    unless (exists $self->{'envelope_sender'}) {
-        ## We trust in Return-Path: header field at the top of message.
-        ## To add it to messages by MDA:
-        ## - Sendmail:   Add 'P' in the 'F=' flags of local mailer line (such
-        ##               as 'Mlocal').
-        ## - Postfix:
-        ##   - local(8): Available by default.
-        ##   - pipe(8):  Add 'R' in the 'flags=' attributes of master.cf.
-        ## - Exim:       Set 'return_path_add' to true with pipe_transport.
-        ## - qmail:      Use preline(1).
-        my $headers = $self->as_entity()->head->header();
-        my $i       = 0;
-        $i++ while $headers->[$i] and $headers->[$i] =~ /^X-Sympa-/;
-        if ($headers->[$i] and $headers->[$i] =~ /^Return-Path:\s*(.+)$/) {
-            my $addr = $1;
-            if ($addr =~ /<>/) {
-                $self->{'envelope_sender'} = '<>';
-            } else {
-                my @addrs = Mail::Address->parse($addr);
-                if (@addrs and Sympa::Tools::valid_email($addrs[0]->address)) {
-                    $self->{'envelope_sender'} = $addrs[0]->address;
-                }
+Gets the enveloper sender of this message.
+
+=cut
+
+sub get_envelope_sender {
+    my ($self) = @_;
+
+    $self->_set_envelope_sender() unless $self->{'envelope_sender'};
+
+    return $self->{'envelope_sender'};
+}
+
+sub _set_envelope_sender {
+    my ($self) = @_;
+
+    ## We trust in Return-Path: header field at the top of message.
+    ## To add it to messages by MDA:
+    ## - Sendmail:   Add 'P' in the 'F=' flags of local mailer line (such
+    ##               as 'Mlocal').
+    ## - Postfix:
+    ##   - local(8): Available by default.
+    ##   - pipe(8):  Add 'R' in the 'flags=' attributes of master.cf.
+    ## - Exim:       Set 'return_path_add' to true with pipe_transport.
+    ## - qmail:      Use preline(1).
+    my $headers = $self->as_entity()->head->header();
+    my $i       = 0;
+    $i++ while $headers->[$i] and $headers->[$i] =~ /^X-Sympa-/;
+    if ($headers->[$i] and $headers->[$i] =~ /^Return-Path:\s*(.+)$/) {
+        my $addr = $1;
+        if ($addr =~ /<>/) {
+            $self->{'envelope_sender'} = '<>';
+        } else {
+            my @addrs = Mail::Address->parse($addr);
+            if (@addrs and Sympa::Tools::valid_email($addrs[0]->address)) {
+                $self->{'envelope_sender'} = $addrs[0]->address;
             }
         }
     }
-    return $self->{'envelope_sender'};
 }
 
 ## Get sender of the message according to header fields specified by
@@ -412,9 +422,9 @@ sub get_sender_email {
         foreach my $field (split /[\s,]+/, Sympa::Site->sender_headers) {
             if (lc $field eq 'from_') {
                 ## Try to get envelope sender
-                if (    $self->get_envelope_sender
-                    and $self->get_envelope_sender ne '<>') {
-                    $sender = $self->get_envelope_sender;
+                my $envelope_sender = $self->get_envelope_sender();
+                if ($envelope_sender and $envelope_sender ne '<>') {
+                    $sender = $envelope_sender;
                     last;
                 }
             } elsif ($hdr->get($field)) {
