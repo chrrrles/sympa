@@ -1465,7 +1465,7 @@ sub distribute_msg {
         $self,
         $message,
         $message->get_size(),
-        $message->{'filename'},
+        $message->as_file(),
         $message->{'smime_crypted'},
         $apply_dkim_signature
     );
@@ -2052,7 +2052,7 @@ sub send_msg {
     $main::logger->do_log(
         Sympa::Logger::DEBUG2,
         'Sympa::List::send_msg(filename = %s, smime_crypted = %s,apply_dkim_signature = %s )',
-        $message->{'filename'},
+        $message->as_file(),
         $message->{'smime_crypted'},
         $apply_dkim_signature
     );
@@ -2621,7 +2621,7 @@ sub send_to_editor {
 ####################################################
 sub send_auth {
     my ($self, $message) = @_;
-    my ($sender, $file) = ($message->get_sender_email(), $message->{'filename'});
+    my ($sender, $file) = ($message->get_sender_email(), $message->as_file());
     $main::logger->do_log(Sympa::Logger::DEBUG3, 'Sympa::List::send_auth(%s, %s)',
         $sender, $file);
 
