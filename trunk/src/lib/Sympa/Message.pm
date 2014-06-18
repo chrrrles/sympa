@@ -1376,6 +1376,18 @@ sub as_entity {
     return $self->{'msg'};
 }
 
+=item $message->as_file()
+
+Returns the content of this message, as a file.
+
+=cut
+
+sub as_file {
+    my ($self) = @_;
+
+    return $self->{'filename'};
+}
+
 sub get_message_as_string {
     my $self = shift;
     if ($self->{'smime_crypted'}) {

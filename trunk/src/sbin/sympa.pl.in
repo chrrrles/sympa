@@ -1627,7 +1627,7 @@ sub DoMessage {
 
         $logger->do_log(Sympa::Logger::INFO,
             'Key %s for list %s from %s sent to editors; %s',
-            $key, $list, $sender, $message->{'filename'});
+            $key, $list, $sender, $message->as_file());
 
         # do not report to the sender if the message was tagged as a spam
         my $spam_status = $message->get_spam_status();
