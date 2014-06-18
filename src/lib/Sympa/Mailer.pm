@@ -482,7 +482,7 @@ sub send_message {
 
     if ($sign_mode and $sign_mode eq 'smime') {
         $main::logger->do_log(Sympa::Logger::DEBUG2, 'Will sign message');
-        unless ($message->smime_sign()) {
+        unless ($message->sign()) {
             $main::logger->do_log(Sympa::Logger::ERR,
                 'Unable to sign message from %s', $listname);
             return undef;
