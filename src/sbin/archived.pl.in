@@ -408,6 +408,12 @@ while (!$end) {
                         $arcpath, $file);
                     next;
                 }
+                unless ($new_message->has_valid_sender()) {
+                    $logger->do_log(Sympa::Logger::ERR,
+                        'New message %s/arctxt/%s has no valid sender',
+                        $arcpath, $file);
+                    next;
+                }
                 my $messagesender = lc($new_message->get_sender_email || '');
 
                 unless ($sender eq $messagesender) {

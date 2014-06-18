@@ -505,7 +505,7 @@ while ($signal ne 'term') {
         my $message;
         $message = Sympa::Message->new(%$message_in_spool)
             if $message_in_spool;
-        unless ($message) {
+        unless ($message && $message->has_valid_sender()) {
             sleep(Sympa::Site->sleep);
             next;
         }
@@ -1261,7 +1261,7 @@ sub DoMessage {
         '(%s, list=%s, sender=%s, size=%s, smime_crypted=%s)',
         $message,
         $message->get_list(),
-        $message->{'sender'},
+        $message->get_sender_email(),
         $message->{'size'},
         $message->{'smime_crypted'}
     );

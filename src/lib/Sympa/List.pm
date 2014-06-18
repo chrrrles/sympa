@@ -2552,7 +2552,7 @@ sub send_to_editor {
     my $param = {
         'modkey'         => $modkey,
         'boundary'       => $boundary,
-        'msg_from'       => $message->{'sender'},
+        'msg_from'       => $message->get_sender_email(),
         'subject'        => $subject,
         'spam_status'    => $message->get_spam_status(),
         'mod_spool_size' => $self->get_mod_spool_size,
@@ -2621,7 +2621,7 @@ sub send_to_editor {
 ####################################################
 sub send_auth {
     my ($self, $message) = @_;
-    my ($sender, $file) = ($message->{'sender'}, $message->{'filename'});
+    my ($sender, $file) = ($message->get_sender_email(), $message->{'filename'});
     $main::logger->do_log(Sympa::Logger::DEBUG3, 'Sympa::List::send_auth(%s, %s)',
         $sender, $file);
 

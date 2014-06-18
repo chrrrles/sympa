@@ -243,9 +243,9 @@ sub _load {
             } elsif ($k eq 'X-Sympa-Authenticated') {
                 $self->{'authenticated'} = $v;
             } elsif ($k eq 'X-Sympa-Sender') {
-                $self->{'sender'} = $v;
+                $self->{'sender_email'} = $v;
             } elsif ($k eq 'X-Sympa-Gecos') {
-                $self->{'gecos'} = $v;
+                $self->{'sender_gecos'} = $v;
             } elsif ($k eq 'X-Sympa-Spam-Status') {
                 $self->{'spam_status'} = $v;
             } else {
@@ -266,11 +266,6 @@ sub _load {
     $parser->output_to_core(1);
     my $msg = $parser->parse_data(\$messageasstring);
     $self->{'msg'} = $msg;
-
-    # Get envelope sender, actual sender according to sender_headers site
-    # parameter and spam status according to spam_status scenario.
-    # FIXME: These processes are needed for incoming messages only.
-    return undef unless $self->get_sender_email;
 
     #    $self->get_recipient;
     $self->check_dkim_signature;
@@ -315,11 +310,11 @@ sub to_string {
         $str .= sprintf "X-Sympa-Authenticated: %s\n",
             $self->{'authenticated'};
     }
-    if (defined $self->{'sender'}) {
-        $str .= sprintf "X-Sympa-Sender: %s\n", $self->{'sender'};
+    if (defined $self->{'sender_email'}) {
+        $str .= sprintf "X-Sympa-Sender: %s\n", $self->{'sender_email'};
     }
-    if (defined $self->{'gecos'} and length $self->{'gecos'}) {
-        $str .= sprintf "X-Sympa-Gecos: %s\n", $self->{'gecos'};
+    if (defined $self->{'sender_gecos'} and length $self->{'sender_gecos'}) {
+        $str .= sprintf "X-Sympa-Gecos: %s\n", $self->{'sender_gecos'};
     }
     if ($self->{'spam_status'}) {
         $str .= sprintf "X-Sympa-Spam-Status: %s\n", $self->{'spam_status'};
@@ -411,56 +406,63 @@ sub _set_envelope_sender {
 ## 'sender_headers' parameter.
 ## FIXME: S/MIME signer may not be same as sender given by this method.
 sub get_sender_email {
-    my $self = shift;
+    my ($self) = @_;
 
-    unless ($self->{'sender'}) {
-        my $hdr    = $self->as_entity()->head;
-        my $sender = undef;
-        my $gecos  = undef;
-        foreach my $field (split /[\s,]+/, Sympa::Site->sender_headers) {
-            if (lc $field eq 'from_') {
-                ## Try to get envelope sender
-                my $envelope_sender = $self->get_envelope_sender();
-                if ($envelope_sender and $envelope_sender ne '<>') {
-                    $sender = $envelope_sender;
-                    last;
-                }
-            } elsif ($hdr->get($field)) {
-                ## Try to get message header
-                ## On "Resent-*:" headers, the first occurrence must be used.
-                ## Though "From:" can occur multiple times, only the first
-                ## one is detected.
-                my @sender_hdr = Mail::Address->parse($hdr->get($field));
-                if (scalar @sender_hdr and $sender_hdr[0]->address) {
-                    $sender = lc($sender_hdr[0]->address);
-                    my $phrase = $sender_hdr[0]->phrase;
-                    if (defined $phrase and length $phrase) {
-                        $gecos = MIME::EncWords::decode_mimewords($phrase,
-                            Charset => 'UTF-8');
-                    }
-                    last;
-                }
-            }
-        }
-        unless (defined $sender) {
-            $main::logger->do_log(Sympa::Logger::ERR, 'No valid sender address');
-            return undef;
-        }
-        unless (Sympa::Tools::valid_email($sender)) {
-            $main::logger->do_log(Sympa::Logger::ERR, 'Invalid sender address "%s"',
-                $sender);
-            return undef;
-        }
-        $self->{'sender'} = $sender;
-        $self->{'gecos'}  = $gecos;
-    }
-    return $self->{'sender'};
+    $self->_set_sender_email() unless $self->{'sender_email'};
+
+    return $self->{'sender_email'};
 }
 
 sub get_sender_gecos {
-    my $self = shift;
-    $self->get_sender_email unless exists $self->{'gecos'};
-    return $self->{'gecos'};
+    my ($self) = @_;
+
+    $self->_set_sender_email() unless $self->{'sender_gecos'};
+
+    return $self->{'sender_gecos'};
+}
+
+sub _set_sender_email {
+    my ($self) = @_;
+
+    my $hdr    = $self->as_entity()->head;
+    my $sender = undef;
+    my $gecos  = undef;
+    foreach my $field (split /[\s,]+/, Sympa::Site->sender_headers) {
+        if (lc $field eq 'from_') {
+            ## Try to get envelope sender
+            my $envelope_sender = $self->get_envelope_sender();
+            if ($envelope_sender and $envelope_sender ne '<>') {
+                $sender = $envelope_sender;
+                last;
+            }
+        } elsif ($hdr->get($field)) {
+            ## Try to get message header
+            ## On "Resent-*:" headers, the first occurrence must be used.
+            ## Though "From:" can occur multiple times, only the first
+            ## one is detected.
+            my @sender_hdr = Mail::Address->parse($hdr->get($field));
+            if (scalar @sender_hdr and $sender_hdr[0]->address) {
+                $sender = lc($sender_hdr[0]->address);
+                my $phrase = $sender_hdr[0]->phrase;
+                if (defined $phrase and length $phrase) {
+                    $gecos = MIME::EncWords::decode_mimewords($phrase,
+                        Charset => 'UTF-8');
+                }
+                last;
+            }
+        }
+    }
+
+    $self->{'sender_email'} = $sender;
+    $self->{'sender_gecos'} = $gecos;
+}
+
+sub has_valid_sender {
+    my ($self) = @_;
+
+    my $sender = $self->get_sender_email();
+
+    return $sender && Sympa::Tools::valid_email($sender);
 }
 
 sub get_decoded_subject {
@@ -1131,7 +1133,7 @@ sub smime_sign {
 sub smime_sign_check {
     my $message = shift;
     $main::logger->do_log(Sympa::Logger::DEBUG2, '(sender=%s, filename=%s)',
-        $message->{'sender'}, $message->{'filename'});
+        $message->{'sender_email'}, $message->{'filename'});
 
     my $is_signed = {};
     $is_signed->{'body'}    = undef;
@@ -1151,7 +1153,7 @@ sub smime_sign_check {
     unless (open MSGDUMP, "| $cmd > /dev/null") {
         $main::logger->do_log(Sympa::Logger::ERR,
             'Unable to run command %s to check signature from %s: %s',
-            $cmd, $message->{'sender'}, $ERRNO);
+            $cmd, $message->{'sender_email'}, $ERRNO);
         return undef;
     }
 
@@ -1175,12 +1177,12 @@ sub smime_sign_check {
         openssl => Sympa::Site->openssl,
     );
 
-    unless ($signer->{'email'}{lc($message->{'sender'})}) {
+    unless ($signer->{'email'}{lc($message->{'sender_email'})}) {
         unlink($temporary_file) unless ($main::options{Sympa::Logger::DEBUG});
         $main::logger->do_log(
             Sympa::Logger::ERR,
             "S/MIME signed message, sender(%s) does NOT match signer(%s)",
-            $message->{'sender'},
+            $message->{'sender_email'},
             join(',', keys %{$signer->{'email'}})
         );
         return undef;
@@ -1279,7 +1281,7 @@ sub smime_sign_check {
                 "Found cert for <%s>",
                 join(',', keys %{$parsed->{'email'}})
             );
-            if ($parsed->{'email'}{lc($message->{'sender'})}) {
+            if ($parsed->{'email'}{lc($message->{'sender_email'})}) {
                 if (   $parsed->{'purpose'}{'sign'}
                     && $parsed->{'purpose'}{'enc'}) {
                     $certs{'both'} = $workcert;
@@ -1312,7 +1314,7 @@ sub smime_sign_check {
     ## or as email@addr@sign / email@addr@enc for split certs.
     foreach my $c (keys %certs) {
         my $fn = Sympa::Site->ssl_cert_dir . '/'
-            . Sympa::Tools::escape_chars(lc($message->{'sender'}));
+            . Sympa::Tools::escape_chars(lc($message->{'sender_email'}));
         if ($c ne 'both') {
             unlink($fn);    # just in case there's an old cert left...
             $fn .= "\@$c";

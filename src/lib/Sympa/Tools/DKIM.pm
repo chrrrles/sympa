@@ -306,7 +306,12 @@ sub sign {
     );
     unless ($message) {
         $main::logger->do_log(Sympa::Logger::ERR,
-            'Unable to load %s as a message object',
+            'Unable to parse %s', $temporary_file);
+        return ($msg_as_string);
+    }
+    unless ($message->has_valid_sender()) {
+        $main::logger->do_log(Sympa::Logger::ERR,
+            'Message from %s has no valid sender',
             $temporary_file);
         return ($msg_as_string);
     }

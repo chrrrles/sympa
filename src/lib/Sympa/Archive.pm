@@ -133,6 +133,11 @@ sub scan_dir_archive {
                 'Unable to create Message object from file %s', $file);
             return undef;
         }
+        unless ($message->has_valid_sender()) {
+            $main::logger->do_log(Sympa::Logger::ERR,
+                'Message from file %s has no valid sender', $file);
+            return undef;
+        }
 
         $main::logger->do_log(Sympa::Logger::DEBUG, 'MAIL object : %s', $message);
 
