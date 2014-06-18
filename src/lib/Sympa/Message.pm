@@ -130,7 +130,7 @@ sub new {
         'messagekey' => $params{'messagekey'},
         'spoolname'  => $params{'spoolname'},
         'robot_id'   => $params{'robot'},
-        'filename'   => $params{'file'},
+        'file'       => $params{'file'},
         'listname'   => $params{'list'},       #++
         'authkey'    => $params{'authkey'},    #FIXME: needed only by KeySpool.
         'priority'   => $params{'priority'},   #++
@@ -190,7 +190,7 @@ Returns the message itself, as a file name.
 sub as_file {
     my ($self) = @_;
 
-    return $self->{'filename'};
+    return $self->{'file'};
 }
 
 =item $message->as_string()
@@ -201,7 +201,7 @@ Returns the message itself, as a string.
 
 sub as_string {
     my $self = shift;
-    return $self->{'msg_as_string'};
+    return $self->{'string'};
 }
 
 =item $message->as_entity()
@@ -212,7 +212,7 @@ Returns the message itself, as a L<MIME::Entity> object.
 
 sub as_entity {
     my $self = shift;
-    return $self->{'msg'};
+    return $self->{'entity'};
 }
 
 =item $message->get_family()
@@ -263,7 +263,7 @@ Gets the size of this message.
 sub get_size {
     my ($self) = @_;
 
-    return length $self->{'msg_as_string'};
+    return length $self->{'string'};
 }
 
 sub _load {
@@ -305,12 +305,11 @@ sub _load {
         substr($messageasstring, 0, pos $messageasstring) = '';
     }
 
-    $self->{'msg_as_string'} = $messageasstring;
+    $self->{'string'} = $messageasstring;
 
     my $parser = MIME::Parser->new();
     $parser->output_to_core(1);
-    my $msg = $parser->parse_data(\$messageasstring);
-    $self->{'msg'} = $msg;
+    $self->{'entity'} = $parser->parse_data(\$messageasstring);
 
     ## S/MIME
     if (Sympa::Site->openssl) {
@@ -362,7 +361,7 @@ sub to_string {
         $str .= sprintf "X-Sympa-Spam-Status: %s\n", $self->{'spam_status'};
     }
 
-    $str .= $self->{'msg_as_string'};
+    $str .= $self->{'string'};
 
     return $str;
 }
@@ -613,7 +612,7 @@ sub _set_dkim_status {
     return unless $self->{robot}->dkim_feature eq 'on';
 
     $self->{'dkim_status'} = Sympa::Tools::DKIM::verifier(
-        $self->{'msg_as_string'}, Sympa::Site->tmpdir
+        $self->{'string'}, Sympa::Site->tmpdir
     );
 }
 
@@ -751,8 +750,8 @@ sub clean_html {
     my $robot = shift;
     my $new_msg;
     if ($new_msg = _fix_html_part($self->as_entity(), $robot)) {
-        $self->{'msg'}           = $new_msg;
-        $self->{'msg_as_string'} = $new_msg->as_string();
+        $self->{'entity'} = $new_msg;
+        $self->{'string'} = $new_msg->as_string();
         return 1;
     }
     return 0;
@@ -1066,8 +1065,8 @@ sub smime_encrypt {
             $self->{'crypted_message'}->head->add($tag, $val)
                 unless $predefined_headers->{lc $tag};
         }
-        $self->{'msg'} = $self->{'crypted_message'};
-        $self->{'msg_as_string'} = $self->{'crypted_message'}->as_string();
+        $self->{'entity'} = $self->{'crypted_message'};
+        $self->{'string'} = $self->{'crypted_message'}->as_string();
         $self->{'smime_crypted'} = 1;
     } else {
         $main::logger->do_log(Sympa::Logger::ERR,
@@ -1171,8 +1170,8 @@ sub smime_sign {
     $new_message_as_string =
         $signed_msg->head->as_string() . '\n\n' . $new_message[1];
 
-    $self->{'msg'}           = $signed_msg;
-    $self->{'msg_as_string'} = $new_message_as_string;    #FIXME
+    $self->{'entity'} = $signed_msg;
+    $self->{'string'} = $new_message_as_string;    #FIXME
     $self->check_smime_signature;
     return 1;
 }
@@ -1181,7 +1180,7 @@ sub smime_sign_check {
     my ($self) = @_;
 
     $main::logger->do_log(Sympa::Logger::DEBUG2, '(sender=%s, filename=%s)',
-        $self->{'sender_email'}, $self->{'filename'});
+        $self->{'sender_email'}, $self->{'file'});
 
     ## first step is the msg signing OK ; /tmp/sympa-smime.$PID is created
     ## to store the signer certificat for step two. I known, that's dirty.
@@ -1396,7 +1395,7 @@ sub get_mime_message {
     if ($self->{'smime_crypted'}) {
         return $self->{'decrypted_msg'};
     }
-    return $self->{'msg'};
+    return $self->{'entity'};
 }
 
 
@@ -1405,13 +1404,13 @@ sub get_message_as_string {
     if ($self->{'smime_crypted'}) {
         return $self->{'decrypted_msg_as_string'};
     }
-    return $self->{'msg_as_string'};
+    return $self->{'string'};
 }
 
 sub set_message_as_string {
     my $self = shift;
 
-    $self->{'msg_as_string'} = shift;
+    $self->{'string'} = shift;
 }
 
 sub _reset_message_from_entity {
@@ -1424,8 +1423,8 @@ sub _reset_message_from_entity {
             ref $entity);
         return undef;
     }
-    $self->{'msg'}           = $entity;
-    $self->{'msg_as_string'} = $entity->as_string();
+    $self->{'entity'} = $entity;
+    $self->{'string'} = $entity->as_string();
     if ($self->is_crypted) {
         $self->{'decrypted_msg'}           = $entity;
         $self->{'decrypted_msg_as_string'} = $entity->as_string();
@@ -1894,7 +1893,7 @@ sub personalize {
         return undef;
     }
     if ($entity) {
-        $self->{'msg_as_string'} = $entity->as_string();
+        $self->{'string'} = $entity->as_string();
     }
     return $self;
 }
@@ -2095,9 +2094,9 @@ sub prepare_reception_mail {
     return 0 if ($self->is_signed);
     my $new_msg = $self->add_parts;
     if (defined $new_msg) {
-        $self->{'msg'}           = $new_msg;
-        $self->{'altered'}       = '_ALTERED_';
-        $self->{'msg_as_string'} = $new_msg->as_string();
+        $self->{'entity'}  = $new_msg;
+        $self->{'altered'} = '_ALTERED_';
+        $self->{'string'}  = $new_msg->as_string();
     } else {
         $main::logger->do_log(Sympa::Logger::ERR, 'Part addition failed');
         return undef;
