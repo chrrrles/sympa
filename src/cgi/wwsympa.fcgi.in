@@ -8380,7 +8380,7 @@ sub do_modindex {
         $param->{'spool'}{$id}{'subject'} =
             Sympa::Tools::Message::decode_header($message, 'Subject') || 'no_subject';
                                                            
-        my $date = $message->{'msg'}->head->get('Date');
+        my $date = $message->as_entity()->head->get('Date');
         if ($date) {
             $param->{'spool'}{$id}{'date_smtp'} = $date;
             my $date_epoch = eval {
@@ -22068,7 +22068,7 @@ sub do_request_topic {
     $param->{'message_id'} =
         Sympa::Tools::clean_msg_id($message->get_header('Message-Id'));
 
-    my $bodyh = $message->{'msg'}->bodyhandle();
+    my $bodyh = $message->as_entity()->bodyhandle();
     if ($bodyh) {
         $param->{'body'} = $bodyh->as_string();
     } else {
