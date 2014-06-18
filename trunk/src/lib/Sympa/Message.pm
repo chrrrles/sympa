@@ -181,6 +181,40 @@ sub new {
 
 =over
 
+=item $message->as_file()
+
+Returns the message itself, as a file name.
+
+=cut
+
+sub as_file {
+    my ($self) = @_;
+
+    return $self->{'filename'};
+}
+
+=item $message->as_string()
+
+Returns the message itself, as a string.
+
+=cut
+
+sub as_string {
+    my $self = shift;
+    return $self->{'msg_as_string'};
+}
+
+=item $message->as_entity()
+
+Returns the message itself, as a L<MIME::Entity> object.
+
+=cut
+
+sub as_entity {
+    my $self = shift;
+    return $self->{'msg'};
+}
+
 =item $message->get_family()
 
 Gets the family context of this message.
@@ -1365,28 +1399,6 @@ sub get_mime_message {
     return $self->{'msg'};
 }
 
-=item $message->as_entity()
-
-Returns the content of this message, as a L<MIME::Entity> object.
-
-=cut
-
-sub as_entity {
-    my $self = shift;
-    return $self->{'msg'};
-}
-
-=item $message->as_file()
-
-Returns the content of this message, as a file.
-
-=cut
-
-sub as_file {
-    my ($self) = @_;
-
-    return $self->{'filename'};
-}
 
 sub get_message_as_string {
     my $self = shift;
@@ -1419,17 +1431,6 @@ sub _reset_message_from_entity {
         $self->{'decrypted_msg_as_string'} = $entity->as_string();
     }
     return 1;
-}
-
-=item $message->as_string()
-
-Returns the content of this message, as a string.
-
-=cut
-
-sub as_string {
-    my $self = shift;
-    return $self->{'msg_as_string'};
 }
 
 sub get_msg_id {
