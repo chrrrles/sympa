@@ -3097,8 +3097,6 @@ sub reject {
         return 'wrong_auth';
     }
 
-    my $msg          = $message->as_entity();
-
     #FIXME: use get_sender_email() ?
     my @sender_hdr = Mail::Address->parse($message->get_header('From'));
     unless (@sender_hdr) {
@@ -3119,7 +3117,7 @@ sub reject {
                 $main::logger->do_log(Sympa::Logger::NOTICE,
                     "Unable to send template 'reject' to $rejected_sender");
                 Sympa::Report::reject_report_msg('intern_quiet', '', $sender,
-                    {'listname' => $list->name, 'message' => $msg},
+                    {'listname' => $list->name, 'message' => $message},
                     $robot, '', $list);
             }
         }
@@ -3128,7 +3126,7 @@ sub reject {
         unless (
             Sympa::Report::notice_report_msg(
                 'message_rejected', $sender,
-                {'key' => $key, 'message' => $msg}, $robot,
+                {'key' => $key, 'message' => $message}, $robot,
                 $list
             )
             ) {

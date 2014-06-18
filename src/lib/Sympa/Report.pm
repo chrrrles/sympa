@@ -138,18 +138,10 @@ sub reject_report_msg {
 ##############################################################
 
 sub _get_msg_as_hash {
-    my $msg_object = shift;
+    my ($message) = @_;
 
     my ($msg_entity, $msg_hash);
-
-    if (ref($msg_object) =~ /^MIME::Entity/) {    ## MIME-ttols object
-        $msg_entity = $msg_object;
-    } elsif (ref($msg_object) =~ /^Message/) {   ## Sympa's own Message object
-        $msg_entity = $msg_object->as_entity();
-    } else {
-        $main::logger->do_log(Sympa::Logger::ERR,
-            "reject_report_msg: wrong type for msg parameter");
-    }
+    $msg_entity = $message->as_entity();
 
     my $head        = $msg_entity->head;
     my $body_handle = $msg_entity->bodyhandle;
