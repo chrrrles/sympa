@@ -292,8 +292,9 @@ sub distribute_message {
             }
         }
     } else {
-        $message->{'msg_as_string'} =
-            $msg_header->as_string() . "\n" . $msg_body;
+        $message->set_message_as_string(
+            $msg_header->as_string() . "\n" . $msg_body
+        );
         my $result = $self->send_message(
             'message'       => $message,
             'rcpt'          => \@sendtobypacket,
