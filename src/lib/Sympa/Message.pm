@@ -1131,9 +1131,10 @@ sub smime_sign {
 }
 
 sub smime_sign_check {
-    my $message = shift;
+    my ($self) = @_;
+
     $main::logger->do_log(Sympa::Logger::DEBUG2, '(sender=%s, filename=%s)',
-        $message->{'sender_email'}, $message->{'filename'});
+        $self->{'sender_email'}, $self->{'filename'});
 
     my $is_signed = {};
     $is_signed->{'body'}    = undef;
@@ -1153,13 +1154,13 @@ sub smime_sign_check {
     unless (open MSGDUMP, "| $cmd > /dev/null") {
         $main::logger->do_log(Sympa::Logger::ERR,
             'Unable to run command %s to check signature from %s: %s',
-            $cmd, $message->{'sender_email'}, $ERRNO);
+            $cmd, $self->{'sender_email'}, $ERRNO);
         return undef;
     }
 
-    $message->get_mime_message->head->print(\*MSGDUMP);
+    $self->get_mime_message->head->print(\*MSGDUMP);
     print MSGDUMP "\n";
-    print MSGDUMP $message->get_message_as_string;
+    print MSGDUMP $self->get_message_as_string;
     close MSGDUMP;
     my $status = $CHILD_ERROR >> 8;
     if ($status) {
@@ -1177,12 +1178,12 @@ sub smime_sign_check {
         openssl => Sympa::Site->openssl,
     );
 
-    unless ($signer->{'email'}{lc($message->{'sender_email'})}) {
+    unless ($signer->{'email'}{lc($self->{'sender_email'})}) {
         unlink($temporary_file) unless ($main::options{Sympa::Logger::DEBUG});
         $main::logger->do_log(
             Sympa::Logger::ERR,
             "S/MIME signed message, sender(%s) does NOT match signer(%s)",
-            $message->{'sender_email'},
+            $self->{'sender_email'},
             join(',', keys %{$signer->{'email'}})
         );
         return undef;
@@ -1214,17 +1215,17 @@ sub smime_sign_check {
     ## "S/MIME encryption : Yes/No"
     my $certbundle = Sympa::Site->tmpdir . "/certbundle.$PID";
     my $tmpcert    = Sympa::Site->tmpdir . "/cert.$PID";
-    my $nparts     = $message->get_mime_message->parts;
+    my $nparts     = $self->get_mime_message->parts;
     my $extracted  = 0;
     $main::logger->do_log(Sympa::Logger::DEBUG3, 'smime_sign_check: parsing %d parts',
         $nparts);
     if ($nparts == 0) {    # could be opaque signing...
         $extracted += Sympa::Tools::SMIME::extract_certs(
-            $message->get_mime_message, $certbundle, Sympa::Site->openssl
+            $self->get_mime_message, $certbundle, Sympa::Site->openssl
         );
     } else {
         for (my $i = 0; $i < $nparts; $i++) {
-            my $part = $message->get_mime_message->parts($i);
+            my $part = $self->get_mime_message->parts($i);
             $extracted += Sympa::Tools::SMIME::extract_certs(
                 $part, $certbundle, Sympa::Site->openssl
             );
@@ -1281,7 +1282,7 @@ sub smime_sign_check {
                 "Found cert for <%s>",
                 join(',', keys %{$parsed->{'email'}})
             );
-            if ($parsed->{'email'}{lc($message->{'sender_email'})}) {
+            if ($parsed->{'email'}{lc($self->{'sender_email'})}) {
                 if (   $parsed->{'purpose'}{'sign'}
                     && $parsed->{'purpose'}{'enc'}) {
                     $certs{'both'} = $workcert;
@@ -1314,7 +1315,7 @@ sub smime_sign_check {
     ## or as email@addr@sign / email@addr@enc for split certs.
     foreach my $c (keys %certs) {
         my $fn = Sympa::Site->ssl_cert_dir . '/'
-            . Sympa::Tools::escape_chars(lc($message->{'sender_email'}));
+            . Sympa::Tools::escape_chars(lc($self->{'sender_email'}));
         if ($c ne 'both') {
             unlink($fn);    # just in case there's an old cert left...
             $fn .= "\@$c";
@@ -1346,8 +1347,8 @@ sub smime_sign_check {
     $is_signed->{'subject'} = $signer;
 
     if ($is_signed->{'body'}) {
-        $message->{'smime_signed'}  = 1;
-        $message->{'smime_subject'} = $is_signed->{'subject'};
+        $self->{'smime_signed'}  = 1;
+        $self->{'smime_subject'} = $is_signed->{'subject'};
     }
 
     return 1;
