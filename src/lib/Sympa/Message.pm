@@ -267,9 +267,6 @@ sub _load {
     my $msg = $parser->parse_data(\$messageasstring);
     $self->{'msg'} = $msg;
 
-    #    $self->get_recipient;
-    $self->check_dkim_signature;
-
     ## S/MIME
     if (Sympa::Site->openssl) {
         return undef unless $self->decrypt;
@@ -556,18 +553,23 @@ sub _set_spam_status {
                                 $action             ;
 }
 
-## This should be moved to Messagespool.
-sub check_dkim_signature {
-    my $self = shift;
+sub get_dkim_status {
+    my ($self) = @_;
 
-    # verify DKIM signature
-    if (ref($self->robot) eq 'Sympa::Robot'
-        and $self->robot->dkim_feature eq 'on') {
-        $self->{'dkim_pass'} = Sympa::Tools::DKIM::verifier(
-            $self->{'msg_as_string'}, Sympa::Site->tmpdir
-        );
-    }
-    return 1;
+    $self->_set_dkim_status() unless $self->{'dkim_status'};
+
+    return $self->{'dkim_status'};
+}
+
+sub _set_dkim_status {
+    my ($self) = @_;
+
+    return unless $self->{robot};
+    return unless $self->{robot}->dkim_feature eq 'on';
+
+    $self->{'dkim_status'} = Sympa::Tools::DKIM::verifier(
+        $self->{'msg_as_string'}, Sympa::Site->tmpdir
+    );
 }
 
 sub authenticated {

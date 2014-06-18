@@ -724,7 +724,7 @@ sub process_message {
             }
 
             my $auth_level = 'smtp';
-            $auth_level = 'dkim'  if $message->{'dkim_pass'};
+            $auth_level = 'dkim'  if $message->get_dkim_status();
             $auth_level = 'md5'   if $message->authenticated;
             $auth_level = 'smime' if $message->{'smime_signed'};
             if ($list = $dyn_family->create_automatic_list(
@@ -1405,7 +1405,7 @@ sub DoMessage {
 
     # the order of the following 3 lines is important ! S/MIME > DKIM > SMTP
     my $auth_method = 'smtp';
-    $auth_method = 'dkim'  if ($message->{'dkim_pass'});
+    $auth_method = 'dkim'  if $message->get_dkim_status();
     $auth_method = 'md5'   if $message->authenticated;
     $auth_method = 'smime' if ($is_signed->{'body'});
 
@@ -1866,7 +1866,7 @@ sub DoCommand {
             $message, $list, $command, $message->{'priority'});
         my $auth_level;
         $auth_level = 'dkim'
-            if $message->{'dkim_pass'};
+            if $message->get_dkim_status();
 
         # at this point $message->{'dkim_pass'} does not verify that
         # Subject: is part of the signature. It SHOULD !
@@ -1898,7 +1898,7 @@ sub DoCommand {
     $subject_field =~ s/^\s*(?:$re_regexp)?\s*(.*)\s*$/$1/i
         if $subject_field;
 
-    my $auth_level = 'dkim' if ($message->{'dkim_pass'});
+    my $auth_level = 'dkim' if $message->get_dkim_status();
     $auth_level = $is_signed->{'subject'} if $is_signed->{'subject'};
 
     if (defined $subject_field and $subject_field =~ /\S/) {
@@ -1998,7 +1998,7 @@ sub DoCommand {
             $logger->do_log(Sympa::Logger::DEBUG3, 'is_signed->body %s',
                 $is_signed->{'body'});
 
-            $auth_level = 'dkim' if $message->{'dkim_pass'};
+            $auth_level = 'dkim' if $message->get_dkim_status();
             $auth_level = $is_signed->{'body'} if $is_signed->{'body'};
             $status =
                 Sympa::Commands::parse($sender, $robot, $i, $auth_level, $message);
