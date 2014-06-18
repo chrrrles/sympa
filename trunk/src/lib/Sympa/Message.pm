@@ -1086,9 +1086,15 @@ sub encrypt {
     return 1;
 }
 
-# input object msg and listname, output signed message object
-sub smime_sign {
-    my $self = shift;
+=item $message->sign()
+
+Sign this message digitally, using S/MIME format.
+
+=cut
+
+sub sign {
+    my ($self) = @_;
+
     my $list = $self->{'list'};
     $main::logger->do_log(Sympa::Logger::DEBUG2, '(%s, list=%s)', $self, $list);
 
