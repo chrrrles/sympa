@@ -2566,7 +2566,7 @@ sub send_to_editor {
 
     foreach my $recipient (@rcpt) {
         if ($encrypt and $encrypt eq 'smime_crypted') {
-            $message->smime_encrypt($recipient);
+            $message->encrypt($recipient);
             unless ($message->{'smime_crypted'} eq 'smime_crypted') {
                 $main::logger->do_log(Sympa::Logger::ERR,
                     'Could not encrypt message for moderator %s', $recipient);
@@ -2671,7 +2671,7 @@ sub send_auth {
     }
 
     if ($message->{'smime_crypted'}) {
-        $message->smime_encrypt($sender);
+        $message->encrypt($sender);
         unless ($message->{'smime_crypted'} eq 'smime_crypted') {
             $main::logger->do_log(Sympa::Logger::ERR,
                 'Could not encrypt message for moderator %s', $sender);
