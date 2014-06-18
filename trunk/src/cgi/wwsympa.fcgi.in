@@ -8376,7 +8376,7 @@ sub do_modindex {
         next unless $message && $message->has_valid_sender();
         my $id = $message->{'authkey'};
 
-        $param->{'spool'}{$id}{'size'} = int($message->{'size'} / 1024 + 0.5);
+        $param->{'spool'}{$id}{'size'} = int($message->get_size() / 1024 + 0.5);
         $param->{'spool'}{$id}{'subject'} =
             Sympa::Tools::Message::decode_header($message, 'Subject') || 'no_subject';
                                                            
