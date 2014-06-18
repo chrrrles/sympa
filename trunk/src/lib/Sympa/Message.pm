@@ -1033,7 +1033,7 @@ sub smime_encrypt {
                 unless $predefined_headers->{lc $tag};
         }
         $self->{'msg'} = $self->{'crypted_message'};
-        $self->set_message_as_string($self->{'crypted_message'}->as_string());
+        $self->{'msg_as_string'} = $self->{'crypted_message'}->as_string();
         $self->{'smime_crypted'} = 1;
     } else {
         $main::logger->do_log(Sympa::Logger::ERR,
