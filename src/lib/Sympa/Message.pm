@@ -1136,10 +1136,6 @@ sub smime_sign_check {
     $main::logger->do_log(Sympa::Logger::DEBUG2, '(sender=%s, filename=%s)',
         $self->{'sender_email'}, $self->{'filename'});
 
-    my $is_signed = {};
-    $is_signed->{'body'}    = undef;
-    $is_signed->{'subject'} = undef;
-
     ## first step is the msg signing OK ; /tmp/sympa-smime.$PID is created
     ## to store the signer certificat for step two. I known, that's dirty.
 
@@ -1340,16 +1336,10 @@ sub smime_sign_check {
         unlink($certbundle);
     }
 
-    $is_signed->{'body'} = 'smime';
-
     # future version should check if the subject was part of the SMIME
     # signature.
-    $is_signed->{'subject'} = $signer;
-
-    if ($is_signed->{'body'}) {
-        $self->{'smime_signed'}  = 1;
-        $self->{'smime_subject'} = $is_signed->{'subject'};
-    }
+    $self->{'smime_signed'}  = 1;
+    $self->{'smime_subject'} = $signer;
 
     return 1;
 }
