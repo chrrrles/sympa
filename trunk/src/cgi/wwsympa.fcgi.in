@@ -8373,7 +8373,7 @@ sub do_modindex {
         my $message = undef;
         $message = Sympa::Message->new(%$message_in_spool)
             if $message_in_spool;
-        next unless $message;
+        next unless $message && $message->has_valid_sender();
         my $id = $message->{'authkey'};
 
         $param->{'spool'}{$id}{'size'} = int($message->{'size'} / 1024 + 0.5);
@@ -8861,7 +8861,7 @@ sub do_reject {
         my $message = undef;
         $message = Sympa::Message->new(%$message_in_spool)
             if $message_in_spool;
-        unless ($message) {
+        unless ($message && $message->has_valid_sender()) {
             Sympa::Report::reject_report_web('user', 'already_moderated', {},
                 $param->{'action'});
             wwslog(
@@ -9067,7 +9067,7 @@ sub do_distribute {
         my $message = undef;
         $message = Sympa::Message->new(%$message_in_spool)
             if $message_in_spool;
-        unless ($message) {
+        unless ($message && $message->has_valid_sender()) {
             Sympa::Report::reject_report_web('user', 'already_moderated', {},
                 $param->{'action'});
             wwslog(Sympa::Logger::ERR,
@@ -9182,7 +9182,7 @@ sub do_add_frommod {
         my $message = undef;
         $message = Sympa::Message->new(%$message_in_spool)
             if $message_in_spool;
-        unless ($message) {
+        unless ($message && $message->has_valid_sender()) {
             ## if the message has been accepted via WWSympa, it's in spool
             ## 'validated'
             my $validatedspool = Sympa::Spool::SQL->new('validated');
@@ -9195,7 +9195,7 @@ sub do_add_frommod {
             $message = Sympa::Message->new(%$message_in_spool)
                 if $message_in_spool;
         }
-        unless ($message) {
+        unless ($message && $message->has_valid_sender()) {
             Sympa::Report::reject_report_web('user', 'already_moderated', {},
                 $param->{'action'});
             wwslog(Sympa::Logger::ERR,
@@ -10214,7 +10214,7 @@ sub do_send_me {
             'list_object'     => $list
         );
 
-        unless ($message) {
+        unless ($message && $message->has_valid_sender()) {
             $param->{'status'} = 'message_err';
             wwslog(Sympa::Logger::INFO, 'Could not read file %s/arctxt/%s',
                 $arcpath, $msgfile);
@@ -22051,7 +22051,7 @@ sub do_request_topic {
     $message = Sympa::Message->new(%$message_in_spool)
         if $message_in_spool;
 
-    unless ($message) {
+    unless ($message && $message->has_valid_sender()) {
         Sympa::Report::reject_report_web('user', 'unknown_auth_key', {},
             $param->{'action'}, $list);
         wwslog(Sympa::Logger::INFO, 'Unknown authentication key "%s"', $in{'authkey'});
@@ -22116,7 +22116,7 @@ sub do_tag_topic_by_sender {
     }
 
     $message = Sympa::Message->new(%$message_in_spool, 'noxsympato' => 'noxsympato');
-    unless ($message) {
+    unless ($message && $message->has_valid_sender()) {
         Sympa::Report::reject_report_web('intern',
             'cannot_parse_message retrived by key %s for list %s@%s',
             $in{'authkey'}, $listname, $robot_id);
@@ -22124,7 +22124,7 @@ sub do_tag_topic_by_sender {
             $in{'authkey'}, $list);
         return undef;
     }
-    my $sender = $message->{'sender'};
+    my $sender = $message->get_sender_email();
 
     unless ($list->is_there_msg_topic()) {
         Sympa::Report::reject_report_web('user', 'no_topic', {}, $param->{'action'},

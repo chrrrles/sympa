@@ -2695,6 +2695,15 @@ sub distribute {
             $robot, '', $list);
         return 'msg_not_found';
     }
+    unless ($message->has_valid_sender()) {
+        $main::logger->do_log(Sympa::Logger::ERR,
+            'Message for %s validation key %s has no valid sender',
+            $list, $key);
+        Sympa::Report::reject_report_msg('user', 'unfound_message', $sender,
+            {'listname' => $name, 'key' => $key},
+            $robot, '', $list);
+        return 'msg_not_found';
+    }
 
     my $msg = $message->as_entity();
     my $hdr = $msg->head;
@@ -2799,6 +2808,15 @@ sub confirm {
     unless ($message) {
         $main::logger->do_log(Sympa::Logger::ERR,
             'Unable to create message object for key %s from %s',
+            $key, $sender);
+        Sympa::Report::reject_report_msg('user', 'unfound_file_message', $sender,
+            {'key' => $key},
+            $robot, '', '');
+        return 'msg_not_found';
+    }
+    unless ($message->has_valid_sender()) {
+        $main::logger->do_log(Sympa::Logger::ERR,
+            'Message for key %s from %s has no valid sender',
             $key, $sender);
         Sympa::Report::reject_report_msg('user', 'unfound_file_message', $sender,
             {'key' => $key},
@@ -3069,6 +3087,15 @@ sub reject {
             $robot, '', $list);
         return 'wrong_auth';
     }
+    unless ($message->has_valid_sender()) {
+        $main::logger->do_log(Sympa::Logger::INFO,
+            'Message %s %s from %s has no valid sender, auth failed',
+            $which, $key, $sender);
+        Sympa::Report::reject_report_msg('user', 'unfound_message', $sender,
+            {'key' => $key},
+            $robot, '', $list);
+        return 'wrong_auth';
+    }
 
     my $msg          = $message->as_entity();
 
@@ -3183,7 +3210,7 @@ sub modindex {
         my $message = undef;
         $message = Sympa::Message->new(%$message_in_spool)
             if $message_in_spool;
-        next unless $message;
+        next unless $message && $message->has_valid_sender();
         push @spool, $message->as_entity();
         $n++;
     }
