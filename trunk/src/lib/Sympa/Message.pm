@@ -616,7 +616,13 @@ sub _set_dkim_status {
     );
 }
 
-sub authenticated {
+=item $message->is_authenticated()
+
+Returns a true value if this message is authenticated.
+
+=cut
+
+sub is_authenticated {
     return shift->{'authenticated'};
 }
 

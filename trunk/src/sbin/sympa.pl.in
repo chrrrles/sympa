@@ -725,7 +725,7 @@ sub process_message {
 
             my $auth_level = 'smtp';
             $auth_level = 'dkim'  if $message->get_dkim_status();
-            $auth_level = 'md5'   if $message->authenticated;
+            $auth_level = 'md5'   if $message->is_authenticated();
             $auth_level = 'smime' if $message->{'smime_signed'};
             if ($list = $dyn_family->create_automatic_list(
                     (   'listname'   => $listname,
@@ -1403,7 +1403,7 @@ sub DoMessage {
     # the order of the following 3 lines is important ! S/MIME > DKIM > SMTP
     my $auth_method = 'smtp';
     $auth_method = 'dkim'  if $message->get_dkim_status();
-    $auth_method = 'md5'   if $message->authenticated;
+    $auth_method = 'md5'   if $message->is_authenticated();
     $auth_method = 'smime' if ($is_signed->{'body'});
 
     $result = Sympa::Scenario::request_action($list, 'send', $auth_method, $context);
