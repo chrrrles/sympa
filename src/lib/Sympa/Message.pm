@@ -626,21 +626,165 @@ sub is_authenticated {
     return shift->{'authenticated'};
 }
 
+=item $message->decrypt()
+
+Decrypts this message.
+
+=cut
+
 sub decrypt {
-    my $self = shift;
-    ## Decrypt messages
-    my $hdr = $self->get_mime_message->head;
-    if (   ($hdr->get('Content-Type') =~ /application\/(x-)?pkcs7-mime/i)
-        && ($hdr->get('Content-Type') !~ /signed-data/i)) {
-        unless (defined $self->smime_decrypt()) {
-            $main::logger->do_log(Sympa::Logger::ERR,
-                "Message %s could not be decrypted", $self);
-            return undef;
-            ## We should warn the sender and/or the listmaster
-        }
-        $main::logger->do_log(Sympa::Logger::NOTICE, "message %s has been decrypted",
-            $self);
+    my ($self) = @_;
+
+    my $content_type = $self->get_mime_message()->head()->get('Content-Type');
+    return 1 unless
+        $content_type =~ /application\/(x-)?pkcs7-mime/i && 
+        $content_type !~ /signed-data/i;
+
+    my $from = $self->get_header('From');
+    my $list = $self->{'list'};
+
+    $main::logger->do_log(Sympa::Logger::DEBUG2,
+        'Decrypting message from %s, %s', $from, $list
+    );
+
+    ## an empty "list" parameter means mail to sympa@, listmaster@...
+    my $dir;
+    if ($list) {
+        $dir = $list->dir;
+    } else {
+        $dir = Sympa::Site->home . '/sympa';
     }
+    my ($certs, $keys) = Sympa::Tools::SMIME::find_keys($dir, 'decrypt');
+    unless (defined $certs && @$certs) {
+        $main::logger->do_log(Sympa::Logger::ERR,
+            "Unable to decrypt message : missing certificate file");
+        return undef;
+    }
+
+    my $temporary_file = Sympa::Site->tmpdir . "/" . $list->get_list_id() . "." . $PID;
+    my $temporary_pwd  = Sympa::Site->tmpdir . '/pass.' . $PID;
+
+    ## dump the incoming message.
+    if (!open(MSGDUMP, "> $temporary_file")) {
+        $main::logger->do_log(Sympa::Logger::INFO, 'Can\'t store message in file %s',
+            $temporary_file);
+        return undef;
+    }
+    $self->as_entity()->print(\*MSGDUMP);
+    close(MSGDUMP);
+
+    my $pass_option;
+    $self->{'decrypted_msg_as_string'} = '';
+    if (Sympa::Site->key_passwd ne '') {
+
+        # if password is defined in sympa.conf pass the password to OpenSSL
+        $pass_option = "-passin file:$temporary_pwd";
+    }
+
+    ## try all keys/certs until one decrypts.
+    while (my $certfile = shift @$certs) {
+        my $keyfile = shift @$keys;
+        $main::logger->do_log(Sympa::Logger::DEBUG, 'Trying decrypt with %s, %s',
+            $certfile, $keyfile);
+        if (Sympa::Site->key_passwd ne '') {
+            unless (POSIX::mkfifo($temporary_pwd, 0600)) {
+                $main::logger->do_log(Sympa::Logger::ERR,
+                    'Unable to make fifo for %s',
+                    $temporary_pwd);
+                return undef;
+            }
+        }
+        my $cmd = sprintf '%s smime -decrypt -in %s -recip %s -inkey %s %s',
+            Sympa::Site->openssl, $temporary_file, $certfile, $keyfile,
+            $pass_option;
+        $main::logger->do_log(Sympa::Logger::DEBUG3, '%s', $cmd);
+        open(NEWMSG, "$cmd |");
+
+        if (defined Sympa::Site->key_passwd and Sympa::Site->key_passwd ne '') {
+            unless (open(FIFO, "> $temporary_pwd")) {
+                $main::logger->do_log(Sympa::Logger::ERR,
+                    'Unable to open fifo for %s',
+                    $temporary_pwd);
+                return undef;
+            }
+            print FIFO Sympa::Site->key_passwd;
+            close FIFO;
+            unlink($temporary_pwd);
+        }
+
+        while (<NEWMSG>) {
+            $self->{'decrypted_msg_as_string'} .= $_;
+        }
+        close NEWMSG;
+        my $status = $CHILD_ERROR >> 8;
+        if ($status) {
+            $main::logger->do_log(
+                Sympa::Logger::ERR, 'Unable to decrypt S/MIME message: (%d) %s',
+                $status, ($openssl_errors{$status} || 'unknown reason')
+            );
+            next;
+        }
+
+        unlink($temporary_file) unless ($main::options{Sympa::Logger::DEBUG});
+
+        my $parser = MIME::Parser->new();
+        $parser->output_to_core(1);
+        unless ($self->{'decrypted_msg'} =
+            $parser->parse_data($self->{'decrypted_msg_as_string'})) {
+            $main::logger->do_log(Sympa::Logger::ERR, 'Unable to parse message');
+            last;
+        }
+    }
+
+    unless (defined $self->{'decrypted_msg'}) {
+        $main::logger->do_log(Sympa::Logger::ERR, 'Message could not be decrypted');
+        return undef;
+    }
+
+    ## Now remove headers from $self->{'decrypted_msg_as_string'}
+    my @msg_tab = split(/\n/, $self->{'decrypted_msg_as_string'});
+    my $line;
+    do { $line = shift(@msg_tab) } while ($line !~ /^\s*$/);
+    $self->{'decrypted_msg_as_string'} = join("\n", @msg_tab);
+
+    ## foreach header defined in the incoming message but undefined in the
+    ## decrypted message, add this header in the decrypted form.
+    my $predefined_headers;
+    foreach my $header ($self->{'decrypted_msg'}->head->tags) {
+        if ($self->{'decrypted_msg'}->head->get($header)) {
+            $predefined_headers->{lc $header} = 1;
+        }
+    }
+    foreach my $header (split /\n(?![ \t])/,
+        $self->as_entity()->head->as_string()) {
+        next unless $header =~ /^([^\s:]+)\s*:\s*(.*)$/s;
+        my ($tag, $val) = ($1, $2);
+        unless ($predefined_headers->{lc $tag}) {
+            $self->{'decrypted_msg'}->head->add($tag, $val);
+        }
+    }
+    ## Some headers from the initial message should not be restored
+    ## Content-Disposition and Content-Transfer-Encoding if the result is
+    ## multipart
+    $self->{'decrypted_msg'}->head->delete('Content-Disposition')
+        if ($self->{'decrypted_msg'}->head->get('Content-Disposition'));
+    if ($self->{'decrypted_msg'}->head->get('Content-Type') =~ /multipart/) {
+        $self->{'decrypted_msg'}->head->delete('Content-Transfer-Encoding')
+            if (
+            $self->{'decrypted_msg'}->head->get('Content-Transfer-Encoding'));
+    }
+
+    ## Now add headers to message as string
+    $self->{'decrypted_msg_as_string'} =
+          $self->{'decrypted_msg'}->head->as_string() . "\n"
+        . $self->{'decrypted_msg_as_string'};
+
+    $self->{'smime_crypted'} = 'smime_crypted';
+
+    $main::logger->do_log(Sympa::Logger::NOTICE,
+        "message %s has been decrypted", $self
+    );
+
     return 1;
 }
 
@@ -832,151 +976,6 @@ sub get_body_from_msg_as_string {
     return (join("\n\n", @bodysection));    # convert it back as string
 }
 
-# input : msg object for a list, return a new message object decrypted
-sub smime_decrypt {
-    my $self = shift;
-    my $from = $self->get_header('From');
-    my $list = $self->{'list'};
-
-    $main::logger->do_log(Sympa::Logger::DEBUG2, 'Decrypting message from %s, %s',
-        $from, $list);
-
-    ## an empty "list" parameter means mail to sympa@, listmaster@...
-    my $dir;
-    if ($list) {
-        $dir = $list->dir;
-    } else {
-        $dir = Sympa::Site->home . '/sympa';
-    }
-    my ($certs, $keys) = Sympa::Tools::SMIME::find_keys($dir, 'decrypt');
-    unless (defined $certs && @$certs) {
-        $main::logger->do_log(Sympa::Logger::ERR,
-            "Unable to decrypt message : missing certificate file");
-        return undef;
-    }
-
-    my $temporary_file = Sympa::Site->tmpdir . "/" . $list->get_list_id() . "." . $PID;
-    my $temporary_pwd  = Sympa::Site->tmpdir . '/pass.' . $PID;
-
-    ## dump the incoming message.
-    if (!open(MSGDUMP, "> $temporary_file")) {
-        $main::logger->do_log(Sympa::Logger::INFO, 'Can\'t store message in file %s',
-            $temporary_file);
-        return undef;
-    }
-    $self->as_entity()->print(\*MSGDUMP);
-    close(MSGDUMP);
-
-    my $pass_option;
-    $self->{'decrypted_msg_as_string'} = '';
-    if (Sympa::Site->key_passwd ne '') {
-
-        # if password is defined in sympa.conf pass the password to OpenSSL
-        $pass_option = "-passin file:$temporary_pwd";
-    }
-
-    ## try all keys/certs until one decrypts.
-    while (my $certfile = shift @$certs) {
-        my $keyfile = shift @$keys;
-        $main::logger->do_log(Sympa::Logger::DEBUG, 'Trying decrypt with %s, %s',
-            $certfile, $keyfile);
-        if (Sympa::Site->key_passwd ne '') {
-            unless (POSIX::mkfifo($temporary_pwd, 0600)) {
-                $main::logger->do_log(Sympa::Logger::ERR,
-                    'Unable to make fifo for %s',
-                    $temporary_pwd);
-                return undef;
-            }
-        }
-        my $cmd = sprintf '%s smime -decrypt -in %s -recip %s -inkey %s %s',
-            Sympa::Site->openssl, $temporary_file, $certfile, $keyfile,
-            $pass_option;
-        $main::logger->do_log(Sympa::Logger::DEBUG3, '%s', $cmd);
-        open(NEWMSG, "$cmd |");
-
-        if (defined Sympa::Site->key_passwd and Sympa::Site->key_passwd ne '') {
-            unless (open(FIFO, "> $temporary_pwd")) {
-                $main::logger->do_log(Sympa::Logger::ERR,
-                    'Unable to open fifo for %s',
-                    $temporary_pwd);
-                return undef;
-            }
-            print FIFO Sympa::Site->key_passwd;
-            close FIFO;
-            unlink($temporary_pwd);
-        }
-
-        while (<NEWMSG>) {
-            $self->{'decrypted_msg_as_string'} .= $_;
-        }
-        close NEWMSG;
-        my $status = $CHILD_ERROR >> 8;
-        if ($status) {
-            $main::logger->do_log(
-                Sympa::Logger::ERR, 'Unable to decrypt S/MIME message: (%d) %s',
-                $status, ($openssl_errors{$status} || 'unknown reason')
-            );
-            next;
-        }
-
-        unlink($temporary_file) unless ($main::options{Sympa::Logger::DEBUG});
-
-        my $parser = MIME::Parser->new();
-        $parser->output_to_core(1);
-        unless ($self->{'decrypted_msg'} =
-            $parser->parse_data($self->{'decrypted_msg_as_string'})) {
-            $main::logger->do_log(Sympa::Logger::ERR, 'Unable to parse message');
-            last;
-        }
-    }
-
-    unless (defined $self->{'decrypted_msg'}) {
-        $main::logger->do_log(Sympa::Logger::ERR, 'Message could not be decrypted');
-        return undef;
-    }
-
-    ## Now remove headers from $self->{'decrypted_msg_as_string'}
-    my @msg_tab = split(/\n/, $self->{'decrypted_msg_as_string'});
-    my $line;
-    do { $line = shift(@msg_tab) } while ($line !~ /^\s*$/);
-    $self->{'decrypted_msg_as_string'} = join("\n", @msg_tab);
-
-    ## foreach header defined in the incoming message but undefined in the
-    ## decrypted message, add this header in the decrypted form.
-    my $predefined_headers;
-    foreach my $header ($self->{'decrypted_msg'}->head->tags) {
-        if ($self->{'decrypted_msg'}->head->get($header)) {
-            $predefined_headers->{lc $header} = 1;
-        }
-    }
-    foreach my $header (split /\n(?![ \t])/,
-        $self->as_entity()->head->as_string()) {
-        next unless $header =~ /^([^\s:]+)\s*:\s*(.*)$/s;
-        my ($tag, $val) = ($1, $2);
-        unless ($predefined_headers->{lc $tag}) {
-            $self->{'decrypted_msg'}->head->add($tag, $val);
-        }
-    }
-    ## Some headers from the initial message should not be restored
-    ## Content-Disposition and Content-Transfer-Encoding if the result is
-    ## multipart
-    $self->{'decrypted_msg'}->head->delete('Content-Disposition')
-        if ($self->{'decrypted_msg'}->head->get('Content-Disposition'));
-    if ($self->{'decrypted_msg'}->head->get('Content-Type') =~ /multipart/) {
-        $self->{'decrypted_msg'}->head->delete('Content-Transfer-Encoding')
-            if (
-            $self->{'decrypted_msg'}->head->get('Content-Transfer-Encoding'));
-    }
-
-    ## Now add headers to message as string
-    $self->{'decrypted_msg_as_string'} =
-          $self->{'decrypted_msg'}->head->as_string() . "\n"
-        . $self->{'decrypted_msg_as_string'};
-
-    $self->{'smime_crypted'} = 'smime_crypted';
-
-    return 1;
-}
 
 # input : msg object, return a new message object encrypted
 sub smime_encrypt {
