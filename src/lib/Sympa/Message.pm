@@ -628,7 +628,7 @@ sub is_authenticated {
 
 =item $message->decrypt()
 
-Decrypts this message.
+Decrypts this message, if in S/MIME format.
 
 =cut
 
@@ -976,12 +976,15 @@ sub get_body_from_msg_as_string {
     return (join("\n\n", @bodysection));    # convert it back as string
 }
 
+=item $message->encrypt($email)
 
-# input : msg object, return a new message object encrypted
-sub smime_encrypt {
+Encrypts this message for the given recipient, using S/MIME format.
+
+=cut
+
+sub encrypt {
+    my ($self, $email) = @_;
     $main::logger->do_log(Sympa::Logger::DEBUG2, '(%s, %s, %s)', @_);
-    my $self  = shift;
-    my $email = shift;
 
     my $usercert;
 

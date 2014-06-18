@@ -271,7 +271,7 @@ sub distribute_message {
                     );
                     return undef;
                 }
-                unless ($message->smime_encrypt($email)) {
+                unless ($message->encrypt($email)) {
                     $main::logger->do_log(Sympa::Logger::ERR,
                         "Failed to encrypt message");
                     return undef;
