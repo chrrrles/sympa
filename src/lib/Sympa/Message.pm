@@ -220,6 +220,18 @@ sub get_robot {
                            undef;
 }
 
+=item $message->get_size()
+
+Gets the size of this message.
+
+=cut
+
+sub get_size {
+    my ($self) = @_;
+
+    return length $self->{'msg_as_string'};
+}
+
 sub _load {
     my $self            = shift;
     my $messageasstring = shift;
@@ -260,7 +272,6 @@ sub _load {
     }
 
     $self->{'msg_as_string'} = $messageasstring;
-    $self->{'size'}          = length $messageasstring;
 
     my $parser = MIME::Parser->new();
     $parser->output_to_core(1);

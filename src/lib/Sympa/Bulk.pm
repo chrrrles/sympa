@@ -298,7 +298,7 @@ sub store {
                     'robot'     => $robot->name,
                     'list'      => $listname,
                     'operation' => 'send_mail',
-                    'parameter' => $message->{'size'},
+                    'parameter' => $message->get_size(),
                     'mail'      => $message_sender,
                     'daemon'    => 'sympa.pl'
                 );

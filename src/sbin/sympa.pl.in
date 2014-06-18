@@ -1262,7 +1262,7 @@ sub DoMessage {
         $message,
         $message->get_list(),
         $message->get_sender_email(),
-        $message->{'size'},
+        $message->get_size(),
         $message->{'smime_crypted'}
     );
 
@@ -1334,13 +1334,13 @@ sub DoMessage {
     ## Check if the message is too large
     my $max_size = $list->get_max_size();
 
-    if ($max_size and $message->{'size'} > $max_size) {
+    if ($max_size and $message->get_size() > $max_size) {
         $logger->do_log(Sympa::Logger::INFO,
             'Rejecting message %s for list %s from %s; too large (%d > %d)',
-            $message, $listname, $sender, $message->{'size'}, $max_size);
+            $message, $listname, $sender, $message->get_size(), $max_size);
         $list->send_dsn(
             $message,
-            {   'msg_size' => int($message->{'size'} / 1024),
+            {   'msg_size' => int($message->get_size() / 1024),
                 'max_size' => int($max_size / 1024)
             },
             '5.2.3'
@@ -1518,7 +1518,7 @@ sub DoMessage {
             time - $start_time,
             $numsmtp,
             $list->total,
-            $message->{'size'}
+            $message->get_size()
         );
 
         return 1;

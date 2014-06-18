@@ -1464,7 +1464,7 @@ sub distribute_msg {
         '(%s, msg=%s, size=%s, filename=%s, smime_crypted=%s, apply_dkim_signature=%s)',
         $self,
         $message,
-        $message->{'size'},
+        $message->get_size(),
         $message->{'filename'},
         $message->{'smime_crypted'},
         $apply_dkim_signature
@@ -1473,7 +1473,7 @@ sub distribute_msg {
     my $hdr = $message->as_entity()->head;
 
     ## Update the stats, and returns the new X-Sequence, if any.
-    my $sequence = $self->update_stats($message->{'size'});
+    my $sequence = $self->update_stats($message->get_size());
 
     ## Loading info msg_topic file if exists, add X-Sympa-Topic
     my $info_msg_topic;

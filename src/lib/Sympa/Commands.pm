@@ -2753,7 +2753,7 @@ sub distribute {
         time - $start_time,
         $numsmtp,
         $list->total(),
-        $message->{'size'}
+        $message->get_size()
     );
 
     unless ($quiet) {
