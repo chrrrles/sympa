@@ -1058,8 +1058,7 @@ sub DoForward {
         croak 'bug in logic.  Ask developer';
     }
 
-    my $msg        = $message->as_entity();
-    my $hdr        = $msg->head;
+    my $hdr        = $message->as_entity()->head;
     my $messageid  = $message->get_msg_id;
     my $msg_string = $message->as_string();        # raw message
     my $sender     = $message->get_sender_email;
@@ -1159,7 +1158,7 @@ sub DoForward {
                 {   'msg_id'   => $messageid,
                     'entry'    => 'forward',
                     'function' => $function,
-                    'message'  => $msg
+                    'message'  => $message
                 },
                 $robot,
                 $msg_string,
@@ -1185,8 +1184,6 @@ sub DoForward {
     my $listname = '';
     $listname = $list->name if $list;
 
-    # my $msg_copy = $msg->dup;
-    $message->{'msg'} = $msg;
     unless (
         $mailer->forward_message(
             message => $message,
@@ -1206,7 +1203,7 @@ sub DoForward {
             {   'msg_id'   => $messageid,
                 'entry'    => 'forward',
                 'function' => $function,
-                'message'  => $msg
+                'message'  => $message
             },
             $robot,
             $msg_string,
