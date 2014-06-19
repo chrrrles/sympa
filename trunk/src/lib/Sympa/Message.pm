@@ -316,8 +316,6 @@ sub _load {
         return undef unless $self->decrypt;
         $self->check_smime_signature;
     }
-    ## TOPICS
-    $self->_set_topic;
 
     return $self;
 }
@@ -861,26 +859,12 @@ Parameters:
 
 =back 
 
-Returns a true value for success.
-
 =cut 
 
 sub add_topic {
     my ($self, $topic) = @_;
 
-    $self->{'topic'} = $topic;
-    my $hdr = $self->as_entity()->head;
-    $hdr->add('X-Sympa-Topic', $topic);
-
-    return 1;
-}
-
-sub _set_topic {
-    my $self = shift;
-    my $topics;
-    if ($topics = $self->get_mime_message->head->get('X-Sympa-Topic')) {
-        $self->{'topic'} = $topics;
-    }
+    $self->{entity}->head()->add('X-Sympa-Topic', $topic);
 }
 
 =item $message->get_topic()
@@ -892,7 +876,7 @@ Gets the topic of this message.
 sub get_topic {
     my ($self) = @_;
 
-    return $self->{'topic'};
+    return $self->{entity}->head()->get('X-Sympa-Topic');
 }
 
 sub clean_html {
