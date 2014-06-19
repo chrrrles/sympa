@@ -798,7 +798,7 @@ sub check_smime_signature {
             && $hdr->get('Content-Type') =~ /signed-data/i)
         ) {
         ## Messages that should not be altered (no footer)
-        $self->{'protected'} = 1;
+        $self->{'signed'} = 1;
 
         $self->smime_sign_check();
         if ($self->{'smime_signed'}) {
@@ -1439,9 +1439,16 @@ sub get_msg_id {
     return $self->{'id'};
 }
 
+=item $message->is_signed()
+
+Returns a true value if this message is digitally signed.
+
+=cut
+
 sub is_signed {
-    my $self = shift;
-    return $self->{'protected'};
+    my ($self) = @_;
+
+    return $self->{'signed'};
 }
 
 sub is_crypted {
