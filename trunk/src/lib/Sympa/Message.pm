@@ -1453,7 +1453,7 @@ sub is_signed {
 
 =item $message->is_encrypted()
 
-Returns a true value if this message is digitally signed.
+Returns a true value if this message is encrypted.
 
 =cut
 
