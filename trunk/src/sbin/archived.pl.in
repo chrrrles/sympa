@@ -781,8 +781,8 @@ sub rebuild {
 sub mail2arc {
     my ($message) = @_;
 
-    my $list  = $message->{'list_object'};
-    my $robot = $message->{'robot_object'};
+    my $list  = $message->get_list();
+    my $robot = $message->get_robot();
 
     my $dt = DateTime->from_epoch(epoch => $message->{'date'});
     my $yyyy = $dt->year();
