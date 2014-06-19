@@ -528,7 +528,7 @@ while (!$end) {
                     $entity->head->replace('Disposition-Notification-To',
                         $return_path)
                         if ($bulk->{'tracking'} eq 'mdn');
-                    if (   ($message->{'protected'})
+                    if (   ($message->is_signed())
                         || ($message->{'smime_crypted'})) {
 
                         # concat headers from entity with original body
@@ -544,7 +544,7 @@ while (!$end) {
                 } else {    # VERP
                     $return_path = $list->get_bounce_address($rcpt);
                 }
-                if (($bulk->{'merge'}) && !($message->{'protected'})) {
+                if (($bulk->{'merge'}) && !($message->is_signed())) {
                     if ($message->personalize($list, $rcpt)) {
                         $messageasstring = $message->as_string();
                     } else {
