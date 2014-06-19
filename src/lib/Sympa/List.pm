@@ -2510,7 +2510,7 @@ sub send_to_editor {
     }
     @rcpt = $self->get_editors_email();
 
-    my $hdr = $message->get_mime_message->head;
+    my $hdr = $message->as_entity()->head;
 
     ## Did we find a recipient?
     if ($#rcpt < 0) {
@@ -2570,7 +2570,7 @@ sub send_to_editor {
             }
             $param->{'msg'} = $message->as_entity();
         } else {
-            $param->{'msg'} = $message->get_mime_message;    #FIXME
+            $param->{'msg'} = $message->as_entity();    #FIXME
         }
 
         # create a one time ticket that will be used as an MD5 URL credential
@@ -2675,7 +2675,7 @@ sub send_auth {
         }
         $param->{'msg'} = $message->as_entity();
     } else {
-        $param->{'msg'} = $message->get_mime_message;
+        $param->{'msg'} = $message->as_entity();
     }
 
     Sympa::Template::allow_absolute_path();
@@ -5312,12 +5312,12 @@ sub archive_msg {
         } else {
             $main::logger->do_log(Sympa::Logger::DEBUG3,
                 'Will store UNencrypted message');
-            $msgtostore = $message->get_message_as_string;
+            $msgtostore = $message->as_string();
         }
 
         my $x_no_archive =
-            $message->get_mime_message->head->get('X-no-archive');
-        my $restrict = $message->get_mime_message->head->get('Restrict');
+            $message->as_entity()->head->get('X-no-archive');
+        my $restrict = $message->as_entity()->head->get('Restrict');
         if (Sympa::Site->ignore_x_no_archive_header_feature ne 'on'
             and (  $x_no_archive and $x_no_archive =~ /yes/i
                 or $restrict and $restrict =~ /no\-external\-archive/i)

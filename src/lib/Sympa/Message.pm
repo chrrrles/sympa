@@ -633,7 +633,7 @@ Decrypts this message, if in S/MIME format.
 sub decrypt {
     my ($self) = @_;
 
-    my $content_type = $self->get_mime_message()->head()->get('Content-Type');
+    my $content_type = $self->{'entity'}->head()->get('Content-Type');
     return 1 unless
         $content_type =~ /application\/(x-)?pkcs7-mime/i && 
         $content_type !~ /signed-data/i;
@@ -797,7 +797,7 @@ sub decrypt {
 
 sub check_smime_signature {
     my $self = shift;
-    my $hdr  = $self->get_mime_message->head;
+    my $hdr  = $self->{'entity'}->head;
     $main::logger->do_log(Sympa::Logger::DEBUG,
         'Checking S/MIME signature for message %s, from user %s',
         $self->get_msg_id, $self->get_sender_email);
@@ -1012,14 +1012,14 @@ sub encrypt {
     ## for this, we need to manually extract only the MIME headers...
     ##	$self->head->print(\*MSGDUMP);
     ##	printf MSGDUMP "\n%s", $self->body;
-    my $mime_hdr = $self->get_mime_message->head->dup();
+    my $mime_hdr = $self->{'entity'}->head->dup();
     foreach my $t ($mime_hdr->tags()) {
         $mime_hdr->delete($t) unless ($t =~ /^(mime|content)-/i);
     }
     $mime_hdr->print(\*MSGDUMP);
 
     printf MSGDUMP "\n";
-    foreach (@{$self->get_mime_message->body}) {
+    foreach (@{$self->{'entity'}->body}) {
         printf MSGDUMP '%s', $_;
     }
     ##$self->get_mime_message->bodyhandle->print(\*MSGDUMP);
@@ -1068,7 +1068,7 @@ sub encrypt {
             if ($encrypted_entity->head->get($header));
     }
     foreach my $header (split /\n(?![ \t])/,
-        $self->get_mime_message->head->as_string()) {
+        $self->{'entity'}->head->as_string()) {
         next unless $header =~ /^([^\s:]+)\s*:\s*(.*)$/s;
         my ($tag, $val) = ($1, $2);
         $encrypted_entity->head->add($tag, $val)
@@ -1114,7 +1114,7 @@ sub sign {
     ## Keep a set of header fields ONLY
     ## OpenSSL only needs content type & encoding to generate a
     ## multipart/signed msg
-    my $dup_msg = $self->get_mime_message->dup;
+    my $dup_msg = $self->{'entity'}->dup;
     foreach my $field ($dup_msg->head->tags) {
         next if ($field =~ /^(content-type|content-transfer-encoding)$/i);
         $dup_msg->head->delete($field);
@@ -1179,7 +1179,7 @@ sub sign {
             if ($signed_msg->head->get($header));
     }
     foreach my $header (split /\n(?![ \t])/,
-        $self->get_mime_message->head->as_string()) {
+        $self->{'entity'}->head->as_string()) {
         next unless $header =~ /^([^\s:]+)\s*:\s*(.*)$/s;
         my ($tag, $val) = ($1, $2);
         $signed_msg->head->add($tag, $val)
@@ -1220,9 +1220,9 @@ sub smime_sign_check {
         return undef;
     }
 
-    $self->get_mime_message->head->print(\*MSGDUMP);
+    $self->{'entity'}->head->print(\*MSGDUMP);
     print MSGDUMP "\n";
-    print MSGDUMP $self->get_message_as_string;
+    print MSGDUMP $self->{'string'};
     close MSGDUMP;
     my $status = $CHILD_ERROR >> 8;
     if ($status) {
@@ -1277,17 +1277,17 @@ sub smime_sign_check {
     ## "S/MIME encryption : Yes/No"
     my $certbundle = Sympa::Site->tmpdir . "/certbundle.$PID";
     my $tmpcert    = Sympa::Site->tmpdir . "/cert.$PID";
-    my $nparts     = $self->get_mime_message->parts;
+    my $nparts     = $self->{'entity'}->parts;
     my $extracted  = 0;
     $main::logger->do_log(Sympa::Logger::DEBUG3, 'smime_sign_check: parsing %d parts',
         $nparts);
     if ($nparts == 0) {    # could be opaque signing...
         $extracted += Sympa::Tools::SMIME::extract_certs(
-            $self->get_mime_message, $certbundle, Sympa::Site->openssl
+            $self->{'entity'}, $certbundle, Sympa::Site->openssl
         );
     } else {
         for (my $i = 0; $i < $nparts; $i++) {
-            my $part = $self->get_mime_message->parts($i);
+            my $part = $self->{'entity'}->parts($i);
             $extracted += Sympa::Tools::SMIME::extract_certs(
                 $part, $certbundle, Sympa::Site->openssl
             );
@@ -1410,23 +1410,6 @@ sub smime_sign_check {
     return 1;
 }
 
-sub get_mime_message {
-    my $self = shift;
-    if ($self->{'encrypted'}) {
-        return $self->{'decrypted_msg'};
-    }
-    return $self->{'entity'};
-}
-
-
-sub get_message_as_string {
-    my $self = shift;
-    if ($self->{'encrypted'}) {
-        return $self->{'decrypted_msg_as_string'};
-    }
-    return $self->{'string'};
-}
-
 sub set_message_as_string {
     my $self = shift;
 
@@ -1455,7 +1438,7 @@ sub _reset_message_from_entity {
 sub get_msg_id {
     my $self = shift;
     unless ($self->{'id'}) {
-        $self->{'id'} = $self->get_mime_message->head->get('Message-Id');
+        $self->{'id'} = $self->{'entity'}->head->get('Message-Id');
         chomp $self->{'id'} if $self->{'id'};
     }
     return $self->{'id'};
@@ -1514,7 +1497,7 @@ sub check_message_structure {
     $main::logger->do_log(Sympa::Logger::DEBUG2, '(%s, %s)', @_);
     my $self = shift;
     my $msg  = shift;
-    $msg ||= $self->get_mime_message->dup;
+    $msg ||= $self->{'entity'}->dup;
     $self->{'structure_already_checked'} = 1;
     if ($msg->effective_type() =~ /^multipart\/alternative/) {
         foreach my $part ($msg->parts) {
@@ -1569,7 +1552,7 @@ sub add_parts {
     $main::logger->do_log(Sympa::Logger::DEBUG3, '(%s, list=%s, type=%s)',
         $self, $self->{'list'}, $self->{'list'}->footer_type);
 
-    my $msg      = $self->get_mime_message;
+    my $msg      = $self->{'entity'};
     my $type     = $self->{'list'}->footer_type;
     my $listdir  = $self->{'list'}->dir;
     my $eff_type = $msg->effective_type || 'text/plain';
@@ -2142,7 +2125,7 @@ sub prepare_reception_notice {
     my $self = shift;
     $main::logger->do_log(Sympa::Logger::DEBUG3,
         'preparing message for notice reception mode');
-    my $notice_msg = $self->get_mime_message->dup;
+    my $notice_msg = $self->{'entity'}->dup;
     $notice_msg->bodyhandle(undef);
     $notice_msg->parts([]);
     if ((   $notice_msg->head->get('Content-Type') =~
@@ -2166,7 +2149,7 @@ sub prepare_reception_txt {
     $main::logger->do_log(Sympa::Logger::DEBUG3,
         'preparing message for txt reception mode');
     return 0 if ($self->is_signed);
-    if (Sympa::Tools::Message::as_singlepart($self->get_mime_message, 'text/plain')) {
+    if (Sympa::Tools::Message::as_singlepart($self->{'entity'}, 'text/plain')) {
         $main::logger->do_log(Sympa::Logger::NOTICE,
             'Multipart message changed to text singlepart');
     }
@@ -2180,7 +2163,7 @@ sub prepare_reception_html {
     $main::logger->do_log(Sympa::Logger::DEBUG3,
         'preparing message for html reception mode');
     return 0 if ($self->is_signed);
-    if (Sympa::Tools::Message::as_singlepart($self->get_mime_message, 'text/html')) {
+    if (Sympa::Tools::Message::as_singlepart($self->{'entity'}, 'text/html')) {
         $main::logger->do_log(Sympa::Logger::NOTICE,
             'Multipart message changed to html singlepart');
     }
@@ -2211,7 +2194,7 @@ sub prepare_reception_urlize {
 
     my $dir1 =
         Sympa::Tools::clean_msg_id(
-        $self->get_mime_message->head->get('Message-ID'));
+        $self->{'entity'}->head->get('Message-ID'));
 
     ## Clean up Message-ID
     $dir1 = Sympa::Tools::escape_chars($dir1);
@@ -2226,7 +2209,7 @@ sub prepare_reception_urlize {
     }
     my @parts      = ();
     my $i          = 0;
-    foreach my $part ($self->get_mime_message->parts()) {
+    foreach my $part ($self->{'entity'}->parts()) {
         my $entity =
             _urlize_part($part, $self->{'list'}, $dir1, $i,
             $self->{'list'}->robot->wwsympa_url);
@@ -2239,7 +2222,7 @@ sub prepare_reception_urlize {
     }
 
     ## Replace message parts
-    $self->get_mime_message->parts(\@parts);
+    $self->{'entity'}->parts(\@parts);
 
     ## Add a footer
     $self->_reset_message_from_entity($self->add_parts);
