@@ -1423,7 +1423,7 @@ sub _reset_message_from_entity {
     }
     $self->{'entity'} = $entity;
     $self->{'string'} = $entity->as_string();
-    if ($self->is_crypted) {
+    if ($self->is_encrypted) {
         $self->{'decrypted_msg'}           = $entity;
         $self->{'decrypted_msg_as_string'} = $entity->as_string();
     }
@@ -1451,7 +1451,7 @@ sub is_signed {
     return $self->{'signed'};
 }
 
-sub is_crypted {
+sub is_encrypted {
     my $self = shift;
     unless (defined $self->{'smime_crypted'}) {
         $self->decrypt;

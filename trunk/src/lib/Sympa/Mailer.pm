@@ -258,7 +258,7 @@ sub distribute_message {
 
     my $delivery_date = $list->get_next_delivery_date() || time();
 
-    if ($message->is_crypted) {
+    if ($message->is_encrypted()) {
 
         # encrypt message for each recipient and send the message
         # this MUST be moved to the bulk mailer. This way, merge will be
