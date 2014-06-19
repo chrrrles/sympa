@@ -672,7 +672,7 @@ sub decrypt {
     close(MSGDUMP);
 
     my $pass_option;
-    $self->{'decrypted_msg_as_string'} = '';
+    my $decrypted_string = '';
     if (Sympa::Site->key_passwd ne '') {
 
         # if password is defined in sympa.conf pass the password to OpenSSL
@@ -680,6 +680,7 @@ sub decrypt {
     }
 
     ## try all keys/certs until one decrypts.
+    my $decrypted_entity;
     while (my $certfile = shift @$certs) {
         my $keyfile = shift @$keys;
         $main::logger->do_log(Sympa::Logger::DEBUG, 'Trying decrypt with %s, %s',
@@ -711,7 +712,7 @@ sub decrypt {
         }
 
         while (<NEWMSG>) {
-            $self->{'decrypted_msg_as_string'} .= $_;
+            $decrypted_string .= $_;
         }
         close NEWMSG;
         my $status = $CHILD_ERROR >> 8;
@@ -727,29 +728,29 @@ sub decrypt {
 
         my $parser = MIME::Parser->new();
         $parser->output_to_core(1);
-        unless ($self->{'decrypted_msg'} =
-            $parser->parse_data($self->{'decrypted_msg_as_string'})) {
+        $decrypted_entity = $parser->parse_data($decrypted_string);
+        unless ($decrypted_entity) {
             $main::logger->do_log(Sympa::Logger::ERR, 'Unable to parse message');
             last;
         }
     }
 
-    unless (defined $self->{'decrypted_msg'}) {
+    unless ($decrypted_entity) {
         $main::logger->do_log(Sympa::Logger::ERR, 'Message could not be decrypted');
         return undef;
     }
 
-    ## Now remove headers from $self->{'decrypted_msg_as_string'}
-    my @msg_tab = split(/\n/, $self->{'decrypted_msg_as_string'});
+    ## Now remove headers from decrypted string
+    my @msg_tab = split(/\n/, $decrypted_string);
     my $line;
     do { $line = shift(@msg_tab) } while ($line !~ /^\s*$/);
-    $self->{'decrypted_msg_as_string'} = join("\n", @msg_tab);
+    $decrypted_string = join("\n", @msg_tab);
 
     ## foreach header defined in the incoming message but undefined in the
     ## decrypted message, add this header in the decrypted form.
     my $predefined_headers;
-    foreach my $header ($self->{'decrypted_msg'}->head->tags) {
-        if ($self->{'decrypted_msg'}->head->get($header)) {
+    foreach my $header ($decrypted_entity->head->tags) {
+        if ($decrypted_entity->head->get($header)) {
             $predefined_headers->{lc $header} = 1;
         }
     }
@@ -758,26 +759,34 @@ sub decrypt {
         next unless $header =~ /^([^\s:]+)\s*:\s*(.*)$/s;
         my ($tag, $val) = ($1, $2);
         unless ($predefined_headers->{lc $tag}) {
-            $self->{'decrypted_msg'}->head->add($tag, $val);
+            $decrypted_entity->head->add($tag, $val);
         }
     }
     ## Some headers from the initial message should not be restored
     ## Content-Disposition and Content-Transfer-Encoding if the result is
     ## multipart
-    $self->{'decrypted_msg'}->head->delete('Content-Disposition')
-        if ($self->{'decrypted_msg'}->head->get('Content-Disposition'));
-    if ($self->{'decrypted_msg'}->head->get('Content-Type') =~ /multipart/) {
-        $self->{'decrypted_msg'}->head->delete('Content-Transfer-Encoding')
+    $decrypted_entity->head->delete('Content-Disposition')
+        if ($decrypted_entity->head->get('Content-Disposition'));
+    if ($decrypted_entity->head->get('Content-Type') =~ /multipart/) {
+        $decrypted_entity->head->delete('Content-Transfer-Encoding')
             if (
-            $self->{'decrypted_msg'}->head->get('Content-Transfer-Encoding'));
+            $decrypted_entity->head->get('Content-Transfer-Encoding'));
     }
 
     ## Now add headers to message as string
-    $self->{'decrypted_msg_as_string'} =
-          $self->{'decrypted_msg'}->head->as_string() . "\n"
-        . $self->{'decrypted_msg_as_string'};
+    $decrypted_string =
+          $decrypted_entity->head->as_string() . "\n"
+        . $decrypted_string;
 
-    $self->{'encrypted'} = 'smime_crypted';
+    # keep original entity (is this really needed ?)
+    $self->{'old_entity'} = $self->{'entity'};
+
+    # replace current entity
+    $self->{'entity'} = $decrypted_entity;
+    $self->{'string'} = $decrypted_string;
+
+    # switch encrypted flag off
+    undef $self->{'encrypted'};
 
     $main::logger->do_log(Sympa::Logger::NOTICE,
         "message %s has been decrypted", $self
@@ -1028,18 +1037,20 @@ sub encrypt {
     open(NEWMSG, $temporary_file);
     my $parser = MIME::Parser->new();
     $parser->output_to_core(1);
-    unless ($self->{'crypted_message'} = $parser->read(\*NEWMSG)) {
+    my $encrypted_entity =  $parser->read(\*NEWMSG);
+    unless ($encrypted_entity) {
         $main::logger->do_log(Sympa::Logger::NOTICE, 'Unable to parse message');
         return undef;
     }
     close NEWMSG;
 
     ## Get body
+    my $encrypted_body;
     open(NEWMSG, $temporary_file);
     my $in_header = 1;
     while (<NEWMSG>) {
         if (!$in_header) {
-            $self->{'encrypted_body'} .= $_;
+            $encrypted_body .= $_;
         } else {
             $in_header = 0 if (/^$/);
         }
@@ -1052,20 +1063,31 @@ sub encrypt {
     ## the
     ## crypted message, add this header in the crypted form.
     my $predefined_headers;
-    foreach my $header ($self->{'crypted_message'}->head->tags) {
+    foreach my $header ($encrypted_entity->head->tags) {
         $predefined_headers->{lc $header} = 1
-            if ($self->{'crypted_message'}->head->get($header));
+            if ($encrypted_entity->head->get($header));
     }
     foreach my $header (split /\n(?![ \t])/,
         $self->get_mime_message->head->as_string()) {
         next unless $header =~ /^([^\s:]+)\s*:\s*(.*)$/s;
         my ($tag, $val) = ($1, $2);
-        $self->{'crypted_message'}->head->add($tag, $val)
+        $encrypted_entity->head->add($tag, $val)
             unless $predefined_headers->{lc $tag};
     }
-    $self->{'entity'} = $self->{'crypted_message'};
-    $self->{'string'} = $self->{'crypted_message'}->as_string();
+    
+    # keep original entity (is this really needed ?)
+    $self->{'old_entity'} = $self->{'entity'};
+
+    # replace current entity
+    $self->{'entity'} = $encrypted_entity;
+    $self->{'string'} = $encrypted_entity->as_string();
+
+    # switch encrypted flag on
     $self->{'encrypted'} = 1;
+
+    $main::logger->do_log(Sympa::Logger::NOTICE,
+        "message %s has been encrypted", $self
+    );
 
     return 1;
 }
