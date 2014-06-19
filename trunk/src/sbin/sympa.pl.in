@@ -615,7 +615,7 @@ sub process_message {
     my $type     = $message->{'listtype'};
     my $status;
 
-    my $msg    = $message->get_mime_message;
+    my $msg    = $message->as_entity();
     my $hdr    = $msg->head;
     my $msg_id = $message->get_msg_id;
 

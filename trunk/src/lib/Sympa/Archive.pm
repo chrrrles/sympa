@@ -382,7 +382,7 @@ sub convert_single_message {
     my $msg_as_string;
     my $messagekey;
     if (ref $message eq 'Sympa::Message') {
-        $msg_as_string = $message->get_message_as_string;
+        $msg_as_string = $message->as_string();
         $messagekey    = $message->{'messagekey'};
     } elsif (ref $message eq 'HASH') {
         $msg_as_string = $message->{'messageasstring'};

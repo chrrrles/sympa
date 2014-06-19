@@ -163,15 +163,15 @@ sub distribute_message {
     ## Extract body from original file to preserve signature
     my $msg_body;
     my $msg_header;
-    $msg_header = $message->get_mime_message->head;
+    $msg_header = $message->as_entity()->head;
     ##if (!($message->is_signed())) {
-    ##$msg_body = $message->get_mime_message->body_as_string;
+    ##$msg_body = $message->as_entity()->body_as_string;
     ##}elsif ($message->{'smime_crypted'}) {
     ##$msg_body = ${$message->{'msg_as_string'}};
     ##}else{
     ## Get body from original message body
     # convert it as a tab with headers as first element
-    my @bodysection = split /\n\n/, $message->get_message_as_string;
+    my @bodysection = split /\n\n/, $message->as_string();
 
     # remove headers
     shift @bodysection;
@@ -354,10 +354,13 @@ sub forward_message {
     }
     ## Add an Auto-Submitted header field according to
     ## http://www.tools.ietf.org/html/draft-palme-autosub-01
-    $message->get_mime_message->head->add('Auto-Submitted', 'auto-forwarded');
+    $message->as_entity()->head->add('Auto-Submitted', 'auto-forwarded');
     $message->{'rcpt'} = $rcpt;                    #FIXME: no effect
                                                    #FIXME:
-    $message->set_message_as_string($message->get_mime_message->as_string());
+
+    # FIXME: this is just a forced synchronisation between internal object
+    # message internals
+    $message->set_message_as_string($message->as_entity()->as_string());
 
     my $result = $self->send_message(
         'message'  => $message,
@@ -547,7 +550,7 @@ sub send_message {
         if ($message->is_signed) {
             $string_to_send = $message->as_string();
         } else {
-            $string_to_send = $message->get_mime_message->as_string();  #FIXME
+            $string_to_send = $message->as_entity()->as_string();  #FIXME
         }
 
         my $handle = $self->get_sendmail_handle(
