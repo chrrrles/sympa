@@ -311,12 +311,6 @@ sub _load {
     $parser->output_to_core(1);
     $self->{'entity'} = $parser->parse_data(\$messageasstring);
 
-    ## S/MIME
-    if (Sympa::Site->openssl) {
-        return undef unless $self->decrypt;
-        $self->check_smime_signature;
-    }
-
     return $self;
 }
 
