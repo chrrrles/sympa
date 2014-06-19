@@ -1063,8 +1063,7 @@ sub DoForward {
     my $msg_string = $message->as_string();        # raw message
     my $sender     = $message->get_sender_email;
 
-    my $spam_status = $message->get_spam_status();
-    if ($spam_status and $spam_status eq 'spam') {
+    if ($message->is_spam()) {
         $logger->do_log(Sympa::Logger::NOTICE,
             "Message %s for %s function %s ignored, because tagged as spam",
             $message, ($list || $robot), $function,);
@@ -1630,8 +1629,7 @@ sub DoMessage {
             $key, $list, $sender, $message->as_file());
 
         # do not report to the sender if the message was tagged as a spam
-        my $spam_status = $message->get_spam_status();
-        unless ($is_quiet or ($spam_status and $spam_status eq 'spam')) {
+        unless ($is_quiet or $message->is_spam()) {
             unless (
                 Sympa::Report::notice_report_msg(
                     'moderating_message', $sender,
@@ -1699,8 +1697,7 @@ sub DoMessage {
             $message, $list, $sender);
 
         # do not report to the sender if the message was tagged as a spam
-        my $spam_status = $message->get_spam_status();
-        unless ($is_quiet or ($spam_status and $spam_status eq 'spam')) {
+        unless ($is_quiet or $message->is_spam()) {
             unless (
                 Sympa::Report::notice_report_msg(
                     'moderating_message', $sender,
@@ -1723,8 +1720,7 @@ sub DoMessage {
             $message, $list, $sender, $result->{'tt2'});
 
         # do not report to the sender if the message was tagued as a spam
-        my $spam_status = $message->get_spam_status();
-        unless ($is_quiet or ($spam_status and $spam_status eq 'spam')) {
+        unless ($is_quiet or $message->is_spam()) {
             if (defined $result->{'tt2'}) {
                 unless (
                     $list->send_file(
@@ -1823,8 +1819,7 @@ sub DoCommand {
 
     my $sender = $message->get_sender_email;
 
-    my $spam_status = $message->get_spam_status();
-    if ($spam_status and $spam_status eq 'spam') {
+    if ($message->is_spam()) {
         $logger->do_log(Sympa::Logger::NOTICE,
             'Message %s for %s function %s ignored, because tagged as spam',
             $message, ($list || $robot), $command);

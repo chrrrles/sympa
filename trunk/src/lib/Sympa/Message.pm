@@ -567,18 +567,18 @@ sub _set_decoded_subject {
     }
 }
 
-=item $message->get_spam_status()
+=item $message->is_spam()
 
-Gets the spam status of this message.
+Returns a true value if this message is considered spam.
 
 =cut
 
-sub get_spam_status {
+sub is_spam {
     my ($self) = @_;
 
     $self->_set_spam_status() unless $self->{'spam_status'};
 
-    return $self->{'spam_status'};
+    return $self->{'spam_status'} && $self->{'spam_status'} eq 'spam';
 }
 
 sub _set_spam_status {
