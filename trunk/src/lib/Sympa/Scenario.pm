@@ -361,9 +361,8 @@ sub request_action {
     $context->{'msg'}          = $context->{'message'}->as_entity()
         if defined $context->{'message'};
     $context->{'msg_encrypted'} = 'smime'
-        if (defined $context->{'message'}
-        && defined $context->{'message'}->{'smime_crypted'}
-        && $context->{'message'}->{'smime_crypted'} eq 'smime_crypted');
+        if defined $context->{'message'}
+        && $context->{'message'}->is_crypted();
     ## Check that authorization method is one of those known by Sympa
     unless ($auth_method =~ /^(smtp|md5|pgp|smime|dkim)/) {
         $main::logger->do_log(Sympa::Logger::INFO,

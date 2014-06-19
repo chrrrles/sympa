@@ -528,8 +528,7 @@ while (!$end) {
                     $entity->head->replace('Disposition-Notification-To',
                         $return_path)
                         if ($bulk->{'tracking'} eq 'mdn');
-                    if (   ($message->is_signed())
-                        || ($message->{'smime_crypted'})) {
+                    if ($message->is_signed() || $message->is_crypted()) {
 
                         # concat headers from entity with original body
                         my $msg_body = Sympa::Message::get_body_from_msg_as_string(
