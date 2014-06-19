@@ -777,7 +777,7 @@ sub decrypt {
           $self->{'decrypted_msg'}->head->as_string() . "\n"
         . $self->{'decrypted_msg_as_string'};
 
-    $self->{'smime_crypted'} = 'smime_crypted';
+    $self->{'encrypted'} = 'smime_crypted';
 
     $main::logger->do_log(Sympa::Logger::NOTICE,
         "message %s has been decrypted", $self
@@ -1059,7 +1059,7 @@ sub encrypt {
         }
         $self->{'entity'} = $self->{'crypted_message'};
         $self->{'string'} = $self->{'crypted_message'}->as_string();
-        $self->{'smime_crypted'} = 1;
+        $self->{'encrypted'} = 1;
     } else {
         $main::logger->do_log(Sympa::Logger::ERR,
             'unable to encrypt message to %s (missing certificate %s)',
@@ -1390,7 +1390,7 @@ sub smime_sign_check {
 
 sub get_mime_message {
     my $self = shift;
-    if ($self->{'smime_crypted'}) {
+    if ($self->{'encrypted'}) {
         return $self->{'decrypted_msg'};
     }
     return $self->{'entity'};
@@ -1399,7 +1399,7 @@ sub get_mime_message {
 
 sub get_message_as_string {
     my $self = shift;
-    if ($self->{'smime_crypted'}) {
+    if ($self->{'encrypted'}) {
         return $self->{'decrypted_msg_as_string'};
     }
     return $self->{'string'};
@@ -1453,10 +1453,10 @@ sub is_signed {
 
 sub is_encrypted {
     my $self = shift;
-    unless (defined $self->{'smime_crypted'}) {
+    unless (defined $self->{'encrypted'}) {
         $self->decrypt;
     }
-    return $self->{'smime_crypted'};
+    return $self->{'encrypted'};
 }
 
 sub has_html_part {
@@ -2128,7 +2128,7 @@ sub prepare_reception_notice {
         $notice_msg->head->replace('Content-Transfer-Encoding', '7BIT');
     }
     $self->_reset_message_from_entity($notice_msg);
-    undef $self->{'smime_crypted'};
+    undef $self->{'encrypted'};
     return 1;
 }
 
