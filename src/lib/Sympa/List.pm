@@ -2554,7 +2554,7 @@ sub send_to_editor {
         'boundary'       => $boundary,
         'msg_from'       => $message->get_sender_email(),
         'subject'        => $subject,
-        'spam_status'    => $message->get_spam_status(),
+        'spam_status'    => 'spam' if $message->is_spam(),
         'mod_spool_size' => $self->get_mod_spool_size,
         'method'         => $method
     };
