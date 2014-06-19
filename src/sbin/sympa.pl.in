@@ -1259,7 +1259,7 @@ sub DoMessage {
         $message->get_list(),
         $message->get_sender_email(),
         $message->get_size(),
-        $message->{'smime_crypted'}
+        $message->is_crypted()
     );
 
     my $list  = $message->get_list();
