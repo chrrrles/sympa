@@ -164,7 +164,7 @@ sub distribute_message {
     my $msg_body;
     my $msg_header;
     $msg_header = $message->get_mime_message->head;
-    ##if (!($message->{'protected'})) {
+    ##if (!($message->is_signed())) {
     ##$msg_body = $message->get_mime_message->body_as_string;
     ##}elsif ($message->{'smime_crypted'}) {
     ##$msg_body = ${$message->{'msg_as_string'}};
