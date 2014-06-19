@@ -979,93 +979,93 @@ sub encrypt {
         $usercert = "$base";
     }
 
-    if (-r $usercert) {
-        my $temporary_file = Sympa::Site->tmpdir . "/" . $email . "." . $PID;
-
-        ## encrypt the incoming message parse it.
-        my $cmd = sprintf '%s smime -encrypt -out %s -des3 %s',
-            Sympa::Site->openssl, $temporary_file, $usercert;
-        $main::logger->do_log(Sympa::Logger::DEBUG3, '%s', $cmd);
-        if (!open(MSGDUMP, "| $cmd")) {
-            $main::logger->do_log(Sympa::Logger::INFO,
-                'Can\'t encrypt message for recipient %s', $email);
-        }
-        ## don't; cf RFC2633 3.1. netscape 4.7 at least can't parse encrypted
-        ## stuff
-        ## that contains a whole header again... since MIME::Tools has got no
-        ## function
-        ## for this, we need to manually extract only the MIME headers...
-        ##	$self->head->print(\*MSGDUMP);
-        ##	printf MSGDUMP "\n%s", $self->body;
-        my $mime_hdr = $self->get_mime_message->head->dup();
-        foreach my $t ($mime_hdr->tags()) {
-            $mime_hdr->delete($t) unless ($t =~ /^(mime|content)-/i);
-        }
-        $mime_hdr->print(\*MSGDUMP);
-
-        printf MSGDUMP "\n";
-        foreach (@{$self->get_mime_message->body}) {
-            printf MSGDUMP '%s', $_;
-        }
-        ##$self->get_mime_message->bodyhandle->print(\*MSGDUMP);
-        close MSGDUMP;
-        my $status = $CHILD_ERROR >> 8;
-        if ($status) {
-            $main::logger->do_log(
-                Sympa::Logger::ERR, 'Unable to S/MIME encrypt message: (%d) %s',
-                $status, ($openssl_errors{$status} || 'unknown reason')
-            );
-            return undef;
-        }
-
-        ## Get as MIME object
-        open(NEWMSG, $temporary_file);
-        my $parser = MIME::Parser->new();
-        $parser->output_to_core(1);
-        unless ($self->{'crypted_message'} = $parser->read(\*NEWMSG)) {
-            $main::logger->do_log(Sympa::Logger::NOTICE, 'Unable to parse message');
-            return undef;
-        }
-        close NEWMSG;
-
-        ## Get body
-        open(NEWMSG, $temporary_file);
-        my $in_header = 1;
-        while (<NEWMSG>) {
-            if (!$in_header) {
-                $self->{'encrypted_body'} .= $_;
-            } else {
-                $in_header = 0 if (/^$/);
-            }
-        }
-        close NEWMSG;
-
-        unlink($temporary_file) unless ($main::options{Sympa::Logger::DEBUG});
-
-        ## foreach header defined in  the incomming message but undefined in
-        ## the
-        ## crypted message, add this header in the crypted form.
-        my $predefined_headers;
-        foreach my $header ($self->{'crypted_message'}->head->tags) {
-            $predefined_headers->{lc $header} = 1
-                if ($self->{'crypted_message'}->head->get($header));
-        }
-        foreach my $header (split /\n(?![ \t])/,
-            $self->get_mime_message->head->as_string()) {
-            next unless $header =~ /^([^\s:]+)\s*:\s*(.*)$/s;
-            my ($tag, $val) = ($1, $2);
-            $self->{'crypted_message'}->head->add($tag, $val)
-                unless $predefined_headers->{lc $tag};
-        }
-        $self->{'entity'} = $self->{'crypted_message'};
-        $self->{'string'} = $self->{'crypted_message'}->as_string();
-        $self->{'encrypted'} = 1;
-    } else {
+    unless (-r $usercert) {
         $main::logger->do_log(Sympa::Logger::ERR,
             'unable to encrypt message to %s (missing certificate %s)',
             $email, $usercert);
         return undef;
     }
+
+    my $temporary_file = Sympa::Site->tmpdir . "/" . $email . "." . $PID;
+
+    ## encrypt the incoming message parse it.
+    my $cmd = sprintf '%s smime -encrypt -out %s -des3 %s',
+        Sympa::Site->openssl, $temporary_file, $usercert;
+    $main::logger->do_log(Sympa::Logger::DEBUG3, '%s', $cmd);
+    if (!open(MSGDUMP, "| $cmd")) {
+        $main::logger->do_log(Sympa::Logger::INFO,
+            'Can\'t encrypt message for recipient %s', $email);
+    }
+    ## don't; cf RFC2633 3.1. netscape 4.7 at least can't parse encrypted
+    ## stuff
+    ## that contains a whole header again... since MIME::Tools has got no
+    ## function
+    ## for this, we need to manually extract only the MIME headers...
+    ##	$self->head->print(\*MSGDUMP);
+    ##	printf MSGDUMP "\n%s", $self->body;
+    my $mime_hdr = $self->get_mime_message->head->dup();
+    foreach my $t ($mime_hdr->tags()) {
+        $mime_hdr->delete($t) unless ($t =~ /^(mime|content)-/i);
+    }
+    $mime_hdr->print(\*MSGDUMP);
+
+    printf MSGDUMP "\n";
+    foreach (@{$self->get_mime_message->body}) {
+        printf MSGDUMP '%s', $_;
+    }
+    ##$self->get_mime_message->bodyhandle->print(\*MSGDUMP);
+    close MSGDUMP;
+    my $status = $CHILD_ERROR >> 8;
+    if ($status) {
+        $main::logger->do_log(
+            Sympa::Logger::ERR, 'Unable to S/MIME encrypt message: (%d) %s',
+            $status, ($openssl_errors{$status} || 'unknown reason')
+        );
+        return undef;
+    }
+
+    ## Get as MIME object
+    open(NEWMSG, $temporary_file);
+    my $parser = MIME::Parser->new();
+    $parser->output_to_core(1);
+    unless ($self->{'crypted_message'} = $parser->read(\*NEWMSG)) {
+        $main::logger->do_log(Sympa::Logger::NOTICE, 'Unable to parse message');
+        return undef;
+    }
+    close NEWMSG;
+
+    ## Get body
+    open(NEWMSG, $temporary_file);
+    my $in_header = 1;
+    while (<NEWMSG>) {
+        if (!$in_header) {
+            $self->{'encrypted_body'} .= $_;
+        } else {
+            $in_header = 0 if (/^$/);
+        }
+    }
+    close NEWMSG;
+
+    unlink($temporary_file) unless ($main::options{Sympa::Logger::DEBUG});
+
+    ## foreach header defined in  the incomming message but undefined in
+    ## the
+    ## crypted message, add this header in the crypted form.
+    my $predefined_headers;
+    foreach my $header ($self->{'crypted_message'}->head->tags) {
+        $predefined_headers->{lc $header} = 1
+            if ($self->{'crypted_message'}->head->get($header));
+    }
+    foreach my $header (split /\n(?![ \t])/,
+        $self->get_mime_message->head->as_string()) {
+        next unless $header =~ /^([^\s:]+)\s*:\s*(.*)$/s;
+        my ($tag, $val) = ($1, $2);
+        $self->{'crypted_message'}->head->add($tag, $val)
+            unless $predefined_headers->{lc $tag};
+    }
+    $self->{'entity'} = $self->{'crypted_message'};
+    $self->{'string'} = $self->{'crypted_message'}->as_string();
+    $self->{'encrypted'} = 1;
 
     return 1;
 }
