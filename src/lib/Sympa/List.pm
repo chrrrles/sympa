@@ -1466,7 +1466,7 @@ sub distribute_msg {
         $message,
         $message->get_size(),
         $message->as_file(),
-        $message->is_crypted(),
+        $message->is_encrypted(),
         $apply_dkim_signature
     );
 
@@ -1700,7 +1700,7 @@ sub distribute_msg {
 
     ## store msg in digest if list accept digest mode (encrypted message can't
     ## be included in digest)
-    if ($self->is_digest() and not $message->is_crypted()) {
+    if ($self->is_digest() and not $message->is_encrypted()) {
         $self->store_digest($message);
     }
 
@@ -2050,7 +2050,7 @@ sub send_msg {
         Sympa::Logger::DEBUG2,
         'Sympa::List::send_msg(filename = %s, smime_crypted = %s,apply_dkim_signature = %s )',
         $message->as_file(),
-        $message->is_crypted(),
+        $message->is_encrypted(),
         $apply_dkim_signature
     );
     my $original_message_id = $message->get_msg_id;
@@ -2248,7 +2248,7 @@ sub get_list_members_per_mode {
                     $user->{'email'});
             }
         } elsif (
-            $message->is_crypted()
+            $message->is_encrypted()
             && (!-r Sympa::Site->ssl_cert_dir . '/'
                 . Sympa::Tools::escape_chars($user->{'email'})
                 && !-r Sympa::Site->ssl_cert_dir . '/'
@@ -2456,7 +2456,7 @@ sub find_packet_to_tag_as_last {
 #################################################################
 sub send_to_editor {
     my ($self, $method, $message) = @_;
-    my $encrypt = 'smime_crypted' if $message->is_crypted();
+    my $encrypt = 'smime_crypted' if $message->is_encrypted();
     $main::logger->do_log(Sympa::Logger::DEBUG2, '(%s, %s, %s, encrypt=%s)',
         $self, $method, $message, $encrypt);
 
@@ -2564,7 +2564,7 @@ sub send_to_editor {
     foreach my $recipient (@rcpt) {
         if ($encrypt and $encrypt eq 'smime_crypted') {
             $message->encrypt($recipient);
-            unless ($message->is_crypted()) {
+            unless ($message->is_encrypted()) {
                 $main::logger->do_log(Sympa::Logger::ERR,
                     'Could not encrypt message for moderator %s', $recipient);
             }
@@ -2667,9 +2667,9 @@ sub send_auth {
         $param->{'request_topic'} = 1;
     }
 
-    if ($message->is_crypted()) {
+    if ($message->is_encrypted()) {
         $message->encrypt($sender);
-        unless ($message->is_crypted()) {
+        unless ($message->is_encrypted()) {
             $main::logger->do_log(Sympa::Logger::ERR,
                 'Could not encrypt message for moderator %s', $sender);
         }
@@ -5304,7 +5304,7 @@ sub archive_msg {
 
     if ($self->is_archived()) {
         my $msgtostore;    # Stringified message without metadata
-        if (    $message->is_crypted()
+        if (    $message->is_encrypted()
             and ($self->archive_crypted_msg eq 'original')) {
             $main::logger->do_log(Sympa::Logger::DEBUG3,
                 'Will store encrypted message');
