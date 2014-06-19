@@ -169,8 +169,8 @@ sub new {
         $messageasstring = $params{'messageasstring'};
     }
 
-    return undef
-        unless $self->_load($messageasstring);
+    return undef unless
+        $messageasstring && $self->_load($messageasstring);
 
     return $self;
 }
