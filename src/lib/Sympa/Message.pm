@@ -1451,8 +1451,15 @@ sub is_signed {
     return $self->{'signed'};
 }
 
+=item $message->is_encrypted()
+
+Returns a true value if this message is digitally signed.
+
+=cut
+
 sub is_encrypted {
-    my $self = shift;
+    my ($self) = @_;
+
     unless (defined $self->{'encrypted'}) {
         $self->decrypt;
     }
