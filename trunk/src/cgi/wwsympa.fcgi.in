@@ -8394,12 +8394,15 @@ sub do_modindex {
                     localtime $date_epoch);
             }
         }
-        $param->{'spool'}{$id}{'from'}  = $message->get_sender_email;
-        $param->{'spool'}{$id}{'gecos'} = $message->get_sender_gecos
-            if defined $message->get_sender_gecos;
+        my $headers = Sympa::Site->sender_headers();
+        my $sender_email = $message->get_sender_email(headers => $headers);
+        my $sender_gecos = $message->get_sender_gecos(headers => $headers);
+        $param->{'spool'}{$id}{'from'}  = $sender_email;
+        $param->{'spool'}{$id}{'gecos'} = $sender_gecos if $sender_gecos;
+            if defined $message->get_sender_gecos(headers => $headers);
         $param->{'spool'}{$id}{'spam_status'} = 'spam' if $message->is_spam();
         $param->{'spool'}{$id}{'is_subscriber'} =
-            $list->is_list_member($message->get_sender_email);
+            $list->is_list_member($sender_email);
 
         foreach my $field ('subject', 'date', 'from') {
             $param->{'spool'}{$id}{$field} =~ s/&/&amp;/g;
@@ -8881,7 +8884,9 @@ sub do_reject {
         #  extract sender address is needed to report reject to sender and in
         #  case the sender is to be added to the blacklist
         if ($in{'quiet'} ne '1' or $in{'blacklist'}) {
-            my $rejected_sender = $message->get_sender_email;
+            my $rejected_sender = $message->get_sender_email(
+                headers => Sympa::Site->sender_headers()
+            );
             if ($rejected_sender) {
                 unless ($in{'message_template'} eq 'reject_quiet') {
                     my %context;
@@ -9209,9 +9214,10 @@ sub do_add_frommod {
             );
             next;
         }
-        my $email = $message->get_sender_email;
+        my $headers = Sympa::Site->sender_headers();
+        my $email = $message->get_sender_email(headers => $headers);
         next unless $email =~ /\S/;
-        my $fullname = $message->get_sender_gecos;
+        my $fullname = $message->get_sender_gecos(headers => $headers);
         $in{'dump'} .= "$email $fullname\n";
     }
 
@@ -22124,7 +22130,8 @@ sub do_tag_topic_by_sender {
             $in{'authkey'}, $list);
         return undef;
     }
-    my $sender = $message->get_sender_email();
+    my $sender =
+        $message->get_sender_email(headers => Sympa::Site->sender_headers());
 
     unless ($list->is_there_msg_topic()) {
         Sympa::Report::reject_report_web('user', 'no_topic', {}, $param->{'action'},

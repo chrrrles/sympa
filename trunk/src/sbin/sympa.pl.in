@@ -611,7 +611,8 @@ sub process_message {
     my $robot_id = $message->{'robot_id'} || Sympa::Site->domain;
     my $list     = $message->get_list();
     my $robot    = $message->get_robot();
-    my $sender   = $message->get_sender_email;
+    my $sender   =
+        $message->get_sender_email(headers => Sympa::Site->sender_headers());
     my $type     = $message->{'listtype'};
     my $status;
 
@@ -1061,7 +1062,8 @@ sub DoForward {
     my $hdr        = $message->as_entity()->head;
     my $messageid  = $message->get_msg_id;
     my $msg_string = $message->as_string();        # raw message
-    my $sender     = $message->get_sender_email;
+    my $sender   =
+        $message->get_sender_email(headers => Sympa::Site->sender_headers());
 
     if ($message->is_spam()) {
         $logger->do_log(Sympa::Logger::NOTICE,
@@ -1257,7 +1259,7 @@ sub DoMessage {
         '(%s, list=%s, sender=%s, size=%s, smime_crypted=%s)',
         $message,
         $message->get_list(),
-        $message->get_sender_email(),
+        $message->get_sender_email(headers => Sympa::Site->sender_headers()),
         $message->get_size(),
         $message->is_encrypted()
     );
@@ -1271,7 +1273,8 @@ sub DoMessage {
     my $msg        = $message->as_entity();
     my $msg_string = $message->as_string();    # raw message
 
-    my $sender = $message->get_sender_email;
+    my $sender =
+        $message->get_sender_email(headers => Sympa::Site->sender_headers());
 
     my ($listname, $host) = ($list->name, $list->host);
     my $start_time = time;
@@ -1817,7 +1820,8 @@ sub DoCommand {
     my $messageid = $message->get_msg_id;
     my ($success, $status);
 
-    my $sender = $message->get_sender_email;
+    my $sender =
+        $message->get_sender_email(headers => Sympa::Site->sender_headers());
 
     if ($message->is_spam()) {
         $logger->do_log(Sympa::Logger::NOTICE,
