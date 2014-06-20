@@ -1479,7 +1479,13 @@ Returns a true value if this message is digitally signed.
 sub is_signed {
     my ($self) = @_;
 
-    return $self->{'signed'};
+    my $content_type = $self->{'entity'}->head()->get('Content-Type');
+    return
+        $content_type =~ /multipart\/signed/ ||
+            (
+                $content_type =~ /application\/(x-)?pkcs7-mime/i &&
+                $content_type =~ /signed-data/i
+            );
 }
 
 =item $message->is_encrypted()
@@ -1491,10 +1497,10 @@ Returns a true value if this message is encrypted.
 sub is_encrypted {
     my ($self) = @_;
 
-    unless (defined $self->{'encrypted'}) {
-        $self->decrypt;
-    }
-    return $self->{'encrypted'};
+    my $content_type = $self->{'entity'}->head()->get('Content-Type');
+    return
+        $content_type =~ /application\/(x-)?pkcs7-mime/i && 
+        $content_type !~ /signed-data/i;
 }
 
 sub has_html_part {
