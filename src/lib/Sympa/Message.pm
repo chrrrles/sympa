@@ -435,32 +435,64 @@ sub _set_envelope_sender {
     }
 }
 
-## Get sender of the message according to header fields specified by
-## 'sender_headers' parameter.
-## FIXME: S/MIME signer may not be same as sender given by this method.
-sub get_sender_email {
-    my ($self) = @_;
+=item $message->get_sender_email(%params)
 
-    $self->_set_sender_email() unless $self->{'sender_email'};
+Gets the email part of the sender address (ie, "user@domain" for "User
+<user@domain>"), according to the given headers.
+
+Parameters:
+
+=over
+
+=item * I<headers>: the list of allowed headers, as a comma-separated string
+(default: Resent-From,From,From_,Resent-Sender,Sender)
+
+=back
+
+=cut
+
+sub get_sender_email {
+    my ($self, %params) = @_;
+
+    $self->_set_sender_email(%params) unless $self->{'sender_email'};
 
     return $self->{'sender_email'};
 }
 
-sub get_sender_gecos {
-    my ($self) = @_;
+=item $message->get_sender_gecos(%params)
 
-    $self->_set_sender_email() unless $self->{'sender_gecos'};
+Gets the label part of the sender address (ie, "User" for "User
+<user@domain>"), according to the given headers.
+
+Parameters:
+
+=over
+
+=item * I<headers>: the list of allowed headers, as a comma-separated string
+(default: Resent-From,From,From_,Resent-Sender,Sender)
+
+=back
+
+=cut
+
+sub get_sender_gecos {
+    my ($self, %params) = @_;
+
+    $self->_set_sender_email(%params) unless $self->{'sender_gecos'};
 
     return $self->{'sender_gecos'};
 }
 
 sub _set_sender_email {
-    my ($self) = @_;
+    my ($self, %params) = @_;
+
+    my $headers = $params{headers} ||
+                  'Resent-From,From,From_,Resent-Sender,Sender';
 
     my $hdr    = $self->as_entity()->head;
     my $sender = undef;
     my $gecos  = undef;
-    foreach my $field (split /[\s,]+/, Sympa::Site->sender_headers) {
+    foreach my $field (split /[\s,]+/, $headers) {
         if (lc $field eq 'from_') {
             ## Try to get envelope sender
             my $envelope_sender = $self->get_envelope_sender();

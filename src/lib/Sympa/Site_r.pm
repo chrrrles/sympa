@@ -605,11 +605,11 @@ sub send_dsn {
         return undef;
     }
 
-    my $sender;
-    if (defined($sender = $message->get_envelope_sender())) {
-        ## Won't reply to message with null envelope sender.
-        return 0 if $sender eq '<>';
-    } elsif (!defined($sender = $message->get_sender_email())) {
+    my $sender = 
+        $message->get_envelope_sender() ||
+        $message->get_sender_email(headers => Sympa::Site->sender_headers());
+
+    if (! defined $sender or $sender eq '<>') {
         $main::logger->do_log(Sympa::Logger::ERR, 'no sender found');
         return undef;
     }

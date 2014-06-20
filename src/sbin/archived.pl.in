@@ -414,7 +414,10 @@ while (!$end) {
                         $arcpath, $file);
                     next;
                 }
-                my $messagesender = lc($new_message->get_sender_email || '');
+                my $headers = Sympa::Site->sender_headers();
+                my $messagesender =
+                    lc($new_message->get_sender_email(headers => $headers)) ||
+                    '';
 
                 unless ($sender eq $messagesender) {
                     $logger->do_log(Sympa::Logger::ERR,

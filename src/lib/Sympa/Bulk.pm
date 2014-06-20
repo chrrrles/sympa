@@ -241,7 +241,8 @@ sub store {
     $priority_packet = $robot->sympa_packet_priority unless $priority_packet;
 
     my $messageasstring = $message->to_string;
-    my $message_sender  = $message->get_sender_email();
+    my $message_sender  =
+        $message->get_sender_email(headers => Sympa::Site->sender_headers());
 
     # first store the message in spool_table
     # because as soon as packet are created bulk.pl may distribute the

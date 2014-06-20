@@ -2546,10 +2546,11 @@ sub send_to_editor {
     }
 
     my $subject = Sympa::Tools::Message::decode_header($hdr, 'Subject');
+    my $headers = Sympa::Site->sender_headers();
     my $param = {
         'modkey'         => $modkey,
         'boundary'       => $boundary,
-        'msg_from'       => $message->get_sender_email(),
+        'msg_from'       => $message->get_sender_email(headers => $headers),
         'subject'        => $subject,
         'spam_status'    => $message->is_spam() ? 'spam' : undef,
         'mod_spool_size' => $self->get_mod_spool_size,
@@ -2618,7 +2619,10 @@ sub send_to_editor {
 ####################################################
 sub send_auth {
     my ($self, $message) = @_;
-    my ($sender, $file) = ($message->get_sender_email(), $message->as_file());
+    my $sender = $message->get_sender_email(
+        headers => Sympa::Site->sender_headers()
+    );
+    my $file   = $message->as_file();
     $main::logger->do_log(Sympa::Logger::DEBUG3, 'Sympa::List::send_auth(%s, %s)',
         $sender, $file);
 
