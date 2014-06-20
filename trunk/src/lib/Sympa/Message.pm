@@ -836,6 +836,8 @@ sub check_signature {
     $main::logger->do_log(Sympa::Logger::DEBUG2, '(sender=%s, filename=%s)',
         $self->{'sender_email'}, $self->{'file'});
 
+    return undef unless $self->is_signed();
+
     ## first step is the msg signing OK ; /tmp/sympa-smime.$PID is created
     ## to store the signer certificat for step two. I known, that's dirty.
 
