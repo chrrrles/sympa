@@ -12,7 +12,6 @@ use lib "$Bin/../src/lib";
 use English qw(-no_match_vars);
 use File::Temp;
 use Test::More;
-use Test::Exception;
 
 use Sympa::Logger;
 use Sympa::Logger::Memory;

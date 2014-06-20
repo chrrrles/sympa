@@ -30,6 +30,7 @@ check_SCRIPTS = t/compile_modules.t \
 		t/LockedFile.t \
 		t/Logger.t \
 		t/Mailer.t \
+		t/Message.t \
 		t/Tools_Data.t \
 		t/Tools_Daemon.t \
 		t/Tools_File.t \
