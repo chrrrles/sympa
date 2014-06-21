@@ -579,7 +579,7 @@ sub upgrade {
                 ## It should tell us what character encoding was used for
                 ## filenames
                 Sympa::Language::set_lang($list->lang);
-                my $list_encoding = Sympa::Language::get_charset();
+                my $list_encoding = Site->get_charset();
 
                 my $count = Sympa::Tools::qencode_hierarchy($list->dir . '/shared',
                     $list_encoding);
@@ -1469,7 +1469,7 @@ sub to_utf8 {
             $charset = $Sympa::Conf::Ignored_Conf{'filesystem_encoding'};
         } else {
             Sympa::Language::push_lang($lang);
-            $charset = Sympa::Language::get_charset;
+            $charset = Site->get_charset;
             Sympa::Language::pop_lang;
         }
 

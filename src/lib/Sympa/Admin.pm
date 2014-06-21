@@ -271,6 +271,7 @@ sub create_list_old {
     ## Use an intermediate handler to encode to filesystem_encoding
     my $config = '';
     my $fd     = IO::Scalar->new(\$config);
+    #FIXME: Check parse error
     Sympa::Template::parse_tt2($param, 'config.tt2', $fd, $tt2_include_path);
 
     #    Encode::from_to($config, 'utf8', Sympa::Site->filesystem_encoding);
@@ -635,6 +636,7 @@ sub update_list {
             $list->{'dir'}, $!);
         return undef;
     }
+    #FIXME: Check parse error
     Sympa::Template::parse_tt2($param, 'config.tt2', $lock_fh,
         [$family->{'dir'}]);
     ## Unlock config file

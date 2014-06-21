@@ -30,6 +30,7 @@ use Encode qw();
 use English qw(-no_match_vars);
 use HTML::StripScripts::Parser;
 use MIME::Lite::HTML;
+use Scalar::Util '1.22'; # looks_like_number() works.
 
 ##use if (5.008 < $] && $] < 5.016), qw(Unicode::CaseFold fc);
 
@@ -173,7 +174,10 @@ sub sanitize_var {
                         ref($parameters{'var'}->[$index]);
                 } elsif (defined $parameters{'var'}->[$index]) {
                     $parameters{'var'}->[$index] =
-                        escape_html($parameters{'var'}->[$index]);
+                        escape_html($parameters{'var'}->[$index])
+                        unless Scalar::Util::looks_like_number(
+                            $parameters{'var'}->[$index]
+                        ); # preserve numeric flags.
                 }
             }
         } elsif (ref($parameters{'var'}) eq 'HASH') {
@@ -194,7 +198,10 @@ sub sanitize_var {
                     unless ($parameters{'htmlAllowedParam'}{$key}
                         or $parameters{'htmlToFilter'}{$key}) {
                         $parameters{'var'}->{$key} =
-                            escape_html($parameters{'var'}->{$key});
+                            escape_html($parameters{'var'}->{$key})
+                            unless Scalar::Util::looks_like_number(
+                                $parameters{'var'}->{$key}
+                            ); # preserve numeric flags.
                     }
                     if ($parameters{'htmlToFilter'}{$key}) {
                         $parameters{'var'}->{$key} = sanitize_html(

@@ -317,30 +317,73 @@ sub listmasters {
 
 =over 4
 
-=item supported_languages
+=item supported_languages ( )
 
 I<Getter>.
 Gets supported languages, canonicalized.
-In array context, returns array of globally supported languages.
+In array context, returns array of supported languages.
 In scalar context, returns arrayref to them.
 
 =back
 
 =cut
 
+#FIXME: Inefficient.  Would be cached.
 sub supported_languages {
-    my $self           = shift;
-    my $supported_lang = $self->supported_lang;
+    my $self = shift;
 
-    my $saved_lang = Sympa::Language::get_lang();
-    my @lang_list =
-        grep { $_ and $_ = Sympa::Language::set_lang($_) }
-        split /\s*,\s*/, $supported_lang;
-    Sympa::Language::set_lang($saved_lang);
+    my @lang_list = ();
+    if ($Sympa::Site::is_initialized) {    # configuration loaded.
+        my $supported_lang = $self->supported_lang;
 
+        my $language = Sympa::Language->instance;
+        $language->push_lang;
+        @lang_list =
+            grep { $_ and $_ = $language->set_lang($_) }
+            split /[\s,]+/, $supported_lang;
+        $language->pop_lang;
+    }
     @lang_list = ('en') unless @lang_list;
     return @lang_list if wantarray;
     return \@lang_list;
+}
+
+=over
+
+=item get_charset ( )
+
+I<Class method>.
+Gets charset for e-mail messages sent by Sympa according to current language
+context.
+
+Parameters:
+
+None.
+
+Returns:
+
+Charset name.
+If it is not known, returns default charset.
+
+=back
+
+=cut
+
+sub get_charset {
+    my $language = Sympa::Language->instance;
+    my $lang     = $language->get_lang;
+
+    my $locale2charset;
+    if ($lang and $is_initialized   # configuration loaded
+        and $locale2charset = Site->locale2charset
+        ) {
+        foreach my $l (Sympa::Language::implicated_langs($lang)) {
+            if (exists $locale2charset->{$l}) {
+                return $locale2charset->{$l};
+            }
+        }
+    }
+    return 'utf-8';                  # the last resort
 }
 
 1;

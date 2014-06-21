@@ -65,6 +65,12 @@ our %cpan_modules = (
         mandatory        => 1,
         'gettext_id'     => 'required to run Sympa web interface',
     },
+    'Class::Singleton' => {
+        required_version => '1.03',
+        package_name     => 'Class-Singleton',
+        mandatory        => 1,
+        'gettext_id'     => 'used to construct various singleton classes.',
+    },
     'Crypt::CipherSaber' => {
         required_version => '0.50',
         package_name     => 'Crypt-CipherSaber',
@@ -84,6 +90,12 @@ our %cpan_modules = (
         package_name => 'DateTime-Format-Mail',
         mandatory => 1,
         usage => 'used to decode date and time in message headers',
+    },
+     'DateTime::TimeZone' => {
+        required_version => '1.10',
+        package_name     => 'DateTime-TimeZone',
+        mandatory        => 1,
+        'gettext_id'     => 'used to decode date and time in message headers',
     },
     'DBD::Oracle' => {
         required_version => '0.90',
@@ -278,6 +290,11 @@ our %cpan_modules = (
         mandatory        => 1,
         'gettext_id' =>
             'Used by the bulk.pl daemon to check the number of slave bulks running.',
+    },
+    'Scalar::Util' => {
+        required_version => '1.22',
+        package_name     => 'Scalar-List-Utils',
+        'gettext_id'     => 'set of various subroutines to handle scalar',
     },
     'SOAP::Lite' => {
         required_version => '0.712',
