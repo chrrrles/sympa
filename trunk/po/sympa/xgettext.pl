@@ -2,7 +2,6 @@
 
 eval 'exec /usr/bin/perl  -S $0 ${1+"$@"}'
     if 0;    # not running under some shell
-
 # $File: //member/autrijus/Locale-Maketext-Lexicon/bin/xgettext.pl $ $Author$
 # $Revision$ $Change: 5999 $ $DateTime: 2003/05/20 07:50:59 $
 ## [O. Salaun] 12/08/02 : Also look for gettext() in perl code
@@ -76,8 +75,8 @@ C<loc>, C<x>, C<_> and C<__>.
 
 =item HTML::Mason
 
-The text inside C<E<lt>&|/lE<gt>I<...>E<lt>/&E<gt>> or
-C<E<lt>&|/locE<gt>I<...>E<lt>/&E<gt>> will be extracted.
+The text inside C<E<lt>E<amp>|/lE<gt>I<...>E<lt>/E<amp>E<gt>> or
+C<E<lt>E<amp>|/locE<gt>I<...>E<lt>/E<amp>E<gt>> will be extracted.
 
 =item Template Toolkit
 
@@ -122,7 +121,6 @@ my $help;
 my $leave_brackets;
 my $gnu_gettext;
 my $output_file;
-
 # Defaults stored separately because GetOptions append arguments to defaults.
 my @default_tags = ('locdt', 'loc');
 my @specified_tags;
@@ -248,7 +246,6 @@ foreach my $file (@ordered_files) {
 
     my $line = 1;
     pos($_) = 0;
-
     # Text::Template
     if (/^STARTTEXT$/m and /^ENDTEXT$/m) {
         require HTML::Parser;
@@ -343,13 +340,13 @@ foreach my $file (@ordered_files) {
         &add_expression($expression);
     }
 
-    # Sympa variables (gettext_id and gettext_unit)
+    # Sympa variables (gettext_comment, gettext_id and gettext_unit)
     $line = 1;
     pos($_) = 0;
     while (
-        /\G.*?\'(gettext_comment|gettext_id|gettext_unit)\'\s*=>\s*\"([^\"]+)\"/sg
+        /\G.*?(\'?)(gettext_comment|gettext_id|gettext_unit)\1\s*=>\s*\"([^\"]+)\"/sg
         ) {
-        my $str = $2;
+        my $str = $3;
         $line += (() = ($& =~ /\n/g));    # cryptocontext!
         &add_expression(
             {   'expression' => $str,
@@ -362,9 +359,9 @@ foreach my $file (@ordered_files) {
     $line = 1;
     pos($_) = 0;
     while (
-        /\G.*?\'(gettext_comment|gettext_id|gettext_unit)\'\s*=>\s*\'([^\']+)\'/sg
+        /\G.*?(\'?)(gettext_comment|gettext_id|gettext_unit)\1\s*=>\s*\'([^\']+)\'/sg
         ) {
-        my $str = $2;
+        my $str = $3;
         $line += (() = ($& =~ /\n/g));    # cryptocontext!
         &add_expression(
             {   'expression' => $str,
@@ -390,30 +387,32 @@ foreach my $file (@ordered_files) {
 
     # Perl source file
     my ($state, $str, $vars) = (0);
-    my $is_date = 0;
+    my $is_date   = 0;
+    my $is_printf = 0;
+
     pos($_) = 0;
     my $orig = 1 + (() = ((my $__ = $_) =~ /\n/g));
 PARSER: {
         $_ = substr($_, pos($_)) if (pos($_));
         my $line = $orig - (() = ((my $__ = $_) =~ /\n/g));
-
         # maketext or loc or _
         $state == NUL
-            && m/\b(translate|gettext(?:_strftime)?|maketext|__?|loc|x)/gcx
+            && m/\b(translate|gettext(?:_strftime|_sprintf)?|maketext|__?|loc|x)/gcx
             && do {
-            if ($& eq 'gettext_strftime') {
-                $state   = BEGM;
-                $is_date = 1;
+            if ($& eq 'gettext_strftime' or $& eq 'gettext_sprintf') {
+                $state     = BEGM;
+                $is_date   = ($& eq 'gettext_strftime');
+                $is_printf = ($& eq 'gettext_sprintf');
             } else {
-                $state   = BEG;
-                $is_date = 0;
+                $state     = BEG;
+                $is_date   = 0;
+                $is_printf = 0;
             }
             redo;
             };
         ($state == BEG || $state == BEGM)
             && m/^([\s\t\n]*)/gcx
             && do { redo; };
-
         # begin ()
         $state == BEG && m/^([\S\(]) /gcx && do {
             $state = (($1 eq '(') ? PAR : NUL);
@@ -444,8 +443,12 @@ PARSER: {
         $state == QUOM2 && m/^([^\"]+)/gcx && do { $str .= $1; redo; };
         $state == QUOM2 && m/^\"  /gcx && do { $state = COMM; redo; };
 
+        $state == BEGM && do { $state = NUL; redo; };
+
         # end ()
-        ($state == PAR && m/^\s*[\)]/gcx || $state == COMM && m/^,/gcx)
+        (          $state == PAR && m/^\s*[\)]/gcx
+                || $state == PARM && m/^\s*[\)]/gcx
+                || $state == COMM && m/^\s*,/gcx)
             && do {
             $state = NUL;
             $vars =~ s/[\n\r]//g if ($vars);
@@ -456,7 +459,8 @@ PARSER: {
                     'line'       => $line - (() = $str =~ /\n/g),
                     'vars'       => $vars
                 };
-                $expression->{'type'} = 'date' if ($is_date);
+                $expression->{'type'} = 'date'   if ($is_date);
+                $expression->{'type'} = 'printf' if ($is_printf);
 
                 &add_expression($expression);
             }
@@ -466,7 +470,14 @@ PARSER: {
             };
 
         # a line of vars
-        $state == PAR && m/^([^\)]*)/gcx && do { $vars .= $1 . "\n"; redo; };
+        $state == PAR  && m/^([^\)]*)/gcx && do { $vars .= $1 . "\n"; redo; };
+        $state == PARM && m/^([^\)]*)/gcx && do { $vars .= $1 . "\n"; redo; };
+    }
+
+    unless ($state == NUL) {
+        my $post = $_;
+        $post =~ s/\A(\s*.*\n.*\n.*)\n(.|\n)+\z/$1\n.../;
+        warn sprintf "Warning: incomplete state just before ---\n%s\n", $post;
     }
 }
 
@@ -564,6 +575,10 @@ foreach my $entry (@ordered_bis) {
         print "#. This entry is a date/time format\n";
         print
             "#. Check the strftime manpage for format details : http://docs.freebsd.org/info/gawk/gawk.info.Time_Functions.html\n";
+    } elsif ($type_of_entries{$entry} eq 'printf') {
+        print "#. This entry is a sprintf format\n";
+        print
+            "#. Check the sprintf manpage for format details : http://perldoc.perl.org/functions/sprintf.html\n";
     }
 
     print "#, maketext-format" if $gnu_gettext and /%(?:\d|\w+\([^\)]*\))/;

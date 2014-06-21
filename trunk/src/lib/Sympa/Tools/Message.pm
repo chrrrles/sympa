@@ -894,12 +894,13 @@ sub parse_tt2_messageasstring {
 
     ## Charset for encoding
     Sympa::Language::push_lang($data->{'lang'}) if defined $data->{'lang'};
-    $data->{'charset'} ||= Sympa::Language::get_charset();
+    $data->{'charset'} ||= Site->get_charset();
     Sympa::Language::pop_lang() if defined $data->{'lang'};
 
     if ($filename =~ /\.tt2$/) {
 
         # TT2 file parsing
+        #FIXME: Check TT2 parse error
         my $output;
         my @path = split /\//, $filename;
 

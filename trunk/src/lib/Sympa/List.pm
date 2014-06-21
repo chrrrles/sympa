@@ -1538,6 +1538,7 @@ sub distribute_msg {
         $tag_regexp =~ s/\s+/\\s+/g;
 
         ## Add subject tag
+        #FIXME: Check parse error
         $message->as_entity()->head->delete('Subject');
         my $parsed_tag;
         Sympa::Template::parse_tt2(
@@ -1589,7 +1590,7 @@ sub distribute_msg {
                 $before_tag . ' '
                 . MIME::EncWords::encode_mimewords(
                 Encode::decode_utf8('[' . $parsed_tag . ']'),
-                Charset  => Sympa::Language::get_charset(),
+                Charset  => Site->get_charset,
                 Encoding => 'A',
                 Field    => 'Subject'
                 )

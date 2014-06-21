@@ -4,9 +4,10 @@
 
 # Sympa - SYsteme de Multi-Postage Automatique
 #
-# Copyright (c) 1997-1999 Institut Pasteur & Christophe Wolfhugel
-# Copyright (c) 1997-2011 Comite Reseau des Universites
-# Copyright (c) 2011-2014 GIP RENATER
+# Copyright (c) 1997, 1998, 1999 Institut Pasteur & Christophe Wolfhugel
+# Copyright (c) 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005,
+# 2006, 2007, 2008, 2009, 2010, 2011 Comite Reseau des Universites
+# Copyright (c) 2011, 2012, 2013, 2014 GIP RENATER
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,32 +26,30 @@ package Sympa::Template;
 
 use strict;
 use warnings;
-
 use CGI::Util;
-use Encode qw();
 use English; # FIXME: drop $MATCH usage
 use MIME::EncWords;
 use Template;
 
 use Sympa::Constants;
 use Sympa::Language;
-use Sympa::Logger;
+use Sympa::Template::Compat;
 use Sympa::Tools::Text;
 
-my $current_lang;
 my $last_error;
 my @other_include_path;
 my $allow_absolute;
 
+my $language = Sympa::Language->instance;
+
 sub qencode {
     my $string = shift;
-
     # We are not able to determine the name of header field, so assume
     # longest (maybe) one.
     return MIME::EncWords::encode_mimewords(
         Encode::decode('utf8', $string),
         Encoding => 'A',
-        Charset  => Sympa::Language::get_charset(),
+        Charset  => Site->get_charset(),
         Field    => "message-id"
     );
 }
@@ -60,7 +59,6 @@ sub escape_url {
     my $string = shift;
 
     $string =~ s/[\s+]/sprintf('%%%02x', ord($MATCH))/eg;
-
     # Some MUAs aren't able to decode ``%40'' (escaped ``@'') in e-mail
     # address of mailto: URL, or take ``@'' in query component for a
     # delimiter to separate URL from the rest.
@@ -122,41 +120,50 @@ sub decode_utf8 {
 
 }
 
+## We use different catalog/textdomains depending on the template that
+## requests translations
+my %template2textdomain = (
+    'help_admin.tt2'         => 'web_help',
+    'help_arc.tt2'           => 'web_help',
+    'help_editfile.tt2'      => 'web_help',
+    'help_editlist.tt2'      => 'web_help',
+    'help_faqadmin.tt2'      => 'web_help',
+    'help_faquser.tt2'       => 'web_help',
+    'help_introduction.tt2'  => 'web_help',
+    'help_listconfig.tt2'    => 'web_help',
+    'help_mail_commands.tt2' => 'web_help',
+    'help_sendmsg.tt2'       => 'web_help',
+    'help_shared.tt2'        => 'web_help',
+    'help.tt2'               => 'web_help',
+    'help_user_options.tt2'  => 'web_help',
+    'help_user.tt2'          => 'web_help',
+);
+
 sub maketext {
     my ($context, @arg) = @_;
 
-    my $stash         = $context->stash();
-    my $component     = $stash->get('component');
-    my $template_name = $component->{'name'};
+    my $template_name = $context->stash->get('component')->{'name'};
+    my $textdomain = $template2textdomain{$template_name} || '';
 
-    ## Strangely the path is sometimes empty...
-    ## TODO : investigate
-    #    $main::logger->do_log(Sympa::Logger::NOTICE, "PATH: $path ; $template_name");
-
-    ## Sample code to dump the STASH
-    # my $s = $stash->_dump();
-
-    return sub {
-        Sympa::Language::maketext($template_name, $_[0], @arg);
-        }
+    return sub { $language->maketext($textdomain, $_[0], @arg); };
 }
 
 # IN:
-#    $fmt: strftime() style format string.
+#    $fmt: POSIX::strftime() style format string.
 #    $arg: a string representing date/time:
 #          "YYYY/MM", "YYYY/MM/DD", "YYYY/MM/DD/HH/MM", "YYYY/MM/DD/HH/MM/SS"
 # OUT:
 #    Subref to generate formatted (i18n'ized) date/time.
 sub locdatetime {
-    my (undef, $arg) = @_;
+    my ($fmt, $arg) = @_;
     if ($arg !~
         /^(\d{4})\D(\d\d?)(?:\D(\d\d?)(?:\D(\d\d?)\D(\d\d?)(?:\D(\d\d?))?)?)?/
         ) {
-        return sub { Sympa::Language::gettext("(unknown date)"); };
+        return sub { $language->gettext("(unknown date)"); };
     } else {
         my @arg =
             ($6 + 0, $5 + 0, $4 + 0, $3 + 0 || 1, $2 - 1, $1 - 1900, 0, 0, 0);
-        return sub { Sympa::Language::gettext_strftime($_[0], @arg); };
+        return sub { $language->gettext_strftime($_[0], @arg); };
     }
 }
 
@@ -228,7 +235,6 @@ sub allow_absolute_path {
 
 ## Return the last error message
 sub get_error {
-
     return $last_error;
 }
 
@@ -247,14 +253,13 @@ sub parse_tt2 {
     push @{$include_path}, @other_include_path;
     clear_include_path();    ## Reset it
 
-    my $wantarray;
-
     ## An array can be used as a template (instead of a filename)
     if (ref($template) eq 'ARRAY') {
         $template = \join('', @$template);
     }
 
-    Sympa::Language::set_lang($data->{lang}) if ($data->{'lang'});
+    # Set language if possible: Must be restored later
+    $language->push_lang($data->{lang} || undef);
 
     my $config = {
         # ABSOLUTE => 1,
@@ -300,16 +305,21 @@ sub parse_tt2 {
 
     unless ($tt2->process($template, $data, $output)) {
         $last_error = $tt2->error();
-        $main::logger->do_log(Sympa::Logger::ERR, 'Failed to parse %s : %s',
-            $template, "$last_error");
-        $main::logger->do_log(
-            Sympa::Logger::ERR,
-            'Looking for TT2 files in %s',
-            join(',', @{$include_path})
-        );
+        #Log::do_log(
+        #    'err',     'Failed to parse %s: %s',
+        #    $template, $last_error->as_string
+        #);
+        #Log::do_log(
+        #    'err',
+        #    'Looking for TT2 files in %s',
+        #    join(',', @{$include_path})
+        #);
+
+        $language->pop_lang;
         return undef;
     }
 
+    $language->pop_lang;
     return 1;
 }
 

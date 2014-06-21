@@ -1002,7 +1002,7 @@ sub upgrade_shared {
         ## It should tell us what character encoding was used for
         ## filenames
         Sympa::Language::set_lang($list->lang);
-        my $list_encoding = Sympa::Language::get_charset();
+        my $list_encoding = Site->get_charset();
 
         my $count = Sympa::Tools::qencode_hierarchy($list->dir . '/shared',
             $list_encoding);

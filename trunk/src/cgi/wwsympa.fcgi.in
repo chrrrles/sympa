@@ -3807,13 +3807,11 @@ sub do_login {
 
         # user did not choose a specific language, apply user pref for this
         # session.
-        foreach my $lang ($user->{'lang'}, ($list || $robot)->lang,
-            $robot->best_language()) {
-            next unless $lang;
-            last
-                if $param->{'lang'} =
-                    Sympa::Language::set_lang($lang, 'just_try' => 1);
-        }
+        my $list_lang = $list->lang if ref $list eq 'List';
+        $param->{'lang'} = $language->set_lang(
+            $user->{'lang'}, $list_lang,
+            $robot->lang, $robot->best_language, 'en'
+        );
         $session->{'lang'} = $param->{'lang'};
     }
 
@@ -18022,7 +18020,7 @@ sub d_unzip_shared_file {
     ## Qencode 8bit filenames afterward
     ## The suspected charset is the one that is associated to the user's
     ## language
-    Sympa::Tools::qencode_hierarchy($zip_abs_dir . '/zip', Sympa::Language::get_charset());
+    Sympa::Tools::qencode_hierarchy($zip_abs_dir . '/zip', Site->get_charset());
 
     return $status;
 }
@@ -21742,7 +21740,7 @@ sub do_send_mail {
 
     if (defined $param->{'subscriber'}) {
         $from = Sympa::Tools::addrencode($from, $param->{'subscriber'}{'gecos'},
-            Sympa::Language::get_charset());
+            Site->get_charset());
     }
 
     ##--------------- TOPICS --------------------
