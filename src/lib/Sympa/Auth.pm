@@ -26,9 +26,9 @@ package Sympa::Auth;
 use strict;
 
 use Digest::MD5;
+use POSIX qw();
 
 use Sympa::DatabaseManager;
-use Sympa::Language;
 use Sympa::LDAPSource;
 use Sympa::Logger;
 use Sympa::Report;
@@ -532,9 +532,8 @@ sub get_one_time_ticket {
     }
 
     my $result;
-    my $printable_date = Sympa::Language::gettext_strftime(
-        "%d %b %Y at %H:%M:%S", localtime($ticket->{'date'})
-    );
+    my $printable_date = POSIX::strftime(
+        "%d %b %Y at %H:%M:%S", localtime($ticket->{'date'}));
     my $lockout = $robot->one_time_ticket_lockout || 'open';
     my $lifetime =
         Sympa::Tools::Time::duration_conv($robot->one_time_ticket_lifetime || 0);

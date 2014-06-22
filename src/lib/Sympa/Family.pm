@@ -53,6 +53,8 @@ use Sympa::Logger;
 use Sympa::Robot;
 use Sympa::Site;
 
+my $language = Sympa::Language->instance;
+
 my @uncompellable_param = (
     'msg_topic.keywords',
     'owner_include.source_parameters',
@@ -395,7 +397,7 @@ sub add_list {
     # info parameters
     $list->latest_instantiation(
         {   'email' => "listmaster\@$host",
-            'date' => Sympa::Language::gettext_strftime(
+            'date' => $language->gettext_strftime(
                 "%d %b %Y at %H:%M:%S", localtime(time)
             ),
             'date_epoch' => time
@@ -682,7 +684,7 @@ sub modify_list {
 
     $list->latest_instantiation(
         {   'email' => "listmaster\@$host",
-            'date' => Sympa::Language::gettext_strftime(
+            'date' => $language->gettext_strftime(
                 "%d %b %Y at %H:%M:%S", localtime(time)
             ),
             'date_epoch' => time
@@ -2500,7 +2502,7 @@ sub _end_update_list {
     my $host = $self->robot->host;
     $list->latest_instantiation(
         {   'email' => "listmaster\@$host",
-            'date' => Sympa::Language::gettext_strftime(
+            'date' => $language->gettext_strftime(
                 "%d %b %Y at %H:%M:%S", localtime(time)
             ),
             'date_epoch' => time

@@ -33,6 +33,8 @@ use if (5.016 <= $]), qw(feature fc);
 
 use Sympa::Language;
 
+my $language = Sympa::Language->instance;
+
 =head1 FUNCTIONS
 
 =over
@@ -66,7 +68,7 @@ sub wrap_text {
     return $text unless $cols;
 
     $text = Text::LineFold->new(
-        Language      => Sympa::Language::get_lang(),
+        Language      => $language->get_lang(),
         OutputCharset => (Encode::is_utf8($text) ? '_UNICODE_' : 'utf8'),
         Prep          => 'NONBREAKURI',
         ColumnsMax    => $cols

@@ -102,7 +102,7 @@ sub new {
 
     ## Date
     my @info = stat $document->{'absolute_path'};
-    $document->{'date'} = Sympa::Language::gettext_strftime(
+    $document->{'date'} = $language->gettext_strftime(
         "%d %b %Y", localtime($info[9])
     );
     $document->{'date_epoch'} = $info[9];

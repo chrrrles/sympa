@@ -89,6 +89,9 @@ my @more_data_sources = qw/
 my %config_in_admin_user_file = map +($_ => 1),
     @sources_providing_listmembers;
 
+# Language context
+my $language = Sympa::Language->instance;
+
 =encoding utf-8
 
 =head1 CONSTRUCTOR AND INITIALIZER
@@ -1888,7 +1891,7 @@ sub prepare_digest_parameters {
     $self->{'digest'}{'template_params'} = {
         'replyto'          => $self->get_list_address('owner'),
         'to'               => $self->get_list_address(),
-        'table_of_content' => Sympa::Language::gettext("Table of contents:"),
+        'table_of_content' => $language->gettext("Table of contents:"),
         'boundary1'        => '----------=_'
             . Sympa::Tools::get_message_id($self->domain),
         'boundary2' => '----------=_'
@@ -1899,9 +1902,9 @@ sub prepare_digest_parameters {
     }
     my @now = localtime(time);
     $self->{'digest'}{'template_params'}{'datetime'} =
-        Sympa::Language::gettext_strftime( "%a, %d %b %Y %H:%M:%S", @now);
+        $language->gettext_strftime( "%a, %d %b %Y %H:%M:%S", @now);
     $self->{'digest'}{'template_params'}{'date'} =
-        Sympa::Language::gettext_strftime("%a, %d %b %Y", @now);
+        $language->gettext_strftime("%a, %d %b %Y", @now);
     $self->{'digest'}{'template_params'}{'current_group'} = 0;
     $self->{'digest'}{'template_params'}{'total_group'} =
         $#{$self->{'digest'}{'group_of_msg'}} + 1;
@@ -4915,18 +4918,19 @@ sub _create_add_error_string {
     my $self = shift;
     $self->{'add_outcome'}{'errors'}{'error_message'} = '';
     if ($self->{'add_outcome'}{'errors'}{'max_list_members_exceeded'}) {
-        $self->{'add_outcome'}{'errors'}{'error_message'} .= sprintf Sympa::Language::gettext(
-            'Attempt to exceed the max number of members (%s) for this list.'
-        ), $self->max_list_members;
+        $self->{'add_outcome'}{'errors'}{'error_message'} .=
+            $language->gettext_sprintf(
+            'Attempt to exceed the max number of members (%s) for this list.',
+            $self->max_list_members);
     }
     if ($self->{'add_outcome'}{'errors'}{'unable_to_add_to_database'}) {
         $self->{'add_outcome'}{'error_message'} .=
-            ' ' . Sympa::Language::gettext('Attempts to add some users in database failed.');
+            ' ' . $language->gettext('Attempts to add some users in database failed.');
     }
     $self->{'add_outcome'}{'errors'}{'error_message'} .=
-        ' ' . sprintf Sympa::Language::gettext('Added %s users out of %s required.'),
+        ' ' . $language->gettext_sprintf('Added %s users out of %s required.',
         $self->{'add_outcome'}{'added_members'},
-        $self->{'add_outcome'}{'expected_number_of_added_users'};
+        $self->{'add_outcome'}{'expected_number_of_added_users'});
 }
 
 ## Adds a new list admin user, no overwrite.
@@ -5537,7 +5541,7 @@ sub load_task_list {
             my $titles = Sympa::List::_load_task_title($file);
 
             ## Set the title in the current language
-            foreach my $lang (Sympa::Language::implicated_langs()) {
+            foreach my $lang (Sympa::Language::implicated_langs($language->get_lang)) {
                 if (defined $titles->{$lang}) {
                     $list_of_task{$name}{'title'} = $titles->{$lang};
                     last;
@@ -5545,9 +5549,7 @@ sub load_task_list {
             }
             next if defined $list_of_task{$name}{'title'};
             if (defined $titles->{'gettext'}) {
-                $list_of_task{$name}{'title'} = Sympa::Language::gettext($titles->{'gettext'});
-            } elsif (defined $titles->{'us'}) {
-                $list_of_task{$name}{'title'} = $titles->{'us'};
+                $list_of_task{$name}{'title'} = $language->gettext($titles->{'gettext'});
             } else {
                 $list_of_task{$name}{'title'} = $name;
             }
@@ -9713,7 +9715,7 @@ sub _save_list_config_file {
     $self->update(
         {   'email'      => $email,
             'date_epoch' => $time,
-            'date'       => Sympa::Language::gettext_strftime(
+            'date'       => $language->gettext_strftime(
                 "%d %b %Y at %H:%M:%S", localtime($time)
             ),
         }
@@ -11884,7 +11886,7 @@ sub get_option_title {
         || \%list_option;
     my $t = $map->{$option} || {};
     if ($t->{'gettext_id'}) {
-        my $ret = Sympa::Language::gettext($t->{'gettext_id'});
+        my $ret = $language->gettext($t->{'gettext_id'});
         $ret =~ s/^\s+//;
         $ret =~ s/\s+$//;
         return sprintf '%s (%s)', $ret, $option if $withval;

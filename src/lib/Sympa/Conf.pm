@@ -1194,7 +1194,7 @@ sub load_nrcpt_by_domain {
             $valid_dom += 1;
         } else {
             $main::logger->do_log(Sympa::Logger::NOTICE,
-                Sympa::Language::gettext('Error at line %d: %s'),
+                'Error at line %d: %s',
                 $line_num, $config_file, $_);
             $config_err++;
         }
@@ -1667,7 +1667,7 @@ sub _load_config_file_to_hash {
             }
         } else {
             $main::logger->do_log(Sympa::Logger::ERR,
-                Sympa::Language::gettext('Error at %s line %d: %s'),
+                'Error at %s line %d: %s',
                 $config_file, $line_num, $_);
             $result->{'errors'}++;
         }

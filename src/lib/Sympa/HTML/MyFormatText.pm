@@ -30,13 +30,15 @@ use Sympa::Language;
 use strict;
 use base qw(HTML::FormatText);
 
+my $language = Sympa::Language->instance;
+
 sub img_start {
     my ($self, $node) = @_;
     my $alt = $node->attr('alt');
     $self->out(
         defined($alt)
-        ? sprintf(Sympa::Language::gettext("[ Image%s ]"), ": " . $alt)
-        : sprintf(Sympa::Language::gettext("[Image%s]"),   "")
+        ? $language->gettext_sprintf("[ Image%s ]"), ": " . $alt)
+        : $language->gettext_sprintf("[Image%s]"),   "")
     );
 }
 

@@ -34,6 +34,7 @@ use base qw(Sympa::Site);
 
 use Carp qw(carp croak);
 
+use Sympa::Language;
 use Sympa::ListDef;
 use Sympa::Logger;
 use Sympa::Tools::Data;
@@ -43,6 +44,9 @@ use Sympa::Tools::Data;
 use overload
     'bool' => sub {1},
     '""'   => sub { croak "object Robot <$_[0]->{'name'}> is not a string"; };
+
+# Language context
+my $language = Sympa::Language->instance;
 
 =encoding utf-8
 
@@ -840,15 +844,16 @@ sub _get_topic_titles {
 
 sub _get_topic_current_title {
     my $topic = shift;
-    foreach my $lang (Sympa::Language::implicated_langs()) {
+    my $lang = $language->get_lang;
+    foreach my $lang (Sympa::Language::implicated_langs($lang)) {
         if ($topic->{'title'}{$lang}) {
             return $topic->{'title'}{$lang};
         }
     }
     if ($topic->{'title'}{'gettext'}) {
-        return Sympa::Language::gettext($topic->{'title'}{'gettext'});
+        return $language->gettext($topic->{'title'}{'gettext'});
     } elsif ($topic->{'title'}{'default'}) {
-        return Sympa::Language::gettext($topic->{'title'}{'default'});
+        return $language->gettext($topic->{'title'}{'default'});
     } else {
         return undef;
     }

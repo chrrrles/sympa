@@ -644,10 +644,10 @@ sub list_sessions {
 
     while (my $session = ($sth->fetchrow_hashref('NAME_lc'))) {
         $session->{'formated_date'} =
-            Sympa::Language::gettext_strftime("%d %b %y  %H:%M",
+            $language->gettext_strftime("%d %b %y  %H:%M",
             localtime($session->{'date_session'}));
         $session->{'formated_start_date'} =
-            Sympa::Language::gettext_strftime("%d %b %y  %H:%M",
+            $language->gettext_strftime("%d %b %y  %H:%M",
             localtime($session->{'start_date_session'}));
 
         push @sessions, $session;

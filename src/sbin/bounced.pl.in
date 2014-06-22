@@ -222,7 +222,7 @@ our $mailer = Sympa::Mailer->new(
 );
 
 # initialize i18n subsystem
-Sympa::Language::set_lang(Sympa::Site->lang || 'en');
+Sympa::Language->instance->set_lang(Sympa::Site->lang, 'en');
 
 # put ourselves in background if not in debug mode.
 Sympa::Tools::Daemon::daemonize(name => $daemon_name)
