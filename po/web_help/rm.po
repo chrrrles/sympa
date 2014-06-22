@@ -1,60 +1,48 @@
-# #-#-#-#-#  blank_web_help_nb_NO.po (sympa)  #-#-#-#-#
 # Sympa online help internationalisation.
-# Copyright (C) 2007
+# Copyright (C) YEAR
 # This file is distributed under the same license as Sympa.
-# FIRST AUTHOR <david.verdin@cru.fr>, 2007.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
-# #-#-#-#-#  tmp_web_help_nb_NO.po (nb)  #-#-#-#-#
-# translation of nb.po to
-# Norwegian Bokmål translation for sympa
-# Copyright (c) (c) 2005 Canonical Ltd, and Rosetta Contributors 2005
-# This file is distributed under the same license as the sympa package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2005.
-# Anders Lund <anders.lund@uninett.no>, 2005.
-#
+#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: sympa\n"
-"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
+"Project-Id-Version: Sympa VERSION\n"
+"Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2007-11-13 14:50+0200\n"
-"PO-Revision-Date: 2008-06-25 21:58+0200\n"
-"Last-Translator: Bente Christine Aasgaard <bca@usit.uio.no>\n"
-"Language-Team: Bokmål\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: Rumantsch\n"
+"Language: rm\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: nb\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Pootle 1.0.2\n"
-"X-Rosetta-Version: 0.1\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+"X-Generator: Translate Toolkit 1.0.1\n"
 
 #: ../web_tt2/help.tt2:11
 msgid "Subscriber, moderator and owner documentation"
-msgstr "Medlems-, moderator- og eier-dokumentasjon"
+msgstr ""
 
 #: ../web_tt2/help.tt2:13
 msgid "In this documentation, you will find:"
-msgstr "I denne dokumentasjonen vil du finne:"
+msgstr ""
 
 #. (path_cgi)
 #: ../web_tt2/help.tt2:15
 msgid ""
 "a <a href=\"%1/help/introduction\">general introduction</a> to mailing lists;"
 msgstr ""
-"en <a href=\"%1/help/introduction\">generell introduksjon </a> til e-"
-"postlister;"
 
 #. (path_cgi)
 #: ../web_tt2/help.tt2:16
 msgid "a <a href=\"%1/help/user\">user guide</a> about the use of Sympa;"
-msgstr "en <a href=\"%1/help/user\">brukerveiledning</a> i bruk av Sympa;"
+msgstr ""
 
 #. (path_cgi)
 #: ../web_tt2/help.tt2:17
 msgid ""
 "an <a href=\"%1/help/admin\">administrator guide</a> about the use of Sympa."
 msgstr ""
-"en <a href=\"%1/help/admin\">administratorveiledning</a> i bruk av Sympa. "
 
 #. (path_cgi)
 #: ../web_tt2/help.tt2:20
@@ -63,9 +51,6 @@ msgid ""
 "href=\"%1/help/introduction#features\">available features</a> in the mailing "
 "list management software Sympa."
 msgstr ""
-"Hvis du ønsker å utføre en bestemt oppgave, se på listen av alle <a href=\"%"
-"1/help/introduction#features\">tilgjenglige funksjoner</a> i e-"
-"postlistesystemet Sympa."
 
 #. (path_cgi)
 #: ../web_tt2/help.tt2:21
@@ -75,18 +60,14 @@ msgid ""
 "to the <a href=\"%1/help/faqadmin\">administrators <acronym title="
 "\"Frequently asked questions\">FAQ</acronym></a>."
 msgstr ""
-"Hvis du opplever problemer, vennligst henvis til <a href=\"%1/help/faquser"
-"\">bruker-<acronym title=\"Frequently asked questions\">FAQen</acronym></a> "
-"eller  til <a href=\"%1/help/faqadmin\">administrator- <acronym title="
-"\"Frequently asked questions\">FAQen</acronym></a>."
 
 #: ../web_tt2/help_introduction.tt2:3
 msgid "Mailing lists - General introduction"
-msgstr "E-postlister - Generell innføring"
+msgstr ""
 
 #: ../web_tt2/help_introduction.tt2:5
 msgid "What is a mailing list?"
-msgstr "Hva er en e-postliste?"
+msgstr ""
 
 #: ../web_tt2/help_introduction.tt2:6
 msgid ""
@@ -100,7 +81,7 @@ msgstr ""
 
 #: ../web_tt2/help_introduction.tt2:7
 msgid "Special cases:</strong>"
-msgstr "Spesielle tilfeller:</strong>"
+msgstr ""
 
 #: ../web_tt2/help_introduction.tt2:9
 msgid ""
@@ -108,9 +89,6 @@ msgid ""
 "subscribed to it. However, you need to be subscribed to a list to receive "
 "its messages."
 msgstr ""
-"Det er i noen tilfeller mulig å sende e-post til en e-postliste uten å "
-"abonnere på den. Du må dog være abonnent på en liste for å motta meldinger "
-"sendt til den."
 
 #: ../web_tt2/help_introduction.tt2:10
 msgid ""
@@ -119,10 +97,6 @@ msgid ""
 "used to transmit information from a unique sender to a large number of "
 "recipients."
 msgstr ""
-"Det er i noen tilfeller umulig å sende e-post til en liste selv om du "
-"faktisk er abonnent på den: det er tilfellet med beskjedlister, som blir "
-"brukt for å sende informasjon fra en spesifikk avsender til et større antall "
-"mottakere."
 
 #: ../web_tt2/help_introduction.tt2:13
 msgid "Interest of mailing lists"
@@ -135,26 +109,22 @@ msgid ""
 "topic</strong> and to <strong>take part in exchanges about it</strong>. "
 "Examples are:"
 msgstr ""
-"Folk abonnerer på en e-postliste (noen ganger forkortet til <acronym title="
-"\"Mailing List\">ML</acronym>)  for  å <strong>bli informert om et bestemt "
-"emne</strong og for å <strong> ta del i diskusjon rundt det</strong>. "
-"Eksempler er:"
 
 #: ../web_tt2/help_introduction.tt2:16
 msgid "mailing list for all the employees of a company;"
-msgstr "e-postliste for alle ansatte i en bedrift;"
+msgstr ""
 
 #: ../web_tt2/help_introduction.tt2:17
 msgid "mailing list reserved to the participants in a project;"
-msgstr "e-postliste reservert for medlemmer i et prosjekt;"
+msgstr ""
 
 #: ../web_tt2/help_introduction.tt2:18
 msgid "mailing list dedicated to a class of students;"
-msgstr "e-postliste tilegnet studenter ved et fag;"
+msgstr ""
 
 #: ../web_tt2/help_introduction.tt2:19
 msgid "mailing list about the latest news in computer security;"
-msgstr "e-postliste om de siste nyheter innen IT-sikkerhet;"
+msgstr ""
 
 #: ../web_tt2/help_introduction.tt2:20
 msgid "mailing list of mutual aid between handymen;"
@@ -165,37 +135,28 @@ msgid ""
 "mailing list restricted to a family and dedicated to the organization of "
 "large family gatherings;"
 msgstr ""
-"e-postliste avgrenset til en familie og brukt til organiseringen av store "
-"familietreff;"
 
 #: ../web_tt2/help_introduction.tt2:22
 msgid "and so on!"
-msgstr "og så videre!"
+msgstr ""
 
 #: ../web_tt2/help_introduction.tt2:25
 msgid "Types of mailing lists"
-msgstr "Typer av e-postlister"
+msgstr ""
 
 #: ../web_tt2/help_introduction.tt2:26
-#, fuzzy
 msgid ""
 "There are <strong>thousands of mailing lists</strong> of all kinds on the "
 "Internet: public or private, free or not, with subscription subject to "
 "conditions or not, etc. Those lists may have from a dozen up to several "
 "thousand members."
 msgstr ""
-"Det finnes <strong>tusener av e-postlister</strong> av alle slag på "
-"internettet: offentlige eller private, gratis eller ikke, med "
-"abonnementsbetingelser eller ikke, osv.Disse listene kan ha fra et dusing "
-"til mange tusen medlemmer."
 
 #: ../web_tt2/help_introduction.tt2:27
 msgid ""
 "According to the way they work, we can distinguish between <strong>two types "
 "of lists</strong>:"
 msgstr ""
-"Etter måten de fungerer på så kan vi skille mellom <strong> to typer lister</"
-"strong>:"
 
 #: ../web_tt2/help_introduction.tt2:29
 msgid ""
@@ -208,13 +169,10 @@ msgid ""
 msgstr ""
 
 #: ../web_tt2/help_introduction.tt2:30
-#, fuzzy
 msgid ""
 "<strong>Discussion lists</strong> allow all subscribers to take part in "
 "exchanges. Those lists can be moderated or not:"
 msgstr ""
-"<strong>Diskusjonslister</strong> tillat alle abonnenter å delta i samtalen. "
-"Disse listene kan være moderert eller umoderert:"
 
 #: ../web_tt2/help_introduction.tt2:32
 msgid ""
@@ -224,11 +182,6 @@ msgid ""
 "will not receive off-topic messages, unsolicited commercial messages "
 "(spams), messages containing large attachments, etc."
 msgstr ""
-"I en <strong>moderert diskusjonsliste</strong> så bli meldinger distribuert "
-"til alle abonnentene etter godkjennelse fra en av listemoderatorene. "
-"Moderering  kvalitetssikrer listen. For eksempel sikrer det at abonnentene "
-"ikke vil motta meldinger som ikke er relevante for listens tema, søppelpost, "
-"meldinger med store vedlegg, osv."
 
 #: ../web_tt2/help_introduction.tt2:33
 msgid ""
@@ -236,9 +189,6 @@ msgid ""
 "transmitted to all subscribers as soon as the mailing list management robot "
 "receives them."
 msgstr ""
-"I en <strong>umoderert diskusjonsliste</strong> så blir meldinger "
-"distribuert til alle abonnentene umiddelbart etter at listesystemet mottar "
-"dem."
 
 #: ../web_tt2/help_introduction.tt2:37
 msgid "Features"
@@ -302,13 +252,13 @@ msgstr ""
 msgid ""
 "read the <a href=\"%1/help/arc\">archive of lists to which you are "
 "subscribed</a>,"
-msgstr "lese <a href=\"%1/help/arc\">arkiveve til listene du abonnerer på</a>,"
+msgstr ""
 
 #. (path_cgi)
 #: ../web_tt2/help_introduction.tt2:52
 msgid ""
 "perform <a href=\"%1/help/arc#arcsearch\">searches in the list archive</a>,"
-msgstr "utføre <a href=\"%1/help/arc#arcsearch\">søk i listearkivet</a>,"
+msgstr ""
 
 #. (path_cgi)
 #: ../web_tt2/help_introduction.tt2:53
@@ -316,7 +266,6 @@ msgid ""
 "<a href=\"%1/help/sendmsg\">send messages</a> to lists to which you are "
 "subscribed,"
 msgstr ""
-"<a href=\"%1/help/sendmsg\">sende meldinger</a> til lister du abonnerer på,"
 
 #. (path_cgi)
 #: ../web_tt2/help_introduction.tt2:54
@@ -346,14 +295,12 @@ msgstr ""
 #. (path_cgi)
 #: ../web_tt2/help_introduction.tt2:60
 msgid "<a href=\"%1/help/admin#edit_list\">configure lists</a> you own,"
-msgstr "<a href=\"%1/help/admin#edit_list\">konfigurere lister </a> du eier,"
+msgstr ""
 
 #. (path_cgi)
 #: ../web_tt2/help_introduction.tt2:61
-#, fuzzy
 msgid "<a href=\"%1/help/admin#manage_members\">manage subscriptions</a>,"
 msgstr ""
-"<a href=\"%1/help/admin#manage_members\">administrere abonnementer</a>,"
 
 #. (path_cgi)
 #: ../web_tt2/help_introduction.tt2:62
@@ -371,27 +318,27 @@ msgstr ""
 
 #: ../web_tt2/help_introduction.tt2:67
 msgid "How the mailing list service works: roles and responsibilities"
-msgstr "Hvordan e-postlistetjenesten fungerer: roller og ansvar"
+msgstr ""
 
 #: ../web_tt2/help_introduction.tt2:69
 msgid "A mailing list service involves four types of roles:"
-msgstr "En e-postlistetjeneste har fire typer roller:"
+msgstr ""
 
 #: ../web_tt2/help_introduction.tt2:71
 msgid "<strong>listmaster;</strong>"
-msgstr "<strong>listesjef;</strong>"
+msgstr ""
 
 #: ../web_tt2/help_introduction.tt2:72
 msgid "<strong>owner;</strong>"
-msgstr "<strong>eier;</strong>"
+msgstr ""
 
 #: ../web_tt2/help_introduction.tt2:73
 msgid "<strong>moderator;</strong>"
-msgstr "<strong>moderator;</strong>"
+msgstr ""
 
 #: ../web_tt2/help_introduction.tt2:74
 msgid "<strong>subscriber.</strong>"
-msgstr "<strong>abonnent (medlem).</strong>"
+msgstr ""
 
 #: ../web_tt2/help_introduction.tt2:76
 msgid ""
@@ -575,7 +522,7 @@ msgstr ""
 #: ../web_tt2/help_introduction.tt2:119
 msgid ""
 "The use of mailing lists naturally means respecting the rules of good "
-"practices as regards to email."
+"practices as regards email (the \"Netiquette\")."
 msgstr ""
 
 #. (path_cgi)
@@ -925,11 +872,10 @@ msgstr ""
 
 #. (path_cgi)
 #: ../web_tt2/help_user.tt2:83
-#, fuzzy
 msgid ""
 "<a href=\"%1/help/suspend\">suspend or resume</a> your subscription of each "
 "list;"
-msgstr "en <a href=\"%1/help/user\">brukerveiledning</a> i bruk av Sympa;"
+msgstr ""
 
 #: ../web_tt2/help_user.tt2:84
 msgid "<a href=\"#unsubscribe\">unsubscribe</a> from the list."
@@ -1285,9 +1231,8 @@ msgid ""
 msgstr ""
 
 #: ../web_tt2/help_user.tt2:164
-#, fuzzy
 msgid "Suspending or resuming your subscription of each list"
-msgstr "en <a href=\"%1/help/user\">brukerveiledning</a> i bruk av Sympa;"
+msgstr ""
 
 #. (path_cgi)
 #: ../web_tt2/help_user.tt2:165
@@ -1530,8 +1475,8 @@ msgstr ""
 #. (path_cgi)
 #: ../web_tt2/help_admin.tt2:51
 msgid ""
-"Go to the <strong>list environment homepage</strong> and <strong><a href=\"%"
-"1/help/user#sympa_auth\">log on</a></strong>."
+"Go to the <strong>list environment homepage</strong> and <strong><a href="
+"\"%1/help/user#sympa_auth\">log on</a></strong>."
 msgstr ""
 
 #: ../web_tt2/help_admin.tt2:52
@@ -2082,9 +2027,8 @@ msgid ""
 msgstr ""
 
 #: ../web_tt2/help_admin.tt2:186
-#, fuzzy
 msgid "You have <strong>two options</strong>:"
-msgstr "<strong>eier;</strong>"
+msgstr ""
 
 #: ../web_tt2/help_admin.tt2:188
 msgid "<strong>authorize the message distribution</strong> on the list;"
@@ -2261,8 +2205,8 @@ msgstr ""
 msgid ""
 "If you manage a set of lists, you can <strong>prefix your lists' names with "
 "a common prefix</strong>; thus they will be sorted together and will be "
-"easily recognizable (example: <em class=\"example\">xx-users@%1, xx-hotline@%"
-"1.fr</em>, etc.)."
+"easily recognizable (example: <em class=\"example\">xx-users@%1, xx-hotline@"
+"%1.fr</em>, etc.)."
 msgstr ""
 
 #: ../web_tt2/help_admin.tt2:225
@@ -2817,42 +2761,25 @@ msgid ""
 msgstr ""
 
 #: ../web_tt2/help_editfile.tt2:9
-#, fuzzy
 msgid ""
 "Unsubscribe message: This message is sent when users leave the list\n"
 "using the UNSUBSCRIBE command."
 msgstr ""
-"#-#-#-#-#  blank_web_help_nb_NO.po (sympa)  #-#-#-#-#\n"
-"#-#-#-#-#  tmp_web_help_nb_NO.po (nb)  #-#-#-#-#\n"
-"Slettemelding : Denne meldingen er sendt til brukere når du\n"
-"fjerner de fra listen ved bruk av DEL kommandoen (så lenge du ikke velger\n"
-"Quiet knappen)."
 
 #: ../web_tt2/help_editfile.tt2:13
-#, fuzzy
 msgid ""
 "Deletion message: This message is sent to users when you\n"
 "remove them from the list using the DEL command (unless you hit the\n"
 "Quiet button."
 msgstr ""
-"Slettemelding : Denne meldingen er sendt til brukere når du\n"
-"fjerner de fra listen ved bruk av DEL kommandoen (så lenge du ikke velger\n"
-"Quiet knappen)."
 
 #: ../web_tt2/help_editfile.tt2:18
-#, fuzzy
 msgid ""
 "Remind message: This message is sent to each subscriber\n"
 "when using the command  REMIND. It's very useful to help people who are\n"
 "confused about their own subscription emails or people who are not able to\n"
 "unsubscribe themselves."
 msgstr ""
-"Påminnelse melding : Denne meldingen er sent til hver abonnent\n"
-"når man velger kommandoen  REMIND. Den er veldig fin for å hjelpe personer "
-"som er\n"
-"forvirret i forhold til deres egne eposter med påmelding eller de som ikke "
-"greier å\n"
-"gjøre avmelding på egen hånd."
 
 #: ../web_tt2/help_editfile.tt2:21
 msgid ""
@@ -2925,10 +2852,6 @@ msgid ""
 "the list, sympa uses the mode specified in the default_user_options "
 "paragraph."
 msgstr ""
-"<em>modusliste</em> er en liste med modi (mail, notice, digest, digestplain, "
-"summary, nomail), adskilt med komma. Bare de nevnte modi er tillatt for "
-"påmeldte på denne listen. Dersom en bruker har valgt ugyldig modus vil sympa "
-"bruke modusen angitt i default_user_options."
 
 #: ../web_tt2/help_editlist.tt2:22
 msgid "This paragraph defines bounce management parameters:"
@@ -2936,7 +2859,7 @@ msgstr ""
 
 #: ../web_tt2/help_editlist.tt2:24
 msgid "Default value: bounce_warn_rate robot parameter"
-msgstr "Standardverdi: bounce_warn_rate robot parameter"
+msgstr ""
 
 #: ../web_tt2/help_editlist.tt2:25
 msgid ""
@@ -2946,7 +2869,7 @@ msgstr ""
 
 #: ../web_tt2/help_editlist.tt2:27
 msgid "Default value: bounce_halt_rate robot parameter"
-msgstr "Standardverdi: bounce_halt_rate robot parameter"
+msgstr ""
 
 #: ../web_tt2/help_editlist.tt2:28
 msgid ""
@@ -2960,7 +2883,7 @@ msgstr ""
 #: ../web_tt2/help_editlist.tt2:56 ../web_tt2/help_editlist.tt2:59
 #: ../web_tt2/help_editlist.tt2:62
 msgid "Default value:"
-msgstr "Standardverdi"
+msgstr ""
 
 #: ../web_tt2/help_editlist.tt2:31
 msgid ""
@@ -3067,7 +2990,6 @@ msgid "This parameter specifies who is authorized to use the DEL command."
 msgstr ""
 
 #: ../web_tt2/help_editlist.tt2:81
-#, fuzzy
 msgid ""
 "Definition of digest mode. If this parameter is present, subscribers can "
 "select the option of receiving messages in multipart/digest MIME format, or "
@@ -3075,13 +2997,6 @@ msgid ""
 "messages are sent to subscribers according to the frequency selected with "
 "this parameter."
 msgstr ""
-"#-#-#-#-#  blank_web_help_nb_NO.po (sympa)  #-#-#-#-#\n"
-"#-#-#-#-#  tmp_web_help_nb_NO.po (nb)  #-#-#-#-#\n"
-"Definisjon av listesammendrag. Dersom denne parameteren er satt kan "
-"abonnenter velge å motta meldinger på multipart/digest MIME format, eller "
-"som rent tekstlig sammendrag. Meldinger er dermed gruppert, og sammendrag av "
-"meldinger er sendt til abonnenter i den takt man har valgt i forhold til "
-"denne parameteren."
 
 #: ../web_tt2/help_editlist.tt2:83
 msgid ""
@@ -3350,7 +3265,7 @@ msgstr ""
 
 #: ../web_tt2/help_editlist.tt2:167
 msgid "Defines who can access the web archive for the list."
-msgstr "Definerer hvem som har tilgang til web-arkivet for listen."
+msgstr ""
 
 #: ../web_tt2/help_editlist.tt2:169
 msgid ""
@@ -3472,7 +3387,7 @@ msgstr ""
 #: ../web_tt2/help_faquser.tt2:15
 msgid ""
 "<strong>You have no password</strong>. To be given a password, follow the <a "
-"href=\"%1/sendpasswd\">First login?</a> link from the homepage. You will "
+"href=\"%1/firstpasswd\">First login?</a> link from the homepage. You will "
 "receive your new password by email."
 msgstr ""
 
@@ -4726,8 +4641,8 @@ msgid ""
 "European Union, the \"Directive 95/46/EC of the European Parliament and of "
 "the Council of 24 October 1995 on the protection of individuals with regard "
 "to the processing of personal data and on the free movement of such data\" "
-"and national laws arising from it apply. To know more about this, <a href=\"%"
-"1/help/faquser#contactadmin\">please contact the list owners</a>."
+"and national laws arising from it apply. To know more about this, <a href="
+"\"%1/help/faquser#contactadmin\">please contact the list owners</a>."
 msgstr ""
 
 #: ../web_tt2/help_sendmsg.tt2:37
@@ -5488,7 +5403,7 @@ msgstr ""
 
 #: ../web_tt2/help_user_options.tt2:7
 msgid "Digest"
-msgstr "Listesammendrag"
+msgstr ""
 
 #: ../web_tt2/help_user_options.tt2:10
 msgid ""
@@ -5577,8 +5492,3 @@ msgid ""
 "in nomail mode, he or she will again receive individual mail messages from "
 "the list."
 msgstr ""
-
-#~ msgid ""
-#~ "(Default value: reception mail,notice,digest,digestplain,summary,nomail)"
-#~ msgstr ""
-#~ "(Standardverdier: reception mail,notice,digest,digestplain,summary,nomail)"
