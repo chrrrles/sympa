@@ -1,3 +1,7 @@
+# -*- indent-tabs-mode: nil; -*-
+# vim:ft=perl:et:sw=4
+# $Id: LockedFile.pm 11007 2014-06-18 07:30:17Z sikeda $
+
 # Sympa - SYsteme de Multi-Postage Automatique
 #
 # Copyright (c) 1997, 1998, 1999 Institut Pasteur & Christophe Wolfhugel
@@ -24,19 +28,15 @@ use strict;
 use warnings;
 use base qw(IO::File);
 
-use Carp qw(croak);
-use Fcntl qw(LOCK_EX LOCK_NB LOCK_SH);
+use Fcntl qw();
 use File::NFSLock;
-$File::NFSLock::LOCK_EXTENSION = '.lock';
-
-use Sympa::Logger;
+$File::NFSLock::LOCK_EXTENSION = '.LOCK';
 
 our %lock_of;
 my $default_timeout    = 30;
 my $stale_lock_timeout = 20 * 60;    # TODO should become a config parameter
 
 sub open {
-    $main::logger->do_log(Sympa::Logger::DEBUG2, '(%s, %s, %s, %s)', @_);
     my $self             = shift;
     my $file             = shift;
     my $blocking_timeout = shift || $default_timeout;
@@ -44,12 +44,12 @@ sub open {
 
     my $lock_type;
     if ($mode =~ /[+>aw]/) {
-        $lock_type = LOCK_EX;
+        $lock_type = Fcntl::LOCK_EX;
     } else {
-        $lock_type = LOCK_SH;
+        $lock_type = Fcntl::LOCK_SH;
     }
     if ($blocking_timeout < 0) {
-        $lock_type |= LOCK_NB;
+        $lock_type |= Fcntl::LOCK_NB;
     }
 
     my $lock = File::NFSLock->new(
@@ -60,14 +60,14 @@ sub open {
         }
     );
     unless ($lock) {
-        $main::logger->do_log(Sympa::Logger::ERR, 'Failed locking %s: %s', $file, $!);
         return undef;
     }
 
-    unless ($self->SUPER::open($file, $mode)) {
-        $main::logger->do_log(Sympa::Logger::ERR, 'Failed opening %s: %s', $file, $!);
-        $lock->unlock;    # make sure unlock to occur immediately.
-        return undef;
+    if ($mode ne '+') {
+        unless ($self->SUPER::open($file, $mode)) {
+            $lock->unlock;    # make sure unlock to occur immediately.
+            return undef;
+        }
     }
 
     $lock_of{$self + 0} = $lock;    # register lock object, i.e. keep locking.
@@ -75,13 +75,16 @@ sub open {
 }
 
 sub close {
-    $main::logger->do_log(Sympa::Logger::DEBUG2, '(%s)', @_);
     my $self = shift;
 
-    my $ret = $self->SUPER::close;
+    my $ret;
+    if (defined $self->fileno) {
+        $ret = $self->SUPER::close;
+    } else {
+        $ret = 1;
+    }
 
-    croak 'Lock not found'
-        unless exists $lock_of{$self + 0};
+    die 'Lock not found' unless exists $lock_of{$self + 0};
 
     $lock_of{$self + 0}->unlock;    # make sure unlock to occur immediately.
     delete $lock_of{$self + 0};     # lock object will be destructed.
@@ -180,10 +183,13 @@ lock will be stolen.
 
 Mode to open file.
 If it implys any writing operations (C<'E<gt>'>, C<'E<gt>E<gt>'>,
-C<'+E<lt>'>, ...), trys to acquire exclusive lock (C<LOCK_EX>),
-otherwise shared lock (C<LOCK_SH>).
+C<'+E<lt>'>, ...), trys to acquire exclusive lock (C<Fcntl::LOCK_EX>),
+otherwise shared lock (C<Fcntl::LOCK_SH>).
 
 Default is C<'E<lt>'>.
+
+Additionally, a special mode C<'+'> will acquire exclusive lock
+without opening file.  In this case the file does not have to exist.
 
 =back
 
@@ -230,4 +236,3 @@ Support for NFS was added by Kazuo Moriwaka.
 L<Sympa::LockedFile> module was initially written by IKEDA Soji.
 
 =cut
-

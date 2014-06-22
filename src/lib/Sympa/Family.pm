@@ -2425,16 +2425,16 @@ sub _set_status_changes {
 ##    if (($old_status ne 'pending') && ($old_status ne 'open')) {
 ##
 ##	if ($list->user_data_source eq 'file') {
-##	    $list->{'users'} = Sympa::List::_load_users_file($list->dir . '/subscribers.closed.dump');
+##	    $list->{'users'} = Sympa::List::_load_list_members_file($list->dir . '/subscribers.closed.dump');
 ##	}elsif ($list->user_data_source eq 'database') {
 ##	    unless (-f $list->dir . '/subscribers.closed.dump') {
 ##		$main::logger->do_log(Sympa::Logger::NOTICE, 'No subscribers to restore');
 ##	    }
-##	    my @users = Sympa::List::_load_users_file($list->dir . '/subscribers.closed.dump');
+##	    my @users = Sympa::List::_load_list_members_file($list->dir . '/subscribers.closed.dump');
 ##
 ##	    ## Insert users in database
 ##	    foreach my $user (@users) {
-##		$list->add_user($user);
+##		$list->add_list_member($user);
 ##	    }
 ##	}
 ##    }
