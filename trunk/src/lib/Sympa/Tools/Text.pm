@@ -29,6 +29,7 @@ use warnings;
 use Encode qw();
 use Text::LineFold;
 use if (5.008 < $] && $] < 5.016), qw(Unicode::CaseFold fc);
+use if (5.016 <= $]), qw(feature fc);
 
 use Sympa::Language;
 
