@@ -379,7 +379,7 @@ while (!$end) {
                                 "Starting bulk child daemon, PID %s",
                                 $child_pid);
 
-                            # Saves the pid number
+                            # Saves the PID number
                             Sympa::Tools::Daemon::write_pid(
                                 name             => $daemon_name,
                                 pid              => $child_pid,

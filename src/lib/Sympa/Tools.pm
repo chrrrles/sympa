@@ -32,8 +32,6 @@ use HTML::StripScripts::Parser;
 use MIME::Lite::HTML;
 use Scalar::Util '1.22'; # looks_like_number() works.
 
-##use if (5.008 < $] && $] < 5.016), qw(Unicode::CaseFold fc);
-
 use Sympa::Constants;
 use Sympa::LockedFile;
 use Sympa::Logger;

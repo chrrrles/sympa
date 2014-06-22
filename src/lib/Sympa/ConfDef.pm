@@ -80,7 +80,7 @@ our @params = (
             'This parameter is used for display name in the "From:" header',
     },
     {   'name'       => 'listmaster',
-        'default'    => 'your_email_address@domain.tld',
+        'sample'    => 'your_email_address@domain.tld',
         'gettext_id' => 'Listmasters email list comma separated',
         'file'       => 'sympa.conf',
         'vhost'      => '1',
