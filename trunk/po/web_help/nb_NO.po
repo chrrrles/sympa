@@ -1,35 +1,31 @@
-# #-#-#-#-#  blank_web_help_it.po (sympa)  #-#-#-#-#
+# #-#-#-#-#  blank_web_help_nb_NO.po (sympa)  #-#-#-#-#
 # Sympa online help internationalisation.
 # Copyright (C) 2007
 # This file is distributed under the same license as Sympa.
 # FIRST AUTHOR <david.verdin@cru.fr>, 2007.
 #
-# #-#-#-#-#  tmp_web_help_it.po (it)  #-#-#-#-#
-# translation of it.po to Italian
-# #-#-#-#-#  it.po (PACKAGE VERSION)  #-#-#-#-#
-# #-#-#-#-#  it.po (PACKAGE VERSION)  #-#-#-#-#
-# Copyright (C) 2004 Free Software Foundation, Inc.
-# #-#-#-#-#  it.po (PACKAGE VERSION)  #-#-#-#-#
-# Copyright (C) YEAR Free Software Foundation, Inc.
-# FIRST AUTHOR <EMAIL>, YEAR.
-# Giorgio Donnini <giorgio.donnini@Unimi.it>, 2004.
+# #-#-#-#-#  tmp_web_help_nb_NO.po (nb)  #-#-#-#-#
+# translation of nb.po to
+# Norwegian Bokmål translation for sympa
+# Copyright (c) (c) 2005 Canonical Ltd, and Rosetta Contributors 2005
+# This file is distributed under the same license as the sympa package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2005.
+# Anders Lund <anders.lund@uninett.no>, 2005.
 #
-#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: it\n"
-"Report-Msgid-Bugs-To: \n"
+"Project-Id-Version: nb\n"
+"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
 "POT-Creation-Date: 2007-11-13 14:50+0200\n"
-"PO-Revision-Date: 2007-05-21 18:05+0200\n"
-"Last-Translator: Giorgio Donnini <giorgio.donnini@unimi.it>\n"
-"Language-Team: Italiano\n"
+"PO-Revision-Date: 2008-06-25 21:58+0200\n"
+"Last-Translator: Bente Christine Aasgaard <bca@usit.uio.no>\n"
+"Language-Team: Bokmål <en@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"#-#-#-#-#  blank_web_help_it.po (sympa)  #-#-#-#-#\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"#-#-#-#-#  tmp_web_help_it.po (it)  #-#-#-#-#\n"
-"X-Generator: Pootle 0.10.1\n"
+"X-Generator: Pootle 1.0.2\n"
+"X-Rosetta-Version: 0.1\n"
 
 #: default/web_tt2/help_admin.tt2:3
 msgid "Mailing lists - Owner and moderator guide"
@@ -779,8 +775,9 @@ msgid ""
 msgstr ""
 
 #: default/web_tt2/help_admin.tt2:186
+#, fuzzy
 msgid "You have <strong>two options</strong>:"
-msgstr ""
+msgstr "<strong>eier;</strong>"
 
 #: default/web_tt2/help_admin.tt2:188
 msgid "<strong>authorize the message distribution</strong> on the list;"
@@ -1519,19 +1516,13 @@ msgstr ""
 
 #: default/web_tt2/help_editfile.tt2:3
 msgid "Service messages description :"
-msgstr "Descrizione dei messaggi di servizio"
+msgstr ""
 
 #: default/web_tt2/help_editfile.tt2:6
-#, fuzzy
 msgid ""
 "Welcome message: This message is sent to new subscribers. It can be\n"
 "a full MIME structured message (only for MIME gurus)."
 msgstr ""
-"#-#-#-#-#  blank_web_help_it.po (sympa)  #-#-#-#-#\n"
-"#-#-#-#-#  tmp_web_help_it.po (it)  #-#-#-#-#\n"
-"Messaggio di benvenuto. Questo messaggio viene invitato ai nuovi iscritti. "
-"Può essere un messaggio completamente costruito con MIME  (solo per guru del "
-"MIME)\n"
 
 #: default/web_tt2/help_editfile.tt2:9
 #, fuzzy
@@ -1539,10 +1530,11 @@ msgid ""
 "Unsubscribe message: This message is sent when users leave the list\n"
 "using the UNSUBSCRIBE command."
 msgstr ""
-"#-#-#-#-#  blank_web_help_it.po (sympa)  #-#-#-#-#\n"
-"#-#-#-#-#  tmp_web_help_it.po (it)  #-#-#-#-#\n"
-"Messaggio di disiscrizione: Questo messaggio viene spedito quando un utente "
-"abbandona la lista con il comando UNSUBSCRIBE\n"
+"#-#-#-#-#  blank_web_help_nb_NO.po (sympa)  #-#-#-#-#\n"
+"#-#-#-#-#  tmp_web_help_nb_NO.po (nb)  #-#-#-#-#\n"
+"Slettemelding : Denne meldingen er sendt til brukere når du\n"
+"fjerner de fra listen ved bruk av DEL kommandoen (så lenge du ikke velger\n"
+"Quiet knappen)."
 
 #: default/web_tt2/help_editfile.tt2:13
 #, fuzzy
@@ -1551,9 +1543,9 @@ msgid ""
 "remove them from the list using the DEL command (unless you hit the\n"
 "Quiet button."
 msgstr ""
-"Messaggio di rimozione: Questo messaggio viene inviato\n"
-" agli utenti quando vengono rimossi dalla lista usando il comando DEL\n"
-" (a meno di non selezionare il modo Silenzioso)"
+"Slettemelding : Denne meldingen er sendt til brukere når du\n"
+"fjerner de fra listen ved bruk av DEL kommandoen (så lenge du ikke velger\n"
+"Quiet knappen)."
 
 #: default/web_tt2/help_editfile.tt2:18
 #, fuzzy
@@ -1563,106 +1555,71 @@ msgid ""
 "confused about their own subscription emails or people who are not able to\n"
 "unsubscribe themselves."
 msgstr ""
-"#-#-#-#-#  blank_web_help_it.po (sympa)  #-#-#-#-#\n"
-"#-#-#-#-#  tmp_web_help_it.po (it)  #-#-#-#-#\n"
-"Messaggio di promemoria: Questo messaggio è inviato ad ogni iscritto \n"
-"quando si usa il comando REMIND. È molto utile per aiutare le persone che "
-"confondono \n"
-"le loro mail di sicrizione o persone che non sono capaci di disciscriversi "
-"da sole.\n"
+"Påminnelse melding : Denne meldingen er sent til hver abonnent\n"
+"når man velger kommandoen  REMIND. Den er veldig fin for å hjelpe personer "
+"som er\n"
+"forvirret i forhold til deres egne eposter med påmelding eller de som ikke "
+"greier å\n"
+"gjøre avmelding på egen hånd."
 
 #: default/web_tt2/help_editfile.tt2:21
-#, fuzzy
 msgid ""
 "Subscribing invitation message: sent to a person if someone  \n"
 "uses the INVITE command to invite someone to subscribe."
 msgstr ""
-"#-#-#-#-#  blank_web_help_it.po (sympa)  #-#-#-#-#\n"
-"#-#-#-#-#  tmp_web_help_it.po (it)  #-#-#-#-#\n"
-"Messaggio di invito all'iscrizione: viene mandato ad una persona\n"
-"se un utente usa il comando INVITE per invitare qualcuno all'iscrizione\n"
 
 #: default/web_tt2/help_editfile.tt2:24
-#, fuzzy
 msgid "Other files/pages description:"
-msgstr "Altro file/pagina di descrizione: "
+msgstr ""
 
 #: default/web_tt2/help_editfile.tt2:28
-#, fuzzy
 msgid ""
 "List homepage: HTML text to describe the list. It is printed on the\n"
 "right-hand side of the main list page. (default for this is the list "
 "description)"
 msgstr ""
-"#-#-#-#-#  blank_web_help_it.po (sympa)  #-#-#-#-#\n"
-"#-#-#-#-#  tmp_web_help_it.po (it)  #-#-#-#-#\n"
-"Pagina della lista: testo HTML di descrizione della lista. Viene "
-"visualizzato sul lato sinistro\n"
-"della pagina principale della lista (il valore predefinito è la descrizione "
-"della lista).\n"
 
 #: default/web_tt2/help_editfile.tt2:31
-#, fuzzy
 msgid ""
 "List description: This text is sent as an answer to the mail command\n"
 "INFO. It can also be included in the <em>Welcome message</em>."
 msgstr ""
-"Descrizione della lista: Questo testo viene inviato come risposta al "
-"comando\n"
-"INFO. Può essere anche incluso nel messaggio di benvenuto.\n"
 
 #: default/web_tt2/help_editfile.tt2:34
-#, fuzzy
 msgid ""
 "Message header: If this file is not empty, it is added as a MIME\n"
 "attachment at the beginning of each message distributed to the list."
 msgstr ""
-"#-#-#-#-#  blank_web_help_it.po (sympa)  #-#-#-#-#\n"
-"#-#-#-#-#  tmp_web_help_it.po (it)  #-#-#-#-#\n"
-"Intestazione: se il file non è vuoto, viene aggiunto come un allegato MIME "
-"all'inizio di ogni messaggio distribuito alla lista.\n"
 
 #: default/web_tt2/help_editfile.tt2:37
-#, fuzzy
 msgid ""
 "Message footer: same as <em>Message header,</em> but attached at the\n"
 "end of the message."
 msgstr ""
-"#-#-#-#-#  blank_web_help_it.po (sympa)  #-#-#-#-#\n"
-"#-#-#-#-#  tmp_web_help_it.po (it)  #-#-#-#-#\n"
-"Messaggio a pié di pagine: come l'<em>intestazione</em>, ma allegato alla "
-"fine del messaggio\n"
 
 #: default/web_tt2/help_editlist.tt2:184 default/web_tt2/help_editlist.tt2:6
 msgid ":"
 msgstr ""
 
-# nlsref 16,73
 #: default/web_tt2/help_editlist.tt2:9
 msgid "Privilege for adding (ADD command) a subscriber to the list"
-msgstr "Chi può aggiungere (comando ADD) iscritti alla lista"
+msgstr ""
 
 #: default/web_tt2/help_editlist.tt2:11
 msgid ""
 "To hide the sender's email address before distributing the message. It is "
 "replaced by the provided email address."
 msgstr ""
-"Per nascondere l'indirizzo email del mittente prima di distribuire il "
-"messaggio.Viene sostituito dall'indirizzo specificato."
 
 #: default/web_tt2/help_editlist.tt2:13
 msgid "Privilege for reading mail archives and frequency of archiving"
 msgstr ""
-"Privilegi per leggere gli archivi delle mail e definire la frequenza "
-"dell'archiviazione"
 
 #: default/web_tt2/help_editlist.tt2:15
 msgid ""
 "The available_user_options parameter starts a paragraph to define available "
 "options for the subscribers of the list."
 msgstr ""
-"il parametro avaiable_user_options dà inizio al paragrafo per definire le "
-"opzioni disponibili agli iscritti alla lista."
 
 #: default/web_tt2/help_editlist.tt2:17
 msgid "Default value: reception mail,notice,digest,digestplain,summary,nomail"
@@ -1676,47 +1633,34 @@ msgid ""
 "the list, sympa uses the mode specified in the default_user_options "
 "paragraph."
 msgstr ""
-"<em>modelist</em> è un elenco di modi (mail, notice, digest, digestplain, "
-"summary, nomail), separati da virgole. Solo questi modi saranno permessi "
-"agli iscritti alla lista. Se un iscritto ha un modo di recezione non "
-"presente in questa lista, Sympa utilizza il modo stabilito dal parametro "
-"default_user_options."
+"<em>modusliste</em> er en liste med modi (mail, notice, digest, digestplain, "
+"summary, nomail), adskilt med komma. Bare de nevnte modi er tillatt for "
+"påmeldte på denne listen. Dersom en bruker har valgt ugyldig modus vil sympa "
+"bruke modusen angitt i default_user_options."
 
 #: default/web_tt2/help_editlist.tt2:22
 msgid "This paragraph defines bounce management parameters:"
-msgstr "Questo paragrafo definisce il parametri di gestione dei rifiuti"
+msgstr ""
 
 #: default/web_tt2/help_editlist.tt2:24
 msgid "Default value: bounce_warn_rate robot parameter"
-msgstr "Valori predefiniti: bounce_warn_rate della lista"
+msgstr "Standardverdi: bounce_warn_rate robot parameter"
 
 #: default/web_tt2/help_editlist.tt2:25
 msgid ""
 "The list owner receives a warning whenever a message is distributed and the "
 "number (percentage) of bounces exceeds this value."
 msgstr ""
-"Il proprietario della lista rivece un messaggio d'avviso ogni volta che un "
-"messaggio viene distribuito e il numero (in percentuale) dei rifiuti va "
-"oltre questo valore."
 
 #: default/web_tt2/help_editlist.tt2:27
 msgid "Default value: bounce_halt_rate robot parameter"
-msgstr "Valore predefinito: parametro bounce_halt_rate lista"
+msgstr "Standardverdi: bounce_halt_rate robot parameter"
 
 #: default/web_tt2/help_editlist.tt2:28
-#, fuzzy
 msgid ""
 "NOT USED YET. If bounce rate reaches the halt_rate, messages for the list "
 "will be halted, i.e. they are retained for subsequent moderation."
 msgstr ""
-"#-#-#-#-#  blank_web_help_it.po (sympa)  #-#-#-#-#\n"
-"#-#-#-#-#  tmp_web_help_it.po (it)  #-#-#-#-#\n"
-"NON ANCORA USATO: Se il tasso di rimbalzi raggiunge il tasso_di_blocco i "
-"messaggi \n"
-"per la lista vengono bloccati e vengono custoditi per una successiva "
-"moderazione.\n"
-"Se il numero di rimbalzi supera questo valore, i messaggi per la lista non "
-"vengono piú distributiti.\n"
 
 #: default/web_tt2/help_editlist.tt2:130 default/web_tt2/help_editlist.tt2:137
 #: default/web_tt2/help_editlist.tt2:30 default/web_tt2/help_editlist.tt2:40
@@ -1724,108 +1668,69 @@ msgstr ""
 #: default/web_tt2/help_editlist.tt2:56 default/web_tt2/help_editlist.tt2:59
 #: default/web_tt2/help_editlist.tt2:62
 msgid "Default value:"
-msgstr "Valore predefinito:"
+msgstr "Standardverdi"
 
 #: default/web_tt2/help_editlist.tt2:31
-#, fuzzy
 msgid ""
 "Name of the task template used to remove old bounces. Useful for removing "
 "bounced subscriber email. If some messages are distributed without receiving "
 "new bounce messages, the subscriber's email seems to be OK again. Active if "
 "task_manager.pl is running."
 msgstr ""
-"#-#-#-#-#  blank_web_help_it.po (sympa)  #-#-#-#-#\n"
-"#-#-#-#-#  tmp_web_help_it.po (it)  #-#-#-#-#\n"
-"Nome dello schema d'azione usato per eliminare i messaggi respinti. Utile "
-"per rimuovere le email respinte d'un iscritto se alcuni messaggi sono stati "
-"distribuiti senza che si siano ricevuti altri errori. In questo caso l'email "
-"dell'iscritto sembra di nuovo a posto.È attivo se task_manager.pl è in "
-"azione."
 
 #: default/web_tt2/help_editlist.tt2:37
-#, fuzzy
 msgid ""
 "The Bouncers_level1 paragraphs defines the automatic behavior of bounce "
 "management.<br />\n"
 "\tLevel 1 is the lower level of bouncing users"
 msgstr ""
-"#-#-#-#-#  blank_web_help_it.po (sympa)  #-#-#-#-#\n"
-"#-#-#-#-#  tmp_web_help_it.po (it)  #-#-#-#-#\n"
-"Il paragrafo del livello 1 di messaggi rifiutati definisce il comportamento "
-"automatico per la gestione dei rifiuti.<br>\n"
-"   Il livello 1 è il livello piú basso di indirizzi rifiutati.\n"
 
 #: default/web_tt2/help_editlist.tt2:41 default/web_tt2/help_editlist.tt2:57
 msgid "Each bouncing user have a score (from 0 to 100)."
-msgstr "Ciascun indirizzo respinto ha un punteggio (da 0 a 100)"
+msgstr ""
 
 #: default/web_tt2/help_editlist.tt2:41
-#, fuzzy
 msgid ""
 "This parameter defines a lower limit for each category of bouncing users.For "
 "example, level 1 begins from 45 to level_2_treshold."
 msgstr ""
-"#-#-#-#-#  blank_web_help_it.po (sympa)  #-#-#-#-#\n"
-"#-#-#-#-#  tmp_web_help_it.po (it)  #-#-#-#-#\n"
-"Ogni indirizzo respinto ha un punteggio (da 0 a 100). Questo parametro "
-"definisce la soglia inferiore per ogni categoria d'indirizzo respinto.Per "
-"esempio il livello 1 inizia a 45 e arriva alla soglia del livello 2"
 
 #: default/web_tt2/help_editlist.tt2:44
 msgid ""
 "This parameter defines which task is automaticaly applied on level 1 "
 "bouncers."
 msgstr ""
-"Questo parametro definisce quali azioni sono eseguite al livello1 di rifiuto"
 
 #: default/web_tt2/help_editlist.tt2:47
 msgid ""
 "When automatic task is executed on level 1 bouncers, a notification email "
 "can be send to listowner or listmaster."
 msgstr ""
-"Quando un azione automatica viene eseguita su errori di livello 1, può "
-"essere invitata una mail di notifica al proprietario o al listmaster"
 
 #: default/web_tt2/help_editlist.tt2:53
-#, fuzzy
 msgid ""
 "The Bouncers_levelX paragraphs defines the automatic behavior of bounce "
 "management.<br />\n"
 "\tLevel 2 is the highest level of bouncing users"
 msgstr ""
-"#-#-#-#-#  blank_web_help_it.po (sympa)  #-#-#-#-#\n"
-"#-#-#-#-#  tmp_web_help_it.po (it)  #-#-#-#-#\n"
-"Il paragrafo del livello X definisce il comportamento automatico per la "
-"gestione dei rifiuti. <br/>\n"
-"   Il livello 2 è il livello piú alto di rifiuto.\n"
 
 #: default/web_tt2/help_editlist.tt2:57
-#, fuzzy
 msgid ""
 "This parameter defines the score range defining each category of bouncing "
 "users.For example, level 2 is for users with a score between 80 and 100."
 msgstr ""
-"#-#-#-#-#  blank_web_help_it.po (sympa)  #-#-#-#-#\n"
-"#-#-#-#-#  tmp_web_help_it.po (it)  #-#-#-#-#\n"
-"Ogni indirizzo respinto ha un punteggio (da 0 a 100). Questo parametro "
-"definisce i limiti tra ciascuna categoria di utenti respinti. Per esempio il "
-"livello 2 è per gli utenti con un punteggio tra 80 e 100"
 
 #: default/web_tt2/help_editlist.tt2:60
 msgid ""
 "This parameter defines which task is automaticaly applied on level 2 "
 "bouncers."
 msgstr ""
-"Questo parametro definisce quali azioni vengano eseguite automaticamente per "
-"un rifiuto di livello 2"
 
 #: default/web_tt2/help_editlist.tt2:63
 msgid ""
 "When automatic task is executed on level 2 bouncers, a notification email "
 "can be send to listowner or listmaster."
 msgstr ""
-"Quando un azione automatica viene eseguita su rifiuti di livello 2, può "
-"essere invitata una mail di notifica al proprietario o al listmaster"
 
 #: default/web_tt2/help_editlist.tt2:67
 msgid ""
@@ -1834,11 +1739,6 @@ msgid ""
 "concealed, even for owners. The cookie is applied to all list owners, and is "
 "only taken into account when the owner has the auth parameter."
 msgstr ""
-"Questo parametro è un valore riservato per generare automaticamente le "
-"chaivi per i comandi amministrativi (ADD DELETE, ecc). Questo parametro deve "
-"rimanere nascosto, anche al proprietario.Il cookie è usato per tutti i "
-"proprietari di lista, ed è preso in considerazione solo quando il "
-"proprietario ha il parametro auth"
 
 #: default/web_tt2/help_editlist.tt2:69
 msgid ""
@@ -1847,10 +1747,6 @@ msgid ""
 "it is possible to put several custom header lines in the configuration file "
 "at the same time."
 msgstr ""
-"Questo parametro è opzionale. Gli header specificati verranno aggiunti agli "
-"header dei messaggi distribuiti per lista. Dalla release 1.2.2 di Sympa, è "
-"possibile mettere svariate linee di header personali nel file di "
-"configurazione in una volta sola."
 
 #: default/web_tt2/help_editlist.tt2:71
 msgid ""
@@ -1859,33 +1755,27 @@ msgid ""
 "automatic tools to sort incoming messages). This string will be surrounded "
 "by [] characters."
 msgstr ""
-"Questo parametro è opzionale.Specifica una stringa che viene aggiunta "
-"all'oggetto del messaggio distribuito (lo scopo è aiutare gli utenti che non "
-"usano strumenti automatici per riordinare i messaggi in arrivo). Questa "
-"stringa viene inclusa tra [ ]."
 
 #: default/web_tt2/help_editlist.tt2:73
 msgid ""
 "The default_user_options parameter starts a paragraph to define a default "
 "profile for the subscribers of the list."
 msgstr ""
-"il parametro default_user_options dà inizio ad un paragrafo per definire un "
-"profilo predefinito per gli iscritti alla lista."
 
-# nlsref 16,19
 #: default/web_tt2/help_editlist.tt2:75
 msgid "Mail reception mode."
-msgstr "modo di ricezione dei messaggi."
+msgstr ""
 
 #: default/web_tt2/help_editlist.tt2:76
 msgid "Visibility of the subscriber with the REVIEW command."
-msgstr "Visibilità dell'utente con il comando REVIEW"
+msgstr ""
 
 #: default/web_tt2/help_editlist.tt2:79
 msgid "This parameter specifies who is authorized to use the DEL command."
-msgstr "Questo parametro specifica chi è autorizzato ad usare il comando DEL"
+msgstr ""
 
 #: default/web_tt2/help_editlist.tt2:81
+#, fuzzy
 msgid ""
 "Definition of digest mode. If this parameter is present, subscribers can "
 "select the option of receiving messages in multipart/digest MIME format, or "
@@ -1893,10 +1783,13 @@ msgid ""
 "messages are sent to subscribers according to the frequency selected with "
 "this parameter."
 msgstr ""
-"Definizione del modo Raccolta. Se questo parametro è presente, gli iscritti "
-"possono selezionare questa opzione per ricevere i messaggi nel formato MIME "
-"multipart/digest, oppure come riassunto in testo semplice. I messaggi sono "
-"raggruppati e inviati agli iscritti coi ritmi scelti con questo parametro."
+"#-#-#-#-#  blank_web_help_nb_NO.po (sympa)  #-#-#-#-#\n"
+"#-#-#-#-#  tmp_web_help_nb_NO.po (nb)  #-#-#-#-#\n"
+"Definisjon av listesammendrag. Dersom denne parameteren er satt kan "
+"abonnenter velge å motta meldinger på multipart/digest MIME format, eller "
+"som rent tekstlig sammendrag. Meldinger er dermed gruppert, og sammendrag av "
+"meldinger er sendt til abonnenter i den takt man har valgt i forhold til "
+"denne parameteren."
 
 #: default/web_tt2/help_editlist.tt2:83
 msgid ""
@@ -1904,18 +1797,12 @@ msgid ""
 "moderated, messages posted to the list will first be passed to the editors, "
 "who will decide whether to distribute or reject it."
 msgstr ""
-"I moderatori sono responsabili della moderazione della lista .Se la lista è "
-"moderata, i messaggi inviati alla lista devono prima passare dai moderatori, "
-"che decidono se distribuirli o rifiutarli."
 
 #: default/web_tt2/help_editlist.tt2:84
-#, fuzzy
 msgid ""
 "FYI: Defining editors will not make the list moderated; you will have to set "
 "the \"send\" parameter."
 msgstr ""
-"NB: Indicare i moderatori non rende la lista moderata. Devi anche impostare "
-"il parametro \"send\""
 
 #: default/web_tt2/help_editlist.tt2:85
 msgid ""
@@ -1924,25 +1811,14 @@ msgid ""
 "not been distributed or rejected will remain in the moderation spool until "
 "they are acted on."
 msgstr ""
-"NB: se la lista è moderata, ogni moderatore può distribuire o rifiutare un "
-"messaggio  all'insaputa degli altri moderatori. I messaggi che non sono "
-"stati distribuiti o rifiutati rimangono nella coda di moderazione fino alla "
-"loro scadenza."
 
 #: default/web_tt2/help_editlist.tt2:87
-#, fuzzy
 msgid ""
 "This parameter states which model is used to create an expire task. An "
 "expire task regularly checks the subscription or resubscription  date of "
 "subscribers and asks them to renew their subscription. If they don't they "
 "are deleted."
 msgstr ""
-"#-#-#-#-#  blank_web_help_it.po (sympa)  #-#-#-#-#\n"
-"#-#-#-#-#  tmp_web_help_it.po (it)  #-#-#-#-#\n"
-"Questo parametro indica quale modello va usato per creare un azione di "
-"estinzione. Un azione d'estinzione controlla regolarmente le date "
-"d'iscrizione e risiscrizione degli iscritti, e chiede loro di rinnovarla. Se "
-"non lo fanno vengono cancellati."
 
 #: default/web_tt2/help_editlist.tt2:89
 msgid ""
@@ -1950,15 +1826,10 @@ msgid ""
 "via the list. This parameter defines the way a footer/header is added to a "
 "message."
 msgstr ""
-"I proprietari della lista possono decidere di aggiungere un messaggio in "
-"testa o in coda alle mail invitate alla lista. Questo parametro imposta il "
-"modo con cui questi messaggi vengono aggiunti"
 
 #: default/web_tt2/help_editlist.tt2:92
 msgid "The default value. Sympa will add the footer/header as a new MIME part."
 msgstr ""
-"Il valore predefinito che Sympa aggiungerà all'intestazione/pié di pagina "
-"come una nuova sezione MIME"
 
 #: default/web_tt2/help_editlist.tt2:95
 msgid ""
@@ -1966,56 +1837,34 @@ msgid ""
 "footer to the body of the message. Predefined message-footers will be "
 "ignored. Headers/footers may be appended to text/plain messages only."
 msgstr ""
-"Sympa non creerà altre sezioni MIME, ma cercherà di allegare l'intestazione/"
-"piè di pagina al corpo del messaggio. I pié di pagina preimpostati saranno "
-"ignorati. Le intestazioni e i piè di pagina possono essere allegati solo a "
-"file di testo semplice."
 
 #: default/web_tt2/help_editlist.tt2:99
 msgid ""
 "Domain name of the list, default is the robot domain name set in the related "
 "robot.conf file or in file /etc/sympa.conf."
 msgstr ""
-"Nome di dominio della lista. Il valore predefinito è il dominio del robot "
-"stabilito nel file robot.conf relativo o nel file /etc/sympa.conf"
 
 #: default/web_tt2/help_editlist.tt2:101
-#, fuzzy
 msgid ""
 "Include subscribers from this file.  The file should contain one e-mail "
 "address per line (lines beginning with a \"#\" are ignored)."
 msgstr ""
-"Questo parametro viene interpretato solo se il valore di user_data_source è "
-"impostato a include. Il file deve contenere un indirizzi email per riga (le "
-"righe che iniziano per # sono ignorate)"
 
 #: default/web_tt2/help_editlist.tt2:103
-#, fuzzy
 msgid ""
 "This paragraph defines parameters for a two-level query returning a list of "
 "subscribers. Usually the first-level query returns a list of DNs and the "
 "second-level queries convert the DNs into e-mail addresses. This feature "
 "requires the Net::LDAP (perlldap) PERL module."
 msgstr ""
-"Questo paragrafo definisce i parametri per un'interrogazione a due livelli "
-"che restituiscono un elenco di iscritti. Di solito la prima interrogazione "
-"restitutisce un elenco di DN e la seconda li converte in indirizzi email."
-"Questo paragrafo viene usato solo se user_data_source è impostato a include."
-"Questa caratteristica richiede il modulo Perl Net::LDAP (perlldap)"
 
 #: default/web_tt2/help_editlist.tt2:105
-#, fuzzy
 msgid ""
 "This paragraph defines parameters for a query returning a list of "
 "subscribers. This feature requires the Net::LDAP (perlldap) PERL module."
 msgstr ""
-"Questo paragrafo definisce i parametri per un'interrogazione LDAP che "
-"restituisce un elenco di iscritti.Questo paragrafo viene usato solo se "
-"user_data_source è impostato a include.Questa caratteristica richiedere il "
-"modulo Perl Net::LDAP (perlldap)"
 
 #: default/web_tt2/help_editlist.tt2:107
-#, fuzzy
 msgid ""
 "Include subscribers from other list. All subscribers of list listname become "
 "subscribers of the current list. You may include as many lists as required, "
@@ -2025,20 +1874,8 @@ msgid ""
 "list B and then list B in list A, since this will give rise to an infinite "
 "loop."
 msgstr ""
-"#-#-#-#-#  blank_web_help_it.po (sympa)  #-#-#-#-#\n"
-"#-#-#-#-#  tmp_web_help_it.po (it)  #-#-#-#-#\n"
-"Questo parametro viene interpretato solo se il valore di user_data_source è "
-"impostato a include. Tutti gli iscritti della lista listname diventano "
-"iscritti della lista in questione. Si possono includere tutte le liste che "
-"si vogliono, usando un include_list listname per ogni lista da includere. "
-"Ogni tipo di lista può essere incluso, la definizione di user_data_source "
-"delle liste incluse non è rilevante, e quindi si possono includere liste "
-"definite a loro volta includendo altre liste. Fa' però attenzione a non "
-"includere la lista A nella lista B e quindi la lista B nella lista A, perché "
-"questo darà il via ad un ciclo infinito."
 
 #: default/web_tt2/help_editlist.tt2:109
-#, fuzzy
 msgid ""
 "Sympa can contact another Sympa service using HTTPS to fetch a remote list "
 "in order to include each member of a remote list as subscriber. You may "
@@ -2046,38 +1883,20 @@ msgid ""
 "paragraph for each included list. Be careful, however, not to give rise to "
 "an infinite loop resulting from cross includes."
 msgstr ""
-"#-#-#-#-#  blank_web_help_it.po (sympa)  #-#-#-#-#\n"
-"#-#-#-#-#  tmp_web_help_it.po (it)  #-#-#-#-#\n"
-"Sympa può contattare un altro servizio Sympa usando una connessione https "
-"per andare a prendere una lista in remoto ed includere i membri di quella "
-"lista come iscritti. Si possono includere tutte le liste che si vuole, "
-"usando un paragrafo include_remote_sympa_list per ogni lista inclusa. Fai "
-"attenzione a non creare un ciclo infinito creando inclusioni incrociate."
 
 #: default/web_tt2/help_editlist.tt2:110
-#, fuzzy
 msgid ""
 "For this operation, one Sympa site acts as a server while the other one acs "
 "as client. On the server side, the only setting needed is to give permission "
 "to the remote Sympa to review the list. This is controlled by the review "
 "scenario."
 msgstr ""
-"#-#-#-#-#  blank_web_help_it.po (sympa)  #-#-#-#-#\n"
-"#-#-#-#-#  tmp_web_help_it.po (it)  #-#-#-#-#\n"
-"Per questa operazione, un sito Sympa agisce da server mentre l'altro agisce "
-"daclient. Lato server, l'unica impostazione necessaria è dare il permesso al "
-"Sympa remoto di elencare gli utenti della lista. Questo è controllato dallo "
-"scenario review"
 
 #: default/web_tt2/help_editlist.tt2:112
-#, fuzzy
 msgid ""
 "This parameter is used to begin a paragraph defining the SQL query "
 "parameters. "
 msgstr ""
-"Questo parametro viene interpretato solo se il valore di user_data_source è "
-"impostato a include, ed è usato per dare inizio ad un paragrafo che "
-"definisce un'interrogazione SQL"
 
 #: default/web_tt2/help_editlist.tt2:114
 msgid ""
@@ -2085,31 +1904,18 @@ msgid ""
 "initialize a user's language preference; Sympa command reports are extracted "
 "from the associated message catalog."
 msgstr ""
-"Questo parametro definisce il linguaggio usato per le liste. È utilizzato "
-"anche per inizializzare l'opzione di lingua dell'utente. I resoconti di "
-"Sympa sono presi dal catalogo di messaggi associato."
 
 #: default/web_tt2/help_editlist.tt2:116
 msgid "Maximum size of a message in 8-bit bytes."
-msgstr "Dimensione massima del messaggio in byte."
+msgstr ""
 
 #: default/web_tt2/help_editlist.tt2:118
-#, fuzzy
 msgid ""
 "Owners are managing subscribers of the list. They may review subscribers and "
 "add or delete email addresses from the mailing list. If you are a privileged "
 "owner of the list, you can choose other owners for the mailing list. "
 "Privileged owners may edit a few more options than other owners. "
 msgstr ""
-"#-#-#-#-#  blank_web_help_it.po (sympa)  #-#-#-#-#\n"
-"#-#-#-#-#  tmp_web_help_it.po (it)  #-#-#-#-#\n"
-"I proprietari gestiscono gli iscritti alla lista. Possono elencare gli "
-"iscritti e aggiungere o cancellare indirizzi dalla lista. Se sei un "
-"proprietario con privilegi, puoi scegliere altri proprietari per la lista.I "
-"proprietari *privilegiati* possono modificare un numero maggiore di "
-"parametri rispetto agli altri proprietari. Ci può essere un solo "
-"proprietario privilegiato per lista, e il suo indirizzo email non può essere "
-"modificato via web."
 
 #: default/web_tt2/help_editlist.tt2:120
 msgid ""
@@ -2117,42 +1923,27 @@ msgid ""
 "level of priority is applied while the message is going through the spool. "
 "The z priority will freeze the message in the spool."
 msgstr ""
-"La priorità con cui Sympa elabora i messaggi per la lista. Questo livello di "
-"priorità viene usato quando il messaggio passa attraverso la coda.La "
-"priorità z congela il messaggio nella coda"
 
 #: default/web_tt2/help_editlist.tt2:122
 msgid "This parameter specifies who is authorized to use the remind command."
 msgstr ""
-"Questo parametro specifica chi è autorizzato ad usare il comando REMIND"
 
 #: default/web_tt2/help_editlist.tt2:124
 msgid "Same as welcome_return_path, but applied to remind messages."
 msgstr ""
-"Come il percorso di ritorno di benvenuto, ma riferito al messaggio di "
-"promemoria"
 
 #: default/web_tt2/help_editlist.tt2:126
-#, fuzzy
 msgid ""
 "This parameter states which model is used to create a remind task. A remind "
 "task regularly sends  subscribers a message which reminds them of their list "
 "subscriptions."
 msgstr ""
-"#-#-#-#-#  blank_web_help_it.po (sympa)  #-#-#-#-#\n"
-"#-#-#-#-#  tmp_web_help_it.po (it)  #-#-#-#-#\n"
-"Questo parametro indica quale modello va usato per creare un'azione di "
-"promemoria. Un'azione di promemoria manda regolarmente agli iscritti un "
-"messaggio, ricordando loro che sono iscritti alla lista."
 
 #: default/web_tt2/help_editlist.tt2:128
 msgid ""
 "The reply_to_header parameter starts a paragraph defining what Sympa will "
 "place in the Reply-To: SMTP header field of the messages it distributes."
 msgstr ""
-"Il parametro reply_to_header dà inizio ad un paragrafo che definisce cosa "
-"Sympa metterà al posto del campo Reply To: degli header-SMTP nei messaggi "
-"che distribuisce."
 
 #: default/web_tt2/help_editlist.tt2:131
 msgid ""
@@ -2160,9 +1951,6 @@ msgid ""
 "sender of the message (sender), the list itself (list), both list and sender "
 "(all) or an arbitrary e-mail address (defined by the other_email parameter)."
 msgstr ""
-"Questo parametro indica che il campo Reply-To debba contenere il mittente "
-"del messaggio (sender), la lista stessa (list) sia la lista che il mittente "
-"(all) o un indirizzo email arbitrario (definito dal parametro other_email)"
 
 #: default/web_tt2/help_editlist.tt2:132
 msgid ""
@@ -2172,24 +1960,16 @@ msgid ""
 "the sender, will send private messages to a list. This can lead, at the very "
 "least, to embarrassment, and sometimes to more serious consequences."
 msgstr ""
-"Nota:non è consigliabile cambiare questo parametro, e soprattutto è "
-"sconsigliabile impostarlo a \"lista\". L'esperienza ha dimostrato che quasi "
-"sempre l'utente, credendo erroneamente di star rispondendo solo al mittente, "
-"manda un messaggio privato alla lista.Questo conduce, per lo meno, a "
-"situazioni imbarazzanti, e spesso a conseguente piú serie."
 
-# nlsref 16,27
 #: default/web_tt2/help_editlist.tt2:134
 msgid "an_email_address"
-msgstr "an_email_address"
+msgstr ""
 
 #: default/web_tt2/help_editlist.tt2:135
 msgid ""
 "If value was set to other_email, this parameter defines the e-mail address "
 "used."
 msgstr ""
-"Se il valore è impostato a other_mail, questo parametro definisce "
-"l'indirizzo email utilizzato."
 
 #: default/web_tt2/help_editlist.tt2:138
 msgid ""
@@ -2197,9 +1977,6 @@ msgid ""
 "field in incoming messages. If set to forced, Reply-To: SMTP header field "
 "will be overwritten."
 msgstr ""
-"La scelta predefinita è di conservare il campo header-SMTP Reply To nei "
-"messaggi in arrivo. Se impostato a forced, il campo Reply To verrà "
-"sovrascritto "
 
 #: default/web_tt2/help_editlist.tt2:142
 msgid ""
@@ -2207,57 +1984,38 @@ msgid ""
 "subscriber addresses can be abused by spammers, it is strongly recommended "
 "that you only authorize owners or subscribers to access the subscriber list. "
 msgstr ""
-"Questo parametro specifica chi può avere accesso all'elenco degli iscritti. "
-"Siccome gli spammer possono fare abuso degli indirizzi degli iscritti, si "
-"raccomanda vivamente di autorizzare solo i proprietari o gli iscritti per "
-"accedere all'elenco degli iscritti."
 
 #: default/web_tt2/help_editlist.tt2:144
 msgid "This parameter specifies who can send messages to the list."
-msgstr "Questo parametro specifica chi può mandare un messaggio alla lista."
+msgstr ""
 
 #: default/web_tt2/help_editlist.tt2:146
 msgid ""
 "This paragraph defines read and edit access to the shared document "
 "repository."
 msgstr ""
-"Questo paragrafo definisce l'accesso in lettura e in scrittura per il "
-"repositorio dei documenti condivisi."
 
 #: default/web_tt2/help_editlist.tt2:148
-#, fuzzy
 msgid ""
 "There is a need to protect Sympa web sites against spambots which collect "
 "email addresses from public web sites. Various methods are available in "
 "Sympa and you can choose to use them with the spam_protection and "
 "web_archive_spam_protection parameters. Possible value are:"
 msgstr ""
-"#-#-#-#-#  blank_web_help_it.po (sympa)  #-#-#-#-#\n"
-"#-#-#-#-#  tmp_web_help_it.po (it)  #-#-#-#-#\n"
-"È necessario proteggere il sito Web Sympa contro gli 'spambot' che "
-"raccolgono indirizzi email dai siti web pubblici.Sono disponibili varî "
-"metodi in Sympa, e puoi scegliere quale usare con i parametri "
-"spam_protection e web_archive_spam_protection.I valori possibili sono:"
 
 #: default/web_tt2/help_editlist.tt2:150
-#, fuzzy
 msgid ""
 "the address is hidden using a javascript. A user who enables javascript can "
 "see a nice mailto address where others have nothing."
 msgstr ""
-"#-#-#-#-#  blank_web_help_it.po (sympa)  #-#-#-#-#\n"
-"#-#-#-#-#  tmp_web_help_it.po (it)  #-#-#-#-#\n"
-"L'indirizzo viene nascosto usando javascript. Gli utenti che abiliitano "
-"javascript possono vedere un mailto carino, mentre gli altri non vedranno "
-"nulla."
 
 #: default/web_tt2/help_editlist.tt2:151
 msgid "the @ char is replaced by the string \" AT \"."
-msgstr "il carattere @ viene sostituito dalla parola AT"
+msgstr ""
 
 #: default/web_tt2/help_editlist.tt2:152
 msgid "no protection against spammer."
-msgstr "Nessuna protezione contro gli spammer"
+msgstr ""
 
 #: default/web_tt2/help_editlist.tt2:155
 msgid ""
@@ -2265,13 +2023,10 @@ msgid ""
 "to the LISTS mail command. The subject is a free form text limited to one "
 "line."
 msgstr ""
-"Questo parametro mostra l'oggetto della lista, che viene mandato in risposta "
-"al comando via mail LISTS. L'oggetto è un testo libero limitato ad una linea."
 
 #: default/web_tt2/help_editlist.tt2:157
 msgid "The subscribe parameter defines the rules for subscribing to the list."
 msgstr ""
-"I parametri subscribe definiscono le regole per l'iscrizione alla lista."
 
 #: default/web_tt2/help_editlist.tt2:159
 msgid ""
@@ -2279,9 +2034,6 @@ msgid ""
 "topics as well as hierarchical ones. WWSympa's list of public lists uses "
 "this parameter."
 msgstr ""
-"Questo parametro permette la classificazione delle liste. Puoi definire "
-"argomenti multipli e gerarchie di argomenti.L'elenco WWSympa delle liste "
-"pubbliche utilizza questo parametro."
 
 #: default/web_tt2/help_editlist.tt2:161
 msgid ""
@@ -2289,9 +2041,6 @@ msgid ""
 "(time-to-live) within Sympa can be controlled using this parameter. The "
 "default value is 3600"
 msgstr ""
-"Sympa memorizza i dati degli utenti ottenuti usando il parametro include. Il "
-"loro TTL (time to live=tempo di vita) può essere gestito usando questo "
-"parametro. Il valore predefinito è 3600."
 
 #: default/web_tt2/help_editlist.tt2:163
 msgid ""
@@ -2299,9 +2048,6 @@ msgid ""
 "open_notify or auth_notify to allow owner notification of each unsubscribe "
 "command."
 msgstr ""
-"Questo parametro specifica il modo di disiscrizione dalla lista. Usa "
-"open_notify o auth_notify per far ricevere ai proprietari la notifica d'ogni "
-"comando di disicrizione."
 
 #: default/web_tt2/help_editlist.tt2:165
 msgid ""
@@ -2309,38 +2055,24 @@ msgid ""
 "generated in response to a LISTS command or should be shown in the list "
 "overview of the web-interface."
 msgstr ""
-"Questo parametro indica se la lista debba apparire nell'output generato in "
-"risposta al comando LISTS e se debba comparire nella rivista "
-"dell'interfaccia Web"
 
 #: default/web_tt2/help_editlist.tt2:167
 msgid "Defines who can access the web archive for the list."
-msgstr "Definisce chi può accedere all'archivio web per la lista."
+msgstr "Definerer hvem som har tilgang til web-arkivet for listen."
 
 #: default/web_tt2/help_editlist.tt2:169
-#, fuzzy
 msgid ""
 "Idem spam_protection is provided but it can be used only for web archives. "
 "Access requires a cookie, and users must submit a small form in order to "
 "receive a cookie before browsing the archives. This blocks all robot, even "
 "google and co."
 msgstr ""
-"#-#-#-#-#  blank_web_help_it.po (sympa)  #-#-#-#-#\n"
-"#-#-#-#-#  tmp_web_help_it.po (it)  #-#-#-#-#\n"
-"Identico al parametro spam_protection, ma limitatamente all'archivio Web. È "
-"disponibile un scelta aggiuntiva: il valore \"cookie\": in questo caso "
-"l'utente deve compilare un piccolo modulo per ricevere un cookie prima di "
-"navigare gli archivi. Questo blocca tutti i robot, compreso google e "
-"compagnia bella."
 
 #: default/web_tt2/help_editlist.tt2:171
 msgid ""
 "If set to unique, the welcome message is sent using a unique return path in "
 "order to remove the subscriber immediately in the case of a bounce."
 msgstr ""
-"Se impostato a \"unique\", il messaggio di benvenuto viene spedito usando un "
-"unico indirizzo di replica, in modo da poter immediatamente rimuovere gli "
-"indirizzi degli iscritti in caso di errore."
 
 #: default/web_tt2/help_editlist.tt2:173
 msgid ""
@@ -2669,11 +2401,11 @@ msgstr ""
 
 #: default/web_tt2/help_introduction.tt2:3
 msgid "Mailing lists - General introduction"
-msgstr ""
+msgstr "E-postlister - Generell innføring"
 
 #: default/web_tt2/help_introduction.tt2:5
 msgid "What is a mailing list?"
-msgstr ""
+msgstr "Hva er en e-postliste?"
 
 #: default/web_tt2/help_introduction.tt2:6
 msgid ""
@@ -2687,7 +2419,7 @@ msgstr ""
 
 #: default/web_tt2/help_introduction.tt2:7
 msgid "Special cases:</strong>"
-msgstr ""
+msgstr "Spesielle tilfeller:</strong>"
 
 #: default/web_tt2/help_introduction.tt2:9
 msgid ""
@@ -2695,6 +2427,9 @@ msgid ""
 "subscribed to it. However, you need to be subscribed to a list to receive "
 "its messages."
 msgstr ""
+"Det er i noen tilfeller mulig å sende e-post til en e-postliste uten å "
+"abonnere på den. Du må dog være abonnent på en liste for å motta meldinger "
+"sendt til den."
 
 #: default/web_tt2/help_introduction.tt2:10
 msgid ""
@@ -2703,6 +2438,10 @@ msgid ""
 "used to transmit information from a unique sender to a large number of "
 "recipients."
 msgstr ""
+"Det er i noen tilfeller umulig å sende e-post til en liste selv om du "
+"faktisk er abonnent på den: det er tilfellet med beskjedlister, som blir "
+"brukt for å sende informasjon fra en spesifikk avsender til et større antall "
+"mottakere."
 
 #: default/web_tt2/help_introduction.tt2:13
 msgid "Interest of mailing lists"
@@ -2715,22 +2454,26 @@ msgid ""
 "topic</strong> and to <strong>take part in exchanges about it</strong>. "
 "Examples are:"
 msgstr ""
+"Folk abonnerer på en e-postliste (noen ganger forkortet til <acronym title="
+"\"Mailing List\">ML</acronym>)  for  å <strong>bli informert om et bestemt "
+"emne</strong og for å <strong> ta del i diskusjon rundt det</strong>. "
+"Eksempler er:"
 
 #: default/web_tt2/help_introduction.tt2:16
 msgid "mailing list for all the employees of a company;"
-msgstr ""
+msgstr "e-postliste for alle ansatte i en bedrift;"
 
 #: default/web_tt2/help_introduction.tt2:17
 msgid "mailing list reserved to the participants in a project;"
-msgstr ""
+msgstr "e-postliste reservert for medlemmer i et prosjekt;"
 
 #: default/web_tt2/help_introduction.tt2:18
 msgid "mailing list dedicated to a class of students;"
-msgstr ""
+msgstr "e-postliste tilegnet studenter ved et fag;"
 
 #: default/web_tt2/help_introduction.tt2:19
 msgid "mailing list about the latest news in computer security;"
-msgstr ""
+msgstr "e-postliste om de siste nyheter innen IT-sikkerhet;"
 
 #: default/web_tt2/help_introduction.tt2:20
 msgid "mailing list of mutual aid between handymen;"
@@ -2741,28 +2484,37 @@ msgid ""
 "mailing list restricted to a family and dedicated to the organization of "
 "large family gatherings;"
 msgstr ""
+"e-postliste avgrenset til en familie og brukt til organiseringen av store "
+"familietreff;"
 
 #: default/web_tt2/help_introduction.tt2:22
 msgid "and so on!"
-msgstr ""
+msgstr "og så videre!"
 
 #: default/web_tt2/help_introduction.tt2:25
 msgid "Types of mailing lists"
-msgstr ""
+msgstr "Typer av e-postlister"
 
 #: default/web_tt2/help_introduction.tt2:26
+#, fuzzy
 msgid ""
 "There are <strong>thousands of mailing lists</strong> of all kinds on the "
 "Internet: public or private, free or not, with subscription subject to "
 "conditions or not, etc. Those lists may have from a dozen up to several "
 "thousand members."
 msgstr ""
+"Det finnes <strong>tusener av e-postlister</strong> av alle slag på "
+"internettet: offentlige eller private, gratis eller ikke, med "
+"abonnementsbetingelser eller ikke, osv.Disse listene kan ha fra et dusing "
+"til mange tusen medlemmer."
 
 #: default/web_tt2/help_introduction.tt2:27
 msgid ""
 "According to the way they work, we can distinguish between <strong>two types "
 "of lists</strong>:"
 msgstr ""
+"Etter måten de fungerer på så kan vi skille mellom <strong> to typer lister</"
+"strong>:"
 
 #: default/web_tt2/help_introduction.tt2:29
 msgid ""
@@ -2775,10 +2527,13 @@ msgid ""
 msgstr ""
 
 #: default/web_tt2/help_introduction.tt2:30
+#, fuzzy
 msgid ""
 "<strong>Discussion lists</strong> allow all subscribers to take part in "
 "exchanges. Those lists can be moderated or not:"
 msgstr ""
+"<strong>Diskusjonslister</strong> tillat alle abonnenter å delta i samtalen. "
+"Disse listene kan være moderert eller umoderert:"
 
 #: default/web_tt2/help_introduction.tt2:32
 msgid ""
@@ -2788,6 +2543,11 @@ msgid ""
 "will not receive off-topic messages, unsolicited commercial messages "
 "(spams), messages containing large attachments, etc."
 msgstr ""
+"I en <strong>moderert diskusjonsliste</strong> så bli meldinger distribuert "
+"til alle abonnentene etter godkjennelse fra en av listemoderatorene. "
+"Moderering  kvalitetssikrer listen. For eksempel sikrer det at abonnentene "
+"ikke vil motta meldinger som ikke er relevante for listens tema, søppelpost, "
+"meldinger med store vedlegg, osv."
 
 #: default/web_tt2/help_introduction.tt2:33
 msgid ""
@@ -2795,6 +2555,9 @@ msgid ""
 "transmitted to all subscribers as soon as the mailing list management robot "
 "receives them."
 msgstr ""
+"I en <strong>umoderert diskusjonsliste</strong> så blir meldinger "
+"distribuert til alle abonnentene umiddelbart etter at listesystemet mottar "
+"dem."
 
 #: default/web_tt2/help_introduction.tt2:37
 msgid "Features"
@@ -2858,13 +2621,13 @@ msgstr ""
 msgid ""
 "read the <a href=\"%1/help/arc\">archive of lists to which you are "
 "subscribed</a>,"
-msgstr ""
+msgstr "lese <a href=\"%1/help/arc\">arkiveve til listene du abonnerer på</a>,"
 
 #. (path_cgi)
 #: default/web_tt2/help_introduction.tt2:52
 msgid ""
 "perform <a href=\"%1/help/arc#arcsearch\">searches in the list archive</a>,"
-msgstr ""
+msgstr "utføre <a href=\"%1/help/arc#arcsearch\">søk i listearkivet</a>,"
 
 #. (path_cgi)
 #: default/web_tt2/help_introduction.tt2:53
@@ -2872,6 +2635,7 @@ msgid ""
 "<a href=\"%1/help/sendmsg\">send messages</a> to lists to which you are "
 "subscribed,"
 msgstr ""
+"<a href=\"%1/help/sendmsg\">sende meldinger</a> til lister du abonnerer på,"
 
 #. (path_cgi)
 #: default/web_tt2/help_introduction.tt2:54
@@ -2901,12 +2665,14 @@ msgstr ""
 #. (path_cgi)
 #: default/web_tt2/help_introduction.tt2:60
 msgid "<a href=\"%1/help/admin#edit_list\">configure lists</a> you own,"
-msgstr ""
+msgstr "<a href=\"%1/help/admin#edit_list\">konfigurere lister </a> du eier,"
 
 #. (path_cgi)
 #: default/web_tt2/help_introduction.tt2:61
+#, fuzzy
 msgid "<a href=\"%1/help/admin#manage_members\">manage subscriptions</a>,"
 msgstr ""
+"<a href=\"%1/help/admin#manage_members\">administrere abonnementer</a>,"
 
 #. (path_cgi)
 #: default/web_tt2/help_introduction.tt2:62
@@ -2924,27 +2690,27 @@ msgstr ""
 
 #: default/web_tt2/help_introduction.tt2:67
 msgid "How the mailing list service works: roles and responsibilities"
-msgstr ""
+msgstr "Hvordan e-postlistetjenesten fungerer: roller og ansvar"
 
 #: default/web_tt2/help_introduction.tt2:69
 msgid "A mailing list service involves four types of roles:"
-msgstr ""
+msgstr "En e-postlistetjeneste har fire typer roller:"
 
 #: default/web_tt2/help_introduction.tt2:71
 msgid "<strong>listmaster;</strong>"
-msgstr ""
+msgstr "<strong>listesjef;</strong>"
 
 #: default/web_tt2/help_introduction.tt2:72
 msgid "<strong>owner;</strong>"
-msgstr ""
+msgstr "<strong>eier;</strong>"
 
 #: default/web_tt2/help_introduction.tt2:73
 msgid "<strong>moderator;</strong>"
-msgstr ""
+msgstr "<strong>moderator;</strong>"
 
 #: default/web_tt2/help_introduction.tt2:74
 msgid "<strong>subscriber.</strong>"
-msgstr ""
+msgstr "<strong>abonnent (medlem).</strong>"
 
 #: default/web_tt2/help_introduction.tt2:76
 msgid ""
@@ -4939,28 +4705,31 @@ msgstr ""
 
 #: default/web_tt2/help.tt2:11
 msgid "Subscriber, moderator and owner documentation"
-msgstr ""
+msgstr "Medlems-, moderator- og eier-dokumentasjon"
 
 #: default/web_tt2/help.tt2:13
 msgid "In this documentation, you will find:"
-msgstr ""
+msgstr "I denne dokumentasjonen vil du finne:"
 
 #. (path_cgi)
 #: default/web_tt2/help.tt2:15
 msgid ""
 "a <a href=\"%1/help/introduction\">general introduction</a> to mailing lists;"
 msgstr ""
+"en <a href=\"%1/help/introduction\">generell introduksjon </a> til e-"
+"postlister;"
 
 #. (path_cgi)
 #: default/web_tt2/help.tt2:16
 msgid "a <a href=\"%1/help/user\">user guide</a> about the use of Sympa;"
-msgstr ""
+msgstr "en <a href=\"%1/help/user\">brukerveiledning</a> i bruk av Sympa;"
 
 #. (path_cgi)
 #: default/web_tt2/help.tt2:17
 msgid ""
 "an <a href=\"%1/help/admin\">administrator guide</a> about the use of Sympa."
 msgstr ""
+"en <a href=\"%1/help/admin\">administratorveiledning</a> i bruk av Sympa. "
 
 #. (path_cgi)
 #: default/web_tt2/help.tt2:20
@@ -4969,6 +4738,9 @@ msgid ""
 "href=\"%1/help/introduction#features\">available features</a> in the mailing "
 "list management software Sympa."
 msgstr ""
+"Hvis du ønsker å utføre en bestemt oppgave, se på listen av alle <a href=\"%"
+"1/help/introduction#features\">tilgjenglige funksjoner</a> i e-"
+"postlistesystemet Sympa."
 
 #. (path_cgi)
 #: default/web_tt2/help.tt2:21
@@ -4978,28 +4750,24 @@ msgid ""
 "to the <a href=\"%1/help/faqadmin\">administrators <acronym title="
 "\"Frequently asked questions\">FAQ</acronym></a>."
 msgstr ""
+"Hvis du opplever problemer, vennligst henvis til <a href=\"%1/help/faquser"
+"\">bruker-<acronym title=\"Frequently asked questions\">FAQen</acronym></a> "
+"eller  til <a href=\"%1/help/faqadmin\">administrator- <acronym title="
+"\"Frequently asked questions\">FAQen</acronym></a>."
 
 #: default/web_tt2/help_user_options.tt2:3
-#, fuzzy
 msgid ""
 "This is a description of the receivie modes available in Sympa. These "
 "options are mutually exclusive, which means that you can't set two different "
 "receive modes at the same time. Only some of the modes might be available to "
 "specific mailing lists."
 msgstr ""
-"#-#-#-#-#  blank_web_help_it.po (sympa)  #-#-#-#-#\n"
-"#-#-#-#-#  tmp_web_help_it.po (it)  #-#-#-#-#\n"
-"Questa è una descrizione dei modi di ricezione disponibili in Sympa. Queste "
-"opzioni sono mutuamente esclusive, ovvero non puoi impostare due diversi "
-"modi di ricezione allo stesso tempo. Per alcune liste potrebbero essere "
-"disponibili sono alcuni di questi modi."
 
 #: default/web_tt2/help_user_options.tt2:7
 msgid "Digest"
-msgstr "Raccolta"
+msgstr "Listesammendrag"
 
 #: default/web_tt2/help_user_options.tt2:10
-#, fuzzy
 msgid ""
 "Instead of receiving individual mail messages from the list, the subscriber "
 "will periodically \n"
@@ -5007,26 +4775,17 @@ msgid ""
 "messages from the list, using\n"
 "the multipart/digest MIME format."
 msgstr ""
-"#-#-#-#-#  blank_web_help_it.po (sympa)  #-#-#-#-#\n"
-"#-#-#-#-#  tmp_web_help_it.po (it)  #-#-#-#-#\n"
-"Invece di ricevere ogni singolo messaggio dalla lista, l'iscritto riceve \n"
-"periodicamente i messaggi in una raccolta.\n"
-"Questa raccolta riunisce un insieme di messaggi della lista \n"
-"usando il formato MIME multipart/digest\n"
 
 #: default/web_tt2/help_user_options.tt2:12
 #: default/web_tt2/help_user_options.tt2:20
 msgid "The sending interval for these Digests is defined by the list owner."
 msgstr ""
-"La frequenza d'invio per queste Raccolte è definito dal proprietario della "
-"lista."
 
 #: default/web_tt2/help_user_options.tt2:14
 msgid "DigestPlain"
-msgstr "Raccolta testo semplice"
+msgstr ""
 
 #: default/web_tt2/help_user_options.tt2:18
-#, fuzzy
 msgid ""
 "Similar to the Digest option in that the subscriber will periodically \n"
 "receive batched messages in a Digest. With DigestPlain the Digest is sent in "
@@ -5035,21 +4794,12 @@ msgid ""
 "email software doesn't\n"
 "display multipart/digest format messages well."
 msgstr ""
-"#-#-#-#-#  blank_web_help_it.po (sympa)  #-#-#-#-#\n"
-"#-#-#-#-#  tmp_web_help_it.po (it)  #-#-#-#-#\n"
-"È simile al modo Raccolta, nel senso che l'iscritto riceverà periodicamente\n"
-"dei messaggi in delle raccolte.\n"
-" Nel modo DigestPlain la raccolta viene spedita come testo semplice,\n"
-" con tutti gli allegati rimossi.Il modo DigestPlain è utile se il software "
-"di posta\n"
-" non visualizza i formati multipart/digest in maniera corretta.\n"
 
 #: default/web_tt2/help_user_options.tt2:22
 msgid "Summary"
-msgstr "Sommario"
+msgstr ""
 
 #: default/web_tt2/help_user_options.tt2:26
-#, fuzzy
 msgid ""
 "Instead of receiving individual mail messages from the list, the subscriber "
 "will periodically \n"
@@ -5057,16 +4807,10 @@ msgid ""
 "mode but the \n"
 "subscriber receives only the list of messages."
 msgstr ""
-"#-#-#-#-#  blank_web_help_it.po (sympa)  #-#-#-#-#\n"
-"#-#-#-#-#  tmp_web_help_it.po (it)  #-#-#-#-#\n"
-"Invece di ricevere messaggi singoli dalla lista, l'iscritto riceve "
-"periodicamente \n"
-"solo un'elenco dei messaggi. Questo modo è molto simile al modo Raccolta,\n"
-"ma l'iscritto riceve solo l'elenco dei messaggi\n"
 
 #: default/web_tt2/help_user_options.tt2:29
 msgid "Nomail"
-msgstr "nomail"
+msgstr ""
 
 #: default/web_tt2/help_user_options.tt2:31
 msgid ""
@@ -5075,74 +4819,42 @@ msgid ""
 "This mode therefore prevents the subscriber from unsubscribing and "
 "subscribing later on."
 msgstr ""
-"Questo modo va usato quando un iscritto non vuole piú ricevere mail dalla "
-"lista, ma vuole comunque consevarela possibilità di spedire alla lista. "
-"Questo modo evita all'iscritto dal disiscriversi e riiscriversi subito dopo."
 
 #: default/web_tt2/help_user_options.tt2:36
-#, fuzzy
 msgid ""
 "This mode is used when a subscriber wishes to receive mails sent in both "
 "HTML and plain text formats\n"
 "only in plain text format."
 msgstr ""
-"#-#-#-#-#  blank_web_help_it.po (sympa)  #-#-#-#-#\n"
-"#-#-#-#-#  tmp_web_help_it.po (it)  #-#-#-#-#\n"
-"Questo modo va usato quando un iscritto vuole\n"
-"che le mail mandate in formato sia HTML che in testo semplice\n"
-"gli vengano consegnate solo formato testo.\n"
 
 #: default/web_tt2/help_user_options.tt2:41
-#, fuzzy
 msgid ""
 "This mode is used when a subscriber wishes to receive mails sent in both "
 "HTML and plain text formats\n"
 "only in HTML format."
 msgstr ""
-"#-#-#-#-#  blank_web_help_it.po (sympa)  #-#-#-#-#\n"
-"#-#-#-#-#  tmp_web_help_it.po (it)  #-#-#-#-#\n"
-"Questo modo va usato quando un iscritto vuole\n"
-"che le mail mandate in formato sia HTML che in testo semplice\n"
-" gli vengano consegnate solo formato HTML\n"
 
 #: default/web_tt2/help_user_options.tt2:46
-#, fuzzy
 msgid ""
 "This mode is used when a subscriber does not want to receive attached files. "
 "The attached files are \n"
 "replaced by a URL leading to the file stored on the list site."
 msgstr ""
-"#-#-#-#-#  blank_web_help_it.po (sympa)  #-#-#-#-#\n"
-"#-#-#-#-#  tmp_web_help_it.po (it)  #-#-#-#-#\n"
-"Questo modo è usato quando un iscritto non vuole ricevere file allegati.\n"
-"Il file allegati sono sostituiti da un URL che punta al file immagazzinato "
-"sul sito della lista.\n"
 
 #: default/web_tt2/help_user_options.tt2:51
-#, fuzzy
 msgid ""
 "This mode is used when a subscriber does not want to receive copies of "
 "messages that he or she has sent to \n"
 "the list."
 msgstr ""
-"#-#-#-#-#  blank_web_help_it.po (sympa)  #-#-#-#-#\n"
-"#-#-#-#-#  tmp_web_help_it.po (it)  #-#-#-#-#\n"
-"Questo modo va usato quando un iscritto non vuole ricevere\n"
-"una copia del messaggio che ha spedito alla lista.\n"
 
 #: default/web_tt2/help_user_options.tt2:56
-#, fuzzy
 msgid ""
 "This option is used mainly to cancel the nomail, summary or digest modes. If "
 "the subscriber was \n"
 "in nomail mode, he or she will again receive individual mail messages from "
 "the list."
 msgstr ""
-"#-#-#-#-#  blank_web_help_it.po (sympa)  #-#-#-#-#\n"
-"#-#-#-#-#  tmp_web_help_it.po (it)  #-#-#-#-#\n"
-"Questa opzione sa usata principalmente per disattivare i modi nomail, "
-"sommario, compendio.\n"
-"Se l'iscritto era in modo nomail, tornerà a ricevere messaggi dalla lista.\n"
 
 #: default/web_tt2/help_user.tt2:3
 msgid "Mailing lists - User Guide"
@@ -5472,10 +5184,11 @@ msgstr ""
 
 #. (path_cgi)
 #: default/web_tt2/help_user.tt2:83
+#, fuzzy
 msgid ""
 "<a href=\"%1/help/suspend\">suspend or resume</a> your subscription of each "
 "list;"
-msgstr ""
+msgstr "en <a href=\"%1/help/user\">brukerveiledning</a> i bruk av Sympa;"
 
 #: default/web_tt2/help_user.tt2:84
 msgid "<a href=\"#unsubscribe\">unsubscribe</a> from the list."
@@ -5823,8 +5536,9 @@ msgid ""
 msgstr ""
 
 #: default/web_tt2/help_user.tt2:164
+#, fuzzy
 msgid "Suspending or resuming your subscription of each list"
-msgstr ""
+msgstr "en <a href=\"%1/help/user\">brukerveiledning</a> i bruk av Sympa;"
 
 #. (path_cgi)
 #: default/web_tt2/help_user.tt2:165
@@ -5871,34 +5585,7 @@ msgstr ""
 msgid "<strong>In the left menu, click on the 'Unsubscribe' link</strong>."
 msgstr ""
 
-#~ msgid "No Comment"
-#~ msgstr "Nessun commento"
-
-#~ msgid ""
-#~ "Sympa allows the list owner to choose how Sympa loads list member data. "
-#~ "Subscriber information can be stored in a text file or relational "
-#~ "database, or included from various external sources (list, flat file, "
-#~ "result of or query)."
-#~ msgstr ""
-#~ "Sympa permette al proprietario della lista di scegliere come Sympa carica "
-#~ "i dati dei membri della lista Le informazioni sugli iscritti possono "
-#~ "essere immagazzinate in un file di testo, in un database relazionale o "
-#~ "prese da fonti esterne (elenchi, semplici file, risultati di "
-#~ "interrogazioni su database)."
-
-#, fuzzy
-#~ msgid "Expert mode"
-#~ msgstr "Cartella vuota"
-
-#~ msgid "Welcome message"
-#~ msgstr "Messaggio di benvenuto"
-
 #~ msgid ""
 #~ "(Default value: reception mail,notice,digest,digestplain,summary,nomail)"
 #~ msgstr ""
-#~ "(Valori predefiniti: reception mail,notice,digest,digestplain,summary,"
-#~ "nomail)"
-
-# nlsref 16,91
-#~ msgid "value"
-#~ msgstr "valore"
+#~ "(Standardverdier: reception mail,notice,digest,digestplain,summary,nomail)"
