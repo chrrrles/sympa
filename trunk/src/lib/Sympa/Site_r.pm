@@ -60,6 +60,9 @@ our %robots;
 our $robots_ok;
 our %listmaster_messages_stack;
 
+# Language context
+my $language = Sympa::Language->instance;
+
 =head2 INITIALIZER
 
 =over 4
@@ -557,7 +560,7 @@ sub get_etc_include_path {
     my $lang_dirs = undef;
     if ($lang) {
         ## For compatibility: add old-style "locale" directory at first.
-        my $old_lang = Sympa::Language::lang2locale_old($lang);
+        my $old_lang = Sympa::Language::lang2oldlocale($lang);
         if ($old_lang) {
             $lang_dirs = [$old_lang];
         } else {
@@ -678,9 +681,9 @@ sub send_dsn {
 
     my $header = $message->as_entity()->head->as_string();
 
-    Sympa::Language::push_lang('en');
+    $language->push_lang('en');
     my $date = POSIX::strftime("%a, %d %b %Y %H:%M:%S +0000", gmtime time);
-    Sympa::Language::pop_lang();
+    $language->pop_lang();
 
     unless (
         $self->send_file(
@@ -819,12 +822,12 @@ sub send_file {
 
             if ($data->{'subscriber'}) {
                 $data->{'subscriber'}{'date'} =
-                    Sympa::Language::gettext_strftime(
+                    $language->gettext_strftime(
                         "%d %b %Y",
                         localtime($data->{'subscriber'}{'date'})
                     );
                 $data->{'subscriber'}{'update_date'} =
-                    Sympa::Language::gettext_strftime(
+                    $language->gettext_strftime(
                         "%d %b %Y",
                         localtime($data->{'subscriber'}{'update_date'})
                     );
@@ -833,7 +836,7 @@ sub send_file {
                         /^(\d+)\s+(\d+)\s+(\d+)(\s+(.*))?$/;
 
                     $data->{'subscriber'}{'first_bounce'} =
-                        Sympa::Language::gettext_strftime(
+                        $language->gettext_strftime(
                             "%d %b %Y",
                             localtime($1)
                         );

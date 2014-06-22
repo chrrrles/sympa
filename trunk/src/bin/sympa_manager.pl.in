@@ -283,6 +283,7 @@ unless (
         'import=s',
         'input_file=s',
         'instantiate_family=s',
+        'lang|l=s',
         'log_level=s',
         'lowercase',
         'make_alias_file',
@@ -307,6 +308,8 @@ unless (
 if ($options{'debug'}) {
     $options{'log_level'} = 2 unless ($options{'log_level'});
 }
+
+my $language = Sympa::Language->instance;
 
 our $logger = Sympa::Logger::Stderr->new(
     level => $options{'log_level'}
@@ -1001,7 +1004,7 @@ sub upgrade_shared {
         ## Determine default lang for this list
         ## It should tell us what character encoding was used for
         ## filenames
-        Sympa::Language::set_lang($list->lang);
+        $language->set_lang($list->lang, $list->robot->lang, Site->lang, 'en');
         my $list_encoding = Site->get_charset();
 
         my $count = Sympa::Tools::qencode_hierarchy($list->dir . '/shared',

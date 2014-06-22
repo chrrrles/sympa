@@ -32,6 +32,8 @@ use Sympa::Logger;
 use Sympa::Language;
 use Sympa::Site;
 
+my $language = Sympa::Language->instance;
+
 # hash of the icons linked with a type of file
 my %icons = (
     'unknown'        => 'unknown.png',
@@ -554,8 +556,8 @@ sub get_list_list_tpl {
                 $list_templates->{$template}{'path'} = $dir;
 
                 my $locale =
-                    Sympa::Language::lang2locale_old(
-                    Sympa::Language::get_lang());
+                    Sympa::Language::lang2oldlocale(
+                    $language->get_lang());
                 ## FIXME: lang should be used instead of "locale".
                 ## Look for a comment.tt2 in the appropriate locale first
                 if (  -r $dir . '/'
@@ -678,7 +680,7 @@ sub get_template_path {
 
     ##FIXME: path is fixed to older "locale".
     my $locale;
-    $locale = Sympa::Language::lang2locale_old($lang)
+    $locale = Sympa::Language::lang2oldlocale($lang)
         unless $lang eq 'default';
 
     unless ($type eq 'web' or $type eq 'mail') {

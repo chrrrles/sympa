@@ -51,6 +51,8 @@ use Sympa::Tools;
 use Sympa::Tools::File;
 use Sympa::User;
 
+my $language = Sympa::Language->instance;
+
 =pod 
 
 =head1 SUBFUNCTIONS 
@@ -250,7 +252,7 @@ sub create_list_old {
 
     ## Creation of the config file
     my $time = time;
-    $param->{'creation'}{'date'} = Sympa::Language::gettext_strftime(
+    $param->{'creation'}{'date'} = $language->gettext_strftime(
         "%d %b %Y at %H:%M:%S", localtime($time)
     );
     $param->{'creation'}{'date_epoch'} = $time;
@@ -546,7 +548,7 @@ sub create_list {
 
     my $time = time;
     $list->creation(
-        {   'date' => Sympa::Language::gettext_strftime(
+        {   'date' => $language->gettext_strftime(
                 "%d %b %Y at %H:%M:%S", localtime($time)
             ),
             'date_epoch' => $time,
@@ -652,7 +654,7 @@ sub update_list {
 ############## ? update
     my $time = time;
     $list->creation(
-        {   'date' => Sympa::Language::gettext_strftime(
+        {   'date' => $language->gettext_strftime(
                 "%d %b %Y at %H:%M:%S", localtime($time)
             ),
             'date_epoch' => $time,
@@ -1195,7 +1197,7 @@ sub clone_list_as_empty {
     my $time     = time;
     my $creation = {
         'date_epoch' => $time,
-        'date' => Sympa::Language::gettext_strftime(
+        'date' => $language->gettext_strftime(
             "%d %b %y at %H:%M:%S", localtime($time)
         )
     };

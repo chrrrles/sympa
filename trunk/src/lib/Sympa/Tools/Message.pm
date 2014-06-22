@@ -56,6 +56,9 @@ use Sympa::Template;
 use Sympa::Tools;
 use Sympa::Tools::Text;
 
+# Language context
+my $language = Sympa::Language->instance;
+
 =head1 FUNCTIONS
 
 =over
@@ -642,11 +645,11 @@ sub _do_message {
     my $string;
 
     unless ($msgent) {
-        return Sympa::Language::gettext("----- Malformed message ignored -----\n\n");
+        return $language->gettext("----- Malformed message ignored -----\n\n");
     }
 
     my $from = decode_headerr($msgent, 'From');
-    $from = Sympa::Language::gettext("[Unknown]") unless defined $from and length $from;
+    $from = $language->gettext("[Unknown]") unless defined $from and length $from;
     my $subject = decode_headerr($msgent, 'Subject');
     $subject = '' unless defined $subject;
     my $date = decode_headerr($msgent, 'Date');
@@ -668,27 +671,25 @@ sub _do_message {
     $name = $from unless defined $name and length $name;
 
     $string .=
-        Sympa::Language::gettext("\n[Attached message follows]\n-----Original message-----\n");
+        $language->gettext("\n[Attached message follows]\n-----Original message-----\n");
     my $headers = '';
-    $headers .= sprintf(Sympa::Language::gettext("Date: %s\n"),    $date)
+    $headers .= $language->gettext_sprintf("Date: %s\n",    $date)
         if $date;
-    $headers .= sprintf(Sympa::Language::gettext("From: %s\n"),    $from)
+    $headers .= $language->gettext_sprintf("From: %s\n",    $from)
         if $from;
-    $headers .= sprintf(Sympa::Language::gettext("To: %s\n"),      $to)
+    $headers .= $language->gettext_sprintf("To: %s\n",      $to)
         if $to;
-    $headers .= sprintf(Sympa::Language::gettext("Cc: %s\n"),      $cc)
+    $headers .= $language->gettext_sprintf("Cc: %s\n",      $cc)
         if $cc;
-    $headers .= sprintf(Sympa::Language::gettext("Subject: %s\n"), $subject)
+    $headers .= $language->gettext_sprintf("Subject: %s\n", $subject)
         if $subject;
     $headers .= "\n";
     $string .= Sympa::Tools::Text::wrap_text($headers, '', '    ');
 
     $string .= _do_toplevel($msgent);
 
-    $string .= sprintf(
-        Sympa::Language::gettext("-----End of original message from %s-----\n\n"),
-        $name
-    );
+    $string .= $language->gettext_sprintf(
+        "-----End of original message from %s-----\n\n", $name);
     return $string;
 }
 
@@ -716,9 +717,9 @@ sub _do_text_plain {
     if ($EVAL_ERROR) {
 
         # mmm, what to do if it fails?
-        $string .= sprintf Sympa::Language::gettext(
-            "** Warning: A message part using unrecognized character set %s\n    Some characters may be lost or incorrect **\n\n"
-        ), $charset->as_string();
+        $string .= $language->gettext_sprintf(
+            "** Warning: A message part using unrecognized character set %s\n    Some characters may be lost or incorrect **\n\n",
+            $charset->as_string);
         $thispart =~ s/[^\x00-\x7F]/?/g;
     }
 
@@ -738,19 +739,18 @@ sub _do_text_plain {
 sub _do_other {
     my $entity = shift;
 
-    return sprintf(
-        Sympa::Language::gettext("\n[An attachment of type %s was included here]\n"),
-        $entity->mime_type
-    );
+    return $language->gettext_sprintf(
+        "\n[An attachment of type %s was included here]\n",
+        $entity->mime_type);
 }
 
 sub _do_dsn {
     my $entity = shift;
     my $string = '';
 
-    $string .= Sympa::Language::gettext("\n-----Delivery Status Report-----\n");
+    $string .= $language->gettext("\n-----Delivery Status Report-----\n");
     $string .= _do_text_plain($entity);
-    $string .= Sympa::Language::gettext("\n-----End of Delivery Status Report-----\n");
+    $string .= $language->gettext("\n-----End of Delivery Status Report-----\n");
 
     return $string;
 }
@@ -763,7 +763,7 @@ sub _do_text_html {
 
     unless (defined $entity->bodyhandle) {
         return 
-            Sympa::Language::gettext("\n[** Unable to process HTML message part **]\n");
+            $language->gettext("\n[** Unable to process HTML message part **]\n");
     }
 
     my $body = $entity->bodyhandle->as_string();
@@ -782,9 +782,9 @@ sub _do_text_html {
         } else {
 
             # mmm, what to do if it fails?
-            $string .= sprintf Sympa::Language::gettext(
-                "** Warning: A message part using unrecognized character set %s\n    Some characters may be lost or incorrect **\n\n"
-            ), $charset->as_string();
+            $string .= $language->gettext_sprintf(
+                "** Warning: A message part using unrecognized character set %s\n    Some characters may be lost or incorrect **\n\n",
+                $charset->as_string);
             $body =~ s/[^\x00-\x7F]/?/g;
         }
         my $tree = HTML::TreeBuilder->new->parse($body);
@@ -797,11 +797,11 @@ sub _do_text_html {
     };
     if ($EVAL_ERROR) {
         $string .=
-            Sympa::Language::gettext("\n[** Unable to process HTML message part **]\n");
+            $language->gettext("\n[** Unable to process HTML message part **]\n");
         return 1;
     }
 
-    $string .= Sympa::Language::gettext("[ Text converted from HTML ]\n");
+    $string .= $language->gettext("[ Text converted from HTML ]\n");
 
     # deal with 30 hyphens (RFC 1153)
     $text =~ s/\n-{30}(\n|$)/\n -----------------------------\n/g;
@@ -893,9 +893,7 @@ sub parse_tt2_messageasstring {
     }
 
     ## Charset for encoding
-    Sympa::Language::push_lang($data->{'lang'}) if defined $data->{'lang'};
-    $data->{'charset'} ||= Site->get_charset();
-    Sympa::Language::pop_lang() if defined $data->{'lang'};
+    $data->{'charset'} ||= Site->get_charset($data->{'lang'});
 
     if ($filename =~ /\.tt2$/) {
 
@@ -903,11 +901,7 @@ sub parse_tt2_messageasstring {
         #FIXME: Check TT2 parse error
         my $output;
         my @path = split /\//, $filename;
-
-        Sympa::Language::push_lang($data->{'lang'}) if defined $data->{'lang'};
         Sympa::Template::parse_tt2($data, $path[$#path], \$output);
-        Sympa::Language::pop_lang() if defined $data->{'lang'};
-
         $message_as_string .= join('', $output);
         $header_possible = 1;
     } else {    # or not

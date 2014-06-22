@@ -371,18 +371,21 @@ If it is not known, returns default charset.
 
 sub get_charset {
     my $language = Sympa::Language->instance;
-    my $lang     = $language->get_lang;
+    my $lang     = shift || $language->get_lang;
 
+    $language->push_lang($lang);
     my $locale2charset;
     if ($lang and $is_initialized   # configuration loaded
         and $locale2charset = Site->locale2charset
         ) {
         foreach my $l (Sympa::Language::implicated_langs($lang)) {
             if (exists $locale2charset->{$l}) {
+                $language->pop_lang;
                 return $locale2charset->{$l};
             }
         }
     }
+    $language->pop_lang;
     return 'utf-8';                  # the last resort
 }
 

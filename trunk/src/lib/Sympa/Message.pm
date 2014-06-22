@@ -69,6 +69,9 @@ use Sympa::Tools::Message;
 use Sympa::Tools::SMIME;
 use Sympa::Tools::WWW;
 
+# Language context
+my $language = Sympa::Language->instance;
+
 my %openssl_errors = (
     1 => 'an error occurred parsing the command options',
     2 => 'one of the input files could not be read',
@@ -2419,8 +2422,9 @@ sub personalize_text {
     my $user = $list->user('member', $rcpt);
     if ($user) {
         $user->{'escaped_email'} = URI::Escape::uri_escape($rcpt);
+        my $language = Sympa::Language->instance;
         $user->{'friendly_date'} =
-            Sympa::Language::gettext_strftime("%d %b %Y  %H:%M", localtime($user->{'date'}));
+            $language->gettext_strftime("%d %b %Y  %H:%M", localtime($user->{'date'}));
     }
 
     # this method as been removed because some users may forward

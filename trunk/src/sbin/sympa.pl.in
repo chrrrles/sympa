@@ -257,6 +257,8 @@ our $logger;
 # signal handlers
 my $signal = 0;
 
+my $language = Sympa::Language->instance;
+
 # Catch SIGTERM, in order to exit cleanly, whenever possible.
 $SIG{'TERM'} = sub {
     $logger->do_log(Sympa::Logger::NOTICE,
@@ -341,8 +343,8 @@ while ($signal ne 'term') {
     # Compatibility with version < 2.3.3
     $options{'lang'} =~ s/\.cat$//
         if defined $options{'lang'};
-    $default_lang = $options{'lang'} || Sympa::Site->lang;
-    Sympa::Language::set_lang($default_lang);
+    $default_lang =
+        $language->set_lang($main::options{'lang'}, Site->lang, 'en');
 
     ## Main program
     if (!chdir(Sympa::Site->home)) {
@@ -448,7 +450,7 @@ while ($signal ne 'term') {
     ## them, sleeps a while and continues the good job.
     while (!$signal) {
 
-        Sympa::Language::set_lang($default_lang);
+        $language->set_lang($default_lang);
 
         Sympa::List::init_list_cache();
 
@@ -525,8 +527,7 @@ while ($signal ne 'term') {
         }
 
         ## Set NLS default lang for current message
-        $default_lang = $options{'lang'} || $message->get_robot()->lang;
-        Sympa::Language::set_lang($default_lang);
+        $language->set_lang($robot->lang, $default_lang);
 
         my $status = process_message($message);
 
@@ -840,7 +841,7 @@ sub process_message {
                     $sender,
                     {   'virus_name'     => $rc,
                         'recipient'      => $list_address,
-                        'lang'           => ($robot->lang || 'en'),
+                        'lang'           => $robot->lang,
                         'auto_submitted' => 'auto-replied'
                     }
                 )
@@ -1278,7 +1279,7 @@ sub DoMessage {
 
     my ($listname, $host) = ($list->name, $list->host);
     my $start_time = time;
-    Sympa::Language::set_lang($list->lang);
+    $language->set_lang($list->lang, $list->robot->lang, Site->lang, 'en');
 
     ## Now check if the sender is an authorized address.
 
@@ -2094,7 +2095,7 @@ sub SendDigest {
             next;
         }
 
-        Sympa::Language::set_lang($list->lang);
+        $language->set_lang($list->lang, $list->robot->lang, Site->lang, 'en');
 
         if ($list->get_nextdigest($digest->{'date'})) {
             ## Blindly send the message to all users.
