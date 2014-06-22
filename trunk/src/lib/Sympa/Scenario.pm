@@ -246,16 +246,14 @@ sub _parse_scenario {
         if ($current_rule =~ /^\s*title\.gettext\s+(.*)\s*$/i) {
             $structure->{'title'}{'gettext'} = $1;
             next;
-        } elsif ($current_rule =~ /^\s*title\.us\s+(.*)\s*$/i) {
-            $structure->{'title'}{'us'} = $1;
-            next;
-        } elsif ($current_rule =~ /^\s*title\.([-.\w]+)\s+(.*)\s*$/i) {
+        } elsif ($current_rule =~ /^\s*title\.(\S+)\s+(.*)\s*$/i) {
             my ($lang, $title) = ($1, $2);
+            # canonicalize lang if possible.
             $lang = Sympa::Language::canonic_lang($lang) || $lang;
             $structure->{'title'}{$lang} = $title;
             next;
         } elsif ($current_rule =~ /^\s*title\s+(.*)\s*$/i) {
-            $structure->{'title'}{'us'} = $1;
+            $structure->{'title'}{'default'} = $1;
             next;
         }
 
@@ -1908,15 +1906,18 @@ Get internationalized title of the scenario, under current language context.
 sub get_current_title {
     my $self = shift;
 
-    foreach my $lang (Sympa::Language::implicated_langs()) {
-        if (defined $self->{'title'}{$lang}) {
+    my $language = Sympa::Language->instance;
+
+    foreach my $lang (Sympa::Language::implicated_langs($language->get_lang))
+    {
+        if (exists $self->{'title'}{$lang}) {
             return $self->{'title'}{$lang};
         }
     }
-    if (defined $self->{'title'}{'gettext'}) {
-        return Sympa::Language::gettext($self->{'title'}{'gettext'});
-    } elsif (defined $self->{'title'}{'us'}) {
-        return Sympa::Language::gettext($self->{'title'}{'us'});
+    if (exists $self->{'title'}{'gettext'}) {
+        return $language->gettext($self->{'title'}{'gettext'});
+    } elsif (exists $self->{'title'}{'default'}) {
+        return $self->{'title'}{'default'};
     } else {
         return $self->{'name'};
     }
