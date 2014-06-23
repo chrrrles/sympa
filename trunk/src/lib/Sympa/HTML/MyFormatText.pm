@@ -37,8 +37,8 @@ sub img_start {
     my $alt = $node->attr('alt');
     $self->out(
         defined($alt)
-        ? $language->gettext_sprintf("[ Image%s ]"), ": " . $alt)
-        : $language->gettext_sprintf("[Image%s]"),   "")
+        ? $language->gettext_sprintf("[ Image%s ]", ": " . $alt)
+        : $language->gettext_sprintf("[Image%s]", "")
     );
 }
 
