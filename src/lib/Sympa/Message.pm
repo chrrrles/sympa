@@ -824,9 +824,25 @@ sub decrypt {
     return 1;
 }
 
-=item $message->check_signature()
+=item $message->check_signature(%params)
 
 Check the signature of this message.
+
+Parameters:
+
+=over
+
+=item * I<cafile>: path to a CA certificate file.
+
+=item * I<capath>: path to a CA certificate directory.
+
+=item * I<openssl>: path to openssl binary
+
+=item * I<ssl_cert_dir>: path to Sympa certificate/keys directory.
+
+=item * I<tmpdir>: path to Sympa temporary directory
+
+=back
 
 Return a data structure corresponding to the signer certificate on
 success, C<undef> otherwise.
@@ -834,7 +850,13 @@ success, C<undef> otherwise.
 =cut
 
 sub check_signature {
-    my ($self) = @_;
+    my ($self, %params) = @_;
+
+    my $tmpdir       = $params{tmpdir};
+    my $openssl      = $params{openssl};
+    my $cafile       = $params{cafile};
+    my $capath       = $params{capath};
+    my $ssl_cert_dir = $params{ssl_cert_dir};
 
     $main::logger->do_log(Sympa::Logger::DEBUG2, '(sender=%s, filename=%s)',
         $self->{'sender_email'}, $self->{'file'});
@@ -844,12 +866,12 @@ sub check_signature {
     ## first step is the msg signing OK ; /tmp/sympa-smime.$PID is created
     ## to store the signer certificat for step two. I known, that's dirty.
 
-    my $temporary_file     = Sympa::Site->tmpdir . "/" . 'smime-sender.' . $PID;
+    my $temporary_file     = $tmpdir . "/" . 'smime-sender.' . $PID;
     my $trusted_ca_options = '';
-    $trusted_ca_options = "-CAfile " . Sympa::Site->cafile . " " if Sympa::Site->cafile;
-    $trusted_ca_options .= "-CApath " . Sympa::Site->capath . " " if Sympa::Site->capath;
+    $trusted_ca_options = "-CAfile $cafile " if $cafile;
+    $trusted_ca_options .= "-CApath $capath " if $capath;
     my $cmd = sprintf '%s smime -verify %s -signer %s',
-        Sympa::Site->openssl, $trusted_ca_options, $temporary_file;
+        $openssl, $trusted_ca_options, $temporary_file;
     $main::logger->do_log(Sympa::Logger::DEBUG2, '%s', $cmd);
 
     unless (open MSGDUMP, "| $cmd > /dev/null") {
@@ -875,8 +897,8 @@ sub check_signature {
     ## a better analyse should be performed to extract the signer email.
     my $signer = Sympa::Tools::SMIME::parse_cert(
         file    => $temporary_file,
-        tmpdir  => Sympa::Site->tmpdir,
-        openssl => Sympa::Site->openssl,
+        tmpdir  => $tmpdir,
+        openssl => $openssl,
     );
 
     unless ($signer->{'email'}{lc($self->{'sender_email'})}) {
@@ -896,14 +918,14 @@ sub check_signature {
         join(',', keys %{$signer->{'email'}})
     );
     ## store the signer certificat
-    unless (-d Sympa::Site->ssl_cert_dir) {
-        if (mkdir(Sympa::Site->ssl_cert_dir, 0775)) {
+    unless (-d $ssl_cert_dir) {
+        if (mkdir($ssl_cert_dir, 0775)) {
             $main::logger->do_log(Sympa::Logger::INFO, 'creating spool %s',
-                Sympa::Site->ssl_cert_dir);
+                $ssl_cert_dir);
         } else {
             $main::logger->do_log(Sympa::Logger::ERR,
                 'Unable to create user certificat directory %s',
-                Sympa::Site->ssl_cert_dir);
+                $ssl_cert_dir);
         }
     }
 
@@ -914,8 +936,8 @@ sub check_signature {
     ## are also included), and look at the purpose:
     ## "S/MIME signing : Yes/No"
     ## "S/MIME encryption : Yes/No"
-    my $certbundle = Sympa::Site->tmpdir . "/certbundle.$PID";
-    my $tmpcert    = Sympa::Site->tmpdir . "/cert.$PID";
+    my $certbundle = $tmpdir . "/certbundle.$PID";
+    my $tmpcert    = $tmpdir . "/cert.$PID";
     my $nparts     = $self->{'entity'}->parts;
     my $extracted  = 0;
     $main::logger->do_log(Sympa::Logger::DEBUG3, 'smime_sign_check: parsing %d parts',
@@ -928,7 +950,7 @@ sub check_signature {
         for (my $i = 0; $i < $nparts; $i++) {
             my $part = $self->{'entity'}->parts($i);
             $extracted += Sympa::Tools::SMIME::extract_certs(
-                $part, $certbundle, Sympa::Site->openssl
+                $part, $certbundle, $openssl
             );
             last if $extracted;
         }
@@ -963,8 +985,8 @@ sub check_signature {
             close(CERT);
             my ($parsed) = Sympa::Tools::SMIME::parse_cert(
                 file => $tmpcert,
-                tmpdir  => Sympa::Site->tmpdir,
-                openssl => Sympa::Site->openssl,
+                tmpdir  => $tmpdir,
+                openssl => $openssl,
             );
             unless ($parsed) {
                 $main::logger->do_log(Sympa::Logger::ERR,
@@ -1015,7 +1037,7 @@ sub check_signature {
     ## or a pair of single-purpose. save them, as email@addr if combined,
     ## or as email@addr@sign / email@addr@enc for split certs.
     foreach my $c (keys %certs) {
-        my $fn = Sympa::Site->ssl_cert_dir . '/'
+        my $fn = $ssl_cert_dir . '/'
             . Sympa::Tools::escape_chars(lc($self->{'sender_email'}));
         if ($c ne 'both') {
             unlink($fn);    # just in case there's an old cert left...
