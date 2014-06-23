@@ -719,7 +719,7 @@ sub get_template_path {
     }
 
     $dir .= '/' . $type . '_tt2';
-    $dir .= '/' . $locale unless $lang eq 'default';
+    $dir .= '/' . $lang unless $lang eq 'default';
     return $dir . '/' . $tpl;
 }
 
