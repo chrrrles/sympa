@@ -972,7 +972,7 @@ my %filtering = (
     'change_email' => {'*email' => 'normalize'},
 );
 
-## Set locale configuration
+## Set locale configuration	 
 my $language = Sympa::Language->instacne;
 $language->set_lang(Sympa::Site->lang, 'en');
 
@@ -1564,16 +1564,20 @@ while ($query = new_loop()) {
             $param->{'host'} = $list->host if (ref($list) eq 'Sympa::List');
             $param->{'host'} ||= $robot_id;
             $param->{'domain'} = $list->domain if (ref($list) eq 'Sympa::List');
-
-            ## Get best language
-            $param->{'list_lang'} = $list->lang
-                if ref $list eq 'Sympa::List';
-            $param->{'user_lang'} = $param->{'user'}{'lang'}
-                if ref $param->{'user'};
-            $param->{'lang'} = $language->set_lang(
-                $session->{'lang'},    $param->{'user_lang'},
-                $param->{'list_lang'}, $robot->lang,
-                $robot->best_language());
+	     
+	    # Set content language
+	    # FIXME: $ENV{'HTTP_ACCEPT_LANGUAGE'} not used !
+	    my $list_lang = $list->lang if ref $list eq 'List';
+	    my $user_lang = $param->{'user'}{'lang'} if $param->{'user'};
+	    $param->{'lang'} = $language->set_lang(
+		$session->{'lang'}, $user_lang, $list_lang,
+		$robot->lang, Site->lang, 'en'
+	    );
+	    # compatibility concern: old-style locale.
+	    $param->{'locale'} =
+		Sympa::Language::lang2oldlocale($param->{'lang'});
+	    # compatibility concern: for 6.1.
+	    $param->{'lang_tag'} = $param->{'lang'};
 
             ## list topics
             export_topics($robot);
@@ -1701,17 +1705,16 @@ while ($query = new_loop()) {
         unless (($param->{'is_priv'})
         || ($param->{'action_type'} eq 'serveradmin'));
 
-    $param->{'user_lang'} = $param->{'user'}{'lang'}
-        if ref $param->{'user'};
-    $param->{'list_lang'} = $list->lang
-        if ref $list eq 'Sympa::List';
-    foreach my $lang (
-        $param->{'lang'},      $param->{'user_lang'},
-        $param->{'list_lang'}, $robot->lang,
-        $robot->best_language()
-        ) {
-        next unless $lang;
-        last if $param->{'lang'} = $language->set_lang($lang, 'just_try' => 1);
+    #FIXME: is this block neccessary?
+    unless ($param->{'lang'}) {
+	my $user_lang = $param->{'user'}{'lang'} if ref $param->{'user'};
+        my $list_lang = $list->lang if ref $list eq 'Sympa::List';
+	$param->{'lang'} = $language->set_lang(
+	    $user_lang, $list_lang,
+	    $robot->lang, Site->lang, 'en'
+	);
+	# compatibility: 6.1.
+	$param->{'lang_tag'} = $param->{'lang'};
     }
 
     if ($param->{'list'}) {
@@ -1858,22 +1861,24 @@ while ($query = new_loop()) {
     }
 
     ## Available languages
-    my $saved_lang = $language->get_lang();
-
-    foreach my $l ($robot->supported_languages) {
-        $language->set_lang($l) || next;
-
-        $param->{'languages'}{$l}{'complete'} = $language->native_name($l)
-            || $l;
-
-        if ($param->{'lang'} eq $l) {
-            $param->{'languages'}{$l}{'selected'} = 'selected="selected"';
-        } else {
-            $param->{'languages'}{$l}{'selected'} = '';
-        }
+    $param->{'languages'} = {};
+    $language->push_lang();
+    foreach my $lang (@{$robot->supported_languages}) {
+        next unless $lang = $language->set_lang($lang);
+        $param->{'languages'}{$lang}{'complete'} = $language->native_name
+        || $lang;
+        # compatibility: 6.1.
+        $param->{'languages'}{$lang}{'lang_tag'} = $lang;
     }
+    if (my $lang = $language->set_lang($param->{'lang'})) { #current lang
+        $param->{'languages'}{$lang}{'complete'} = $language->native_name
+        || $lang;
+        # compatibility: 6.1.
+        $param->{'languages'}{$lang}{'lang_tag'} = $lang;
 
-    $language->set_lang($saved_lang);
+        $param->{'languages'}{$lang}{'selected'} = 'selected="selected"';
+    }
+    $language->pop_lang;
 
     $param->{'html_dumpvars'} = Sympa::Tools::Data::dump_html_var($param)
         if ($session->{'dumpvars'});
@@ -3793,22 +3798,27 @@ sub do_login {
 
     if ($session->{'lang'}) {
 
-        # user did choose a specific language before being logged. Apply it as
-        # a user pref.
-        Sympa::User::update_global_user($param->{'user'}{'email'},
-            {lang => $session->{'lang'}});
+     if ($session->{'lang'}) {
+	# user did choose a specific language before being logged.  Apply it
+	# as a user pref.
+	# FIXME: Should users' language preference be changed?
+	Sympa::User::update_global_user(
+	    $param->{'user'}{'email'}, {lang => $session->{'lang'}});
         $param->{'lang'} = $session->{'lang'};
     } else {
-
-        # user did not choose a specific language, apply user pref for this
-        # session.
-        my $list_lang = $list->lang if ref $list eq 'List';
-        $param->{'lang'} = $language->set_lang(
-            $user->{'lang'}, $list_lang,
-            $robot->lang, $robot->best_language, 'en'
-        );
-        $session->{'lang'} = $param->{'lang'};
+	# user did not choose a specific language, apply user pref for this
+	# session. 
+	my $list_lang = $list->lang if ref $list eq 'List';
+	my $param->{'lang'} = $language->set_lang(
+	    $user->{'lang'}, $list_lang,
+	    $robot->lang, 'en'
+	);
+	$session->{'lang'} = $param->{'lang'} ;
     }
+    # compatibility: old-style locale.
+    $param->{'locale'} = Sympa::Language::lang2oldlocale($param->{'lang'});
+    # compatibility: 6.1.
+    $param->{'lang_tag'} = $param->{'lang'};
 
     if ($session->{'review_page_size'}) {
 
@@ -5844,17 +5854,21 @@ sub do_setpref {
     wwslog(Sympa::Logger::INFO, 'do_setpref');
     my $changes = {};
 
-    foreach my $p ('gecos', 'lang', 'cookie_delay') {
-        $changes->{$p} = $in{$p} if (defined($in{$p}));
-    }
+    # Set session language and user language to new value
+    # At first check if it is available lang.
+    my $lang;
+    if ($in{'lang'} and $lang = $language->set_lang($in{'lang'})) {
+	$session->{'lang'} = $lang;
+	$param->{'lang'}   = $lang;
+	# compatibility: 6.1.
+	$param->{'lang_tag'} = $lang;
 
-    ## Set session language and user language to new value
-    my $current_lang = $language->get_lang();
-    if ($in{'lang'} and $language->set_lang($in{'lang'})) {
-        $session->{'lang'} = $language->get_lang();
-        $language->set_lang($current_lang);
+	$changes->{'lang'} = $lang;
     }
-    $param->{'lang'} = $session->{'lang'};
+    # other prefs.
+    foreach my $p ('gecos', 'cookie_delay') {
+	$changes->{$p} = $in{$p} if defined $in{$p};
+    }
 
     if (Sympa::User::is_global_user($param->{'user'}{'email'})) {
 
@@ -5903,9 +5917,8 @@ sub do_setpref {
         }
     }
 
-    foreach my $p ('gecos', 'lang', 'cookie_delay') {
-        $param->{'user'}{$p} = $in{$p};
-    }
+    $param->{'user'} =
+	Sympa::User::get_global_user($param->{'user'}{'email'});
 
     web_db_log(
         {   'parameters' => "$in{'gecos'},$in{'lang'},$in{'cookie_delay'}",
@@ -6129,10 +6142,10 @@ sub do_subscribe {
 
                 $list->add_list_member($u);
                 if (defined $list->{'add_outcome'}{'errors'}) {
-                    my $error = $language->gettext_sprintf(
-                        "Unable to add user %s in list %s : %s",
-                        $u->{'email'}, $list->name,
-                        $list->{'add_outcome'}{'errors'}{'error_message'});
+		    my $error = $language->gettext_sprintf(
+			"Unable to add user %s in list %s : %s",
+			$u->{'email'}, $list->name,
+			$list->{'add_outcome'}{'errors'}{'error_message'});
                     my $error_type = 'intern';
                     $error_type = 'user'
                         if (
@@ -7099,8 +7112,19 @@ sub do_show_sessions {
 
     $in{'session_delay'} = 10 unless ($in{'session_delay'});
     my $delay = 60 * $in{'session_delay'};
-    $param->{'sessions'} =
-        Sympa::Session::list_sessions($delay, $robot, $in{'connected_only'});
+    my $sessions =
+        SympaSession::list_sessions($delay, $robot, $in{'connected_only'});
+    foreach my $session (@$sessions) {
+        $session->{'date'} = $language->gettext_strftime(
+            "%d %b %Y at %H:%M:%S", localtime($session->{'date_epoch'}));
+        $session->{'start_date'} = $language->gettext_strftime(
+            "%d %b %Y at %H:%M:%S",
+            localtime($session->{'start_date_epoch'}));
+        # Compatibility for misspelling.
+        $session->{'formated_date'} = $session->{'date'};
+        $session->{'formated_start_date'} = $session->{'start_date'}
+    }
+    $param->{'sessions'} = $sessions;
     return '1';
 }
 
@@ -7171,23 +7195,25 @@ sub do_ls_templates {
 
     foreach my $file (keys %{$param->{'templates'}}) {
         foreach my $level (keys %{$param->{'templates'}{$file}}) {
-            foreach my $lang (keys %{$param->{'templates'}{$file}{$level}}) {
-                if ($lang eq 'default') {
-                    $param->{'lang_per_level'}{$level}{$lang} = $lang;
-                    next;
-                }
-                $param->{'lang_per_level'}{$level}{$lang} =
-                    $language->native_name($lang) || $lang;
+	    $language->push_lang;
+	    foreach my $subdir (keys %{$param->{'templates'}{$file}{$level}}) {
+		my $lang = $language->set_lang($subdir); # allow unknown lang.
+		$param->{'lang_per_level'}{$level}{$subdir} =
+		    {
+			'title' => ($lang ? $language->native_name : ''),
+			'lang'  => $lang,
+		    };
             }
+	    $language->pop_lang;
         }
     }
 
     ## Colspan per level
     foreach my $level (keys %{$param->{'lang_per_level'}}) {
-        foreach my $lang (keys %{$param->{'lang_per_level'}{$level}}) {
+	foreach my $subdir (keys %{$param->{'lang_per_level'}{$level}}) {
             $param->{'colspan_per_level'}{$level}++;
             foreach my $file (keys %{$param->{'templates'}}) {
-                $param->{'templates'}{$file}{$level}{$lang} ||= '';
+		$param->{'templates'}{$file}{$level}{$subdir} ||= '';
             }
         }
     }
@@ -7297,6 +7323,23 @@ sub do_view_template {
     $param->{'scope'}         = $in{'scope'};
     $param->{'tpl_lang'}      = $in{'tpl_lang'};
 
+    my $tpl_lang = $in{'tpl_lang'} || 'default';
+    $param->{'tpl_lang'} = $tpl_lang;
+    unless ($tpl_lang eq 'default') {
+	$language->push_lang;
+
+	if (my $lang = $language->set_lang($tpl_lang)) { # allow unknown lang.
+	    $param->{'tpl_lang_title'} = $language->native_name || $tpl_lang;
+	    $param->{'tpl_lang_lang'} = $lang;
+	} else {
+	    $param->{'tpl_lang_title'} = $tpl_lang;
+	    $param->{'tpl_lang_lang'} =
+		Sympa::Language::canonic_lang($tpl_lang);
+	}
+
+	$language->pop_lang;
+    }
+
     return 1;
 }
 
@@ -7354,7 +7397,8 @@ sub do_copy_template {
             $in{'tpl_lang_out'});
     }
 
-    unless (Sympa::Tools::File::mk_parent_dir($param->{'template_path_out'})) {
+    unless ($param->{'template_path_out'}
+        and Sympa::Tools::File::mk_parent_dir($param->{'template_path_out'})) {
         Sympa::Report::reject_report_web(
             'intern',
             'cannot_open_file',
@@ -7407,18 +7451,30 @@ sub do_copy_template {
     if ($in{'list_out'}) { $param->{'list'} = $in{'list'} = $in{'list_out'}; }
 
     $param->{'webormail'}     = $in{'webormail'};
-    $param->{'tpl_lang'}      = $in{'tpl_lang'} = $in{'tpl_lang_out'};
-    $param->{'scope'}         = $in{'scope'} = $in{'scope_out'};
-    $param->{'template_path'} = $in{'template_path'} =
-        $param->{'template_path_out'};
-    $param->{'template_name'} = $in{'template_name'} =
-        $in{'template_name_out'};
-    web_db_log(
-        {   'parameters' => $param->{'template_name_out'},
-            'status'     => 'success'
+
+    my $tpl_lang = $in{'tpl_lang_out'} || 'default';
+    $param->{'tpl_lang'} = $in{'tpl_lang'} = $tpl_lang;
+    unless ($tpl_lang eq 'default') {
+	$language->push_lang;
+
+	if (my $lang = $language->set_lang($tpl_lang)) { # allow unknown lang.
+	    $param->{'tpl_lang_title'} = $language->native_name || $tpl_lang;
+	    $param->{'tpl_lang_lang'} = $lang;
+	} else {
+	    $param->{'tpl_lang_title'} = $tpl_lang;
+	    $param->{'tpl_lang_lang'} =
+		Sympa::Langage::caonic_lang($tpl_lang);
         }
-    );
-    return ('edit_template');
+
+	$language->pop_lang;
+    }
+
+    $param->{'scope'} = $in{'scope'} = $in{'scope_out'} ;
+    $param->{'template_path'} = $in{'template_path'} = $param->{'template_path_out'};
+    $param->{'template_name'} = $in{'template_name'} = $in{'template_name_out'};
+    &web_db_log({'parameters' => $param->{'template_name_out'},
+		 'status' => 'success'});
+    return ('edit_template');    
 }
 
 ## manage the rejection templates
@@ -7759,7 +7815,8 @@ sub do_edit_template {
         Sympa::Tools::WWW::get_template_path($in{'webormail'}, $robot, $in{'scope'},
         $in{'template_name'}, $in{'tpl_lang'}, $list);
 
-    unless (open(TPLOUT, '>' . $param->{'template_path'})) {
+    unless ($param->{'template_path'}
+        and open(TPLOUT, '>' . $param->{'template_path'})) {
         Sympa::Report::reject_report_web(
             'intern',
             'cannot_open_file',
@@ -11406,9 +11463,10 @@ sub do_editsubscriber {
     $param->{'current_subscriber'}{'visibility'} ||= 'noconceal';
 
     ## Get language from user_table
-    my $user = Sympa::User::get_global_user($in{'email'}, Sympa::Site->db_additional_user_fields);
-    $param->{'current_subscriber'}{'lang'} =
-        $language->native_name($user->{'lang'});
+    my $user = Sympa::User::get_global_user($in{'email'});
+    $language->push_lang($user->{'lang'});
+    $param->{'current_subscriber'}{'lang'} = $language->native_name;
+    $language->pop_lang;
 
     foreach my $m ($list->available_reception_mode) {
         $param->{'reception'}{$m}{'description'} =
@@ -12962,7 +13020,8 @@ sub _prepare_edit_form {
                 next unless (defined $selected_topic);
                 $p->{'value'}{$selected_topic}{'selected'} = 1;
                 $p->{'value'}{$selected_topic}{'title'} =
-                    $language->gettext_sprintf("Unknown (%s)", $selected_topic)
+		    $language->gettext_sprintf("Unknown (%s)",
+			$selected_topic)
                     unless (defined $p->{'value'}{$selected_topic}{'title'});
             }
         } elsif ($pname eq 'digest') {
@@ -12986,12 +13045,17 @@ sub _prepare_edit_form {
                 }
             }
         } elsif ($pname eq 'lang') {
+	    $language->push_lang;
             foreach my $lang (keys %{$p->{'value'}}) {
-                my $t = $language->native_name($lang) || $lang;
+		$language->set_lang($lang);
+		my $t = $language->native_name || $lang;
                 $t = sprintf '%s (%s)', $t, $lang
                     if $robot->is_listmaster($param->{'user'}{'email'});
                 $p->{'value'}{$lang}{'title'} = $t;
+		# compatibility: 6.1.
+		$p->{'value'}{$lang}{'lang_tag'} = $lang;
             }
+            $language->pop_lang;
         } elsif ($pname eq 'available_user_options'
             or $pname eq 'default_user_options') {
             foreach my $v (@{$p->{'value'}}) {
@@ -22244,13 +22308,16 @@ sub do_search_user {
 sub do_set_lang {
     wwslog(Sympa::Logger::INFO, 'do_set_lang(%s)', $in{'lang'});
 
-    my $current_lang = $language->get_lang();
-    if ($in{'lang'} and $language->set_lang($in{'lang'})) {
-        $session->{'lang'} = $language->get_lang();
-        $language->set_lang($current_lang);
-    }
-    $param->{'lang'} = $session->{'lang'};
+  my $lang;
+  if ($in{'lang'} and $lang = $language->set_lang($in{'lang'})) {
+    $session->{'lang'} = $lang;
+    $param->{'lang'} = $lang;
+    # compatibility: old-style locale.
+    $param->{'locale'} = Sympa::Language::lang2oldlocale($lang);
+    # compatibility: 6.1.
+    $param->{'lang_tag'} = $lang;
 
+    #FIXME:Should users' language preferences be changed?
     if ($param->{'user'}{'email'}) {
         if (Sympa::User::is_global_user($param->{'user'}{'email'})) {
             unless (
@@ -22321,6 +22388,7 @@ sub do_set_lang {
             }
         }
     }
+  }
 
     if ($in{'previous_action'}) {
         ## Some actions don't make sense with GET method, redirecting to other
@@ -24517,7 +24585,8 @@ sub new_d_read {
     my %access       = %{$ref_access};
     $param->{'doc_owner'} = $document->{'owner'};
     $param->{'doc_title'} = $document->{'title'};
-    $param->{'doc_date'}  = $document->{'date'};
+    $param->{'doc_date'}  = $language->gettext_strftime("%d %b %Y",
+        localtime $document->{'date_epoch'});
 
     ### Access control
     unless ($access{'may'}{'read'}) {

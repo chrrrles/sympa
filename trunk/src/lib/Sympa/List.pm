@@ -556,7 +556,6 @@ my %edit_list_conf = ();
 my %mtime;
 
 #use Fcntl; # duplicated
-
 ## Creates an object.
 sub new {
     $main::logger->do_log(Sympa::Logger::DEBUG2, '(%s, %s, %s, %s)', @_);
@@ -4918,19 +4917,13 @@ sub _create_add_error_string {
     my $self = shift;
     $self->{'add_outcome'}{'errors'}{'error_message'} = '';
     if ($self->{'add_outcome'}{'errors'}{'max_list_members_exceeded'}) {
-        $self->{'add_outcome'}{'errors'}{'error_message'} .=
-            $language->gettext_sprintf(
-            'Attempt to exceed the max number of members (%s) for this list.',
-            $self->max_list_members);
+	$self->{'add_outcome'}{'errors'}{'error_message'} .= $language->gettext_sprintf('Attempt to exceed the max number of members (%s) for this list.', $self->max_list_members);
     }
     if ($self->{'add_outcome'}{'errors'}{'unable_to_add_to_database'}) {
         $self->{'add_outcome'}{'error_message'} .=
             ' ' . $language->gettext('Attempts to add some users in database failed.');
     }
-    $self->{'add_outcome'}{'errors'}{'error_message'} .=
-        ' ' . $language->gettext_sprintf('Added %s users out of %s required.',
-        $self->{'add_outcome'}{'added_members'},
-        $self->{'add_outcome'}{'expected_number_of_added_users'});
+    $self->{'add_outcome'}{'errors'}{'error_message'} .= ' '. $language->gettext_sprintf('Added %s users out of %s required.', $self->{'add_outcome'}{'added_members'},$self->{'add_outcome'}{'expected_number_of_added_users'});
 }
 
 ## Adds a new list admin user, no overwrite.
@@ -5530,6 +5523,7 @@ sub load_task_list {
     foreach my $dir (@{$self->get_etc_include_path('list_task_models')}) {
         next unless (-d $dir);
 
+	LOOP_FOREACH_FILE:
         foreach my $file (<$dir/$action.*>) {
             next unless ($file =~ /$action\.(\w+)\.task$/);
             my $name = $1;
@@ -5541,19 +5535,22 @@ sub load_task_list {
             my $titles = Sympa::List::_load_task_title($file);
 
             ## Set the title in the current language
-            foreach my $lang (Sympa::Language::implicated_langs($language->get_lang)) {
-                if (defined $titles->{$lang}) {
-                    $list_of_task{$name}{'title'} = $titles->{$lang};
-                    last;
+	    foreach my $lang (
+		Sympa::Language::implicated_langs($language->get_lang)
+	    ) {
+		if (exists $titles->{$lang}) {
+		    $list_of_task{$name}{'title'} = $titles->{$lang};
+		    next LOOP_FOREACH_FILE;
+		}
+	    }
+	    if (exists $titles->{'gettext'}) {
+		$list_of_task{$name}{'title'} =
+		    $language->gettext($titles->{'gettext'});
+	    } elsif (exists $titles->{'default'}) {
+		$list_of_task{$name}{'title'} = $titles->{'default'};
+	    } else {
+		$list_of_task{$name}{'title'} = $name;		     
                 }
-            }
-            next if defined $list_of_task{$name}{'title'};
-            if (defined $titles->{'gettext'}) {
-                $list_of_task{$name}{'title'} = $language->gettext($titles->{'gettext'});
-            } else {
-                $list_of_task{$name}{'title'} = $name;
-            }
-
         }
     }
 
@@ -5562,10 +5559,10 @@ sub load_task_list {
 
 sub _load_task_title {
     $main::logger->do_log(Sympa::Logger::DEBUG3, '(%s)', @_);
-    my $file  = shift;
-    my $title = {};
+    my $file   = shift;
+    my $titles = {};
 
-    unless (open TASK, $file) {
+    unless (open TASK, '<', $file) {
         $main::logger->do_log(Sympa::Logger::ERR, 'Unable to open file "%s": %s',
             $file, $ERRNO);
         return undef;
@@ -5574,22 +5571,21 @@ sub _load_task_title {
     while (<TASK>) {
         last if /^\s*$/;
 
-        if (/^title\.gettext\s+(.*)\s*$/) {
-            $title->{'gettext'} = $1;
-        } elsif (/^title\.us\s+(.*)\s*$/) {
-            $title->{'us'} = $1;
-        } elsif (/^title\.([-.\w]+)\s+(.*)\s*$/) {
-            my ($lang, $t) = ($1, $2);
-            $lang = Sympa::Language::canonic_lang($lang) || $lang;
-            $title->{$lang} = $t;
-        } elsif (/^title\s+(\S.*?)\s*$/) {    # new on 6.2a.34.
-            $title->{'us'} = $1;
+	if (/^title\.gettext\s+(.*)\s*$/i) {
+	    $titles->{'gettext'} = $1;
+	} elsif (/^title\.(\S+)\s+(.*)\s*$/i) {
+	     my ($lang, $title) = ($1, $2);
+	    # canonicalize lang if possible.
+	    $lang = Sympa::Language::canonic_lang($lang) || $lang;
+	    $titles->{$lang} = $title;
+	} elsif (/^title\s+(.*)\s*$/i) {
+	     $titles->{'default'} = $1;
         }
     }
 
     close TASK;
 
-    return $title;
+    return $titles;
 }
 
 ## Loads all data sources
@@ -6873,7 +6869,8 @@ sub _load_list_members_from_include {
     $result->{'users'}      = \%users;
     $result->{'errors'}     = \@errors;
     $result->{'exclusions'} = \@ex_sources;
-    if (open OUT, '>/tmp/result') { print OUT Dumper $result; close OUT }
+    ##use Data::Dumper;
+    ##if(open OUT, '>/tmp/result') { print OUT Dumper $result; close OUT }
     return $result;
 }
 ## Loads the list of admin users from an external include source
@@ -9680,6 +9677,12 @@ sub _load_list_config_file {
         ## delete old entries
         delete $admin{'reply_to'};
         delete $admin{'forced_reply_to'};
+    }
+
+    # lang
+    # canonicalize language
+    unless ($admin{'lang'} = Sympa::Language::canonic_lang($admin{'lang'})) {
+	$admin{'lang'} = Conf::get_robot_conf($robot, 'lang');
     }
 
     ############################################

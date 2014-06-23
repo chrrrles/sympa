@@ -550,27 +550,28 @@ rather than locale name.
 
 =cut
 
+#FIXME: Sympa::Site::_get_etc_include_path() is missing!
 sub get_etc_include_path {
-    $main::logger->do_log(Sympa::Logger::DEBUG3, '(%s, %s, %s)', @_);
+    $main::logger->do_log(Sympa::Logger::DEBUG3, '(%s, %s, %s, %s)', @_);
     my $self = shift;
     my $dir  = shift;
     my $lang = shift;
+    my $lang_only = shift;
 
     ## Get language subdirectories.
-    my $lang_dirs = undef;
+    my $lang_dirs;
     if ($lang) {
         ## For compatibility: add old-style "locale" directory at first.
-        my $old_lang = Sympa::Language::lang2oldlocale($lang);
-        if ($old_lang) {
-            $lang_dirs = [$old_lang];
-        } else {
-            $lang_dirs = [];
-        }
         ## Add lang itself and fallback directories.
-        push @$lang_dirs, Sympa::Language::implicated_langs($lang);
+        $lang_dirs = [
+            grep {$_} (
+                Sympa::Language::lang2oldlocale($lang),
+                Sympa::Language::implicated_langs($lang)
+            )
+        ];
     }
 
-    return [$self->_get_etc_include_path($dir, $lang_dirs)];
+    return [$self->_get_etc_include_path($dir, $lang_dirs, $lang_only)];
 }
 
 =head3 Sending Notifications

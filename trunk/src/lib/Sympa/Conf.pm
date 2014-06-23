@@ -1151,14 +1151,9 @@ sub load_charset {
                 );
                 next;
             }
-            unless ($lang and $lang = Sympa::Language::canonic_lang($lang)) {
-                $main::logger->do_log(Sympa::Logger::ERR,
-                    'Illegal lang name in configuration file %s line %d',
-                    $config_file, $.);
-                next;
-            }
-            $charset->{$lang} = $cset;
-
+	    # canonicalize lang if possible.
+	    $lang = Sympa::Language::canonic_lang($lang) || $lang;
+	    $charset->{$lang} = $cset;
         }
         close CONFIG;
     }
@@ -1831,6 +1826,11 @@ sub _load_server_specific_secondary_config_files {
         );
     }
 
+    # canonicalize language, or if failed, apply site-wide default.
+    $param->{'config_hash'}{'lang'} =
+	Sympa::Language::canonic_lang($param->{'config_hash'}{'lang'})
+	|| 'en-US';
+
     ## Load charset.conf file if necessary.
     if ($param->{'config_hash'}{'legacy_character_support_feature'} eq 'on') {
         $param->{'config_hash'}{'locale2charset'} = load_charset();
@@ -1842,7 +1842,6 @@ sub _load_server_specific_secondary_config_files {
     $param->{'config_hash'}{'nrcpt_by_domain'} = load_nrcpt_by_domain();
     $param->{'config_hash'}{'crawlers_detection'} =
         load_crawlers_detection($param->{'config_hash'}{'robot_name'});
-
 }
 
 sub _infer_robot_parameter_values {
@@ -1927,8 +1926,12 @@ sub _infer_robot_parameter_values {
         delete $param->{'config_hash'}{'db_list_cache'};
     }
 
-    _parse_custom_robot_parameters(
-        {'config_hash' => $param->{'config_hash'}});
+    # canonicalize language
+    $param->{'config_hash'}{'lang'} =
+	Sympa::Language::canonic_lang($param->{'config_hash'}{'lang'})
+	or delete $param->{'config_hash'}{'lang'};
+
+    _parse_custom_robot_parameters({'config_hash' => $param->{'config_hash'}});
 }
 
 sub _load_robot_secondary_config_files {
