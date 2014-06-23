@@ -23,8 +23,6 @@ if ($EVAL_ERROR) {
 
 chdir "$Bin/..";
 
-$ENV{PERL5LIB} = $ENV{PERL5LIB} ? "$ENV{PERL5LIB}:src/lib" : "src/lib";
-
 all_pl_files_ok(
 	<src/sbin/*.pl>,
 	<src/bin/*.pl>,

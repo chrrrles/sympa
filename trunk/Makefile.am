@@ -51,11 +51,13 @@ MSGFMT=@MSGFMT@
 
 check-local:
 	[ -z "$(TEST_FILES)" ] && TEST_FILES="$(check_SCRIPTS)"; \
-	$(PROVE) -I src/lib $$TEST_FILES
+	PERL5LIB=src/lib; export PERL5LIB; \
+	$(PROVE) $$TEST_FILES
 
 check-local-jenkins:
 	[ ! -d out ] && mkdir out; \
 	[ -z "$(TEST_FILES)" ] && TEST_FILES="$(check_SCRIPTS)"; \
+	PERL5LIB=src/lib; export PERL5LIB; \
 	$(PROVE) -I src/lib --archive out $$TEST_FILES
 
 install-data-hook: installdir installconfig nextstep importantchanges
