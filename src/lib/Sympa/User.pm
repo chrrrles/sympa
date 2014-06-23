@@ -76,10 +76,10 @@ Create new Sympa::User object.
 =cut
 
 sub new {
-    my $pkg    = shift;
-    my $who    = Sympa::Tools::clean_email(shift || '');
+    my $pkg         = shift;
+    my $who         = Sympa::Tools::clean_email(shift || '');
     my $user_fields = shift;
-    my %values = @_;
+    my %values      = @_;
     my $self;
     return undef unless $who;
 
@@ -193,7 +193,8 @@ sub save {
     my $self = shift;
     unless (add_global_user('email' => $self->email, %$self)
         or update_global_user($self->email, %$self)) {
-        $main::logger->do_log(Sympa::Logger::ERR, 'Cannot save user %s', $self);
+        $main::logger->do_log(Sympa::Logger::ERR, 'Cannot save user %s',
+            $self);
         return undef;
     }
 
@@ -315,8 +316,8 @@ sub delete_global_user {
                 q{DELETE FROM user_table WHERE email_user = ?}, $who
             )
             ) {
-            $main::logger->do_log(Sympa::Logger::ERR, 'Unable to delete user %s',
-                $who);
+            $main::logger->do_log(Sympa::Logger::ERR,
+                'Unable to delete user %s', $who);
             next;
         }
     }
@@ -327,7 +328,7 @@ sub delete_global_user {
 ## Returns a hash for a given user
 sub get_global_user {
     $main::logger->do_log(Sympa::Logger::DEBUG2, '(%s)', @_);
-    my $who = Sympa::Tools::clean_email(shift);
+    my $who         = Sympa::Tools::clean_email(shift);
     my $user_fields = shift;
 
     ## Additional subscriber fields
@@ -352,7 +353,8 @@ sub get_global_user {
             $who
         )
         ) {
-        $main::logger->do_log(Sympa::Logger::ERR, 'Failed to prepare SQL query');
+        $main::logger->do_log(Sympa::Logger::ERR,
+            'Failed to prepare SQL query');
         $sth = pop @sth_stack;
         return undef;
     }
@@ -378,9 +380,9 @@ sub get_global_user {
         ## Turn user_attributes into a hash
         my $attributes = $user->{'attributes'};
         if (defined $attributes and length $attributes) {
-	    $user->{'attributes'} = {};
-	    foreach my $attr (split(/__ATT_SEP__/, $attributes)) {
-		my ($key, $value) = split(/__PAIRS_SEP__/, $attr);
+            $user->{'attributes'} = {};
+            foreach my $attr (split(/__ATT_SEP__/, $attributes)) {
+                my ($key, $value) = split(/__PAIRS_SEP__/, $attr);
                 $user->{'attributes'}{$key} = $value;
             }
             delete $user->{'attributes'}
@@ -406,9 +408,12 @@ sub get_all_global_user {
 
     push @sth_stack, $sth;
 
-    unless ($sth =
-        Sympa::DatabaseManager::do_prepared_query('SELECT email_user FROM user_table')) {
-        $main::logger->do_log(Sympa::Logger::ERR, 'Unable to gather all users in DB');
+    unless (
+        $sth = Sympa::DatabaseManager::do_prepared_query(
+            'SELECT email_user FROM user_table')
+        ) {
+        $main::logger->do_log(Sympa::Logger::ERR,
+            'Unable to gather all users in DB');
         $sth = pop @sth_stack;
         return undef;
     }
@@ -466,7 +471,8 @@ sub update_global_user {
     $who = Sympa::Tools::clean_email($who);
 
     ## use md5 fingerprint to store password
-    $values->{'password'} = Sympa::Auth::password_fingerprint($values->{'password'})
+    $values->{'password'} =
+        Sympa::Auth::password_fingerprint($values->{'password'})
         if ($values->{'password'});
 
     ## Canonicalize lang if possible.
@@ -491,7 +497,8 @@ sub update_global_user {
             $value ||= 0;    ## Can't have a null value
             $set = sprintf '%s=%s', $map_field{$field}, $value;
         } else {
-            $set = sprintf '%s=%s', $map_field{$field}, Sympa::DatabaseManager::quote($value);
+            $set = sprintf '%s=%s', $map_field{$field},
+                Sympa::DatabaseManager::quote($value);
         }
         push @set_list, $set;
     }
@@ -536,7 +543,8 @@ sub add_global_user {
     my ($field, $value);
 
     ## encrypt password
-    $values->{'password'} = Sympa::Auth::password_fingerprint($values->{'password'})
+    $values->{'password'} =
+        Sympa::Auth::password_fingerprint($values->{'password'})
         if ($values->{'password'});
 
     ## Canonicalize lang if possible
@@ -544,7 +552,8 @@ sub add_global_user {
         || $values->{'lang'}
         if $values->{'lang'};
 
-    return undef unless (my $who = Sympa::Tools::clean_email($values->{'email'}));
+    return undef
+        unless (my $who = Sympa::Tools::clean_email($values->{'email'}));
     return undef if (is_global_user($who));
 
     ## Update each table

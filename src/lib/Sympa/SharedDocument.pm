@@ -27,7 +27,6 @@ use strict;
 
 use English qw(-no_match_vars);
 
-use Sympa::Language;
 use Sympa::Logger;
 use Sympa::Scenario;
 use Sympa::Tools;
@@ -102,9 +101,6 @@ sub new {
 
     ## Date
     my @info = stat $document->{'absolute_path'};
-    $document->{'date'} = $language->gettext_strftime(
-        "%d %b %Y", localtime($info[9])
-    );
     $document->{'date_epoch'} = $info[9];
 
     # Size of the doc

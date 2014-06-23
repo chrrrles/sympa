@@ -402,8 +402,7 @@ sub global_report_cmd {
     if ($type eq 'intern') {
 
         if ($robot) {
-            my $param = $data;
-            $param ||= {};
+            my $param = $data || {};
             $param->{'error'}  = $error;
             $param->{'who'}    = $sender;
             $param->{'action'} = 'Command process';
@@ -488,8 +487,7 @@ sub reject_report_cmd {
                 $listname = $data->{'listname'};
             }
 
-            my $param = $data;
-            $param ||= {};
+            my $param = $data || {};
             $param->{'error'}    = $error;
             $param->{'cmd'}      = $cmd;
             $param->{'listname'} = $listname;

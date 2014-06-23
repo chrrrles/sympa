@@ -251,11 +251,11 @@ sub create_list_old {
     }
 
     ## Creation of the config file
-    my $time = time;
+    ##FIXME:should be unneccessary
     $param->{'creation'}{'date'} = $language->gettext_strftime(
-        "%d %b %Y at %H:%M:%S", localtime($time)
+        "%d %b %Y at %H:%M:%S", localtime time
     );
-    $param->{'creation'}{'date_epoch'} = $time;
+    $param->{'creation'}{'date_epoch'} = time;
     $param->{'creation_email'} ||= $robot->get_address('listmaster');
     $param->{'status'} ||= 'open';
 
@@ -546,12 +546,12 @@ sub create_list {
         $list->create_shared();
     }
 
-    my $time = time;
+    ##FIXME:should be unneccessary
     $list->creation(
         {   'date' => $language->gettext_strftime(
-                "%d %b %Y at %H:%M:%S", localtime($time)
+                "%d %b %Y at %H:%M:%S", localtime time
             ),
-            'date_epoch' => $time,
+            'date_epoch' => time,
             'email'      => (
                        $param->{'creation_email'}
                     || $robot->get_address('listmaster')
@@ -651,13 +651,13 @@ sub update_list {
             $param->{'listname'});
         return undef;
     }
-############## ? update
-    my $time = time;
+
+    ##FIXME:should be unneccessary
     $list->creation(
         {   'date' => $language->gettext_strftime(
-                "%d %b %Y at %H:%M:%S", localtime($time)
+                "%d %b %Y at %H:%M:%S", localtime time
             ),
-            'date_epoch' => $time,
+            'date_epoch' => time,
             'email'      => (
                        $param->{'creation_email'}
                     || $list->robot->get_address('listmaster')
@@ -1194,11 +1194,11 @@ sub clone_list_as_empty {
         return undef;
     }
     $new_list->serial(0);
-    my $time     = time;
     my $creation = {
-        'date_epoch' => $time,
+        'date_epoch' => time,
+        ##FIXME:should be unneccessary
         'date' => $language->gettext_strftime(
-            "%d %b %y at %H:%M:%S", localtime($time)
+            "%d %b %y at %H:%M:%S", localtime time
         )
     };
     ##FIXME: creation.email may be empty

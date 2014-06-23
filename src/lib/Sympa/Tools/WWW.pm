@@ -546,29 +546,33 @@ sub get_list_list_tpl {
     foreach my $dir (
         reverse @{$robot->get_etc_include_path('create_list_templates')}) {
         if (opendir(DIR, $dir)) {
+            LOOP_FOREACH_TEMPLATE:
             foreach my $template (sort grep (!/^\./, readdir(DIR))) {
-
                 my $status = $list_conf->{$template}
                     || $list_conf->{'default'};
-
                 next if ($status eq 'hidden');
 
                 $list_templates->{$template}{'path'} = $dir;
 
-                my $locale =
-                    Sympa::Language::lang2oldlocale(
-                    $language->get_lang());
-                ## FIXME: lang should be used instead of "locale".
-                ## Look for a comment.tt2 in the appropriate locale first
-                if (  -r $dir . '/'
-                    . $template . '/'
-                    . $locale
-                    . '/comment.tt2') {
-                    $list_templates->{$template}{'comment'} =
-                        $template . '/' . $locale . '/comment.tt2';
-                } elsif (-r $dir . '/' . $template . '/comment.tt2') {
-                    $list_templates->{$template}{'comment'} =
-                        $template . '/comment.tt2';
+                # Look for a comment.tt2.
+                # Check old style locale first then canonic language and its
+                # fallbacks.
+                my $lang = Sympa::Language->instance->get_lang;
+                my $comment_tt2;
+                foreach my $l (
+                    Sympa::Language::lang2oldlocale($lang),
+                    Sympa::Language::implicated_langs($lang)
+                ) {
+                    next unless $l;
+                    $comment_tt2 = $dir.'/'.$template.'/'.$l.'/comment.tt2';
+                    if (-r $comment_tt2) {
+                        $list_templates->{$template}{'comment'} = $comment_tt2;
+                        next LOOP_FOREACH_TEMPLATE;
+                    }
+                }
+                $comment_tt2 = $dir.'/'.$template.'/comment.tt2';
+                if (-r $comment_tt2) {
+                    $list_templates->{$template}{'comment'} = $comment_tt2;
                 }
             }
             closedir(DIR);
@@ -678,10 +682,18 @@ sub get_template_path {
     my $lang  = shift || 'default';
     my $list  = shift;
 
-    ##FIXME: path is fixed to older "locale".
-    my $locale;
-    $locale = Sympa::Language::lang2oldlocale($lang)
-        unless $lang eq 'default';
+    my $subdir = '';
+    # canonicalize language name which may be old-style locale name.
+    unless ($lang eq 'default') {
+       my $oldlocale = Sympa::Language::lang2oldlocale($lang);
+       unless ($oldlocale eq $lang) {
+           $subdir = Sympa::Language::canonic_lang($lang);
+           unless ($subdir) {
+               $main::logger->do_log(Sympa::Logger::INFO, 'internal error incorrect parameter');
+               return undef;
+           }
+       }
+    }
 
     unless ($type eq 'web' or $type eq 'mail') {
         $main::logger->do_log(Sympa::Logger::INFO,

@@ -167,7 +167,8 @@ sub load {
     }
 
     unless ($self->{'name'} eq $name) {
-        $main::logger->do_log(Sympa::Logger::ERR, 'Bug in logic.  Ask developer');
+        $main::logger->do_log(Sympa::Logger::ERR,
+            'Bug in logic.  Ask developer');
         return undef;
     }
 
@@ -318,7 +319,8 @@ sub is_available_topic {
 
     my %topics;
     unless (%topics = %{$self->topics || {}}) {
-        $main::logger->do_log(Sympa::Logger::ERR, 'unable to load list of topics');
+        $main::logger->do_log(Sympa::Logger::ERR,
+            'unable to load list of topics');
     }
 
     if ($subtop) {
@@ -357,16 +359,18 @@ sub split_listname {
             grep { $_ and length $_ }
             split(/[\s,]+/, $self->list_check_suffixes));
 
-    if ($mailbox eq 'sympa' and $self->domain eq Sympa::Site->domain) {    # compat.
+    if ($mailbox eq 'sympa' and $self->domain eq Sympa::Site->domain) {
+        # compat.
         return (undef, 'sympa');
     } elsif ($mailbox eq $self->email
-        or $self->domain eq Sympa::Site->domain and $mailbox eq Sympa::Site->email) {
+        or $self->domain eq Sympa::Site->domain
+        and $mailbox eq Sympa::Site->email) {
         return (undef, 'sympa');
     } elsif ($mailbox eq $self->listmaster_email
         or $self->domain eq Sympa::Site->domain
         and $mailbox eq Sympa::Site->listmaster_email) {
         return (undef, 'listmaster');
-    } elsif ($mailbox =~ /^(\S+)$return_path_suffix$/) {            # -owner
+    } elsif ($mailbox =~ /^(\S+)$return_path_suffix$/) {    # -owner
         return ($1, 'return_path');
     } elsif (!$regexp) {
         return ($mailbox);
@@ -403,9 +407,9 @@ get idp xref to locally validated email address
 =cut
 
 sub get_netidtoemail_db {
-    my $self     = shift;
-    my $netid    = shift;
-    my $idpname  = shift;
+    my $self    = shift;
+    my $netid   = shift;
+    my $idpname = shift;
 
     $main::logger->do_log(Sympa::Logger::DEBUG,
         'Sympa::List::get_netidtoemail_db(%s, %s)',
@@ -449,10 +453,10 @@ set idp xref to locally validated email address
 =cut
 
 sub set_netidtoemail_db {
-    my $self     = shift;
-    my $netid    = shift;
-    my $idpname  = shift;
-    my $email    = shift;
+    my $self    = shift;
+    my $netid   = shift;
+    my $idpname = shift;
+    my $email   = shift;
 
     $main::logger->do_log(Sympa::Logger::DEBUG2, '(%s, %s, %s, %s)', @_);
 
@@ -723,8 +727,8 @@ sub topics {
         }
 
         unless (open(FILE, '<', $conf_file)) {
-            $main::logger->do_log(Sympa::Logger::ERR, 'Unable to open config file %s',
-                $conf_file);
+            $main::logger->do_log(Sympa::Logger::ERR,
+                'Unable to open config file %s', $conf_file);
             return undef;
         }
 
@@ -744,10 +748,10 @@ sub topics {
 
                 $topic->{$1} = $2;
             } elsif (/^\s*$/) {
-                if (defined $topic->{'name'}) {
-                    push @rough_data, $topic;
-                    $topic = {};
-                }
+                next unless defined $topic->{'name'};
+
+                push @rough_data, $topic;
+                $topic = {};
             }
         }
         close FILE;
@@ -761,8 +765,8 @@ sub topics {
         $self->{'mtime'}{'topics.conf'} = (stat($conf_file))[9];
 
         unless ($#rough_data > -1) {
-            $main::logger->do_log(Sympa::Logger::NOTICE, 'No topic defined in %s',
-                $conf_file);
+            $main::logger->do_log(Sympa::Logger::NOTICE,
+                'No topic defined in %s', $conf_file);
             return undef;
         }
 
@@ -775,7 +779,6 @@ sub topics {
                 $list_of_topics->{$tree[0]}{'title'} = $title;
                 $list_of_topics->{$tree[0]}{'visibility'} =
                     $topic->{'visibility'} || 'default';
-
                 #$list_of_topics->{$tree[0]}{'visibility'} =
                 #    _load_scenario_file('topics_visibility', $self,
                 #    $topic->{'visibility'} || 'default');
@@ -791,7 +794,6 @@ sub topics {
         ## Set undefined Topic (defined via subtopic)
         foreach my $t (keys %{$list_of_topics}) {
             unless (defined $list_of_topics->{$t}{'visibility'}) {
-
                 #$list_of_topics->{$t}{'visibility'} =
                 #    _load_scenario_file('topics_visibility', $self,
                 #    'default');
@@ -801,20 +803,45 @@ sub topics {
                 $list_of_topics->{$t}{'title'} = {'default' => $t};
             }
         }
-
-        $self->{'topics'} = $list_of_topics;
     }
 
-    $list_of_topics = Sympa::Tools::Data::dup_var($self->{'topics'});
-
     ## Set the title in the current language
+    my $lang = $language->get_lang;
     foreach my $top (keys %{$list_of_topics}) {
         my $topic = $list_of_topics->{$top};
-        $topic->{'current_title'} = _get_topic_current_title($topic) || $top;
+        foreach my $l (Sympa::Language::implicated_langs($lang)) {
+            if (exists $topic->{'title'}{$l}) {
+                $topic->{'current_title'} = $topic->{'title'}{$l};
+            }
+        }
+        unless (exists $topic->{'current_title'}) {
+            if (exists $topic->{'title'}{'gettext'}) {
+                $topic->{'current_title'} =
+                    $language->gettext($topic->{'title'}{'gettext'});
+            } else {
+                $topic->{'current_title'} = $topic->{'title'}{'default'}
+                    || $top;
+            }
+        }
 
         foreach my $subtop (keys %{$topic->{'sub'}}) {
-            $topic->{'sub'}{$subtop}{'current_title'} =
-                _get_topic_current_title($topic->{'sub'}{$subtop}) || $subtop;
+            foreach my $l (Sympa::Language::implicated_langs($lang)) {
+                if (exists $topic->{'sub'}{$subtop}{'title'}{$l}) {
+                    $topic->{'sub'}{$subtop}{'current_title'} =
+                        $topic->{'sub'}{$subtop}{'title'}{$l};
+                }
+            }
+            unless (exists $topic->{'sub'}{$subtop}{'current_title'}) {
+                if (exists $topic->{'sub'}{$subtop}{'title'}{'gettext'}) {
+                    $topic->{'sub'}{$subtop}{'current_title'} =
+                        $language->gettext(
+                        $topic->{'sub'}{$subtop}{'title'}{'gettext'});
+                } else {
+                    $topic->{'sub'}{$subtop}{'current_title'} =
+                           $topic->{'sub'}{$subtop}{'title'}{'default'}
+                        || $subtop;
+                }
+            }
         }
     }
 
@@ -826,16 +853,15 @@ sub _get_topic_titles {
 
     my $title;
     foreach my $key (%{$topic}) {
-        if ($key =~ /^title(.(\w+))?$/) {
-            my $lang = $2 || 'default';
-            if ($lang eq 'gettext') {    # new in 6.2a.34
-                ;
-            } elsif ($lang eq 'default') {
-                ;
-            } else {
-                $lang = Sympa::Language::canonic_lang($lang) || $lang;
-            }
+        if ($key =~ /^title\.gettext$/i) {
+            $title->{'gettext'} = $topic->{$key};
+        } elsif ($key =~ /^title\.(\S+)$/i) {
+            my $lang = $1;
+            # canonicalize lang if possible.
+            $lang = Sympa::Language::canonic_lang($lang) || $lang;
             $title->{$lang} = $topic->{$key};
+        } elsif ($key =~ /^title$/i) {
+            $title->{'default'} = $topic->{$key};
         }
     }
 
@@ -844,7 +870,7 @@ sub _get_topic_titles {
 
 sub _get_topic_current_title {
     my $topic = shift;
-    my $lang = $language->get_lang;
+    my $lang  = $language->get_lang;
     foreach my $lang (Sympa::Language::implicated_langs($lang)) {
         if ($topic->{'title'}{$lang}) {
             return $topic->{'title'}{$lang};
@@ -1034,8 +1060,8 @@ sub get_robots {
 
     ## purge orphan robots
     foreach my $domain (keys %orphan) {
-        $main::logger->do_log(Sympa::Logger::DEBUG3, 'removing orphan robot %s',
-            $domain);
+        $main::logger->do_log(Sympa::Logger::DEBUG3,
+            'removing orphan robot %s', $domain);
         Sympa::Site->robots($domain, undef);
     }
 

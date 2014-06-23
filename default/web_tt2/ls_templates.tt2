@@ -48,20 +48,44 @@
 
 <!-- print list of languages -->
 [% FOREACH lang = lang_per_level.distrib %]
-    <th>[%IF lang.key == 'default' %]&nbsp;[%ELSE%][% lang.value %][%END%]</th>
+[%- IF lang.key == 'default' -%]
+<th>&nbsp;</th>
+[%- ELSE -%]
+<th class="LanguageNeutral"
+lang="[%lang.value.lang%]" xml:lang="[%lang.value.lang%]"
+>[%lang.value.title%] ([%lang.key%])</th>
+[%- END %]
 [% END %]
 
 [% FOREACH lang = lang_per_level.site %]
-    <th>[%IF lang.key == 'default' %][%|loc%]default[%END%][%ELSE%][% lang.value %][%END%]</th>
+[%- IF lang.key == 'default' -%]
+<th>&nbsp;</th>
+[%- ELSE -%]
+<th class="LanguageNeutral"
+lang="[%lang.value.lang%]" xml:lang="[%lang.value.lang%]"
+>[%lang.value.title%] ([%lang.key%])</th>
+[%- END %]
 [% END %]
 
- [% FOREACH lang = lang_per_level.robot %]
-    <th>[%IF lang.key == 'default' %][%|loc%]default[%END%][%ELSE%][% lang.value %][%END%]</th>
- [% END %]
+[% FOREACH lang = lang_per_level.robot %]
+[%- IF lang.key == 'default' -%]
+<th>&nbsp;</th>
+[%- ELSE -%]
+<th class="LanguageNeutral"
+lang="[%lang.value.lang%]" xml:lang="[%lang.value.lang%]"
+>[%lang.value.title%] ([%lang.key%])</th>
+[%- END %]
+[% END %]
 
- [% FOREACH lang = lang_per_level.list %]
-    <th>[%IF lang.key == 'default' %][%|loc%]default[%END%][%ELSE%][% lang.value %][%END%]</th>
- [% END %]
+[% FOREACH lang = lang_per_level.list %]
+[%- IF lang.key == 'default' -%]
+<th>&nbsp;</th>
+[%- ELSE -%]
+<th class="LanguageNeutral"
+lang="[%lang.value.lang%]" xml:lang="[%lang.value.lang%]"
+>[%lang.value.title%] ([%lang.key%])</th>
+[%- END %]
+[% END %]
 
 [% FOREACH file = templates %]
   [% IF dark == '1' %]
