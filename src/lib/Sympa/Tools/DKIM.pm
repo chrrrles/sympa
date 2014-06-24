@@ -316,7 +316,7 @@ sub sign {
         return ($msg_as_string);
     }
 
-    if ($main::options{Sympa::Logger::DEBUG}) {
+    if ($main::options{'debug'}) {
         $main::logger->do_log(Sympa::Logger::DEBUG, 'Temporary file is %s',
             $temporary_file);
     } else {

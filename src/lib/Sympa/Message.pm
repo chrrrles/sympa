@@ -753,7 +753,7 @@ sub decrypt {
             next;
         }
 
-        unlink($temporary_file) unless ($main::options{Sympa::Logger::DEBUG});
+        unlink($temporary_file) unless ($main::options{'debug'});
 
         my $parser = MIME::Parser->new();
         $parser->output_to_core(1);
@@ -902,7 +902,7 @@ sub check_signature {
     );
 
     unless ($signer->{'email'}{lc($self->{'sender_email'})}) {
-        unlink($temporary_file) unless ($main::options{Sympa::Logger::DEBUG});
+        unlink($temporary_file) unless ($main::options{'debug'});
         $main::logger->do_log(
             Sympa::Logger::ERR,
             "S/MIME signed message, sender(%s) does NOT match signer(%s)",
@@ -1057,7 +1057,7 @@ sub check_signature {
         close(CERT);
     }
 
-    unless ($main::options{Sympa::Logger::DEBUG}) {
+    unless ($main::options{'debug'}) {
         unlink($temporary_file);
         unlink($tmpcert);
         unlink($certbundle);
@@ -1310,7 +1310,7 @@ sub encrypt {
     }
     close NEWMSG;
 
-    unlink($temporary_file) unless ($main::options{Sympa::Logger::DEBUG});
+    unlink($temporary_file) unless ($main::options{'debug'});
 
     ## foreach header defined in  the incomming message but undefined in
     ## the
@@ -1422,7 +1422,7 @@ sub sign {
         $main::logger->do_log(Sympa::Logger::NOTICE, 'Unable to parse message');
         return undef;
     }
-    unlink($temporary_file) unless ($main::options{Sympa::Logger::DEBUG});
+    unlink($temporary_file) unless ($main::options{'debug'});
 
     ## foreach header defined in  the incoming message but undefined in the
     ## crypted message, add this header in the crypted form.
