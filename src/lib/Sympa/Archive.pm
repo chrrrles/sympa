@@ -79,14 +79,14 @@ sub list {
     my (@l,        $i);
 
     unless (-d "$name") {
-        $main::logger->do_log('warning',
+        $main::logger->do_log(Sympa::Logger::ERR,
             "archive::list($name) failed, no directory $name");
 
         #      @l = ($msg::no_archives_available);
         return @l;
     }
     unless (opendir(DIR, "$name")) {
-        $main::logger->do_log('warning',
+        $main::logger->do_log(Sympa::Logger::ERR,
             "archive::list($name) failed, cannot open directory $name");
 
         #	@l = ($msg::no_archives_available);
