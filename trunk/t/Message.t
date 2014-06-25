@@ -14,7 +14,7 @@ use Test::More;
 use Sympa::Logger::Memory;
 use Sympa::Message;
 
-plan tests => 57;
+plan tests => 59;
 
 our $logger = Sympa::Logger::Memory->new();
 
@@ -158,6 +158,11 @@ $message = Sympa::Message->new(
     file => $file
 );
 ok(!$message->is_encrypted(), 'message is not encrypted');
+is(
+    $message->as_entity()->body()->[0],
+    "This is an unsigned test message.\n",
+    'initial message body'
+);
 
 ok(
     $message->encrypt(
@@ -169,3 +174,8 @@ ok(
     'encryption operation success'
 );
 ok($message->is_encrypted(), 'message is encrypted');
+isnt(
+    $message->as_entity()->body()->[0],
+    "This is an unsigned test message.\n",
+    'new message body'
+);
