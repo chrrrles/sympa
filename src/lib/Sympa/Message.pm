@@ -1445,7 +1445,6 @@ sub sign {
 
     $self->{'entity'} = $signed_msg;
     $self->{'string'} = $new_message_as_string;    #FIXME
-    $self->check_signature;
     return 1;
 }
 
