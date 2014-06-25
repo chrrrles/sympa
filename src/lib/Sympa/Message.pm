@@ -1222,19 +1222,38 @@ sub get_body_from_msg_as_string {
     return (join("\n\n", @bodysection));    # convert it back as string
 }
 
-=item $message->encrypt($email)
+=item $message->encrypt(%parameter)
 
 Encrypts this message for the given recipient, using S/MIME format.
+
+Parameters:
+
+=over
+
+=item * I<email>: FIXME
+
+=item * I<openssl>: path to openssl binary
+
+=item * I<ssl_cert_dir>: path to Sympa certificate/keys directory.
+
+=item * I<tmpdir>: path to Sympa temporary directory
+
+=back
 
 =cut
 
 sub encrypt {
-    my ($self, $email) = @_;
+    my ($self, %params) = @_;
     $main::logger->do_log(Sympa::Logger::DEBUG2, '(%s, %s, %s)', @_);
+
+    my $tmpdir       = $params{tmpdir};
+    my $openssl      = $params{openssl};
+    my $ssl_cert_dir = $params{ssl_cert_dir};
+    my $email        = $params{email};
 
     my $usercert;
 
-    my $base = Sympa::Site->ssl_cert_dir . '/' . Sympa::Tools::escape_chars($email);
+    my $base = $ssl_cert_dir . '/' . Sympa::Tools::escape_chars($email);
     if (-f "$base\@enc") {
         $usercert = "$base\@enc";
     } else {
@@ -1248,11 +1267,11 @@ sub encrypt {
         return undef;
     }
 
-    my $temporary_file = Sympa::Site->tmpdir . "/" . $email . "." . $PID;
+    my $temporary_file = $tmpdir . "/" . $email . "." . $PID;
 
     ## encrypt the incoming message parse it.
     my $cmd = sprintf '%s smime -encrypt -out %s -des3 %s',
-        Sympa::Site->openssl, $temporary_file, $usercert;
+        $openssl, $temporary_file, $usercert;
     $main::logger->do_log(Sympa::Logger::DEBUG3, '%s', $cmd);
     if (!open(MSGDUMP, "| $cmd")) {
         $main::logger->do_log(Sympa::Logger::INFO,
