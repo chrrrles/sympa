@@ -14,7 +14,7 @@ use Test::More;
 use Sympa::Logger::Memory;
 use Sympa::Message;
 
-plan tests => 54;
+plan tests => 57;
 
 our $logger = Sympa::Logger::Memory->new();
 
@@ -124,10 +124,13 @@ $message = Sympa::Message->new(
 );
 ok(!$message->is_signed(), 'message is not signed');
 
-$message->sign(
-    openssl      => 'openssl',
-    tmpdir       => $ENV{TMPDIR},
-    ssl_cert_dir => $cert_dir
+ok(
+    $message->sign(
+        openssl      => 'openssl',
+        tmpdir       => $ENV{TMPDIR},
+        ssl_cert_dir => $cert_dir
+    ),
+    'signature operation success'
 );
 ok($message->is_signed(), 'message is signed');
 
@@ -139,11 +142,14 @@ $message = Sympa::Message->new(
 );
 ok(!$message->is_signed(), 'message is not signed');
 
-$message->sign(
-    openssl      => 'openssl',
-    tmpdir       => $ENV{TMPDIR},
-    ssl_cert_dir => $cert_dir,
-    key_password => 'test'
+ok(
+    $message->sign(
+        openssl      => 'openssl',
+        tmpdir       => $ENV{TMPDIR},
+        ssl_cert_dir => $cert_dir,
+        key_password => 'test'
+    ),
+    'signature operation success'
 );
 ok($message->is_signed(), 'message is signed');
 
@@ -153,10 +159,13 @@ $message = Sympa::Message->new(
 );
 ok(!$message->is_encrypted(), 'message is not encrypted');
 
-$message->encrypt(
-    email        => 'guillaume.rousse@sympa.org',
-    openssl      => 'openssl',
-    tmpdir       => $ENV{TMPDIR},
-    ssl_cert_dir => $cert_dir,
+ok(
+    $message->encrypt(
+        email        => 'guillaume.rousse@sympa.org',
+        openssl      => 'openssl',
+        tmpdir       => $ENV{TMPDIR},
+        ssl_cert_dir => $cert_dir,
+    ),
+    'encryption operation success'
 );
 ok($message->is_encrypted(), 'message is encrypted');
