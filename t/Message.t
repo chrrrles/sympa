@@ -8,22 +8,23 @@ use strict;
 use FindBin qw($Bin);
 use lib "$Bin/../src/lib";
 
+use File::Copy;
 use Test::More;
 
 use Sympa::Logger::Memory;
 use Sympa::Message;
 
-plan tests => 47;
+plan tests => 52;
 
 our $logger = Sympa::Logger::Memory->new();
 
 my $message;
 
-# no source
+# parsing test: no source
 $message = Sympa::Message->new();
 ok(!$message, 'no source');
 
-# unsigned file source
+# parsing test: file source
 my $file = 't/samples/unsigned.eml';
 
 $message = Sympa::Message->new(
@@ -45,7 +46,7 @@ ok(!$message->is_signed(), 'message is not signed');
 ok(!$message->is_encrypted(), 'message is not encrypted');
 ok(!defined$message->check_signature(), 'can not check signature');
 
-# unsigned string souce
+# parsing test: string source
 my $string = <<'EOF';
 Date: Mon, 25 Feb 2013 17:10:38 +0100
 From: Guillaume Rousse <Guillaume.Rousse@sympa.org>
@@ -78,7 +79,7 @@ ok(!$message->is_signed(), 'message is not signed');
 ok(!$message->is_encrypted(), 'message is not encrypted');
 ok(!defined$message->check_signature(), 'can not check signature');
 
-# signed file source
+# parsing test: signed file source
 my $signed_file = 't/samples/signed.eml';
 
 $message = Sympa::Message->new(
@@ -99,6 +100,8 @@ ok(!$message->is_authenticated(), 'message is not authenticated');
 ok($message->is_signed(), 'message is signed');
 ok(!$message->is_encrypted(), 'message is not encrypted');
 
+# signature check test
+
 my $cert_dir = File::Temp->newdir(CLEANUP => $ENV{TEST_DEBUG} ? 0 : 1);
 my $cert_file = $cert_dir . '/guillaume.rousse@sympa.org';
 ok(
@@ -110,3 +113,36 @@ ok(
     ),
     'message signature is OK'
 );
+ok(-f $cert_file, 'certificate file created');
+
+# signature test: unprotected key
+copy('t/pki/crt/rousse.pem', "$cert_dir/cert.pem");
+copy('t/pki/key/rousse_nopassword.pem', "$cert_dir/private_key");
+
+$message = Sympa::Message->new(
+    file => $file
+);
+ok(!$message->is_signed(), 'message is not signed');
+
+$message->sign(
+    openssl      => 'openssl',
+    tmpdir       => $ENV{TMPDIR},
+    ssl_cert_dir => $cert_dir
+);
+ok($message->is_signed(), 'message is signed');
+
+# signature test: password-protected key
+copy('t/pki/key/rousse_password.pem', "$cert_dir/private_key");
+
+$message = Sympa::Message->new(
+    file => $file
+);
+ok(!$message->is_signed(), 'message is not signed');
+
+$message->sign(
+    openssl      => 'openssl',
+    tmpdir       => $ENV{TMPDIR},
+    ssl_cert_dir => $cert_dir,
+    key_password => 'test'
+);
+ok($message->is_signed(), 'message is signed');
