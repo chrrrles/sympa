@@ -1349,20 +1349,38 @@ sub encrypt {
 
 Sign this message digitally, using S/MIME format.
 
+Parameters:
+
+=over
+
+=item * I<openssl>: path to openssl binary
+
+=item * I<ssl_cert_dir>: path to Sympa certificate/keys directory.
+
+=item * I<tmpdir>: path to Sympa temporary directory
+
+=item * I<key_password>: key password
+
+=back
+
 =cut
 
 sub sign {
-    my ($self) = @_;
+    my ($self, %params) = @_;
 
-    my $list = $self->{'list'};
-    $main::logger->do_log(Sympa::Logger::DEBUG2, '(%s, list=%s)', $self, $list);
+    my $tmpdir       = $params{tmpdir};
+    my $openssl      = $params{openssl};
+    my $ssl_cert_dir = $params{ssl_cert_dir};
+    my $key_password = $params{key_password};
 
-    my ($cert, $key) = Sympa::Tools::SMIME::find_keys($list->dir, 'sign');
-    my $temporary_file = Sympa::Site->tmpdir . '/' . $list->get_id . "." . $PID;
-    my $temporary_pwd  = Sympa::Site->tmpdir . '/pass.' . $PID;
+    $main::logger->do_log(Sympa::Logger::DEBUG2, '(%s)', $self);
+
+    my ($cert, $key) = Sympa::Tools::SMIME::find_keys($ssl_cert_dir, 'sign');
+    my $temporary_file = $tmpdir . '/message.' . $PID;
+    my $temporary_pwd  = $tmpdir . '/pass.' . $PID;
 
     my ($signed_msg, $pass_option);
-    $pass_option = "-passin file:$temporary_pwd" if (Sympa::Site->key_passwd ne '');
+    $pass_option = "-passin file:$temporary_pwd" if $key_password;
 
     ## Keep a set of header fields ONLY
     ## OpenSSL only needs content type & encoding to generate a
@@ -1382,7 +1400,7 @@ sub sign {
     $dup_msg->print(\*MSGDUMP);
     close(MSGDUMP);
 
-    if (Sympa::Site->key_passwd ne '') {
+    if ($key_password) {
         unless (POSIX::mkfifo($temporary_pwd, 0600)) {
             $main::logger->do_log(Sympa::Logger::NOTICE, 'Unable to make fifo for %s',
                 $temporary_pwd);
@@ -1390,7 +1408,7 @@ sub sign {
     }
     my $cmd = sprintf
         '%s smime -sign -rand %s/rand -signer %s %s -inkey %s -in %s',
-        Sympa::Site->openssl, Sympa::Site->tmpdir, $cert, $pass_option, $key,
+        $openssl, $tmpdir, $cert, $pass_option, $key,
         $temporary_file;
     $main::logger->do_log(Sympa::Logger::DEBUG2, '%s', $cmd);
     unless (open NEWMSG, "$cmd |") {
@@ -1399,13 +1417,13 @@ sub sign {
         return undef;
     }
 
-    if (Sympa::Site->key_passwd ne '') {
+    if ($key_password) {
         unless (open(FIFO, "> $temporary_pwd")) {
             $main::logger->do_log(Sympa::Logger::NOTICE, 'Unable to open fifo for %s',
                 $temporary_pwd);
         }
 
-        print FIFO Sympa::Site->key_passwd;
+        print FIFO $key_password;
         close FIFO;
         unlink($temporary_pwd);
     }
