@@ -14,7 +14,7 @@ use Test::More;
 use Sympa::Logger::Memory;
 use Sympa::Message;
 
-plan tests => 52;
+plan tests => 54;
 
 our $logger = Sympa::Logger::Memory->new();
 
@@ -146,3 +146,17 @@ $message->sign(
     key_password => 'test'
 );
 ok($message->is_signed(), 'message is signed');
+
+# encryption test
+$message = Sympa::Message->new(
+    file => $file
+);
+ok(!$message->is_encrypted(), 'message is not encrypted');
+
+$message->encrypt(
+    email        => 'guillaume.rousse@sympa.org',
+    openssl      => 'openssl',
+    tmpdir       => $ENV{TMPDIR},
+    ssl_cert_dir => $cert_dir,
+);
+ok($message->is_encrypted(), 'message is encrypted');
