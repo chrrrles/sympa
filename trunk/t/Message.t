@@ -5,8 +5,7 @@
 
 use strict;
 
-use FindBin qw($Bin);
-use lib "$Bin/../src/lib";
+use lib 'src/lib';
 
 use File::Copy;
 use Test::More;

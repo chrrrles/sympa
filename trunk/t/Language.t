@@ -11,8 +11,7 @@ use strict;
 use warnings;
 use Test::More;
 
-use FindBin qw($Bin);
-use lib 't/stub', "$Bin/../src/lib";
+use lib 't/stub', 'src/lib';
 use Sympa::Language;
 
 # Lang 2 gettext locale

@@ -6,8 +6,7 @@
 use strict;
 use warnings;
 
-use FindBin qw($Bin);
-use lib "$Bin/../src/lib";
+use lib 'src/lib';
 
 use English qw(-no_match_vars);
 use File::Temp;
@@ -90,7 +89,7 @@ exit \$lock + 0;
 EOF
     my @command = (
         $EXECUTABLE_NAME,
-        "-I$Bin/../src/lib",
+        "-Isrc/lib",
         "-e", $code
     );
     system(@command);
