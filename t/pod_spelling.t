@@ -6,8 +6,7 @@
 use strict;
 use warnings;
 
-use FindBin qw($Bin);
-use lib "$Bin/../src/lib";
+use lib 'src/lib';
 
 use English qw(-no_match_vars);
 use Test::More;
@@ -26,8 +25,6 @@ eval {
     Test::Pod::Spelling::CommonMistakes->import();
 };
 plan(skip_all => 'Test::Pod::Spelling::CommonMistakes required') if $EVAL_ERROR;
-
-chdir "$Bin/..";
 
 my @files = all_pod_files('src/lib');
 
