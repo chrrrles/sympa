@@ -90,6 +90,7 @@ exit \$lock + 0;
 EOF
     my @command = (
         $EXECUTABLE_NAME,
+        "-I$Bin/../src/lib",
         "-e", $code
     );
     system(@command);
