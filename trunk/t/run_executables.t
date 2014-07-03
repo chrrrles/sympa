@@ -29,7 +29,7 @@ plan tests => scalar @files * 3;
 
 foreach my $file (@files) {
      run(
-        [ $EXECUTABLE_NAME, $file, '--help' ],
+        [ $EXECUTABLE_NAME, '-I', 'src/lib', $file, '--help' ],
         \my ($in, $out, $err)
     );
     my $rc = $CHILD_ERROR >> 8;
