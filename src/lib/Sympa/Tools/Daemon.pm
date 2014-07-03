@@ -43,6 +43,7 @@ use English qw(-no_match_vars);
 use POSIX qw();
 use Proc::ProcessTable;
 
+use Sympa::Language;
 use Sympa::LockedFile;
 use Sympa::Logger;
 use Sympa::Tools::File;
