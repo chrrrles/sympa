@@ -34,7 +34,8 @@ check_SCRIPTS = t/compile_modules.t \
 		t/Tools_Data.t \
 		t/Tools_Daemon.t \
 		t/Tools_File.t \
-		t/Tools_Time.t
+		t/Tools_Time.t \
+		t/Tools_SMIME.t
 check_DATA = t/locale/cs/LC_MESSAGES/sympa.mo \
 	     t/locale/cs/LC_MESSAGES/web_help.mo \
 	     t/locale/zh_TW/LC_MESSAGES/sympa.mo
