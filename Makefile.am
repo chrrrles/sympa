@@ -25,6 +25,7 @@ check_SCRIPTS = t/compile_modules.t \
 		t/pod_syntax.t \
 		t/pod_spelling.t \
 		t/pod_coverage.t \
+		t/Datasource_LDAP.t \
 		t/Instruction.t \
 		t/Language.t \
 		t/LockedFile.t \
