@@ -77,6 +77,11 @@ Returns a new L<Sympa::Datasource::LDAP> object, or I<undef> for failure.
 
 sub new {
     my ($class, %params) = @_;
+    
+    unless ($params{'host'}) {
+        $main::logger->do_log(Sympa::Logger::ERROR, "missing 'host' parameter");
+        return undef;
+    }
 
     my $self = {
         async              => 1,
@@ -116,15 +121,6 @@ sub new {
 sub connect {
     my $self    = shift;
     my $options = shift;
-
-    ## Do we have all required parameters
-    foreach my $ldap_param ('ldap_host') {
-        unless ($self->{$ldap_param}) {
-            $main::logger->do_log(Sympa::Logger::INFO,
-                'Missing parameter %s for LDAP connection', $ldap_param);
-            return undef;
-        }
-    }
 
     my $host_entry;
     ## There might be multiple alternate hosts defined
