@@ -769,4 +769,13 @@ sub create_html_part_from_web_page {
     return $part->as_string();
 }
 
+# shamelessly imported from List::MoreUtils to avoid a dependency
+sub any (&@) {
+    my $f = shift;
+    foreach ( @_ ) {
+        return 1 if $f->();
+    }
+    return 0;
+}
+
 1;

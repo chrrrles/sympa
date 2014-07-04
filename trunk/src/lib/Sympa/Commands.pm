@@ -36,7 +36,6 @@ use Sympa::Report;
 use Sympa::Scenario;
 use Sympa::Site;
 use Sympa::Tools;
-use Sympa::Tools::Data;
 use Sympa::Tools::File;
 use Sympa::Tools::Password;
 
@@ -2719,10 +2718,9 @@ sub distribute {
     my $numsmtp;
     my $apply_dkim_signature = 'off';
     $apply_dkim_signature = 'on'
-        if Sympa::Tools::Data::is_in_array($list->dkim_signature_apply_on, 'any');
+        if Sympa::Tools::any { $_ eq 'any' } @{$list->dkim_signature_apply_on};
     $apply_dkim_signature = 'on'
-        if Sympa::Tools::Data::is_in_array($list->dkim_signature_apply_on,
-        'editor_validated_messages');
+        if Sympa::Tools::any { $_ eq 'editor_validated_messages' } @{$list->dkim_signature_apply_on};
 
     $numsmtp = $list->distribute_msg(
         'message'              => $message,
@@ -2989,10 +2987,9 @@ sub confirm {
         my $numsmtp;
         my $apply_dkim_signature = 'off';
         $apply_dkim_signature = 'on'
-            if Sympa::Tools::Data::is_in_array($list->dkim_signature_apply_on, 'any');
+            if Sympa::Tools::any { $_ eq 'any' } @{$list->dkim_signature_apply_on};
         $apply_dkim_signature = 'on'
-            if Sympa::Tools::Data::is_in_array($list->dkim_signature_apply_on,
-            'md5_authenticated_messages');
+            if Sympa::Tools::any { $_ eq 'md5_authenticated_messages' } @{$list->dkim_signature_apply_on};
 
         $numsmtp = $list->distribute_msg(
             'message'              => $message,
