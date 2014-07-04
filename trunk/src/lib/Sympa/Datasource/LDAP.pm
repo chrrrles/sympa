@@ -63,7 +63,7 @@ Parameters:
 
 =item * I<ssl_key>: client key, for authentication
 
-=item * I<ca_verify>: server certificate checking policy
+=item * I<ca_verify>: server certificate checking policy (default: optional)
 
 =item * I<ca_path>: CA indexed certificates directory
 
@@ -95,7 +95,7 @@ sub new {
         ldap_ssl_ciphers   => $params{'ssl_ciphers'},
         ssl_cert           => $params{'ssl_cert'},
         ssl_key            => $params{'ssl_key'},
-        ca_verify          => $params{'ca_verify'},
+        ca_verify          => $params{'ca_verify'} || "optional",
         ca_path            => $params{'ca_path'},
         ca_file            => $params{'ca_file'},
     };
@@ -175,7 +175,7 @@ sub connect {
     ## check this.
     if ($self->{'use_start_tls'}) {
         $self->{'ldap_handler'}->start_tls(
-            verify     => $self->{'ca_verify'} || "optional",
+            verify     => $self->{'ca_verify'},
             capath     => $self->{'ca_path'},
             cafile     => $self->{'ca_file'},
             sslversion => $self->{'ssl_version'},
