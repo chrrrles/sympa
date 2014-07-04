@@ -8447,7 +8447,6 @@ sub do_modindex {
         my $sender_gecos = $message->get_sender_gecos(headers => $headers);
         $param->{'spool'}{$id}{'from'}  = $sender_email;
         $param->{'spool'}{$id}{'gecos'} = $sender_gecos if $sender_gecos;
-            if defined $message->get_sender_gecos(headers => $headers);
         $param->{'spool'}{$id}{'spam_status'} = 'spam' if $message->is_spam();
         $param->{'spool'}{$id}{'is_subscriber'} =
             $list->is_list_member($sender_email);
