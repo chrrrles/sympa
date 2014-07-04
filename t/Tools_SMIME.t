@@ -178,11 +178,19 @@ my $parser = MIME::Parser->new();
 my $entity = $parser->parse_open('t/samples/signed.eml');
 my $out_file = $cert_dir . '/out';
 ok(
-    !Sympa::Tools::SMIME::extract_certs($entity->parts(0), $out_file, 'openssl'),
+    !Sympa::Tools::SMIME::extract_certs(
+        entity  => $entity->parts(0),
+        file    => $out_file,
+        openssl => 'openssl'
+    ),
     "certificate extraction from text part doesn't work"
 );
 ok(
-    Sympa::Tools::SMIME::extract_certs($entity->parts(1), $out_file, 'openssl'),
+    Sympa::Tools::SMIME::extract_certs(
+        entity  => $entity->parts(1),
+        file    => $out_file,
+        openssl => 'openssl'
+    ),
     "certificate extraction from signature part does work"
 );
 ok(-f $out_file, 'certificate extraction file exists');
