@@ -84,7 +84,6 @@ sub new {
     }
 
     my $self = {
-        async              => 1,
         timeout            => $params{timeout} || 3,
         ldap_bind_dn       => $params{'user'},
         ldap_bind_password => $params{'passwd'},
