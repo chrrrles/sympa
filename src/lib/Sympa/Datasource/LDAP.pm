@@ -119,7 +119,6 @@ Returns a L<Net::LDAP> instance on success, I<undef> otherwise.
 
 sub connect {
     my $self    = shift;
-    my $options = shift;
 
     my $host_entry;
     ## There might be multiple alternate hosts defined
