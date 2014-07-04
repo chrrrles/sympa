@@ -42,7 +42,6 @@ nobase_modules_DATA = Sympa/Admin.pm \
 		      Sympa/HTML/MyFormatText.pm \
 		      Sympa/Instruction.pm \
 		      Sympa/Language.pm \
-		      Sympa/LDAP.pm \
 		      Sympa/List.pm \
 		      Sympa/ListDef.pm \
 		      Sympa/LockedFile.pm \
