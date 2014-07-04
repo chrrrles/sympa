@@ -221,49 +221,9 @@ sub connect {
 
 }
 
-sub query {
-    my ($self, $sql_query) = @_;
-    unless ($self->{'sth'} = $self->{'dbh'}->prepare($sql_query)) {
-        $main::logger->do_log(
-            Sympa::Logger::ERR,
-            'Unable to prepare SQL query : %s',
-            $self->{'dbh'}->errstr
-        );
-        return undef;
-    }
-    unless ($self->{'sth'}->execute) {
-        $main::logger->do_log(Sympa::Logger::ERR,
-            'Unable to perform SQL query %s : %s ',
-            $sql_query, $self->{'dbh'}->errstr);
-        return undef;
-    }
-
-}
-
-## Does not make sense in LDAP context
-sub ping {
-}
-
-## Does not make sense in LDAP context
-sub quote {
-}
-
-sub fetch {
-    my $self = shift;
-    return $self->{'sth'}->fetchrow_arrayref;
-}
-
-## Does not make sense in LDAP context
-sub create_db {
-}
-
 sub disconnect {
     my $self = shift;
     $self->{'ldap_handler'}->unbind if $self->{'ldap_handler'};
-}
-
-## Does not make sense in LDAP context
-sub set_fetch_timeout {
 }
 
 1;
