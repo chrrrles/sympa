@@ -174,18 +174,15 @@ sub connect {
     ## "supported_extension" in Net::LDAP::RootDSE to
     ## check this.
     if ($self->{'use_start_tls'}) {
-        my %tls_param;
-        $tls_param{'sslversion'} = $self->{'ssl_version'}
-            if ($self->{'ssl_version'});
-        $tls_param{'ciphers'} = $self->{'ssl_ciphers'}
-            if ($self->{'ssl_ciphers'});
-        $tls_param{'verify'} = $self->{'ca_verify'} || "optional";
-        $tls_param{'capath'} = $self->{'ca_path'}   || "/etc/ssl";
-        $tls_param{'cafile'} = $self->{'ca_file'} if ($self->{'ca_file'});
-        $tls_param{'clientcert'} = $self->{'ssl_cert'}
-            if ($self->{'ssl_cert'});
-        $tls_param{'clientkey'} = $self->{'ssl_key'} if ($self->{'ssl_key'});
-        $self->{'ldap_handler'}->start_tls(%tls_param);
+        $self->{'ldap_handler'}->start_tls(
+            verify     => $self->{'ca_verify'} || "optional",
+            capath     => $self->{'ca_path'}   || "/etc/ssl",
+            cafile     => $self->{'ca_file'},
+            sslversion => $self->{'ssl_version'},
+            ciphers    => $self->{'ssl_ciphers'},
+            clientcert => $self->{'ssl_cert'},
+            clientkey  => $self->{'ssl_key'},
+        );
     }
 
     my $cnx;
