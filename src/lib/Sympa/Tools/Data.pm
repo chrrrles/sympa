@@ -343,33 +343,6 @@ sub diff_on_arrays {
 
 }
 
-=item is_in_array($setA, $value)
-
-Test if a value is on an array
-
-Parameters:
-
-=over
-
-=item * I<$setA>: set
-
-=item * I<$value>: searched value
-
-=back
-
-Returns a boolean value.
-
-=cut
-
-sub is_in_array {
-    my ($set, $value) = @_;
-
-    foreach my $elt (@$set) {
-        return 1 if ($elt eq $value);
-    }
-    return undef;
-}
-
 =item string_2_hash($string)
 
 Convert a string formatted as var1="value1";var2="value2"; into a hash.
