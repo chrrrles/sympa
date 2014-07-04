@@ -103,20 +103,20 @@ sub new {
     return $self;
 }
 
-############################################################
-#  connect
-############################################################
-#  Connect to an LDAP directory. This could be called as
-#  a LDAPSource object member, or as a static sub.
-#
-# IN : -$options : ref to a hash. Options for the connection process.
-#         currently accepts 'keep_trying' : wait and retry until
-#         db connection is ok (boolean) ; 'warn' : warn
-#         listmaster if connection fails (boolean)
-# OUT : $self->{'ldap_handler'}
-#     | undef
-#
-##############################################################
+=back
+
+=head1 INSTANCE METHODS
+
+=over
+
+=item $datasource->connect()
+
+Connect to an LDAP directory.
+
+Returns a L<Net::LDAP> instance on success, I<undef> otherwise.
+
+=cut
+
 sub connect {
     my $self    = shift;
     my $options = shift;
@@ -198,9 +198,19 @@ sub connect {
     return $self->{'ldap_handler'};
 }
 
+=item $datasource->disconnect()
+
+Disconnect from the LDAP directory.
+
+=cut
+
 sub disconnect {
     my $self = shift;
     $self->{'ldap_handler'}->unbind if $self->{'ldap_handler'};
 }
+
+=back
+
+=cut
 
 1;
