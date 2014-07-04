@@ -34,7 +34,6 @@ use Net::Netmask;
 
 use Sympa::ConfDef;
 use Sympa::Language;
-use Sympa::Datasource::LDAP;
 use Sympa::List; # FIXME: circular dependency
 use Sympa::Logger;
 use Sympa::Robot;
@@ -1720,6 +1719,7 @@ sub search {
                 {'value'};
         }
 
+        require Sympa::Datasource::LDAP;
         my $ldap;
         my $param = Sympa::Tools::Data::dup_var(\%ldap_conf);
         my $ds    = Sympa::Datasource::LDAP->new($param);

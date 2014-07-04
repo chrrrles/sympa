@@ -4407,6 +4407,7 @@ sub is_ldap_user {
 
     my ($ldap_anonymous, $filter);
 
+    require Sympa::Datasource::LDAP;
     foreach my $ldap (@ldap_servers) {
 
         # skip ldap auth service if the user id or email do not match regexp
