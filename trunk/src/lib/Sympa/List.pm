@@ -42,7 +42,6 @@ use Sympa::Archive;
 use Sympa::Constants;
 use Sympa::DatabaseManager;
 use Sympa::Datasource;
-use Sympa::Datasource::LDAP;
 use Sympa::Datasource::SQL;
 use Sympa::Family; # FIXME: circular dependency
 use Sympa::Fetch;
@@ -6761,6 +6760,7 @@ sub _load_list_members_from_include {
                     $included = 0;
                 }
             } elsif ($type eq 'include_ldap_query') {
+                require Sympa::Datasource::LDAP;
                 my $source = Sympa::Datasource::LDAP->new($incl);
                 if ($source->is_allowed_to_sync() || $source_is_new) {
                     $included =
@@ -6783,6 +6783,7 @@ sub _load_list_members_from_include {
                     $included = 0;
                 }
             } elsif ($type eq 'include_ldap_2level_query') {
+                require Sympa::Datasource::LDAP;
                 my $source = Sympa::Datasource::LDAP->new($incl);
                 if ($source->is_allowed_to_sync() || $source_is_new) {
                     my $result =
@@ -6965,11 +6966,13 @@ sub _load_list_admin_from_include {
                         _include_users_sql(\%admin_users, $incl, $source,
                         \%option, 'untied', $self->sql_fetch_timeout);
                 } elsif ($type eq 'include_ldap_query') {
+                    require Sympa::Datasource::LDAP;
                     my $source = Sympa::Datasource::LDAP->new($incl);
                     $included =
                         _include_users_ldap(\%admin_users, $incl, $source,
                         \%option);
                 } elsif ($type eq 'include_ldap_2level_query') {
+                    require Sympa::Datasource::LDAP;
                     my $source = Sympa::Datasource::LDAP->new($incl);
                     my $result =
                         _include_users_ldap_2level(\%admin_users, $incl,
@@ -7300,6 +7303,7 @@ sub sync_include_ca {
                 $source = Sympa::Datasource::SQL->new($incl);
             } elsif (($type eq 'include_ldap_ca')
                 or ($type eq 'include_ldap_2level_ca')) {
+                require Sympa::Datasource::LDAP;
                 $source = Sympa::Datasource::LDAP->new($incl);
             }
             next unless (defined($source));

@@ -29,7 +29,6 @@ use Digest::MD5;
 use POSIX qw();
 
 use Sympa::DatabaseManager;
-use Sympa::Datasource::LDAP;
 use Sympa::Logger;
 use Sympa::Report;
 use Sympa::Robot;
@@ -225,6 +224,8 @@ sub ldap_authentication {
 
     # only ldap service are to be applied here
     return undef unless ($ldap->{'auth_type'} eq 'ldap');
+
+    require Sympa::Datasource::LDAP;
 
     # skip ldap auth service if the an email address was provided
     # and this email address does not match the corresponding regexp
