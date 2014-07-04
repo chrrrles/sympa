@@ -84,19 +84,19 @@ sub new {
     }
 
     my $self = {
-        timeout            => $params{timeout} || 3,
-        ldap_bind_dn       => $params{'user'},
-        ldap_bind_password => $params{'passwd'},
-        ldap_host          => $params{'host'},
-        ldap_use_ssl       => $params{'use_ssl'},
-        ldap_start_tls     => $params{'use_start_tls'},
-        ldap_ssl_version   => $params{'ssl_version'},
-        ldap_ssl_ciphers   => $params{'ssl_ciphers'},
-        ssl_cert           => $params{'ssl_cert'},
-        ssl_key            => $params{'ssl_key'},
-        ca_verify          => $params{'ca_verify'} || "optional",
-        ca_path            => $params{'ca_path'},
-        ca_file            => $params{'ca_file'},
+        timeout       => $params{timeout} || 3,
+        bind_dn       => $params{'user'},
+        bind_password => $params{'passwd'},
+        host          => $params{'host'},
+        use_ssl       => $params{'use_ssl'},
+        start_tls     => $params{'use_start_tls'},
+        ssl_version   => $params{'ssl_version'},
+        ssl_ciphers   => $params{'ssl_ciphers'},
+        ssl_cert      => $params{'ssl_cert'},
+        ssl_key       => $params{'ssl_key'},
+        ca_verify     => $params{'ca_verify'} || "optional",
+        ca_path       => $params{'ca_path'},
+        ca_file       => $params{'ca_file'},
     };
     bless $self, $class;
 
@@ -122,7 +122,7 @@ sub connect {
 
     my $host_entry;
     ## There might be multiple alternate hosts defined
-    foreach $host_entry (split(/,/, $self->{'ldap_host'})) {
+    foreach $host_entry (split(/,/, $self->{'host'})) {
 
         ## Remove leading and trailing spaces
         $host_entry =~ s/^\s*(\S.*\S)\s*$/$1/;
@@ -131,12 +131,12 @@ sub connect {
         $self->{'port'} ||= $port if (defined $port);
 
         ## value may be '1' or 'yes' depending on the context
-        if (   $self->{'ldap_use_ssl'} eq 'yes'
-            || $self->{'ldap_use_ssl'} eq '1') {
-            $self->{'sslversion'} = $self->{'ldap_ssl_version'}
-                if ($self->{'ldap_ssl_version'});
-            $self->{'ciphers'} = $self->{'ldap_ssl_ciphers'}
-                if ($self->{'ldap_ssl_ciphers'});
+        if (   $self->{'use_ssl'} eq 'yes'
+            || $self->{'use_ssl'} eq '1') {
+            $self->{'sslversion'} = $self->{'ssl_version'}
+                if ($self->{'ssl_version'});
+            $self->{'ciphers'} = $self->{'ssl_ciphers'}
+                if ($self->{'ssl_ciphers'});
 
             unless (eval "require Net::LDAPS") {
                 $main::logger->do_log(Sympa::Logger::ERR,
@@ -145,27 +145,27 @@ sub connect {
             }
             require Net::LDAPS;
 
-            $self->{'ldap_handler'} =
+            $self->{'handler'} =
                 Net::LDAPS->new($host, port => $port, %{$self});
         } else {
-            $self->{'ldap_handler'} = Net::LDAP->new($host, %{$self});
+            $self->{'handler'} = Net::LDAP->new($host, %{$self});
         }
 
-        next unless (defined $self->{'ldap_handler'});
+        next unless (defined $self->{'handler'});
 
-        ## if $self->{'ldap_handler'} is defined, skip alternate hosts
+        ## if $self->{'handler'} is defined, skip alternate hosts
         last;
     }
 
-    unless (defined $self->{'ldap_handler'}) {
+    unless (defined $self->{'handler'}) {
         $main::logger->do_log(Sympa::Logger::ERR,
             "Unable to connect to the LDAP server '%s'",
-            $self->{'ldap_host'});
+            $self->{'host'});
         return undef;
     }
 
     if ($self->{'use_start_tls'}) {
-        $self->{'ldap_handler'}->start_tls(
+        $self->{'handler'}->start_tls(
             verify     => $self->{'ca_verify'},
             capath     => $self->{'ca_path'},
             cafile     => $self->{'ca_file'},
@@ -176,10 +176,10 @@ sub connect {
         );
     }
 
-    if ($self->{'ldap_bind_dn'} && $self->{'ldap_bind_password'}) {
-        my $result = $self->{'ldap_handler'}->bind(
-            $self->{'ldap_bind_dn'},
-            password => $self->{'ldap_bind_password'}
+    if ($self->{'bind_dn'} && $self->{'bind_password'}) {
+        my $result = $self->{'handler'}->bind(
+            $self->{'bind_dn'},
+            password => $self->{'bind_password'}
         );
         if ($result->code != 0) {
             $main::logger->do_log(
@@ -194,7 +194,7 @@ sub connect {
 
     $main::logger->do_log(Sympa::Logger::DEBUG, "Bound to LDAP host '$host_entry'");
 
-    return $self->{'ldap_handler'};
+    return $self->{'handler'};
 }
 
 =item $datasource->disconnect()
@@ -205,7 +205,7 @@ Disconnect from the LDAP directory.
 
 sub disconnect {
     my $self = shift;
-    $self->{'ldap_handler'}->unbind if $self->{'ldap_handler'};
+    $self->{'handler'}->unbind if $self->{'handler'};
 }
 
 =back
