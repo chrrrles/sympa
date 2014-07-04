@@ -79,7 +79,7 @@ sub new {
     my ($class, %params) = @_;
     
     unless ($params{'host'}) {
-        $main::logger->do_log(Sympa::Logger::ERROR, "missing 'host' parameter");
+        $main::logger->do_log(Sympa::Logger::ERR, "missing 'host' parameter");
         return undef;
     }
 
