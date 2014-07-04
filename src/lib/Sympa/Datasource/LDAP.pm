@@ -27,6 +27,7 @@ use strict;
 use base qw(Sympa::Datasource);
 
 use Carp;
+use Net::LDAP;
 
 use Sympa::Logger;
 
@@ -94,30 +95,6 @@ sub new {
         ca_file            => $params{'ca_file'},
     };
     bless $self, $class;
-
-    unless (eval "require Net::LDAP") {
-        $main::logger->do_log(Sympa::Logger::ERR,
-            "Unable to use LDAP library, Net::LDAP required, install perl-ldap (CPAN) first"
-        );
-        return undef;
-    }
-    require Net::LDAP;
-
-    unless (eval "require Net::LDAP::Entry") {
-        $main::logger->do_log(Sympa::Logger::ERR,
-            "Unable to use LDAP library,Net::LDAP::Entry required install perl-ldap (CPAN) first"
-        );
-        return undef;
-    }
-    require Net::LDAP::Entry;
-
-    unless (eval "require Net::LDAP::Message") {
-        $main::logger->do_log(Sympa::Logger::ERR,
-            "Unable to use LDAP library,Net::LDAP::Entry required install perl-ldap (CPAN) first"
-        );
-        return undef;
-    }
-    require Net::LDAP::Message;
 
     return $self;
 }
