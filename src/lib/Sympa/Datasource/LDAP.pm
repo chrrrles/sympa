@@ -176,7 +176,7 @@ sub connect {
     if ($self->{'use_start_tls'}) {
         $self->{'ldap_handler'}->start_tls(
             verify     => $self->{'ca_verify'} || "optional",
-            capath     => $self->{'ca_path'}   || "/etc/ssl",
+            capath     => $self->{'ca_path'},
             cafile     => $self->{'ca_file'},
             sslversion => $self->{'ssl_version'},
             ciphers    => $self->{'ssl_ciphers'},
