@@ -201,8 +201,6 @@ sub connect {
     }
     $main::logger->do_log(Sympa::Logger::DEBUG, "Bound to LDAP host '$host_entry'");
 
-    $main::logger->do_log(Sympa::Logger::DEBUG, 'Connected to Database %s',
-        $self->{'db_name'});
     return $self->{'ldap_handler'};
 
 }
