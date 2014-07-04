@@ -30,30 +30,70 @@ use Carp;
 
 use Sympa::Logger;
 
+=head1 CLASS METHODS
+
+=over
+
+=item Sympa::Datasource::LDAP->new(%parameters)
+
+Creates a new L<Sympa::Datasource::LDAP> object.
+
+Parameters:
+
+=over 4
+
+=item * I<timeout>: connection timeout
+
+=item * I<user>: connection user
+
+=item * I<passwd>: connection password
+
+=item * I<host>: ldap server hostname
+
+=item * I<use_ssl>: wether to use SSL/TLS on dedicated port
+
+=item * I<use_start_tls>: wether to use SSL/TLS on standard port, through start_tls command
+
+=item * I<ssl_version>: SSL/TLS version to use
+
+=item * I<ssl_ciphers>: SSL/TLS ciphers to use
+
+=item * I<ssl_cert>: client certificate, for authentication
+
+=item * I<ssl_key>: client key, for authentication
+
+=item * I<ca_verify>: server certificate checking policy
+
+=item * I<ca_path>: CA indexed certificates directory
+
+=item * I<ca_file>: CA bundled certificates file
+
+=back
+
+Returns a new L<Sympa::Datasource::LDAP> object, or I<undef> for failure.
+
+=cut
+
 sub new {
-    my $pkg   = shift;
-    my $param = shift;
-    my $self  = $param;
-    $main::logger->do_log(Sympa::Logger::DEBUG, 'Creating new LDAPSource object');
-    ## Map equivalent parameters (depends on the calling context : included
-    ## members, scenario, authN
-    ## Also set defaults
-    foreach my $p (keys %{$self}) {
-        unless ($p =~ /^ldap_/) {
-            my $p_equiv = 'ldap_' . $p;
-            ## Respect existing entries
-            $self->{$p_equiv} = $self->{$p}
-                unless (defined $self->{$p_equiv});
-        }
-    }
+    my ($class, %params) = @_;
 
-    $self->{'timeout'} ||= 3;
-    $self->{'async'}              = 1;
-    $self->{'ldap_bind_dn'}       = $self->{'user'};
-    $self->{'ldap_bind_password'} = $self->{'passwd'};
-
-    $self = $pkg->SUPER::new($self);
-    bless $self, $pkg;
+    my $self = {
+        async              => 1,
+        timeout            => $params{timeout} || 3,
+        ldap_bind_dn       => $params{'user'},
+        ldap_bind_password => $params{'passwd'},
+        ldap_host          => $params{'host'},
+        ldap_use_ssl       => $params{'use_ssl'},
+        ldap_start_tls     => $params{'use_start_tls'},
+        ldap_ssl_version   => $params{'ssl_version'},
+        ldap_ssl_ciphers   => $params{'ssl_ciphers'},
+        ssl_cert           => $params{'ssl_cert'},
+        ssl_key            => $params{'ssl_key'},
+        ca_verify          => $params{'ca_verify'},
+        ca_path            => $params{'ca_path'},
+        ca_file            => $params{'ca_file'},
+    };
+    bless $self, $class;
 
     unless (eval "require Net::LDAP") {
         $main::logger->do_log(Sympa::Logger::ERR,
@@ -78,6 +118,7 @@ sub new {
         return undef;
     }
     require Net::LDAP::Message;
+
     return $self;
 }
 
