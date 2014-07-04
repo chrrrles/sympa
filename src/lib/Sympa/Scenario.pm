@@ -1672,9 +1672,9 @@ sub search {
             return undef;
         }
         my $timeout = 3600;
-        my %ldap_conf;
+        my %ldap_conf = _load_sympa_configuration($file);
 
-        return undef unless (%ldap_conf = Sympa::LDAP::load($file));
+        return undef unless %ldap_conf;
 
         my $filter = $ldap_conf{'filter'};
 
@@ -1962,6 +1962,91 @@ sub is_purely_closed {
     $main::logger->do_log(Sympa::Logger::NOTICE, 'Scenario %s is purely closed.',
         $self->{'file_path'});
     return 1;
+}
+
+sub _load_ldap_configuration {
+    my ($config) = @_;
+
+    $main::logger->do_log(Sympa::Logger::DEBUG3, 'Ldap::load(%s)', $config);
+
+    my $line_num   = 0;
+    my $config_err = 0;
+    my ($i, %o);
+
+    ## Open the configuration file or return and read the lines.
+    unless (open(IN, $config)) {
+        $main::logger->do_log(Sympa::Logger::ERR, 'Unable to open %s: %s',
+            $config, $ERRNO);
+        return undef;
+    }
+
+    my @valid_options    = qw(host suffix filter scope bind_dn bind_password);
+    my @required_options = qw(host suffix filter);
+
+    my %valid_options    = map { $_ => 1 } @valid_options;
+    my %required_options = map { $_ => 1 } @required_options;
+
+    my %Default_Conf = (
+        'host'          => undef,
+        'suffix'        => undef,
+        'filter'        => undef,
+        'scope'         => 'sub',
+        'bind_dn'       => undef,
+        'bind_password' => undef
+    );
+
+    my %Ldap = ();
+
+    my $folded_line;
+    while (my $current_line = <IN>) {
+        $line_num++;
+        next if ($current_line =~ /^\s*$/o || $current_line =~ /^[\#\;]/o);
+
+        ## Cope with folded line (ending with '\')
+        if ($current_line =~ /\\\s*$/) {
+            $current_line =~ s/\\\s*$//;    ## remove trailing \
+            chomp $current_line;
+            $folded_line .= $current_line;
+            next;
+        } elsif (defined $folded_line) {
+            $current_line = $folded_line . $current_line;
+            $folded_line  = undef;
+        }
+
+        if ($current_line =~ /^(\S+)\s+(.+)$/io) {
+            my ($keyword, $value) = ($1, $2);
+            $value =~ s/\s*$//;
+
+            $o{$keyword} = [$value, $line_num];
+        } else {
+
+            #	    printf STDERR Msg(1, 3, "Malformed line %d: %s"), $config,
+            #	    $_;
+            $config_err++;
+        }
+    }
+    close(IN);
+
+    ## Check if we have unknown values.
+    foreach $i (sort keys %o) {
+        $Ldap{$i} = $o{$i}[0] || $Default_Conf{$i};
+
+        unless ($valid_options{$i}) {
+            $main::logger->do_log(Sympa::Logger::ERR, "Line %d, unknown field: %s \n",
+                $o{$i}[1], $i);
+            $config_err++;
+        }
+    }
+    ## Do we have all required values ?
+    foreach $i (keys %required_options) {
+        unless (defined $o{$i} or defined $Default_Conf{$i}) {
+            $main::logger->do_log(Sympa::Logger::ERR,
+                "Required field not found : %s\n", $i);
+            $config_err++;
+            next;
+        }
+    }
+    return %Ldap;
 }
 
 1;
