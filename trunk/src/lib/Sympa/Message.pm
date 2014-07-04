@@ -944,13 +944,17 @@ sub check_signature {
         $nparts);
     if ($nparts == 0) {    # could be opaque signing...
         $extracted += Sympa::Tools::SMIME::extract_certs(
-            $self->{'entity'}, $certbundle, Sympa::Site->openssl
+            entity  => $self->{'entity'},
+            file    => $certbundle,
+            openssl => Sympa::Site->openssl
         );
     } else {
         for (my $i = 0; $i < $nparts; $i++) {
             my $part = $self->{'entity'}->parts($i);
             $extracted += Sympa::Tools::SMIME::extract_certs(
-                $part, $certbundle, $openssl
+                entity  => $part,
+                file    => $certbundle,
+                openssl => $openssl
             );
             last if $extracted;
         }

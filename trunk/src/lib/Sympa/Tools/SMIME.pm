@@ -267,15 +267,15 @@ sub parse_cert {
     return \%res;
 }
 
-=item extract_certs($mime, $outfile, $openssl)
+=item extract_certs(%parameters)
 
 FIXME.
 
 =over
 
-=item * I<mime>: FIXME
+=item * I<entity>: FIXME
 
-=item * I<outfile>: FIXME
+=item * I<file>: FIXME
 
 =item * I<openssl>: FIXME
 
@@ -284,7 +284,12 @@ FIXME.
 =cut
 
 sub extract_certs {
-    my ($mime, $outfile, $openssl) = @_;
+    my (%params) = @_;
+
+    my $mime    = $params{entity};
+    my $outfile = $params{file};
+    my $openssl = $params{openssl};
+
     $main::logger->do_log(Sympa::Logger::DEBUG2,
         "Sympa::Tools::extract_certs(%s)",
         $mime->mime_type);
