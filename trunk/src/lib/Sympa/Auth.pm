@@ -29,7 +29,7 @@ use Digest::MD5;
 use POSIX qw();
 
 use Sympa::DatabaseManager;
-use Sympa::LDAPSource;
+use Sympa::Datasource::LDAP;
 use Sympa::Logger;
 use Sympa::Report;
 use Sympa::Robot;
@@ -240,7 +240,7 @@ sub ldap_authentication {
 
     ## bind in order to have the user's DN
     my $param = Sympa::Tools::Data::dup_var($ldap);
-    my $ds    = Sympa::LDAPSource->new($param);
+    my $ds    = Sympa::Datasource::LDAP->new($param);
 
     unless (defined $ds && ($ldap_anonymous = $ds->connect())) {
         $main::logger->do_log(Sympa::Logger::ERR,
@@ -276,7 +276,7 @@ sub ldap_authentication {
     $param->{'ldap_bind_dn'}       = $DN[0];
     $param->{'ldap_bind_password'} = $pwd;
 
-    $ds = Sympa::LDAPSource->new($param);
+    $ds = Sympa::Datasource::LDAP->new($param);
 
     unless (defined $ds && ($ldap_passwd = $ds->connect())) {
         $main::logger->do_log(Sympa::Logger::ERR,
@@ -370,7 +370,7 @@ sub get_email_by_net_id {
     my $ldap = @{Sympa::Site->auth_services->{$robot->domain}}[$auth_id];
 
     my $param = Sympa::Tools::Data::dup_var($ldap);
-    my $ds    = Sympa::LDAPSource->new($param);
+    my $ds    = Sympa::Datasource::LDAP->new($param);
     my $ldap_anonymous;
 
     unless (defined $ds && ($ldap_anonymous = $ds->connect())) {
