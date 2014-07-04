@@ -1622,6 +1622,7 @@ sub search {
                 {'value'};
         }
 
+        require Sympa::Datasource::SQL;
         my $ds = Sympa::Datasource::SQL->new($sql_conf->{'sql_named_filter_query'});
         unless (defined $ds && $ds->connect() && $ds->ping) {
             $main::logger->do_log(

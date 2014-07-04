@@ -42,7 +42,6 @@ use Sympa::Archive;
 use Sympa::Constants;
 use Sympa::DatabaseManager;
 use Sympa::Datasource;
-use Sympa::Datasource::SQL;
 use Sympa::Family; # FIXME: circular dependency
 use Sympa::Fetch;
 use Sympa::Language;
@@ -6735,6 +6734,7 @@ sub _load_list_members_from_include {
             ## Else if we can't synchronize sources. We make an array with
             ## excluded sources.
             if ($type eq 'include_sql_query') {
+                require Sympa::Datasource::SQL;
                 my $source = Sympa::Datasource::SQL->new($incl);
                 if ($source->is_allowed_to_sync() || $source_is_new) {
                     $main::logger->do_log(Sympa::Logger::DEBUG, 'is_new %d, syncing',
@@ -6961,6 +6961,7 @@ sub _load_list_admin_from_include {
                         admin_only    => 1
                     );
                 } elsif ($type eq 'include_sql_query') {
+                    require Sympa::Datasource::SQL;
                     my $source = Sympa::Datasource::SQL->new($incl);
                     $included =
                         _include_users_sql(\%admin_users, $incl, $source,
@@ -7300,6 +7301,7 @@ sub sync_include_ca {
             my $source = undef;
             my $srcca  = undef;
             if ($type eq 'include_sql_ca') {
+                require Sympa::Datasource::SQL;
                 $source = Sympa::Datasource::SQL->new($incl);
             } elsif (($type eq 'include_ldap_ca')
                 or ($type eq 'include_ldap_2level_ca')) {
