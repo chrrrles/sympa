@@ -33,7 +33,7 @@ use Sympa::Conf;
 use Sympa::Constants;
 use Sympa::DatabaseDescription;
 use Sympa::Logger;
-use Sympa::SQLSource;
+use Sympa::Datasource::SQL;
 use Sympa::Site;
 
 # db structure description has moved in Sympa/Constant.pm
@@ -158,9 +158,9 @@ sub connect_sympa_database {
         ),
         'warn' => 1
     };
-    unless ($db_source = Sympa::SQLSource->new($db_conf)) {
+    unless ($db_source = Sympa::Datasource::SQL->new($db_conf)) {
         $main::logger->do_log(Sympa::Logger::ERR,
-            'Unable to create Sympa::SQLSource object');
+            'Unable to create Sympa::Datasource::SQL object');
         return undef;
     }
     ## Used to check that connecting to the Sympa database works and the

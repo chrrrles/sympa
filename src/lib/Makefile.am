@@ -29,6 +29,8 @@ nobase_modules_DATA = Sympa/Admin.pm \
 		      Sympa/Config_XML.pm \
 		      Sympa/DatabaseManager.pm \
 		      Sympa/Datasource.pm \
+		      Sympa/Datasource/LDAP.pm \
+		      Sympa/Datasource/SQL.pm \
 		      Sympa/DBManipulator.pm \
 		      Sympa/DBManipulator/MySQL.pm \
 		      Sympa/DBManipulator/Oracle.pm \
@@ -41,7 +43,6 @@ nobase_modules_DATA = Sympa/Admin.pm \
 		      Sympa/Instruction.pm \
 		      Sympa/Language.pm \
 		      Sympa/LDAP.pm \
-		      Sympa/LDAPSource.pm \
 		      Sympa/List.pm \
 		      Sympa/ListDef.pm \
 		      Sympa/LockedFile.pm \
@@ -67,7 +68,6 @@ nobase_modules_DATA = Sympa/Admin.pm \
 		      Sympa/Spool/File/Subscribe.pm \
 		      Sympa/Spool/File/Task.pm \
 		      Sympa/Spool/SQL.pm \
-		      Sympa/SQLSource.pm \
 		      Sympa/Constants.pm \
 		      Sympa/DatabaseDescription.pm \
 		      Sympa/Template/Compat.pm \

@@ -34,7 +34,7 @@ use Net::Netmask;
 
 use Sympa::ConfDef;
 use Sympa::Language;
-use Sympa::LDAPSource;
+use Sympa::Datasource::LDAP;
 use Sympa::List; # FIXME: circular dependency
 use Sympa::Logger;
 use Sympa::Robot;
@@ -1623,7 +1623,7 @@ sub search {
                 {'value'};
         }
 
-        my $ds = Sympa::SQLSource->new($sql_conf->{'sql_named_filter_query'});
+        my $ds = Sympa::Datasource::SQL->new($sql_conf->{'sql_named_filter_query'});
         unless (defined $ds && $ds->connect() && $ds->ping) {
             $main::logger->do_log(
                 Sympa::Logger::NOTICE,
@@ -1722,7 +1722,7 @@ sub search {
 
         my $ldap;
         my $param = Sympa::Tools::Data::dup_var(\%ldap_conf);
-        my $ds    = Sympa::LDAPSource->new($param);
+        my $ds    = Sympa::Datasource::LDAP->new($param);
 
         unless (defined $ds && ($ldap = $ds->connect())) {
             $main::logger->do_log(Sympa::Logger::ERR,

@@ -24,7 +24,7 @@
 package Sympa::DBManipulator;
 
 use strict;
-use base qw(Sympa::SQLSource);
+use base qw(Sympa::Datasource::SQL);
 
 use Carp;
 

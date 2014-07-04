@@ -4414,7 +4414,7 @@ sub is_ldap_user {
         next unless ($auth =~ /$ldap->{'regexp'}/i);
 
         my $param = Sympa::Tools::Data::dup_var($ldap);
-        my $ds    = Sympa::LDAPSource->new($param);
+        my $ds    = Sympa::Datasource::LDAP->new($param);
 
         unless (defined $ds && ($ldap_anonymous = $ds->connect())) {
             $logger->do_log(Sympa::Logger::ERR,
