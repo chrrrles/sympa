@@ -43,7 +43,7 @@ Parameters:
 
 =over 4
 
-=item * I<timeout>: connection timeout
+=item * I<timeout>: connection timeout (default: 3)
 
 =item * I<user>: connection user
 
