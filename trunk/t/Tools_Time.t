@@ -17,7 +17,9 @@ use Sympa::Tools::Time;
 POSIX::setlocale(LC_ALL, 'C');
 
 # Fix our time zone for localtime().
-$ENV{'TZ'} = 'CEST-2';
+# Zone name (Europe/Paris) is used instead of abbreviated code (CET/CEST).
+# Note that it depends on time zone database therefore may not be portable.
+$ENV{'TZ'} = 'Europe/Paris';
 POSIX::tzset();
 
 my @adate_tests = (
@@ -37,7 +39,13 @@ my @date_conv_tests = (
     [ [ '2012y10m18d09h',           undef ] => 1350543600 ],
     [ [ '2012y10m18d',              undef ] => 1350511200 ],
     [ [ '2012y10m',                 undef ] => 1349042400 ],
-    [ [ '2012y',                    undef ] => 1325368800 ],
+    [ [ '2012y',                    undef ] => 1325372400 ],
+    [ [ '2013y3m31d1h59min59sec',   undef ] => 1364691599, 'Before daylight saving' ],
+    [ [ '2013y3m31d2h30min',        undef ] => 1364693400, 'Invalid date' ],
+    [ [ '2013y3m31d3h',             undef ] => 1364691600, 'Beginning of daylight saving' ],
+    [ [ '2013y10m27d1h59min59sec',  undef ] => 1382831999, 'Ending of daylight saving' ],
+    [ [ '2013y10m27d2h30min',       undef ] => 1382833800, 'Ambiguous date', ],
+    [ [ '2013y10m27d3h',            undef ] => 1382839200, 'After daylight saving', ],
 );
 
 my @duration_conv_tests = (
@@ -85,7 +93,7 @@ foreach my $test (@date_conv_tests) {
     is(
         Sympa::Tools::Time::date_conv(@{$test->[0]}),
         $test->[1],
-        "date_conv $test->[0]"
+        $test->[2] || "date_conv $test->[0]"
     );
 }
 
