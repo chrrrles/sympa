@@ -698,7 +698,7 @@ sub decrypt {
         return undef;
     }
 
-    my $temporary_file = $tmpdir . "/" . $from . "." . $PID;
+    my $temporary_file = $tmpdir . "/decrypted_message" . "." . $PID;
     my $temporary_pwd  = $tmpdir . '/pass.' . $PID;
 
     ## dump the incoming message.
