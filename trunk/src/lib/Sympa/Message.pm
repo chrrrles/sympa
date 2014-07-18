@@ -681,10 +681,7 @@ sub decrypt {
     my $ssl_cert_dir = $params{ssl_cert_dir};
     my $key_password = $params{key_password};
 
-    my $content_type = $self->{'entity'}->head()->get('Content-Type');
-    return 1 unless
-        $content_type =~ /application\/(x-)?pkcs7-mime/i && 
-        $content_type !~ /signed-data/i;
+    return undef unless $self->is_encrypted();
 
     my $from = $self->get_header('From');
 
