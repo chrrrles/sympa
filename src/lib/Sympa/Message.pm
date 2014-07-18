@@ -884,9 +884,7 @@ sub check_signature {
         return undef;
     }
 
-    $self->{'entity'}->head->print($command_handle);
-    print $command_handle "\n";
-    print $command_handle $self->{'string'};
+    $self->{'entity'}->print($command_handle);
     close $command_handle;
 
     my $status = $CHILD_ERROR >> 8;
