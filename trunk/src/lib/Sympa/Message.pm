@@ -657,10 +657,29 @@ sub is_authenticated {
 
 Decrypts this message, if in S/MIME format.
 
+Parameters:
+
+=over
+
+=item * I<openssl>: path to openssl binary
+
+=item * I<ssl_cert_dir>: path to Sympa certificate/keys directory.
+
+=item * I<tmpdir>: path to Sympa temporary directory
+
+=item * I<key_password>: key password
+
+=back
+
 =cut
 
 sub decrypt {
-    my ($self) = @_;
+    my ($self, %params) = @_;
+
+    my $tmpdir       = $params{tmpdir};
+    my $openssl      = $params{openssl};
+    my $ssl_cert_dir = $params{ssl_cert_dir};
+    my $key_password = $params{key_password};
 
     my $content_type = $self->{'entity'}->head()->get('Content-Type');
     return 1 unless
@@ -668,28 +687,20 @@ sub decrypt {
         $content_type !~ /signed-data/i;
 
     my $from = $self->get_header('From');
-    my $list = $self->{'list'};
 
     $main::logger->do_log(Sympa::Logger::DEBUG2,
-        'Decrypting message from %s, %s', $from, $list
+        'Decrypting message from %s', $from
     );
 
-    ## an empty "list" parameter means mail to sympa@, listmaster@...
-    my $dir;
-    if ($list) {
-        $dir = $list->dir;
-    } else {
-        $dir = Sympa::Site->home . '/sympa';
-    }
-    my ($certs, $keys) = Sympa::Tools::SMIME::find_keys($dir, 'decrypt');
+    my ($certs, $keys) = Sympa::Tools::SMIME::find_keys($ssl_cert_dir, 'decrypt');
     unless (defined $certs && @$certs) {
         $main::logger->do_log(Sympa::Logger::ERR,
             "Unable to decrypt message : missing certificate file");
         return undef;
     }
 
-    my $temporary_file = Sympa::Site->tmpdir . "/" . $list->get_list_id() . "." . $PID;
-    my $temporary_pwd  = Sympa::Site->tmpdir . '/pass.' . $PID;
+    my $temporary_file = $tmpdir . "/" . $from . "." . $PID;
+    my $temporary_pwd  = $tmpdir . '/pass.' . $PID;
 
     ## dump the incoming message.
     if (!open(MSGDUMP, "> $temporary_file")) {
@@ -702,7 +713,7 @@ sub decrypt {
 
     my $pass_option;
     my $decrypted_string = '';
-    if (Sympa::Site->key_passwd ne '') {
+    if ($key_password) {
 
         # if password is defined in sympa.conf pass the password to OpenSSL
         $pass_option = "-passin file:$temporary_pwd";
@@ -714,7 +725,7 @@ sub decrypt {
         my $keyfile = shift @$keys;
         $main::logger->do_log(Sympa::Logger::DEBUG, 'Trying decrypt with %s, %s',
             $certfile, $keyfile);
-        if (Sympa::Site->key_passwd ne '') {
+        if ($key_password) {
             unless (POSIX::mkfifo($temporary_pwd, 0600)) {
                 $main::logger->do_log(Sympa::Logger::ERR,
                     'Unable to make fifo for %s',
@@ -723,19 +734,19 @@ sub decrypt {
             }
         }
         my $cmd = sprintf '%s smime -decrypt -in %s -recip %s -inkey %s %s',
-            Sympa::Site->openssl, $temporary_file, $certfile, $keyfile,
+            $openssl, $temporary_file, $certfile, $keyfile,
             $pass_option;
         $main::logger->do_log(Sympa::Logger::DEBUG3, '%s', $cmd);
         open(NEWMSG, "$cmd |");
 
-        if (defined Sympa::Site->key_passwd and Sympa::Site->key_passwd ne '') {
+        if ($key_password) {
             unless (open(FIFO, "> $temporary_pwd")) {
                 $main::logger->do_log(Sympa::Logger::ERR,
                     'Unable to open fifo for %s',
                     $temporary_pwd);
                 return undef;
             }
-            print FIFO Sympa::Site->key_passwd;
+            print FIFO $key_password;
             close FIFO;
             unlink($temporary_pwd);
         }
