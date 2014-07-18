@@ -4397,7 +4397,7 @@ sub is_ldap_user {
         return undef;
     }
 
-    eval { require Sympa::Datasource::LDAP; }
+    eval { require Sympa::Datasource::LDAP; };
     if ($EVAL_ERROR) {
         wwslog(Sympa::Logger::ERR,
             "Unable to use LDAP datasource, install required dependencies first"
