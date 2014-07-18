@@ -663,9 +663,9 @@ Parameters:
 
 =item * I<openssl>: path to openssl binary (default: 'openssl')
 
-=item * I<ssl_cert_dir>: path to Sympa certificate/keys directory.
+=item * I<tmpdir>: path to temporary file directory (default: '/tmp')
 
-=item * I<tmpdir>: path to Sympa temporary directory
+=item * I<ssl_cert_dir>: path to Sympa certificate/keys directory.
 
 =item * I<key_password>: key password
 
@@ -678,7 +678,7 @@ Returns a true value on success, C<undef> otherwise.
 sub decrypt {
     my ($self, %params) = @_;
 
-    my $tmpdir       = $params{tmpdir};
+    my $tmpdir       = $params{tmpdir} || '/tmp';
     my $openssl      = $params{openssl} || 'openssl';
     my $ssl_cert_dir = $params{ssl_cert_dir};
     my $key_password = $params{key_password};
@@ -838,9 +838,9 @@ Parameters:
 
 =item * I<openssl>: path to openssl binary (default: 'openssl')
 
-=item * I<ssl_cert_dir>: path to Sympa certificate/keys directory.
+=item * I<tmpdir>: path to temporary file directory (default: '/tmp')
 
-=item * I<tmpdir>: path to Sympa temporary directory
+=item * I<ssl_cert_dir>: path to Sympa certificate/keys directory.
 
 =back
 
@@ -852,7 +852,7 @@ success, C<undef> otherwise.
 sub check_signature {
     my ($self, %params) = @_;
 
-    my $tmpdir       = $params{tmpdir};
+    my $tmpdir       = $params{tmpdir} || '/tmp';
     my $openssl      = $params{openssl} || 'openssl';
     my $cafile       = $params{cafile};
     my $capath       = $params{capath};
@@ -1252,9 +1252,9 @@ Parameters:
 
 =item * I<openssl>: path to openssl binary (default: 'openssl')
 
-=item * I<ssl_cert_dir>: path to Sympa certificate/keys directory.
+=item * I<tmpdir>: path to temporary file directory (default: '/tmp')
 
-=item * I<tmpdir>: path to Sympa temporary directory
+=item * I<ssl_cert_dir>: path to Sympa certificate/keys directory.
 
 =back
 
@@ -1264,7 +1264,7 @@ sub encrypt {
     my ($self, %params) = @_;
     $main::logger->do_log(Sympa::Logger::DEBUG2, '(%s, %s, %s)', @_);
 
-    my $tmpdir       = $params{tmpdir};
+    my $tmpdir       = $params{tmpdir} || '/tmp';
     my $openssl      = $params{openssl} || 'openssl';
     my $ssl_cert_dir = $params{ssl_cert_dir};
     my $email        = $params{email};
@@ -1374,9 +1374,9 @@ Parameters:
 
 =item * I<openssl>: path to openssl binary (default: 'openssl')
 
-=item * I<ssl_cert_dir>: path to Sympa certificate/keys directory.
+=item * I<tmpdir>: path to temporary file directory (default: '/tmp')
 
-=item * I<tmpdir>: path to Sympa temporary directory
+=item * I<ssl_cert_dir>: path to Sympa certificate/keys directory.
 
 =item * I<key_password>: key password
 
@@ -1387,7 +1387,7 @@ Parameters:
 sub sign {
     my ($self, %params) = @_;
 
-    my $tmpdir       = $params{tmpdir};
+    my $tmpdir       = $params{tmpdir} || '/tmp';
     my $openssl      = $params{openssl} || 'openssl';
     my $ssl_cert_dir = $params{ssl_cert_dir};
     my $key_password = $params{key_password};
@@ -1423,7 +1423,7 @@ sub sign {
         UNLINK => $main::options{'debug'} ? 0 : 1
     );
 
-    my $command = "$openssl smime -sign"
+    my $command = "$openssl smime -sign"                             .
         " -signer $cert -inkey $key " .  "-out $signed_message_file" .
         ($password_file ? " -passin file:$password_file" : "" );
     $main::logger->do_log(Sympa::Logger::DEBUG2, '%s', $command);
