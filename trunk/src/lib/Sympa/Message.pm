@@ -863,12 +863,12 @@ sub check_signature {
 
     return undef unless $self->is_signed();
 
-    ## first step is the msg signing OK ; /tmp/sympa-smime.$PID is created
-    ## to store the signer certificat for step two. I known, that's dirty.
+    my $signer_cert_file = File::Temp->new(
+        DIR    => $tmpdir,
+        UNLINK => $main::options{'debug'} ? 0 : 1
+    );
 
-    my $temporary_file     = $tmpdir . "/" . 'smime-sender.' . $PID;
-
-    my $command = "$openssl smime -verify -signer $temporary_file " .
+    my $command = "$openssl smime -verify -signer $signer_cert_file " .
         ($cafile ? "-CAfile $cafile" : '')          .
         ($capath ? "-CApath $capath" : '')          .
         ">/dev/null";
@@ -898,13 +898,12 @@ sub check_signature {
     ## second step is the message signer match the sender
     ## a better analyse should be performed to extract the signer email.
     my $signer = Sympa::Tools::SMIME::parse_cert(
-        file    => $temporary_file,
+        file    => $signer_cert_file,
         tmpdir  => $tmpdir,
         openssl => $openssl,
     );
 
     unless ($signer->{'email'}{lc($self->{'sender_email'})}) {
-        unlink($temporary_file) unless ($main::options{'debug'});
         $main::logger->do_log(
             Sympa::Logger::ERR,
             "S/MIME signed message, sender(%s) does NOT match signer(%s)",
@@ -1064,7 +1063,6 @@ sub check_signature {
     }
 
     unless ($main::options{'debug'}) {
-        unlink($temporary_file);
         unlink($tmpcert);
         unlink($certbundle);
     }
