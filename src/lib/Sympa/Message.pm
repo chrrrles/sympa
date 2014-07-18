@@ -731,7 +731,14 @@ sub decrypt {
         $main::logger->do_log(Sympa::Logger::DEBUG3, '%s', $command);
 
         my $command_handle;
-        open($command_handle, '|-', $command);
+        if (!open($command_handle, '|-', $command)) {
+            $main::logger->do_log(
+                Sympa::Logger::ERR,
+                'Unable to execute command %s: %s',
+                $command, $ERRNO
+            );
+            return undef;
+        }
 
         $self->{'entity'}->print($command_handle);
         close $command_handle;
@@ -868,9 +875,11 @@ sub check_signature {
     $main::logger->do_log(Sympa::Logger::DEBUG2, '%s', $command);
 
     unless (open MSGDUMP, "| $command") {
-        $main::logger->do_log(Sympa::Logger::ERR,
-            'Unable to run command %s to check signature from %s: %s',
-            $command, $self->{'sender_email'}, $ERRNO);
+        $main::logger->do_log(
+            Sympa::Logger::ERR,
+            'Unable to execute command %s: %s',
+            $command, $ERRNO
+        );
         return undef;
     }
 
@@ -1297,8 +1306,12 @@ sub encrypt {
 
     my $command_handle;
     if (!open($command_handle, '|-', $command)) {
-        $main::logger->do_log(Sympa::Logger::INFO,
-            'Can\'t encrypt message for recipient %s', $email);
+        $main::logger->do_log(
+            Sympa::Logger::ERR,
+            'Unable to execute command %s: %s',
+            $command, $ERRNO
+        );
+        return undef;
     }
     $entity->print($command_handle);
     close $command_handle;
@@ -1419,8 +1432,11 @@ sub sign {
 
     my $command_handle;
     unless (open $command_handle, '|-', $command) {
-        $main::logger->do_log(Sympa::Logger::NOTICE,
-            'Cannot sign message (open pipe)');
+        $main::logger->do_log(
+            Sympa::Logger::ERR,
+            'Unable to execute command %s: %s',
+            $command, $ERRNO
+        );
         return undef;
     }
     $entity->print($command_handle);
