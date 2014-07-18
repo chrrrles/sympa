@@ -107,7 +107,6 @@ my $tmpdir = File::Temp->newdir(CLEANUP => $ENV{TEST_DEBUG} ? 0 : 1);
 ok(
     $message->check_signature(
         cafile       => 't/pki/crt/ca.pem',
-        openssl      => 'openssl',
         tmpdir       => $tmpdir,
         ssl_cert_dir => $cert_dir
     ),
@@ -126,7 +125,6 @@ ok(!$message->is_signed(), 'message is not signed');
 
 ok(
     $message->sign(
-        openssl      => 'openssl',
         tmpdir       => $tmpdir,
         ssl_cert_dir => $cert_dir
     ),
@@ -144,7 +142,6 @@ ok(!$message->is_signed(), 'message is not signed');
 
 ok(
     $message->sign(
-        openssl      => 'openssl',
         tmpdir       => $tmpdir,
         ssl_cert_dir => $cert_dir,
         key_password => 'test'
@@ -167,7 +164,6 @@ is(
 ok(
     $message->encrypt(
         email        => 'guillaume.rousse@sympa.org',
-        openssl      => 'openssl',
         tmpdir       => $tmpdir,
         ssl_cert_dir => $cert_dir,
     ),
@@ -185,7 +181,6 @@ copy('t/pki/crt/rousse.pem', "$cert_dir/cert.pem");
 copy('t/pki/key/rousse_nopassword.pem', "$cert_dir/private_key");
 ok(
     $message->decrypt(
-        openssl      => 'openssl',
         tmpdir       => $tmpdir,
         ssl_cert_dir => $cert_dir,
     ),
@@ -212,7 +207,6 @@ is(
 ok(
     $message->encrypt(
         email        => 'guillaume.rousse@sympa.org',
-        openssl      => 'openssl',
         tmpdir       => $tmpdir,
         ssl_cert_dir => $cert_dir,
     ),
@@ -230,7 +224,6 @@ copy('t/pki/crt/rousse.pem', "$cert_dir/cert.pem");
 copy('t/pki/key/rousse_password.pem', "$cert_dir/private_key");
 ok(
     $message->decrypt(
-        openssl      => 'openssl',
         tmpdir       => $tmpdir,
         ssl_cert_dir => $cert_dir,
         key_password => 'test'
