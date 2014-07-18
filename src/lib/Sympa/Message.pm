@@ -710,13 +710,7 @@ sub decrypt {
     $self->as_entity()->print(\*MSGDUMP);
     close(MSGDUMP);
 
-    my $pass_option;
     my $decrypted_string = '';
-    if ($key_password) {
-
-        # if password is defined in sympa.conf pass the password to OpenSSL
-        $pass_option = "-passin file:$temporary_pwd";
-    }
 
     ## try all keys/certs until one decrypts.
     my $decrypted_entity;
@@ -732,11 +726,11 @@ sub decrypt {
                 return undef;
             }
         }
-        my $cmd = sprintf '%s smime -decrypt -in %s -recip %s -inkey %s %s',
-            $openssl, $temporary_file, $certfile, $keyfile,
-            $pass_option;
-        $main::logger->do_log(Sympa::Logger::DEBUG3, '%s', $cmd);
-        open(NEWMSG, "$cmd |");
+        my $command = "$openssl smime -decrypt"                    .
+            " -in $temporary_file -recip $certfile -inkey $keyfile" .
+            ($key_password ? " -passin file:$temporary_pwd" : "" );
+        $main::logger->do_log(Sympa::Logger::DEBUG3, '%s', $command);
+        open(NEWMSG, "$command |");
 
         if ($key_password) {
             unless (open(FIFO, "> $temporary_pwd")) {
@@ -891,17 +885,17 @@ sub check_signature {
     ## to store the signer certificat for step two. I known, that's dirty.
 
     my $temporary_file     = $tmpdir . "/" . 'smime-sender.' . $PID;
-    my $trusted_ca_options = '';
-    $trusted_ca_options = "-CAfile $cafile " if $cafile;
-    $trusted_ca_options .= "-CApath $capath " if $capath;
-    my $cmd = sprintf '%s smime -verify %s -signer %s',
-        $openssl, $trusted_ca_options, $temporary_file;
-    $main::logger->do_log(Sympa::Logger::DEBUG2, '%s', $cmd);
 
-    unless (open MSGDUMP, "| $cmd > /dev/null") {
+    my $command = "$openssl smime -verify -signer $temporary_file " .
+        ($cafile ? "-CAfile $cafile" : '')          .
+        ($capath ? "-CApath $capath" : '')          .
+        ">/dev/null";
+    $main::logger->do_log(Sympa::Logger::DEBUG2, '%s', $command);
+
+    unless (open MSGDUMP, "| $command") {
         $main::logger->do_log(Sympa::Logger::ERR,
             'Unable to run command %s to check signature from %s: %s',
-            $cmd, $self->{'sender_email'}, $ERRNO);
+            $command, $self->{'sender_email'}, $ERRNO);
         return undef;
     }
 
@@ -1312,10 +1306,9 @@ sub encrypt {
     my $temporary_file = $tmpdir . "/" . $email . "." . $PID;
 
     ## encrypt the incoming message parse it.
-    my $cmd = sprintf '%s smime -encrypt -out %s -des3 %s',
-        $openssl, $temporary_file, $usercert;
-    $main::logger->do_log(Sympa::Logger::DEBUG3, '%s', $cmd);
-    if (!open(MSGDUMP, "| $cmd")) {
+    my $command = "$openssl smime -encrypt -out $temporary_file -des3 $usercert";
+    $main::logger->do_log(Sympa::Logger::DEBUG3, '%s', $command);
+    if (!open(MSGDUMP, "| $command")) {
         $main::logger->do_log(Sympa::Logger::INFO,
             'Can\'t encrypt message for recipient %s', $email);
     }
@@ -1440,8 +1433,7 @@ sub sign {
     my $temporary_file = $tmpdir . '/message.' . $PID;
     my $temporary_pwd  = $tmpdir . '/pass.' . $PID;
 
-    my ($signed_msg, $pass_option);
-    $pass_option = "-passin file:$temporary_pwd" if $key_password;
+    my $signed_msg;
 
     ## Keep a set of header fields ONLY
     ## OpenSSL only needs content type & encoding to generate a
@@ -1467,12 +1459,11 @@ sub sign {
                 $temporary_pwd);
         }
     }
-    my $cmd = sprintf
-        '%s smime -sign -rand %s/rand -signer %s %s -inkey %s -in %s',
-        $openssl, $tmpdir, $cert, $pass_option, $key,
-        $temporary_file;
-    $main::logger->do_log(Sympa::Logger::DEBUG2, '%s', $cmd);
-    unless (open NEWMSG, "$cmd |") {
+    my $command = "$openssl smime -sign -rand $tmpdir/rand"    .
+        " -signer $cert -inkey $key " .  "-in $temporary_file" .
+        ($key_password ? " -passin file:$temporary_pwd" : "" );
+    $main::logger->do_log(Sympa::Logger::DEBUG2, '%s', $command);
+    unless (open NEWMSG, "$command |") {
         $main::logger->do_log(Sympa::Logger::NOTICE,
             'Cannot sign message (open pipe)');
         return undef;
