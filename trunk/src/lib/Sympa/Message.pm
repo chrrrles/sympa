@@ -661,7 +661,7 @@ Parameters:
 
 =over
 
-=item * I<openssl>: path to openssl binary
+=item * I<openssl>: path to openssl binary (default: 'openssl')
 
 =item * I<ssl_cert_dir>: path to Sympa certificate/keys directory.
 
@@ -679,7 +679,7 @@ sub decrypt {
     my ($self, %params) = @_;
 
     my $tmpdir       = $params{tmpdir};
-    my $openssl      = $params{openssl};
+    my $openssl      = $params{openssl} || 'openssl';
     my $ssl_cert_dir = $params{ssl_cert_dir};
     my $key_password = $params{key_password};
 
@@ -836,7 +836,7 @@ Parameters:
 
 =item * I<capath>: path to a CA certificate directory.
 
-=item * I<openssl>: path to openssl binary
+=item * I<openssl>: path to openssl binary (default: 'openssl')
 
 =item * I<ssl_cert_dir>: path to Sympa certificate/keys directory.
 
@@ -853,7 +853,7 @@ sub check_signature {
     my ($self, %params) = @_;
 
     my $tmpdir       = $params{tmpdir};
-    my $openssl      = $params{openssl};
+    my $openssl      = $params{openssl} || 'openssl';
     my $cafile       = $params{cafile};
     my $capath       = $params{capath};
     my $ssl_cert_dir = $params{ssl_cert_dir};
@@ -1250,7 +1250,7 @@ Parameters:
 
 =item * I<email>: FIXME
 
-=item * I<openssl>: path to openssl binary
+=item * I<openssl>: path to openssl binary (default: 'openssl')
 
 =item * I<ssl_cert_dir>: path to Sympa certificate/keys directory.
 
@@ -1265,7 +1265,7 @@ sub encrypt {
     $main::logger->do_log(Sympa::Logger::DEBUG2, '(%s, %s, %s)', @_);
 
     my $tmpdir       = $params{tmpdir};
-    my $openssl      = $params{openssl};
+    my $openssl      = $params{openssl} || 'openssl';
     my $ssl_cert_dir = $params{ssl_cert_dir};
     my $email        = $params{email};
 
@@ -1372,7 +1372,7 @@ Parameters:
 
 =over
 
-=item * I<openssl>: path to openssl binary
+=item * I<openssl>: path to openssl binary (default: 'openssl')
 
 =item * I<ssl_cert_dir>: path to Sympa certificate/keys directory.
 
@@ -1388,7 +1388,7 @@ sub sign {
     my ($self, %params) = @_;
 
     my $tmpdir       = $params{tmpdir};
-    my $openssl      = $params{openssl};
+    my $openssl      = $params{openssl} || 'openssl';
     my $ssl_cert_dir = $params{ssl_cert_dir};
     my $key_password = $params{key_password};
 
