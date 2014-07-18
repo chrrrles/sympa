@@ -1438,15 +1438,6 @@ sub sign {
         $dup_msg->head->delete($field);
     }
 
-    ## dump the incomming message.
-    if (!open(MSGDUMP, "> $temporary_file")) {
-        $main::logger->do_log(Sympa::Logger::INFO, 'Can\'t store message in file %s',
-            $temporary_file);
-        return undef;
-    }
-    $dup_msg->print(\*MSGDUMP);
-    close(MSGDUMP);
-
     my $password_file;
     if ($key_password) {
         my $umask = umask;
@@ -1462,24 +1453,20 @@ sub sign {
     }
 
     my $command = "$openssl smime -sign -rand $tmpdir/rand"    .
-        " -signer $cert -inkey $key " .  "-in $temporary_file" .
+        " -signer $cert -inkey $key " .  "-out $temporary_file" .
         ($password_file ? " -passin file:$password_file" : "" );
     $main::logger->do_log(Sympa::Logger::DEBUG2, '%s', $command);
-    unless (open NEWMSG, "$command |") {
+    unless (open NEWMSG, "| $command") {
         $main::logger->do_log(Sympa::Logger::NOTICE,
             'Cannot sign message (open pipe)');
         return undef;
     }
-
-    my $new_message_as_string = '';
-    while (<NEWMSG>) {
-        $new_message_as_string .= $_;
-    }
+    $dup_msg->print(\*NEWMSG);
+    close NEWMSG;
 
     my $parser = MIME::Parser->new();
-
     $parser->output_to_core(1);
-    unless ($signed_msg = $parser->parse_data($new_message_as_string)) {
+    unless ($signed_msg = $parser->parse_open($temporary_file)) {
         $main::logger->do_log(Sympa::Logger::NOTICE, 'Unable to parse message');
         return undef;
     }
@@ -1499,13 +1486,10 @@ sub sign {
         $signed_msg->head->add($tag, $val)
             unless $predefined_headers->{lc $tag};
     }
-    ## Keeping original message string in addition to updated headers.
-    my @new_message = split /\n\n/, $new_message_as_string, 2;
-    $new_message_as_string =
-        $signed_msg->head->as_string() . '\n\n' . $new_message[1];
 
     $self->{'entity'} = $signed_msg;
-    $self->{'string'} = $new_message_as_string;    #FIXME
+    $self->{'string'} = $signed_msg->as_string();
+
     return 1;
 }
 
