@@ -216,97 +216,111 @@ plan tests =>
     scalar @gettext_strftime_tests;
 
 foreach my $test (@lang2locale_tests) {
-    is( Sympa::Language::lang2locale($test->[0]),
+    is(
+        Sympa::Language::lang2locale($test->[0]),
         $test->[1],
-        (   defined $test->[0]
-            ? "lang2locale($test->[0])"
-            : 'lang2locale(undef)'
-            )
+        "lang2locale(" . ($test->[0] || 'undef') . ")"
             . ($test->[2] ? ": $test->[2]" : '')
     );
 }
 
 foreach my $test (@lang2oldlocale_tests) {
-    is(Sympa::Language::lang2oldlocale($test->[0]),
+    is(
+        Sympa::Language::lang2oldlocale($test->[0]),
         $test->[1],
-        "lang2oldlocale($test->[0])" . ($test->[2] ? ": $test->[2]" : ''));
+        "lang2oldlocale($test->[0])"
+            . ($test->[2] ? ": $test->[2]" : '')
+    );
 }
 
 foreach my $test (@canonic_lang_tests) {
-    is( Sympa::Language::canonic_lang($test->[0]),
+    is(
+        Sympa::Language::canonic_lang($test->[0]),
         $test->[1],
-        (   defined $test->[0]
-            ? "canonic_lang($test->[0])"
-            : 'canonic_lang(undef)'
-            )
+        "canonic_lang(" . ($test->[0] || 'undef') . ")"
             . ($test->[2] ? ": $test->[2]" : '')
     );
 }
 
 foreach my $test (@implicated_langs_tests) {
-    is_deeply([Sympa::Language::implicated_langs(@{$test->[0]})], $test->[1],
-              'implicated_langs('
-            . join(' ', @{$test->[0]}) . ')'
-            . ($test->[2] ? ": $test->[2]" : ''));
+    is_deeply(
+        [Sympa::Language::implicated_langs(@{$test->[0]})],
+        $test->[1],
+        "implicated_langs("
+            . join(' ', @{$test->[0]}) . ")"
+            . ($test->[2] ? ": $test->[2]" : '')
+        );
 }
 
 foreach my $test (@negotiate_lang_tests) {
-    is(Sympa::Language::negotiate_lang(@{$test->[0]}), $test->[1],
-              "negotiate_lang("
-            . join(' ', @{$test->[0]}) . ')'
+    is(
+        Sympa::Language::negotiate_lang(@{$test->[0]}),
+        $test->[1],
+        "negotiate_lang("
+            . join(' ', @{$test->[0]}) . ")"
             . ($test->[2] ? ": $test->[2]" : ''));
 }
 
 my $language = Sympa::Language->instance;
 
 foreach my $test (@set_lang_tests) {
-    is($language->set_lang($test->[0]), $test->[1],
-        (defined $test->[0] ? "set_lang($test->[0])" : 'set_lang(undef)')
-            . ($test->[2]   ? ": $test->[2]"         : ''));
+    is(
+        $language->set_lang($test->[0]),
+        $test->[1],
+        "set_lang(" . ($test->[0] || 'undef') . ")"
+            . ($test->[2]   ? ": $test->[2]" : '')
+    );
 }
 
 foreach my $test (@native_name_tests) {
     $language->set_lang($test->[0]);
-    is( $language->native_name,
+    is(
+        $language->native_name,
         $test->[1],
-        (   defined $test->[0]
-            ? "native_name($test->[0])"
-            : 'native_name(undef)'
-            )
+        "native_name(" . ($test->[0] || 'undef') . ")"
             . ($test->[2] ? ": $test->[2]" : '')
     );
 }
 
 $language->set_lang('cs');
 foreach my $test (@gettext_tests) {
-    is($language->gettext($test->[0]), $test->[1],
-              (defined $test->[0] ? "gettext($test->[0])" : 'gettext(undef)')
-            . ($test->[2]         ? ": $test->[2]"        : ''));
+    is(
+        $language->gettext($test->[0]),
+        $test->[1],
+        "gettext(" . ($test->[0] || 'undef') . ")"
+            . ($test->[2] ? ": $test->[2]" : '')
+    );
 }
 
 $language->set_lang('cs');
 foreach my $test (@dgettext_tests) {
-    is( $language->dgettext(@{$test->[0]}),
+    is(
+        $language->dgettext(@{$test->[0]}),
         $test->[1],
         (   defined $test->[0]->[1]
             ? "dgettext(" . join(' ', @{$test->[0]}) . ")"
             : 'dgettext(' . $test->[0]->[0] . ' undef)'
-            )
-            . ($test->[2] ? ": $test->[2]" : '')
+        ) . ($test->[2] ? ": $test->[2]" : '')
     );
 }
 
 $language->set_lang('en');
 foreach my $test (@strftime_tests) {
-    is($language->gettext_strftime($test->[0], gmtime 0),
+    is(
+        $language->gettext_strftime($test->[0], gmtime 0),
         $test->[1],
-        "gettext_strftime($test->[0])" . ($test->[2] ? ": $test->[2]" : ''));
+        "gettext_strftime($test->[0])"
+            . ($test->[2] ? ": $test->[2]" : '')
+    );
 }
 
 $language->set_lang('cs');
 $language->{locale_time} = 'C';    # hack to cancel POSIX locale.
 foreach my $test (@gettext_strftime_tests) {
-    is($language->gettext_strftime($test->[0], gmtime 0),
+    is(
+        $language->gettext_strftime($test->[0], gmtime 0),
         $test->[1],
-        "gettext_strftime($test->[0])" . ($test->[2] ? ": $test->[2]" : ''));
+        "gettext_strftime($test->[0])"
+            . ($test->[2] ? ": $test->[2]" : '')
+        );
 }
