@@ -874,7 +874,8 @@ sub check_signature {
         ">/dev/null";
     $main::logger->do_log(Sympa::Logger::DEBUG2, '%s', $command);
 
-    unless (open MSGDUMP, "| $command") {
+    my $command_handle;
+    unless (open $command_handle, '|-', $command) {
         $main::logger->do_log(
             Sympa::Logger::ERR,
             'Unable to execute command %s: %s',
@@ -883,10 +884,11 @@ sub check_signature {
         return undef;
     }
 
-    $self->{'entity'}->head->print(\*MSGDUMP);
-    print MSGDUMP "\n";
-    print MSGDUMP $self->{'string'};
-    close MSGDUMP;
+    $self->{'entity'}->head->print($command_handle);
+    print $command_handle "\n";
+    print $command_handle $self->{'string'};
+    close $command_handle;
+
     my $status = $CHILD_ERROR >> 8;
     if ($status) {
         $main::logger->do_log(
