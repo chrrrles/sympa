@@ -1425,15 +1425,13 @@ sub sign {
 
     my ($cert, $key) = Sympa::Tools::SMIME::find_keys($ssl_cert_dir, 'sign');
 
-    my $signed_msg;
-
     ## Keep a set of header fields ONLY
     ## OpenSSL only needs content type & encoding to generate a
     ## multipart/signed msg
-    my $dup_msg = $self->{'entity'}->dup;
-    foreach my $field ($dup_msg->head->tags) {
+    my $entity = $self->{'entity'}->dup;
+    foreach my $field ($entity->head->tags) {
         next if ($field =~ /^(content-type|content-transfer-encoding)$/i);
-        $dup_msg->head->delete($field);
+        $entity->head->delete($field);
     }
 
     my $password_file;
@@ -1464,12 +1462,13 @@ sub sign {
             'Cannot sign message (open pipe)');
         return undef;
     }
-    $dup_msg->print(\*NEWMSG);
+    $entity->print(\*NEWMSG);
     close NEWMSG;
 
     my $parser = MIME::Parser->new();
     $parser->output_to_core(1);
-    unless ($signed_msg = $parser->read($signed_message_file)) {
+    my $signed_entity = $parser->read($signed_message_file);
+    unless ($signed_entity) {
         $main::logger->do_log(Sympa::Logger::NOTICE, 'Unable to parse message');
         return undef;
     }
@@ -1477,20 +1476,20 @@ sub sign {
     ## foreach header defined in  the incoming message but undefined in the
     ## crypted message, add this header in the crypted form.
     my $predefined_headers;
-    foreach my $header ($signed_msg->head->tags) {
+    foreach my $header ($signed_entity->head->tags) {
         $predefined_headers->{lc $header} = 1
-            if ($signed_msg->head->get($header));
+            if ($signed_entity->head->get($header));
     }
     foreach my $header (split /\n(?![ \t])/,
         $self->{'entity'}->head->as_string()) {
         next unless $header =~ /^([^\s:]+)\s*:\s*(.*)$/s;
         my ($tag, $val) = ($1, $2);
-        $signed_msg->head->add($tag, $val)
+        $signed_entity->head->add($tag, $val)
             unless $predefined_headers->{lc $tag};
     }
 
-    $self->{'entity'} = $signed_msg;
-    $self->{'string'} = $signed_msg->as_string();
+    $self->{'entity'} = $signed_entity;
+    $self->{'string'} = $signed_entity->as_string();
 
     return 1;
 }
