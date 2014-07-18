@@ -957,7 +957,7 @@ sub check_signature {
         $extracted += Sympa::Tools::SMIME::extract_certs(
             entity  => $self->{'entity'},
             file    => $certbundle,
-            openssl => Sympa::Site->openssl
+            openssl => $openssl
         );
     } else {
         for (my $i = 0; $i < $nparts; $i++) {
