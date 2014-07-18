@@ -13,7 +13,7 @@ use Test::More;
 use Sympa::Logger::Memory;
 use Sympa::Message;
 
-plan tests => 59;
+plan tests => 70;
 
 our $logger = Sympa::Logger::Memory->new();
 
@@ -177,5 +177,69 @@ ok($message->is_encrypted(), 'message is encrypted');
 isnt(
     $message->as_entity()->body()->[0],
     "This is an unsigned test message.\n",
-    'new message body'
+    'message body has been modified'
+);
+
+# decryption test: unprotected key
+copy('t/pki/crt/rousse.pem', "$cert_dir/cert.pem");
+copy('t/pki/key/rousse_nopassword.pem', "$cert_dir/private_key");
+ok(
+    $message->decrypt(
+        openssl      => 'openssl',
+        tmpdir       => $tmpdir,
+        ssl_cert_dir => $cert_dir,
+    ),
+    'decryption operation success, with a passwordless key'
+);
+ok(!$message->is_encrypted(), 'message is not encrypted anymore');
+is(
+    $message->as_entity()->body()->[0],
+    "This is an unsigned test message.\n",
+    'message body has been restored'
+);
+
+# encryption test (again)
+$message = Sympa::Message->new(
+    file => $file
+);
+ok(!$message->is_encrypted(), 'message is not encrypted');
+is(
+    $message->as_entity()->body()->[0],
+    "This is an unsigned test message.\n",
+    'initial message body'
+);
+
+ok(
+    $message->encrypt(
+        email        => 'guillaume.rousse@sympa.org',
+        openssl      => 'openssl',
+        tmpdir       => $tmpdir,
+        ssl_cert_dir => $cert_dir,
+    ),
+    'encryption operation success'
+);
+ok($message->is_encrypted(), 'message is encrypted');
+isnt(
+    $message->as_entity()->body()->[0],
+    "This is an unsigned test message.\n",
+    'message body has been modified'
+);
+
+# decryption test: password-protected key
+copy('t/pki/crt/rousse.pem', "$cert_dir/cert.pem");
+copy('t/pki/key/rousse_password.pem', "$cert_dir/private_key");
+ok(
+    $message->decrypt(
+        openssl      => 'openssl',
+        tmpdir       => $tmpdir,
+        ssl_cert_dir => $cert_dir,
+        key_password => 'test'
+    ),
+    'decryption operation success, with a password-protectedless key'
+);
+ok(!$message->is_encrypted(), 'message is not encrypted anymore');
+is(
+    $message->as_entity()->body()->[0],
+    "This is an unsigned test message.\n",
+    'message body has been restored'
 );
