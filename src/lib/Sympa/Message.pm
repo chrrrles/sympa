@@ -1424,8 +1424,6 @@ sub sign {
     $main::logger->do_log(Sympa::Logger::DEBUG2, '(%s)', $self);
 
     my ($cert, $key) = Sympa::Tools::SMIME::find_keys($ssl_cert_dir, 'sign');
-    my $temporary_file = $tmpdir . '/message.' . $PID;
-    my $temporary_pwd  = $tmpdir . '/pass.' . $PID;
 
     my $signed_msg;
 
@@ -1452,8 +1450,13 @@ sub sign {
         umask $umask;
     }
 
+    my $signed_message_file = File::Temp->new(
+        DIR    => $tmpdir,
+        UNLINK => $main::options{'debug'} ? 0 : 1
+    );
+
     my $command = "$openssl smime -sign -rand $tmpdir/rand"    .
-        " -signer $cert -inkey $key " .  "-out $temporary_file" .
+        " -signer $cert -inkey $key " .  "-out $signed_message_file" .
         ($password_file ? " -passin file:$password_file" : "" );
     $main::logger->do_log(Sympa::Logger::DEBUG2, '%s', $command);
     unless (open NEWMSG, "| $command") {
@@ -1466,11 +1469,10 @@ sub sign {
 
     my $parser = MIME::Parser->new();
     $parser->output_to_core(1);
-    unless ($signed_msg = $parser->parse_open($temporary_file)) {
+    unless ($signed_msg = $parser->read($signed_message_file)) {
         $main::logger->do_log(Sympa::Logger::NOTICE, 'Unable to parse message');
         return undef;
     }
-    unlink($temporary_file) unless ($main::options{'debug'});
 
     ## foreach header defined in  the incoming message but undefined in the
     ## crypted message, add this header in the crypted form.
