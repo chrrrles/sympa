@@ -1296,6 +1296,14 @@ sub encrypt {
             $email, $usercert);
         return undef;
     }
+    
+    # clone original MIME entity, and discard all headers excepted
+    # mime and content ones
+    my $entity = $self->{'entity'}->dup();
+    foreach my $header ($entity->head->tags) {
+        $entity->head->delete($header)
+            unless $header =~ /^(mime|content)-/i;
+    }
 
     my $encrypted_message_file = File::Temp->new(
         DIR    => $tmpdir,
@@ -1311,23 +1319,7 @@ sub encrypt {
         $main::logger->do_log(Sympa::Logger::INFO,
             'Can\'t encrypt message for recipient %s', $email);
     }
-    ## don't; cf RFC2633 3.1. netscape 4.7 at least can't parse encrypted
-    ## stuff
-    ## that contains a whole header again... since MIME::Tools has got no
-    ## function
-    ## for this, we need to manually extract only the MIME headers...
-    ##	$self->head->print(\*MSGDUMP);
-    ##	printf MSGDUMP "\n%s", $self->body;
-    my $mime_hdr = $self->{'entity'}->head->dup();
-    foreach my $t ($mime_hdr->tags()) {
-        $mime_hdr->delete($t) unless ($t =~ /^(mime|content)-/i);
-    }
-    $mime_hdr->print($command_handle);
-
-    printf $command_handle "\n";
-    foreach (@{$self->{'entity'}->body}) {
-        printf $command_handle '%s', $_;
-    }
+    $entity->print($command_handle);
     close $command_handle;
 
     my $status = $CHILD_ERROR >> 8;
@@ -1412,13 +1404,12 @@ sub sign {
 
     my ($cert, $key) = Sympa::Tools::SMIME::find_keys($ssl_cert_dir, 'sign');
 
-    ## Keep a set of header fields ONLY
-    ## OpenSSL only needs content type & encoding to generate a
-    ## multipart/signed msg
-    my $entity = $self->{'entity'}->dup;
-    foreach my $field ($entity->head->tags) {
-        next if ($field =~ /^(content-type|content-transfer-encoding)$/i);
-        $entity->head->delete($field);
+    # clone original MIME entity, and discard all headers excepted
+    # content-type and content-transfer-encoding
+    my $entity = $self->{'entity'}->dup();
+    foreach my $header ($entity->head->tags) {
+        $entity->head->delete($header)
+            unless $header =~ /^(content-type|content-transfer-encoding)$/i
     }
 
     my $password_file;
