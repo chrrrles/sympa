@@ -135,8 +135,6 @@ my $cert_data   = {
 is_deeply(
     Sympa::Tools::SMIME::parse_cert(
         file    => $cert_file,
-        tmpdir  => $ENV{TMP},
-        openssl => 'openssl'
     ),
     $cert_data,
     'user certificate file parsing'
@@ -145,8 +143,6 @@ is_deeply(
 is_deeply(
     Sympa::Tools::SMIME::parse_cert(
         text    => $cert_string,
-        tmpdir  => $ENV{TMP},
-        openssl => 'openssl'
     ),
     $cert_data,
     'user certificate string parsing'
@@ -167,8 +163,6 @@ my $ca_cert_data   = {
 is_deeply(
     Sympa::Tools::SMIME::parse_cert(
         file    => $ca_cert_file,
-        tmpdir  => $ENV{TMP},
-        openssl => 'openssl'
     ),
     $ca_cert_data,
     'CA certificate file parsing'
@@ -181,7 +175,6 @@ ok(
     !Sympa::Tools::SMIME::extract_certs(
         entity  => $entity->parts(0),
         file    => $out_file,
-        openssl => 'openssl'
     ),
     "certificate extraction from text part doesn't work"
 );
@@ -189,7 +182,6 @@ ok(
     Sympa::Tools::SMIME::extract_certs(
         entity  => $entity->parts(1),
         file    => $out_file,
-        openssl => 'openssl'
     ),
     "certificate extraction from signature part does work"
 );
@@ -197,8 +189,6 @@ ok(-f $out_file, 'certificate extraction file exists');
 is_deeply(
     Sympa::Tools::SMIME::parse_cert(
         file    => $out_file,
-        tmpdir  => $ENV{TMP},
-        openssl => 'openssl'
     ),
     $cert_data,
     'certificate extraction file has expected content'

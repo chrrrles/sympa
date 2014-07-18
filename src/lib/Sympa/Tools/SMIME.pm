@@ -148,9 +148,9 @@ FIXME.
 
 =item * I<text>: FIXME
 
-=item * I<tmpdir>: FIXME
+=item * I<openssl>: path to openssl binary (default: 'openssl')
 
-=item * I<openssl>: FIXME
+=item * I<tmpdir>: path to temporary file directory (default: '/tmp')
 
 =back
 
@@ -181,8 +181,8 @@ sub parse_cert {
 
     my $file   = $params{file};
     my $text   = $params{text};
-    my $tmpdir  = $params{tmpdir};
-    my $openssl = $params{openssl};
+    my $tmpdir  = $params{tmpdir} || '/tmp';
+    my $openssl = $params{openssl} || 'openssl';
 
     $main::logger->do_log(
         Sympa::Logger::DEBUG,
@@ -277,7 +277,7 @@ FIXME.
 
 =item * I<file>: FIXME
 
-=item * I<openssl>: FIXME
+=item * I<openssl>: path to openssl binary (default: 'openssl')
 
 =back
 
@@ -288,7 +288,7 @@ sub extract_certs {
 
     my $mime    = $params{entity};
     my $outfile = $params{file};
-    my $openssl = $params{openssl};
+    my $openssl = $params{openssl} || 'openssl';
 
     $main::logger->do_log(Sympa::Logger::DEBUG2,
         "Sympa::Tools::extract_certs(%s)",
