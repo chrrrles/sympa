@@ -118,48 +118,32 @@ Returns a L<Net::LDAP> instance on success, I<undef> otherwise.
 =cut
 
 sub connect {
-    my $self    = shift;
+    my ($self) = @_;
 
-    my $host_entry;
     ## There might be multiple alternate hosts defined
-    foreach $host_entry (split(/,/, $self->{'host'})) {
+    my $host;
+    foreach $host (split(/,/, $self->{'host'})) {
 
         ## Remove leading and trailing spaces
-        $host_entry =~ s/^\s*(\S.*\S)\s*$/$1/;
-        my ($host, $port) = split(/:/, $host_entry);
-        ## If port a 'port' entry was defined, use it as default
-        $self->{'port'} ||= $port if (defined $port);
+        $host =~ s/^\s*//;
+        $host =~ s/\s*$//;
 
-        ## value may be '1' or 'yes' depending on the context
-        if (   $self->{'use_ssl'} eq 'yes'
-            || $self->{'use_ssl'} eq '1') {
-            $self->{'sslversion'} = $self->{'ssl_version'}
-                if ($self->{'ssl_version'});
-            $self->{'ciphers'} = $self->{'ssl_ciphers'}
-                if ($self->{'ssl_ciphers'});
+        $self->{'handler'} = Net::LDAP->new(
+            $host,
+            port       => $self->{'port'},
+            timeout    => $self->{'timeout'},
+            scheme     => $self->{'use_ssl'} ? 'ldaps' : 'ldap',
+            sslversion => $self->{'ssl_version'},
+            ciphers    => $self->{'ssl_ciphers'},
+        );
 
-            unless (eval "require Net::LDAPS") {
-                $main::logger->do_log(Sympa::Logger::ERR,
-                    "Unable to use LDAPS library, Net::LDAPS required");
-                return undef;
-            }
-            require Net::LDAPS;
-
-            $self->{'handler'} =
-                Net::LDAPS->new($host, port => $port, %{$self});
-        } else {
-            $self->{'handler'} = Net::LDAP->new($host, %{$self});
-        }
-
-        next unless (defined $self->{'handler'});
-
-        ## if $self->{'handler'} is defined, skip alternate hosts
-        last;
+        # skip alternate hosts as soon as connection succeed
+        last if $self->{'handler'};
     }
 
-    unless (defined $self->{'handler'}) {
+    unless ($self->{'handler'}) {
         $main::logger->do_log(Sympa::Logger::ERR,
-            "Unable to connect to the LDAP server '%s'",
+            "Unable to connect to any LDAP server '%s'",
             $self->{'host'});
         return undef;
     }
@@ -185,14 +169,14 @@ sub connect {
             $main::logger->do_log(
                 Sympa::Logger::ERR,
                 "Failed to bind to LDAP server : '%s', LDAP server error : '%s'",
-                $host_entry,
+                $host,
                 $result->error,
             );
             return undef;
         }
     }
 
-    $main::logger->do_log(Sympa::Logger::DEBUG, "Bound to LDAP host '$host_entry'");
+    $main::logger->do_log(Sympa::Logger::DEBUG, "Bound to LDAP host '$host'");
 
     return $self->{'handler'};
 }
