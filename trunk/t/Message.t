@@ -103,11 +103,12 @@ ok(!$message->is_encrypted(), 'message is not encrypted');
 
 my $cert_dir = File::Temp->newdir(CLEANUP => $ENV{TEST_DEBUG} ? 0 : 1);
 my $cert_file = $cert_dir . '/guillaume.rousse@sympa.org';
+my $tmpdir = File::Temp->newdir(CLEANUP => $ENV{TEST_DEBUG} ? 0 : 1);
 ok(
     $message->check_signature(
         cafile       => 't/pki/crt/ca.pem',
         openssl      => 'openssl',
-        tmpdir       => $ENV{TMPDIR},
+        tmpdir       => $tmpdir,
         ssl_cert_dir => $cert_dir
     ),
     'message signature is OK'
@@ -126,7 +127,7 @@ ok(!$message->is_signed(), 'message is not signed');
 ok(
     $message->sign(
         openssl      => 'openssl',
-        tmpdir       => $ENV{TMPDIR},
+        tmpdir       => $tmpdir,
         ssl_cert_dir => $cert_dir
     ),
     'signature operation success'
@@ -144,7 +145,7 @@ ok(!$message->is_signed(), 'message is not signed');
 ok(
     $message->sign(
         openssl      => 'openssl',
-        tmpdir       => $ENV{TMPDIR},
+        tmpdir       => $tmpdir,
         ssl_cert_dir => $cert_dir,
         key_password => 'test'
     ),
@@ -167,7 +168,7 @@ ok(
     $message->encrypt(
         email        => 'guillaume.rousse@sympa.org',
         openssl      => 'openssl',
-        tmpdir       => $ENV{TMPDIR},
+        tmpdir       => $tmpdir,
         ssl_cert_dir => $cert_dir,
     ),
     'encryption operation success'
