@@ -699,7 +699,6 @@ sub decrypt {
     }
 
     my $temporary_file = $tmpdir . "/decrypted_message" . "." . $PID;
-    my $temporary_pwd  = $tmpdir . '/pass.' . $PID;
 
     ## dump the incoming message.
     if (!open(MSGDUMP, "> $temporary_file")) {
@@ -712,37 +711,32 @@ sub decrypt {
 
     my $decrypted_string = '';
 
+    my $password_file;
+    if ($key_password) {
+        my $umask = umask;
+        umask 0077;
+        $password_file = File::Temp->new(
+            DIR    => $tmpdir,
+            UNLINK => $main::options{'debug'} ? 0 : 1
+        );
+
+        print $password_file $key_password;
+        close $password_file;
+        umask $umask;
+    }
+
     ## try all keys/certs until one decrypts.
     my $decrypted_entity;
     while (my $certfile = shift @$certs) {
         my $keyfile = shift @$keys;
         $main::logger->do_log(Sympa::Logger::DEBUG, 'Trying decrypt with %s, %s',
             $certfile, $keyfile);
-        if ($key_password) {
-            unless (POSIX::mkfifo($temporary_pwd, 0600)) {
-                $main::logger->do_log(Sympa::Logger::ERR,
-                    'Unable to make fifo for %s',
-                    $temporary_pwd);
-                return undef;
-            }
-        }
+
         my $command = "$openssl smime -decrypt"                    .
             " -in $temporary_file -recip $certfile -inkey $keyfile" .
-            ($key_password ? " -passin file:$temporary_pwd" : "" );
+            ($password_file ? " -passin file:$password_file" : "" );
         $main::logger->do_log(Sympa::Logger::DEBUG3, '%s', $command);
         open(NEWMSG, "$command |");
-
-        if ($key_password) {
-            unless (open(FIFO, "> $temporary_pwd")) {
-                $main::logger->do_log(Sympa::Logger::ERR,
-                    'Unable to open fifo for %s',
-                    $temporary_pwd);
-                return undef;
-            }
-            print FIFO $key_password;
-            close FIFO;
-            unlink($temporary_pwd);
-        }
 
         while (<NEWMSG>) {
             $decrypted_string .= $_;
@@ -1453,31 +1447,28 @@ sub sign {
     $dup_msg->print(\*MSGDUMP);
     close(MSGDUMP);
 
+    my $password_file;
     if ($key_password) {
-        unless (POSIX::mkfifo($temporary_pwd, 0600)) {
-            $main::logger->do_log(Sympa::Logger::NOTICE, 'Unable to make fifo for %s',
-                $temporary_pwd);
-        }
+        my $umask = umask;
+        umask 0077;
+        $password_file = File::Temp->new(
+            DIR    => $tmpdir,
+            UNLINK => $main::options{'debug'} ? 0 : 1
+        );
+
+        print $password_file $key_password;
+        close $password_file;
+        umask $umask;
     }
+
     my $command = "$openssl smime -sign -rand $tmpdir/rand"    .
         " -signer $cert -inkey $key " .  "-in $temporary_file" .
-        ($key_password ? " -passin file:$temporary_pwd" : "" );
+        ($password_file ? " -passin file:$password_file" : "" );
     $main::logger->do_log(Sympa::Logger::DEBUG2, '%s', $command);
     unless (open NEWMSG, "$command |") {
         $main::logger->do_log(Sympa::Logger::NOTICE,
             'Cannot sign message (open pipe)');
         return undef;
-    }
-
-    if ($key_password) {
-        unless (open(FIFO, "> $temporary_pwd")) {
-            $main::logger->do_log(Sympa::Logger::NOTICE, 'Unable to open fifo for %s',
-                $temporary_pwd);
-        }
-
-        print FIFO $key_password;
-        close FIFO;
-        unlink($temporary_pwd);
     }
 
     my $new_message_as_string = '';
