@@ -204,12 +204,12 @@ my @gettext_strftime_tests = (
 
 plan tests =>
     scalar @lang2locale_tests      +
-    scalar @lang2locale_old_tests  +
+    scalar @lang2oldlocale_tests   +
     scalar @canonic_lang_tests     +
     scalar @implicated_langs_tests +
     scalar @negotiate_lang_tests   +
     scalar @set_lang_tests         +
-    scalar @get_lang_name_tests    +
+    scalar @native_name_tests      +
     scalar @gettext_tests          +
     scalar @dgettext_tests         +
     scalar @strftime_tests         +
