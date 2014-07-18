@@ -23,7 +23,7 @@ our $logger = Sympa::Logger::Memory->new();
 my $lock;
 my $temp_dir = File::Temp->newdir(CLEANUP => $ENV{TEST_DEBUG} ? 0 : 1);
 my $main_file = $temp_dir . '/file';
-my $lock_file = $main_file . '.lock';
+my $lock_file = $main_file . '.LOCK';
 
 throws_ok {
     $lock = Sympa::LockedFile->new();
