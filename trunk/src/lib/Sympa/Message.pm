@@ -1305,7 +1305,9 @@ sub encrypt {
     my $command =
         "$openssl smime -encrypt -out $encrypted_message_file -des3 $usercert";
     $main::logger->do_log(Sympa::Logger::DEBUG3, '%s', $command);
-    if (!open(MSGDUMP, "| $command")) {
+
+    my $command_handle;
+    if (!open($command_handle, '|-', $command)) {
         $main::logger->do_log(Sympa::Logger::INFO,
             'Can\'t encrypt message for recipient %s', $email);
     }
@@ -1320,14 +1322,14 @@ sub encrypt {
     foreach my $t ($mime_hdr->tags()) {
         $mime_hdr->delete($t) unless ($t =~ /^(mime|content)-/i);
     }
-    $mime_hdr->print(\*MSGDUMP);
+    $mime_hdr->print($command_handle);
 
-    printf MSGDUMP "\n";
+    printf $command_handle "\n";
     foreach (@{$self->{'entity'}->body}) {
-        printf MSGDUMP '%s', $_;
+        printf $command_handle '%s', $_;
     }
-    ##$self->get_mime_message->bodyhandle->print(\*MSGDUMP);
-    close MSGDUMP;
+    close $command_handle;
+
     my $status = $CHILD_ERROR >> 8;
     if ($status) {
         $main::logger->do_log(
