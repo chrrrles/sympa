@@ -729,10 +729,12 @@ sub decrypt {
             " -recip $certfile -inkey $keyfile" .
             ($password_file ? " -passin file:$password_file" : "" );
         $main::logger->do_log(Sympa::Logger::DEBUG3, '%s', $command);
-        open(NEWMSG, "| $command");
 
-        $self->{'entity'}->print(\*NEWMSG);
-        close NEWMSG;
+        my $command_handle;
+        open($command_handle, '|-', $command);
+
+        $self->{'entity'}->print($command_handle);
+        close $command_handle;
 
         my $status = $CHILD_ERROR >> 8;
         if ($status) {
