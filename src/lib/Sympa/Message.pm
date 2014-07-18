@@ -1423,7 +1423,7 @@ sub sign {
         UNLINK => $main::options{'debug'} ? 0 : 1
     );
 
-    my $command = "$openssl smime -sign -rand $tmpdir/rand"    .
+    my $command = "$openssl smime -sign"
         " -signer $cert -inkey $key " .  "-out $signed_message_file" .
         ($password_file ? " -passin file:$password_file" : "" );
     $main::logger->do_log(Sympa::Logger::DEBUG2, '%s', $command);
