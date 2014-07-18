@@ -655,7 +655,7 @@ sub is_authenticated {
 
 =item $message->decrypt()
 
-Decrypts this message, if in S/MIME format.
+Decrypts this message.
 
 Parameters:
 
@@ -670,6 +670,8 @@ Parameters:
 =item * I<key_password>: key password
 
 =back
+
+Returns a true value on success, C<undef> otherwise.
 
 =cut
 
@@ -830,6 +832,20 @@ sub decrypt {
     );
 
     return 1;
+}
+
+=item $message->decrypt_if_needed()
+
+Decrypts this message, but only if in S/MIME format.
+
+See $message->decrypt() for parameters and return value.
+
+=cut
+
+sub decrypt_if_needed {
+    my ($self, %params) = @_;
+
+    return $self->is_encrypted() ? $self->decrypt(%params) : 1;
 }
 
 =item $message->check_signature(%params)
@@ -1081,6 +1097,20 @@ sub check_signature {
     $self->{'smime_subject'} = $signer;
 
     return 1;
+}
+
+=item $message->check_signature_if_needed(%params)
+
+Check the signature of this message, but only if digitally signed.
+
+See $message->check_signature() for parameters and return value.
+
+=cut
+
+sub check_signature_if_needed {
+    my ($self, %params) = @_;
+
+    return $self->is_signed() ? $self->check_signature(%params) : 1;
 }
 
 =item $message->dump($output)
