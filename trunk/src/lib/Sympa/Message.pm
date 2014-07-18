@@ -698,19 +698,6 @@ sub decrypt {
         return undef;
     }
 
-    my $temporary_file = $tmpdir . "/decrypted_message" . "." . $PID;
-
-    ## dump the incoming message.
-    if (!open(MSGDUMP, "> $temporary_file")) {
-        $main::logger->do_log(Sympa::Logger::INFO, 'Can\'t store message in file %s',
-            $temporary_file);
-        return undef;
-    }
-    $self->as_entity()->print(\*MSGDUMP);
-    close(MSGDUMP);
-
-    my $decrypted_string = '';
-
     my $password_file;
     if ($key_password) {
         my $umask = umask;
@@ -732,16 +719,21 @@ sub decrypt {
         $main::logger->do_log(Sympa::Logger::DEBUG, 'Trying decrypt with %s, %s',
             $certfile, $keyfile);
 
-        my $command = "$openssl smime -decrypt"                    .
-            " -in $temporary_file -recip $certfile -inkey $keyfile" .
+        my $decrypted_message_file = File::Temp->new(
+            DIR    => $tmpdir,
+            UNLINK => $main::options{'debug'} ? 0 : 1
+        );
+
+        my $command =
+            "$openssl smime -decrypt -out $decrypted_message_file" . 
+            " -recip $certfile -inkey $keyfile" .
             ($password_file ? " -passin file:$password_file" : "" );
         $main::logger->do_log(Sympa::Logger::DEBUG3, '%s', $command);
-        open(NEWMSG, "$command |");
+        open(NEWMSG, "| $command");
 
-        while (<NEWMSG>) {
-            $decrypted_string .= $_;
-        }
+        $self->{'entity'}->print(\*NEWMSG);
         close NEWMSG;
+
         my $status = $CHILD_ERROR >> 8;
         if ($status) {
             $main::logger->do_log(
@@ -751,11 +743,9 @@ sub decrypt {
             next;
         }
 
-        unlink($temporary_file) unless ($main::options{'debug'});
-
         my $parser = MIME::Parser->new();
         $parser->output_to_core(1);
-        $decrypted_entity = $parser->parse_data($decrypted_string);
+        $decrypted_entity = $parser->parse($decrypted_message_file);
         unless ($decrypted_entity) {
             $main::logger->do_log(Sympa::Logger::ERR, 'Unable to parse message');
             last;
@@ -766,12 +756,6 @@ sub decrypt {
         $main::logger->do_log(Sympa::Logger::ERR, 'Message could not be decrypted');
         return undef;
     }
-
-    ## Now remove headers from decrypted string
-    my @msg_tab = split(/\n/, $decrypted_string);
-    my $line;
-    do { $line = shift(@msg_tab) } while ($line !~ /^\s*$/);
-    $decrypted_string = join("\n", @msg_tab);
 
     ## foreach header defined in the incoming message but undefined in the
     ## decrypted message, add this header in the decrypted form.
@@ -800,17 +784,12 @@ sub decrypt {
             $decrypted_entity->head->get('Content-Transfer-Encoding'));
     }
 
-    ## Now add headers to message as string
-    $decrypted_string =
-          $decrypted_entity->head->as_string() . "\n"
-        . $decrypted_string;
-
     # keep original entity (is this really needed ?)
     $self->{'old_entity'} = $self->{'entity'};
 
     # replace current entity
     $self->{'entity'} = $decrypted_entity;
-    $self->{'string'} = $decrypted_string;
+    $self->{'string'} = $decrypted_entity->as_string();
 
     # switch encrypted flag off
     undef $self->{'encrypted'};
