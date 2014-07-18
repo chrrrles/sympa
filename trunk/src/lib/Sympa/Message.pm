@@ -1297,10 +1297,13 @@ sub encrypt {
         return undef;
     }
 
-    my $temporary_file = $tmpdir . "/" . $email . "." . $PID;
+    my $encrypted_message_file = File::Temp->new(
+        DIR    => $tmpdir,
+        UNLINK => $main::options{'debug'} ? 0 : 1
+    );
 
-    ## encrypt the incoming message parse it.
-    my $command = "$openssl smime -encrypt -out $temporary_file -des3 $usercert";
+    my $command =
+        "$openssl smime -encrypt -out $encrypted_message_file -des3 $usercert";
     $main::logger->do_log(Sympa::Logger::DEBUG3, '%s', $command);
     if (!open(MSGDUMP, "| $command")) {
         $main::logger->do_log(Sympa::Logger::INFO,
@@ -1334,18 +1337,13 @@ sub encrypt {
         return undef;
     }
 
-    ## Get as MIME object
-    open(NEWMSG, $temporary_file);
     my $parser = MIME::Parser->new();
     $parser->output_to_core(1);
-    my $encrypted_entity =  $parser->read(\*NEWMSG);
+    my $encrypted_entity =  $parser->read($encrypted_message_file);
     unless ($encrypted_entity) {
         $main::logger->do_log(Sympa::Logger::NOTICE, 'Unable to parse message');
         return undef;
     }
-    close NEWMSG;
-
-    unlink($temporary_file) unless ($main::options{'debug'});
 
     ## foreach header defined in  the incomming message but undefined in
     ## the
