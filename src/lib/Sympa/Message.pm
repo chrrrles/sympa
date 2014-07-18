@@ -1457,13 +1457,15 @@ sub sign {
         " -signer $cert -inkey $key " .  "-out $signed_message_file" .
         ($password_file ? " -passin file:$password_file" : "" );
     $main::logger->do_log(Sympa::Logger::DEBUG2, '%s', $command);
-    unless (open NEWMSG, "| $command") {
+
+    my $command_handle;
+    unless (open $command_handle, '|-', $command) {
         $main::logger->do_log(Sympa::Logger::NOTICE,
             'Cannot sign message (open pipe)');
         return undef;
     }
-    $entity->print(\*NEWMSG);
-    close NEWMSG;
+    $entity->print($command_handle);
+    close $command_handle;
 
     my $parser = MIME::Parser->new();
     $parser->output_to_core(1);
