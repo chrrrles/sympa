@@ -1345,19 +1345,6 @@ sub encrypt {
     }
     close NEWMSG;
 
-    ## Get body
-    my $encrypted_body;
-    open(NEWMSG, $temporary_file);
-    my $in_header = 1;
-    while (<NEWMSG>) {
-        if (!$in_header) {
-            $encrypted_body .= $_;
-        } else {
-            $in_header = 0 if (/^$/);
-        }
-    }
-    close NEWMSG;
-
     unlink($temporary_file) unless ($main::options{'debug'});
 
     ## foreach header defined in  the incomming message but undefined in
