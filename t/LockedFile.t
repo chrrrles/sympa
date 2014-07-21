@@ -14,11 +14,8 @@ use Test::More;
 use Test::Exception;
 
 use Sympa::LockedFile;
-use Sympa::Logger::Memory;
 
 plan tests => 19;
-
-our $logger = Sympa::Logger::Memory->new();
 
 my $lock;
 my $temp_dir = File::Temp->newdir(CLEANUP => $ENV{TEST_DEBUG} ? 0 : 1);
@@ -81,9 +78,7 @@ sub attempt_parallel_lock {
 
     my $code = <<EOF;
 use Sympa::LockedFile;
-use Sympa::Logger::Memory;
 
-our \$logger = Sympa::Logger::Memory->new();
 my \$lock = Sympa::LockedFile->new("$file", -1, "$mode");
 exit \$lock + 0;
 EOF
