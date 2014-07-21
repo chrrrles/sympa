@@ -62,9 +62,9 @@ ok(!$lock->open($main_file, -1, '>'), 'prevented non-blocking locking, write mod
 ok($lock->close, 'unlocking');
 ok($lock->open($main_file, 0, '>'), 'locking unlocked file, write mode');
 
-ok(attempt_parallel_lock($temp_dir . '/foo', '>'), 'write lock on another file');
-ok(!attempt_parallel_lock($main_file, '<'), 'read lock on same file');
-ok(!attempt_parallel_lock($main_file, '>'), 'write lock on same file');
+ok(attempt_parallel_lock($temp_dir . '/foo', '>'), 'write lock on another file') or print $ERRNO;
+ok(!attempt_parallel_lock($main_file, '<'), 'read lock on same file') or print $ERRNO;
+ok(!attempt_parallel_lock($main_file, '>'), 'write lock on same file') or print $ERRNO;
 
 $lock->close;
 $lock->open($main_file);
