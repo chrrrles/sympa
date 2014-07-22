@@ -60,7 +60,7 @@ check-local-jenkins:
 	[ ! -d out ] && mkdir out; \
 	[ -z "$(TEST_FILES)" ] && TEST_FILES="$(check_SCRIPTS)"; \
 	PERL5LIB=src/lib; export PERL5LIB; \
-	$(PROVE) -I src/lib --archive out $$TEST_FILES
+	$(PROVE) --archive out $$TEST_FILES
 
 install-data-hook: installdir installconfig nextstep importantchanges
 
