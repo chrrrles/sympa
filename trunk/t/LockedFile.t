@@ -59,7 +59,7 @@ ok(!$lock->open($main_file, -1, '>'), 'prevented non-blocking locking, write mod
 ok($lock->close, 'unlocking');
 ok($lock->open($main_file, 0, '>'), 'locking unlocked file, write mode');
 
-ok(attempt_parallel_lock($temp_dir . '/foo', '>'), 'write lock on another file') or diag("underlying error: $ERRNO");
+ok(attempt_parallel_lock($temp_dir . '/foo', '>'), 'write lock on another file');
 ok(!attempt_parallel_lock($main_file, '<'), 'read lock on same file');
 ok(!attempt_parallel_lock($main_file, '>'), 'write lock on same file');
 
@@ -80,8 +80,7 @@ sub attempt_parallel_lock {
 use Sympa::LockedFile;
 
 my \$lock = Sympa::LockedFile->new("$file", -1, "$mode");
-die \$File::NFSLock::errstr if !\$lock;
-
+exit 1 if !\$lock;
 exit 0;
 EOF
     my @command = (
