@@ -80,7 +80,9 @@ sub attempt_parallel_lock {
 use Sympa::LockedFile;
 
 my \$lock = Sympa::LockedFile->new("$file", -1, "$mode");
-exit \$lock + 0;
+die \$File::NFSLock::errstr if !\$lock;
+
+exit 0;
 EOF
     my @command = (
         $EXECUTABLE_NAME,
@@ -88,5 +90,6 @@ EOF
         "-e", $code
     );
     system(@command);
-    return $CHILD_ERROR >> 8;
+
+    return $CHILD_ERROR >> 8 == 0;
 }
