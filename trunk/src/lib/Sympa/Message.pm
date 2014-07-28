@@ -48,6 +48,7 @@ use warnings;
 use Carp qw(croak);
 use English qw(-no_match_vars);
 
+use File::Temp;
 use HTML::Entities qw(encode_entities);
 use Mail::Address;
 use MIME::Charset;
