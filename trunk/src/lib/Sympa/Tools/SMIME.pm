@@ -236,26 +236,26 @@ sub parse_cert {
 
     my (%res, $purpose_section);
 
-    while (<PSC>) {
+    while (my $line = <PSC>) {
         ## First lines before subject are the email address(es)
 
-        if (/^subject=\s+(\S.+)\s*$/) {
+        if ($line =~ /^subject=\s+(\S.+)\s*$/) {
             $res{'subject'} = $1;
 
-        } elsif (!$res{'subject'} && /\@/) {
-            my $email_address = lc($_);
+        } elsif (!$res{'subject'} && $line =~ /\@/) {
+            my $email_address = lc($line);
             chomp $email_address;
             $res{'email'}{$email_address} = 1;
 
             ## Purpose section appears at the end of the output
             ## because options order matters for openssl
-        } elsif (/^Certificate purposes:/) {
+        } elsif ($line =~ /^Certificate purposes:/) {
             $purpose_section = 1;
         } elsif ($purpose_section) {
-            if (/^S\/MIME signing : (\S+)/) {
+            if ($line =~ /^S\/MIME signing : (\S+)/) {
                 $res{purpose}->{sign} = ($1 eq 'Yes');
 
-            } elsif (/^S\/MIME encryption : (\S+)/) {
+            } elsif ($line =~ /^S\/MIME encryption : (\S+)/) {
                 $res{purpose}->{enc} = ($1 eq 'Yes');
             }
         }
