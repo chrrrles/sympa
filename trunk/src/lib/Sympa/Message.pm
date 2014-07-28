@@ -864,12 +864,12 @@ sub check_signature {
 
     return undef unless $self->is_signed();
 
-    my $signer_cert_file = File::Temp->new(
+    my $certificate_file = File::Temp->new(
         DIR    => $tmpdir,
         UNLINK => $main::options{'debug'} ? 0 : 1
     );
 
-    my $command = "$openssl smime -verify -signer $signer_cert_file " .
+    my $command = "$openssl smime -verify -signer $certificate_file " .
         ($cafile ? "-CAfile $cafile" : '')          .
         ($capath ? "-CApath $capath" : '')          .
         ">/dev/null";
@@ -898,18 +898,18 @@ sub check_signature {
     }
     ## second step is the message signer match the sender
     ## a better analyse should be performed to extract the signer email.
-    my $signer = Sympa::Tools::SMIME::parse_cert(
-        file    => $signer_cert_file,
+    my $certificate = Sympa::Tools::SMIME::parse_cert(
+        file    => $certificate_file,
         tmpdir  => $tmpdir,
         openssl => $openssl,
     );
 
-    unless ($signer->{'email'}{lc($self->{'sender_email'})}) {
+    unless ($certificate->{'email'}{lc($self->{'sender_email'})}) {
         $main::logger->do_log(
             Sympa::Logger::ERR,
             "S/MIME signed message, sender(%s) does NOT match signer(%s)",
             $self->{'sender_email'},
-            join(',', keys %{$signer->{'email'}})
+            join(',', keys %{$certificate->{'email'}})
         );
         return undef;
     }
@@ -917,7 +917,7 @@ sub check_signature {
     $main::logger->do_log(
         Sympa::Logger::DEBUG,
         "S/MIME signed message, signature checked and sender match signer(%s)",
-        join(',', keys %{$signer->{'email'}})
+        join(',', keys %{$certificate->{'email'}})
     );
     ## store the signer certificat
     unless (-d $ssl_cert_dir) {
@@ -1035,7 +1035,7 @@ sub check_signature {
         $main::logger->do_log(
             Sympa::Logger::ERR,
             "Could not extract certificate for %s",
-            join(',', keys %{$signer->{'email'}})
+            join(',', keys %{$certificate->{'email'}})
         );
         return undef;
     }
@@ -1071,7 +1071,7 @@ sub check_signature {
     # future version should check if the subject was part of the SMIME
     # signature.
     $self->{'smime_signed'}  = 1;
-    $self->{'smime_subject'} = $signer;
+    $self->{'smime_subject'} = $certificate;
 
     return 1;
 }
