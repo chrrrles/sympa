@@ -115,7 +115,7 @@ ok(
 );
 
 ok(
-    !Sympa::Tools::SMIME::parse_cert(text => ''),
+    !Sympa::Tools::SMIME::parse_cert(string => ''),
     'empty string',
 );
 
@@ -142,7 +142,7 @@ is_deeply(
 
 is_deeply(
     Sympa::Tools::SMIME::parse_cert(
-        text    => $cert_string,
+        string    => $cert_string,
     ),
     $cert_data,
     'user certificate string parsing'
