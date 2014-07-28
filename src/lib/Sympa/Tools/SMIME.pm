@@ -144,9 +144,9 @@ FIXME.
 
 =over
 
-=item * I<file>: FIXME
+=item * I<file>: the certificat, as a file
 
-=item * I<text>: FIXME
+=item * I<string>: the certificat, as a string
 
 =item * I<openssl>: path to openssl binary (default: 'openssl')
 
@@ -180,7 +180,7 @@ sub parse_cert {
     my (%params) = @_;
 
     my $file   = $params{file};
-    my $text   = $params{text};
+    my $string = $params{string};
     my $tmpdir  = $params{tmpdir} || '/tmp';
     my $openssl = $params{openssl} || 'openssl';
 
@@ -192,8 +192,8 @@ sub parse_cert {
 
     ## Load certificate
     my @cert;
-    if ($text) {
-        @cert = ($text);
+    if ($string) {
+        @cert = ($string);
     } elsif ($file) {
         unless (open(PSC, "$file")) {
             $main::logger->do_log(Sympa::Logger::ERR,
@@ -205,7 +205,7 @@ sub parse_cert {
         close(PSC);
     } else {
         $main::logger->do_log(Sympa::Logger::ERR,
-            'parse_cert: neither "text" nor "file" given');
+            'parse_cert: neither "string" nor "file" given');
         return undef;
     }
 
