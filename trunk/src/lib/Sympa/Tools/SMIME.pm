@@ -234,41 +234,40 @@ sub parse_cert {
         return undef;
     }
 
-    my (%res, $purpose_section);
+    my $result;
 
+    # the lines before the subject contains the email address(es)
     while (my $line = <PSC>) {
-        ## First lines before subject are the email address(es)
-
         if ($line =~ /^subject=\s+(\S.+)\s*$/) {
-            $res{'subject'} = $1;
+            $result->{'subject'} = $1;
+            last;
+        }
+        chomp $line;
+        $result->{'email'}{lc($line)} = 1;
+    }
 
-        } elsif (!$res{'subject'} && $line =~ /\@/) {
-            my $email_address = lc($line);
-            chomp $email_address;
-            $res{'email'}{$email_address} = 1;
+    # the lines after the subject contains the purpose
+    while (my $line = <PSC>) {
+        if ($line =~ /^S\/MIME signing : (\S+)/) {
+            $result->{purpose}->{sign} = ($1 eq 'Yes');
+            next;
+        }
 
-            ## Purpose section appears at the end of the output
-            ## because options order matters for openssl
-        } elsif ($line =~ /^Certificate purposes:/) {
-            $purpose_section = 1;
-        } elsif ($purpose_section) {
-            if ($line =~ /^S\/MIME signing : (\S+)/) {
-                $res{purpose}->{sign} = ($1 eq 'Yes');
-
-            } elsif ($line =~ /^S\/MIME encryption : (\S+)/) {
-                $res{purpose}->{enc} = ($1 eq 'Yes');
-            }
+       if ($line =~ /^S\/MIME encryption : (\S+)/) {
+            $result->{purpose}->{enc} = ($1 eq 'Yes');
+            next;
         }
     }
 
-    ## OK, so there's CAs which put the email in the subjectAlternateName only
-    ## and ones that put it in the DN only...
-    if (!$res{email} && ($res{subject} =~ /\/email(address)?=([^\/]+)/)) {
-        $res{email} = $1;
+    # some CA put the email address in the DN only
+    if (!$result->{email} && $result->{subject} =~ /\/email(address)?=([^\/]+)/) {
+        $result->{email} = $1;
     }
+
     close(PSC);
     unlink($tmpfile);
-    return \%res;
+
+    return $result;
 }
 
 =item extract_certs(%parameters)
