@@ -904,12 +904,12 @@ sub check_signature {
         openssl => $openssl,
     );
 
-    unless ($certificate->{'email'}{lc($self->{'sender_email'})}) {
+    unless (Sympa::Tools::any { $_ eq lc($self->{'sender_email'}) } @{$certificate->{'email'}}) {
         $main::logger->do_log(
             Sympa::Logger::ERR,
             "S/MIME signed message, sender(%s) does NOT match signer(%s)",
             $self->{'sender_email'},
-            join(',', keys %{$certificate->{'email'}})
+            join(',', @{$certificate->{'email'}})
         );
         return undef;
     }
@@ -917,7 +917,7 @@ sub check_signature {
     $main::logger->do_log(
         Sympa::Logger::DEBUG,
         "S/MIME signed message, signature checked and sender match signer(%s)",
-        join(',', keys %{$certificate->{'email'}})
+        join(',', @{$certificate->{'email'}})
     );
     ## store the signer certificat
     unless (-d $ssl_cert_dir) {
@@ -1009,9 +1009,9 @@ sub check_signature {
             $main::logger->do_log(
                 Sympa::Logger::DEBUG2,
                 "Found cert for <%s>",
-                join(',', keys %{$parsed->{'email'}})
+                join(',', @{$parsed->{'email'}})
             );
-            if ($parsed->{'email'}{lc($self->{'sender_email'})}) {
+            if (Sympa::Tools::any { $_ eq lc($self->{'sender_email'}) } @{$parsed->{'email'}}) {
                 if (   $parsed->{'purpose'}{'sign'}
                     && $parsed->{'purpose'}{'enc'}) {
                     $certs{'both'} = $workcert;

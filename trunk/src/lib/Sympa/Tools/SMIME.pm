@@ -243,7 +243,7 @@ sub parse_cert {
             last;
         }
         chomp $line;
-        $result->{'email'}{lc($line)} = 1;
+        push @{$result->{'email'}}, lc($line);
     }
 
     # the lines after the subject contains the purpose
@@ -261,7 +261,7 @@ sub parse_cert {
 
     # some CA put the email address in the DN only
     if (!$result->{email} && $result->{subject} =~ /\/email(address)?=([^\/]+)/) {
-        $result->{email} = $1;
+        $result->{email} = [ $1 ];
     }
 
     close(PSC);

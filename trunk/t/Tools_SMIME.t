@@ -127,9 +127,7 @@ my $cert_data   = {
         enc  => 1
     },
     subject => '/O=sympa developpers/OU=unit testing/CN=Guillaume Rousse/emailAddress=Guillaume.Rousse@sympa.org',
-    email   => {
-        'guillaume.rousse@sympa.org' => 1
-    }
+    email   => [ 'guillaume.rousse@sympa.org' ]
 };
 
 is_deeply(
@@ -151,9 +149,7 @@ is_deeply(
 my $ca_cert_file   = 't/pki/crt/ca.pem';
 my $ca_cert_data   = {
     subject => '/O=sympa developpers/OU=unit testing/CN=Test CA/emailAddress=test@sympa.org',
-    email   => {
-        'test@sympa.org' => 1
-    },
+    email   => [ 'test@sympa.org' ],
     purpose => {
         sign => '',
         enc  => ''
