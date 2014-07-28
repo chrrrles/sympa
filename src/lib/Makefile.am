@@ -28,15 +28,15 @@ nobase_modules_DATA = Sympa/Admin.pm \
 		      Sympa/ConfDef.pm \
 		      Sympa/Config_XML.pm \
 		      Sympa/DatabaseManager.pm \
+		      Sympa/DatabaseDriver.pm \
+		      Sympa/DatabaseDriver/MySQL.pm \
+		      Sympa/DatabaseDriver/Oracle.pm \
+		      Sympa/DatabaseDriver/Postgres.pm \
+		      Sympa/DatabaseDriver/SQLite.pm\
+		      Sympa/DatabaseDriver/Sybase.pm \
 		      Sympa/Datasource.pm \
 		      Sympa/Datasource/LDAP.pm \
 		      Sympa/Datasource/SQL.pm \
-		      Sympa/DBManipulator.pm \
-		      Sympa/DBManipulator/MySQL.pm \
-		      Sympa/DBManipulator/Oracle.pm \
-		      Sympa/DBManipulator/Postgres.pm \
-		      Sympa/DBManipulator/SQLite.pm\
-		      Sympa/DBManipulator/Sybase.pm \
 		      Sympa/Family.pm \
 		      Sympa/Fetch.pm \
 		      Sympa/HTML/MyFormatText.pm \

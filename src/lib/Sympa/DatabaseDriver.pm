@@ -21,7 +21,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package Sympa::DBManipulator;
+package Sympa::DatabaseDriver;
 
 use strict;
 use base qw(Sympa::Datasource::SQL);
