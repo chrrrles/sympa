@@ -220,7 +220,7 @@ ok(
         ssl_cert_dir => $cert_dir,
         key_password => 'test'
     ),
-    'decryption operation success, with a password-protectedless key'
+    'decryption operation success, with a password-protected key'
 );
 ok(!$message->is_encrypted(), 'message is not encrypted anymore');
 is(
