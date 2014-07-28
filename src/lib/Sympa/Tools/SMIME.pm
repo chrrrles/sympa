@@ -191,21 +191,25 @@ sub parse_cert {
     );
 
     ## Load certificate
-    my @cert;
+    my $cert_string;
     if ($string) {
-        @cert = ($string);
+        $cert_string = $string;
     } elsif ($file) {
-        unless (open(PSC, "$file")) {
-            $main::logger->do_log(Sympa::Logger::ERR,
-                "parse_cert: open %s: $ERRNO",
-                $file);
+        eval {
+            $cert_string = Sympa::Tools::File::slurp_file($file);
+        };
+        if ($EVAL_ERROR) {
+            $main::logger->do_log(
+                Sympa::Logger::ERR,
+                "unable to read certificate file: %s", $EVAL_ERROR
+            );
             return undef;
         }
-        @cert = <PSC>;
-        close(PSC);
     } else {
-        $main::logger->do_log(Sympa::Logger::ERR,
-            'parse_cert: neither "string" nor "file" given');
+        $main::logger->do_log(
+            Sympa::Logger::ERR,
+            'neither "string" nor "file" given'
+        );
         return undef;
     }
 
@@ -216,7 +220,7 @@ sub parse_cert {
         $main::logger->do_log(Sympa::Logger::ERR, 'open |openssl: %s', $ERRNO);
         return undef;
     }
-    print PSC join('', @cert);
+    print PSC $cert_string;
 
     unless (close(PSC)) {
         $main::logger->do_log(Sympa::Logger::ERR,
