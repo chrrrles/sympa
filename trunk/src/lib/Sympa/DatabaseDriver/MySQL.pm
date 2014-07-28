@@ -21,27 +21,12 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package Sympa::DBManipulator::Oracle;
+package Sympa::DatabaseDriver::MySQL;
 
 use strict;
-use base qw(Sympa::DBManipulator);
+use base qw(Sympa::DatabaseDriver);
 
 use Sympa::Logger;
-
-#######################################################
-####### Beginning the RDBMS-specific code. ############
-#######################################################
-
-our %date_format = (
-    'read' => {
-        'Oracle' =>
-            '((to_number(to_char(%s,\'J\')) - to_number(to_char(to_date(\'01/01/1970\',\'dd/mm/yyyy\'), \'J\'))) * 86400) +to_number(to_char(%s,\'SSSSS\'))',
-    },
-    'write' => {
-        'Oracle' =>
-            'to_date(to_char(floor(%s/86400) + to_number(to_char(to_date(\'01/01/1970\',\'dd/mm/yyyy\'), \'J\'))) || \':\' ||to_char(mod(%s,86400)), \'J:SSSSS\')',
-    }
-);
 
 # Builds the string to be used by the DBI to connect to the database.
 #
@@ -50,37 +35,45 @@ our %date_format = (
 # OUT: Nothing
 sub build_connect_string {
     my $self = shift;
-    $self->{'connect_string'} = "DBI:Oracle:";
-    if ($self->{'db_host'} && $self->{'db_name'}) {
-        $self->{'connect_string'} .=
-            "host=$self->{'db_host'};sid=$self->{'db_name'}";
-    }
+    $main::logger->do_log(Sympa::Logger::DEBUG3,
+        'Building connection string to database %s',
+        $self->{'db_name'});
+    $self->{'connect_string'} =
+        "DBI:$self->{'db_type'}:$self->{'db_name'}:$self->{'db_host'}";
 }
 
-## Returns an SQL clause to be inserted in a query.
-## This clause will compute a substring of max length
-## $param->{'substring_length'} starting from the first character equal
-## to $param->{'separator'} found in the value of field $param->{'source_field'}.
+# Returns an SQL clause to be inserted in a query.
+# This clause will compute a substring of max length
+# $param->{'substring_length'} starting from the first character equal
+# to $param->{'separator'} found in the value of field $param->{'source_field'}.
 sub get_substring_clause {
     my $self  = shift;
     my $param = shift;
+    $main::logger->do_log(Sympa::Logger::DEBUG3, 'Building substring clause');
     return
-          "substr("
+          "REVERSE(SUBSTRING("
         . $param->{'source_field'}
-        . ",instr("
-        . $param->{'source_field'} . ",'"
-        . $param->{'separator'} . "')+1)";
+        . " FROM position('"
+        . $param->{'separator'} . "' IN "
+        . $param->{'source_field'}
+        . ") FOR "
+        . $param->{'substring_length'} . "))";
 }
 
-## Returns an SQL clause to be inserted in a query.
-## This clause will limit the number of records returned by the query to
-## $param->{'rows_count'}. If $param->{'offset'} is provided, an offset of
-## $param->{'offset'} rows is done from the first record before selecting
-## the rows to return.
+# Returns an SQL clause to be inserted in a query.
+# This clause will limit the number of records returned by the query to
+# $param->{'rows_count'}. If $param->{'offset'} is provided, an offset of
+# $param->{'offset'} rows is done from the first record before selecting
+# the rows to return.
 sub get_limit_clause {
     my $self  = shift;
     my $param = shift;
-    return "";
+    $main::logger->do_log(Sympa::Logger::DEBUG3, 'Building limit 1 clause');
+    if ($param->{'offset'}) {
+        return "LIMIT " . $param->{'offset'} . "," . $param->{'rows_count'};
+    } else {
+        return "LIMIT " . $param->{'rows_count'};
+    }
 }
 
 # Returns a character string corresponding to the expression to use in a query
@@ -147,13 +140,18 @@ sub is_autoinc {
 sub set_autoinc {
     my $self  = shift;
     my $param = shift;
+    my $field_type =
+        defined($param->{'field_type'})
+        ? $param->{'field_type'}
+        : 'BIGINT( 20 )';
     $main::logger->do_log(Sympa::Logger::DEBUG3,
         'Setting field %s.%s as autoincremental',
         $param->{'field'}, $param->{'table'});
     unless (
         $self->do_query(
-            "ALTER TABLE `%s` CHANGE `%s` `%s` BIGINT( 20 ) NOT NULL AUTO_INCREMENT",
-            $param->{'table'}, $param->{'field'}, $param->{'field'}
+            "ALTER TABLE `%s` CHANGE `%s` `%s` %s NOT NULL AUTO_INCREMENT",
+            $param->{'table'}, $param->{'field'},
+            $param->{'field'}, $field_type
         )
         ) {
         $main::logger->do_log(Sympa::Logger::ERR,
@@ -175,17 +173,26 @@ sub get_tables {
         'Retrieving all tables in database %s',
         $self->{'db_name'});
     my @raw_tables;
-    my $sth;
-    unless ($sth = $self->do_query("SELECT table_name FROM user_tables")) {
+    my @result;
+    unless (@raw_tables = $self->{'dbh'}->tables()) {
         $main::logger->do_log(Sympa::Logger::ERR,
             'Unable to retrieve the list of tables from database %s',
             $self->{'db_name'});
         return undef;
     }
-    while (my $table = $sth->fetchrow()) {
-        push @raw_tables, lc($table);
+
+    foreach my $t (@raw_tables) {
+
+        # Clean table names that would look like `databaseName`.`tableName`
+        # (mysql)
+        $t =~ s/^\`[^\`]+\`\.//;
+
+        # Clean table names that could be surrounded by `` (recent DBD::mysql
+        # release)
+        $t =~ s/^\`(.+)\`$/$1/;
+        push @result, $t;
     }
-    return \@raw_tables;
+    return \@result;
 }
 
 # Adds a table to the database
@@ -200,8 +207,11 @@ sub add_table {
     $main::logger->do_log(Sympa::Logger::DEBUG3, 'Adding table %s to database %s',
         $param->{'table'}, $self->{'db_name'});
     unless (
-        $self->do_query("CREATE TABLE %s (temporary INT)", $param->{'table'}))
-    {
+        $self->do_query(
+            "CREATE TABLE %s (temporary INT) DEFAULT CHARACTER SET utf8",
+            $param->{'table'}
+        )
+        ) {
         $main::logger->do_log(Sympa::Logger::ERR,
             'Could not create table %s in database %s',
             $param->{'table'}, $self->{'db_name'});
@@ -516,8 +526,6 @@ sub get_indexes {
             $found_indexes{$index_name}{$field_name} = 1;
         }
     }
-
-    #open TMP, ">>/tmp/toto"; print TMP Dumper(\%found_indexes); close TMP;
     return \%found_indexes;
 }
 
@@ -598,9 +606,9 @@ sub set_index {
     return $report;
 }
 
-## For BLOB types.
-sub AS_BLOB {
-    return ({'ora_type' => DBD::Oracle::ORA_BLOB()} => $_[1])
+## For DOUBLE type.
+sub AS_DOUBLE {
+    return ({'mysql_type' => DBD::mysql::FIELD_TYPE_DOUBLE()} => $_[1])
         if scalar @_ > 1;
     return ();
 }

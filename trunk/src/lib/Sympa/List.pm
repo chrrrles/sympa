@@ -6596,9 +6596,9 @@ sub _include_users_sql {
 
     $main::logger->do_log(Sympa::Logger::DEBUG2, 'Sympa::List::_include_users_sql()');
 
-    unless (ref($source) =~ /DBManipulator/) {
+    unless (ref($source) =~ /DatabaseDriver/) {
         $main::logger->do_log(Sympa::Logger::ERR,
-            'source object has not a DBManipulator type : %s', $source);
+            'source object has not a DatabaseDriver type : %s', $source);
         return undef;
     }
 
