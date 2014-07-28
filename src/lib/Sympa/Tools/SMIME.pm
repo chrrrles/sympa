@@ -215,18 +215,18 @@ sub parse_cert {
 
     ## Extract information from cert
     my ($tmpfile) = $tmpdir . "/parse_cert.$PID";
-    my $cmd = sprintf '%s x509 -email -subject -purpose -noout', $openssl;
-    unless (open(PSC, "| $cmd > $tmpfile")) {
-        $main::logger->do_log(Sympa::Logger::ERR, 'open |openssl: %s', $ERRNO);
+    my $command =
+        "$openssl x509 -email -subject -purpose -noout > $tmpfile";
+    my $command_handle;
+    unless (open($command_handle, '|-', $command)) {
+        $main::logger->do_log(
+            Sympa::Logger::ERR,
+            'unable to execute command %s: %s',
+        );
         return undef;
     }
-    print PSC $cert_string;
-
-    unless (close(PSC)) {
-        $main::logger->do_log(Sympa::Logger::ERR,
-            "parse_cert: close openssl: $ERRNO, $EVAL_ERROR");
-        return undef;
-    }
+    print $command_handle $cert_string;
+    close $command_handle;
 
     unless (open(PSC, "$tmpfile")) {
         $main::logger->do_log(Sympa::Logger::ERR,
