@@ -25,7 +25,9 @@ ok(
     'non existing directory'
 );
 
-my $cert_dir = File::Temp->newdir(CLEANUP => $ENV{TEST_DEBUG} ? 0 : 1);
+my $cert_dir =
+    File::Temp->newdir("test.$$.XXXXX",
+    CLEANUP => ($ENV{TEST_DEBUG} ? 0 : 1));
 
 ok(
     !Sympa::Tools::SMIME::find_keys($cert_dir, 'sign'),
@@ -165,7 +167,8 @@ is_deeply(
 );
 
 my $parser = MIME::Parser->new();
-my $entity = $parser->parse_open('t/samples/signed.eml');
+$parser->output_to_core(1);
+my $entity   = $parser->parse_open('t/samples/signed.eml');
 my $out_file = $cert_dir . '/out';
 ok(
     !Sympa::Tools::SMIME::extract_certs(
