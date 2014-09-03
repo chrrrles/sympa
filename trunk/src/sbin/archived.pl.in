@@ -649,7 +649,9 @@ sub rebuild {
         opendir HTML, "$arcpath/$adrlist/$yyyy-$mm";
 
         ## Skip arctxt/ . and ..
-        foreach my $html_file (grep !/^arctxt$OUTPUT_AUTOFLUSH^index$OUTPUT_AUTOFLUSH\.+$/, readdir(HTML)) {
+        foreach my $html_file (
+            grep { !/\Aarctxt\z/ and !/\Aindex\z/ and !/\.+\z/ } readdir HTML)
+        {
             unlink $arcpath . '/' . $adrlist . '/' . $yyyy . '-' . $mm . '/'
                 . $html_file;
         }
@@ -725,8 +727,9 @@ sub rebuild {
             ## Remove existing HTML files
             opendir HTML, $arcdir;
             ## Skip arctxt/ . and ..
-            foreach
-                my $html_file (grep !/^arctxt$OUTPUT_AUTOFLUSH^index$OUTPUT_AUTOFLUSH\.+$/, readdir(HTML)) {
+            foreach my $html_file (
+                grep { !/\Aarctxt\z/ and !/\Aindex\z/ and !/\.+\z/ }
+                readdir HTML) {
                 unlink $arcdir . '/' . $html_file;
             }
             closedir HTML;
@@ -1016,7 +1019,16 @@ sub set_hidden_mode {
     ## $ENV{'M2H_MODIFYBODYADDRESSES'} à positionner si le corps du message
     ## est parse
     $ENV{'M2H_ADDRESSMODIFYCODE'} =
-        "s|^([^\@]+)\@([^\@]+)\$OUTPUT_AUTOFLUSH\($tag\%hidden_head\%$tag\)\$1\($tag\%hidden_at\%$tag\)\$2\($tag\%hidden_end\%$tag\)|g";
+          's|\A([^@]+)@([^@]+)\z|(' 
+        . $tag
+        . '%hidden_head%'
+        . $tag . ')$1('
+        . $tag
+        . '%hidden_at%'
+        . $tag . ')$2('
+        . $tag
+        . '%hidden_end%'
+        . $tag . ')|g';
     $ENV{'M2H_MODIFYBODYADDRESSES'} = 1;
 }
 
