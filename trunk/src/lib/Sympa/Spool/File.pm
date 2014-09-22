@@ -40,6 +40,7 @@ use File::Copy;
 use File::Path qw(make_path);
 
 use Sympa::Constants;
+use Sympa::Tools;
 use Sympa::Tools::File;
 
 our $filename_regexp = '^(\S+)\.(\d+)\.\w+$';
