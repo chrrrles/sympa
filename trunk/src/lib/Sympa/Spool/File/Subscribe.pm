@@ -29,12 +29,6 @@ use base qw(Sympa::Spool::File);
 
 use Sympa::Logger;
 
-sub new {
-    $main::logger->do_log(Sympa::Logger::DEBUG2, '(%s, %s)', @_);
-    my ($class, %params) = @_;
-    return $class->SUPER::new(%params);
-}
-
 sub sub_request_exists {
     my $self     = shift;
     my $selector = shift;
