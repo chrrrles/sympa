@@ -55,18 +55,32 @@ our %classes = (
 
 =over 4
 
-=item new ( NAME, STATUS, OPTIONS... )
+=item Sympa::Spool::File->new(%parameters)
 
-I<Constructor>.
 Creates a new L<Sympa::Spool::File> object.
 
-XXX @todo doc
+Parameters:
+
+=over 4
+
+=item * I<name>: the spool name
+
+=item * I<directory>: the spool directory
+
+=item * I<selection_status>: FIXME
+
+=item * I<selector>: FIXME
+
+=item * I<sortby>: FIXME
+
+=item * I<way>: FIXME
 
 =back
 
+Returns a new L<Sympa::Spool::File> object, or I<undef> for failure.
+
 =cut
 
-## Creates an object.
 sub new {
     $main::logger->do_log(Sympa::Logger::DEBUG2, '(%s, %s, %s, ...)', @_);
     my ($pkg, %params) = @_;
@@ -107,27 +121,28 @@ sub global_count {
     return $count;
 }
 
+=back
+
+=head1 INSTANCE METHODS
+
+=over
+
+=item $spool->count( OPTIONS... )
+
+=cut
+
 sub count {
     my $self = shift;
     return ($self->get_content({'selection' => 'count'}));
 }
 
-=over 4
+=item $spool->get_content( OPTIONS... )
 
-=item get_content ( OPTIONS... )
-
-I<Instance method>.
-XXX @todo doc
-
-=back
+Return the content of the hash, as a list of serialized entries.
+content
 
 =cut
 
-#######################
-#
-#  get_content return the content an array of hash describing the spool
-#  content
-#
 sub get_content {
     $main::logger->do_log(Sympa::Logger::DEBUG2, '(%s, %s)', @_);
     my $self = shift;
@@ -221,6 +236,10 @@ sub get_content {
     return @ret;
 }
 
+=item $spool->get_count()
+
+=cut
+
 sub get_count {
     my $self     = shift;
     my $param    = shift;
@@ -228,7 +247,12 @@ sub get_count {
     return $#messages + 1;
 }
 
-# Returns the single file corresponding to the selector.
+=item $spool->get_file_key()
+
+Returns the single file corresponding to the selector.
+
+=cut
+
 sub get_file_key {
     my $self     = shift;
     my $selector = shift;
@@ -239,23 +263,17 @@ sub get_file_key {
     return $message->{'messagekey'};
 }
 
-=over 4
+=item $spool->next( )
 
-=item next ( )
+Return the next spool entry ordered by priority.
 
-I<Instance method>.
-XXX @todo doc
-
-=back
+next lock the
+message_in_spool that is returned
+returns 0 if no file found
+returns undef if problem scanning spool
 
 =cut
 
-#######################
-#
-#  next : return next spool entry ordered by priority next lock the
-#  message_in_spool that is returned
-#  returns 0 if no file found
-#  returns undef if problem scanning spool
 sub next {
     $main::logger->do_log(Sympa::Logger::DEBUG2, '(%s)', @_);
     my $self = shift;
@@ -510,14 +528,9 @@ sub create_spool_dir {
     }
 }
 
-=over 4
+=item $spool->move_to_bad( OPTIONS... )
 
-=item move_to_bad ( OPTIONS... )
-
-I<Instance method>.
 XXX @todo doc
-
-=back
 
 =cut
 
@@ -552,21 +565,13 @@ sub move_to_bad {
     return 1;
 }
 
-=over 4
+=item $spool->get_message( OPTIONS... )
 
-=item get_message ( OPTIONS... )
-
-I<Instance method>.
-XXX @todo doc
-
-=back
+return one message from related spool using a specified selector
+returns undef if message was not found.
 
 =cut
 
-#################"
-# return one message from related spool using a specified selector
-# returns undef if message was not found.
-#
 sub get_message {
     my $self     = shift;
     my $selector = shift;
@@ -607,20 +612,12 @@ sub update {
     croak 'Not implemented yet';
 }
 
-=over 4
+=item $spool->store( OPTIONS... )
 
-=item store ( OPTIONS... )
-
-I<Instance method>.
-XXX @todo doc
-
-=back
+Store a message in spool.
 
 =cut
 
-################"
-# store a message in spool
-#
 sub store {
     my $self            = shift;
     my $messageasstring = shift;
@@ -638,21 +635,13 @@ sub store {
     return 1;
 }
 
-=over 4
+=item $spool->remove_message ( OPTIONS... )
 
-=item remove_message ( OPTIONS... )
-
-I<Instance method>.
-XXX @todo doc
-
-=back
+Remove a message in spool using (messagekey,list,robot) which are a
+unique id in the spool
 
 =cut
 
-################"
-# remove a message in database spool using (messagekey,list,robot) which are a
-# unique id in the spool
-#
 sub remove_message {
     my $self = shift;
     my $key  = shift;
@@ -668,20 +657,11 @@ sub remove_message {
     return 1;
 }
 
-=over 4
+=item $spool->clean( OPTIONS... )
 
-=item clean ( OPTIONS... )
-
-I<Instance method>.
-XXX @todo doc
-
-=back
+Clean a spool by removing old messages.
 
 =cut
-
-################"
-# Clean a spool by removing old messages
-#
 
 sub clean {
     my $self   = shift;
@@ -787,5 +767,9 @@ sub get_id {
     return sprintf '%s/%s',
         $self->{'spoolname'}, ($self->{'selection_status'} || 'ok');
 }
+
+=back
+
+=cut
 
 1;
