@@ -57,7 +57,8 @@ our %global_models = (    #'crl_update_task' => 'crl_update',
 
 sub new {
     $main::logger->do_log(Sympa::Logger::DEBUG2, '(%s, %s)', @_);
-    return shift->SUPER::new('task', shift);
+    my ($class, @params) = @_;
+    return $class->SUPER::new(@params);
 }
 
 sub get_storage_name {

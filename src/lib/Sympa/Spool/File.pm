@@ -40,7 +40,6 @@ use File::Copy;
 use File::Path qw(make_path);
 
 use Sympa::Constants;
-use Sympa::Site;
 use Sympa::Tools::File;
 
 our $filename_regexp = '^(\S+)\.(\d+)\.\w+$';
@@ -69,17 +68,14 @@ XXX @todo doc
 ## Creates an object.
 sub new {
     $main::logger->do_log(Sympa::Logger::DEBUG2, '(%s, %s, %s, ...)', @_);
-    my ($pkg, $spoolname, $selection_status, %opts) = @_;
+    my ($pkg, $spoolname, $dir, $selection_status, %opts) = @_;
 
     my $self;
 
-    my $queue = 'queue' . $spoolname;
-    $queue = 'queue' if ($spoolname eq 'msg');
-    my $dir;
-    eval { $dir = Sympa::Site->$queue; };    # check if parameter is defined.
-    if ($EVAL_ERROR) {
-        $main::logger->do_log(Sympa::Logger::ERR, 'internal error unknown spool %s',
-            $spoolname);
+    if (!$dir) {
+        $main::logger->do_log(
+            Sympa::Logger::ERR, 'Missing directory parameter'
+        );
         return undef;
     }
     if ($selection_status and $selection_status eq 'bad') {

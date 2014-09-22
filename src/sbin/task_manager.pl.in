@@ -227,7 +227,9 @@ $SIG{'__DIE__'} = sub {
     Sympa::Tools::Daemon::terminate_on_unexpected_error(@_);
 };
 
-my $spool = Sympa::Spool::File::Task->new();
+my $spool = Sympa::Spool::File::Task->new(
+    'task', Sympa::Site->queuetask()
+);
 
 $logger->do_log(Sympa::Logger::NOTICE, "task_manager started");
 
