@@ -301,7 +301,7 @@ $SIG{'__DIE__'} = sub {
     Sympa::Tools::Daemon::terminate_on_unexpected_error(@_);
 };
 
-my $spool = Sympa::Spool::File->new('outgoing');
+my $spool = Sympa::Spool::File->new('outgoing', Sympa::Site->queueoutgoing());
 
 $logger->do_log(Sympa::Logger::NOTICE, "archived started");
 

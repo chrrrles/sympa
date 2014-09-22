@@ -1498,7 +1498,9 @@ sub distribute_msg {
 
         # rename update topic content id of the message
         if ($info_msg_topic) {
-            my $topicspool = Sympa::Spool::File->new('topic');
+            my $topicspool = Sympa::Spool::File->new(
+                'topic', Sympa::Site->queuetopic()
+            );
             rename(
                 "$topicspool->{'dir'}/$info_msg_topic->{'filename'}",
                 "$topicspool->{'dir'}/$self->->get_id.$new_id"
@@ -2489,7 +2491,9 @@ sub send_to_editor {
     if ($method eq 'md5') {
 
         # move message to spool  mod
-        my $modspool = Sympa::Spool::File::Key->new();
+        my $modspool = Sympa::Spool::File::Key->new(
+            'mod', Sympa::Site->queuemod()
+        );
         $modspool->store(
             $message->to_string,    #FIXME: maybe encrypted
             {   'list'    => $message->get_list()->name,
@@ -5327,7 +5331,9 @@ sub archive_msg {
                 'Do not archive message with no-archive flag for list %s',
                 $self);
         } else {
-            my $spoolarchive = Sympa::Spool::File->new('outgoing');
+            my $spoolarchive = Sympa::Spool::File->new(
+                'outgoing', Sympa::Site->queueoutgoing()
+            );
             unless (
                 $spoolarchive->store(
                     $msgtostore,
@@ -9031,7 +9037,9 @@ sub get_mod_spool_size {
     my $self = shift;
     $main::logger->do_log(Sympa::Logger::DEBUG3, 'Sympa::List::get_mod_spool_size()');
 
-    my $modspool = Sympa::Spool::File::Key->new();
+    my $modspool = Sympa::Spool::File::Key->new(
+        'mod', Sympa::Site->queuemod()
+    );
     my @messages = $modspool->get_awaiting_messages(
         {'selector' => {'list' => $self->name, 'robot' => $self->domain}});
 
@@ -10049,7 +10057,9 @@ sub tag_topic {
 
     my $topic_item = sprintf "TOPIC   %s\n", $topic_list;
     $topic_item .= sprintf "METHOD  %s\n", $method;
-    my $topicspool = Sympa::Spool::File->new('topic');
+    my $topicspool = Sympa::Spool::File->new(
+        'topic', Sympa::Site->queuetopic()
+    );
 
     return (
         $topicspool->store(
@@ -10084,7 +10094,9 @@ sub load_msg_topic {
     $main::logger->do_log(Sympa::Logger::DEBUG2, '(%s, %s)', @_);
     my ($self, $msg_id, $robot) = @_;
 
-    my $topicspool = Sympa::Spool::File->new('topic');
+    my $topicspool = Sympa::Spool::File->new(
+        'topic', Sympa::Site->queuetopic()
+    );
 
     my $topics_from_spool = $topicspool->get_message(
         {   'list'      => $self->name,
@@ -10296,7 +10308,9 @@ sub store_subscription_request {
     $main::logger->do_log(Sympa::Logger::DEBUG2, '(%s, %s, %s, %s)', @_);
     my ($self, $email, $gecos, $custom_attr) = @_;
 
-    my $subscription_request_spool = Sympa::Spool::File::Subscribe->new;
+    my $subscription_request_spool = Sympa::Spool::File::Subscribe->new(
+        'subscribe', Sympa::Site->subscribequeue()
+    );
 
     return 'already_subscribed'
         if (
@@ -10328,7 +10342,9 @@ sub get_subscription_requests {
 
     my %subscriptions;
 
-    my $subscription_request_spool = Sympa::Spool::File::Subscribe->new;
+    my $subscription_request_spool = Sympa::Spool::File::Subscribe->new(
+        'subscribe', Sympa::Site->subscribequeue()
+    );
     my @subrequests                = $subscription_request_spool->get_content(
         {   'selector'  => {'list' => $self->name, 'robot' => $self->domain},
             'selection' => '*'
@@ -10388,7 +10404,9 @@ sub get_subscription_requests {
 sub get_subscription_request_count {
     my ($self) = shift;
 
-    my $subscription_request_spool = Sympa::Spool::File::Subscribe->new;
+    my $subscription_request_spool = Sympa::Spool::File::Subscribe->new(
+        'subscribe', Sympa::Site->subscribequeue()
+    );
     return $subscription_request_spool->get_content(
         {   'selector'  => {'list' => $self->name, 'robot' => $self->domain},
             'selection' => 'count'
@@ -10402,7 +10420,9 @@ sub delete_subscription_request {
         'Sympa::List::delete_subscription_request(%s, %s)',
         $self->name, join(',', @list_of_email));
 
-    my $subscription_request_spool = Sympa::Spool::File::Subscribe->new;
+    my $subscription_request_spool = Sympa::Spool::File::Subscribe->new(
+        'subscribe', Sympa::Site->subscribequeue()
+    );
 
     my $removed = 0;
     foreach my $email (@list_of_email) {
@@ -10788,7 +10808,9 @@ sub purge {
     return undef unless $self->robot->lists($self->name);
 
     ## Remove tasks for this list
-    my $taskspool = Sympa::Spool::File::Task->new();
+    my $taskspool = Sympa::Spool::File::Task->new(
+        'task', Sympa::Site->queuetask()
+    );
     foreach my $task (
         $taskspool->get_content(
             {   'selector' =>

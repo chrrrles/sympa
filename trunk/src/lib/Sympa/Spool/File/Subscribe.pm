@@ -31,7 +31,8 @@ use Sympa::Logger;
 
 sub new {
     $main::logger->do_log(Sympa::Logger::DEBUG2, '(%s, %s)', @_);
-    return shift->SUPER::new('subscribe', shift);
+    my ($class, @params) = @_;
+    return $class->SUPER::new(@params);
 }
 
 sub sub_request_exists {
