@@ -228,7 +228,7 @@ $SIG{'__DIE__'} = sub {
 };
 
 my $spool = Sympa::Spool::File::Task->new(
-    'task', Sympa::Site->queuetask()
+    name => 'task', directory => Sympa::Site->queuetask()
 );
 
 $logger->do_log(Sympa::Logger::NOTICE, "task_manager started");

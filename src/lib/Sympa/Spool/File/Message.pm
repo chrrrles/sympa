@@ -34,9 +34,9 @@ my $filename_regexp = '^(\S+)\.(\d+)\.\w+$';
 
 sub new {
     $main::logger->do_log(Sympa::Logger::DEBUG2, '(%s, %s)', @_);
-    my ($class, @params) = @_;
+    my ($class, %params) = @_;
     return $class->SUPER::new(
-        @params,
+        %params,
         'sortby'   => 'priority',
         'selector' => {'priority' => ['z', 'ne']},
     );

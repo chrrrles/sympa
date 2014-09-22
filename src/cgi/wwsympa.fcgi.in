@@ -8415,7 +8415,7 @@ sub do_modindex {
 
     my $list_name = $list->name;
     my $modspool  = Sympa::Spool::File::Key->new(
-        'mod', Sympa::Site->queuemod()
+        name => 'mod', directory => Sympa::Site->queuemod()
     );
     my @messages  = $modspool->get_awaiting_messages(
         {'selector' => {'list' => $list_name, 'robot' => $robot_id}});
@@ -8898,7 +8898,9 @@ sub do_reject {
     }
 
     wwslog(Sympa::Logger::INFO, 'do_reject(%s)', $in{'id'});
-    my $modspool = Sympa::Spool::File::Key->new('mod', Sympa::Site->queuemod());
+    my $modspool = Sympa::Spool::File::Key->new(
+        name => 'mod', directory => Sympa::Site->queuemod()
+    );
     my ($msg, $file);
 
     $param->{'blacklist_added'}   = 0;
@@ -9084,7 +9086,9 @@ sub do_distribute {
 
     wwslog(Sympa::Logger::INFO, 'do_distribute(%s)', $in{'id'});
 
-    my $modspool = Sympa::Spool::File::Key->new('mod', Sympa::Site->queuemod());
+    my $modspool = Sympa::Spool::File::Key->new(
+        name => 'mod', directory => Sympa::Site->queuemod()
+    );
     my ($msg, $file);
 
     my @mail_command = ();
@@ -9171,7 +9175,7 @@ sub do_distribute {
     }
 
     my $incomingspool = Sympa::Spool::File::Message->new(
-        'msg', Sympa::Site->queue()
+        name => 'msg', directory => Sympa::Site->queue()
     );
     unless (
         $incomingspool->store(
@@ -9231,7 +9235,9 @@ sub do_add_frommod {
 
     ## messages
     $in{'dump'} = '';
-    my $modspool = Sympa::Spool::File::Key->new('mod', Sympa::Site->queuemod());
+    my $modspool = Sympa::Spool::File::Key->new(
+        name => 'mod', directory => Sympa::Site->queuemod()
+    );
     foreach my $id (split /,/, $in{'id'}) {
         my $message_in_spool = $modspool->get_message(
             {'list' => $list->name, 'robot' => $robot_id, 'authkey' => $id});
@@ -10176,7 +10182,7 @@ sub do_remove_arc {
         Sympa::Tracking::remove_message_by_id($list, $msgid);
     }
     my $spoolarchive = Sympa::Spool::File->new(
-        'outgoing', Sympa::Site->queueoutgoing()
+        name => 'outgoing', directory => Sympa::Site->queueoutgoing()
     );
     $spoolarchive->store($removeorder,
         {'list' => $in{'list'}, 'robot' => $robot_id});
@@ -11818,7 +11824,7 @@ sub do_rebuildarc {
     wwslog(Sympa::Logger::INFO, 'do_rebuildarc(%s, %s)', $param->{'list'}, $in{'month'});
 
     my $spoolarchive = Sympa::Spool::File->new(
-        'outgoing', Sympa::Site->queueoutgoing()
+        name => 'outgoing', directory => Sympa::Site->queueoutgoing()
     );
 
     unless (
@@ -11857,7 +11863,7 @@ sub do_rebuildallarc {
     #FIXME: past archives should be rebuilt even if archiving is disabled.
     my $errors = 0;
     my $spoolarchive = Sympa::Spool::File->new(
-        'outgoing', Sympa::Site->queueoutgoing()
+        name => 'outgoing', directory => Sympa::Site->queueoutgoing()
     );
     unless ($spoolarchive) {
         Sympa::Report::reject_report_web('intern', 'cannot fetch archive spool',
@@ -20911,7 +20917,7 @@ sub do_remind {
     }
 
     my $incomingspool = Sympa::Spool::File::Message->new(
-        'msg', Sympa::Site->queue()
+        name => 'msg', directory => Sympa::Site->queue()
     );
     unless (
         $incomingspool->store(
@@ -21994,7 +22000,7 @@ sub do_send_mail {
     my $result;
     if ($in{'sub_action'} eq 'sendmailtolist') {
         my $incomingspool = Sympa::Spool::File::Message->new(
-            'msg', Sympa::Site->queue()
+            name => 'msg', directory => Sympa::Site->queue()
         );
         $result = $incomingspool->store(
             sprintf(
@@ -22227,7 +22233,7 @@ sub do_tag_topic_by_sender {
     my $mail_command = sprintf 'QUIET CONFIRM %s', $in{'authkey'};
 
     my $incomingspool = Sympa::Spool::File::Message->new(
-        'msg', Sympa::Site->queue()
+        name => 'msg', directory => Sympa::Site->queue()
     );
     unless (
         $incomingspool->store(
