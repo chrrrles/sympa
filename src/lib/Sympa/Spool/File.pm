@@ -371,6 +371,12 @@ sub get_next_file_to_process {
     return $data;
 }
 
+sub analyze_file_name {
+    my $self = shift;
+    my $data = shift;
+    return $data;
+}
+
 sub is_relevant {
     return 1;
 }
