@@ -39,7 +39,6 @@ use English qw(-no_match_vars);
 use File::Copy;
 use File::Path qw(make_path);
 
-use Sympa::Constants;
 use Sympa::Tools;
 use Sympa::Tools::File;
 
@@ -100,7 +99,7 @@ sub new {
     $self = bless {
         'spoolname'        => $params{name},
         'selection_status' => $params{selection_status},
-        'dir'              => $params{directory},
+e       'dir'              => $params{directory},
     } => $pkg;
     $self->{'selector'} = $params{'selector'} if $params{'selector'};
     $self->{'sortby'}   = $params{'sortby'}   if $params{'sortby'};
@@ -111,14 +110,6 @@ sub new {
     $self->create_spool_dir;
 
     return $self;
-}
-
-# total spool_table count : not object oriented, just a subroutine
-sub global_count {
-    my @files          = <Sympa::Constants::SPOOLDIR/*>;
-    my $count          = @files;
-
-    return $count;
 }
 
 =back
