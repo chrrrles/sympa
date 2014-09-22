@@ -21,17 +21,23 @@ our $logger = Sympa::Logger::Memory->new();
 
 my $spool;
 
-$spool = Sympa::Spool::File->new('foo');
+$spool = Sympa::Spool::File->new(
+    name => 'foo'
+);
 ok(! defined $spool, 'spool is not defined');
 like($logger->{messages}->[-1], qr/Missing directory parameter$/, 'missing directory parameter');
 
 my $dir = File::Temp->newdir();
 
-$spool = Sympa::Spool::File->new('foo', $dir . '/bar');
+$spool = Sympa::Spool::File->new(
+    name => 'foo', directory => $dir . '/bar'
+);
 ok($spool, 'spool is defined');
 ok(-d $dir . '/bar', 'spool directory has been created');
 
-$spool = Sympa::Spool::File->new('foo', $dir . '/baz', 'bad');
+$spool = Sympa::Spool::File->new(
+    name => 'foo', directory => $dir . '/baz', selection_status => 'bad'
+);
 ok($spool, 'spool is defined');
 ok(-d $dir . '/baz/bad', 'spool subdirectory has been created');
 

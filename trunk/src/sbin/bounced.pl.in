@@ -280,7 +280,10 @@ $SIG{'__DIE__'} = sub {
     Sympa::Tools::Daemon::terminate_on_unexpected_error(@_);
 };
 
-my $spool = Sympa::Spool::File->new('bounce', Sympa::Site->queuebounce());
+my $spool = Sympa::Spool::File->new(
+    name      => 'bounce',
+    directory => Sympa::Site->queuebounce()
+);
 
 $logger->do_log(Sympa::Logger::NOTICE, "bounced started");
 

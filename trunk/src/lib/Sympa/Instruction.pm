@@ -493,9 +493,10 @@ sub _next_cmd {
     croak "error in create command : Failed to create task $model.$flavour\n"
         unless $new_task && $new_task->init();
 
-    Sympa::Spool::File::Task->new('task', Sympa::Site->queuetask())->store(
-        $new_task->{'messageastring'},
-        $new_task->get_metadata()
+    Sympa::Spool::File::Task->new(
+        name => 'task', directory => Sympa::Site->queuetask()
+    )->store(
+        $new_task->{'messageastring'}, $new_task->get_metadata()
     );
 
     my $human_date = Sympa::Tools::Time::adate($date);
