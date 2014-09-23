@@ -38,7 +38,6 @@ use Sympa::List; # FIXME: circular dependency
 use Sympa::Logger;
 use Sympa::Robot;
 use Sympa::Site;
-use Sympa::Scenario;
 use Sympa::Tools::Data;
 use Sympa::Tools::Time;
 
