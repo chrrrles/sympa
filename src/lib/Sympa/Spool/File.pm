@@ -99,7 +99,7 @@ sub new {
     $self = bless {
         'spoolname'        => $params{name},
         'selection_status' => $params{selection_status},
-e       'dir'              => $params{directory},
+        'dir'              => $params{directory},
     } => $pkg;
     $self->{'selector'} = $params{'selector'} if $params{'selector'};
     $self->{'sortby'}   = $params{'sortby'}   if $params{'sortby'};
