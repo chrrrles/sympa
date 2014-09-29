@@ -15,11 +15,15 @@ use Test::More;
 use Sympa::Spool::File::Key;
 use Sympa::Logger::Memory;
 
-plan tests => 9;
+plan tests => 11;
 
 our $logger = Sympa::Logger::Memory->new();
 
 my $spool;
+
+$spool = Sympa::Spool::File::Key->new();
+ok(! defined $spool, 'spool is not defined');
+like($logger->{messages}->[-1], qr/Missing name parameter$/, 'missing name parameter');
 
 $spool = Sympa::Spool::File::Key->new(name => 'foo');
 ok(! defined $spool, 'spool is not defined');

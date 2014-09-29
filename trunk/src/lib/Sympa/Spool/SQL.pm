@@ -83,6 +83,13 @@ sub new {
     my $sortby           = $params{sortby};
     my $way              = $params{way};
 
+    if (!$spoolname) {
+        $main::logger->do_log(
+            Sympa::Logger::ERR, 'Missing name parameter'
+        );
+        return undef;
+    }
+
     unless ($spoolname =~
         /^(auth)|(bounce)|(digest)|(bulk)|(expire)|(mod)|(msg)|(archive)|(automatic)|(subscribe)|(signoff)|(topic)|(validated)|(task)$/
         ) {
@@ -681,8 +688,6 @@ sub clean {
         $delay
     );
 
-    my $spoolname = $self->{'spoolname'};
-    return undef unless $spoolname;
     return undef unless $delay;
 
     my $freshness_date = time - ($delay * 60 * 60 * 24);
@@ -690,7 +695,7 @@ sub clean {
     my $sqlquery =
         sprintf
         "DELETE FROM spool_table WHERE spoolname_spool = %s AND date_spool < %s ",
-        Sympa::DatabaseManager::quote($spoolname), $freshness_date;
+        Sympa::DatabaseManager::quote($self->{spoolname}), $freshness_date;
     if ($self->{'selection_status'} eq 'bad') {
         $sqlquery = $sqlquery . " AND message_status_spool = 'bad' ";
     } else {
