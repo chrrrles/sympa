@@ -666,7 +666,7 @@ sub remove_message {
     return 1;
 }
 
-=item $spool->clean($filter)
+=item $spool->clean($delay)
 
 Clean the spool by removing old messages.
 
@@ -674,14 +674,13 @@ Clean the spool by removing old messages.
 
 sub clean {
     my $self   = shift;
-    my $filter = shift;
+    my $delay = shift;
     $main::logger->do_log(
         Sympa::Logger::DEBUG, 'Cleaning spool %s (%s), delay: %s',
         $self->{'spoolname'}, $self->{'selection_status'},
-        $filter->{'delay'}
+        $delay
     );
     my $bad   = 0;
-    my $delay = $filter->{'delay'};
     if ($self->{'selection_status'} eq 'bad') {
         $bad = 1;
     }
