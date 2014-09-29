@@ -86,12 +86,12 @@ sub new {
     $main::logger->do_log(Sympa::Logger::DEBUG2, '(%s, %s, %s, ...)', @_);
     my ($class, %params) = @_;
 
-    my $name             = $params{name};
-    my $directory        = $params{directory};
-    my $selection_status = $params{status};
-    my $selector         = $params{selector};
-    my $sortby           = $params{sortby};
-    my $way              = $params{way};
+    my $name      = $params{name};
+    my $directory = $params{directory};
+    my $status    = $params{status};
+    my $selector  = $params{selector};
+    my $sortby    = $params{sortby};
+    my $way       = $params{way};
 
     if (!$name) {
         $main::logger->do_log(
@@ -107,14 +107,14 @@ sub new {
         return undef;
     }
 
-    if ($selection_status and $selection_status eq 'bad') {
+    if ($status and $status eq 'bad') {
         $directory .= '/bad';
     }
 
     my $self = bless {
-        'spoolname'        => $name,
-        'selection_status' => $selection_status,
-        'dir'              => $directory,
+        name      => $name,
+        status    => $status,
+        directory => $directory,
     }, $class;
 
     $self->{'selector'} = $selector if $selector;
@@ -312,7 +312,7 @@ sub parse_filename {
     }
 
     my $data = {
-        'file'       => $self->{'dir'} . '/' . $key,
+        'file'       => $self->{directory} . '/' . $key,
         'messagekey' => $key,
     };
 
@@ -409,7 +409,7 @@ sub is_readable {
     my $self = shift;
     my $key  = shift;
 
-    if (-f "$self->{'dir'}/$key" && -r _) {
+    if (-f "$self->{directory}/$key" && -r _) {
         return 1;
     } else {
         return 0;
@@ -422,11 +422,11 @@ sub get_file_content {
     my $key  = shift;
 
     my $fh;
-    unless (open $fh, $self->{'dir'} . '/' . $key) {
+    unless (open $fh, $self->{directory} . '/' . $key) {
         $main::logger->do_log(
             Sympa::Logger::ERR,
             'Unable to open file %s: %s',
-            $self->{'dir'} . '/' . $key, $ERRNO
+            $self->{directory} . '/' . $key, $ERRNO
         );
         return undef;
     }
@@ -491,16 +491,16 @@ sub get_dirs_in_spool {
 sub _refresh_spool_files_list {
     my $self = shift;
     $main::logger->do_log(Sympa::Logger::DEBUG2, '%s', $self->get_id);
-    unless (opendir SPOOLDIR, $self->{'dir'}) {
+    unless (opendir SPOOLDIR, $self->{directory}) {
         $main::logger->do_log(
             Sympa::Logger::ERR,
             'Unable to access %s spool. Please check proper rights are set;',
-            $self->{'dir'}
+            $self->{directory}
         );
         return undef;
     }
     my @qfile =
-        sort Sympa::Tools::by_date grep { !/^\./ && -f "$self->{'dir'}/$_" }
+        sort Sympa::Tools::by_date grep { !/^\./ && -f "$self->{directory}/$_" }
         readdir(SPOOLDIR);
     closedir(SPOOLDIR);
     $self->{'spool_files_list'} = \@qfile;
@@ -510,16 +510,16 @@ sub _refresh_spool_files_list {
 sub _refresh_spool_dirs_list {
     my $self = shift;
     $main::logger->do_log(Sympa::Logger::DEBUG2, '%s', $self->get_id);
-    unless (opendir SPOOLDIR, $self->{'dir'}) {
+    unless (opendir SPOOLDIR, $self->{directory}) {
         $main::logger->do_log(
             Sympa::Logger::ERR,
             'Unable to access %s spool. Please check proper rights are set;',
-            $self->{'dir'}
+            $self->{directory}
         );
         return undef;
     }
     my @qdir =
-        sort Sympa::Tools::by_date grep { !/^(\.\.|\.)$/ && -d "$self->{'dir'}/$_" }
+        sort Sympa::Tools::by_date grep { !/^(\.\.|\.)$/ && -d "$self->{directory}/$_" }
         readdir(SPOOLDIR);
     closedir(SPOOLDIR);
     $self->{'spool_dirs_list'} = \@qdir;
@@ -529,8 +529,8 @@ sub _refresh_spool_dirs_list {
 sub _create_spool_dir {
     my $self = shift;
     $main::logger->do_log(Sympa::Logger::DEBUG, '%s', $self->get_id);
-    unless (-d $self->{'dir'}) {
-        make_path($self->{'dir'});
+    unless (-d $self->{directory}) {
+        make_path($self->{directory});
     }
 }
 
@@ -543,27 +543,27 @@ sub move_to_bad {
     my $self = shift;
     my $key  = shift;
 
-    unless (-d $self->{'dir'} . '/bad') {
-        make_path($self->{'dir'} . '/bad');
+    unless (-d $self->{directory} . '/bad') {
+        make_path($self->{directory} . '/bad');
     }
     unless (
         File::Copy::copy(
-            $self->{'dir'} . '/' . $key,
-            $self->{'dir'} . '/bad/' . $key
+            $self->{directory} . '/' . $key,
+            $self->{directory} . '/bad/' . $key
         )
         ) {
         $main::logger->do_log(
             Sympa::Logger::ERR,
             'Could not move file %s to spool bad %s: %s',
-            $self->{'dir'} . '/' . $key,
-            $self->{'dir'} . '/bad', $ERRNO
+            $self->{directory} . '/' . $key,
+            $self->{directory} . '/bad', $ERRNO
         );
         return undef;
     }
-    unless (unlink($self->{'dir'} . '/' . $key)) {
+    unless (unlink($self->{directory} . '/' . $key)) {
         $main::logger->do_log(Sympa::Logger::ERR,
             "Could not unlink message %s/%s . Exiting",
-            $self->{'dir'}, $key);
+            $self->{directory}, $key);
     }
     $self->unlock_message($key);
     return 1;
@@ -592,7 +592,7 @@ sub get_message {
 #    my $self = shift;
 #    my $messagekey = shift;
 #
-#    $main::logger->do_log(Sympa::Logger::DEBUG, 'Spool::unlock_message(%s,%s)',$self->{'spoolname'}, $messagekey);
+#    $main::logger->do_log(Sympa::Logger::DEBUG, 'Spool::unlock_message(%s,%s)',$self->{name}, $messagekey);
 #    return ( $self->update({'messagekey' => $messagekey},
 #			   {'messagelock' => 'NULL'}));
 #}
@@ -628,9 +628,9 @@ sub store {
     my $target_file     = $param->{'filename'};
     $target_file ||= $self->get_storage_name($param);
     my $fh;
-    unless (open $fh, ">", "$self->{'dir'}/$target_file") {
+    unless (open $fh, ">", "$self->{directory}/$target_file") {
         $main::logger->do_log(Sympa::Logger::ERR, 'Unable to write file to spool %s',
-            $self->{'dir'});
+            $self->{directory});
         return undef;
     }
     print $fh $messageasstring;
@@ -648,11 +648,11 @@ sub remove_message {
     my $self = shift;
     my $key  = shift;
 
-    unless (unlink $self->{'dir'} . '/' . $key) {
+    unless (unlink $self->{directory} . '/' . $key) {
         $main::logger->do_log(
             Sympa::Logger::ERR,
             'Unable to remove file %s: %s',
-            $self->{'dir'} . '/' . $key, $ERRNO
+            $self->{directory} . '/' . $key, $ERRNO
         );
         return undef;
     }
@@ -670,7 +670,7 @@ sub clean {
     my $delay = shift;
     $main::logger->do_log(
         Sympa::Logger::DEBUG, 'Cleaning spool %s (%s), delay: %s',
-        $self->{'spoolname'}, $self->{'selection_status'},
+        $self->{name}, $self->{status},
         $delay
     );
 
@@ -681,15 +681,15 @@ sub clean {
 
     my @to_kill = $self->get_files_in_spool;
     foreach my $f (@to_kill) {
-        if ((stat "$self->{'dir'}/$f")[9] < $freshness_date) {
-            if (unlink("$self->{'dir'}/$f")) {
+        if ((stat "$self->{directory}/$f")[9] < $freshness_date) {
+            if (unlink("$self->{directory}/$f")) {
                 $deleted++;
                 $main::logger->do_log(Sympa::Logger::NOTICE, 'Deleting old file %s',
-                    "$self->{'dir'}/$f");
+                    "$self->{directory}/$f");
             } else {
                 $main::logger->do_log(Sympa::Logger::NOTICE,
                     'unable to delete old file %s: %s',
-                    "$self->{'dir'}/$f", $ERRNO);
+                    "$self->{directory}/$f", $ERRNO);
             }
         } else {
             last;
@@ -697,15 +697,15 @@ sub clean {
     }
     @to_kill = $self->get_dirs_in_spool;
     foreach my $d (@to_kill) {
-        if ((stat "$self->{'dir'}/$d")[9] < $freshness_date) {
-            if (Sympa::Tools::File::remove_dir("$self->{'dir'}/$d")) {
+        if ((stat "$self->{directory}/$d")[9] < $freshness_date) {
+            if (Sympa::Tools::File::remove_dir("$self->{directory}/$d")) {
                 $deleted++;
                 $main::logger->do_log(Sympa::Logger::NOTICE, 'Deleting old file %s',
-                    "$self->{'dir'}/$d");
+                    "$self->{directory}/$d");
             } else {
                 $main::logger->do_log(Sympa::Logger::NOTICE,
                     'unable to delete old file %s: %s',
-                    "$self->{'dir'}/$d", $ERRNO);
+                    "$self->{directory}/$d", $ERRNO);
             }
         } else {
             last;
@@ -714,7 +714,7 @@ sub clean {
 
     $main::logger->do_log(Sympa::Logger::DEBUG,
         "%s entries older than %s days removed from spool %s",
-        $deleted, $delay, $self->{'spoolname'});
+        $deleted, $delay, $self->{name});
     return 1;
 }
 
@@ -771,7 +771,7 @@ Return spool identifier.
 sub get_id {
     my $self = shift;
     return sprintf '%s/%s',
-        $self->{'spoolname'}, ($self->{'selection_status'} || 'ok');
+        $self->{name}, ($self->{status} || 'ok');
 }
 
 =back
