@@ -60,7 +60,7 @@ Returns a new L<Sympa::SharedDocument> object, or I<undef> for failure.
 
 sub new {
     $main::logger->do_log(Sympa::Logger::DEBUG2, '(%s, %s, %s, %s)', @_);
-    my ($pkg, %params) = @_;
+    my ($class, %params) = @_;
 
     my $list      = $params{list};
     my $path      = $params{path};
@@ -296,8 +296,7 @@ sub new {
 
     $document->{'list'} = $list;
 
-    ## Bless Message object
-    bless $document, $pkg;
+    bless $document, $class;
 
     return $document;
 }
