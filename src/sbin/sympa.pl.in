@@ -2100,7 +2100,7 @@ sub SendDigest {
 
     foreach my $digest (
         $digestspool->get_content(
-            {'selection' => 'messagekey,list,robot,date'}
+            'selection' => 'messagekey,list,robot,date'
         )
         ) {
         my $list = Sympa::List->new($digest->{'list'}, $digest->{'robot'});
