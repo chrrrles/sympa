@@ -61,6 +61,7 @@ nobase_modules_DATA = Sympa/Admin.pm \
 		      Sympa/SharedDocument.pm \
 		      Sympa/Site.pm \
 		      Sympa/Site_r.pm \
+		      Sympa/Spool.pm \
 		      Sympa/Spool/File.pm \
 		      Sympa/Spool/File/Key.pm \
 		      Sympa/Spool/File/Message.pm \
