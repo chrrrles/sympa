@@ -34,7 +34,7 @@ wwsympa, wwsympa.fcgi - Sympa web interface
 
 =head1 DESCRIPTION 
 
-This FastCGI script completely handles all aspects of the Sympa web interface
+This CGI script completely handles all aspects of the Sympa web interface
 
 =cut 
 
