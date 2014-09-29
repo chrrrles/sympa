@@ -21,6 +21,16 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+=head1 NAME
+
+Sympa::Spool::SQL - SQL-based spool
+
+=head1 DESCRIPTION
+
+This class implements a spool using a relational database as storage backend.
+
+=cut
+
 package Sympa::Spool::SQL;
 
 use strict;
