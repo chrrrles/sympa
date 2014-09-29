@@ -113,7 +113,7 @@ sub new {
 
     $main::logger->do_log(Sympa::Logger::DEBUG3, 'Spool to scan "%s"', $directory);
 
-    $self->create_spool_dir;
+    $self->_create_spool_dir();
 
     return $self;
 }
@@ -477,7 +477,7 @@ sub refresh_spool_files_list {
     my $self = shift;
     $main::logger->do_log(Sympa::Logger::DEBUG2, '%s', $self->get_id);
     unless (-d $self->{'dir'}) {
-        $self->create_spool_dir;
+        $self->_create_spool_dir;
     }
     unless (opendir SPOOLDIR, $self->{'dir'}) {
         $main::logger->do_log(
@@ -499,7 +499,7 @@ sub refresh_spool_dirs_list {
     my $self = shift;
     $main::logger->do_log(Sympa::Logger::DEBUG2, '%s', $self->get_id);
     unless (-d $self->{'dir'}) {
-        $self->create_spool_dir;
+        $self->_create_spool_dir();
     }
     unless (opendir SPOOLDIR, $self->{'dir'}) {
         $main::logger->do_log(
@@ -517,7 +517,7 @@ sub refresh_spool_dirs_list {
     return 1;
 }
 
-sub create_spool_dir {
+sub _create_spool_dir {
     my $self = shift;
     $main::logger->do_log(Sympa::Logger::DEBUG, '%s', $self->get_id);
     unless (-d $self->{'dir'}) {
