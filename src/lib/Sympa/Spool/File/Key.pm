@@ -103,18 +103,18 @@ sub validate_message {
 
     unless (
         File::Copy::copy(
-            $self->{'dir'} . '/' . $key,
-            $self->{'dir'} . '/' . $key . '.distribute'
+            $self->{directory} . '/' . $key,
+            $self->{directory} . '/' . $key . '.distribute'
         )
         ) {
         $main::logger->do_log(Sympa::Logger::ERR, 'Could not rename file %s/%s: %s',
-            $self->{'dir'}, $key, $ERRNO);
+            $self->{directory}, $key, $ERRNO);
         return undef;
     }
-    unless (unlink($self->{'dir'} . '/' . $key)) {
+    unless (unlink($self->{directory} . '/' . $key)) {
         $main::logger->do_log(Sympa::Logger::ERR,
             'Could not unlink message %s/%s: %s',
-            $self->{'dir'}, $key, $ERRNO);
+            $self->{directory}, $key, $ERRNO);
     }
     return 1;
 }
