@@ -77,28 +77,29 @@ sub new {
     $main::logger->do_log(Sympa::Logger::DEBUG2, '(%s, %s, %s)', @_);
     my ($class, %params) = @_;
 
-    my $spoolname        = $params{name};
-    my $selection_status = $params{status};
-    my $selector         = $params{selector};
-    my $sortby           = $params{sortby};
-    my $way              = $params{way};
+    my $name     = $params{name};
+    my $status   = $params{status};
+    my $selector = $params{selector};
+    my $sortby   = $params{sortby};
+    my $way      = $params{way};
 
-    if (!$spoolname) {
+    if (!$name) {
         $main::logger->do_log(
             Sympa::Logger::ERR, 'Missing name parameter'
         );
         return undef;
     }
 
-    unless ($selection_status
-        and ($selection_status eq 'bad' or $selection_status eq 'ok')) {
-        $selection_status = 'ok';
+    unless ($status
+        and ($status eq 'bad' or $status eq 'ok')) {
+        $status = 'ok';
     }
 
     my $self = bless {
-        'spoolname'        => $spoolname,
-        'selection_status' => $selection_status,
+        name   => $name,
+        status => $status,
     }, $class;
+
     $self->{'selector'} = $selector if $selector;
     $self->{'sortby'}   = $sortby   if $sortby;
     $self->{'way'}      = $way      if $way;
@@ -173,7 +174,7 @@ sub get_content {
     my $way     = $data->{'way'}    || $self->{'way'};       # asc or desc
 
     my $sql_where = _sqlselector($selector);
-    if ($self->{'selection_status'} eq 'bad') {
+    if ($self->{status} eq 'bad') {
         $sql_where = $sql_where . " AND message_status_spool = 'bad' ";
     } else {
         $sql_where = $sql_where . " AND message_status_spool <> 'bad' ";
@@ -192,7 +193,7 @@ sub get_content {
     $statement =
         $statement
         . sprintf " FROM spool_table WHERE %s AND spoolname_spool = %s ",
-        $sql_where, Sympa::DatabaseManager::quote($self->{'spoolname'});
+        $sql_where, Sympa::DatabaseManager::quote($self->{name});
 
     if ($orderby) {
         $statement = $statement . ' ORDER BY ' . $orderby . '_spool ';
@@ -218,8 +219,8 @@ sub get_content {
                 if ($message->{'message'});
             $message->{'listname'} = $message->{'list'
                 }; # duplicated because "list" is a tt2 method that convert a string to an array of chars so you can't test  [% IF  message.list %] because it is always defined!!!
-            $message->{'status'}    = $self->{'selection_status'};
-            $message->{'spoolname'} = $self->{'spoolname'};
+            $message->{'status'}    = $self->{status};
+            $message->{'spoolname'} = $self->{name};
             push @messages, $message;
 
             last if $page_size and $page_size <= scalar @messages;
@@ -241,7 +242,7 @@ sub next {
 
     my $sql_where = _sqlselector($self->{'selector'});
 
-    if ($self->{'selection_status'} eq 'bad') {
+    if ($self->{status} eq 'bad') {
         $sql_where = $sql_where . " AND message_status_spool = 'bad' ";
     } else {
         $sql_where = $sql_where . " AND message_status_spool <> 'bad' ";
@@ -259,12 +260,12 @@ sub next {
                 (priority_spool <> 'z' OR priority_spool IS NULL) AND %s
           ORDER by priority_spool, date_spool
           %s},
-            Sympa::DatabaseManager::quote($self->{'spoolname'}), $sql_where,
+            Sympa::DatabaseManager::quote($self->{name}), $sql_where,
             Sympa::DatabaseManager::get_limit_clause({'rows_count' => 1})
         );
         unless ($sth) {
             $main::logger->do_log(Sympa::Logger::ERR, 'Could not search spool %s',
-                $self->{'spoolname'});
+                $self->{name});
             return undef;
         }
         $messagekey = $sth->fetchrow_array();
@@ -282,7 +283,7 @@ sub next {
         );
         unless ($sth) {
             $main::logger->do_log(Sympa::Logger::ERR, 'Could not update spool %s',
-                $self->{'spoolname'});
+                $self->{name});
             return undef;
         }
         unless ($sth->rows) {    # locked by another process?  retry.
@@ -322,7 +323,7 @@ sub next {
         return undef;
     }
 
-    $message->{'spoolname'} = $self->{'spoolname'};
+    $message->{'spoolname'} = $self->{name};
 
     ## add objects
     my $robot_id = $message->{'robot'};
@@ -389,7 +390,7 @@ sub get_message {
       FROM spool_table
       WHERE spoolname_spool = %s%s
       %s},
-        $all, Sympa::DatabaseManager::quote($self->{'spoolname'}),
+        $all, Sympa::DatabaseManager::quote($self->{name}),
         ($sqlselector ? " AND $sqlselector" : ''),
         Sympa::DatabaseManager::get_limit_clause({'rows_count' => 1})
     );
@@ -413,7 +414,7 @@ sub get_message {
     $message->{'lock'} = $message->{'messagelock'};
     $message->{'messageasstring'} =
         MIME::Base64::decode($message->{'message'});
-    $message->{'spoolname'} = $self->{'spoolname'};
+    $message->{'spoolname'} = $self->{name};
 
     if ($message->{'list'} && $message->{'robot'}) {
         my $robot = Sympa::Robot->new($message->{'robot'});
@@ -439,7 +440,7 @@ sub unlock_message {
     my $messagekey = shift;
 
     $main::logger->do_log(Sympa::Logger::DEBUG, 'Spool::unlock_message(%s,%s)',
-        $self->{'spoolname'}, $messagekey);
+        $self->{name}, $messagekey);
     return (
         $self->update(
             {'messagekey'  => $messagekey},
@@ -457,7 +458,7 @@ sub update {
     my $values   = shift;
 
     $main::logger->do_log(Sympa::Logger::DEBUG2,
-        "Spool::update($self->{'spoolname'}, list = $selector->{'list'}, robot = $selector->{'robot'}, messagekey = $selector->{'messagekey'}"
+        "Spool::update($self->{name}, list = $selector->{'list'}, robot = $selector->{'robot'}, messagekey = $selector->{'messagekey'}"
     );
 
     my $where = _sqlselector($selector);
@@ -472,7 +473,7 @@ sub update {
 
     # update can be used in order to move a message from a spool to another
     # one
-    $values->{'spoolname'} = $self->{'spoolname'}
+    $values->{'spoolname'} = $self->{name}
         unless ($values->{'spoolname'});
 
     foreach my $meta (keys %$values) {
@@ -547,10 +548,10 @@ sub store {
 
     my $b64msg = MIME::Base64::encode($message_asstring);
     my $message;
-    if (   $self->{'spoolname'} ne 'task'
+    if (   $self->{name} ne 'task'
         && $message_asstring    ne 'rebuild'
-        && $self->{'spoolname'} ne 'digest'
-        && $self->{'spoolname'} ne 'subscribe') {
+        && $self->{name} ne 'digest'
+        && $self->{name} ne 'subscribe') {
         $message = Sympa::Message->new(
             'messageasstring' => $message_asstring,
             'noxsympato'      => 1
@@ -605,7 +606,7 @@ sub store {
 	      VALUES (?, ?, ?%s)},
             $insertpart1, $insertpart2
         ),
-        $self->{'spoolname'},
+        $self->{name},
         $lock,
         $b64msg,
         @insertparts
@@ -648,7 +649,7 @@ sub remove_message {
     my $sth = Sympa::DatabaseManager::do_query(
         q{DELETE FROM spool_table
       WHERE spoolname_spool = %s%s},
-        Sympa::DatabaseManager::quote($self->{'spoolname'}),
+        Sympa::DatabaseManager::quote($self->{name}),
         ($sqlselector ? " AND $sqlselector" : '')
     );
 
@@ -680,7 +681,7 @@ sub clean {
     my $delay = shift;
     $main::logger->do_log(
         Sympa::Logger::DEBUG, 'Cleaning spool %s (%s), delay: %s',
-        $self->{'spoolname'}, $self->{'selection_status'},
+        $self->{name}, $self->{status},
         $delay
     );
 
@@ -692,7 +693,7 @@ sub clean {
         sprintf
         "DELETE FROM spool_table WHERE spoolname_spool = %s AND date_spool < %s ",
         Sympa::DatabaseManager::quote($self->{spoolname}), $freshness_date;
-    if ($self->{'selection_status'} eq 'bad') {
+    if ($self->{status} eq 'bad') {
         $sqlquery = $sqlquery . " AND message_status_spool = 'bad' ";
     } else {
         $sqlquery = $sqlquery . " AND message_status_spool <> 'bad'";
@@ -702,7 +703,7 @@ sub clean {
     $sth->finish;
     $main::logger->do_log(Sympa::Logger::DEBUG,
         "%s entries older than %s days removed from spool %s",
-        $sth->rows, $delay, $self->{'spoolname'});
+        $sth->rows, $delay, $self->{name});
     return 1;
 }
 
@@ -799,7 +800,7 @@ Return spool identifier.
 
 sub get_id {
     my $self = shift;
-    return sprintf '%s/%s', $self->{'spoolname'}, $self->{'selection_status'};
+    return sprintf '%s/%s', $self->{name}, $self->{status};
 }
 
 =back
