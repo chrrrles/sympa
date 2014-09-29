@@ -651,25 +651,25 @@ sub remove_message {
     return 1;
 }
 
-=item $spool->clean($filter)
+=item $spool->clean($delay)
 
 Clean the spool by removing old messages.
 
 =cut
 
 sub clean {
-    my $self   = shift;
-    my $filter = shift;
+    my $self  = shift;
+    my $delay = shift;
     $main::logger->do_log(
         Sympa::Logger::DEBUG, 'Cleaning spool %s (%s), delay: %s',
         $self->{'spoolname'}, $self->{'selection_status'},
-        $filter->{'delay'}
+        $delay
     );
 
     return undef unless $self->{'spoolname'};
-    return undef unless $filter->{'delay'};
+    return undef unless $delay;
 
-    my $freshness_date = time - ($filter->{'delay'} * 60 * 60 * 24);
+    my $freshness_date = time - ($delay * 60 * 60 * 24);
     my $deleted = 0;
 
     my @to_kill = $self->get_files_in_spool;
@@ -707,7 +707,7 @@ sub clean {
 
     $main::logger->do_log(Sympa::Logger::DEBUG,
         "%s entries older than %s days removed from spool %s",
-        $deleted, $filter->{'delay'}, $self->{'spoolname'});
+        $deleted, $delay, $self->{'spoolname'});
     return 1;
 }
 

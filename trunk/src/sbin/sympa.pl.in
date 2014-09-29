@@ -510,18 +510,15 @@ while ($signal ne 'term') {
         if ($index_cleanqueue++ >= 1) {
             $index_cleanqueue = 0;
             $logger->do_log(Sympa::Logger::DEBUG, 'Cleaning spools');
-            $bad_msg_spool->clean({'delay' => Sympa::Site->clean_delay_queue});
-            $bad_outgoing_spool->clean({'delay' => Sympa::Site->clean_delay_queueoutgoing});
-            $bad_bounce_spool->clean(
-                {'delay' => Sympa::Site->clean_delay_queuebounce});
-            $mod_spool->clean({'delay' => Sympa::Site->clean_delay_queuemod});
-            $auth_spool->clean({'delay' => Sympa::Site->clean_delay_queueauth});
-            $topic_spool->clean({'delay' => Sympa::Site->clean_delay_queuetopic});
-            $subscribe_spool->clean(
-                {'delay' => Sympa::Site->clean_delay_queuesubscribe});
-            $signoff_spool->clean({'delay' => Sympa::Site->clean_delay_queuesignoff});
-            $automatic_spool->clean(
-                {'delay' => Sympa::Site->clean_delay_queueautomatic});
+            $bad_msg_spool->clean(Sympa::Site->clean_delay_queue);
+            $bad_outgoing_spool->clean(Sympa::Site->clean_delay_queueoutgoing);
+            $bad_bounce_spool->clean(Sympa::Site->clean_delay_queuebounce);
+            $mod_spool->clean(Sympa::Site->clean_delay_queuemod);
+            $auth_spool->clean(Sympa::Site->clean_delay_queueauth);
+            $topic_spool->clean(Sympa::Site->clean_delay_queuetopic);
+            $subscribe_spool->clean(Sympa::Site->clean_delay_queuesubscribe);
+            $signoff_spool->clean(Sympa::Site->clean_delay_queuesignoff);
+            $automatic_spool->clean(Sympa::Site->clean_delay_queueautomatic);
 
             # this is not a message spool
             Sympa::Tools::File::clean_dir(Sympa::Site->tmpdir, Sympa::Site->clean_delay_tmpdir);
