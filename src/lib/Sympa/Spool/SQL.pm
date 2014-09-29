@@ -90,13 +90,6 @@ sub new {
         return undef;
     }
 
-    unless ($spoolname =~
-        /^(auth)|(bounce)|(digest)|(bulk)|(expire)|(mod)|(msg)|(archive)|(automatic)|(subscribe)|(signoff)|(topic)|(validated)|(task)$/
-        ) {
-        $main::logger->do_log(Sympa::Logger::ERR, 'internal error unknown spool %s',
-            $spoolname);
-        return undef;
-    }
     unless ($selection_status
         and ($selection_status eq 'bad' or $selection_status eq 'ok')) {
         $selection_status = 'ok';
