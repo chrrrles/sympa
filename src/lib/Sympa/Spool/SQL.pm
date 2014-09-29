@@ -59,7 +59,7 @@ Parameters:
 
 =item * I<name>: the spool name
 
-=item * I<status>: FIXME
+=item * I<status>: selection status (ok|bad)
 
 =item * I<selector>: FIXME
 
@@ -78,7 +78,7 @@ sub new {
     my ($class, %params) = @_;
 
     my $name     = $params{name};
-    my $status   = $params{status};
+    my $status   = $params{status} || 'ok';
     my $selector = $params{selector};
     my $sortby   = $params{sortby};
     my $way      = $params{way};
@@ -90,8 +90,7 @@ sub new {
         return undef;
     }
 
-    unless ($status
-        and ($status eq 'bad' or $status eq 'ok')) {
+    if ($status ne 'ok' and $status ne 'bad') {
         $status = 'ok';
     }
 

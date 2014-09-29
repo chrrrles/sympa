@@ -68,7 +68,7 @@ Parameters:
 
 =item * I<directory>: the spool directory
 
-=item * I<status>: FIXME
+=item * I<status>: selection status (ok|bad)
 
 =item * I<selector>: FIXME
 
@@ -88,7 +88,7 @@ sub new {
 
     my $name      = $params{name};
     my $directory = $params{directory};
-    my $status    = $params{status};
+    my $status    = $params{status} || 'ok';
     my $selector  = $params{selector};
     my $sortby    = $params{sortby};
     my $way       = $params{way};
@@ -107,7 +107,11 @@ sub new {
         return undef;
     }
 
-    if ($status and $status eq 'bad') {
+    if ($status ne 'ok' and $status ne 'bad') {
+        $status = 'ok';
+    }
+
+    if ($status eq 'bad') {
         $directory .= '/bad';
     }
 
@@ -773,8 +777,7 @@ Return spool identifier.
 
 sub get_id {
     my $self = shift;
-    return sprintf '%s/%s',
-        $self->{name}, ($self->{status} || 'ok');
+    return sprintf '%s/%s', $self->{name}, $self->{status};
 }
 
 =back
