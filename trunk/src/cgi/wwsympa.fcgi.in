@@ -8420,7 +8420,8 @@ sub do_modindex {
         name => 'mod', directory => Sympa::Site->queuemod()
     );
     my @messages  = $modspool->get_awaiting_messages(
-        {'selector' => {'list' => $list_name, 'robot' => $robot_id}});
+        selector => {'list' => $list_name, 'robot' => $robot_id}
+    );
     foreach my $message_in_spool (@messages) {
         my $message = undef;
         $message = Sympa::Message->new(%$message_in_spool)
@@ -23455,13 +23456,12 @@ sub do_viewspools {
         $selector{'list'} = $in{'list'};
     }
     my @messages = $spool->get_content(
-        {   'selector'  => \%selector,
-            'selection' => '*_but_message',
-            'offset'    => $offset,
-            'page_size' => $spool_page_size,
-            'sortby'    => $in{'sortby'},
-            'way'       => $in{'way'}
-        }
+        'selector'  => \%selector,
+        'selection' => '*_but_message',
+        'offset'    => $offset,
+        'page_size' => $spool_page_size,
+        'sortby'    => $in{'sortby'},
+        'way'       => $in{'way'}
     );
     foreach my $message (@messages) {
         unless (defined $message) {
@@ -23519,7 +23519,9 @@ sub do_viewspool_message {
     }
     my $spool = Sympa::Spool::SQL->new(name => $spoolname, status => $status);
     my @messages = $spool->get_content(
-        {'selector' => {'messagekey' => $messagekey}, 'selection' => '*'});
+        selector  => {'messagekey' => $messagekey},
+        selection => '*'
+    );
 
     unless ($#messages == 0) {
         Sympa::Report::reject_report_web('intern', 'could not find message');
@@ -23609,7 +23611,9 @@ sub do_viewspool_message_dump {
     }
     my $spool = Sympa::Spool::SQL->new(name => $spoolname, status => $status);
     my @messages = $spool->get_content(
-        {'selector' => {'messagekey' => $messagekey}, 'selection' => '*'});
+        selector  => {'messagekey' => $messagekey},
+        selection => '*'
+    );
 
     unless ($#messages == 0) {
         Sympa::Report::reject_report_web('intern', 'could not find message');

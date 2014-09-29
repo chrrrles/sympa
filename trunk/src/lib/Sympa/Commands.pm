@@ -3203,11 +3203,10 @@ sub modindex {
 
     foreach my $message_in_spool (
         $modspool->get_content(
-            {   'selector'  => {'list' => $name, 'robot' => $robot->domain},
-                'selection' => '*',
-                'sortby'    => 'date',
-                'way'       => 'asc'
-            }
+            selector  => {'list' => $name, 'robot' => $robot->domain},
+            selection => '*',
+            sortby    => 'date',
+            way       => 'asc'
         )
         ) {
         my $message = undef;

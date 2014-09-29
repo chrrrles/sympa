@@ -9043,7 +9043,8 @@ sub get_mod_spool_size {
         name => 'mod', directory => Sympa::Site->queuemod()
     );
     my @messages = $modspool->get_awaiting_messages(
-        {'selector' => {'list' => $self->name, 'robot' => $self->domain}});
+        selector => {'list' => $self->name, 'robot' => $self->domain}
+    );
 
     return $#messages + 1;
 }
@@ -10349,10 +10350,9 @@ sub get_subscription_requests {
         name      => 'subscribe',
         directory => Sympa::Site->subscribequeue()
     );
-    my @subrequests                = $subscription_request_spool->get_content(
-        {   'selector'  => {'list' => $self->name, 'robot' => $self->domain},
-            'selection' => '*'
-        }
+    my @subrequests = $subscription_request_spool->get_content(
+        selector  => {'list' => $self->name, 'robot' => $self->domain},
+        selection => '*'
     );
 
     foreach my $subrequest (@subrequests) {
@@ -10413,9 +10413,8 @@ sub get_subscription_request_count {
         directory => Sympa::Site->subscribequeue()
     );
     return $subscription_request_spool->get_content(
-        {   'selector'  => {'list' => $self->name, 'robot' => $self->domain},
-            'selection' => 'count'
-        }
+        selector  => {'list' => $self->name, 'robot' => $self->domain},
+        selection => 'count'
     );
 }
 
@@ -10466,13 +10465,12 @@ sub store_signoff_request {
     my $signoff_request_spool = Sympa::Spool::SQL->new(name => 'signoff');
 
     if ($signoff_request_spool->get_content(
-            {   'selector' => {
-                    'list'   => $self->name,
-                    'robot'  => $self->domain,
-                    'sender' => $email
-                },
-                'selection' => 'count'
-            }
+        selector => {
+            'list'   => $self->name,
+            'robot'  => $self->domain,
+            'sender' => $email
+            },
+        selection => 'count'
         ) != 0
         ) {
         $main::logger->do_log(Sympa::Logger::NOTICE,
@@ -10500,9 +10498,8 @@ sub get_signoff_requests {
 
     my $signoff_request_spool = Sympa::Spool::SQL->new(name => 'signoff');
     my @sigrequests           = $signoff_request_spool->get_content(
-        {   'selector'  => {'list' => $self->name, 'robot' => $self->domain},
-            'selection' => '*'
-        }
+        selector  => {'list' => $self->name, 'robot' => $self->domain},
+        selection => '*'
     );
 
     foreach my $sigrequest (@sigrequests) {
@@ -10552,9 +10549,8 @@ sub get_signoff_request_count {
 
     my $signoff_request_spool = Sympa::Spool::SQL->new(name => 'signoff');
     return $signoff_request_spool->get_content(
-        {   'selector'  => {'list' => $self->name, 'robot' => $self->domain},
-            'selection' => 'count'
-        }
+        selector  => {'list' => $self->name, 'robot' => $self->domain},
+        selection => 'count'
     );
 }
 
@@ -10818,10 +10814,8 @@ sub purge {
     );
     foreach my $task (
         $taskspool->get_content(
-            {   'selector' =>
-                    {'list' => $self->name, 'robot' => $self->domain},
-                'selection' => '*',
-            }
+            selector  => {'list' => $self->name, 'robot' => $self->domain},
+            selection => '*',
         )
         ) {
 

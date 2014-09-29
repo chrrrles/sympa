@@ -138,21 +138,38 @@ sub global_count {
 
 sub count {
     my $self = shift;
-    return ($self->get_content({'selection' => 'count'}));
+    return ($self->get_content(selection => 'count'));
 }
 
-=item $spool->get_content($parameters)
+=item $spool->get_content(%parameters)
 
 Return the content of the spool, as a list of serialized entries.
+
+Parameters:
+
+=over 4
+
+=item * I<selector>: FIXME
+
+=item * I<selection>: FIXME
+
+=item * I<sortby>: FIXME
+
+=item * I<way>: FIXME
+
+=item * I<offset>: FIXME
+
+=item * I<page_size>: FIXME
+
+=back
 
 =cut
 
 sub get_content {
-    my $self = shift;
-    my $data = shift;
+    my ($self, %params) = @_;
 
     # hash field->value used as filter WHERE sql query
-    my $selector = $data->{'selector'} || $self->{'selector'};
+    my $selector = $params{'selector'} || $self->{'selector'};
 
     # the list of field to select. possible values are :
     #    -  a comma separated list of field to select.
@@ -162,16 +179,16 @@ sub get_content {
     #    - 'count' mean the selection is just a count.
     # should be used mainly to select all but 'message' that may be huge and
     # may be unusefull
-    my $selection = $data->{'selection'};
+    my $selection = $params{'selection'};
 
     # for pagination, start fetch at element number = $offset;
-    my $offset = $data->{'offset'};
+    my $offset = $params{'offset'};
 
     # for pagination, limit answers to $page_size
-    my $page_size = $data->{'page_size'};
+    my $page_size = $params{'page_size'};
 
-    my $orderby = $data->{'sortby'} || $self->{'sortby'};    # sort
-    my $way     = $data->{'way'}    || $self->{'way'};       # asc or desc
+    my $orderby = $params{'sortby'} || $self->{'sortby'};    # sort
+    my $way     = $params{'way'}    || $self->{'way'};       # asc or desc
 
     my $sql_where = _sqlselector($selector);
     if ($self->{status} eq 'bad') {

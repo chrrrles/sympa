@@ -145,27 +145,45 @@ sub new {
 
 sub count {
     my $self = shift;
-    return ($self->get_content({'selection' => 'count'}));
+    return ($self->get_content(selection => 'count'));
 }
 
-=item $spool->get_content($parameters)
+=item $spool->get_content(%parameters)
 
 Return the content of the spool, as a list of serialized entries.
+
+Parameters:
+
+=over 4
+
+=item * I<selector>: FIXME
+
+=item * I<selection>: FIXME
+
+=item * I<sortby>: FIXME
+
+=item * I<way>: FIXME
+
+=item * I<offset>: FIXME
+
+=item * I<page_size>: FIXME
+
+=back
 
 =cut
 
 sub get_content {
     $main::logger->do_log(Sympa::Logger::DEBUG2, '(%s, %s)', @_);
-    my $self = shift;
-    my $param = shift || {};
+    my ($self, %params) = @_;
+
     my $perlselector =
-           _perlselector($param->{'selector'})
+           _perlselector($params{'selector'})
         || _perlselector($self->{'selector'})
         || '1';
-    my $perlcomparator = _perlcomparator($param->{'sortby'}, $param->{'way'})
+    my $perlcomparator = _perlcomparator($params{'sortby'}, $params{'way'})
         || _perlcomparator($self->{'sortby'}, $self->{'way'});
-    my $offset = $param->{'offset'} || 0;
-    my $page_size = $param->{'page_size'};
+    my $offset = $params{'offset'} || 0;
+    my $page_size = $params{'page_size'};
 
     # the fields to select. possible values are :
     #    -  '*'  is the default .
@@ -174,7 +192,7 @@ sub get_content {
     #    - 'count' mean the selection is just a count.
     # should be used mainly to select only metadata that may be huge and
     # may be unuseful
-    my $selection = $param->{'selection'} || '*';
+    my $selection = $params{'selection'} || '*';
 
     my @messages;
     foreach my $key ($self->get_files_in_spool) {
@@ -252,9 +270,8 @@ sub get_content {
 =cut
 
 sub get_count {
-    my $self     = shift;
-    my $param    = shift;
-    my @messages = $self->get_content($param);
+    my ($self, %params) = @_;
+    my @messages = $self->get_content(%params);
     return $#messages + 1;
 }
 
@@ -588,7 +605,7 @@ sub get_message {
     my $selector = shift;
     my @messages;
     return undef
-        unless @messages = $self->get_content({'selector' => $selector});
+        unless @messages = $self->get_content(selector => $selector);
     return $messages[0];
 }
 
