@@ -35,6 +35,7 @@ package Sympa::Spool::File;
 
 use strict;
 use warnings;
+use base qw(Sympa::Spool);
 
 use Carp qw(croak);
 use English qw(-no_match_vars);
@@ -767,17 +768,6 @@ sub _perlcomparator {
             return sprintf '$a->{"%s"} cmp $b->{"%s"}', $orderby, $orderby;
         }
     }
-}
-
-=item $spool->get_id()
-
-Return spool identifier.
-
-=cut
-
-sub get_id {
-    my $self = shift;
-    return sprintf '%s/%s', $self->{name}, $self->{status};
 }
 
 =back

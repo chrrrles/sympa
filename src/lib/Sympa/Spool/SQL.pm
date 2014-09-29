@@ -34,6 +34,7 @@ This class implements a spool using a relational database as storage backend.
 package Sympa::Spool::SQL;
 
 use strict;
+use base qw(Sympa::Spool);
 
 use English qw(-no_match_vars);
 
@@ -789,17 +790,6 @@ sub _sqlselector {
         }
     }
     return $sqlselector;
-}
-
-=item $spool->get_id()
-
-Return spool identifier.
-
-=cut
-
-sub get_id {
-    my $self = shift;
-    return sprintf '%s/%s', $self->{name}, $self->{status};
 }
 
 =back
