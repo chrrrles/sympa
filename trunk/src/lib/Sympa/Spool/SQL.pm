@@ -49,7 +49,34 @@ use Sympa::Robot;
 ## Database and SQL statement handlers
 my ($sth, @sth_stack);
 
-## Creates an object.
+=head1 CLASS METHODS
+
+=over 4
+
+=item Sympa::Spool::SQL->new(%parameters)
+
+Creates a new L<Sympa::Spool::SQL> object.
+
+Parameters:
+
+=over 4
+
+=item * I<name>: the spool name
+
+=item * I<selection_status>: FIXME
+
+=item * I<selector>: FIXME
+
+=item * I<sortby>: FIXME
+
+=item * I<way>: FIXME
+
+=back
+
+Returns a new L<Sympa::Spool::SQL> object, or I<undef> for failure.
+
+=cut
+
 sub new {
     $main::logger->do_log(Sympa::Logger::DEBUG2, '(%s, %s, %s)', @_);
     my ($class, %params) = @_;
