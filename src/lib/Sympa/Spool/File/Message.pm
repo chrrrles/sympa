@@ -26,9 +26,7 @@ package Sympa::Spool::File::Message;
 use strict;
 use base qw(Sympa::Spool::File);
 
-use Sympa::List;
 use Sympa::Logger;
-use Sympa::Robot;
 
 my $filename_regexp = '^(\S+)\.(\d+)\.\w+$';
 
@@ -90,6 +88,7 @@ sub analyze_file_name {
 
     $data->{'list'}  = lc($data->{'list'});
     $data->{'robot'} = lc($data->{'robot'});
+    require Sympa::Robot;
     return undef
         unless $data->{'robot_object'} = Sympa::Robot->new($data->{'robot'});
 
@@ -99,6 +98,7 @@ sub analyze_file_name {
     ($listname, $data->{'type'}) =
         $data->{'robot_object'}->split_listname($data->{'list'});
     if (defined $listname) {
+        require Sympa::List;
         $data->{'list_object'} =
             Sympa::List->new($listname, $data->{'robot_object'}, {'just_try' => 1});
     }

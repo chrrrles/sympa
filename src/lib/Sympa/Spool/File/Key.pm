@@ -29,9 +29,7 @@ use base qw(Sympa::Spool::File);
 
 use English qw(-no_match_vars);
 
-use Sympa::List; # FIXME: circular dependency
 use Sympa::Logger;
-use Sympa::Robot;
 
 our $filename_regexp = '^(\S+)_(\w+)(\.distribute)?$';
 
@@ -65,6 +63,7 @@ sub analyze_file_name {
 
     $data->{'list'}  = lc($data->{'list'});
     $data->{'robot'} = lc($data->{'robot'});
+    require Sympa::Robot;
     return undef
         unless $data->{'robot_object'} = Sympa::Robot->new($data->{'robot'});
 
@@ -73,6 +72,7 @@ sub analyze_file_name {
     #FIXME: is this needed?
     ($listname, $data->{'type'}) =
         $data->{'robot_object'}->split_listname($data->{'list'});    #FIXME
+    require Sympa::List;
     return undef
         unless defined $listname
             and $data->{'list_object'} =
