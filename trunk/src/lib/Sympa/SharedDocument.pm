@@ -99,7 +99,7 @@ sub new {
     }
 
     ## Check access control
-    check_access_control($self, $param);
+    $self->check_access_control($param);
 
     ###############################
     ## The path has been checked ##
