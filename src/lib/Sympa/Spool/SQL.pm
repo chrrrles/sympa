@@ -52,7 +52,7 @@ my ($sth, @sth_stack);
 ## Creates an object.
 sub new {
     $main::logger->do_log(Sympa::Logger::DEBUG2, '(%s, %s, %s)', @_);
-    my ($pkg, %params) = @_;
+    my ($class, %params) = @_;
 
     my $spoolname        = $params{name};
     my $selection_status = $params{status};
@@ -77,7 +77,7 @@ sub new {
     $self = bless {
         'spoolname'        => $spoolname,
         'selection_status' => $selection_status,
-    } => $pkg;
+    }, $class;
     $self->{'selector'} = $selector if $selector;
     $self->{'sortby'}   = $sortby   if $sortby;
     $self->{'way'}      = $way      if $way;
