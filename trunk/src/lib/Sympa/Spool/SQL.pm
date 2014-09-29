@@ -113,9 +113,12 @@ sub new {
     return $self;
 }
 
-# total spool_table count : not object oriented, just a subroutine
-sub global_count {
+=item Sympa::Spool::SQL->global_count($status)
 
+=cut
+
+sub global_count {
+    my $class = shift;
     my $message_status = shift;
 
     my $sth = Sympa::DatabaseManager::do_query(

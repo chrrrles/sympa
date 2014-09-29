@@ -23376,8 +23376,8 @@ sub do_viewspools {
         }
     }
 
-    $param->{'global_count_ok'}  = Sympa::Spool::SQL::global_count('ok');
-    $param->{'global_count_bad'} = Sympa::Spool::SQL::global_count('bad');
+    $param->{'global_count_ok'}  = Sympa::Spool::SQL->global_count('ok');
+    $param->{'global_count_bad'} = Sympa::Spool::SQL->global_count('bad');
 
     my $spool_page_size;
     if ($in{'spool_page_size'}) {
