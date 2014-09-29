@@ -2801,7 +2801,7 @@ sub confirm {
     my $key = $1;
     chomp $key;
 
-    my $spool = Sympa::Spool::SQL->new('auth');
+    my $spool = Sympa::Spool::SQL->new(name => 'auth');
 
     my $message_in_spool = $spool->get_message({'authkey' => $key});
     my $message = undef;

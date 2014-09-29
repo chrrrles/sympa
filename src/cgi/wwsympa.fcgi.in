@@ -9247,7 +9247,7 @@ sub do_add_frommod {
         unless ($message && $message->has_valid_sender()) {
             ## if the message has been accepted via WWSympa, it's in spool
             ## 'validated'
-            my $validatedspool = Sympa::Spool::SQL->new('validated');
+            my $validatedspool = Sympa::Spool::SQL->new(name => 'validated');
             $message_in_spool = $validatedspool->get_message(
                 {   'list'    => $list->name,
                     'robot'   => $robot_id,
@@ -22112,7 +22112,7 @@ sub do_request_topic {
 
     my $listname = $list->name;
 
-    my $spoolauth = Sympa::Spool::SQL->new('auth');
+    my $spoolauth = Sympa::Spool::SQL->new(name => 'auth');
 
     my $message_in_spool = $spoolauth->get_message(
         {   'list'    => $list->name,
@@ -22171,7 +22171,7 @@ sub do_tag_topic_by_sender {
 
     my $message;
 
-    my $authspool        = Sympa::Spool::SQL->new('auth');
+    my $authspool        = Sympa::Spool::SQL->new(name => 'auth');
     my $message_in_spool = $authspool->get_message(
         {   'list'    => $listname,
             'robot'   => $robot_id,
@@ -23388,7 +23388,10 @@ sub do_viewspools {
     }
     $param->{'spool_page_size'} = $spool_page_size;
 
-    my $spool = Sympa::Spool::SQL->new($spoolname, $spool_status);
+    my $spool = Sympa::Spool::SQL->new(
+        name   => $spoolname,
+        status => $spool_status
+    );
     unless ($spool) {
         Sympa::Report::reject_report_web('intern', 'unknown_spool', {},
             $param->{'action'}, $list);
@@ -23506,7 +23509,7 @@ sub do_viewspool_message {
         'do_viewspool_message(spoolname = %s,messagekey = %s, status =%s)',
         $spoolname, $messagekey, $status);
 
-    my $spool = Sympa::Spool::SQL->new($spoolname, $status);
+    my $spool = Sympa::Spool::SQL->new(name => $spoolname, status => $status);
     unless ($spool) {
         Sympa::Report::reject_report_web('intern', 'unknown_spool', {},
             $param->{'action'}, $list);
@@ -23596,7 +23599,7 @@ sub do_viewspool_message_dump {
         wwslog(Sympa::Logger::INFO, 'authorization failed, insufficient privileges');
     }
 
-    my $spool = Sympa::Spool::SQL->new($spoolname, $status);
+    my $spool = Sympa::Spool::SQL->new(name => $spoolname, status => $status);
     unless ($spool) {
         Sympa::Report::reject_report_web('intern', 'unknown_spool', {},
             $param->{'action'}, $list);
@@ -23654,7 +23657,7 @@ sub do_viewspool_message_remove {
         wwslog(Sympa::Logger::INFO, 'authorization failed, insufficient privileges');
     }
 
-    my $spool = Sympa::Spool::SQL->new($spoolname, $status);
+    my $spool = Sympa::Spool::SQL->new(name => $spoolname, status => $status);
     unless ($spool) {
         Sympa::Report::reject_report_web('intern', 'unknown_spool', {},
             $param->{'action'}, $list);
@@ -23721,7 +23724,7 @@ sub do_viewspool_message_mv {
         wwslog(Sympa::Logger::INFO, 'authorization failed, insufficient privileges');
     }
 
-    my $spool = Sympa::Spool::SQL->new($spoolname, $status);
+    my $spool = Sympa::Spool::SQL->new(name => $spoolname, status => $status);
     unless ($spool) {
         Sympa::Report::reject_report_web('intern', 'unknown_spool', {},
             $param->{'action'}, $list);
@@ -23729,7 +23732,7 @@ sub do_viewspool_message_mv {
         return undef;
     }
 
-    unless (Sympa::Spool::SQL->new($newspool, $newstatus)) {
+    unless (Sympa::Spool::SQL->new(name => $newspool, status => $newstatus)) {
         Sympa::Report::reject_report_web('user', 'unknown_spool', {},
             $param->{'action'}, $list);
         wwslog(Sympa::Logger::INFO, 'could not move message to unknown spool %s/%s',

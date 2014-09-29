@@ -42,7 +42,13 @@ my ($sth, @sth_stack);
 ## Creates an object.
 sub new {
     $main::logger->do_log(Sympa::Logger::DEBUG2, '(%s, %s, %s)', @_);
-    my ($pkg, $spoolname, $selection_status, %opts) = @_;
+    my ($pkg, %params) = @_;
+
+    my $spoolname        = $params{name};
+    my $selection_status = $params{status};
+    my $selector         = $params{selector};
+    my $sortby           = $params{sortby};
+    my $way              = $params{way};
 
     my $self;
 
@@ -62,9 +68,9 @@ sub new {
         'spoolname'        => $spoolname,
         'selection_status' => $selection_status,
     } => $pkg;
-    $self->{'selector'} = $opts{'selector'} if $opts{'selector'};
-    $self->{'sortby'}   = $opts{'sortby'}   if $opts{'sortby'};
-    $self->{'way'}      = $opts{'way'}      if $opts{'way'};
+    $self->{'selector'} = $selector if $selector;
+    $self->{'sortby'}   = $sortby   if $sortby;
+    $self->{'way'}      = $way      if $way;
 
     return $self;
 }

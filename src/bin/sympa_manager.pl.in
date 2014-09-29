@@ -709,7 +709,7 @@ sub test_database_message_buffer {
         }
     );
 
-    my $testing = Sympa::Spool::SQL->new('msg', 'bad');
+    my $testing = Sympa::Spool::SQL->new(name => 'msg', status => 'bad');
 
     my $msg = <<'EOF';
 From: justeatester@host.notadomain
