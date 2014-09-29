@@ -59,7 +59,7 @@ Parameters:
 
 =item * I<name>: the spool name
 
-=item * I<selection_status>: FIXME
+=item * I<status>: FIXME
 
 =item * I<selector>: FIXME
 

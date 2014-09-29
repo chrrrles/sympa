@@ -68,7 +68,7 @@ Parameters:
 
 =item * I<directory>: the spool directory
 
-=item * I<selection_status>: FIXME
+=item * I<status>: FIXME
 
 =item * I<selector>: FIXME
 
@@ -88,7 +88,7 @@ sub new {
 
     my $name             = $params{name};
     my $directory        = $params{directory};
-    my $selection_status = $params{selection_status};
+    my $selection_status = $params{status};
     my $selector         = $params{selector};
     my $sortby           = $params{sortby};
     my $way              = $params{way};

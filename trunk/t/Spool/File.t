@@ -36,7 +36,7 @@ ok($spool, 'spool is defined');
 ok(-d $dir . '/bar', 'spool directory has been created');
 
 $spool = Sympa::Spool::File->new(
-    name => 'foo', directory => $dir . '/baz', selection_status => 'bad'
+    name => 'foo', directory => $dir . '/baz', status => 'bad'
 );
 ok($spool, 'spool is defined');
 ok(-d $dir . '/baz/bad', 'spool subdirectory has been created');
