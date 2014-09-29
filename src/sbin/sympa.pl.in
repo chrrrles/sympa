@@ -460,19 +460,19 @@ while ($signal ne 'term') {
         Sympa::Site->send_notify_to_listmaster(undef, undef, 1, undef);
 
         my $bad_msg_spool = Sympa::Spool::File->new(
-            name             => 'msg',
-            directory        => Sympa::Site->queue(),
-            selection_status => 'bad'
+            name      => 'msg',
+            directory => Sympa::Site->queue(),
+            status    => 'bad'
         );
         my $bad_outgoing_spool = Sympa::Spool::File->new(
-            name             => 'outgoing',
-            directory        => Sympa::Site->queueoutgoing(),
-            selection_status => 'bad'
+            name      => 'outgoing',
+            directory => Sympa::Site->queueoutgoing(),
+            status    => 'bad'
         );
         my $bad_bounce_spool = Sympa::Spool::File->new(
-            name             => 'bounce',
-            directory        => Sympa::Site->queuebounce(),
-            selection_status => 'bad'
+            name      => 'bounce',
+            directory => Sympa::Site->queuebounce(),
+            status    => 'bad'
         );
         my $mod_spool = Sympa::Spool::File->new(
             name      => 'mod',
