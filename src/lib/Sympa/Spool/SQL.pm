@@ -680,10 +680,6 @@ sub clean {
         $self->{'spoolname'}, $self->{'selection_status'},
         $delay
     );
-    my $bad   = 0;
-    if ($self->{'selection_status'} eq 'bad') {
-        $bad = 1;
-    }
 
     my $spoolname = $self->{'spoolname'};
     return undef unless $spoolname;
@@ -695,7 +691,7 @@ sub clean {
         sprintf
         "DELETE FROM spool_table WHERE spoolname_spool = %s AND date_spool < %s ",
         Sympa::DatabaseManager::quote($spoolname), $freshness_date;
-    if ($bad) {
+    if ($self->{'selection_status'} eq 'bad') {
         $sqlquery = $sqlquery . " AND message_status_spool = 'bad' ";
     } else {
         $sqlquery = $sqlquery . " AND message_status_spool <> 'bad'";
