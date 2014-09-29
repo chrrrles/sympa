@@ -69,7 +69,7 @@ sub new {
     my $email = $param->{'user'}{'email'};
 
     #$email ||= 'nobody';
-    my $document = {};
+    my $self = {};
 
     unless (ref($list) =~ /List/i) {
         $main::logger->do_log(Sympa::Logger::ERR,
@@ -77,158 +77,158 @@ sub new {
         return undef;
     }
 
-    $document->{'root_path'} = $list->dir . '/shared';
+    $self->{'root_path'} = $list->dir . '/shared';
 
-    $document->{'path'} = Sympa::Tools::WWW::no_slash_end($path);
-    $document->{'escaped_path'} =
-        Sympa::Tools::escape_chars($document->{'path'}, '/');
+    $self->{'path'} = Sympa::Tools::WWW::no_slash_end($path);
+    $self->{'escaped_path'} =
+        Sympa::Tools::escape_chars($self->{'path'}, '/');
 
     ### Document isn't a description file
-    if ($document->{'path'} =~ /\.desc/) {
+    if ($self->{'path'} =~ /\.desc/) {
         $main::logger->do_log(Sympa::Logger::ERR,
             "SharedDocument::new : %s : description file",
-            $document->{'path'});
+            $self->{'path'});
         return undef;
     }
 
     ## absolute path
     # my $doc;
-    $document->{'absolute_path'} = $document->{'root_path'};
-    if ($document->{'path'}) {
-        $document->{'absolute_path'} .= '/' . $document->{'path'};
+    $self->{'absolute_path'} = $self->{'root_path'};
+    if ($self->{'path'}) {
+        $self->{'absolute_path'} .= '/' . $self->{'path'};
     }
 
     ## Check access control
-    check_access_control($document, $param);
+    check_access_control($self, $param);
 
     ###############################
     ## The path has been checked ##
     ###############################
 
     ### Document exist ?
-    unless (-r $document->{'absolute_path'}) {
+    unless (-r $self->{'absolute_path'}) {
         $main::logger->do_log(
             Sympa::Logger::ERR,
             "SharedDocument::new : unable to read %s : no such file or directory",
-            $document->{'absolute_path'}
+            $self->{'absolute_path'}
         );
         return undef;
     }
 
     ### Document has non-size zero?
-    unless (-s $document->{'absolute_path'}) {
+    unless (-s $self->{'absolute_path'}) {
         $main::logger->do_log(
             Sympa::Logger::ERR,
             "SharedDocument::new : unable to read %s : empty document",
-            $document->{'absolute_path'}
+            $self->{'absolute_path'}
         );
         return undef;
     }
 
-    $document->{'visible_path'} =
-        Sympa::Tools::WWW::make_visible_path($document->{'path'});
+    $self->{'visible_path'} =
+        Sympa::Tools::WWW::make_visible_path($self->{'path'});
 
     ## Date
-    my @info = stat $document->{'absolute_path'};
-    $document->{'date_epoch'} = $info[9];
+    my @info = stat $self->{'absolute_path'};
+    $self->{'date_epoch'} = $info[9];
 
     # Size of the doc
-    $document->{'size'} = (-s $document->{'absolute_path'}) / 1000;
+    $self->{'size'} = (-s $self->{'absolute_path'}) / 1000;
 
     ## Filename
-    my @tokens = split /\//, $document->{'path'};
-    $document->{'filename'} = $document->{'visible_filename'} =
+    my @tokens = split /\//, $self->{'path'};
+    $self->{'filename'} = $self->{'visible_filename'} =
         $tokens[$#tokens];
 
     ## Moderated document
-    if ($document->{'filename'} =~ /^\.(.*)(\.moderate)$/) {
-        $document->{'moderate'}         = 1;
-        $document->{'visible_filename'} = $1;
+    if ($self->{'filename'} =~ /^\.(.*)(\.moderate)$/) {
+        $self->{'moderate'}         = 1;
+        $self->{'visible_filename'} = $1;
     }
 
-    $document->{'escaped_filename'} =
-        Sympa::Tools::escape_chars($document->{'filename'});
+    $self->{'escaped_filename'} =
+        Sympa::Tools::escape_chars($self->{'filename'});
 
     ## Father dir
-    if ($document->{'path'} =~ /^(([^\/]*\/)*)([^\/]+)$/) {
-        $document->{'father_path'} = $1;
+    if ($self->{'path'} =~ /^(([^\/]*\/)*)([^\/]+)$/) {
+        $self->{'father_path'} = $1;
     } else {
-        $document->{'father_path'} = '';
+        $self->{'father_path'} = '';
     }
-    $document->{'escaped_father_path'} =
-        Sympa::Tools::escape_chars($document->{'father_path'}, '/');
+    $self->{'escaped_father_path'} =
+        Sympa::Tools::escape_chars($self->{'father_path'}, '/');
 
     ### File, directory or URL ?
-    if (!(-d $document->{'absolute_path'})) {
+    if (!(-d $self->{'absolute_path'})) {
 
-        if ($document->{'filename'} =~ /^\..*\.(\w+)\.moderate$/) {
-            $document->{'file_extension'} = $1;
-        } elsif ($document->{'filename'} =~ /^.*\.(\w+)$/) {
-            $document->{'file_extension'} = $1;
+        if ($self->{'filename'} =~ /^\..*\.(\w+)\.moderate$/) {
+            $self->{'file_extension'} = $1;
+        } elsif ($self->{'filename'} =~ /^.*\.(\w+)$/) {
+            $self->{'file_extension'} = $1;
         }
 
-        if ($document->{'file_extension'} eq 'url') {
-            $document->{'type'} = 'url';
+        if ($self->{'file_extension'} eq 'url') {
+            $self->{'type'} = 'url';
         } else {
-            $document->{'type'} = 'file';
+            $self->{'type'} = 'file';
         }
     } else {
-        $document->{'type'} = 'directory';
+        $self->{'type'} = 'directory';
     }
 
     ## Load .desc file unless root directory
     my $desc_file;
-    if ($document->{'type'} eq 'directory') {
-        $desc_file = $document->{'absolute_path'} . '/.desc';
+    if ($self->{'type'} eq 'directory') {
+        $desc_file = $self->{'absolute_path'} . '/.desc';
     } else {
-        if ($document->{'absolute_path'} =~ /^(([^\/]*\/)*)([^\/]+)$/) {
+        if ($self->{'absolute_path'} =~ /^(([^\/]*\/)*)([^\/]+)$/) {
             $desc_file = $1 . '.desc.' . $3;
         } else {
             $main::logger->do_log(
                 Sympa::Logger::ERR,
                 "SharedDocument::new() : cannot determine desc file for %s",
-                $document->{'absolute_path'}
+                $self->{'absolute_path'}
             );
             return undef;
         }
     }
 
-    if ($document->{'path'} && (-e $desc_file)) {
+    if ($self->{'path'} && (-e $desc_file)) {
         my @info = stat $desc_file;
-        $document->{'serial_desc'} = $info[9];
+        $self->{'serial_desc'} = $info[9];
 
         my %desc_hash = Sympa::Tools::WWW::get_desc_file($desc_file);
-        $document->{'owner'} = $desc_hash{'email'};
-        $document->{'title'} = $desc_hash{'title'};
-        $document->{'escaped_title'} =
-            Sympa::Tools::escape_html($document->{'title'});
+        $self->{'owner'} = $desc_hash{'email'};
+        $self->{'title'} = $desc_hash{'title'};
+        $self->{'escaped_title'} =
+            Sympa::Tools::escape_html($self->{'title'});
 
         # Author
         if ($desc_hash{'email'}) {
-            $document->{'author'} = $desc_hash{'email'};
-            $document->{'author_mailto'} =
+            $self->{'author'} = $desc_hash{'email'};
+            $self->{'author_mailto'} =
                 Sympa::Tools::WWW::mailto($list, $desc_hash{'email'});
-            $document->{'author_known'} = 1;
+            $self->{'author_known'} = 1;
         }
     }
 
     ### File, directory or URL ?
-    if ($document->{'type'} eq 'url') {
+    if ($self->{'type'} eq 'url') {
 
-        $document->{'icon'} = $icon_base . Sympa::Tools::WWW::get_icon('url');
+        $self->{'icon'} = $icon_base . Sympa::Tools::WWW::get_icon('url');
 
-        open DOC, $document->{'absolute_path'};
+        open DOC, $self->{'absolute_path'};
         my $url = <DOC>;
         close DOC;
         chomp $url;
-        $document->{'url'} = $url;
+        $self->{'url'} = $url;
 
-        if ($document->{'filename'} =~ /^(.+)\.url/) {
-            $document->{'anchor'} = $1;
+        if ($self->{'filename'} =~ /^(.+)\.url/) {
+            $self->{'anchor'} = $1;
         }
-    } elsif ($document->{'type'} eq 'file') {
+    } elsif ($self->{'type'} eq 'file') {
 
-        if (my $type = Sympa::Tools::WWW::get_mime_type($document->{'file_extension'})) {
+        if (my $type = Sympa::Tools::WWW::get_mime_type($self->{'file_extension'})) {
 
             # type of the file and apache icon
             if ($type =~ /^([\w\-]+)\/([\w\-]+)$/) {
@@ -240,36 +240,36 @@ sub new {
                     }
                     $type = "$subt file";
                 }
-                $document->{'icon'} =
+                $self->{'icon'} =
                     $icon_base . Sympa::Tools::WWW::get_icon($mimet) ||
                     $icon_base . Sympa::Tools::WWW::get_icon('unknown');
             }
         } else {
 
             # unknown file type
-            $document->{'icon'} =
+            $self->{'icon'} =
                 $icon_base . Sympa::Tools::WWW::get_icon('unknown');
         }
 
         ## HTML file
-        if ($document->{'file_extension'} =~ /^html?$/i) {
-            $document->{'html'} = 1;
-            $document->{'icon'} =
+        if ($self->{'file_extension'} =~ /^html?$/i) {
+            $self->{'html'} = 1;
+            $self->{'icon'} =
                 $icon_base . Sympa::Tools::WWW::get_icon('text');
         }
 
         ## Directory
     } else {
 
-        $document->{'icon'} = 
+        $self->{'icon'} = 
             $icon_base . Sympa::Tools::WWW::get_icon('folder');
 
         # listing of all the shared documents of the directory
-        unless (opendir DIR, $document->{'absolute_path'}) {
+        unless (opendir DIR, $self->{'absolute_path'}) {
             $main::logger->do_log(
                 Sympa::Logger::ERR,
                 "SharedDocument::new() : cannot open %s : %s",
-                $document->{'absolute_path'}, $ERRNO
+                $self->{'absolute_path'}, $ERRNO
             );
             return undef;
         }
@@ -280,25 +280,25 @@ sub new {
 
         my $dir =
             Sympa::Tools::WWW::get_directory_content(\@tmpdir, $email, $list,
-            $document->{'absolute_path'});
+            $self->{'absolute_path'});
 
         foreach my $d (@{$dir}) {
 
             my $sub_document =
                 Sympa::SharedDocument->new(
                     list  => $list,
-                    path  => $document->{'path'} . '/' . $d,
+                    path  => $self->{'path'} . '/' . $d,
                     param => $param
                 );
-            push @{$document->{'subdir'}}, $sub_document;
+            push @{$self->{'subdir'}}, $sub_document;
         }
     }
 
-    $document->{'list'} = $list;
+    $self->{'list'} = $list;
 
-    bless $document, $class;
+    bless $self, $class;
 
-    return $document;
+    return $self;
 }
 
 sub dump {
