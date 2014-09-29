@@ -278,7 +278,7 @@ sub next {
 
     my $data;
 
-    unless ($self->refresh_spool_files_list) {
+    unless ($self->_refresh_spool_files_list) {
         $main::logger->do_log(Sympa::Logger::ERR,
             'Unable to refresh spool %s files list', $self);
         return undef;
@@ -470,17 +470,17 @@ sub unlock_message {
 
 sub get_files_in_spool {
     my $self = shift;
-    return undef unless ($self->refresh_spool_files_list);
+    return undef unless ($self->_refresh_spool_files_list);
     return @{$self->{'spool_files_list'}};
 }
 
 sub get_dirs_in_spool {
     my $self = shift;
-    return undef unless ($self->refresh_spool_dirs_list);
+    return undef unless ($self->_refresh_spool_dirs_list);
     return @{$self->{'spool_dirs_list'}};
 }
 
-sub refresh_spool_files_list {
+sub _refresh_spool_files_list {
     my $self = shift;
     $main::logger->do_log(Sympa::Logger::DEBUG2, '%s', $self->get_id);
     unless (opendir SPOOLDIR, $self->{'dir'}) {
@@ -499,7 +499,7 @@ sub refresh_spool_files_list {
     return 1;
 }
 
-sub refresh_spool_dirs_list {
+sub _refresh_spool_dirs_list {
     my $self = shift;
     $main::logger->do_log(Sympa::Logger::DEBUG2, '%s', $self->get_id);
     unless (opendir SPOOLDIR, $self->{'dir'}) {
