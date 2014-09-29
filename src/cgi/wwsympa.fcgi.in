@@ -24570,7 +24570,10 @@ sub new_d_read {
     my $list_name = $list->name;
 
     my $document = Sympa::SharedDocument->new(
-        $list, $in{'path'}, $param, Sympa::Site->static_content_url()
+        list      => $list,
+        path      => $in{'path'},
+        param     => $param,
+        icon_base => Sympa::Site->static_content_url()
     );
 
     unless (defined $document) {

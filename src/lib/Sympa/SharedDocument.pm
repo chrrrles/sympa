@@ -32,11 +32,40 @@ use Sympa::Scenario;
 use Sympa::Tools;
 use Sympa::Tools::Data;
 
-## Creates a new object
+=head1 CLASS METHODS
+
+=over 4
+
+=item Sympa::SharedDocument->new(%parameters)
+
+Creates a new L<Sympa::SharedDocument> object.
+
+Parameters:
+
+=over 4
+
+=item * I<list>: FIXME
+
+=item * I<path>: FIXME
+
+=item * I<param>: FIXME
+
+=item * I<icon_base>: FIXME
+
+=back
+
+Returns a new L<Sympa::SharedDocument> object, or I<undef> for failure.
+
+=cut
+
 sub new {
     $main::logger->do_log(Sympa::Logger::DEBUG2, '(%s, %s, %s, %s)', @_);
-    my ($pkg, $list, $path, $param, $icon_base) = @_;
+    my ($pkg, %params) = @_;
 
+    my $list      = $params{list};
+    my $path      = $params{path};
+    my $param     = $params{param};
+    my $icon_base = $params{icon_base};
     my $email = $param->{'user'}{'email'};
 
     #$email ||= 'nobody';
@@ -256,8 +285,11 @@ sub new {
         foreach my $d (@{$dir}) {
 
             my $sub_document =
-                Sympa::SharedDocument->new($list, $document->{'path'} . '/' . $d,
-                $param);
+                Sympa::SharedDocument->new(
+                    list  => $list,
+                    path  => $document->{'path'} . '/' . $d,
+                    param => $param
+                );
             push @{$document->{'subdir'}}, $sub_document;
         }
     }
