@@ -46,9 +46,6 @@ use Sympa::Logger;
 use Sympa::Message;
 use Sympa::Robot;
 
-## Database and SQL statement handlers
-my ($sth, @sth_stack);
-
 =head1 CLASS METHODS
 
 =over 4
@@ -115,15 +112,13 @@ sub global_count {
 
     my $message_status = shift;
 
-    push @sth_stack, $sth;
-    $sth = Sympa::DatabaseManager::do_query(
+    my $sth = Sympa::DatabaseManager::do_query(
         "SELECT COUNT(*) FROM spool_table where message_status_spool = '"
             . $message_status
             . "'");
 
     my @result = $sth->fetchrow_array();
     $sth->finish();
-    $sth = pop @sth_stack;
 
     return $result[0];
 }
@@ -195,15 +190,12 @@ sub get_content {
             {'offset' => $offset, 'rows_count' => $page_size});
     }
 
-    push @sth_stack, $sth;
-    unless ($sth = Sympa::DatabaseManager::do_query($statement)) {
-        $sth = pop @sth_stack;
-        return undef;
-    }
+    my $sth = Sympa::DatabaseManager::do_query($statement);
+    return unless $sth;
+
     if ($selection eq 'count') {
         my @result = $sth->fetchrow_array();
         $sth->finish;
-        $sth = pop @sth_stack;
         return $result[0];
     } else {
         my @messages;
@@ -220,7 +212,6 @@ sub get_content {
             last if $page_size and $page_size <= scalar @messages;
         }
         $sth->finish();
-        $sth = pop @sth_stack;
         return @messages;
     }
 }
@@ -246,45 +237,38 @@ sub next {
     my $lock  = $PID . '@' . hostname();
     my $epoch = time;                  # should we use milli or nano seconds ?
 
-    push @sth_stack, $sth;
-
     my $messagekey;
     while (1) {
-        unless (
-            $sth = Sympa::DatabaseManager::do_query(
-                q{SELECT messagekey_spool FROM spool_table
-	      WHERE messagelock_spool IS NULL AND spoolname_spool = %s AND
-		    (priority_spool <> 'z' OR priority_spool IS NULL) AND %s
-	      ORDER by priority_spool, date_spool
-	      %s},
-                Sympa::DatabaseManager::quote($self->{'spoolname'}), $sql_where,
-                Sympa::DatabaseManager::get_limit_clause({'rows_count' => 1})
-            )
-            ) {
+        my $sth = Sympa::DatabaseManager::do_query(
+            q{SELECT messagekey_spool FROM spool_table
+          WHERE messagelock_spool IS NULL AND spoolname_spool = %s AND
+                (priority_spool <> 'z' OR priority_spool IS NULL) AND %s
+          ORDER by priority_spool, date_spool
+          %s},
+            Sympa::DatabaseManager::quote($self->{'spoolname'}), $sql_where,
+            Sympa::DatabaseManager::get_limit_clause({'rows_count' => 1})
+        );
+        unless ($sth) {
             $main::logger->do_log(Sympa::Logger::ERR, 'Could not search spool %s',
                 $self->{'spoolname'});
-            $sth = pop @sth_stack;
             return undef;
         }
         $messagekey = $sth->fetchrow_array();
         $sth->finish();
 
         unless (defined $messagekey) {    # spool is empty
-            $sth = pop @sth_stack;
             return undef;
         }
 
-        unless (
-            $sth = Sympa::DatabaseManager::do_prepared_query(
-                q{UPDATE spool_table
-	      SET messagelock_spool = ?, lockdate_spool = ?
-	      WHERE messagekey_spool = ? AND messagelock_spool IS NULL},
-                $lock, $epoch, $messagekey
-            )
-            ) {
+        $sth = Sympa::DatabaseManager::do_prepared_query(
+            q{UPDATE spool_table
+          SET messagelock_spool = ?, lockdate_spool = ?
+          WHERE messagekey_spool = ? AND messagelock_spool IS NULL},
+            $lock, $epoch, $messagekey
+        );
+        unless ($sth) {
             $main::logger->do_log(Sympa::Logger::ERR, 'Could not update spool %s',
                 $self->{'spoolname'});
-            $sth = pop @sth_stack;
             return undef;
         }
         unless ($sth->rows) {    # locked by another process?  retry.
@@ -293,27 +277,23 @@ sub next {
         last;
     }
 
-    unless (
-        $sth = Sympa::DatabaseManager::do_prepared_query(
-            sprintf(
-                q{SELECT %s
-	      FROM spool_table
-	      WHERE messagekey_spool = ? AND messagelock_spool = ?},
-                _selectfields()
-            ),
-            $messagekey,
-            $lock
-        )
-        ) {
+    my $sth = Sympa::DatabaseManager::do_prepared_query(
+        sprintf(
+            q{SELECT %s
+          FROM spool_table
+          WHERE messagekey_spool = ? AND messagelock_spool = ?},
+            _selectfields()
+        ),
+        $messagekey,
+        $lock
+    );
+    unless ($sth) {
         $main::logger->do_log(Sympa::Logger::ERR,
             'Could not search message previously locked');
-        $sth = pop @sth_stack;
         return undef;
     }
     my $message = $sth->fetchrow_hashref('NAME_lc');
     $sth->finish();
-
-    $sth = pop @sth_stack;
 
     unless ($message and $message->{'message'}) {
         $main::logger->do_log(Sympa::Logger::ERR,
@@ -383,29 +363,24 @@ sub get_message {
     my $sqlselector = _sqlselector($selector || $self->{'selector'});
     my $all = _selectfields();
 
-    push @sth_stack, $sth;
-
-    unless (
-        $sth = Sympa::DatabaseManager::do_query(
-            q{SELECT %s
-	  FROM spool_table
-	  WHERE spoolname_spool = %s%s
-	  %s},
-            $all, Sympa::DatabaseManager::quote($self->{'spoolname'}),
-            ($sqlselector ? " AND $sqlselector" : ''),
-            Sympa::DatabaseManager::get_limit_clause({'rows_count' => 1})
-        )
-        ) {
+    my $sth = Sympa::DatabaseManager::do_query(
+        q{SELECT %s
+      FROM spool_table
+      WHERE spoolname_spool = %s%s
+      %s},
+        $all, Sympa::DatabaseManager::quote($self->{'spoolname'}),
+        ($sqlselector ? " AND $sqlselector" : ''),
+        Sympa::DatabaseManager::get_limit_clause({'rows_count' => 1})
+    );
+    unless ($sth) {
         $main::logger->do_log(Sympa::Logger::ERR,
             'Could not get message from spool %s', $self);
-        $sth = pop @sth_stack;
         return undef;
     }
 
     my $message = $sth->fetchrow_hashref('NAME_lc');
 
     $sth->finish;
-    $sth = pop @sth_stack;
 
     unless ($message and %$message) {
         $main::logger->do_log(Sympa::Logger::ERR, 'No message: %s', $sqlselector);
@@ -596,9 +571,7 @@ sub store {
     }
     my $lock = $PID . '@' . hostname();
 
-    push @sth_stack, $sth;
-
-    $sth = Sympa::DatabaseManager::do_prepared_query(
+    my $sth = Sympa::DatabaseManager::do_prepared_query(
         sprintf(
             q{INSERT INTO spool_table
 	      (spoolname_spool, messagelock_spool, message_spool%s)
@@ -624,7 +597,6 @@ sub store {
     my $messagekey       = $inserted_message->{'messagekey'};
 
     $sth->finish;
-    $sth = pop @sth_stack;
 
     unless ($locked) {
         $self->unlock_message($messagekey);
@@ -644,19 +616,16 @@ sub remove_message {
     my $just_try    = $params->{'just_try'};
     my $sqlselector = _sqlselector($params);
 
-    push @sth_stack, $sth;
+    my $sth = Sympa::DatabaseManager::do_query(
+        q{DELETE FROM spool_table
+      WHERE spoolname_spool = %s%s},
+        Sympa::DatabaseManager::quote($self->{'spoolname'}),
+        ($sqlselector ? " AND $sqlselector" : '')
+    );
 
-    unless (
-        $sth = Sympa::DatabaseManager::do_query(
-            q{DELETE FROM spool_table
-	  WHERE spoolname_spool = %s%s},
-            Sympa::DatabaseManager::quote($self->{'spoolname'}),
-            ($sqlselector ? " AND $sqlselector" : '')
-        )
-        ) {
+    unless ($sth) {
         $main::logger->do_log(Sympa::Logger::ERR,
             'Could not remove message from spool %s', $self);
-        $sth = pop @sth_stack;
         return undef;
     }
     ## search if this message is already in spool database : mailfile may
@@ -665,11 +634,9 @@ sub remove_message {
         $main::logger->do_log(Sympa::Logger::ERR, 'message is not in spool: %s',
             $sqlselector)
             unless $just_try;
-        $sth = pop @sth_stack;
         return undef;
     }
 
-    $sth = pop @sth_stack;
     return 1;
 }
 
@@ -707,13 +674,11 @@ sub clean {
         $sqlquery = $sqlquery . " AND message_status_spool <> 'bad'";
     }
 
-    push @sth_stack, $sth;
-    $sth = Sympa::DatabaseManager::do_query('%s', $sqlquery);
+    my $sth = Sympa::DatabaseManager::do_query('%s', $sqlquery);
     $sth->finish;
     $main::logger->do_log(Sympa::Logger::DEBUG,
         "%s entries older than %s days removed from spool %s",
         $sth->rows, $delay, $self->{'spoolname'});
-    $sth = pop @sth_stack;
     return 1;
 }
 
