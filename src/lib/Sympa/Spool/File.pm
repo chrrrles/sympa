@@ -25,7 +25,7 @@ Sympa::Spool::File - File-based spool
 
 =head1 DESCRIPTION
 
-This class implements a spool based on filesystem.
+This class implements a spool using the filesystem as storage backend.
 
 =cut
 
