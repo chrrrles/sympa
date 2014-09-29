@@ -421,19 +421,22 @@ sub get_file_content {
     my $self = shift;
     my $key  = shift;
 
-    my $fh;
-    unless (open $fh, $self->{directory} . '/' . $key) {
+    my $content;
+    eval {
+        $content = Sympa::Tools::File::slurp_file(
+            $self->{directory} . '/' . $key
+        );
+    };
+    if ($EVAL_ERROR) {
         $main::logger->do_log(
             Sympa::Logger::ERR,
             'Unable to open file %s: %s',
-            $self->{directory} . '/' . $key, $ERRNO
+            $self->{directory} . '/' . $key, $EVAL_ERROR
         );
         return undef;
     }
-    local $RS;
-    my $messageasstring = <$fh>;
-    close $fh;
-    return $messageasstring;
+
+    return $content;
 }
 
 sub lock_message {
