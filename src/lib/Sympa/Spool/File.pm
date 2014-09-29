@@ -84,28 +84,36 @@ sub new {
     $main::logger->do_log(Sympa::Logger::DEBUG2, '(%s, %s, %s, ...)', @_);
     my ($pkg, %params) = @_;
 
+    my $name             = $params{name};
+    my $directory        = $params{directory};
+    my $selection_status = $params{selection_status};
+    my $selector         = $params{selector};
+    my $sortby           = $params{sortby};
+    my $way              = $params{way};
+
     my $self;
 
-    if (!$params{directory}) {
+    if (!$directory) {
         $main::logger->do_log(
             Sympa::Logger::ERR, 'Missing directory parameter'
         );
         return undef;
     }
-    if ($params{selection_status} and $params{selection_status} eq 'bad') {
-        $params{directory} .= '/bad';
+    if ($selection_status and $selection_status eq 'bad') {
+        $directory .= '/bad';
     }
 
     $self = bless {
-        'spoolname'        => $params{name},
-        'selection_status' => $params{selection_status},
-        'dir'              => $params{directory},
+        'spoolname'        => $name,
+        'selection_status' => $selection_status,
+        'dir'              => $directory,
     } => $pkg;
-    $self->{'selector'} = $params{'selector'} if $params{'selector'};
-    $self->{'sortby'}   = $params{'sortby'}   if $params{'sortby'};
-    $self->{'way'}      = $params{'way'}      if $params{'way'};
 
-    $main::logger->do_log(Sympa::Logger::DEBUG3, 'Spool to scan "%s"', $params{dir});
+    $self->{'selector'} = $selector if $selector;
+    $self->{'sortby'}   = $sortby   if $sortby;
+    $self->{'way'}      = $way      if $way;
+
+    $main::logger->do_log(Sympa::Logger::DEBUG3, 'Spool to scan "%s"', $directory);
 
     $self->create_spool_dir;
 
