@@ -483,9 +483,6 @@ sub get_dirs_in_spool {
 sub refresh_spool_files_list {
     my $self = shift;
     $main::logger->do_log(Sympa::Logger::DEBUG2, '%s', $self->get_id);
-    unless (-d $self->{'dir'}) {
-        $self->_create_spool_dir;
-    }
     unless (opendir SPOOLDIR, $self->{'dir'}) {
         $main::logger->do_log(
             Sympa::Logger::ERR,
@@ -505,9 +502,6 @@ sub refresh_spool_files_list {
 sub refresh_spool_dirs_list {
     my $self = shift;
     $main::logger->do_log(Sympa::Logger::DEBUG2, '%s', $self->get_id);
-    unless (-d $self->{'dir'}) {
-        $self->_create_spool_dir();
-    }
     unless (opendir SPOOLDIR, $self->{'dir'}) {
         $main::logger->do_log(
             Sympa::Logger::ERR,
