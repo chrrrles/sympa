@@ -93,12 +93,20 @@ sub new {
     my $sortby           = $params{sortby};
     my $way              = $params{way};
 
+    if (!$name) {
+        $main::logger->do_log(
+            Sympa::Logger::ERR, 'Missing name parameter'
+        );
+        return undef;
+    }
+
     if (!$directory) {
         $main::logger->do_log(
             Sympa::Logger::ERR, 'Missing directory parameter'
         );
         return undef;
     }
+
     if ($selection_status and $selection_status eq 'bad') {
         $directory .= '/bad';
     }
@@ -666,7 +674,6 @@ sub clean {
         $delay
     );
 
-    return undef unless $self->{'spoolname'};
     return undef unless $delay;
 
     my $freshness_date = time - ($delay * 60 * 60 * 24);
