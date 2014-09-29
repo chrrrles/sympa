@@ -459,42 +459,42 @@ while ($signal ne 'term') {
         # Process grouped notifications
         Sympa::Site->send_notify_to_listmaster(undef, undef, 1, undef);
 
-        my $msg_bad = Sympa::Spool::File->new(
+        my $bad_msg_spool = Sympa::Spool::File->new(
             name             => 'msg',
             directory        => Sympa::Site->queue(),
             selection_status => 'bad'
         );
-        my $archive_bad = Sympa::Spool::File->new(
+        my $bad_outgoing_spool = Sympa::Spool::File->new(
             name             => 'outgoing',
             directory        => Sympa::Site->queueoutgoing(),
             selection_status => 'bad'
         );
-        my $queuebounce_bad = Sympa::Spool::File->new(
+        my $bad_bounce_spool = Sympa::Spool::File->new(
             name             => 'bounce',
             directory        => Sympa::Site->queuebounce(),
             selection_status => 'bad'
         );
-        my $queuemod = Sympa::Spool::File->new(
+        my $mod_spool = Sympa::Spool::File->new(
             name      => 'mod',
             directory => Sympa::Site->queuemod()
         );
-        my $queueauth = Sympa::Spool::File->new(
+        my $auth_spool = Sympa::Spool::File->new(
             name      => 'auth',
             directory => Sympa::Site->queueauth()
         );
-        my $queuetopic = Sympa::Spool::File->new(
+        my $topic_spool = Sympa::Spool::File->new(
             name      => 'topic',
             directory => Sympa::Site->queuetopic()
         );
-        my $queuesubscribe = Sympa::Spool::File->new(
+        my $subscribe_spool = Sympa::Spool::File->new(
             name      => 'subscribe',
             directory => Sympa::Site->queuesubscribe()
         );
-        my $queuesignoff = Sympa::Spool::File->new(
+        my $signoff_spool = Sympa::Spool::File->new(
             name      => 'signoff',
             directory => Sympa::Site->queuesignoff()
         );
-        my $queueautomatic = Sympa::Spool::File->new(
+        my $automatic_spool = Sympa::Spool::File->new(
             name      => 'automatic',
             directory => Sympa::Site->queueautomatic()
         );
@@ -510,17 +510,17 @@ while ($signal ne 'term') {
         if ($index_cleanqueue++ >= 1) {
             $index_cleanqueue = 0;
             $logger->do_log(Sympa::Logger::DEBUG, 'Cleaning spools');
-            $msg_bad->clean({'delay' => Sympa::Site->clean_delay_queue});
-            $archive_bad->clean({'delay' => Sympa::Site->clean_delay_queueoutgoing});
-            $queuebounce_bad->clean(
+            $bad_msg_spool->clean({'delay' => Sympa::Site->clean_delay_queue});
+            $bad_outgoing_spool->clean({'delay' => Sympa::Site->clean_delay_queueoutgoing});
+            $bad_bounce_spool->clean(
                 {'delay' => Sympa::Site->clean_delay_queuebounce});
-            $queuemod->clean({'delay' => Sympa::Site->clean_delay_queuemod});
-            $queueauth->clean({'delay' => Sympa::Site->clean_delay_queueauth});
-            $queuetopic->clean({'delay' => Sympa::Site->clean_delay_queuetopic});
-            $queuesubscribe->clean(
+            $mod_spool->clean({'delay' => Sympa::Site->clean_delay_queuemod});
+            $auth_spool->clean({'delay' => Sympa::Site->clean_delay_queueauth});
+            $topic_spool->clean({'delay' => Sympa::Site->clean_delay_queuetopic});
+            $subscribe_spool->clean(
                 {'delay' => Sympa::Site->clean_delay_queuesubscribe});
-            $queuesignoff->clean({'delay' => Sympa::Site->clean_delay_queuesignoff});
-            $queueautomatic->clean(
+            $signoff_spool->clean({'delay' => Sympa::Site->clean_delay_queuesignoff});
+            $automatic_spool->clean(
                 {'delay' => Sympa::Site->clean_delay_queueautomatic});
 
             # this is not a message spool
