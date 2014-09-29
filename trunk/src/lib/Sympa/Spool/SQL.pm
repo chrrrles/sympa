@@ -122,16 +122,27 @@ sub global_count {
     return $result[0];
 }
 
+=back
+
+=head1 INSTANCE METHODS
+
+=over
+
+=item $spool->count()
+
+=cut
+
 sub count {
     my $self = shift;
     return ($self->get_content({'selection' => 'count'}));
 }
 
-#######################
-#
-#  get_content return the content an array of hash describing the spool
-#  content
-#
+=item $spool->get_content($parameters)
+
+Return the content of the spool, as a list of serialized entries.
+
+=cut
+
 sub get_content {
     my $self = shift;
     my $data = shift;
@@ -215,11 +226,12 @@ sub get_content {
     }
 }
 
-#######################
-#
-#  next : return next spool entry ordered by priority next lock the
-#  message_in_spool that is returned
-#
+=item $spool->next()
+
+Return the next spool entry ordered by priority.
+
+=cut
+
 sub next {
     $main::logger->do_log(Sympa::Logger::DEBUG2, '(%s)', @_);
     my $self = shift;
@@ -329,6 +341,10 @@ sub next {
     return $message;
 }
 
+=item $spool->move_to_bad($key)
+
+=cut
+
 sub move_to_bad {
     my $self = shift;
     my $key  = shift;
@@ -347,10 +363,12 @@ sub move_to_bad {
     }
 }
 
-#################"
-# return one message from related spool using a specified selector
-# returns undef if message was not found.
-#
+=item $spool->get_message($selector)
+
+Return a message from the spool using given selector
+
+=cut
+
 sub get_message {
     my $self     = shift;
     my $selector = shift;
@@ -406,9 +424,12 @@ sub get_message {
     return $message;
 }
 
-#################"
-# lock one message from related spool using a specified selector
-#
+=item $spool->unlock_message($key)
+
+Unlock a message from the spool.
+
+=cut
+
 sub unlock_message {
 
     my $self       = shift;
@@ -497,9 +518,12 @@ sub update {
     return 1;
 }
 
-################"
-# store a message in database spool
-#
+=item $spool->store($string, $metadata, $locked)
+
+Store a message in the spool.
+
+=cut
+
 sub store {
     my $self             = shift;
     my $message_asstring = shift;
@@ -604,10 +628,12 @@ sub store {
     return $messagekey;
 }
 
-################"
-# remove a message in database spool using (messagekey,list,robot) which are a
-# unique id in the spool
-#
+=item $spool->remove_message($params)
+
+Remove a message from the spool.
+
+=cut
+
 sub remove_message {
     $main::logger->do_log(Sympa::Logger::DEBUG2, '(%s, %s)', @_);
     my $self   = shift;
@@ -640,9 +666,11 @@ sub remove_message {
     return 1;
 }
 
-################"
-# Clean a spool by removing old messages
-#
+=item $spool->clean($filter)
+
+Clean the spool by removing old messages.
+
+=cut
 
 sub clean {
     my $self   = shift;
@@ -767,10 +795,19 @@ sub _sqlselector {
     return $sqlselector;
 }
 
-## Get unique ID
+=item $spool->get_id()
+
+Return spool identifier.
+
+=cut
+
 sub get_id {
     my $self = shift;
     return sprintf '%s/%s', $self->{'spoolname'}, $self->{'selection_status'};
 }
+
+=back
+
+=cut
 
 1;

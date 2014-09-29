@@ -126,7 +126,7 @@ sub new {
 
 =over
 
-=item $spool->count( OPTIONS... )
+=item $spool->count()
 
 =cut
 
@@ -135,10 +135,9 @@ sub count {
     return ($self->get_content({'selection' => 'count'}));
 }
 
-=item $spool->get_content( OPTIONS... )
+=item $spool->get_content($parameters)
 
-Return the content of the hash, as a list of serialized entries.
-content
+Return the content of the spool, as a list of serialized entries.
 
 =cut
 
@@ -262,7 +261,7 @@ sub get_file_key {
     return $message->{'messagekey'};
 }
 
-=item $spool->next( )
+=item $spool->next()
 
 Return the next spool entry ordered by priority.
 
@@ -445,6 +444,12 @@ sub lock_message {
     return 1;
 }
 
+=item $spool->unlock_message($key)
+
+Unlock a message from the spool.
+
+=cut
+
 sub unlock_message {
     $main::logger->do_log(Sympa::Logger::DEBUG2, '(%s, %s)', @_);
     my $self = shift;
@@ -527,9 +532,7 @@ sub _create_spool_dir {
     }
 }
 
-=item $spool->move_to_bad( OPTIONS... )
-
-XXX @todo doc
+=item $spool->move_to_bad($key)
 
 =cut
 
@@ -564,10 +567,9 @@ sub move_to_bad {
     return 1;
 }
 
-=item $spool->get_message( OPTIONS... )
+=item $spool->get_message($selector)
 
-return one message from related spool using a specified selector
-returns undef if message was not found.
+Return a message from the spool using given selector
 
 =cut
 
@@ -611,9 +613,9 @@ sub update {
     croak 'Not implemented yet';
 }
 
-=item $spool->store( OPTIONS... )
+=item $spool->store($string, $param, $target_file)
 
-Store a message in spool.
+Store a message in the spool.
 
 =cut
 
@@ -634,10 +636,9 @@ sub store {
     return 1;
 }
 
-=item $spool->remove_message ( OPTIONS... )
+=item $spool->remove_message($key)
 
-Remove a message in spool using (messagekey,list,robot) which are a
-unique id in the spool
+Remove a message from the spool.
 
 =cut
 
@@ -656,9 +657,9 @@ sub remove_message {
     return 1;
 }
 
-=item $spool->clean( OPTIONS... )
+=item $spool->clean($filter)
 
-Clean a spool by removing old messages.
+Clean the spool by removing old messages.
 
 =cut
 
@@ -760,7 +761,12 @@ sub _perlcomparator {
     }
 }
 
-## Get unique ID
+=item $spool->get_id()
+
+Return spool identifier.
+
+=cut
+
 sub get_id {
     my $self = shift;
     return sprintf '%s/%s',
