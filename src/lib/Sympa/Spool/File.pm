@@ -82,7 +82,7 @@ Returns a new L<Sympa::Spool::File> object, or I<undef> for failure.
 
 sub new {
     $main::logger->do_log(Sympa::Logger::DEBUG2, '(%s, %s, %s, ...)', @_);
-    my ($pkg, %params) = @_;
+    my ($class, %params) = @_;
 
     my $name             = $params{name};
     my $directory        = $params{directory};
@@ -105,7 +105,7 @@ sub new {
         'spoolname'        => $name,
         'selection_status' => $selection_status,
         'dir'              => $directory,
-    } => $pkg;
+    }, $class;
 
     $self->{'selector'} = $selector if $selector;
     $self->{'sortby'}   = $sortby   if $sortby;
