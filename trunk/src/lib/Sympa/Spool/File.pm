@@ -91,8 +91,6 @@ sub new {
     my $sortby           = $params{sortby};
     my $way              = $params{way};
 
-    my $self;
-
     if (!$directory) {
         $main::logger->do_log(
             Sympa::Logger::ERR, 'Missing directory parameter'
@@ -103,7 +101,7 @@ sub new {
         $directory .= '/bad';
     }
 
-    $self = bless {
+    my $self = bless {
         'spoolname'        => $name,
         'selection_status' => $selection_status,
         'dir'              => $directory,
