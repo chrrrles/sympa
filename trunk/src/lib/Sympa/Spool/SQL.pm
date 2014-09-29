@@ -44,7 +44,6 @@ use Sys::Hostname qw(hostname);
 use Sympa::DatabaseManager;
 use Sympa::Logger;
 use Sympa::Message;
-use Sympa::Robot;
 
 =head1 CLASS METHODS
 
@@ -316,6 +315,7 @@ sub next {
     my $robot;
 
     if ($robot_id and $robot_id ne '*') {
+        require Sympa::Robot;
         $robot = Sympa::Robot->new($robot_id);
     }
     if ($robot) {
