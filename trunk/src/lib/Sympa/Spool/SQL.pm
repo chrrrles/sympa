@@ -60,8 +60,6 @@ sub new {
     my $sortby           = $params{sortby};
     my $way              = $params{way};
 
-    my $self;
-
     unless ($spoolname =~
         /^(auth)|(bounce)|(digest)|(bulk)|(expire)|(mod)|(msg)|(archive)|(automatic)|(subscribe)|(signoff)|(topic)|(validated)|(task)$/
         ) {
@@ -74,7 +72,7 @@ sub new {
         $selection_status = 'ok';
     }
 
-    $self = bless {
+    my $self = bless {
         'spoolname'        => $spoolname,
         'selection_status' => $selection_status,
     }, $class;
