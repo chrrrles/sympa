@@ -252,7 +252,7 @@ my %created_children;
 
 $Sympa::Conf::Conf{'maxsmtp'} = int(Sympa::Site->maxsmtp / Sympa::Site->bulk_max_count);    #FIXME
 
-my $spool = Sympa::Spool::SQL->new('bulk');
+my $spool = Sympa::Spool::SQL->new(name => 'bulk');
 
 $logger->do_log(Sympa::Logger::NOTICE, "bulk started");
 
