@@ -15,7 +15,7 @@ use Test::More;
 use Sympa::Spool::File;
 use Sympa::Logger::Memory;
 
-plan tests => 11;
+plan tests => 13;
 
 our $logger = Sympa::Logger::Memory->new();
 
@@ -38,12 +38,14 @@ $spool = Sympa::Spool::File->new(
 );
 ok($spool, 'spool is defined');
 ok(-d $dir . '/bar', 'spool directory has been created');
+is($spool->get_id(), 'foo/ok', 'spool identifier');
 
 $spool = Sympa::Spool::File->new(
     name => 'foo', directory => $dir . '/baz', status => 'bad'
 );
 ok($spool, 'spool is defined');
 ok(-d $dir . '/baz/bad', 'spool subdirectory has been created');
+is($spool->get_id(), 'foo/bad', 'spool identifier');
 
 ok($spool->count() == 0, 'spool is empty');
 ok(
