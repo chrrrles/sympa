@@ -52,66 +52,77 @@ Sympa::Scenario - Sympa scenarios
 
 =head1 DESCRIPTION
 
-=head2 Constructor
+=head1 CLASS METHODS
 
 =over 4
 
-=item new ( THAT, [ KEY => VAL, ... ] )
+=item Sympa::Scenario->new(%parameters)
 
-I<Constructor>.
-Creates a new object
+Creates a new L<Sympa::Scenario> object.
 
-IN : -$pkg (+): class name
-     -$that (+) : ref(List) | ref(Robot) | "Site"
-     -%parameters : hash
+Parameters:
 
-OUT : Scenario object or undef
+=over 4
 
-Supported parameters : function, name, file_path, options
+=item * I<that>: FIXME
 
-Output object has the following entries : name, file_path, rules, date,
-title, struct, data
+=item * I<name>: FIXME
+
+=item * I<function>: FIXME
+
+=item * I<file_path>: FIXME
+
+=item * I<options>: FIXME
 
 =back
+
+Returns a new L<Sympa::Scenario> object, or I<undef> for failure.
 
 =cut
 
 sub new {
-    my $pkg        = shift;
-    my $that       = shift;
-    my %parameters = @_;
+    my ($class, %params) = @_;
     $main::logger->do_log(
         Sympa::Logger::DEBUG2,
         '(%s, %s, function=%s, name=%s, file_path=%s, options=%s)',
-        $pkg,
-        $that,
-        $parameters{'function'},
-        $parameters{'name'},
-        $parameters{'file_path'},
-        $parameters{'options'}
+        $class,
+        $params{that},
+        $params{function},
+        $params{name},
+        $params{file_path},
+        $params{options}
     );
 
-    unless (ref $that and ref $that eq 'Sympa::List'
-        or ref $that and ref $that eq 'Sympa::Robot'
-        or $that eq 'Site') {    # FIXME: really maybe a Site?
-        croak 'bug in logic.  Ask developer';
+    my $that      = $params{that};
+    my $file_path = $params{file_path};
+    my $function  = $params{function};
+    my $name      = $params{name};
+    my $options   = $params{options};
+
+    if (!$that) {
+        $main::logger->do_log(Sympa::Logger::ERR, 'Missing that parameter');
+        return undef;
     }
 
-    my $scenario = {};
+    unless ($that eq 'Site'                           or
+            (ref $that && $that->isa('Sympa::List'))  or
+            (ref $that && $that->isa('Sympa::Robot'))
+    ) {
+        $main::logger->do_log(Sympa::Logger::ERR, 'Invalid that parameter');
+        return undef;
+    }
 
     ## Check parameters
     ## Need either file_path or function+name
     ## Note: parameter 'directory' was deprecated
-    unless ($parameters{'file_path'}
-        or $parameters{'function'} and $parameters{'name'}) {
-        $main::logger->do_log(Sympa::Logger::ERR, 'Missing parameter');
+    unless ($file_path or ($function and $name)) {
+        $main::logger->do_log(
+            Sympa::Logger::ERR,
+            'Missing either file_path parameter or function and name parameters'
+        );
         return undef;
     }
 
-    my $file_path = $parameters{'file_path'};
-    my $function  = $parameters{'function'};
-    my $name      = $parameters{'name'};
-    my $options   = $parameters{'options'} || {};
     my $scenario_struct;
 
     ## Determine the file path of the scenario
@@ -125,8 +136,10 @@ sub new {
             $that->get_etc_filename('scenari/' . $function . '.' . $name);
     }
 
+    my $self;
+
     if ($file_path) {
-        $scenario->{'file_path'} = $file_path;
+        $self->{'file_path'} = $file_path;
 
         ## Try to follow symlink.  If it succeed, try to get function and name
         ## from real path name.
@@ -181,7 +194,7 @@ sub new {
         close SCENARIO;
 
         ## Keep rough scenario
-        $scenario->{'data'} = $data;
+        $self->{'data'} = $data;
 
         $scenario_struct = _parse_scenario($function, $name, $data);
     } elsif ($function eq 'include') {
@@ -197,13 +210,13 @@ sub new {
         );
         $scenario_struct =
             _parse_scenario($function, $name, 'true() smtp -> reject');
-        $scenario->{'file_path'} = 'ERROR';                   ## special value
-        $scenario->{'data'}      = 'true() smtp -> reject';
+        $self->{'file_path'} = 'ERROR';                   ## special value
+        $self->{'data'}      = 'true() smtp -> reject';
     }
 
     ## Keep track of the current time ; used later to reload scenario files
     ## when they changed on disk
-    $scenario->{'date'} = time;
+    $self->{'date'} = time;
 
     unless (ref($scenario_struct) eq 'HASH') {
         $main::logger->do_log(Sympa::Logger::ERR, 'Failed to load scenario "%s.%s"',
@@ -211,18 +224,17 @@ sub new {
         return undef;
     }
 
-    $scenario->{'name'}   = $scenario_struct->{'name'};
-    $scenario->{'rules'}  = $scenario_struct->{'rules'};
-    $scenario->{'title'}  = $scenario_struct->{'title'};
-    $scenario->{'struct'} = $scenario_struct;
+    $self->{'name'}   = $scenario_struct->{'name'};
+    $self->{'rules'}  = $scenario_struct->{'rules'};
+    $self->{'title'}  = $scenario_struct->{'title'};
+    $self->{'struct'} = $scenario_struct;
 
-    ## Bless Scenario object
-    bless $scenario => $pkg;
+    bless $self, $class;
 
     ## Keep the scenario in memory
-    $all_scenarios{$scenario->{'file_path'}} = $scenario;
+    $all_scenarios{$self->{'file_path'}} = $self;
 
-    return $scenario;
+    return $self;
 }
 
 ## Parse scenario rules
@@ -477,20 +489,20 @@ sub request_action {
 
             # loading of the structure
             $scenario = Sympa::Scenario->new(
-                $list,
-                'function' => $operations[$#operations],
-                'name'     => $context->{'scenario'},
-                'options'  => $context->{'options'}
+                that     => $list,
+                function => $operations[$#operations],
+                name     => $context->{'scenario'},
+                options  => $context->{'options'}
             );
         }
 
     } elsif ($context->{'topicname'}) {
         ## Topics
         $scenario = Sympa::Scenario->new(
-            $robot,
-            'function' => 'topics_visibility',
-            'name' => $robot->topics->{$context->{'topicname'}}{'visibility'},
-            'options' => $context->{'options'}
+            that     => $robot,
+            function => 'topics_visibility',
+            name     => $robot->topics->{$context->{'topicname'}}{'visibility'},
+            options => $context->{'options'}
         );
     } else {
         ## Global scenario (ie not related to a list) ; example : create_list
@@ -502,10 +514,10 @@ sub request_action {
             and $p[0]->{'scenario'}
             ) {
             $scenario = Sympa::Scenario->new(
-                $robot,
-                'function' => $operation,
-                'name'     => $robot->$operation,
-                'options'  => $context->{'options'}
+                that     => $robot,
+                function => $operation,
+                name     => $robot->$operation,
+                options  => $context->{'options'}
             );
         }
     }
@@ -528,10 +540,10 @@ sub request_action {
 
     ## Include include.<action>.header if found
     my $include_scenario = Sympa::Scenario->new(
-        $that,
-        'function' => 'include',
-        'name'     => $operation . '.header',
-        'options'  => $context->{'options'}
+        that       => $that,
+        function => 'include',
+        name     => $operation . '.header',
+        options  => $context->{'options'}
     );
     if (defined $include_scenario) {
         ## Add rules at the beginning of the array
@@ -543,10 +555,10 @@ sub request_action {
             /^\s*include\s*\(?\'?([\w\.]+)\'?\)?\s*$/i) {
             my $include_file     = $1;
             my $include_scenario = Sympa::Scenario->new(
-                $that,
-                'function' => 'include',
-                'name'     => $include_file,
-                'options'  => $context->{'options'}
+                that     => $that,
+                function => 'include',
+                name     => $include_file,
+                options  => $context->{'options'}
             );
             if (defined $include_scenario) {
                 ## Removes the include directive and replace it with
