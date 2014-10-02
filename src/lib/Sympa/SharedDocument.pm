@@ -71,9 +71,8 @@ sub new {
     #$email ||= 'nobody';
     my $self = {};
 
-    unless (ref($list) =~ /List/i) {
-        $main::logger->do_log(Sympa::Logger::ERR,
-            'SharedDocument::new : incorrect list parameter');
+    unless (ref $list and $list->isa('Sympa::List')) {
+        $main::logger->do_log(Sympa::Logger::ERR, 'Invalid list parameter');
         return undef;
     }
 
