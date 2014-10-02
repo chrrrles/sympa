@@ -5450,9 +5450,9 @@ sub load_scenario_list {
             next if defined $skip_scenario{$name};
 
             my $scenario = Sympa::Scenario->new(
-                $self,
-                'function' => $action,
-                'name'     => $name
+                that     => $self,
+                function => $action,
+                name     => $name
             );
             next unless $scenario;
 
@@ -11485,15 +11485,15 @@ sub _set_list_param {
     if ($p->{'scenario'}) {
         if (ref $val eq 'Sympa::Scenario') {
             $val = Sympa::Scenario->new(
-                $self,
-                'function' => $p->{'scenario'},
-                'name'     => $val->{'name'}
+                that     => $self,
+                function => $p->{'scenario'},
+                name     => $val->{'name'}
             );
         } elsif (ref $val eq 'HASH') {
             $val = Sympa::Scenario->new(
-                $self,
-                'function' => $p->{'scenario'},
-                'name'     => $val->{'name'}
+                that     => $self,
+                function => $p->{'scenario'},
+                name     => $val->{'name'}
             );
         }
     }
@@ -11512,9 +11512,9 @@ sub _set_list_param {
         ## Load scenario to get real default
         if ($p->{'scenario'} and ref $default eq 'HASH') {
             $default = Sympa::Scenario->new(
-                $self,
-                'function' => $p->{'scenario'},
-                'name'     => $default->{'name'}
+                that     => $self,
+                function => $p->{'scenario'},
+                name     => $default->{'name'}
             );
         }
     }
