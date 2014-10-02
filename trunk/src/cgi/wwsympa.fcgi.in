@@ -8431,7 +8431,7 @@ sub do_modindex {
 
         $param->{'spool'}{$id}{'size'} = int($message->get_size() / 1024 + 0.5);
         $param->{'spool'}{$id}{'subject'} =
-            Sympa::Tools::Message::decode_header($message, 'Subject') || 'no_subject';
+            $message->decode_header('Subject') || 'no_subject';
                                                            
         my $date = $message->as_entity()->head->get('Date');
         if ($date) {
@@ -8945,7 +8945,7 @@ sub do_reject {
                 unless ($in{'message_template'} eq 'reject_quiet') {
                     my %context;
                     $context{'subject'} =
-                        Sympa::Tools::Message::decode_header($message, 'Subject');
+                        $message->decode_header('Subject');
                     $context{'rejected_by'}   = $param->{'user'}{'email'};
                     $context{'template_used'} = $in{'message_template'};
                     unless (
@@ -22135,11 +22135,11 @@ sub do_request_topic {
     }
 
     # headers will be encoded later.
-    $param->{'subject'} = Sympa::Tools::Message::decode_header($message, 'Subject');
+    $param->{'subject'} = $message->decode_header($message, 'Subject');
     $param->{'subject'} = Sympa::Tools::escape_html($param->{'subject'});     #FIXME
-    $param->{'from'}    = Sympa::Tools::Message::decode_header($message, 'From');
+    $param->{'from'}    = $message->decode_header('From');
     $param->{'from'}    = Sympa::Tools::escape_html($param->{'from'});        #FIXME
-    $param->{'date'}    = Sympa::Tools::Message::decode_header($message, 'Date');
+    $param->{'date'}    = $message->decode_header($message, 'Date');
     $param->{'date'}    = Sympa::Tools::escape_html($param->{'date'});        #FIXME
     $param->{'message_id'} =
         Sympa::Tools::clean_msg_id($message->get_header('Message-Id'));
