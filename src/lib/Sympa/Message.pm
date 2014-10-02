@@ -639,9 +639,7 @@ sub _set_dkim_status {
     return unless $self->{robot};
     return unless $self->{robot}->dkim_feature eq 'on';
 
-    $self->{'dkim_status'} = Sympa::Tools::DKIM::verifier(
-        $self->{'string'}, Sympa::Site->tmpdir
-    );
+    $self->{'dkim_status'} = Sympa::Tools::DKIM::verifier($self->{'string'});
 }
 
 =item $message->is_authenticated()
