@@ -254,10 +254,12 @@ sub get_content {
     my $i   = 0;
     foreach my $item (@messages) {
         last if $end <= $i;
-        unless ($self->parse_file_content($item->{'messagekey'}, $item)) {
+        my $content = $self->get_file_content($item->{'messagekey'});
+        unless ($content) {
             $self->move_to_bad($item->{'messagekey'});
             next;
         }
+        $item->{messageastring} = $content;
         push @ret, $item
             if $offset <= $i;
         $i++;
@@ -315,10 +317,12 @@ sub next {
     }
     return 0 unless ($#{$self->{'spool_files_list'}} > -1);
     return 0 unless $data = $self->get_next_file_to_process;
-    unless ($self->parse_file_content($data->{'messagekey'}, $data)) {
+    my $content = $self->get_file_content($data->{'messagekey'});
+    unless ($content) {
         $self->move_to_bad($data->{'messagekey'});
         return undef;
     }
+    $data->{messageastring} = $content;
     return $data;
 }
 
@@ -342,27 +346,6 @@ sub parse_filename {
         return undef;
     }
     unless ($self->analyze_file_name($key, $data)) {
-        return undef;
-    }
-    return $data;
-}
-
-#FIXME: This would be replaced by Sympa::Message::load().
-sub parse_file_content {
-    my $self = shift;
-    my $key  = shift;
-    my $data = shift;
-
-    unless ($key) {
-        $main::logger->do_log(Sympa::Logger::ERR,
-            'Unable to find out which file to process');
-        return undef;
-    }
-
-    $data->{'messageasstring'} = $self->get_file_content($key);
-    unless (defined $data->{'messageasstring'}) {
-        $main::logger->do_log(Sympa::Logger::ERR,
-            'Unable to gather content from file %s', $key);
         return undef;
     }
     return $data;

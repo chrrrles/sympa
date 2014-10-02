@@ -60,7 +60,7 @@ sub get_additional_details {
     my $self = shift;
     my $key  = shift;
     my $data = shift;
-    $data = $self->parse_file_content($key, $data);
+    $data->{messageastring} = $self->get_file_content($key);
     my $details;
     unless ($details =
         $self->get_subscription_request_details($data->{'messageasstring'})) {
