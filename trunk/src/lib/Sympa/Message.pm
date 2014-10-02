@@ -697,19 +697,7 @@ sub decrypt {
         return undef;
     }
 
-    my $password_file;
-    if ($key_password) {
-        my $umask = umask;
-        umask 0077;
-        $password_file = File::Temp->new(
-            DIR    => $tmpdir,
-            UNLINK => $main::options{'debug'} ? 0 : 1
-        );
-
-        print $password_file $key_password;
-        close $password_file;
-        umask $umask;
-    }
+    local $ENV{OPENSSL_PASSWORD} = $key_password if $key_password;
 
     ## try all keys/certs until one decrypts.
     my $decrypted_entity;
@@ -726,7 +714,7 @@ sub decrypt {
         my $command =
             "$openssl smime -decrypt -out $decrypted_message_file" . 
             " -recip $certfile -inkey $keyfile" .
-            ($password_file ? " -passin file:$password_file" : "" );
+            ($key_password ? " -passin env:OPENSSL_PASSWORD" : "" );
         $main::logger->do_log(Sympa::Logger::DEBUG3, '%s', $command);
 
         my $command_handle;
@@ -1403,28 +1391,16 @@ sub sign {
             unless $header =~ /^(content-type|content-transfer-encoding)$/i
     }
 
-    my $password_file;
-    if ($key_password) {
-        my $umask = umask;
-        umask 0077;
-        $password_file = File::Temp->new(
-            DIR    => $tmpdir,
-            UNLINK => $main::options{'debug'} ? 0 : 1
-        );
-
-        print $password_file $key_password;
-        close $password_file;
-        umask $umask;
-    }
-
     my $signed_message_file = File::Temp->new(
         DIR    => $tmpdir,
         UNLINK => $main::options{'debug'} ? 0 : 1
     );
 
+    local $ENV{OPENSSL_PASSWORD} = $key_password if $key_password;
+
     my $command = "$openssl smime -sign"                             .
         " -signer $cert -inkey $key " .  "-out $signed_message_file" .
-        ($password_file ? " -passin file:$password_file" : "" );
+        ($key_password ? " -passin env:OPENSSL_PASSWORD" : "" );
     $main::logger->do_log(Sympa::Logger::DEBUG2, '%s', $command);
 
     my $command_handle;
