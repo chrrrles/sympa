@@ -36,7 +36,6 @@ use Sympa::Site;
 use Sympa::Logger;
 use Sympa::Message;
 use Sympa::Tools::File;
-use Sympa::Tools::Message;
 
 my $serial_number = 0;    # incremented on each archived mail
 
@@ -145,9 +144,9 @@ sub scan_dir_archive {
         my $msg = {};
         $msg->{'id'} = $i;
 
-        $msg->{'subject'} = Sympa::Tools::Message::decode_header($message, 'Subject');
-        $msg->{'from'}    = Sympa::Tools::Message::decode_header($message, 'From');
-        $msg->{'date'}    = Sympa::Tools::Message::decode_header($message, 'Date');
+        $msg->{'subject'} = $message->decode_header('Subject');
+        $msg->{'from'}    = $message->decode_header('From');
+        $msg->{'date'}    = $message->decode_header('Date');
 
         $msg->{'full_msg'} = $message->as_string();    # raw message
 

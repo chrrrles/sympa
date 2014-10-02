@@ -478,65 +478,6 @@ sub virus_infected {
 
 }
 
-=item decode_header($message, $tag, $separator)
-
-Return header value, decoded to UTF-8. trailing newline will be
-removed. If sep is given, return all occurrences joined by it.
-
-Parameters:
-
-=over
-
-=item * I<$message>: FIXME
-
-=item * I<$tag>: FIXME
-
-=item * I<$separator>: FIXME
-
-=back
-
-Returns decoded header(s), with hostile characters (newline, nul) removed.
-
-=cut
-
-sub decode_header {
-    my $msg = shift;
-    my $tag = shift;
-    my $sep = shift || undef;
-
-    my $head;
-    if (ref $msg and $msg->isa('Sympa::Message')) {
-        $head = $msg->as_entity()->head;
-    } elsif (ref $msg eq 'MIME::Entity') {
-        $head = $msg->head;
-    } elsif (ref $msg eq 'MIME::Head' or ref $msg eq 'Mail::Header') {
-        $head = $msg;
-    } else {
-        croak 'bug in logic.  Ask developer';
-    }
-
-    if (defined $sep) {
-        my @values = $head->get($tag);
-        return undef unless scalar @values;
-        foreach my $val (@values) {
-            $val = MIME::EncWords::decode_mimewords($val, Charset => 'UTF-8');
-            chomp $val;
-            $val =~ s/(\r\n|\r|\n)([ \t])/$2/g;    #unfold
-            $val =~ s/\0|\r\n|\r|\n//g;            # remove newline & nul
-        }
-        return join $sep, @values;
-    } else {
-        my $val = $head->get($tag, 0);
-        return undef unless defined $val;
-        $val = MIME::EncWords::decode_mimewords($val, Charset => 'UTF-8');
-        chomp $val;
-        $val =~ s/(\r\n|\r|\n)([ \t])/$2/g;        #unfold
-        $val =~ s/\0|\r\n|\r|\n//g;                # remove newline & nul
-
-        return $val;
-    }
-}
-
 =item plain_body_as_string($entity)
 
 Returns a plain text version of an email # message, suitable for use in plain
