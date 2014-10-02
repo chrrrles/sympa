@@ -48,7 +48,7 @@ use Sympa::Message;
 
 =over
 
-=item verifier($msg_as_string, $tpmdir)
+=item verifier($msg_as_string)
 
 Input a msg as string, output the dkim status.
 
@@ -58,15 +58,12 @@ Parameters:
 
 =item * I<$msg_as_string>: FIXME
 
-=item * I<tmpdir>: FIXME
-
 =back
 
 =cut
 
 sub verifier {
     my $msg_as_string = shift;
-    my $tmpdir = shift;
     my $dkim;
 
     $main::logger->do_log(Sympa::Logger::DEBUG, "DKIM verifier");
@@ -83,28 +80,9 @@ sub verifier {
         return undef;
     }
 
-    my $temporary_file = $tmpdir . "/dkim." . $PID;
-    if (!open(MSGDUMP, "> $temporary_file")) {
-        $main::logger->do_log(Sympa::Logger::ERR, 'Can\'t store message in file %s',
-            $temporary_file);
-        return undef;
-    }
-    print MSGDUMP $msg_as_string;
-
-    unless (close(MSGDUMP)) {
-        $main::logger->do_log(Sympa::Logger::ERR,
-            "unable to dump message in temporary file $temporary_file");
-        return undef;
-    }
-
-    unless (open(MSGDUMP, "$temporary_file")) {
-        $main::logger->do_log(Sympa::Logger::ERR, 'Can\'t read message in file %s',
-            $temporary_file);
-        return undef;
-    }
-
     # this documented method is pretty but dont validate signatures, why ?
     # $dkim->load(\*MSGDUMP);
+    open (MSGDUMP, '<', \$msg_as_string);
     while (<MSGDUMP>) {
         chomp;
         s/\015$//;
@@ -113,7 +91,6 @@ sub verifier {
 
     $dkim->CLOSE;
     close(MSGDUMP);
-    unlink($temporary_file);
 
     foreach my $signature ($dkim->signatures) {
         if ($signature->result_detail eq "pass") {
