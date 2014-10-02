@@ -585,7 +585,7 @@ sub _set_decoded_subject {
     }
     if ($self->{'subject_charset'}) {
         $self->{'decoded_subject'} =
-            Sympa::Tools::Message::decode_header($self, 'Subject');
+            $self->decode_header('Subject');
     } else {
         if ($subject) {
             chomp $subject;
@@ -2489,6 +2489,52 @@ sub personalize_text {
     }
 
     return $output;
+}
+
+=item $message->decode_header($tag, $separator)
+
+Return header value, decoded to UTF-8. trailing newline will be
+removed. If sep is given, return all occurrences joined by it.
+
+Parameters:
+
+=over
+
+=item * I<$tag>: FIXME
+
+=item * I<$separator>: FIXME
+
+=back
+
+Returns decoded header(s), with hostile characters (newline, nul) removed.
+
+=cut
+
+sub decode_header {
+    my ($self, $tag, $sep) = @_;
+
+    my $head = $self->as_entity()->head;
+
+    if (defined $sep) {
+        my @values = $head->get($tag);
+        return undef unless scalar @values;
+        foreach my $val (@values) {
+            $val = MIME::EncWords::decode_mimewords($val, Charset => 'UTF-8');
+            chomp $val;
+            $val =~ s/(\r\n|\r|\n)([ \t])/$2/g;    #unfold
+            $val =~ s/\0|\r\n|\r|\n//g;            # remove newline & nul
+        }
+        return join $sep, @values;
+    } else {
+        my $val = $head->get($tag, 0);
+        return undef unless defined $val;
+        $val = MIME::EncWords::decode_mimewords($val, Charset => 'UTF-8');
+        chomp $val;
+        $val =~ s/(\r\n|\r|\n)([ \t])/$2/g;        #unfold
+        $val =~ s/\0|\r\n|\r|\n//g;                # remove newline & nul
+
+        return $val;
+    }
 }
 
 =back
