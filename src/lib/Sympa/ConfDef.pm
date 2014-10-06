@@ -21,6 +21,19 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+=encoding utf-8
+
+=head1 NAME
+
+Sympa::ConfDef - Definition of configuration parameters
+
+=head1 DESCRIPTION
+
+This package contains the definition of all configuration parameters, whose
+value can be defined at runtime.
+
+=cut
+
 package Sympa::ConfDef;
 
 use strict;

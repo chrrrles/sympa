@@ -22,6 +22,22 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+=encoding utf-8
+
+=head1 NAME
+
+Sympa::Language - Handling languages and locales
+
+=head1 DESCRIPTION
+
+This package provides interfaces for i18n (internationalization) of Sympa.
+
+The language tags are used to determine each language.
+A language tag consists of one or more subtags: language, script, region and
+variant.  Below are some examples.
+
+=cut
+
 package Sympa::Language;
 
 use strict;
@@ -698,19 +714,6 @@ sub maketext {
 1;
 __END__
 
-=encoding utf-8
-
-=head1 NAME
-
-Sympa::Language - Handling languages and locales
-
-=head1 DESCRIPTION
-
-This package provides interfaces for i18n (internationalization) of Sympa.
-
-The language tags are used to determine each language.
-A language tag consists of one or more subtags: language, script, region and
-variant.  Below are some examples.
 
 =over 4
 

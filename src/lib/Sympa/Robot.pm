@@ -21,6 +21,18 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+=encoding utf-8
+
+=head1 NAME
+
+Sympa::Robot - A robot of mailing list service (??)
+
+=head1 DESCRIPTION
+
+FIXME
+
+=cut
+
 ## This package handles Sympa virtual robots
 ## It should :
 ##   * provide access to robot conf parameters,
@@ -47,14 +59,6 @@ use overload
 
 # Language context
 my $language = Sympa::Language->instance;
-
-=encoding utf-8
-
-=head1 NAME
-
-Robot - robot of mailing list service
-
-=head1 DESCRIPTION
 
 =head2 CONSTRUCTOR AND INITIALIZER
 

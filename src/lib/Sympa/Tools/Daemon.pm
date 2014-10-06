@@ -29,7 +29,7 @@ Sympa::Tools::Daemon - Daemon-related functions
 
 =head1 DESCRIPTION
 
-This package provides daemon-related functions.
+This package provides some daemon-related functions.
 
 =cut
 

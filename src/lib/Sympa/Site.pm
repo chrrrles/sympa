@@ -21,11 +21,18 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-####
-#### Site class
-####
-#### This implements accessor methods to global config
-####
+=encoding utf-8
+
+=head1 NAME 
+
+Sympa::Site - FIXME
+
+=head1 DESCRIPTION
+
+FIXME
+
+=cut
+
 package Sympa::Site;
 
 use strict;

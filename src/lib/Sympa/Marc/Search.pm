@@ -2,6 +2,18 @@
 # vim:ft=perl:et:sw=4
 # $Id$
 
+=encoding utf-8
+
+=head1 NAME
+
+Sympa::Marc::Search - FIXME
+
+=head1 DESCRIPTION
+
+FIXME
+
+=cut
+
 package Sympa::Marc::Search;
 
 use strict;

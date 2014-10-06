@@ -29,7 +29,7 @@ Sympa::Tools::SMIME - S/MIME-related functions
 
 =head1 DESCRIPTION
 
-This package provides S/MIME-related functions.
+This package provides some S/MIME-related functions.
 
 =cut
 

@@ -21,13 +21,16 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+=encoding utf-8
+
 =head1 NAME
 
-moddef - Definition of dependent modules
+Sympa::ModDef - Definition of dependent modules
 
 =head1 DESCRIPTION
 
-This module keeps definition of modules required by Sympa.
+This package contains the definition of Sympa dependencies on external perl
+modules.
 
 =cut
 

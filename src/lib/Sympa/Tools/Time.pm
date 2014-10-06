@@ -29,7 +29,7 @@ Sympa::Tools::Time - Time-related functions
 
 =head1 DESCRIPTION
 
-This package provides time-related functions.
+This package provides some time-related functions.
 
 =cut
 
