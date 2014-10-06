@@ -9054,15 +9054,13 @@ sub get_mod_spool_size {
     my $modspool = Sympa::Spool::File::Key->new(
         name => 'mod', directory => Sympa::Site->queuemod()
     );
-    my @messages = $modspool->get_raw_entries(
+    return $modspool->get_count(
         selector => {
             list      => $self->name,
             robot     => $self->domain
             validated => ['.distribute', 'ne']
         }
     );
-
-    return $#messages + 1;
 }
 
 ### moderation for shared
