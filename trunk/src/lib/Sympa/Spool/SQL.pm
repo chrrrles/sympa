@@ -134,15 +134,6 @@ sub global_count {
 
 =over
 
-=item $spool->count()
-
-=cut
-
-sub count {
-    my $self = shift;
-    return ($self->get_content(selection => 'count'));
-}
-
 =item $spool->get_content(%parameters)
 
 Return the content of the spool, as a list of serialized entries.
@@ -247,6 +238,18 @@ sub get_content {
         $sth->finish();
         return @messages;
     }
+}
+
+=item $spool->get_count(%parameters)
+
+Return the number of spool entries matching the given criteria.
+
+=cut
+
+sub get_count {
+    my ($self, %params) = @_;
+    my @messages = $self->get_content(%params);
+    return $#messages + 1;
 }
 
 =item $spool->next()
