@@ -9054,8 +9054,12 @@ sub get_mod_spool_size {
     my $modspool = Sympa::Spool::File::Key->new(
         name => 'mod', directory => Sympa::Site->queuemod()
     );
-    my @messages = $modspool->get_awaiting_messages(
-        selector => {'list' => $self->name, 'robot' => $self->domain}
+    my @messages = $modspool->get_raw_entries(
+        selector => {
+            list      => $self->name,
+            robot     => $self->domain
+            validated => ['.distribute', 'ne']
+        }
     );
 
     return $#messages + 1;

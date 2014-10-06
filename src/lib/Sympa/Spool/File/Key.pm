@@ -88,13 +88,6 @@ sub analyze_file_name {
     return $data;
 }
 
-## Return messages not validated yet.
-sub get_awaiting_messages {
-    my ($self, %params) = @_;
-    $params{'selector'}{'validated'} = ['.distribute', 'ne'];
-    return $self->get_raw_entries(%params);
-}
-
 sub validate_message {
     my $self = shift;
     my $key  = shift;
