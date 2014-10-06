@@ -201,14 +201,24 @@ sub split_mail {
     return 1;
 }
 
-=item virus_infected($message)
+=item virus_infected(%parameters)
 
 FIXME: missing description
+
+Parameters:
+
+=over
+
+=item * I<entity>: the message to check, as a L<MIME::Entity> instance
+
+=back
 
 =cut
 
 sub virus_infected {
-    my $mail = shift;
+    my (%params) = @_;
+
+    my $mail = $params{entity};
 
     # in, version previous from db spools, $file was the filename of the
     # message

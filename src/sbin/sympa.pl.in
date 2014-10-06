@@ -862,7 +862,9 @@ sub process_message {
     }
 
     # anti-virus
-    my $rc = Sympa::Tools::Message::virus_infected($message->as_entity());
+    my $rc = Sympa::Tools::Message::virus_infected(
+        entity => $message->as_entity()
+    );
     if ($rc) {
         if ($robot->antivirus_notify eq 'sender') {
             unless (
