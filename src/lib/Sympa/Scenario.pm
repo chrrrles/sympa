@@ -1902,12 +1902,6 @@ sub verify_custom {
 
 =cut
 
-sub dump_all_scenarios {
-    open TMP, ">/tmp/all_scenarios";
-    Sympa::Tools::Data::dump_var(\%all_scenarios, 0, \*TMP);
-    close TMP;
-}
-
 =over 4
 
 =item get_current_title ()

@@ -42,7 +42,6 @@ use English qw(-no_match_vars);
 use Sympa::Logger;
 use Sympa::Scenario;
 use Sympa::Tools;
-use Sympa::Tools::Data;
 
 =head1 CLASS METHODS
 
@@ -310,14 +309,6 @@ sub new {
     bless $self, $class;
 
     return $self;
-}
-
-sub dump {
-    my $self = shift;
-    my $fd   = shift;
-
-    Sympa::Tools::Data::dump_var($self, 0, $fd);
-
 }
 
 sub dup {
