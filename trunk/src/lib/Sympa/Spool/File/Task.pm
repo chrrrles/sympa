@@ -131,7 +131,7 @@ sub create_required_tasks {
     # indexing them by list and model
     my (%tasks_by_list, %tasks_by_model);
 
-    my @tasks = $self->get_content();
+    my @tasks = $self->get_entries();
 
     foreach my $task (@tasks) {
         my $list_id = $task->{'id'};
@@ -308,11 +308,11 @@ sub creation_error {
     Sympa::Site->send_notify_to_listmaster('task_creation_error', $message);
 }
 
-sub get_content {
+sub get_entries {
     my ($self, %params) = @_;
 
     my @tasks;
-    foreach my $task_in_spool ($self->SUPER::get_content(%params)) {
+    foreach my $task_in_spool ($self->get_raw_entries(%params)) {
         next unless $task_in_spool; # is this really needed ?
 
         my $list;

@@ -135,9 +135,9 @@ sub new {
 
 =over
 
-=item $spool->get_content(%parameters)
+=item $spool->get_raw_entries(%parameters)
 
-Return the content of the spool, as a list of serialized entries.
+Return the raw content of the spool, as a list of serialized entries.
 
 Parameters:
 
@@ -159,7 +159,7 @@ Parameters:
 
 =cut
 
-sub get_content {
+sub get_raw_entries {
     $main::logger->do_log(Sympa::Logger::DEBUG2, '(%s, %s)', @_);
     my ($self, %params) = @_;
 
@@ -262,7 +262,7 @@ Return the number of spool entries matching the given criteria.
 
 sub get_count {
     my ($self, %params) = @_;
-    my @messages = $self->get_content(%params);
+    my @messages = $self->get_raw_entries(%params);
     return $#messages + 1;
 }
 
@@ -577,7 +577,7 @@ sub get_message {
     my $selector = shift;
     my @messages;
     return undef
-        unless @messages = $self->get_content(selector => $selector);
+        unless @messages = $self->get_raw_entries(selector => $selector);
     return $messages[0];
 }
 

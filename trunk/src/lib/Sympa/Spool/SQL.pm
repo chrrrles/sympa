@@ -134,9 +134,9 @@ sub global_count {
 
 =over
 
-=item $spool->get_content(%parameters)
+=item $spool->get_raw_entries(%parameters)
 
-Return the content of the spool, as a list of serialized entries.
+Return the raw content of the spool, as a list of serialized entries.
 
 Parameters:
 
@@ -158,7 +158,7 @@ Parameters:
 
 =cut
 
-sub get_content {
+sub get_raw_entries {
     my ($self, %params) = @_;
 
     # hash field->value used as filter WHERE sql query

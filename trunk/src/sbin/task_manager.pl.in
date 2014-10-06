@@ -250,7 +250,7 @@ while (!$end) {
     ## processing of tasks anterior to the current date
     $logger->do_log(Sympa::Logger::DEBUG2,
         'Processing tasks anterior to the current date');
-    foreach my $task ($spool->get_content) {
+    foreach my $task ($spool->get_entries()) {
         last if $end;
         next unless $task->{'date'} <= $current_date;
 
