@@ -169,7 +169,6 @@ sub get_content {
     #    -  '*'  is the default .
     #    -  '*_but_message' mean any field except message which may be huge
     #       and unusefull while listing spools
-    #    - 'count' mean the selection is just a count.
     # should be used mainly to select all but 'message' that may be huge and
     # may be unusefull
     my $selection = $params{'selection'};
@@ -191,17 +190,8 @@ sub get_content {
     }
     $sql_where =~ s/^\s*AND//;
 
-    my $statement;
-    if ($selection eq 'count') {
-
-        # just return the selected count, not all the values
-        $statement = 'SELECT COUNT(*) ';
-    } else {
-        $statement = 'SELECT ' . _selectfields($selection);
-    }
-
-    $statement =
-        $statement
+    my $statement =
+        'SELECT ' . _selectfields($selection)
         . sprintf " FROM spool_table WHERE %s AND spoolname_spool = %s ",
         $sql_where, Sympa::DatabaseManager::quote($self->{name});
 
@@ -217,39 +207,59 @@ sub get_content {
     my $sth = Sympa::DatabaseManager::do_query($statement);
     return unless $sth;
 
-    if ($selection eq 'count') {
-        my @result = $sth->fetchrow_array();
-        $sth->finish;
-        return $result[0];
-    } else {
-        my @messages;
-        while (my $message = $sth->fetchrow_hashref('NAME_lc')) {
-            $message->{'messageasstring'} =
-                MIME::Base64::decode($message->{'message'})
-                if ($message->{'message'});
-            $message->{'listname'} = $message->{'list'
-                }; # duplicated because "list" is a tt2 method that convert a string to an array of chars so you can't test  [% IF  message.list %] because it is always defined!!!
-            $message->{'status'}    = $self->{status};
-            $message->{'spoolname'} = $self->{name};
-            push @messages, $message;
+    my @messages;
+    while (my $message = $sth->fetchrow_hashref('NAME_lc')) {
+        $message->{'messageasstring'} =
+            MIME::Base64::decode($message->{'message'})
+            if ($message->{'message'});
+        $message->{'listname'} = $message->{'list'
+            }; # duplicated because "list" is a tt2 method that convert a string to an array of chars so you can't test  [% IF  message.list %] because it is always defined!!!
+        $message->{'status'}    = $self->{status};
+        $message->{'spoolname'} = $self->{name};
+        push @messages, $message;
 
-            last if $page_size and $page_size <= scalar @messages;
-        }
-        $sth->finish();
-        return @messages;
+        last if $page_size and $page_size <= scalar @messages;
     }
+    $sth->finish();
+    return @messages;
 }
 
 =item $spool->get_count(%parameters)
 
 Return the number of spool entries matching the given criteria.
 
+Parameters:
+
+=over 4
+
+=item * I<selector>: FIXME
+
+=back
+
 =cut
 
 sub get_count {
     my ($self, %params) = @_;
-    my @messages = $self->get_content(%params);
-    return $#messages + 1;
+
+    my $selector = $params{'selector'} || $self->{'selector'};
+    my $sql_where = _sqlselector($selector);
+    if ($self->{status} eq 'bad') {
+        $sql_where = $sql_where . " AND message_status_spool = 'bad' ";
+    } else {
+        $sql_where = $sql_where . " AND message_status_spool <> 'bad' ";
+    }
+    $sql_where =~ s/^\s*AND//;
+
+    my $statement = 'SELECT COUNT(*) '
+        . sprintf " FROM spool_table WHERE %s AND spoolname_spool = %s ",
+        $sql_where, Sympa::DatabaseManager::quote($self->{name});
+
+    my $sth = Sympa::DatabaseManager::do_query($statement);
+    return unless $sth;
+
+    my @result = $sth->fetchrow_array();
+    $sth->finish;
+    return $result[0];
 }
 
 =item $spool->next()
