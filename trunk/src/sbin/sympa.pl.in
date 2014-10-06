@@ -569,14 +569,14 @@ while ($signal ne 'term') {
                 ($list || $robot),
                 ($message->{'listtype'} || '(post)')
             );
-            $spool->remove_message($message_in_spool->{'messagekey'});
+            $spool->remove($message_in_spool->{'messagekey'});
             ##$spool->unlock_message($message_in_spool->{'messagekey'});
         } else {
 
             # Do not remove message task_manager will purge database removing
             # messages in spool distribute that have no links with
             # bulkspool_stable
-            # $spool->remove_message(
+            # $spool->remove(
             #     {'messagekey' => $message_in_spool->{'messagekey'}});
 
             # move message to bad.
@@ -2127,7 +2127,7 @@ sub SendDigest {
                 'client'       => $ip,
                 'daemon'       => $daemon_name
             );
-            $digestspool->remove_message(
+            $digestspool->remove(
                 {'messagekey' => $digest->{'messagekey'}});
             next;
         }
@@ -2152,7 +2152,7 @@ sub SendDigest {
                 'client'       => $ip,
                 'daemon'       => $daemon_name
             );
-            $digestspool->remove_message(
+            $digestspool->remove(
                 {'messagekey' => $digest->{'messagekey'}});
         }
     }

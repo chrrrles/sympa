@@ -617,7 +617,7 @@ sub move_to {
         bless $new_spool, $target;
     }
     $new_spool->store($file_to_move);
-    $self->remove_message("$file_to_move->{'messagekey'}");
+    $self->remove("$file_to_move->{'messagekey'}");
     return 1;
 }
 
@@ -627,7 +627,7 @@ sub update {
 
 =item $spool->store($string, $param)
 
-Store a message in the spool.
+Store a new entry in the spool.
 
 =cut
 
@@ -654,13 +654,13 @@ sub store {
     return 1;
 }
 
-=item $spool->remove_message($key)
+=item $spool->remove($key)
 
-Remove a message from the spool.
+Remove an entry from the spool.
 
 =cut
 
-sub remove_message {
+sub remove {
     my $self = shift;
     my $key  = shift;
 
@@ -677,7 +677,7 @@ sub remove_message {
 
 =item $spool->clean($delay)
 
-Clean the spool by removing old messages.
+Clean the spool by removing old entries.
 
 =cut
 

@@ -311,7 +311,7 @@ while (!$end) {
             next;
         }
         if ($bounce->process) {
-            unless ($spool->remove_message($bounce->{'messagekey'})) {
+            unless ($spool->remove($bounce->{'messagekey'})) {
                 $logger->do_log(Sympa::Logger::ERR,
                     'Could not remove message %s from bounce spool', $bounce);
                 $spool->move_to_bad($bounce->{'messagekey'});

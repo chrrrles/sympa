@@ -2782,7 +2782,7 @@ sub distribute {
                 'Unable to send template "message_report" to %s', $sender);
         }
     }
-    $modspool->remove_message($message_in_spool->{'messagekey'});
+    $modspool->remove($message_in_spool->{'messagekey'});
     $main::logger->do_log(Sympa::Logger::DEBUG2,
         'DISTRIBUTE %s %s from %s accepted (%d seconds)',
         $name, $key, $sender, time - $time_command);
@@ -3037,7 +3037,7 @@ sub confirm {
             'CONFIRM %s from %s for list %s accepted (%d seconds)',
             $key, $sender, $list->name, time - $time_command);
 
-        $spool->remove_message({'authkey' => $key});
+        $spool->remove({'authkey' => $key});
 
         return 1;
     }
@@ -3157,7 +3157,7 @@ sub reject {
     Sympa::Tools::File::remove_dir(
         Sympa::Site->viewmail_dir . '/mod/' . $list->get_list_id() . '/' . $key);
 
-    $modspool->remove_message({'list' => $list, 'authkey' => $key});
+    $modspool->remove({'list' => $list, 'authkey' => $key});
 
     return 1;
 }
