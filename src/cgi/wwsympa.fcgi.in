@@ -9016,7 +9016,7 @@ sub do_reject {
         }
 
         # move message in spool of validated messages
-        unless ($modspool->remove_message($message->{'messagekey'})) {
+        unless ($modspool->remove($message->{'messagekey'})) {
             Sympa::Report::reject_report_web(
                 'intern',
                 'change_spool',
@@ -23671,7 +23671,7 @@ sub do_viewspool_message_remove {
     }
     my $spool = Sympa::Spool::SQL->new(name => $spoolname, status => $status);
     unless (
-        $spool->remove_message(
+        $spool->remove(
             {'messagekey' => $messagekey, 'just_try' => 1}
         )
         ) {

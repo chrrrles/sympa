@@ -744,7 +744,7 @@ EOF
             ) {
             return (($z - 1) * $size_increment);
         }
-        $testing->remove_message({'messagekey' => $messagekey});
+        $testing->remove({'messagekey' => $messagekey});
         $total += $z * $size_increment;
         $progress->message(sprintf ".........[OK. Done in %.2f sec]",
             time() - $time);

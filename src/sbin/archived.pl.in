@@ -328,7 +328,7 @@ while (!$end) {
         $logger->do_log(Sympa::Logger::DEBUG, "rebuild found ");
         if ($item->{'list'} && $item->{'robot'}) {
             rebuild($item->{'list'} . '@' . $item->{'robot'});
-            $spool->remove_message($item->{'messagekey'});
+            $spool->remove($item->{'messagekey'});
         } else {
             $logger->do_log(Sympa::Logger::ERR,
                 "unable to rebuild archive for unknown list/robot.Move to bad"
@@ -464,7 +464,7 @@ while (!$end) {
                 Sympa::Tools::File::remove_dir($arcpath);
             }
         }
-        $spool->remove_message($item->{'messagekey'});
+        $spool->remove($item->{'messagekey'});
     } else {
         $logger->do_log(Sympa::Logger::NOTICE,
             'Archiving message %s for list %s@%s',
@@ -483,7 +483,7 @@ while (!$end) {
                     "Unable to send notify 'archiving_failed' to listmaster");
             }
         }
-        unless ($spool->remove_message($item->{'messagekey'})) {
+        unless ($spool->remove($item->{'messagekey'})) {
             $logger->do_log(
                 Sympa::Logger::ERR,
                 "Couldn't remove message in archive spool %s. exiting to prevent infinite loop",

@@ -1766,7 +1766,7 @@ sub send_msg_digest {
     $self->do_digest_sending();
 
     delete $self->{'digest'};
-    $digestspool->remove_message({'messagekey' => $messagekey});
+    $digestspool->remove({'messagekey' => $messagekey});
     return 1;
 }
 
@@ -10382,7 +10382,7 @@ sub get_subscription_requests {
                 $self
             );
             unless (
-                $subscription_request_spool->remove_message(
+                $subscription_request_spool->remove(
                     $subrequest->{'messagekey'}
                 )
                 ) {
@@ -10452,7 +10452,7 @@ sub delete_subscription_request {
             )
             ) {
             $removed++
-                if $subscription_request_spool->remove_message($key);
+                if $subscription_request_spool->remove($key);
         } else {
             $main::logger->do_log(Sympa::Logger::NOTICE,
                 'Unable to get subscription key for %s', $email);
@@ -10526,7 +10526,7 @@ sub get_signoff_requests {
                 $self
             );
             unless (
-                $signoff_request_spool->remove_message(
+                $signoff_request_spool->remove(
                     {'list' => $self, 'sender' => $email, 'just_try' => 1}
                 )
                 ) {
@@ -10576,7 +10576,7 @@ sub delete_signoff_request {
     my $removed = 0;
     foreach my $email (@list_of_email) {
         $removed++
-            if $signoff_request_spool->remove_message(
+            if $signoff_request_spool->remove(
             {'list' => $self, 'sender' => $email, 'just_try' => 1});
     }
 

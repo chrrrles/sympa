@@ -543,7 +543,7 @@ sub update {
 
 =item $spool->store($string, $metadata, $locked)
 
-Store a message in the spool.
+Store an entry in the spool.
 
 =cut
 
@@ -651,13 +651,13 @@ sub store {
     return $messagekey;
 }
 
-=item $spool->remove_message($params)
+=item $spool->remove($params)
 
-Remove a message from the spool.
+Remove an entry from the spool.
 
 =cut
 
-sub remove_message {
+sub remove {
     $main::logger->do_log(Sympa::Logger::DEBUG2, '(%s, %s)', @_);
     my $self   = shift;
     my $params = shift;
@@ -691,7 +691,7 @@ sub remove_message {
 
 =item $spool->clean($delay)
 
-Clean the spool by removing old messages.
+Clean the spool by removing old entries.
 
 =cut
 
