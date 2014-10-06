@@ -49,12 +49,6 @@ use Sympa::Tools::File;
 
 our $filename_regexp = '^(\S+)\.(\d+)\.\w+$';
 
-our %classes = (
-    'msg'  => 'Sympa::Spool::File::Message',
-    'task' => 'Sympa::Spool::File::Task',
-    'mod'  => 'Sympa::Spool::File::Key',
-);
-
 =head1 CLASS METHODS
 
 =over 4
@@ -606,20 +600,6 @@ sub get_message {
 #    return ( $self->update({'messagekey' => $messagekey},
 #			   {'messagelock' => 'NULL'}));
 #}
-
-sub move_to {
-    my $self         = shift;
-    my $param        = shift;
-    my $target       = shift;
-    my $file_to_move = $self->get_message($param);
-    my $new_spool    = Sympa::Spool::File->new($target);
-    if ($classes{$target}) {
-        bless $new_spool, $target;
-    }
-    $new_spool->store($file_to_move);
-    $self->remove("$file_to_move->{'messagekey'}");
-    return 1;
-}
 
 sub update {
     croak 'Not implemented yet';
