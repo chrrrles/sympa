@@ -311,6 +311,18 @@ sub new {
     return $self;
 }
 
+=back
+
+=head1 INSTANCE METHODS
+
+=over
+
+=item $document->dup()
+
+FIXME
+
+=cut
+
 sub dup {
     my $self = shift;
 
@@ -568,5 +580,9 @@ sub check_access_control {
     $self->{'access'} = \%result;
     return 1;
 }
+
+=back
+
+=cut
 
 1;

@@ -311,13 +311,14 @@ sub _parse_scenario {
     return $structure;
 }
 
-=head2 Functions
+=back
+
+=head2 FUNCTIONS
 
 =over 4
 
-=item request_action ( THAT, OPERATION, AUTH_METHOD, CONTEXT, [ DEBUG ] )
+=item request_action( THAT, OPERATION, AUTH_METHOD, CONTEXT, [ DEBUG ] )
 
-I<Function>.
 Return the action to perform for 1 sender
 using 1 auth method to perform 1 operation
 
@@ -341,8 +342,6 @@ OUT : undef | ref(HASH) containing keys :
           (defined if $debug)
        -auth_method : the checked auth_method
           (defined if $debug)
-
-=back
 
 =cut
 
@@ -737,14 +736,9 @@ sub request_action {
     return $return;
 }
 
-=over 4
+=item verify( CONTEXT, CONDITION, LOG_IT )
 
-=item verify ( CONTEXT, CONDITION, LOG_IT )
-
-I<Function>.
 check if email respect some condition
-
-=back
 
 =cut
 
@@ -1548,14 +1542,9 @@ sub verify {
     return undef;
 }
 
-=over 4
+=item search( THAT, FILTER_FILE, CONTEXT )
 
-=item search ( THAT, FILTER_FILE, CONTEXT )
-
-I<Function>.
 Verify if a given user is part of an LDAP, SQL or TXT search filter
-
-=back
 
 =cut
 
@@ -1898,17 +1887,15 @@ sub verify_custom {
     return $persistent_cache{'named_filter'}{$condition}{$filter}{'value'};
 }
 
-=head2 Miscelaneous
+=back
 
-=cut
+=head2 INSTANCE METHODS
 
 =over 4
 
-=item get_current_title ()
+=item $scenario->get_current_title ()
 
 Get internationalized title of the scenario, under current language context.
-
-=back
 
 =cut
 
@@ -1933,28 +1920,19 @@ sub get_current_title {
     }
 }
 
-=over 4
-
-=item get_id ()
+=item scenario->get_id ()
 
 Get unique ID of object.
 
-=back
-
 =cut
 
-## Get unique ID
 sub get_id {
     return shift->{'file_path'} || '';
 }
 
-=over 4
-
-=item is_purely_closed ()
+=item $scenario->is_purely_closed ()
 
 Returns 1 if all conditions in scenario are "true()   [an_auth_method]    ->  reject"
-
-=back
 
 =cut
 
@@ -2058,5 +2036,9 @@ sub _load_ldap_configuration {
     }
     return %Ldap;
 }
+
+=back
+
+=cut
 
 1;
