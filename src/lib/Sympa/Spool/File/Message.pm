@@ -55,21 +55,17 @@ sub is_relevant {
     return 1;
 }
 
-sub get_storage_name {
-    my $self = shift;
+sub _get_file_name {
+    my ($self, $param) = @_;
     my $filename;
-    my $param = shift;
     if ($param->{'list'} && $param->{'robot'}) {
         $filename =
               $param->{'list'} . '@'
             . $param->{'robot'} . '.'
             . time . '.'
             . int(rand(10000));
-    } else {
-        $main::logger->do_log(Sympa::Logger::ERR,
-            'Unsufficient parameters provided to create file name');
-        return undef;
     }
+
     return $filename;
 }
 
