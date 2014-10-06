@@ -625,25 +625,31 @@ sub update {
     croak 'Not implemented yet';
 }
 
-=item $spool->store($string, $param, $target_file)
+=item $spool->store($string, $param)
 
 Store a message in the spool.
 
 =cut
 
 sub store {
-    my $self            = shift;
-    my $messageasstring = shift;
-    my $param           = shift;
-    my $target_file     = $param->{'filename'};
-    $target_file ||= $self->get_storage_name($param);
+    my ($self, $string, $param) = @_;
+    my $target_file = $param->{'filename'} || $self->_get_file_name($param);
+
+    if (!$target_file) {
+        $main::logger->do_log(
+            Sympa::Logger::ERR,
+            'Unsufficient parameters provided to create file name'
+        );
+        return undef;
+    }
+
     my $fh;
     unless (open $fh, ">", "$self->{directory}/$target_file") {
         $main::logger->do_log(Sympa::Logger::ERR, 'Unable to write file to spool %s',
             $self->{directory});
         return undef;
     }
-    print $fh $messageasstring;
+    print $fh $string;
     close $fh;
     return 1;
 }

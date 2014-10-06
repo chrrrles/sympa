@@ -53,12 +53,10 @@ our %global_models = (    #'crl_update_task' => 'crl_update',
 #### Spool level subs ####
 ##########################
 
-sub get_storage_name {
-    my $self = shift;
+sub _get_file_name {
+    my ($self, $param) = @_;
     my $filename;
-    my $param  = shift;
-    my $date   = $param->{'task_date'};
-    $date ||= time;
+    my $date = $param->{'task_date'} || time();
     $filename =
           $date . '.'
         . $param->{'task_label'} . '.'
