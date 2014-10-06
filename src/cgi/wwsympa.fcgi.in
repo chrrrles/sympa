@@ -23455,7 +23455,7 @@ sub do_viewspools {
     if ($in{'list'}) {
         $selector{'list'} = $in{'list'};
     }
-    my @messages = $spool->get_content(
+    my @messages = $spool->get_raw_entries(
         'selector'  => \%selector,
         'selection' => '*_but_message',
         'offset'    => $offset,
@@ -23518,7 +23518,7 @@ sub do_viewspool_message {
         return undef;
     }
     my $spool = Sympa::Spool::SQL->new(name => $spoolname, status => $status);
-    my @messages = $spool->get_content(
+    my @messages = $spool->get_raw_entries(
         selector  => {'messagekey' => $messagekey},
         selection => '*'
     );
@@ -23610,7 +23610,7 @@ sub do_viewspool_message_dump {
         return undef;
     }
     my $spool = Sympa::Spool::SQL->new(name => $spoolname, status => $status);
-    my @messages = $spool->get_content(
+    my @messages = $spool->get_raw_entries(
         selector  => {'messagekey' => $messagekey},
         selection => '*'
     );

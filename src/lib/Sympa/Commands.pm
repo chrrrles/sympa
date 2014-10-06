@@ -3214,7 +3214,7 @@ sub modindex {
     my @spool;
 
     foreach my $message_in_spool (
-        $modspool->get_content(
+        $modspool->get_raw_entries(
             selector  => {'list' => $name, 'robot' => $robot->domain},
             selection => '*',
             sortby    => 'date',

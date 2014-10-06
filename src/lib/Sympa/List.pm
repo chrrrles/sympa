@@ -10362,7 +10362,7 @@ sub get_subscription_requests {
         name      => 'subscribe',
         directory => Sympa::Site->subscribequeue()
     );
-    my @subrequests = $subscription_request_spool->get_content(
+    my @subrequests = $subscription_request_spool->get_raw_entries(
         selector  => {'list' => $self->name, 'robot' => $self->domain},
         selection => '*'
     );
@@ -10424,7 +10424,7 @@ sub get_subscription_request_count {
         name      => 'subscribe',
         directory => Sympa::Site->subscribequeue()
     );
-    return $subscription_request_spool->get_content(
+    return $subscription_request_spool->get_raw_entries(
         selector  => {'list' => $self->name, 'robot' => $self->domain},
         selection => 'count'
     );
@@ -10476,7 +10476,7 @@ sub store_signoff_request {
 
     my $signoff_request_spool = Sympa::Spool::SQL->new(name => 'signoff');
 
-    if ($signoff_request_spool->get_content(
+    if ($signoff_request_spool->get_raw_entries(
         selector => {
             'list'   => $self->name,
             'robot'  => $self->domain,
@@ -10509,7 +10509,7 @@ sub get_signoff_requests {
     my %signoffs;
 
     my $signoff_request_spool = Sympa::Spool::SQL->new(name => 'signoff');
-    my @sigrequests           = $signoff_request_spool->get_content(
+    my @sigrequests           = $signoff_request_spool->get_raw_entries(
         selector  => {'list' => $self->name, 'robot' => $self->domain},
         selection => '*'
     );
@@ -10560,7 +10560,7 @@ sub get_signoff_request_count {
     my $self = shift;
 
     my $signoff_request_spool = Sympa::Spool::SQL->new(name => 'signoff');
-    return $signoff_request_spool->get_content(
+    return $signoff_request_spool->get_raw_entries(
         selector  => {'list' => $self->name, 'robot' => $self->domain},
         selection => 'count'
     );
@@ -10825,7 +10825,7 @@ sub purge {
         name => 'task', directory => Sympa::Site->queuetask()
     );
     foreach my $task (
-        $taskspool->get_content(
+        $taskspool->get_raw_entries(
             selector  => {'list' => $self->name, 'robot' => $self->domain},
             selection => '*',
         )

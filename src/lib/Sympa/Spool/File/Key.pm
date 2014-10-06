@@ -92,7 +92,7 @@ sub analyze_file_name {
 sub get_awaiting_messages {
     my ($self, %params) = @_;
     $params{'selector'}{'validated'} = ['.distribute', 'ne'];
-    return $self->get_content(%params);
+    return $self->get_raw_entries(%params);
 }
 
 sub validate_message {
