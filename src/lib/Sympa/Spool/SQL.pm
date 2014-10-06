@@ -399,13 +399,13 @@ sub move_to_bad {
     }
 }
 
-=item $spool->get_message($selector)
+=item $spool->get_first_raw_entry($selector)
 
-Return a message from the spool using given selector
+Return the first spool entry matching given selector.
 
 =cut
 
-sub get_message {
+sub get_first_raw_entry {
     my $self     = shift;
     my $selector = shift;
     $main::logger->do_log(

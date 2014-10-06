@@ -8422,7 +8422,7 @@ sub do_modindex {
     my @messages  = $modspool->get_raw_entries(
         selector => {
             list      => $list_name,
-            robot     => $robot_id
+            robot     => $robot_id,
             validated => ['.distribute', 'ne']
         }
     );
@@ -8913,7 +8913,7 @@ sub do_reject {
     $param->{'blacklist_added'}   = 0;
     $param->{'blacklist_ignored'} = 0;
     foreach my $id (split(/,/, $in{'id'})) {
-        my $message_in_spool = $modspool->get_message(
+        my $message_in_spool = $modspool->get_first_raw_entry(
             {   'list'    => $list->name,
                 'robot'   => $robot_id,
                 'authkey' => $id
@@ -9127,7 +9127,7 @@ sub do_distribute {
 
     ## messages
     foreach my $id (split(/,/, $in{'id'})) {
-        my $message_in_spool = $modspool->get_message(
+        my $message_in_spool = $modspool->get_first_raw_entry(
             {'list' => $list->name, 'robot' => $robot_id, 'authkey' => $id});
         my $message = undef;
         $message = Sympa::Message->new(%$message_in_spool)
@@ -9246,7 +9246,7 @@ sub do_add_frommod {
         name => 'mod', directory => Sympa::Site->queuemod()
     );
     foreach my $id (split /,/, $in{'id'}) {
-        my $message_in_spool = $modspool->get_message(
+        my $message_in_spool = $modspool->get_first_raw_entry(
             {'list' => $list->name, 'robot' => $robot_id, 'authkey' => $id});
         my $message = undef;
         $message = Sympa::Message->new(%$message_in_spool)
@@ -9255,7 +9255,7 @@ sub do_add_frommod {
             ## if the message has been accepted via WWSympa, it's in spool
             ## 'validated'
             my $validatedspool = Sympa::Spool::SQL->new(name => 'validated');
-            $message_in_spool = $validatedspool->get_message(
+            $message_in_spool = $validatedspool->get_first_raw_entry(
                 {   'list'    => $list->name,
                     'robot'   => $robot_id,
                     'authkey' => $id
@@ -22121,7 +22121,7 @@ sub do_request_topic {
 
     my $authspool = Sympa::Spool::SQL->new(name => 'auth');
 
-    my $message_in_spool = $authspool->get_message(
+    my $message_in_spool = $authspool->get_first_raw_entry(
         {   'list'    => $list->name,
             'robot'   => $robot_id,
             'authkey' => $in{'authkey'}
@@ -22179,7 +22179,7 @@ sub do_tag_topic_by_sender {
     my $message;
 
     my $authspool        = Sympa::Spool::SQL->new(name => 'auth');
-    my $message_in_spool = $authspool->get_message(
+    my $message_in_spool = $authspool->get_first_raw_entry(
         {   'list'    => $listname,
             'robot'   => $robot_id,
             'authkey' => $in{'authkey'}

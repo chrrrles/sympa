@@ -9057,7 +9057,7 @@ sub get_mod_spool_size {
     return $modspool->get_count(
         selector => {
             list      => $self->name,
-            robot     => $self->domain
+            robot     => $self->domain,
             validated => ['.distribute', 'ne']
         }
     );
@@ -10115,7 +10115,7 @@ sub load_msg_topic {
         name => 'topic', directory => Sympa::Site->queuetopic()
     );
 
-    my $topics_from_spool = $topicspool->get_message(
+    my $topics_from_spool = $topicspool->get_first_raw_entry(
         {   'list'      => $self->name,
             'robot'     => $self->domain,
             'messageid' => $msg_id

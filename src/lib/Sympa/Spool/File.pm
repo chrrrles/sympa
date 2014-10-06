@@ -566,19 +566,18 @@ sub move_to_bad {
     return 1;
 }
 
-=item $spool->get_message($selector)
+=item $spool->get_first_raw_entry($selector)
 
-Return a message from the spool using given selector
+Return the first spool entry matching given selector.
 
 =cut
 
-sub get_message {
+sub get_first_raw_entry {
     my $self     = shift;
     my $selector = shift;
-    my @messages;
-    return undef
-        unless @messages = $self->get_raw_entries(selector => $selector);
-    return $messages[0];
+
+    my @entries = $self->get_raw_entries(selector => $selector);
+    return $entries[0];
 }
 
 #################"
