@@ -21,6 +21,18 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+=encoding utf-8
+
+=head1 NAME
+
+Sympa::Conf - Sympa configuration
+
+=head1 DESCRIPTION
+
+FIXME
+
+=cut
+
 package Sympa::Conf;
 
 use strict;
@@ -37,16 +49,6 @@ use Sympa::Logger;
 use Sympa::Tools;
 use Sympa::Tools::Data;
 use Sympa::Tools::File;
-
-=head1 NAME
-
-Conf - Sympa configuration
-
-=head1 DESCRIPTION
-
-=head2 CONSTANTS AND EXPORTED VARIABLES
-
-=cut
 
 ## Database and SQL statement handlers
 my $sth;

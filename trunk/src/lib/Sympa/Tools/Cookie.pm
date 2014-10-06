@@ -29,7 +29,7 @@ Sympa::Tools::Cookie - Cookie-related functions
 
 =head1 DESCRIPTION
 
-This package provides cookie-related functions.
+This package provides some cookie-related functions.
 
 =cut
 

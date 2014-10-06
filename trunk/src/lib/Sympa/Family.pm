@@ -21,15 +21,16 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-=pod 
+=encoding utf-8
 
 =head1 NAME 
 
-I<Sympa::Family.pm> - Handles list families
+Sympa::Family - A mailing-list family
 
 =head1 DESCRIPTION 
 
-Sympa allows lists creation and management by sets. These are the families, sets of lists sharing common properties. This module gathers all the family-specific operations.
+A family is a set of mailing-list sharing common properties, to allow creation
+and management of multiple lists at once.
 
 =cut 
 

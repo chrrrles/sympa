@@ -29,7 +29,7 @@ Sympa::Tools::DKIM - DKIM-related functions
 
 =head1 DESCRIPTION
 
-This package provides DKIM-related functions.
+This package provides some DKIM-related functions.
 
 =cut
 

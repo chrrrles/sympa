@@ -21,6 +21,18 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+=encoding utf-8
+
+=head1 NAME
+
+Sympa::User - An identified user
+
+=head1 DESCRIPTION
+
+FIXME
+
+=cut
+
 package Sympa::User;
 
 use strict;
@@ -55,13 +67,6 @@ foreach my $k (keys %{$db_struct{'user_table'}->{'fields'}}) {
     }
 }
 
-=encoding utf-8
-
-=head1 NAME
-
-User - All Users Identified by Sympa
-
-=head1 DESCRIPTION
 
 =head2 CONSTRUCTOR
 

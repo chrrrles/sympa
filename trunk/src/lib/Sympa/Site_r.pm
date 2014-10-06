@@ -21,6 +21,18 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+=encoding utf-8
+
+=head1 NAME 
+
+Sympa::Site_r - FIXME
+
+=head1 DESCRIPTION
+
+FIXME
+
+=cut
+
 ## This package handles Sympa global site
 ## It should :
 ##   * provide access to global conf parameters,
@@ -47,14 +59,6 @@ use Sympa::Tools::File;
 use Sympa::Tools::Message;
 use Sympa::Tools::Password;
 use Sympa::User;
-
-=head1 NAME
-
-Site - Sympa Site
-
-=head1 DESCRIPTION
-
-=cut
 
 our %robots;
 our $robots_ok;

@@ -29,7 +29,7 @@ Sympa::Tools::Message - Message-related functions
 
 =head1 DESCRIPTION
 
-This package provides message-related functions.
+This package provides some message-related functions.
 
 =cut
 

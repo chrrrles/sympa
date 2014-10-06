@@ -21,6 +21,18 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+=encoding utf-8
+
+=head1 NAME
+
+Sympa::Scenario - A scenario
+
+=head1 DESCRIPTION
+
+FIXME
+
+=cut
+
 package Sympa::Scenario;
 
 use strict;
@@ -43,14 +55,6 @@ use Sympa::Tools::Time;
 
 my %all_scenarios;
 my %persistent_cache;
-
-=encoding utf-8
-
-=head1 NAME
-
-Sympa::Scenario - Sympa scenarios
-
-=head1 DESCRIPTION
 
 =head1 CLASS METHODS
 

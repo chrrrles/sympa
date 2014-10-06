@@ -29,7 +29,7 @@ Sympa::Tools::Password - Password-related functions
 
 =head1 DESCRIPTION
 
-This package provides password-related functions.
+This package provides some password-related functions.
 
 =cut
 

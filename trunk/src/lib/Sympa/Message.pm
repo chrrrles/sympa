@@ -25,18 +25,12 @@
 
 =head1 NAME 
 
-Message - mail message embedding for internal use in Sympa
+Sympa::Message - An e-mail message
 
 =head1 DESCRIPTION 
 
-While processing a message in Sympa, we need to link information to the
-message, modify headers and such.  This was quite a problem when a message was
-signed, as modifying anything in the message body would alter its MD5
-footprint.  And probably make the message to be rejected by clients verifying
-its identity (which is somehow a good thing as it is the reason why people use
-MD5 after all).  With such messages, the process was complex.  We then decided
-to embed any message treated in a "Message" object, thus making the process
-easier.
+This class implements an e-mail message. It is mostly a wrapper over a
+L<Mime::Entity> object, with additional methods and attributes.
 
 =cut 
 

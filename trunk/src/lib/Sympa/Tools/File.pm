@@ -29,7 +29,7 @@ Sympa::Tools::File - File-related functions
 
 =head1 DESCRIPTION
 
-This package provides file-related functions.
+This package provides some file-related functions.
 
 =cut
 
