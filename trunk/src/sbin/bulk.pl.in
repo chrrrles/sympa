@@ -438,7 +438,7 @@ while (!$end) {
 
             $messagekey = $bulk->{'messagekey'};
             $message_from_spool =
-                $spool->get_message({'messagekey' => $messagekey});
+                $spool->get_first_raw_entry({'messagekey' => $messagekey});
             my $message;
             $message = Sympa::Message->new(%$message_from_spool)
                 if $message_from_spool;

@@ -2695,7 +2695,7 @@ sub distribute {
     );
     my $name     = $list->name;
 
-    my $message_in_spool = $modspool->get_message(
+    my $message_in_spool = $modspool->get_first_raw_entry(
         {'list' => $list->name, 'robot' => $robot->domain, 'authkey' => $key}
     );
     my $message = undef;
@@ -2815,7 +2815,7 @@ sub confirm {
 
     my $spool = Sympa::Spool::SQL->new(name => 'auth');
 
-    my $message_in_spool = $spool->get_message({'authkey' => $key});
+    my $message_in_spool = $spool->get_first_raw_entry({'authkey' => $key});
     my $message = undef;
     $message = Sympa::Message->new(%$message_in_spool)
         if $message_in_spool;
@@ -3087,7 +3087,7 @@ sub reject {
     my $modspool = Sympa::Spool::File::Key->new(
         name => 'mod', directory => Sympa::Site->queuemod()
     );
-    my $message_in_spool = $modspool->get_message(
+    my $message_in_spool = $modspool->get_first_raw_entry(
         {'list' => $list->name, 'robot' => $robot->domain, 'authkey' => $key}
     );
     my $message = undef;
