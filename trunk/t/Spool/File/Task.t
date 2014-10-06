@@ -47,9 +47,9 @@ ok($spool, 'spool is defined');
 ok(-d $dir . '/baz/bad', 'spool subdirectory has been created');
 is($spool->get_id(), 'foo/bad', 'spool identifier');
 
-ok($spool->count() == 0, 'spool is empty');
+ok($spool->get_count() == 0, 'spool is empty');
 ok(
     $spool->store("test message", { filename => 'test' }),
     'storing content works'
 );
-ok($spool->count() == 0, 'spool is still empty');
+ok($spool->get_count() == 0, 'spool is still empty');
