@@ -8419,8 +8419,12 @@ sub do_modindex {
     my $modspool  = Sympa::Spool::File::Key->new(
         name => 'mod', directory => Sympa::Site->queuemod()
     );
-    my @messages  = $modspool->get_awaiting_messages(
-        selector => {'list' => $list_name, 'robot' => $robot_id}
+    my @messages  = $modspool->get_raw_entries(
+        selector => {
+            list      => $list_name,
+            robot     => $robot_id
+            validated => ['.distribute', 'ne']
+        }
     );
     foreach my $message_in_spool (@messages) {
         my $message = undef;
