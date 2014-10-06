@@ -22115,9 +22115,9 @@ sub do_request_topic {
 
     my $listname = $list->name;
 
-    my $spoolauth = Sympa::Spool::SQL->new(name => 'auth');
+    my $authspool = Sympa::Spool::SQL->new(name => 'auth');
 
-    my $message_in_spool = $spoolauth->get_message(
+    my $message_in_spool = $authspool->get_message(
         {   'list'    => $list->name,
             'robot'   => $robot_id,
             'authkey' => $in{'authkey'}
