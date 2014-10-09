@@ -1576,7 +1576,7 @@ sub check_message_structure {
 }
 
 ## Add footer/header to a message
-sub add_parts {
+sub _add_parts {
     my $self = shift;
     unless ($self->{'list'}) {
         $main::logger->do_log(Sympa::Logger::ERR,
@@ -2107,23 +2107,23 @@ sub prepare_message_according_to_mode {
         $self->get_msg_id, $mode);
     ##Prepare message for normal reception mode
     if ($mode eq 'mail') {
-        $self->prepare_reception_mail;
+        $self->_prepare_reception_mail;
     } elsif (($mode eq 'nomail')
         || ($mode eq 'summary')
         || ($mode eq 'digest')
         || ($mode eq 'digestplain')) {
         ##Prepare message for notice reception mode
     } elsif ($mode eq 'notice') {
-        $self->prepare_reception_notice;
+        $self->_prepare_reception_notice;
         ##Prepare message for txt reception mode
     } elsif ($mode eq 'txt') {
-        $self->prepare_reception_txt;
+        $self->_prepare_reception_txt;
         ##Prepare message for html reception mode
     } elsif ($mode eq 'html') {
-        $self->prepare_reception_html;
+        $self->_prepare_reception_html;
         ##Prepare message for urlize reception mode
     } elsif ($mode eq 'url') {
-        $self->prepare_reception_urlize;
+        $self->_prepare_reception_urlize;
     } else {
         $main::logger->do_log(Sympa::Logger::ERR,
             'Unknown variable/reception mode %s', $mode);
@@ -2138,13 +2138,13 @@ sub prepare_message_according_to_mode {
 
 }
 
-sub prepare_reception_mail {
+sub _prepare_reception_mail {
     my $self = shift;
     $main::logger->do_log(Sympa::Logger::DEBUG3,
         'preparing message for mail reception mode');
     ## Add footer and header
     return 0 if ($self->is_signed);
-    my $new_msg = $self->add_parts;
+    my $new_msg = $self->_add_parts;
     if (defined $new_msg) {
         $self->{'entity'}  = $new_msg;
         $self->{'altered'} = '_ALTERED_';
@@ -2156,7 +2156,7 @@ sub prepare_reception_mail {
     return 1;
 }
 
-sub prepare_reception_notice {
+sub _prepare_reception_notice {
     my $self = shift;
     $main::logger->do_log(Sympa::Logger::DEBUG3,
         'preparing message for notice reception mode');
@@ -2179,7 +2179,7 @@ sub prepare_reception_notice {
     return 1;
 }
 
-sub prepare_reception_txt {
+sub _prepare_reception_txt {
     my $self = shift;
     $main::logger->do_log(Sympa::Logger::DEBUG3,
         'preparing message for txt reception mode');
@@ -2189,11 +2189,11 @@ sub prepare_reception_txt {
             'Multipart message changed to text singlepart');
     }
     ## Add a footer
-    $self->_reset_message_from_entity($self->add_parts);
+    $self->_reset_message_from_entity($self->_add_parts);
     return 1;
 }
 
-sub prepare_reception_html {
+sub _prepare_reception_html {
     my $self = shift;
     $main::logger->do_log(Sympa::Logger::DEBUG3,
         'preparing message for html reception mode');
@@ -2203,11 +2203,11 @@ sub prepare_reception_html {
             'Multipart message changed to html singlepart');
     }
     ## Add a footer
-    $self->_reset_message_from_entity($self->add_parts);
+    $self->_reset_message_from_entity($self->_add_parts);
     return 1;
 }
 
-sub prepare_reception_urlize {
+sub _prepare_reception_urlize {
     my $self = shift;
     $main::logger->do_log(Sympa::Logger::DEBUG3,
         'preparing message for urlize reception mode');
@@ -2260,7 +2260,7 @@ sub prepare_reception_urlize {
     $self->{'entity'}->parts(\@parts);
 
     ## Add a footer
-    $self->_reset_message_from_entity($self->add_parts);
+    $self->_reset_message_from_entity($self->_add_parts);
     return 1;
 }
 
