@@ -224,6 +224,12 @@ sub get_raw_entries {
     return @messages;
 }
 
+sub get_entries {
+    my ($self, %params) = @_;
+
+    return map { Sympa::Message->new(%$_) } $self->get_raw_entries(%params);
+}
+
 =item $spool->get_count(%parameters)
 
 Return the number of spool entries matching the given criteria.
@@ -458,6 +464,13 @@ sub get_first_raw_entry {
         }
     }
     return $message;
+}
+
+sub get_first_entry {
+    my ($self, %params) = @_;
+
+    my $raw_entry = $self->get_first_raw_entry($params{selector});
+    return Sympa::Message->new(%$raw_entry);
 }
 
 =item $spool->unlock_message($key)

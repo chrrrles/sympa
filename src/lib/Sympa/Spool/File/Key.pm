@@ -30,6 +30,7 @@ use base qw(Sympa::Spool::File);
 use English qw(-no_match_vars);
 
 use Sympa::Logger;
+use Sympa::Message;
 
 our $filename_regexp = '^(\S+)_(\w+)(\.distribute)?$';
 
@@ -108,6 +109,19 @@ sub validate_message {
             $self->{directory}, $key, $ERRNO);
     }
     return 1;
+}
+
+sub get_entries {
+    my ($self, %params) = @_;
+
+    return map { Sympa::Message->new(%$_) } $self->get_raw_entries(%params);
+}
+
+sub get_first_entry {
+    my ($self, %params) = @_;
+
+    my $raw_entry = $self->get_first_raw_entry($params{selector});
+    return Sympa::Message->new(%$raw_entry);
 }
 
 1;
