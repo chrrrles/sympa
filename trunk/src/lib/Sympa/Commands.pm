@@ -43,7 +43,6 @@ use Carp qw(carp);
 use Sympa::Language;
 use Sympa::List;
 use Sympa::Logger;
-use Sympa::Message;
 use Sympa::Report;
 use Sympa::Scenario;
 use Sympa::Site;
@@ -2695,12 +2694,13 @@ sub distribute {
     );
     my $name     = $list->name;
 
-    my $message_in_spool = $modspool->get_first_raw_entry(
-        {'list' => $list->name, 'robot' => $robot->domain, 'authkey' => $key}
+    my $message = $modspool->get_first_entry(
+        selector => {
+            'list'    => $list->name,
+            'robot'   => $robot->domain,
+            'authkey' => $key
+        }
     );
-    my $message = undef;
-    $message = Sympa::Message->new(%$message_in_spool)
-        if $message_in_spool;
     unless (defined $message) {
         $main::logger->do_log(Sympa::Logger::ERR,
             'Unable to create message object for %s validation key %s',
@@ -2782,7 +2782,7 @@ sub distribute {
                 'Unable to send template "message_report" to %s', $sender);
         }
     }
-    $modspool->remove($message_in_spool->{'messagekey'});
+    $modspool->remove($message->{'messagekey'});
     $main::logger->do_log(Sympa::Logger::DEBUG2,
         'DISTRIBUTE %s %s from %s accepted (%d seconds)',
         $name, $key, $sender, time - $time_command);
@@ -2815,10 +2815,7 @@ sub confirm {
 
     my $spool = Sympa::Spool::SQL->new(name => 'auth');
 
-    my $message_in_spool = $spool->get_first_raw_entry({'authkey' => $key});
-    my $message = undef;
-    $message = Sympa::Message->new(%$message_in_spool)
-        if $message_in_spool;
+    my $message = $spool->get_first_entry(selector => {'authkey' => $key});
     unless ($message) {
         $main::logger->do_log(Sympa::Logger::ERR,
             'Unable to create message object for key %s from %s',
@@ -3087,12 +3084,13 @@ sub reject {
     my $modspool = Sympa::Spool::File::Key->new(
         name => 'mod', directory => Sympa::Site->queuemod()
     );
-    my $message_in_spool = $modspool->get_first_raw_entry(
-        {'list' => $list->name, 'robot' => $robot->domain, 'authkey' => $key}
+    my $message = $modspool->get_first_entry(
+        selector => {
+            'list'    => $list->name,
+            'robot'   => $robot->domain,
+            'authkey' => $key
+        }
     );
-    my $message = undef;
-    $message = Sympa::Message->new(%$message_in_spool)
-        if $message_in_spool;
     unless ($message) {
         $main::logger->do_log(Sympa::Logger::INFO,
             'Could not find message %s %s from %s, auth failed',
@@ -3213,17 +3211,14 @@ sub modindex {
     ## List of messages
     my @spool;
 
-    foreach my $message_in_spool (
-        $modspool->get_raw_entries(
+    foreach my $message (
+        $modspool->get_entries(
             selector  => {'list' => $name, 'robot' => $robot->domain},
             selection => '*',
             sortby    => 'date',
             way       => 'asc'
         )
         ) {
-        my $message = undef;
-        $message = Sympa::Message->new(%$message_in_spool)
-            if $message_in_spool;
         next unless $message && $message->has_valid_sender();
         push @spool, $message->as_entity();
         $n++;
