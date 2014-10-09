@@ -405,15 +405,17 @@ sub move_to_bad {
     }
 }
 
-=item $spool->get_first_raw_entry($selector)
+=item $spool->get_first_raw_entry(%parameters)
 
 Return the first spool entry matching given selector.
 
 =cut
 
 sub get_first_raw_entry {
-    my $self     = shift;
-    my $selector = shift;
+    my ($self, %params) = @_;
+
+    my $selector = $params{selector};
+
     $main::logger->do_log(
         Sympa::Logger::DEBUG2, '(%s, messagekey=%s, list=%s, robot=%s)',
         $self, $selector->{'messagekey'},
@@ -469,7 +471,7 @@ sub get_first_raw_entry {
 sub get_first_entry {
     my ($self, %params) = @_;
 
-    my $raw_entry = $self->get_first_raw_entry($params{selector});
+    my $raw_entry = $self->get_first_raw_entry(%params);
     return Sympa::Message->new(%$raw_entry);
 }
 

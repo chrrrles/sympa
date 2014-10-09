@@ -22176,7 +22176,8 @@ sub do_tag_topic_by_sender {
 
     my $authspool        = Sympa::Spool::SQL->new(name => 'auth');
     my $message_in_spool = $authspool->get_first_raw_entry(
-        {   'list'    => $listname,
+        selector => {
+            'list'    => $listname,
             'robot'   => $robot_id,
             'authkey' => $in{'authkey'}
         }
