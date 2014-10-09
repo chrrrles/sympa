@@ -120,7 +120,7 @@ sub get_entries {
 sub get_first_entry {
     my ($self, %params) = @_;
 
-    my $raw_entry = $self->get_first_raw_entry($params{selector});
+    my $raw_entry = $self->get_first_raw_entry(%params);
     return Sympa::Message->new(%$raw_entry);
 }
 

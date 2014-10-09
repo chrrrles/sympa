@@ -566,17 +566,16 @@ sub move_to_bad {
     return 1;
 }
 
-=item $spool->get_first_raw_entry($selector)
+=item $spool->get_first_raw_entry(%parameters)
 
 Return the first spool entry matching given selector.
 
 =cut
 
 sub get_first_raw_entry {
-    my $self     = shift;
-    my $selector = shift;
+    my ($self, %params) = @_;
 
-    my @entries = $self->get_raw_entries(selector => $selector);
+    my @entries = $self->get_raw_entries(%params);
     return $entries[0];
 }
 
