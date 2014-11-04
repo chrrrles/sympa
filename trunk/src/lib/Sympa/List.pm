@@ -4819,13 +4819,6 @@ sub add_list_member {
             $new_user->{'custom_attribute'}
         );
 
-        ## Crypt password if it was not encrypted
-        unless ($new_user->{'password'}
-            and $new_user->{'password'} =~ /^crypt/) {
-            $new_user->{'password'} =
-                Sympa::Tools::Password::crypt_password($new_user->{'password'});
-        }
-
         $self->user('member', $who, undef);
 
         ## Either is_included or is_subscribed must be set
