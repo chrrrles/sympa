@@ -22653,7 +22653,7 @@ sub export_topics {
     $param->{'topics'} = undef;
 
     my $total = 0;
-    foreach my $t (
+    foreach my $topic (
         sort { $topics->{$a}{'order'} <=> $topics->{$b}{'order'} }
         keys %$topics
         ) {
@@ -22661,7 +22661,7 @@ sub export_topics {
             $robot,
             'topics_visibility',
             $param->{'auth_method'},
-            {   'topicname'   => $t,
+            {   'topicname'   => $topic,
                 'sender'      => $param->{'user'}{'email'},
                 'remote_host' => $param->{'remote_host'},
                 'remote_addr' => $param->{'remote_addr'}
@@ -22671,8 +22671,8 @@ sub export_topics {
         $action = $result->{'action'} if ref $result eq 'HASH';
         next unless $action =~ /do_it/;
 
-        my $current = $topics->{$t};
-        $current->{'id'} = $t;
+        my $current = $topics->{$topic};
+        $current->{'id'} = $topic;
 
         ## For compatibility reasons
         $current->{'mod'}  = $total % 3;
