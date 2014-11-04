@@ -22657,11 +22657,25 @@ sub export_topics {
         sort { $topics->{$a}{'order'} <=> $topics->{$b}{'order'} }
         keys %$topics
         ) {
-        my $result = Sympa::Scenario::request_action(
-            $robot,
-            'topics_visibility',
-            $param->{'auth_method'},
-            {   'topicname'   => $topic,
+        my $scenario = Sympa::Scenario->new(
+            that     => $robot,
+            function => 'topics_visibility',
+            name     => $topics->{$topic}{'visibility'},
+        );
+        unless ($scenario) {
+             $main::logger->do_log(
+                 Sympa::Logger::ERR,
+                 'Failed to load scenario "topics_visibility" for topic "%s"',
+                 $topic
+            );
+            next;
+        }
+
+        my $result = $scenario->evaluate(
+            that        => $robot,
+            operation   => 'topics_visibility',
+            auth_method => $param->{'auth_method'},
+            context     => {
                 'sender'      => $param->{'user'}{'email'},
                 'remote_host' => $param->{'remote_host'},
                 'remote_addr' => $param->{'remote_addr'}
