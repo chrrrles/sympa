@@ -329,8 +329,6 @@ while ($signal ne 'term') {
         nrcpt_by_domain => Sympa::Site->nrcpt_by_domain(),
     );
 
-    Sympa::Tools::Password::ciphersaber_installed();
-
     if (Sympa::Tools::cookie_changed(Sympa::Site->cookie)) {
         Sympa::Tools::Daemon::terminate_on_expected_error(
             'sympa.conf/cookie parameter has changed. You may have severe inconsitencies into password storage. Restore previous cookie or write some tool to re-encrypt password in database and check spools contents (look at %s/cookies.history file)',

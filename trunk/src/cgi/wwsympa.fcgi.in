@@ -996,8 +996,6 @@ unless (Sympa::DatabaseManager::data_structure_uptodate()) {
     );
 }
 
-Sympa::Tools::Password::ciphersaber_installed();
-
 our %changed_params;
 
 our %in;
