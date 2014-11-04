@@ -338,19 +338,15 @@ OUT : undef | ref(HASH) containing keys :
 sub request_action {
     $main::logger->do_log(Sympa::Logger::DEBUG2, '(%s, %s, %s, %s, %s)', @_);
     my (%params) = @_;
-    my $that        = $params{that};
+    my $list        = $params{that};
     my $operation   = $params{operation};
     my $auth_method = $params{auth_method};
     my $context     = $params{context};
 
-    my $robot;
-    my $list;
-    if (ref $that and ref $that eq 'Sympa::List') {
-        $list  = $that;
-        $robot = $that->robot;
-    } else {
-        $robot = Sympa::Robot::clean_robot($that, 1);    #FIXME: really maybe Site?
-    }
+    croak "missing 'list' parameter" unless $list;
+    croak "invalid 'list' parameter" unless $list->isa('Sympa::List');
+
+    my $robot = $list->robot();
 
     my $trace_scenario;
     ## Defining default values for parameters.
@@ -404,92 +400,73 @@ sub request_action {
         }
     }
     if ($log_it) {
-        if (ref $that and ref $that eq 'Sympa::List') {
-            $trace_scenario =
-                  'scenario request '
-                . $operation
-                . ' for list '
-                . ($that->get_id) . ' :';
+        $trace_scenario =
+              'scenario request '
+            . $operation
+            . ' for list '
+            . ($list->get_id) . ' :';
+        $main::logger->do_log(Sympa::Logger::INFO,
+            'Will evaluate scenario %s for list %s',
+            $operation, $list);
+    }
+
+    $context->{'list_object'} = $list;
+    ## The $operation refers to a list parameter of the same name
+    ## The list parameter might be structured ('.' is a separator)
+    $scenario = $list->get_scenario($operation);
+
+    ## List parameter might not be defined (example : web_archive.access)
+    unless ($scenario) {
+        my $return = {
+            'action'      => 'reject',
+            'reason'      => 'parameter-not-defined',
+            'auth_method' => '',
+            'condition'   => ''
+        };
+        if ($log_it) {
             $main::logger->do_log(Sympa::Logger::INFO,
-                'Will evaluate scenario %s for list %s',
-                $operation, $that);
-        } elsif (ref $that and ref $that eq 'Sympa::Robot') {
-            $trace_scenario =
-                  'scenario request '
-                . $operation
-                . ' for robot '
-                . ($that->get_id) . ' :';
-            $main::logger->do_log(Sympa::Logger::INFO,
-                'Will evaluate scenario %s for robot %s',
-                $operation, $that);
-        } else {
-            $trace_scenario =
-                'scenario request ' . $operation . ' for site :';
-            $main::logger->do_log(Sympa::Logger::INFO,
-                'Will evaluate scenario %s for site', $operation);
+                '%s rejected reason parameter not defined',
+                $trace_scenario);
+        }
+        return $return;
+    }
+
+    ## Prepares custom_vars in $context
+    if (scalar @{$list->custom_vars}) {
+        foreach my $var (@{$list->custom_vars}) {
+            $context->{'custom_vars'}{$var->{'name'}} = $var->{'value'};
         }
     }
 
-    ## The current action relates to a list
-    if ($list) {
-        $context->{'list_object'} = $list;
-        ## The $operation refers to a list parameter of the same name
-        ## The list parameter might be structured ('.' is a separator)
-        $scenario = $list->get_scenario($operation);
-
-        ## List parameter might not be defined (example : web_archive.access)
-        unless ($scenario) {
+    ## pending/closed lists => send/visibility are closed
+    unless ($list->status eq 'open') {
+        if ($operation =~ /^(send|visibility)$/) {
             my $return = {
                 'action'      => 'reject',
-                'reason'      => 'parameter-not-defined',
+                'reason'      => 'list-no-open',
                 'auth_method' => '',
                 'condition'   => ''
             };
             if ($log_it) {
                 $main::logger->do_log(Sympa::Logger::INFO,
-                    '%s rejected reason parameter not defined',
-                    $trace_scenario);
+                    "$trace_scenario rejected reason list not open");
             }
             return $return;
         }
-
-        ## Prepares custom_vars in $context
-        if (scalar @{$list->custom_vars}) {
-            foreach my $var (@{$list->custom_vars}) {
-                $context->{'custom_vars'}{$var->{'name'}} = $var->{'value'};
-            }
-        }
-
-        ## pending/closed lists => send/visibility are closed
-        unless ($list->status eq 'open') {
-            if ($operation =~ /^(send|visibility)$/) {
-                my $return = {
-                    'action'      => 'reject',
-                    'reason'      => 'list-no-open',
-                    'auth_method' => '',
-                    'condition'   => ''
-                };
-                if ($log_it) {
-                    $main::logger->do_log(Sympa::Logger::INFO,
-                        "$trace_scenario rejected reason list not open");
-                }
-                return $return;
-            }
-        }
-
-        ### the following lines are used by the document sharing action
-        if (defined $context->{'scenario'}) {
-            my @operations = split /\./, $operation;
-
-            # loading of the structure
-            $scenario = Sympa::Scenario->new(
-                that     => $list,
-                function => $operations[$#operations],
-                name     => $context->{'scenario'},
-            );
-        }
-
     }
+
+    ### the following lines are used by the document sharing action
+    if (defined $context->{'scenario'}) {
+        my @operations = split /\./, $operation;
+
+        # loading of the structure
+        $scenario = Sympa::Scenario->new(
+            that     => $list,
+            function => $operations[$#operations],
+            name     => $context->{'scenario'},
+        );
+    }
+
 
     unless (defined $scenario and defined $scenario->{'rules'}) {
         $main::logger->do_log(Sympa::Logger::ERR, 'Failed to load scenario for "%s"',
@@ -504,7 +481,7 @@ sub request_action {
         log_it      => $log_it,
         trace_scenario => $trace_scenario,
         robot          => $robot,
-        that           => $that
+        that           => $list
     );
 }
 
