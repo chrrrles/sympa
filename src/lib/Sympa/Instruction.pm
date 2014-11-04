@@ -589,8 +589,11 @@ sub _delete_subs_cmd {
     foreach my $email (keys %{$params->{$var}}) {
         $main::logger->do_log(Sympa::Logger::NOTICE, "email : $email");
         my $request = Sympa::Scenario::request_action(
-            $list, 'del', 'smime',
-            {   'sender' => Sympa::Site->listmaster,
+            that        => $list,
+            operation   => 'del',
+            auth_method => 'smime',
+            context     => {
+                'sender' => Sympa::Site->listmaster,
                 'email'  => $email,
             }
         );

@@ -610,7 +610,12 @@ sub _set_spam_status {
 
     require Sympa::Scenario;
     my $action = Sympa::Scenario::request_action(
-        $self->{robot}, 'spam_status', 'smtp', {'message' => $self}
+        that        => $self->{robot},
+        operation   => 'spam_status',
+        auth_method => 'smtp',
+        context     => {
+            'message' => $self
+        }
     );
 
     $self->{'spam_status'} =

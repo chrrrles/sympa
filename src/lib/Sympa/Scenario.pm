@@ -317,7 +317,7 @@ sub _parse_scenario {
 
 =over 4
 
-=item request_action( THAT, OPERATION, AUTH_METHOD, CONTEXT, [ DEBUG ] )
+=item request_action(%parameters)
 
 Return the action to perform for 1 sender
 using 1 auth method to perform 1 operation
@@ -347,11 +347,11 @@ OUT : undef | ref(HASH) containing keys :
 
 sub request_action {
     $main::logger->do_log(Sympa::Logger::DEBUG2, '(%s, %s, %s, %s, %s)', @_);
-    my $that        = shift;
-    my $operation   = shift;
-    my $auth_method = shift;
-    my $context     = shift;
-    my $debug       = shift;
+    my (%params) = @_;
+    my $that        = $params{that};
+    my $operation   = $params{operation};
+    my $auth_method = $params{auth_method};
+    my $context     = $params{context};
 
     my $robot;
     my $list;
