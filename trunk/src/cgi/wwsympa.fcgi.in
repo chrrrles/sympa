@@ -243,7 +243,6 @@ our %comm = (
     'copy_list'                => 'do_copy_list',
     'reviewbouncing'           => 'do_reviewbouncing',
     'resetbounce'              => 'do_resetbounce',
-    'scenario_test'            => 'do_scenario_test',
     'search_list'              => 'do_search_list',
     'show_cert'                => 'show_cert',
     'close_list_request'       => 'do_close_list_request',
@@ -11557,80 +11556,6 @@ sub do_viewbounce {
 
     Sympa::Template::allow_absolute_path();
 
-    return 1;
-}
-
-## some help for listmaster and developpers
-sub do_scenario_test {
-    wwslog(Sympa::Logger::INFO, 'do_scenario_test');
-
-    ## List available scenarios
-    unless (opendir SCENARI, Sympa::Constants::DEFAULTDIR . '/scenari/') {
-        Sympa::Report::reject_report_web(
-            'intern',
-            'cannot_open_dir',
-            {'dir' => Sympa::Constants::DEFAULTDIR . '/scenari/'},
-            $param->{'action'},
-            $list,
-            $param->{'user'}{'email'},
-            $robot_id
-        );
-        wwslog(Sympa::Logger::INFO, "do_scenario_test : unable to open %s/scenari",
-            Sympa::Constants::DEFAULTDIR);
-        return undef;
-    }
-
-    foreach my $scfile (readdir SCENARI) {
-        if ($scfile =~ /^(\w+)\.(\w+)/) {
-            $param->{'scenario'}{$1}{'defined'} = 1;
-        }
-    }
-    closedir SCENARI;
-    my $all_lists = Sympa::List::get_lists();
-    foreach my $list (@$all_lists) {
-        $param->{'listname'}{$list->name}{'defined'} = 1;
-    }
-    foreach my $a ('smtp', 'md5', 'smime') {
-
-        #$param->{'auth_method'}{$a}{'define'}=1 ;
-        $param->{'authmethod'}{$a}{'defined'} = 1;
-    }
-
-    $param->{'scenario'}{$in{'scenario'}}{'selected'} = 'selected="selected"'
-        if $in{'scenario'};
-
-    $param->{'listname'}{$in{'listname'}}{'selected'} = 'selected="selected"'
-        if $in{'listname'};
-
-    $param->{'authmethod'}{$in{'auth_method'}}{'selected'} =
-        'selected="selected"'
-        if $in{'auth_method'};
-
-    $param->{'email'} = $in{'email'};
-
-    if ($in{'scenario'}) {
-        my $operation = $in{'scenario'};
-        wwslog(Sympa::Logger::DEBUG3, 'do_scenario_test: perform scenario_test');
-
-        my $result = Sympa::Scenario::request_action(
-            $robot,
-            $operation,
-            $in{'auth_method'},
-            {   'listname'    => $in{'listname'},
-                'sender'      => $in{'sender'},
-                'email'       => $in{'email'},
-                'remote_host' => $in{'remote_host'},
-                'remote_addr' => $in{'remote_addr'}
-            },
-            'debug'
-        );
-        if (ref($result) eq 'HASH') {
-            $param->{'scenario_action'}      = $result->{'action'};
-            $param->{'scenario_condition'}   = $result->{'condition'};
-            $param->{'scenario_auth_method'} = $result->{'auth_method'};
-            $param->{'scenario_reason'}      = $result->{'reason'};
-        }
-    }
     return 1;
 }
 
