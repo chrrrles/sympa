@@ -1062,7 +1062,6 @@ sub subscribe {
                 $sender, Sympa::Site->db_additional_user_fields
             );
             $u->lang($list->lang) unless $u->lang;
-            $u->password(Sympa::Tools::Password::tmp_passwd($sender)) unless $u->password;
             $u->save;
         }
 
@@ -1688,7 +1687,6 @@ sub add {
                 $email, Sympa::Site->db_additional_user_fields
             );
             $u->lang($list->lang) unless $u->lang;
-            $u->password(Sympa::Tools::Password::tmp_passwd($email)) unless $u->password;
             $u->save;
         }
 
