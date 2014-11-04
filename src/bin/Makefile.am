@@ -9,7 +9,6 @@ perlscripts = arc2webarc.pl \
 	      testldap.pl \
 	      p12topem.pl \
 	      init_comment.pl \
-	      crypt_passwd.pl \
 	      testlogs.pl \
 	      mod2html.pl \
 	      tpl2tt2.pl
@@ -18,7 +17,6 @@ script_SCRIPTS = $(dbscripts) $(perlscripts)
 
 EXTRA_DIST = $(dbscripts) \
 	     arc2webarc.pl.in \
-	     crypt_passwd.pl.in \
 	     init_comment.pl.in \
 	     mod2html.pl.in \
 	     p12topem.pl.in \
@@ -31,7 +29,7 @@ EXTRA_DIST = $(dbscripts) \
 
 CLEANFILES = $(perlscripts) $(bin_SCRIPTS) $(man1_MANS)
 
-arc2webarc.pl crypt_passwd.pl init_comment.pl mod2html.pl p12topem.pl testldap.pl testlogs.pl tpl2tt2.pl sympa_wizard.pl sympa_manager.pl sympa_soap_client.pl: Makefile
+arc2webarc.pl init_comment.pl mod2html.pl p12topem.pl testldap.pl testlogs.pl tpl2tt2.pl sympa_wizard.pl sympa_manager.pl sympa_soap_client.pl: Makefile
 	rm -f $@
 	$(AM_V_GEN)$(SED) \
 		-e 's|--PERL--|$(PERL)|' \
@@ -49,7 +47,6 @@ arc2webarc.pl crypt_passwd.pl init_comment.pl mod2html.pl p12topem.pl testldap.p
 	chmod +x $@
 
 arc2webarc.pl: $(srcdir)/arc2webarc.pl.in
-crypt_passwd.pl: $(srcdir)/crypt_passwd.pl.in
 init_comment.pl: $(srcdir)/init_comment.pl.in
 mod2html.pl: $(srcdir)/mod2html.pl.in
 p12topem.pl: $(srcdir)/p12topem.pl.in
