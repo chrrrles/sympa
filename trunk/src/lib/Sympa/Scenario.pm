@@ -76,8 +76,6 @@ Parameters:
 
 =item * I<file_path>: FIXME
 
-=item * I<options>: FIXME
-
 =back
 
 Returns a new L<Sympa::Scenario> object, or I<undef> for failure.
@@ -88,20 +86,18 @@ sub new {
     my ($class, %params) = @_;
     $main::logger->do_log(
         Sympa::Logger::DEBUG2,
-        '(%s, %s, function=%s, name=%s, file_path=%s, options=%s)',
+        '(%s, %s, function=%s, name=%s, file_path=%s)',
         $class,
         $params{that},
         $params{function},
         $params{name},
         $params{file_path},
-        $params{options}
     );
 
     my $that      = $params{that};
     my $file_path = $params{file_path};
     my $function  = $params{function};
     my $name      = $params{name};
-    my $options   = $params{options};
 
     if (!$that) {
         $main::logger->do_log(Sympa::Logger::ERR, 'Missing that parameter');
@@ -173,13 +169,6 @@ sub new {
 
         ## Load the scenario if previously loaded in memory
         if (defined $all_scenarios{$file_path}) {
-
-            ## Option 'dont_reload_scenario' prevents scenario reloading
-            ## Usefull for performances reasons
-            if ($options->{'dont_reload_scenario'}) {
-                return $all_scenarios{$file_path};
-            }
-
             ## Use cache unless file has changed on disk
             if ($all_scenarios{$file_path}{'date'} >= (stat($file_path))[9]) {
                 return $all_scenarios{$file_path};
@@ -445,7 +434,7 @@ sub request_action {
         $context->{'list_object'} = $list;
         ## The $operation refers to a list parameter of the same name
         ## The list parameter might be structured ('.' is a separator)
-        $scenario = $list->get_scenario($operation, $context->{'options'});
+        $scenario = $list->get_scenario($operation);
 
         ## List parameter might not be defined (example : web_archive.access)
         unless ($scenario) {
@@ -496,7 +485,6 @@ sub request_action {
                 that     => $list,
                 function => $operations[$#operations],
                 name     => $context->{'scenario'},
-                options  => $context->{'options'}
             );
         }
 
@@ -513,7 +501,6 @@ sub request_action {
                 that     => $robot,
                 function => $operation,
                 name     => $robot->$operation,
-                options  => $context->{'options'}
             );
         }
     }
@@ -560,7 +547,6 @@ sub evaluate {
         that       => $that,
         function => 'include',
         name     => $operation . '.header',
-        options  => $context->{'options'}
     );
     if (defined $include_scenario) {
         ## Add rules at the beginning of the array
@@ -575,7 +561,6 @@ sub evaluate {
                 that     => $that,
                 function => 'include',
                 name     => $include_file,
-                options  => $context->{'options'}
             );
             if (defined $include_scenario) {
                 ## Removes the include directive and replace it with

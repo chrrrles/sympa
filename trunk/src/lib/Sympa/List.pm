@@ -5486,7 +5486,6 @@ Get Scenario object about requested operation.
 sub get_scenario {
     my $self    = shift;
     my $op      = shift;
-    my $options = shift || {};
 
     return undef unless $op;
     my @op = split /\./, $op;
@@ -5502,17 +5501,13 @@ sub get_scenario {
                 and exists $pinfo->{$op}{'format'}{$op[1]}
                 and $pinfo->{$op}{'format'}{$op[1]}{'scenario'};
         ## reload cached value if needed
-        return $self->$op($self->$op)->{$op[1]}
-            unless $options->{'dont_reload_scenario'};
-        return $self->$op->{$op[1]};
+        return $self->$op($self->$op)->{$op[1]};
     } else {
         ## Simple parameter
         return undef
             unless exists $pinfo->{$op} and $pinfo->{$op}{'scenario'};
         ## reload cached value if needed
-        return $self->$op($self->$op)
-            unless $options->{'dont_reload_scenario'};
-        return $self->$op;
+        return $self->$op($self->$op);
     }
 }
 
