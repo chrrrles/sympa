@@ -1246,13 +1246,11 @@ while ($query = new_loop()) {
     ) if ($param->{'css_url'} =~ /\.css$/);
 
     $session = Sympa::Session->new(
-        $robot,
-        {   'cookie' =>
-                Sympa::Session::get_session_cookie($ENV{'HTTP_COOKIE'}),
-            'action' => $in{'action'},
-            'rss'    => $rss,
-            'ajax'   => $ajax
-        }
+        robot  => $robot,
+        cookie => Sympa::Session::get_session_cookie($ENV{'HTTP_COOKIE'}),
+        action => $in{'action'},
+        rss    => $rss,
+        ajax   => $ajax
     );
 
     # Getting rid of the environment variable to make sure it won't be
