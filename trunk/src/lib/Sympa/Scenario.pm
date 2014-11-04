@@ -537,7 +537,6 @@ sub request_action {
         auth_method => $auth_method,
         operation   => $operation,
         log_it      => $log_it,
-        debug       => $debug
     );
 }
 
@@ -548,7 +547,6 @@ sub evaluate {
     my $auth_method    = $params{auth_method};
     my $operation      = $params{operation};
     my $log_it         = $params{log_it};
-    my $debug          = $params{debug};
     my $robot          = $params{robot};
     my $trace_scenario = $params{trace_scenario};
     my $that           = $params{that};
@@ -637,15 +635,6 @@ sub evaluate {
                     $context->{'listname'}
                 );
 
-                if ($debug) {
-                    $return = {
-                        'action'      => 'reject',
-                        'reason'      => 'error-performing-condition',
-                        'auth_method' => $rule->{'auth_method'},
-                        'condition'   => $rule->{'condition'}
-                    };
-                    return $return;
-                }
                 $robot->send_notify_to_listmaster(
                     'error-performing-condition',
                     [$context->{'listname'} . "  " . $rule->{'condition'}]);
@@ -713,11 +702,6 @@ sub evaluate {
                         $rule->{'condition'}, $rule->{'auth_method'},
                         $rule->{'action'}
                     );
-                }
-                if ($debug) {
-                    $return->{'auth_method'} = $rule->{'auth_method'};
-                    $return->{'condition'}   = $rule->{'condition'};
-                    return $return;
                 }
 
                 ## Check syntax of returned action
