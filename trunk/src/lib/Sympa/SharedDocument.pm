@@ -399,48 +399,43 @@ sub check_access_control {
         return 1;
     }
 
-    # if not privileged owner
-    if (1) {
-        my $result = Sympa::Scenario::request_action(
-            that        => $list,
-            operation   => 'shared_doc.d_read',
-            auth_method => $param->{'auth_method'},
-            context     => {
-                'sender'      => $param->{'user'}{'email'},
-                'remote_host' => $param->{'remote_host'},
-                'remote_addr' => $param->{'remote_addr'}
-            }
-        );
-        my $action;
-        if (ref($result) eq 'HASH') {
-            $action       = $result->{'action'};
-            $why_not_read = $result->{'reason'};
+    my $result = Sympa::Scenario::request_action(
+        that        => $list,
+        operation   => 'shared_doc.d_read',
+        auth_method => $param->{'auth_method'},
+        context     => {
+            'sender'      => $param->{'user'}{'email'},
+            'remote_host' => $param->{'remote_host'},
+            'remote_addr' => $param->{'remote_addr'}
         }
-
-        $may_read = ($action =~ /do_it/i);
+    );
+    my $action;
+    if (ref($result) eq 'HASH') {
+        $action       = $result->{'action'};
+        $why_not_read = $result->{'reason'};
     }
 
-    if (1) {
-        my $result = Sympa::Scenario::request_action(
-            that        => $list,
-            operation   => 'shared_doc.d_edit',
-            auth_method => $param->{'auth_method'},
-            context     => {
-                'sender'      => $param->{'user'}{'email'},
-                'remote_host' => $param->{'remote_host'},
-                'remote_addr' => $param->{'remote_addr'}
-            }
-        );
-        my $action;
-        if (ref($result) eq 'HASH') {
-            $action       = $result->{'action'};
-            $why_not_edit = $result->{'reason'};
-        }
+    $may_read = ($action =~ /do_it/i);
 
-        #edit = 0, 0.5 or 1
-        $may_edit = Sympa::Tools::WWW::find_edit_mode($action);
-        $why_not_edit = '' if ($may_edit);
+    my $result = Sympa::Scenario::request_action(
+        that        => $list,
+        operation   => 'shared_doc.d_edit',
+        auth_method => $param->{'auth_method'},
+        context     => {
+            'sender'      => $param->{'user'}{'email'},
+            'remote_host' => $param->{'remote_host'},
+            'remote_addr' => $param->{'remote_addr'}
+        }
+    );
+    my $action;
+    if (ref($result) eq 'HASH') {
+        $action       = $result->{'action'};
+        $why_not_edit = $result->{'reason'};
     }
+
+    #edit = 0, 0.5 or 1
+    $may_edit = Sympa::Tools::WWW::find_edit_mode($action);
+    $why_not_edit = '' if ($may_edit);
 
     ## Only authenticated users can edit files
     unless ($param->{'user'}{'email'}) {
@@ -506,53 +501,47 @@ sub check_access_control {
                 return 1;
             }
 
-            if (1) {
-
-                my $result = Sympa::Scenario::request_action(
-                    that        => $list,
-                    operation   => 'shared_doc.d_read',
-                    auth_method => $param->{'auth_method'},
-                    context     => {
-                        'sender'      => $param->{'user'}{'email'},
-                        'remote_host' => $param->{'remote_host'},
-                        'remote_addr' => $param->{'remote_addr'},
-                        'scenario'    => $desc_hash{'read'}
-                    }
-                );
-                my $action;
-                if (ref($result) eq 'HASH') {
-                    $action       = $result->{'action'};
-                    $why_not_read = $result->{'reason'};
+            my $result = Sympa::Scenario::request_action(
+                that        => $list,
+                operation   => 'shared_doc.d_read',
+                auth_method => $param->{'auth_method'},
+                context     => {
+                    'sender'      => $param->{'user'}{'email'},
+                    'remote_host' => $param->{'remote_host'},
+                    'remote_addr' => $param->{'remote_addr'},
+                    'scenario'    => $desc_hash{'read'}
                 }
-
-                $may_read = $may_read && ($action =~ /do_it/i);
-                $why_not_read = '' if ($may_read);
+            );
+            my $action;
+            if (ref($result) eq 'HASH') {
+                $action       = $result->{'action'};
+                $why_not_read = $result->{'reason'};
             }
 
-            if (1) {
-                my $result = Sympa::Scenario::request_action(
-                    that        => $list,
-                    operation   => 'shared_doc.d_edit',
-                    auth_method => $param->{'auth_method'},
-                    context     => {
-                        'sender'      => $param->{'user'}{'email'},
-                        'remote_host' => $param->{'remote_host'},
-                        'remote_addr' => $param->{'remote_addr'},
-                        'scenario'    => $desc_hash{'edit'}
-                    }
-                );
-                my $action_edit;
-                if (ref($result) eq 'HASH') {
-                    $action_edit  = $result->{'action'};
-                    $why_not_edit = $result->{'reason'};
+            $may_read = $may_read && ($action =~ /do_it/i);
+            $why_not_read = '' if ($may_read);
+
+            my $result = Sympa::Scenario::request_action(
+                that        => $list,
+                operation   => 'shared_doc.d_edit',
+                auth_method => $param->{'auth_method'},
+                context     => {
+                    'sender'      => $param->{'user'}{'email'},
+                    'remote_host' => $param->{'remote_host'},
+                    'remote_addr' => $param->{'remote_addr'},
+                    'scenario'    => $desc_hash{'edit'}
                 }
-
-                # $may_edit = 0, 0.5 or 1
-                my $may_action_edit = Sympa::Tools::WWW::find_edit_mode($action_edit);
-                $may_edit = Sympa::Tools::WWW::merge_edit($may_edit, $may_action_edit);
-                $why_not_edit = '' if ($may_edit);
-
+            );
+            my $action_edit;
+            if (ref($result) eq 'HASH') {
+                $action_edit  = $result->{'action'};
+                $why_not_edit = $result->{'reason'};
             }
+
+            # $may_edit = 0, 0.5 or 1
+            my $may_action_edit = Sympa::Tools::WWW::find_edit_mode($action_edit);
+            $may_edit = Sympa::Tools::WWW::merge_edit($may_edit, $may_action_edit);
+            $why_not_edit = '' if ($may_edit);
 
             ## Only authenticated users can edit files
             unless ($param->{'user'}{'email'}) {
@@ -571,15 +560,10 @@ sub check_access_control {
         $current_path = $next_path;
     }
 
-    if (1) {
-        $result{'may'}{'read'}    = $may_read;
-        $result{'reason'}{'read'} = $why_not_read;
-    }
-
-    if (1) {
-        $result{'may'}{'edit'}    = $may_edit;
-        $result{'reason'}{'edit'} = $why_not_edit;
-    }
+    $result{'may'}{'read'}    = $may_read;
+    $result{'reason'}{'read'} = $why_not_read;
+    $result{'may'}{'edit'}    = $may_edit;
+    $result{'reason'}{'edit'} = $why_not_edit;
 
     $self->{'access'} = \%result;
     return 1;
