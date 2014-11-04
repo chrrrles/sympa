@@ -3182,7 +3182,21 @@ sub check_param_in {
     }
 
     ## Check if the current user can create a list.
-    my $result = Sympa::Scenario::request_action(
+    my $scenario = Sympa::Scenario->new(
+        that     => $robot,
+        function => 'create_list',
+        name     => $robot->create_list()
+    );
+    unless ($scenario) {
+        $main::logger->do_log(
+            Sympa::Logger::ERR,
+            'Failed to load scenario for "create_list"'
+        );
+        undef($param->{'may_create_list'});
+        return 1;
+    }
+
+    my $result = $scenario->evaluate(
         that        => $robot,
         operation   => 'create_list',
         auth_method => $param->{'auth_method'},
@@ -11301,7 +11315,19 @@ Sends back the list creation edition form.
 sub do_create_list_request {
     wwslog(Sympa::Logger::INFO, 'do_create_list_request()');
 
-    my $result = Sympa::Scenario::request_action(
+    my $scenario = Sympa::Scenario->new(
+        that     => $robot,
+        function => 'create_list',
+        name     => $robot->create_list(),
+    );
+    unless ($scenario) {
+        $main::logger->do_log(
+            Sympa::Logger::ERR,
+            'Failed to load scenario for "create_list"');
+        return undef;
+    }
+
+    my $result = $scenario->evaluate(
         that        => $robot,
         operation   => 'create_list',
         auth_method => $param->{'auth_method'},
@@ -13368,7 +13394,20 @@ sub do_close_list_request {
 sub do_rename_list_request {
     wwslog(Sympa::Logger::INFO, 'do_rename_list_request()');
 
-    my $result = Sympa::Scenario::request_action(
+    my $scenario = Sympa::Scenario->new(
+        that     => $robot,
+        function => 'create_list',
+        name     => $robot->create_list()
+    );
+    unless ($scenario) {
+        $main::logger->do_log(
+            Sympa::Logger::ERR,
+            'Failed to load scenario for "create_list"'
+        );
+        return undef;
+    }
+
+    my $result = $scenario->evaluate(
         that        => $robot,
         operation   => 'create_list',
         auth_method => $param->{'auth_method'},

@@ -730,7 +730,19 @@ sub rename_list {
     ## Evaluate authorization scenario unless run as listmaster (sympa.pl)
     my ($result, $r_action, $reason);
     unless ($param{'options'}{'skip_authz'}) {
-        $result = Sympa::Scenario::request_action(
+        my $scenario = Sympa::Scenario->new(
+            that     => $robot,
+            function => 'create_list',
+            name     => $robot->create_list(),
+        );
+        unless ($scenario) {
+            $main::logger->do_log(
+                Sympa::Logger::ERR, 'Failed to load scenario for "create_list"'
+            );
+            return 'authorization';
+        }
+
+        $result = $scenario->evaluate(
             that        => $new_robot,
             operation   => 'create_list',
             auth_method => $param{'auth_method'},

@@ -2066,17 +2066,27 @@ sub remind {
     my $result;
 
     if ($listname eq '*') {
-        $result =
-            Sympa::Scenario::request_action(
-                that        => $robot,
-                operation   => 'global_remind',
-                auth_method => $auth_method,
-                context     => {
-                    'sender' => $sender
-                }
-            );
-        $action = $result->{'action'} if (ref($result) eq 'HASH');
+        my $scenario = Sympa::Scenario->new(
+            that     => $robot,
+            function => 'global_remind',
+            name     => $robot->global_remind()
+        );
 
+        if ($scenario) {
+            $result = $scenario->evaluate(
+                    that        => $robot,
+                    operation   => 'global_remind',
+                    auth_method => $auth_method,
+                    context     => {
+                        'sender' => $sender
+                    }
+                );
+            $action = $result->{'action'} if (ref($result) eq 'HASH');
+        } else {
+            $main::logger->do_log(
+                Sympa::Logger::ERR, 'Failed to load scenario for "global_remind"'
+            );
+        }
     } else {
 
         $language->set_lang($list->lang);

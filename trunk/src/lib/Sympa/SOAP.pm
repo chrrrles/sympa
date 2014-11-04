@@ -637,7 +637,20 @@ sub createList {
     }
 
     # check authorization
-    my $result = Sympa::Scenario::request_action(
+    my $scenario = Sympa::Scenario->new(
+        that     => $robot,
+        function => 'create_list',
+        name     => $robot->create_list()
+    );
+    unless ($scenario) {
+        $main::logger->do_log(
+            Sympa::Logger::ERR, 'Failed to load scenario for "create_list"');
+        die SOAP::Fault->faultcode('Server')
+            ->faultstring('Authorization reject')
+            ->faultdetail('Authorization reject: scenario loading failure');
+    }
+
+    my $result = $scenario->evaluate(
         that        => $robot,
         operation   => 'create_list',
         auth_method => 'md5',
