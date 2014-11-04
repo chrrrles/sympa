@@ -57,7 +57,6 @@ use Sympa::Tools;
 use Sympa::Tools::Data;
 use Sympa::Tools::File;
 use Sympa::Tools::Message;
-use Sympa::Tools::Password;
 use Sympa::User;
 
 our %robots;

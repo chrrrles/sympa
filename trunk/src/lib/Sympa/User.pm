@@ -44,7 +44,6 @@ use Sympa::DatabaseDescription;
 use Sympa::Logger;
 use Sympa::Tools;
 use Sympa::Tools::Data;
-use Sympa::Tools::Password;
 
 ## Database and SQL statement handlers
 my ($sth, @sth_stack);
