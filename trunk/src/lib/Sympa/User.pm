@@ -370,12 +370,6 @@ sub get_global_user {
     $sth = pop @sth_stack;
 
     if (defined $user) {
-        ## decrypt password
-        if ($user->{'password'}) {
-            $user->{'password'} =
-                Sympa::Tools::Password::decrypt_password($user->{'password'});
-        }
-
         ## Canonicalize lang if possible
         if ($user->{'lang'}) {
             $user->{'lang'} = Sympa::Language::canonic_lang($user->{'lang'})
