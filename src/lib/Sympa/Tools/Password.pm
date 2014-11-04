@@ -85,20 +85,6 @@ sub ciphersaber_installed {
     return $cipher;
 }
 
-=item crypt_password($inpasswd)
-
-Encrypt a password.
-
-=cut
-
-sub crypt_password {
-    my $inpasswd = shift;
-
-    ciphersaber_installed();
-    return $inpasswd unless $cipher;
-    return ("crypt." . MIME::Base64::encode($cipher->encrypt($inpasswd)));
-}
-
 =item decrypt_password($inpasswd)
 
 Decrypt a password.
