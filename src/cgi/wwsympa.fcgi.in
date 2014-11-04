@@ -4941,7 +4941,6 @@ sub do_lists {
                 'sender'      => $sender,
                 'remote_host' => $param->{'remote_host'},
                 'remote_addr' => $param->{'remote_addr'},
-                'options'     => {'dont_reload_scenario' => 1}
             }
         );
 
