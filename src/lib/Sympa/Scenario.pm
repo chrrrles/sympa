@@ -381,7 +381,8 @@ sub request_action {
         );
         return undef;
     }
-    my (@rules, $name, $scenario);
+
+    my $scenario;
 
     # this var is defined to control if log scenario is activated or not
     my $log_it;
@@ -531,8 +532,28 @@ sub request_action {
         return undef;
     }
 
-    push @rules, @{$scenario->{'rules'}};
-    $name = $scenario->{'name'};
+    return $scenario->evaluate(
+        context     => $context,
+        auth_method => $auth_method,
+        operation   => $operation,
+        log_it      => $log_it,
+        debug       => $debug
+    );
+}
+
+sub evaluate {
+    my ($self, %params) = @_;
+
+    my $context        = $params{context};
+    my $auth_method    = $params{auth_method};
+    my $operation      = $params{operation};
+    my $log_it         = $params{log_it};
+    my $debug          = $params{debug};
+    my $robot          = $params{robot};
+    my $trace_scenario = $params{trace_scenario};
+    my $that           = $params{that};
+    my @rules = @{$self->{'rules'}};
+    my $name = $self->{'name'};
 
     unless ($name) {
         $main::logger->do_log(Sympa::Logger::ERR,
