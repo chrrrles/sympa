@@ -609,7 +609,21 @@ sub _set_spam_status {
     return unless $self->{robot};
 
     require Sympa::Scenario;
-    my $action = Sympa::Scenario::request_action(
+    my $scenario = Sympa::Scenario->new(
+        that     => $self->{robot},
+        function => 'spam_status',
+        name     => $self->{robot}->spam_status(),
+    );
+    unless ($scenario) {
+        $main::logger->do_log(
+            Sympa::Logger::ERR,
+            'Failed to load scenario for "spam_status"'
+        );
+        $self->{'spam_status'} = 'unknown';
+        return;
+    }
+
+    my $action = $scenario->evaluate(
         that        => $self->{robot},
         operation   => 'spam_status',
         auth_method => 'smtp',

@@ -41,6 +41,7 @@ use warnings;
 use Carp qw(croak);
 use English qw(-no_match_vars);
 use File::Spec;
+use List::Util qw(first);
 use Mail::Address;
 use Net::Netmask;
 
@@ -488,21 +489,6 @@ sub request_action {
             );
         }
 
-    } else {
-        ## Global scenario (ie not related to a list) ; example : create_list
-        my @p;
-        if ((   @p =
-                grep { $_->{'name'} and $_->{'name'} eq $operation }
-                @Sympa::ConfDef::params
-            )
-            and $p[0]->{'scenario'}
-            ) {
-            $scenario = Sympa::Scenario->new(
-                that     => $robot,
-                function => $operation,
-                name     => $robot->$operation,
-            );
-        }
     }
 
     unless (defined $scenario and defined $scenario->{'rules'}) {

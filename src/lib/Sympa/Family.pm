@@ -2764,7 +2764,20 @@ sub is_allowed_to_create_automatic_lists {
     my $listname   = $param{'listname'};
 
     # check authorization
-    my $result = Sympa::Scenario::request_action(
+    my $scenario = Sympa::Scenario->new(
+        that     => $self->robot,
+        function => 'automatic_list_creation',
+        name     => $self->robot()->automatic_list_creation()
+    );
+    unless ($scenario) {
+        $main::logger->do_log(
+            Sympa::Logger::ERR,
+            'Failed to load scenario for "automatic_list_creation"',
+        );
+        return undef;
+    }
+
+    my $result = $scenario->evaluate(
         that        => $self->robot,
         operation   => 'automatic_list_creation',
         auth_method => $auth_level,
