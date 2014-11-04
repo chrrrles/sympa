@@ -48,7 +48,6 @@ use Sympa::Scenario;
 use Sympa::Site;
 use Sympa::Tools;
 use Sympa::Tools::File;
-use Sympa::Tools::Password;
 
 my %comms = (
     'add'                               => 'add',

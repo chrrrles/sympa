@@ -73,7 +73,6 @@ use Sympa::Template; # FIXME: circular dependency
 use Sympa::Tools::Data;
 use Sympa::Tools::File;
 use Sympa::Tools::Message;
-use Sympa::Tools::Password;
 use Sympa::Tools::SMIME;
 use Sympa::Tools::Text;
 use Sympa::Tracking;

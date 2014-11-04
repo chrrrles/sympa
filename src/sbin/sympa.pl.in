@@ -202,7 +202,6 @@ use Sympa::Tools;
 use Sympa::Tools::Daemon;
 use Sympa::Tools::File;
 use Sympa::Tools::Message;
-use Sympa::Tools::Password;
 
 # dirty global variables
 my $is_signed = {};
