@@ -2765,10 +2765,11 @@ sub is_allowed_to_create_automatic_lists {
 
     # check authorization
     my $result = Sympa::Scenario::request_action(
-        $self->robot,
-        'automatic_list_creation',
-        $auth_level,
-        {   'sender'             => $sender,
+        that        => $self->robot,
+        operation   => 'automatic_list_creation',
+        auth_method => $auth_level,
+        context => {
+            'sender'             => $sender,
             'message'            => $message,
             'family'             => $self,
             'automatic_listname' => $listname

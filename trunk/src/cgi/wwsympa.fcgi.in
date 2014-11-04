@@ -1794,10 +1794,11 @@ while ($query = new_loop()) {
             foreach my $list (@{$param->{'get_which_member'}}) {
                 ## Evaluate AuthZ scenario first
                 my $result = Sympa::Scenario::request_action(
-                    $list,
-                    'visibility',
-                    $param->{'auth_method'},
-                    {   'sender'      => $param->{'user'}{'email'},
+                    that        => $list,
+                    operation   => 'visibility',
+                    auth_method => $param->{'auth_method'},
+                    context     => {
+                        'sender'      => $param->{'user'}{'email'},
                         'remote_host' => $param->{'remote_host'},
                         'remote_addr' => $param->{'remote_addr'}
                     }
@@ -3080,9 +3081,11 @@ sub check_param_in {
 
             ## Checks if the user can post in this list.
             my $result = Sympa::Scenario::request_action(
-                $list, 'send',
-                $param->{'auth_method'},
-                {   'sender'      => $param->{'user'}{'email'},
+                that        => $list,
+                operation   => 'send',
+                auth_method => $param->{'auth_method'},
+                context     => {
+                    'sender'      => $param->{'user'}{'email'},
                     'remote_host' => $param->{'remote_host'},
                     'remote_addr' => $param->{'remote_addr'}
                 }
@@ -3130,10 +3133,11 @@ sub check_param_in {
 
         ## Check unsubscription authorization for the current user and list.
         my $result = Sympa::Scenario::request_action(
-            $list,
-            'unsubscribe',
-            $param->{'auth_method'},
-            {   'sender'      => $param->{'user'}{'email'},
+            that        => $list,
+            operation   => 'unsubscribe',
+            auth_method => $param->{'auth_method'},
+            context     => {
+                'sender'      => $param->{'user'}{'email'},
                 'remote_host' => $param->{'remote_host'},
                 'remote_addr' => $param->{'remote_addr'}
             }
@@ -3152,10 +3156,11 @@ sub check_param_in {
 
         ## Check subscription authorization for the current user and list.
         $result = Sympa::Scenario::request_action(
-            $list,
-            'subscribe',
-            $param->{'auth_method'},
-            {   'sender'      => $param->{'user'}{'email'},
+            that        => $list,
+            operation   => 'subscribe',
+            auth_method => $param->{'auth_method'},
+            context     => {
+                'sender'      => $param->{'user'}{'email'},
                 'remote_host' => $param->{'remote_host'},
                 'remote_addr' => $param->{'remote_addr'}
             }
@@ -3178,10 +3183,11 @@ sub check_param_in {
 
     ## Check if the current user can create a list.
     my $result = Sympa::Scenario::request_action(
-        $robot,
-        'create_list',
-        $param->{'auth_method'},
-        {   'sender'      => $param->{'user'}{'email'},
+        that        => $robot,
+        operation   => 'create_list',
+        auth_method => $param->{'auth_method'},
+        context     => {
+            'sender'      => $param->{'user'}{'email'},
             'remote_host' => $param->{'remote_host'},
             'remote_addr' => $param->{'remote_addr'}
         }
@@ -3382,9 +3388,11 @@ sub check_param_out {
 
             #May post:
             my $result = Sympa::Scenario::request_action(
-                $list, 'send',
-                $param->{'auth_method'},
-                {   'sender'      => $param->{'user'}{'email'},
+                that        => $list,
+                operation   => 'send',
+                auth_method => $param->{'auth_method'},
+                context     => {
+                    'sender'      => $param->{'user'}{'email'},
                     'remote_host' => $param->{'remote_host'},
                     'remote_addr' => $param->{'remote_addr'}
                 }
@@ -3427,9 +3435,11 @@ sub check_param_out {
 
         ## May review
         my $result = Sympa::Scenario::request_action(
-            $list, 'review',
-            $param->{'auth_method'},
-            {   'sender'      => $param->{'user'}{'email'},
+            that        => $list,
+            operation   => 'review',
+            auth_method => $param->{'auth_method'},
+            context     => {
+                'sender'      => $param->{'user'}{'email'},
                 'remote_host' => $param->{'remote_host'},
                 'remote_addr' => $param->{'remote_addr'}
             }
@@ -3444,10 +3454,11 @@ sub check_param_out {
 
         ## May signoff
         $result = Sympa::Scenario::request_action(
-            $list,
-            'unsubscribe',
-            $param->{'auth_method'},
-            {   'sender'      => $param->{'user'}{'email'},
+            that        => $list,
+            operation   => 'unsubscribe',
+            auth_method => $param->{'auth_method'},
+            context     => {
+                'sender'      => $param->{'user'}{'email'},
                 'remote_host' => $param->{'remote_host'},
                 'remote_addr' => $param->{'remote_addr'}
             }
@@ -3467,10 +3478,11 @@ sub check_param_out {
 
         ## May Subscribe
         $result = Sympa::Scenario::request_action(
-            $list,
-            'subscribe',
-            $param->{'auth_method'},
-            {   'sender'      => $param->{'user'}{'email'},
+            that        => $list,
+            operation   => 'subscribe',
+            auth_method => $param->{'auth_method'},
+            context     => {
+                'sender'      => $param->{'user'}{'email'},
                 'remote_host' => $param->{'remote_host'},
                 'remote_addr' => $param->{'remote_addr'}
             }
@@ -3486,10 +3498,11 @@ sub check_param_out {
 
             ## Check if the current user may access web archives
             my $result = Sympa::Scenario::request_action(
-                $list,
-                'web_archive.access',
-                $param->{'auth_method'},
-                {   'sender'      => $param->{'user'}{'email'},
+                that        => $list,
+                operation   => 'web_archive.access',
+                auth_method => $param->{'auth_method'},
+                context     => {
+                    'sender'      => $param->{'user'}{'email'},
                     'remote_host' => $param->{'remote_host'},
                     'remote_addr' => $param->{'remote_addr'}
                 }
@@ -3506,9 +3519,12 @@ sub check_param_out {
             ## Check if web archive is publically accessible (useful
             ## information for RSS)
             $result = Sympa::Scenario::request_action(
-                $list, 'web_archive.access',
-                $param->{'auth_method'},
-                {'sender' => 'nobody'}
+                that        => $list,
+                operation   => 'web_archive.access',
+                auth_method => $param->{'auth_method'},
+                context     => {
+                    'sender' => 'nobody'
+                }
             );
             $r_action = $result->{'action'} if (ref($result) eq 'HASH');
 
@@ -3522,9 +3538,12 @@ sub check_param_out {
             ## Check if shared is publically accessible (useful information
             ## for RSS)
             my $result = Sympa::Scenario::request_action(
-                $list, 'shared_doc.d_read',
-                $param->{'auth_method'},
-                {'sender' => 'nobody'}
+                that        => $list,
+                operation   => 'shared_doc.d_read',
+                auth_method => $param->{'auth_method'},
+                context     => {
+                    'sender' => 'nobody'
+                }
             );
             my $r_action;
             if (ref($result) eq 'HASH') {
@@ -4822,10 +4841,11 @@ sub do_which {
             Sympa::List::get_which($param->{'user'}{'email'}, $robot, $role)) {
             my $l      = $list->name;
             my $result = Sympa::Scenario::request_action(
-                $list,
-                'visibility',
-                $param->{'auth_method'},
-                {   'sender'      => $param->{'user'}{'email'},
+                that        => $list,
+                operation   => 'visibility',
+                auth_method => $param->{'auth_method'},
+                context     => {
+                    'sender'      => $param->{'user'}{'email'},
                     'remote_host' => $param->{'remote_host'},
                     'remote_addr' => $param->{'remote_addr'}
                 }
@@ -4914,10 +4934,11 @@ sub do_lists {
         my $sender = $param->{'user'}{'email'} || 'nobody';
 
         my $result = Sympa::Scenario::request_action(
-            $list,
-            'visibility',
-            $param->{'auth_method'},
-            {   'sender'      => $sender,
+            that        => $list,
+            operation   => 'visibility',
+            auth_method => $param->{'auth_method'},
+            context     => {
+                'sender'      => $sender,
                 'remote_host' => $param->{'remote_host'},
                 'remote_addr' => $param->{'remote_addr'},
                 'options'     => {'dont_reload_scenario' => 1}
@@ -5946,10 +5967,11 @@ sub do_subscribe {
 
     return undef if ($list->is_scenario_purely_closed('subscribe'));
     my $result = Sympa::Scenario::request_action(
-        $list,
-        'subscribe',
-        $param->{'auth_method'},
-        {   'sender'      => $param->{'user'}{'email'},
+        that        => $list,
+        operation   => 'subscribe',
+        auth_method => $param->{'auth_method'},
+        context     => {
+            'sender'      => $param->{'user'}{'email'},
             'remote_host' => $param->{'remote_host'},
             'remote_addr' => $param->{'remote_addr'}
         }
@@ -6414,10 +6436,11 @@ sub do_auto_signoff {
     ## If unsubscribe is forbidden, reject the request. Other
 
     my $result = Sympa::Scenario::request_action(
-        $list,
-        'unsubscribe',
-        $param->{'auth_method'},
-        {   'sender'      => $in{'email'},
+        that        => $list,
+        operation   => 'unsubscribe',
+        auth_method => $param->{'auth_method'},
+        context     => {
+            'sender'      => $in{'email'},
             'remote_host' => $param->{'remote_host'},
             'remote_addr' => $param->{'remote_addr'}
         }
@@ -6627,10 +6650,11 @@ sub unsubscribe {
     }
 
     my $result = Sympa::Scenario::request_action(
-        $list,
-        'unsubscribe',
-        $param->{'auth_method'},
-        {   'sender'      => $param->{'user'}{'email'},
+        that        => $list,
+        operation   => 'unsubscribe',
+        auth_method => $param->{'auth_method'},
+        context     => {
+            'sender'      => $param->{'user'}{'email'},
             'remote_host' => $param->{'remote_host'},
             'remote_addr' => $param->{'remote_addr'}
         }
@@ -8085,9 +8109,11 @@ sub do_add {
         }
 
         my $result = Sympa::Scenario::request_action(
-            $list, 'add',
-            $param->{'auth_method'},
-            {   'sender'      => $param->{'user'}{'email'},
+            that        => $list,
+            operation   => 'add',
+            auth_method => $param->{'auth_method'},
+            context     => {
+                'sender'      => $param->{'user'}{'email'},
                 'email'       => $in{'email'},
                 'remote_host' => $param->{'remote_host'},
                 'remote_addr' => $param->{'remote_addr'}
@@ -8243,9 +8269,11 @@ sub do_del {
     $in{'email'} = Sympa::Tools::unescape_chars($in{'email'});
 
     my $result = Sympa::Scenario::request_action(
-        $list, 'del',
-        $param->{'auth_method'},
-        {   'sender'      => $param->{'user'}{'email'},
+        that        => $list,
+        operation   => 'del',
+        auth_method => $param->{'auth_method'},
+        context     => {
+            'sender'      => $param->{'user'}{'email'},
             'email'       => $in{'email'},
             'remote_host' => $param->{'remote_host'},
             'remote_addr' => $param->{'remote_addr'}
@@ -9713,10 +9741,11 @@ sub do_arc {
 
     ## check autorization for tracking
     my $result = Sympa::Scenario::request_action(
-        $list,
-        'tracking.tracking',
-        $param->{'auth_method'},
-        {   'sender'      => $param->{'user'}{'email'},
+        that        => $list,
+        operation   => 'tracking.tracking',
+        auth_method => $param->{'auth_method'},
+        context     => {
+            'sender'      => $param->{'user'}{'email'},
             'remote_host' => $param->{'remote_host'},
             'remote_addr' => $param->{'remote_addr'}
         }
@@ -10389,10 +10418,11 @@ sub do_tracking {
 
     ## Access control
     my $result = Sympa::Scenario::request_action(
-        $list,
-        'tracking.tracking',
-        $param->{'auth_method'},
-        {   'sender'      => $param->{'user'}{'email'},
+        that        => $list,
+        operation   => 'tracking.tracking',
+        auth_method => $param->{'auth_method'},
+        context     => {
+            'sender'      => $param->{'user'}{'email'},
             'remote_host' => $param->{'remote_host'},
             'remote_addr' => $param->{'remote_addr'}
         }
@@ -11273,10 +11303,11 @@ sub do_create_list_request {
     wwslog(Sympa::Logger::INFO, 'do_create_list_request()');
 
     my $result = Sympa::Scenario::request_action(
-        $robot,
-        'create_list',
-        $param->{'auth_method'},
-        {   'sender'      => $param->{'user'}{'email'},
+        that        => $robot,
+        operation   => 'create_list',
+        auth_method => $param->{'auth_method'},
+        context     => {
+            'sender'      => $param->{'user'}{'email'},
             'remote_host' => $param->{'remote_host'},
             'remote_addr' => $param->{'remote_addr'}
         }
@@ -11848,10 +11879,11 @@ sub do_search_list {
     foreach my $list (@$all_lists) {
         my $is_admin = 0;
         my $result   = Sympa::Scenario::request_action(
-            $list,
-            'visibility',
-            $param->{'auth_method'},
-            {   'sender'      => $param->{'user'}{'email'},
+            that        => $list,
+            operation   => 'visibility',
+            auth_method => $param->{'auth_method'},
+            context     => {
+                'sender'      => $param->{'user'}{'email'},
                 'remote_host' => $param->{'remote_host'},
                 'remote_addr' => $param->{'remote_addr'}
             }
@@ -13338,10 +13370,11 @@ sub do_rename_list_request {
     wwslog(Sympa::Logger::INFO, 'do_rename_list_request()');
 
     my $result = Sympa::Scenario::request_action(
-        $robot,
-        'create_list',
-        $param->{'auth_method'},
-        {   'sender'      => $param->{'user'}{'email'},
+        that        => $robot,
+        operation   => 'create_list',
+        auth_method => $param->{'auth_method'},
+        context     => {
+            'sender'      => $param->{'user'}{'email'},
             'remote_host' => $param->{'remote_host'},
             'remote_addr' => $param->{'remote_addr'}
         }
@@ -13784,10 +13817,11 @@ sub d_access_control {
     # if not privileged owner
     if ($mode_read) {
         my $result = Sympa::Scenario::request_action(
-            $list,
-            'shared_doc.d_read',
-            $param->{'auth_method'},
-            {   'sender'      => $param->{'user'}{'email'},
+            that        => $list,
+            operation   => 'shared_doc.d_read',
+            auth_method => $param->{'auth_method'},
+            context     => {
+                'sender'      => $param->{'user'}{'email'},
                 'remote_host' => $param->{'remote_host'},
                 'remote_addr' => $param->{'remote_addr'}
             }
@@ -13803,10 +13837,11 @@ sub d_access_control {
 
     if ($mode_edit) {
         my $result = Sympa::Scenario::request_action(
-            $list,
-            'shared_doc.d_edit',
-            $param->{'auth_method'},
-            {   'sender'      => $param->{'user'}{'email'},
+            that        => $list,
+            operation   => 'shared_doc.d_edit',
+            auth_method => $param->{'auth_method'},
+            context     => {
+                'sender'      => $param->{'user'}{'email'},
                 'remote_host' => $param->{'remote_host'},
                 'remote_addr' => $param->{'remote_addr'}
             }
@@ -13880,10 +13915,11 @@ sub d_access_control {
 
             if ($mode_read) {
                 my $result = Sympa::Scenario::request_action(
-                    $list,
-                    'shared_doc.d_read',
-                    $param->{'auth_method'},
-                    {   'sender'      => $param->{'user'}{'email'},
+                    that        => $list,
+                    operation   => 'shared_doc.d_read',
+                    auth_method => $param->{'auth_method'},
+                    context     => {
+                        'sender'      => $param->{'user'}{'email'},
                         'remote_host' => $param->{'remote_host'},
                         'remote_addr' => $param->{'remote_addr'},
                         'scenario'    => $desc_hash{'read'}
@@ -13901,10 +13937,11 @@ sub d_access_control {
 
             if ($mode_edit) {
                 my $result = Sympa::Scenario::request_action(
-                    $list,
-                    'shared_doc.d_edit',
-                    $param->{'auth_method'},
-                    {   'sender'      => $param->{'user'}{'email'},
+                    that        => $list,
+                    operation   => 'shared_doc.d_edit',
+                    auth_method => $param->{'auth_method'},
+                    context     => {
+                        'sender'      => $param->{'user'}{'email'},
                         'remote_host' => $param->{'remote_host'},
                         'remote_addr' => $param->{'remote_addr'},
                         'scenario'    => $desc_hash{'edit'}
@@ -14371,10 +14408,11 @@ sub do_d_read {
                     %desc_hash = Sympa::Tools::WWW::get_desc_file("$path_doc/.desc");
 
                     my $result = Sympa::Scenario::request_action(
-                        $list,
-                        'shared_doc.d_read',
-                        $param->{'auth_method'},
-                        {   'sender'      => $param->{'user'}{'email'},
+                        that        => $list,
+                        operation   => 'shared_doc.d_read',
+                        auth_method => $param->{'auth_method'},
+                        context     => {
+                            'sender'      => $param->{'user'}{'email'},
                             'remote_host' => $param->{'remote_host'},
                             'remote_addr' => $param->{'remote_addr'},
                             'scenario'    => $desc_hash{'read'}
@@ -14423,10 +14461,11 @@ sub do_d_read {
 
                         if ($param->{'user'}{'email'}) {
                             my $result = Sympa::Scenario::request_action(
-                                $list,
-                                'shared_doc.d_edit',
-                                $param->{'auth_method'},
-                                {   'sender' => $param->{'user'}{'email'},
+                                that        => $list,
+                                operation   => 'shared_doc.d_edit',
+                                auth_method => $param->{'auth_method'},
+                                context     => {
+                                    'sender' => $param->{'user'}{'email'},
                                     'remote_host' => $param->{'remote_host'},
                                     'remote_addr' => $param->{'remote_addr'},
                                     'scenario'    => $desc_hash{'edit'}
@@ -14499,10 +14538,11 @@ sub do_d_read {
                     %desc_hash = Sympa::Tools::WWW::get_desc_file("$doc/.desc.$d");
 
                     my $result = Sympa::Scenario::request_action(
-                        $list,
-                        'shared_doc.d_read',
-                        $param->{'auth_method'},
-                        {   'sender'      => $param->{'user'}{'email'},
+                        that        => $list,
+                        operation   => 'shared_doc.d_read',
+                        auth_method => $param->{'auth_method'},
+                        context     => {
+                            'sender'      => $param->{'user'}{'email'},
                             'remote_host' => $param->{'remote_host'},
                             'remote_addr' => $param->{'remote_addr'},
                             'scenario'    => $desc_hash{'read'}
@@ -14577,10 +14617,11 @@ sub do_d_read {
 
                         if ($param->{'user'}{'email'}) {
                             my $result = Sympa::Scenario::request_action(
-                                $list,
-                                'shared_doc.d_edit',
-                                $param->{'auth_method'},
-                                {   'sender' => $param->{'user'}{'email'},
+                                that        => $list,
+                                operation   => 'shared_doc.d_edit',
+                                auth_method => $param->{'auth_method'},
+                                context     => {
+                                    'sender' => $param->{'user'}{'email'},
                                     'remote_host' => $param->{'remote_host'},
                                     'remote_addr' => $param->{'remote_addr'},
                                     'scenario'    => $desc_hash{'edit'}
@@ -14927,10 +14968,11 @@ sub directory_browsing {
                 my %desc_hash = Sympa::Tools::WWW::get_desc_file("$path_d/.desc");
 
                 my $result = Sympa::Scenario::request_action(
-                    $list,
-                    'shared_doc.d_read',
-                    $param->{'auth_method'},
-                    {   'sender'      => $param->{'user'}{'email'},
+                    that        => $list,
+                    operation   => 'shared_doc.d_read',
+                    auth_method => $param->{'auth_method'},
+                    context     => {
+                        'sender'      => $param->{'user'}{'email'},
                         'remote_host' => $param->{'remote_host'},
                         'remote_addr' => $param->{'remote_addr'},
                         'scenario'    => $desc_hash{'read'}
@@ -14990,10 +15032,11 @@ sub directory_browsing {
                 %desc_hash = Sympa::Tools::WWW::get_desc_file("$path_dir/.desc.$d");
 
                 my $result = Sympa::Scenario::request_action(
-                    $list,
-                    'shared_doc.d_read',
-                    $param->{'auth_method'},
-                    {   'sender'      => $param->{'user'}{'email'},
+                    that        => $list,
+                    operation   => 'shared_doc.d_read',
+                    auth_method => $param->{'auth_method'},
+                    context     => {
+                        'sender'      => $param->{'user'}{'email'},
                         'remote_host' => $param->{'remote_host'},
                         'remote_addr' => $param->{'remote_addr'},
                         'scenario'    => $desc_hash{'read'}
@@ -20781,8 +20824,11 @@ sub do_remind {
 
     ## Sympa will require a confirmation
     my $result = Sympa::Scenario::request_action(
-        $list, 'remind', 'smtp',
-        {   'sender'      => $param->{'user'}{'email'},
+        that        => $list,
+        operation   => 'remind',
+        auth_method => 'smtp',
+        context     => {
+            'sender'      => $param->{'user'}{'email'},
             'remote_host' => $param->{'remote_host'},
             'remote_addr' => $param->{'remote_addr'}
         }
@@ -24042,10 +24088,11 @@ sub do_rss_request {
     wwslog(Sympa::Logger::INFO, "do_rss_request");
 
     my $result = Sympa::Scenario::request_action(
-        $list,
-        'visibility',
-        $param->{'auth_method'},
-        {   'sender'      => $param->{'user'}{'email'},
+        that        => $list,
+        operation   => 'visibility',
+        auth_method => $param->{'auth_method'},
+        context     => {
+            'sender'      => $param->{'user'}{'email'},
             'remote_host' => $param->{'remote_host'},
             'remote_addr' => $param->{'remote_addr'}
         }
@@ -24781,9 +24828,11 @@ sub check_authz {
     my ($subname, $action) = @_;
 
     my $result = Sympa::Scenario::request_action(
-        $list, $action,
-        $param->{'auth_method'},
-        {   'sender' => ($param->{'user'}{'email'} || 'nobody'),
+        that        => $list,
+        operation   => $action,
+        auth_method => $param->{'auth_method'},
+        context     => {
+            'sender' => ($param->{'user'}{'email'} || 'nobody'),
             'remote_host' => $param->{'remote_host'},
             'remote_addr' => $param->{'remote_addr'}
         }
@@ -24977,10 +25026,11 @@ sub prevent_visibility_bypass {
     wwslog(Sympa::Logger::DEBUG2, 'Starting');
     if (defined $list && ref $list eq 'Sympa::List') {
         my $result = Sympa::Scenario::request_action(
-            $list,
-            'visibility',
-            $param->{'auth_method'},
-            {   'sender'      => $param->{'user'}{'email'},
+            that        => $list,
+            operation   => 'visibility',
+            auth_method => $param->{'auth_method'},
+            context     => {
+                'sender'      => $param->{'user'}{'email'},
                 'remote_host' => $param->{'remote_host'},
                 'remote_addr' => $param->{'remote_addr'}
             }

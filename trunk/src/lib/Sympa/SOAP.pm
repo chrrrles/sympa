@@ -94,10 +94,11 @@ sub lists {
 
         my $result_item = {};
         my $result      = Sympa::Scenario::request_action(
-            $list,
-            'visibility',
-            'md5',
-            {   'sender'                  => $sender,
+            that        => $list,
+            operation   => 'visibility',
+            auth_method => 'md5',
+            context     => {
+                'sender'                  => $sender,
                 'remote_application_name' => $ENV{'remote_application_name'}
             }
         );
@@ -495,8 +496,11 @@ sub info {
     }
 
     my $result = Sympa::Scenario::request_action(
-        $list, 'info', 'md5',
-        {   'sender'                  => $sender,
+        that        => $list,
+        operation   => 'info',
+        auth_method => 'md5',
+        context     => {
+            'sender'                  => $sender,
             'remote_application_name' => $ENV{'remote_application_name'}
         }
     );
@@ -634,10 +638,11 @@ sub createList {
 
     # check authorization
     my $result = Sympa::Scenario::request_action(
-        $robot,
-        'create_list',
-        'md5',
-        {   'sender'                  => $sender,
+        that        => $robot,
+        operation   => 'create_list',
+        auth_method => 'md5',
+        context     => {
+            'sender'                  => $sender,
             'remote_host'             => $ENV{'REMOTE_HOST'},
             'remote_addr'             => $ENV{'REMOTE_ADDR'},
             'remote_application_name' => $ENV{'remote_application_name'}
@@ -827,8 +832,11 @@ sub add {
     # check authorization
 
     my $result = Sympa::Scenario::request_action(
-        $list, 'add', 'md5',
-        {   'sender'                  => $sender,
+        that        => $list,
+        operation   => 'add',
+        auth_method => 'md5',
+        context     => {
+            'sender'                  => $sender,
             'email'                   => $email,
             'remote_host'             => $ENV{'REMOTE_HOST'},
             'remote_addr'             => $ENV{'REMOTE_ADDR'},
@@ -984,8 +992,11 @@ sub del {
     # check authorization
 
     my $result = Sympa::Scenario::request_action(
-        $list, 'del', 'md5',
-        {   'sender'                  => $sender,
+        that        => $list,
+        operation   => 'del',
+        auth_method => 'md5',
+        context     => {
+            'sender'                  => $sender,
             'email'                   => $email,
             'remote_host'             => $ENV{'REMOTE_HOST'},
             'remote_addr'             => $ENV{'REMOTE_ADDR'},
@@ -1119,8 +1130,11 @@ sub review {
     my $user;
 
     my $result = Sympa::Scenario::request_action(
-        $list, 'review', 'md5',
-        {   'sender'                  => $sender,
+        that        => $list,
+        operation   => 'review',
+        auth_method => 'md5',
+        context     => {
+            'sender'                  => $sender,
             'remote_application_name' => $ENV{'remote_application_name'}
         }
     );
@@ -1346,10 +1360,11 @@ sub signoff {
     $list = Sympa::List->new($listname, $robot);
 
     my $result = Sympa::Scenario::request_action(
-        $list,
-        'unsubscribe',
-        'md5',
-        {   'email'                   => $sender,
+        that        => $list,
+        operation   => 'unsubscribe',
+        auth_method => 'md5',
+        context     => {
+            'email'                   => $sender,
             'sender'                  => $sender,
             'remote_application_name' => $ENV{'remote_application_name'}
         }
@@ -1509,10 +1524,11 @@ sub subscribe {
 
     ## query what to do with this subscribtion request
     my $result = Sympa::Scenario::request_action(
-        $list,
-        'subscribe',
-        'md5',
-        {   'sender'                  => $sender,
+        that        => $list,
+        operation   => 'subscribe',
+        auth_method => 'md5',
+        context     => {
+            'sender'                  => $sender,
             'remote_application_name' => $ENV{'remote_application_name'}
         }
     );
@@ -1710,10 +1726,11 @@ sub which {
         my $result_item;
 
         my $result = Sympa::Scenario::request_action(
-            $list,
-            'visibility',
-            'md5',
-            {   'sender'                  => $sender,
+            that        => $list,
+            operation   => 'visibility',
+            auth_method => 'md5',
+            context     => {
+                'sender'                  => $sender,
                 'remote_application_name' => $ENV{'remote_application_name'}
             }
         );

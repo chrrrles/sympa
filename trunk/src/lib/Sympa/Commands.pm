@@ -247,9 +247,11 @@ sub lists {
     foreach my $list (@$all_lists) {
         my $l      = $list->name;
         my $result = Sympa::Scenario::request_action(
-            $list,
-            'visibility', 'smtp',    # 'smtp' isn't it a bug ?
-            {   'sender'  => $sender,
+            that        => $list,
+            operation   => 'visibility',
+            auth_method => 'smtp',    # 'smtp' isn't it a bug ?
+            context     => {
+                'sender'  => $sender,
                 'message' => $message,
             }
         );
@@ -338,9 +340,11 @@ sub stats {
         unless (defined $auth_method);
 
     my $result = Sympa::Scenario::request_action(
-        $list, 'review',
-        $auth_method,
-        {   'sender'  => $sender,
+        that        => $list,
+        operation   => 'review',
+        auth_method => $auth_method,
+        context     => {
+            'sender'  => $sender,
             'message' => $message,
         }
     );
@@ -675,9 +679,11 @@ sub review {
         unless (defined $auth_method);
 
     my $result = Sympa::Scenario::request_action(
-        $list, 'review',
-        $auth_method,
-        {   'sender'  => $sender,
+        that        => $list,
+        operation   => 'review',
+        auth_method => $auth_method,
+        context     => {
+            'sender'  => $sender,
             'message' => $message
         }
     );
@@ -899,10 +905,11 @@ sub subscribe {
     ## query what to do with this subscribtion request
 
     my $result = Sympa::Scenario::request_action(
-        $list,
-        'subscribe',
-        $auth_method,
-        {   'sender'  => $sender,
+        that        => $list,
+        operation   => 'subscribe',
+        auth_method => $auth_method,
+        context     => {
+            'sender'  => $sender,
             'message' => $message,
         }
     );
@@ -1155,9 +1162,11 @@ sub info {
         unless (defined $auth_method);
 
     my $result = Sympa::Scenario::request_action(
-        $list, 'info',
-        $auth_method,
-        {   'sender'  => $sender,
+        that        => $list,
+        operation   => 'info',
+        auth_method => $auth_method,
+        context     => {
+            'sender'  => $sender,
             'message' => $message,
         }
     );
@@ -1291,10 +1300,11 @@ sub signoff {
 
             ## Skip hidden lists
             my $result = Sympa::Scenario::request_action(
-                $list,
-                'visibility',
-                'smtp',
-                {   'sender'  => $sender,
+                that        => $list,
+                operation   => 'visibility',
+                auth_method => 'smtp',
+                context     => {
+                    'sender'  => $sender,
                     'message' => $message,
                 }
             );
@@ -1355,10 +1365,11 @@ sub signoff {
         unless (defined $auth_method);
 
     my $result = Sympa::Scenario::request_action(
-        $list,
-        'unsubscribe',
-        $auth_method,
-        {   'email'   => $email,
+        that        => $list,
+        operation   => 'unsubscribe',
+        auth_method => $auth_method,
+        context     => {
+            'email'   => $email,
             'sender'  => $sender,
             'message' => $message,
         }
@@ -1588,9 +1599,11 @@ sub add {
         unless (defined $auth_method);
 
     my $result = Sympa::Scenario::request_action(
-        $list, 'add',
-        $auth_method,
-        {   'email'   => $email,
+        that        => $list,
+        operation   => 'add',
+        auth_method => $auth_method,
+        context     => {
+            'email'   => $email,
             'sender'  => $sender,
             'message' => $message,
         }
@@ -1785,9 +1798,11 @@ sub invite {
         unless (defined $auth_method);
 
     my $result = Sympa::Scenario::request_action(
-        $list, 'invite',
-        $auth_method,
-        {   'sender'  => $sender,
+        that        => $list,
+        operation   => 'invite',
+        auth_method => $auth_method,
+        context     => {
+            'sender'  => $sender,
             'message' => $message,
         }
     );
@@ -1857,10 +1872,11 @@ sub invite {
             $context{'requested_by'}  = $sender;
 
             my $result = Sympa::Scenario::request_action(
-                $list,
-                'subscribe',
-                'smtp',
-                {   'sender'  => $sender,
+                that        => $list,
+                operation   => 'subscribe',
+                auth_method => 'smtp',
+                context     => {
+                    'sender'  => $sender,
                     'message' => $message,
                 }
             );
@@ -2051,8 +2067,14 @@ sub remind {
 
     if ($listname eq '*') {
         $result =
-            Sympa::Scenario::request_action($robot, 'global_remind', $auth_method,
-            {'sender' => $sender});
+            Sympa::Scenario::request_action(
+                that        => $robot,
+                operation   => 'global_remind',
+                auth_method => $auth_method,
+                context     => {
+                    'sender' => $sender
+                }
+            );
         $action = $result->{'action'} if (ref($result) eq 'HASH');
 
     } else {
@@ -2062,9 +2084,11 @@ sub remind {
         $host = $list->host;
 
         $result = Sympa::Scenario::request_action(
-            $list, 'remind',
-            $auth_method,
-            {   'sender'  => $sender,
+            that        => $list,
+            operation   => 'remind',
+            auth_method => $auth_method,
+            context     => {
+                'sender'  => $sender,
                 'message' => $message,
             }
         );
@@ -2190,10 +2214,11 @@ sub remind {
                 do {
                     my $email  = lc($user->{'email'});
                     my $result = Sympa::Scenario::request_action(
-                        $list,
-                        'visibility',
-                        'smtp',
-                        {   'sender'  => $sender,
+                        that        => $list,
+                        operation   => 'visibility',
+                        auth_method => 'smtp',
+                        context     => {
+                            'sender'  => $sender,
                             'message' => $message,
                         }
                     );
@@ -2333,9 +2358,11 @@ sub del {
 
     ## query what to do with this DEL request
     my $result = Sympa::Scenario::request_action(
-        $list, 'del',
-        $auth_method,
-        {   'sender'  => $sender,
+        that        => $list,
+        operation   => 'del',
+        auth_method => $auth_method,
+        context     => {
+            'sender'  => $sender,
             'email'   => $who,
             'message' => $message,
         }
@@ -2503,10 +2530,11 @@ sub set {
 
             ## Skip hidden lists
             my $result = Sympa::Scenario::request_action(
-                $list,
-                'visibility',
-                'smtp',
-                {   'sender'  => $sender,
+                that        => $list,
+                operation   => 'visibility',
+                auth_method => 'smtp',
+                context     => {
+                    'sender'  => $sender,
                     'message' => $message,
                 }
             );
@@ -2843,8 +2871,11 @@ sub confirm {
     my $msg_string = $message->as_string();    # raw message
 
     my $result = Sympa::Scenario::request_action(
-        $list, 'send', 'md5',
-        {   'sender'  => $sender,
+        that        => $list,
+        operation   => 'send',
+        auth_method => 'md5',
+        context     => {
+            'sender'  => $sender,
             'message' => $message,
         }
     );
@@ -3281,10 +3312,11 @@ sub which {
         $listname = $list->name;
 
         my $result = Sympa::Scenario::request_action(
-            $list,
-            'visibility',
-            'smtp',
-            {   'sender'  => $sender,
+            that        => $list,
+            operation   => 'visibility',
+            auth_method => 'smtp',
+            context     => {
+                'sender'  => $sender,
                 'message' => $message,
             }
         );

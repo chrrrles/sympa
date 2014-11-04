@@ -402,10 +402,11 @@ sub check_access_control {
     # if not privileged owner
     if (1) {
         my $result = Sympa::Scenario::request_action(
-            $list,
-            'shared_doc.d_read',
-            $param->{'auth_method'},
-            {   'sender'      => $param->{'user'}{'email'},
+            that        => $list,
+            operation   => 'shared_doc.d_read',
+            auth_method => $param->{'auth_method'},
+            context     => {
+                'sender'      => $param->{'user'}{'email'},
                 'remote_host' => $param->{'remote_host'},
                 'remote_addr' => $param->{'remote_addr'}
             }
@@ -421,10 +422,11 @@ sub check_access_control {
 
     if (1) {
         my $result = Sympa::Scenario::request_action(
-            $list,
-            'shared_doc.d_edit',
-            $param->{'auth_method'},
-            {   'sender'      => $param->{'user'}{'email'},
+            that        => $list,
+            operation   => 'shared_doc.d_edit',
+            auth_method => $param->{'auth_method'},
+            context     => {
+                'sender'      => $param->{'user'}{'email'},
                 'remote_host' => $param->{'remote_host'},
                 'remote_addr' => $param->{'remote_addr'}
             }
@@ -507,10 +509,11 @@ sub check_access_control {
             if (1) {
 
                 my $result = Sympa::Scenario::request_action(
-                    $list,
-                    'shared_doc.d_read',
-                    $param->{'auth_method'},
-                    {   'sender'      => $param->{'user'}{'email'},
+                    that        => $list,
+                    operation   => 'shared_doc.d_read',
+                    auth_method => $param->{'auth_method'},
+                    context     => {
+                        'sender'      => $param->{'user'}{'email'},
                         'remote_host' => $param->{'remote_host'},
                         'remote_addr' => $param->{'remote_addr'},
                         'scenario'    => $desc_hash{'read'}
@@ -528,10 +531,11 @@ sub check_access_control {
 
             if (1) {
                 my $result = Sympa::Scenario::request_action(
-                    $list,
-                    'shared_doc.d_edit',
-                    $param->{'auth_method'},
-                    {   'sender'      => $param->{'user'}{'email'},
+                    that        => $list,
+                    operation   => 'shared_doc.d_edit',
+                    auth_method => $param->{'auth_method'},
+                    context     => {
+                        'sender'      => $param->{'user'}{'email'},
                         'remote_host' => $param->{'remote_host'},
                         'remote_addr' => $param->{'remote_addr'},
                         'scenario'    => $desc_hash{'edit'}

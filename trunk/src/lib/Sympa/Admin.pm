@@ -731,10 +731,11 @@ sub rename_list {
     my ($result, $r_action, $reason);
     unless ($param{'options'}{'skip_authz'}) {
         $result = Sympa::Scenario::request_action(
-            $new_robot,
-            'create_list',
-            $param{'auth_method'},
-            {   'sender'      => $param{'user_email'},
+            that        => $new_robot,
+            operation   => 'create_list',
+            auth_method => $param{'auth_method'},
+            context     => {
+                'sender'      => $param{'user_email'},
                 'remote_host' => $param{'remote_host'},
                 'remote_addr' => $param{'remote_addr'}
             }

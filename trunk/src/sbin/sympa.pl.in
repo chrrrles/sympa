@@ -1442,7 +1442,12 @@ sub DoMessage {
     $auth_method = 'md5'   if $message->is_authenticated();
     $auth_method = 'smime' if ($is_signed->{'body'});
 
-    $result = Sympa::Scenario::request_action($list, 'send', $auth_method, $context);
+    $result = Sympa::Scenario::request_action(
+        that        => $list,
+        operation   => 'send',
+        auth_method => $auth_method,
+        context     => $context
+    );
     $action = $result->{'action'} if ref $result eq 'HASH';
 
     unless (defined $action) {
