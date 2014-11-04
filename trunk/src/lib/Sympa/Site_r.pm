@@ -849,10 +849,6 @@ sub send_file {
             }
         }
 
-        unless ($data->{'user'}->password) {
-            $data->{'user'}->password(Sympa::Tools::Password::tmp_passwd($who));
-        }
-
         if (ref $self eq 'Sympa::List') {
             ## Unique return-path VERP
             if (    $self->welcome_return_path eq 'unique'

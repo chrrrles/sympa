@@ -50,23 +50,6 @@ my $cipher;
 
 =over
 
-=item tmp_passwd($email)
-
-FIXME
-
-=cut
-
-sub tmp_passwd {
-    my $email = shift;
-
-    return (
-        'init'
-            . substr(
-            Digest::MD5::md5_hex(join('/', Sympa::Site->cookie, $email)), -8
-            )
-    );
-}
-
 =item ciphersaber_installed()
 
 Create a cipher.
