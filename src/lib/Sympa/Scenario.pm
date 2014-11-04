@@ -500,14 +500,6 @@ sub request_action {
             );
         }
 
-    } elsif ($context->{'topicname'}) {
-        ## Topics
-        $scenario = Sympa::Scenario->new(
-            that     => $robot,
-            function => 'topics_visibility',
-            name     => $robot->topics->{$context->{'topicname'}}{'visibility'},
-            options => $context->{'options'}
-        );
     } else {
         ## Global scenario (ie not related to a list) ; example : create_list
         my @p;
