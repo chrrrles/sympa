@@ -24102,7 +24102,8 @@ sub do_css {
 sub do_rss_request {
     wwslog(Sympa::Logger::INFO, "do_rss_request");
 
-    my $result = $list->check_list_authz(
+    my $result = Sympa::Scenario::request_action(
+        $list,
         'visibility',
         $param->{'auth_method'},
         {   'sender'      => $param->{'user'}{'email'},
@@ -25036,7 +25037,8 @@ sub do_automatic_lists {
 sub prevent_visibility_bypass {
     wwslog(Sympa::Logger::DEBUG2, 'Starting');
     if (defined $list && ref $list eq 'Sympa::List') {
-        my $result = $list->check_list_authz(
+        my $result = Sympa::Scenario::request_action(
+            $list,
             'visibility',
             $param->{'auth_method'},
             {   'sender'      => $param->{'user'}{'email'},

@@ -5080,12 +5080,6 @@ sub am_i {
     return undef;
 }
 
-## Check list authorizations
-## OBSOLETED; Use Sympa::Scenario::request_action();
-sub check_list_authz {
-    return Sympa::Scenario::request_action(@_);
-}
-
 ## Initialize internal list cache
 sub init_list_cache {
     $main::logger->do_log(Sympa::Logger::DEBUG2, '()');
