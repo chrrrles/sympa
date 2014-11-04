@@ -185,9 +185,10 @@ sub login {
     }
 
     ## Create Sympa::Session object
-    my $session =
-        Sympa::Session->new($robot,
-        {'cookie' => Sympa::Session::encrypt_session_id($ENV{'SESSION_ID'})});
+    my $session = Sympa::Session->new(
+        robot => $robot,
+        cookie => Sympa::Session::encrypt_session_id($ENV{'SESSION_ID'})
+    );
     $ENV{'USER_EMAIL'} = $email;
     $session->{'email'} = $email;
     $session->store();
@@ -279,9 +280,10 @@ sub casLogin {
     }
 
     ## Create Sympa::Session object
-    my $session =
-        Sympa::Session->new($robot,
-        {'cookie' => Sympa::Session::encrypt_session_id($ENV{'SESSION_ID'})});
+    my $session = Sympa::Session->new(
+        robot  => $robot,
+        cookie => Sympa::Session::encrypt_session_id($ENV{'SESSION_ID'})
+    );
     $ENV{'USER_EMAIL'} = $email;
     $session->{'email'} = $email;
     $session->store();
@@ -314,7 +316,7 @@ sub authenticateAndRun {
 
     ## Provided email is not trusted, we fetch the user email from the
     ## session_table instead
-    my $session = Sympa::Session->new($robot, {'cookie' => $cookie});
+    my $session = Sympa::Session->new(robot => $robot, cookie => $cookie);
     if (defined $session) {
         $email      = $session->{'email'};
         $session_id = $session->{'id_session'};
@@ -347,7 +349,7 @@ sub getUserEmailByCookie {
             ->faultdetail('Use : <cookie>');
     }
 
-    my $session = Sympa::Session->new($robot, {'cookie' => $cookie});
+    my $session = Sympa::Session->new(robot => $robot, cookie => $cookie);
 
     unless (defined $session and $session->{'email'} ne 'unknown') {
         $main::logger->do_log(Sympa::Logger::ERR,

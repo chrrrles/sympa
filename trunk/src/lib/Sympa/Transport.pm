@@ -72,13 +72,11 @@ sub request {
         ## Existing session or new one
         if (Sympa::Session::get_session_cookie($ENV{'HTTP_COOKIE'})) {
             $session = Sympa::Session->new(
-                $robot,
-                {   'cookie' =>
-                        Sympa::Session::get_session_cookie($ENV{'HTTP_COOKIE'})
-                }
+                robot  => $robot,
+                cookie => Sympa::Session::get_session_cookie($ENV{'HTTP_COOKIE'})
             );
         } else {
-            $session = Sympa::Session->new($robot, {});
+            $session = Sympa::Session->new(robot => $robot);
             $session->store() if defined $session;
             ## Note that id_session changes each time it is saved in the DB
             $session->renew() if defined $session;

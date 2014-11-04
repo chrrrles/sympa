@@ -64,19 +64,43 @@ my %session_hard_attributes = (
     'new_session'  => 1,
 );
 
-sub new {
-    my $pkg     = shift;
-    my $robot   = Sympa::Robot::clean_robot(shift, 1);   #FIXME: maybe a Site object?
-    my $context = shift || {};
+=head1 CLASS METHODS
 
-    my $cookie = $context->{'cookie'};
-    my $action = $context->{'action'};
-    my $rss    = $context->{'rss'};
+=over 4
+
+=item Sympa::Session->new(%parameters)
+
+Creates a new L<Sympa::Session> object.
+
+Parameters:
+
+=over 4
+
+=item * I<robot>: FIXME
+
+=item * I<cookie>: FIXME
+
+=item * I<action>: FIXME
+
+=item * I<rss>: FIXME
+
+=back
+
+Returns a new L<Sympa::Session> object, or I<undef> for failure.
+
+=cut
+
+sub new {
+    my ($class, %params) = @_;
+    my $robot   = Sympa::Robot::clean_robot($params{'robot'}, 1);   #FIXME: maybe a Site object?
+    my $cookie = $params{'cookie'};
+    my $action = $params{'action'};
+    my $rss    = $params{'rss'};
     $main::logger->do_log(Sympa::Logger::DEBUG2, '(%s, cookie=%s, action=%s)',
         $robot, $cookie, $action);
 
     my $self = {'robot' => $robot};
-    bless $self => $pkg;
+    bless $self, $class;
 
     # passive_session are session not stored in the database, they are used
     # for crawler bots and action such as css, wsdl, ajax and rss
