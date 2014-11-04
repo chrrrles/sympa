@@ -537,6 +537,9 @@ sub request_action {
         auth_method => $auth_method,
         operation   => $operation,
         log_it      => $log_it,
+        trace_scenario => $trace_scenario,
+        robot          => $robot,
+        that           => $that
     );
 }
 
