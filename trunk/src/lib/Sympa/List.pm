@@ -37,7 +37,7 @@ package Sympa::List;
 
 use strict;
 use warnings;
-use base qw(Sympa::Site_r);
+use base qw(Sympa::ConfigurableObject);
 
 use Carp qw(croak);
 use Data::Dumper;
@@ -2002,8 +2002,6 @@ See L<Site/send_dsn>.
 
 =cut
 
-## Inherited from Site_r
-
 ####################################################
 # send_file
 ####################################################
@@ -2028,8 +2026,6 @@ See L<Site/send_dsn>.
 #         -...
 # OUT : 1 | undef
 ####################################################
-
-## Inherited from Site_r
 
 ####################################################
 # send_msg
@@ -2721,8 +2717,6 @@ See L<Site/request_auth>.
 
 =cut
 
-## Inherited from Site_r
-
 ####################################################
 # archive_send
 ####################################################
@@ -3225,8 +3219,6 @@ See L<Site/compute_auth>.
 
 =cut
 
-## Inherited from Site_r
-
 =over 4
 
 =item get_etc_filename
@@ -3242,8 +3234,6 @@ See L<Site/get_etc_include_path>.
 =back
 
 =cut
-
-## Inherited from Site_r
 
 ## Delete a user in the user_table
 ##sub delete_global_user
@@ -4831,11 +4821,11 @@ sub add_list_member {
             ## Insert in User Table
             unless (
                 Sympa::User->new(
-                    $who,
-                    Sympa::Site->db_additional_user_fields,
-                    'gecos'    => $new_user->{'gecos'},
-                    'lang'     => $new_user->{'lang'},
-                    'password' => $new_user->{'password'}
+                    email    => $who,
+                    fields   => Sympa::Site->db_additional_user_fields,
+                    gecos    => $new_user->{'gecos'},
+                    lang     => $new_user->{'lang'},
+                    password => $new_user->{'password'}
                 )
                 ) {
                 $main::logger->do_log(Sympa::Logger::ERR,
@@ -4962,11 +4952,11 @@ sub add_list_admin {
             ## Insert in User Table
             unless (
                 Sympa::User->new(
-                    $who,
-                    Sympa::Site->db_additional_user_fields,
-                    'gecos'    => $new_admin_user->{'gecos'},
-                    'lang'     => $new_admin_user->{'lang'},
-                    'password' => $new_admin_user->{'password'}
+                    email    => $who,
+                    fields   => Sympa::Site->db_additional_user_fields,
+                    gecos    => $new_admin_user->{'gecos'},
+                    lang     => $new_admin_user->{'lang'},
+                    password => $new_admin_user->{'password'}
                 )
                 ) {
                 $main::logger->do_log(Sympa::Logger::ERR,
@@ -10388,7 +10378,8 @@ sub get_subscription_requests {
         };
         unless ($subscriptions{$email}{'gecos'}) {
             my $user = Sympa::User->new(
-                $email, Sympa::Site->db_additional_user_fields
+                email  => $email,
+                fields => Sympa::Site->db_additional_user_fields
             );
             if ($user->gecos) {
                 $subscriptions{$email}{'gecos'} = $user->gecos;
@@ -10526,7 +10517,8 @@ sub get_signoff_requests {
 
         $signoffs{$email} = {};
         my $user = Sympa::User->new(
-            $email, Sympa::Site->db_additional_user_fields
+            email  => $email,
+            fields => Sympa::Site->db_additional_user_fields
         );
         if ($user->gecos) {
             $signoffs{$email}{'gecos'} = $user->gecos;
@@ -11023,8 +11015,6 @@ See L<Site/get_address>.
 =back
 
 =cut
-
-##Inherited from Site_r package.
 
 sub get_list_address {
     ##OBSOLETED: Use $list->get_address().

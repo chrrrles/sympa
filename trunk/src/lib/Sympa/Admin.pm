@@ -1710,11 +1710,13 @@ sub change_user_email {
     ## Update User_table and remove existing entry first (to avoid duplicate
     ## entries)
     my $old_user = Sympa::User->new(
-        $in{'new_email'}, Sympa::Site->db_additional_user_fields
+        email  => $in{'new_email'},
+        fields => Sympa::Site->db_additional_user_fields
     );
     $old_user->expire if $old_user;
     my $user = Sympa::User->new(
-        $in{'current_email'}, Sympa::Site->db_additional_user_fields
+        email  => $in{'current_email'},
+        fields => Sympa::Site->db_additional_user_fields
     );
     unless ($user and $user->moveto($in{'new_mail'})) {
         $main::logger->do_log(Sympa::Logger::ERR, 'change_email: update failed');
