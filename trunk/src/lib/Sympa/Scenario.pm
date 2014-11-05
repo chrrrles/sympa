@@ -1846,16 +1846,14 @@ Get internationalized title of the scenario, under current language context.
 sub get_current_title {
     my $self = shift;
 
-    my $language = Sympa::Language->instance;
-
-    foreach my $lang (Sympa::Language::implicated_langs($language->get_lang))
+    foreach my $lang (Sympa::Language::implicated_langs($main::language->get_lang))
     {
         if (exists $self->{'title'}{$lang}) {
             return $self->{'title'}{$lang};
         }
     }
     if (exists $self->{'title'}{'gettext'}) {
-        return $language->gettext($self->{'title'}{'gettext'});
+        return $main::language->gettext($self->{'title'}{'gettext'});
     } elsif (exists $self->{'title'}{'default'}) {
         return $self->{'title'}{'default'};
     } else {

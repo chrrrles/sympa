@@ -309,7 +309,7 @@ if ($options{'debug'}) {
     $options{'log_level'} = 2 unless ($options{'log_level'});
 }
 
-my $language = Sympa::Language->instance;
+our $language = Sympa::Language->new();
 
 our $logger = Sympa::Logger::Stderr->new(
     level => $options{'log_level'}

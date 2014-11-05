@@ -54,9 +54,6 @@ our %robots;
 our $robots_ok;
 our %listmaster_messages_stack;
 
-# Language context
-my $language = Sympa::Language->instance;
-
 =head2 INITIALIZER
 
 =over 4
@@ -676,9 +673,9 @@ sub send_dsn {
 
     my $header = $message->as_entity()->head->as_string();
 
-    $language->push_lang('en');
+    $main::language->push_lang('en');
     my $date = POSIX::strftime("%a, %d %b %Y %H:%M:%S +0000", gmtime time);
-    $language->pop_lang();
+    $main::language->pop_lang();
 
     unless (
         $self->send_file(
@@ -816,12 +813,12 @@ sub send_file {
 
             if ($data->{'subscriber'}) {
                 $data->{'subscriber'}{'date'} =
-                    $language->gettext_strftime(
+                    $main::language->gettext_strftime(
                         "%d %b %Y",
                         localtime($data->{'subscriber'}{'date'})
                     );
                 $data->{'subscriber'}{'update_date'} =
-                    $language->gettext_strftime(
+                    $main::language->gettext_strftime(
                         "%d %b %Y",
                         localtime($data->{'subscriber'}{'update_date'})
                     );
@@ -830,7 +827,7 @@ sub send_file {
                         /^(\d+)\s+(\d+)\s+(\d+)(\s+(.*))?$/;
 
                     $data->{'subscriber'}{'first_bounce'} =
-                        $language->gettext_strftime(
+                        $main::language->gettext_strftime(
                             "%d %b %Y",
                             localtime($1)
                         );

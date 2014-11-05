@@ -43,13 +43,9 @@ use English qw(-no_match_vars);
 use POSIX qw();
 use Proc::ProcessTable;
 
-use Sympa::Language;
 use Sympa::LockedFile;
 use Sympa::Logger;
 use Sympa::Tools::File;
-
-# Language context
-my $language = Sympa::Language->instance;
 
 =head1 FUNCTIONS
 
@@ -363,7 +359,7 @@ sub send_crash_report {
         open ERR, '<', $err_file;
         @err_output = map { chomp $_; $_; } <ERR>;
         close ERR;
-        $err_date = $language->gettext_strftime(
+        $err_date = $main::language->gettext_strftime(
             "%d %b %Y  %H:%M", localtime((stat($err_file))[9])
         );
     }

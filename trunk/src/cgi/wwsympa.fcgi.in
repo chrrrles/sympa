@@ -973,7 +973,7 @@ my %filtering = (
 my $spool_name_pattern = qr/^(auth|bounce|digest|bulk|expire|mod|msg|archive|automatic|subscribe|signoff|topic|validated|task)$/;
 
 ## Set locale configuration	 
-my $language = Sympa::Language->instacne;
+our $language = Sympa::Language->new();
 $language->set_lang(Sympa::Site->lang, 'en');
 
 ## Important to leave this there because it defined defaults for

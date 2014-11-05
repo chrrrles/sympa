@@ -42,15 +42,12 @@ use File::Copy;
 
 use Sympa::Conf;
 use Sympa::Constants;
-use Sympa::Language;
 use Sympa::List;
 use Sympa::Logger;
 use Sympa::Monitor;
 use Sympa::Site;
 use Sympa::Tools;
 use Sympa::Tools::File;
-
-my $language = Sympa::Language->instance;
 
 =pod 
 
@@ -251,7 +248,7 @@ sub create_list_old {
 
     ## Creation of the config file
     ##FIXME:should be unneccessary
-    $param->{'creation'}{'date'} = $language->gettext_strftime(
+    $param->{'creation'}{'date'} = $main::language->gettext_strftime(
         "%d %b %Y at %H:%M:%S", localtime time
     );
     $param->{'creation'}{'date_epoch'} = time;
@@ -547,7 +544,7 @@ sub create_list {
 
     ##FIXME:should be unneccessary
     $list->creation(
-        {   'date' => $language->gettext_strftime(
+        {   'date' => $main::language->gettext_strftime(
                 "%d %b %Y at %H:%M:%S", localtime time
             ),
             'date_epoch' => time,
@@ -653,7 +650,7 @@ sub update_list {
 
     ##FIXME:should be unneccessary
     $list->creation(
-        {   'date' => $language->gettext_strftime(
+        {   'date' => $main::language->gettext_strftime(
                 "%d %b %Y at %H:%M:%S", localtime time
             ),
             'date_epoch' => time,
@@ -1209,7 +1206,7 @@ sub clone_list_as_empty {
     my $creation = {
         'date_epoch' => time,
         ##FIXME:should be unneccessary
-        'date' => $language->gettext_strftime(
+        'date' => $main::language->gettext_strftime(
             "%d %b %y at %H:%M:%S", localtime time
         )
     };

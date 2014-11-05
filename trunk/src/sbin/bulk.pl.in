@@ -106,6 +106,7 @@ use Sympa::Bulk;
 use Sympa::Conf;
 use Sympa::Constants;
 use Sympa::List;
+use Sympa::Language;
 use Sympa::Logger;
 use Sympa::Mailer;
 use Sympa::Site;
@@ -177,7 +178,8 @@ our $mailer = Sympa::Mailer->new(
 );
 
 # initialize i18n subsystem
-Sympa::Language->instance->set_lang(Sympa::Site->lang, 'en');
+our $language = Sympa::Language->new();
+$language->set_lang(Sympa::Site->lang, 'en');
 
 ## Set the process as main bulk daemon by default.
 my $is_main_bulk = 0;

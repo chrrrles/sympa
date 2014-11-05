@@ -62,9 +62,6 @@ use overload
     'bool' => sub {1},
     '""'   => sub { croak "object Robot <$_[0]->{'name'}> is not a string"; };
 
-# Language context
-my $language = Sympa::Language->instance;
-
 sub _ensure_site_is_loaded {
     my %options = @_;
     !$Sympa::Site::is_initialized || $options{'force_reload'}
@@ -742,7 +739,7 @@ sub topics {
     }
 
     ## Set the title in the current language
-    my $lang = $language->get_lang;
+    my $lang = $main::language->get_lang;
     foreach my $top (keys %{$list_of_topics}) {
         my $topic = $list_of_topics->{$top};
         foreach my $l (Sympa::Language::implicated_langs($lang)) {
@@ -753,7 +750,7 @@ sub topics {
         unless (exists $topic->{'current_title'}) {
             if (exists $topic->{'title'}{'gettext'}) {
                 $topic->{'current_title'} =
-                    $language->gettext($topic->{'title'}{'gettext'});
+                    $main::language->gettext($topic->{'title'}{'gettext'});
             } else {
                 $topic->{'current_title'} = $topic->{'title'}{'default'}
                     || $top;
@@ -770,7 +767,7 @@ sub topics {
             unless (exists $topic->{'sub'}{$subtop}{'current_title'}) {
                 if (exists $topic->{'sub'}{$subtop}{'title'}{'gettext'}) {
                     $topic->{'sub'}{$subtop}{'current_title'} =
-                        $language->gettext(
+                        $main::language->gettext(
                         $topic->{'sub'}{$subtop}{'title'}{'gettext'});
                 } else {
                     $topic->{'sub'}{$subtop}{'current_title'} =
@@ -806,16 +803,16 @@ sub _get_topic_titles {
 
 sub _get_topic_current_title {
     my $topic = shift;
-    my $lang  = $language->get_lang;
+    my $lang  = $main::language->get_lang;
     foreach my $lang (Sympa::Language::implicated_langs($lang)) {
         if ($topic->{'title'}{$lang}) {
             return $topic->{'title'}{$lang};
         }
     }
     if ($topic->{'title'}{'gettext'}) {
-        return $language->gettext($topic->{'title'}{'gettext'});
+        return $main::language->gettext($topic->{'title'}{'gettext'});
     } elsif ($topic->{'title'}{'default'}) {
-        return $language->gettext($topic->{'title'}{'default'});
+        return $main::language->gettext($topic->{'title'}{'default'});
     } else {
         return undef;
     }

@@ -43,10 +43,6 @@ use Text::LineFold;
 use if (5.008 < $] && $] < 5.016), qw(Unicode::CaseFold fc);
 use if (5.016 <= $]), qw(feature fc);
 
-use Sympa::Language;
-
-my $language = Sympa::Language->instance;
-
 =head1 FUNCTIONS
 
 =over
@@ -80,7 +76,7 @@ sub wrap_text {
     return $text unless $cols;
 
     $text = Text::LineFold->new(
-        Language      => $language->get_lang(),
+        Language      => $main::language->get_lang(),
         OutputCharset => (Encode::is_utf8($text) ? '_UNICODE_' : 'utf8'),
         Prep          => 'NONBREAKURI',
         ColumnsMax    => $cols

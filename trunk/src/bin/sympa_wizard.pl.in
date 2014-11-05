@@ -75,7 +75,8 @@ if ($modfail) {
 } else {
     no warnings;
 
-    my $language = Sympa::Language->instance;
+    require Sympa::Language;
+    our $language = Sympa::Language->new();
     *gettext          = sub { $language->gettext(shift) };
     *gettext_strftime = sub { $language->gettext_strftime(@_) };
 

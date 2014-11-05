@@ -50,14 +50,10 @@ use MIME::Parser;
 use Time::Local qw();
 
 use Sympa::HTML::MyFormatText;
-use Sympa::Language;
 use Sympa::Logger;
 use Sympa::Template;
 use Sympa::Tools;
 use Sympa::Tools::Text;
-
-# Language context
-my $language = Sympa::Language->instance;
 
 =head1 FUNCTIONS
 
@@ -592,11 +588,11 @@ sub _do_message {
     my $string;
 
     unless ($msgent) {
-        return $language->gettext("----- Malformed message ignored -----\n\n");
+        return $main::language->gettext("----- Malformed message ignored -----\n\n");
     }
 
     my $from = decode_headerr($msgent, 'From');
-    $from = $language->gettext("[Unknown]") unless defined $from and length $from;
+    $from = $main::language->gettext("[Unknown]") unless defined $from and length $from;
     my $subject = decode_headerr($msgent, 'Subject');
     $subject = '' unless defined $subject;
     my $date = decode_headerr($msgent, 'Date');
@@ -618,24 +614,24 @@ sub _do_message {
     $name = $from unless defined $name and length $name;
 
     $string .=
-        $language->gettext("\n[Attached message follows]\n-----Original message-----\n");
+        $main::language->gettext("\n[Attached message follows]\n-----Original message-----\n");
     my $headers = '';
-    $headers .= $language->gettext_sprintf("Date: %s\n",    $date)
+    $headers .= $main::language->gettext_sprintf("Date: %s\n",    $date)
         if $date;
-    $headers .= $language->gettext_sprintf("From: %s\n",    $from)
+    $headers .= $main::language->gettext_sprintf("From: %s\n",    $from)
         if $from;
-    $headers .= $language->gettext_sprintf("To: %s\n",      $to)
+    $headers .= $main::language->gettext_sprintf("To: %s\n",      $to)
         if $to;
-    $headers .= $language->gettext_sprintf("Cc: %s\n",      $cc)
+    $headers .= $main::language->gettext_sprintf("Cc: %s\n",      $cc)
         if $cc;
-    $headers .= $language->gettext_sprintf("Subject: %s\n", $subject)
+    $headers .= $main::language->gettext_sprintf("Subject: %s\n", $subject)
         if $subject;
     $headers .= "\n";
     $string .= Sympa::Tools::Text::wrap_text($headers, '', '    ');
 
     $string .= _do_toplevel($msgent);
 
-    $string .= $language->gettext_sprintf(
+    $string .= $main::language->gettext_sprintf(
         "-----End of original message from %s-----\n\n", $name);
     return $string;
 }
@@ -664,7 +660,7 @@ sub _do_text_plain {
     if ($EVAL_ERROR) {
 
         # mmm, what to do if it fails?
-        $string .= $language->gettext_sprintf(
+        $string .= $main::language->gettext_sprintf(
             "** Warning: A message part using unrecognized character set %s\n    Some characters may be lost or incorrect **\n\n",
             $charset->as_string);
         $thispart =~ s/[^\x00-\x7F]/?/g;
@@ -686,7 +682,7 @@ sub _do_text_plain {
 sub _do_other {
     my $entity = shift;
 
-    return $language->gettext_sprintf(
+    return $main::language->gettext_sprintf(
         "\n[An attachment of type %s was included here]\n",
         $entity->mime_type);
 }
@@ -695,9 +691,9 @@ sub _do_dsn {
     my $entity = shift;
     my $string = '';
 
-    $string .= $language->gettext("\n-----Delivery Status Report-----\n");
+    $string .= $main::language->gettext("\n-----Delivery Status Report-----\n");
     $string .= _do_text_plain($entity);
-    $string .= $language->gettext("\n-----End of Delivery Status Report-----\n");
+    $string .= $main::language->gettext("\n-----End of Delivery Status Report-----\n");
 
     return $string;
 }
@@ -710,7 +706,7 @@ sub _do_text_html {
 
     unless (defined $entity->bodyhandle) {
         return 
-            $language->gettext("\n[** Unable to process HTML message part **]\n");
+            $main::language->gettext("\n[** Unable to process HTML message part **]\n");
     }
 
     my $body = $entity->bodyhandle->as_string();
@@ -729,7 +725,7 @@ sub _do_text_html {
         } else {
 
             # mmm, what to do if it fails?
-            $string .= $language->gettext_sprintf(
+            $string .= $main::language->gettext_sprintf(
                 "** Warning: A message part using unrecognized character set %s\n    Some characters may be lost or incorrect **\n\n",
                 $charset->as_string);
             $body =~ s/[^\x00-\x7F]/?/g;
@@ -744,11 +740,11 @@ sub _do_text_html {
     };
     if ($EVAL_ERROR) {
         $string .=
-            $language->gettext("\n[** Unable to process HTML message part **]\n");
+            $main::language->gettext("\n[** Unable to process HTML message part **]\n");
         return 1;
     }
 
-    $string .= $language->gettext("[ Text converted from HTML ]\n");
+    $string .= $main::language->gettext("[ Text converted from HTML ]\n");
 
     # deal with 30 hyphens (RFC 1153)
     $text =~ s/\n-{30}(\n|$)/\n -----------------------------\n/g;

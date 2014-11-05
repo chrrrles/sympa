@@ -44,8 +44,6 @@ use Sympa::Logger;
 use Sympa::Language;
 use Sympa::Site;
 
-my $language = Sympa::Language->instance;
-
 # hash of the icons linked with a type of file
 my %icons = (
     'unknown'        => 'unknown.png',
@@ -569,7 +567,7 @@ sub get_list_list_tpl {
                 # Look for a comment.tt2.
                 # Check old style locale first then canonic language and its
                 # fallbacks.
-                my $lang = Sympa::Language->instance->get_lang;
+                my $lang = $main::language->get_lang;
                 my $comment_tt2;
                 foreach my $l (
                     Sympa::Language::lang2oldlocale($lang),

@@ -32,15 +32,12 @@ use MIME::EncWords;
 use Template;
 
 use Sympa::Constants;
-use Sympa::Language;
 use Sympa::Template::Compat;
 use Sympa::Tools::Text;
 
 my $last_error;
 my @other_include_path;
 my $allow_absolute;
-
-my $language = Sympa::Language->instance;
 
 sub qencode {
     my $string = shift;
@@ -145,7 +142,7 @@ sub maketext {
     my $template_name = $context->stash->get('component')->{'name'};
     my $textdomain = $template2textdomain{$template_name} || '';
 
-    return sub { $language->maketext($textdomain, $_[0], @arg); };
+    return sub { $main::language->maketext($textdomain, $_[0], @arg); };
 }
 
 # IN:
@@ -159,11 +156,11 @@ sub locdatetime {
     if ($arg !~
         /^(\d{4})\D(\d\d?)(?:\D(\d\d?)(?:\D(\d\d?)\D(\d\d?)(?:\D(\d\d?))?)?)?/
         ) {
-        return sub { $language->gettext("(unknown date)"); };
+        return sub { $main::language->gettext("(unknown date)"); };
     } else {
         my @arg =
             ($6 + 0, $5 + 0, $4 + 0, $3 + 0 || 1, $2 - 1, $1 - 1900, 0, 0, 0);
-        return sub { $language->gettext_strftime($_[0], @arg); };
+        return sub { $main::language->gettext_strftime($_[0], @arg); };
     }
 }
 
@@ -259,7 +256,7 @@ sub parse_tt2 {
     }
 
     # Set language if possible: Must be restored later
-    $language->push_lang($data->{lang} || undef);
+    $main::language->push_lang($data->{lang} || undef);
 
     my $config = {
         # ABSOLUTE => 1,
@@ -315,11 +312,11 @@ sub parse_tt2 {
         #    join(',', @{$include_path})
         #);
 
-        $language->pop_lang;
+        $main::language->pop_lang;
         return undef;
     }
 
-    $language->pop_lang;
+    $main::language->pop_lang;
     return 1;
 }
 

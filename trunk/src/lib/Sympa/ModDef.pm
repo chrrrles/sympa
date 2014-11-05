@@ -68,12 +68,6 @@ our %cpan_modules = (
         mandatory        => 1,
         'gettext_id'     => 'required to run Sympa web interface',
     },
-    'Class::Singleton' => {
-        required_version => '1.03',
-        package_name     => 'Class-Singleton',
-        mandatory        => 1,
-        'gettext_id'     => 'used to construct various singleton classes.',
-    },
     'Crypt::CipherSaber' => {
         required_version => '0.50',
         package_name     => 'Crypt-CipherSaber',
