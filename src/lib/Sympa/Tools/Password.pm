@@ -68,6 +68,8 @@ sub ciphersaber_installed {
     return $cipher;
 }
 
+=back
+
 =cut
 
 1;
