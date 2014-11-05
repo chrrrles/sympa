@@ -52,7 +52,6 @@ use Sympa::VirtualHost;
 use Sympa::Site;
 use Sympa::Tools::File;
 use Sympa::Tools::Text;
-use Sympa::Tools::Password;
 
 my $language = Sympa::Language->instance;
 
@@ -1597,9 +1596,17 @@ sub md5_encode_password {
     $total = 0;
     my $total_md5 = 0;
 
+    my $cipher;
+    eval {
+        require Crypt::CipherSaber;
+        $cipher = Crypt::CipherSaber->new(Sympa::Site->cookie);
+    };
+
     while (my $user = $sth->fetchrow_hashref('NAME_lc')) {
+        my $password = $user->{'password_user'};
         my $clear_password;
-        if ($user->{'password_user'} =~ /^[0-9a-f]{32}/) {
+
+        if ($password =~ /^[0-9a-f]{32}/) {
             $main::logger->do_log(Sympa::Logger::INFO,
                 'password from %s already encoded as MD5 fingerprint',
                 $user->{'email_user'});
@@ -1608,11 +1615,19 @@ sub md5_encode_password {
         }
 
         ## Ignore empty passwords
-        next if ($user->{'password_user'} =~ /^$/);
+        next if ($password =~ /^$/);
 
-        if ($user->{'password_user'} =~ /^crypt.(.*)$/) {
-            $clear_password =
-                Sympa::Tools::Password::decrypt_password($user->{'password_user'});
+        if ($password =~ /^crypt.(.*)$/) {
+            if ($cipher) {
+                $clear_password = $cipher->decrypt(MIME::Base64::decode($passwd));
+            } else {
+                $main::logger->do_log(
+                    Sympa::Logger::INFO,
+                    'unable to decrypt password from %s, install Crypt::CipherSaber'
+                    $user->{'email_user'}
+                );
+                next;
+            }
         } else {    ## Old style cleartext passwords
             $clear_password = $user->{'password_user'};
         }

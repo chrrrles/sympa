@@ -68,31 +68,6 @@ sub ciphersaber_installed {
     return $cipher;
 }
 
-=item decrypt_password($inpasswd)
-
-Decrypt a password.
-
-=cut
-
-sub decrypt_password {
-    my $inpasswd = shift;
-    $main::logger->do_log(Sympa::Logger::DEBUG2,
-        'Sympa::Tools::Password::decrypt_password (%s)', $inpasswd);
-
-    return $inpasswd unless ($inpasswd =~ /^crypt\.(.*)$/);
-    $inpasswd = $1;
-
-    ciphersaber_installed();
-    unless ($cipher) {
-        $main::logger->do_log(Sympa::Logger::INFO,
-            'password seems encrypted while CipherSaber is not installed !');
-        return $inpasswd;
-    }
-    return ($cipher->decrypt(MIME::Base64::decode($inpasswd)));
-}
-
-=back
-
 =cut
 
 1;
