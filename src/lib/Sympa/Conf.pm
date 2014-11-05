@@ -1617,10 +1617,11 @@ sub _load_a_param {
 ## Returns undef if something went wrong while attempting to read the file.
 sub _load_config_file_to_hash {
     my $param = shift;
-    my $result;
+    my $result = { errors => 0, config => {}, numbered_config => {} };
     $result->{'errors'} = 0;
     my $line_num    = 0;
-    my $config_file = $param->{'config_file'};
+    my $config_file = $param->{'config_file'}
+	or die "no config file set";
 
     ## Open the configuration file or return and read the lines.
     unless (open IN, '<', $config_file) {
