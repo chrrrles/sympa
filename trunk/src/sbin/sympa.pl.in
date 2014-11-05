@@ -189,7 +189,7 @@ use Sympa::DatabaseManager;
 use Sympa::Family;
 use Sympa::Language;
 use Sympa::List;
-use Sympa::Log::Database;
+use Sympa::Monitor;
 use Sympa::Logger;
 use Sympa::Mailer;
 use Sympa::Message;
@@ -652,7 +652,7 @@ sub process_message {
     unless ($sender) {
         $logger->do_log(Sympa::Logger::ERR,
             'No sender found in message, skipping.');
-        Sympa::Log::Database::db_log(
+        Sympa::Monitor::db_log(
             'robot'        => $robot_id,
             'list'         => $listname,
             'action'       => 'process_message',
@@ -676,7 +676,7 @@ sub process_message {
             $robot_id);
         Sympa::Site->send_dsn($message,
             {'recipient' => sprintf('%s@%s', $listname, $robot_id)}, '5.1.2');
-        Sympa::Log::Database::db_log(
+        Sympa::Monitor::db_log(
             'robot'        => $robot_id,
             'list'         => $listname,
             'action'       => 'process_message',
@@ -718,7 +718,7 @@ sub process_message {
                     $listname, $robot_id);
                 $robot->send_dsn($message, {'listname' => $listname},
                     '5.1.1');
-                Sympa::Log::Database::db_log(
+                Sympa::Monitor::db_log(
                     'robot'        => $robot_id,
                     'list'         => $listname,
                     'action'       => 'process_message',
@@ -779,7 +779,7 @@ sub process_message {
                 );
                 $robot->send_dsn($message, {'listname' => $listname},
                     '5.3.5');
-                Sympa::Log::Database::db_log(
+                Sympa::Monitor::db_log(
                     'robot'        => $robot_id,
                     'list'         => $listname,
                     'action'       => 'process_message',
@@ -893,7 +893,7 @@ sub process_message {
             $sender,
             $rc
         );
-        Sympa::Log::Database::db_log(
+        Sympa::Monitor::db_log(
             'robot'        => $robot_id,
             'list'         => $listname,
             'action'       => 'process_message',
@@ -925,7 +925,7 @@ sub process_message {
                     '4.2.1');
 
                 #FIXME: Notify listmaster?
-                Sympa::Log::Database::db_log(
+                Sympa::Monitor::db_log(
                     'robot'        => $robot_id,
                     'list'         => $listname,
                     'action'       => 'process_message',
@@ -951,7 +951,7 @@ sub process_message {
                     'Dynamic list %s from family %s has ZERO subscribers',
                     $list, $dyn_list_family);
                 $list->send_dsn($message, {}, '4.2.4');
-                Sympa::Log::Database::db_log(
+                Sympa::Monitor::db_log(
                     'robot'        => $robot_id,
                     'list'         => $listname,
                     'action'       => 'process_message',
@@ -1053,7 +1053,7 @@ sub process_message {
 
         ## Send the reply message
         Sympa::Report::send_report_cmd($sender, $robot_id);
-        Sympa::Log::Database::db_log(
+        Sympa::Monitor::db_log(
             'robot'        => $robot_id,
             'list'         => $listname,
             'action'       => 'process_message',
@@ -1199,7 +1199,7 @@ sub DoForward {
                 $msg_string,
                 $list
             );
-            Sympa::Log::Database::db_log(
+            Sympa::Monitor::db_log(
                 'robot'        => $robot->name,
                 'list'         => $list->name,
                 'action'       => 'DoForward',
@@ -1244,7 +1244,7 @@ sub DoForward {
             $msg_string,
             $list
         );
-        Sympa::Log::Database::db_log(
+        Sympa::Monitor::db_log(
             'robot'        => $robot->name,
             'list'         => $listname,
             'action'       => 'DoForward',
@@ -1258,7 +1258,7 @@ sub DoForward {
         );
         return undef;
     }
-    Sympa::Log::Database::db_log(
+    Sympa::Monitor::db_log(
         'robot'        => $robot->name,
         'list'         => $listname,
         'action'       => 'DoForward',
@@ -1324,7 +1324,7 @@ sub DoMessage {
         $logger->do_log(Sympa::Logger::ERR,
             'Found known Message-ID, ignoring message which would cause a loop'
         );
-        Sympa::Log::Database::db_log(
+        Sympa::Monitor::db_log(
             'robot'        => $robot->name,
             'list'         => $list->name,
             'action'       => 'DoMessage',
@@ -1348,7 +1348,7 @@ sub DoMessage {
             Sympa::Report::reject_report_msg('user', 'routing_error', $sender,
                 {'message' => $message},
                 $robot, $msg_string, $list);
-            Sympa::Log::Database::db_log(
+            Sympa::Monitor::db_log(
                 'robot'        => $robot->name,
                 'list'         => $list->name,
                 'action'       => 'DoMessage',
@@ -1378,7 +1378,7 @@ sub DoMessage {
             },
             '5.2.3'
         );
-        Sympa::Log::Database::db_log(
+        Sympa::Monitor::db_log(
             'robot'        => $robot->name,
             'list'         => $list->name,
             'action'       => 'DoMessage',
@@ -1466,7 +1466,7 @@ sub DoMessage {
             $msg_string,
             $list
         );
-        Sympa::Log::Database::db_log(
+        Sympa::Monitor::db_log(
             'robot'        => $robot->name,
             'list'         => $list->name,
             'action'       => 'DoMessage',
@@ -1531,7 +1531,7 @@ sub DoMessage {
             Sympa::Report::reject_report_msg('intern', '', $sender,
                 {'msg_id' => $messageid, 'message' => $message},
                 $robot, $msg_string, $list);
-            Sympa::Log::Database::db_log(
+            Sympa::Monitor::db_log(
                 'robot'        => $robot->name,
                 'list'         => $list->name,
                 'action'       => 'DoMessage',
@@ -1587,7 +1587,7 @@ sub DoMessage {
                 $robot, $msg_string,
                 $list
             );
-            Sympa::Log::Database::db_log(
+            Sympa::Monitor::db_log(
                 'robot'        => $robot->name,
                 'list'         => $list->name,
                 'action'       => 'DoMessage',
@@ -1604,7 +1604,7 @@ sub DoMessage {
         $logger->do_log(Sympa::Logger::NOTICE,
             'Message %s for %s from %s kept for authentication with key %s',
             $message, $list, $sender, $key);
-        Sympa::Log::Database::db_log(
+        Sympa::Monitor::db_log(
             'robot'        => $robot->name,
             'list'         => $list->name,
             'action'       => 'DoMessage',
@@ -1649,7 +1649,7 @@ sub DoMessage {
                 $msg_string,
                 $list
             );
-            Sympa::Log::Database::db_log(
+            Sympa::Monitor::db_log(
                 'robot'        => $robot->name,
                 'list'         => $list->name,
                 'action'       => 'DoMessage',
@@ -1717,7 +1717,7 @@ sub DoMessage {
                 $msg_string,
                 $list
             );
-            Sympa::Log::Database::db_log(
+            Sympa::Monitor::db_log(
                 'robot'        => $robot->name,
                 'list'         => $list->name,
                 'action'       => 'DoMessage',
@@ -1789,7 +1789,7 @@ sub DoMessage {
                 }
             }
         }
-        Sympa::Log::Database::db_log(
+        Sympa::Monitor::db_log(
             'robot'        => $robot->name,
             'list'         => $list->name,
             'action'       => 'DoMessage',
@@ -1811,7 +1811,7 @@ sub DoMessage {
             $robot, $msg_string,
             $list
         );
-        Sympa::Log::Database::db_log(
+        Sympa::Monitor::db_log(
             'robot'        => $robot->name,
             'list'         => $list->name,
             'action'       => 'DoMessage',
@@ -1872,7 +1872,7 @@ sub DoCommand {
         $logger->do_log(Sympa::Logger::ERR,
             'Found known Message-ID, ignoring command which would cause a loop'
         );
-        Sympa::Log::Database::db_log(
+        Sympa::Monitor::db_log(
             'robot'        => $robot->name,
             'list'         => $list->name,
             'action'       => 'DoCommand',
@@ -1906,7 +1906,7 @@ sub DoCommand {
         Sympa::Commands::parse($sender, $robot,
             sprintf('%s %s', $command, $list->name),
             $auth_level, $message);
-        Sympa::Log::Database::db_log(
+        Sympa::Monitor::db_log(
             'robot'        => $robot->name,
             'list'         => $list->name,
             'action'       => 'DoCommand',
@@ -1951,7 +1951,7 @@ sub DoCommand {
             $logger->do_log(Sympa::Logger::ERR,
                 'Could not change multipart to singlepart');
             Sympa::Report::global_report_cmd('user', 'error_content_type', {});
-            Sympa::Log::Database::db_log(
+            Sympa::Monitor::db_log(
                 'robot'        => $robot->name,
                 'action'       => 'DoCommand',
                 'parameters'   => $command,               #FIXME
@@ -2005,7 +2005,7 @@ sub DoCommand {
                 'Ignoring message body not in text/plain, Content-type: %s',
                 $content_type);
             Sympa::Report::global_report_cmd('user', 'error_content_type', {});
-            Sympa::Log::Database::db_log(
+            Sympa::Monitor::db_log(
                 'robot'        => $robot->name,
                 'action'       => 'DoCommand',
                 'parameters'   => $command,
@@ -2041,7 +2041,7 @@ sub DoCommand {
                 $logger->do_log(Sympa::Logger::NOTICE,
                     "Unknown command found :%s", $i);
                 Sympa::Report::reject_report_cmd('user', 'not_understood', {}, $i);
-                Sympa::Log::Database::db_log(
+                Sympa::Monitor::db_log(
                     'robot'        => $robot->name,
                     'action'       => 'DoCommand',
                     'parameters'   => $i,                 #FIXME
@@ -2067,7 +2067,7 @@ sub DoCommand {
         $logger->do_log(Sympa::Logger::INFO, 'No command found in message %s',
             $message);
         Sympa::Report::global_report_cmd('user', 'no_cmd_found', {});
-        Sympa::Log::Database::db_log(
+        Sympa::Monitor::db_log(
             'robot'        => $robot->name,
             'list'         => '',
             'action'       => 'DoCommand',
@@ -2119,7 +2119,7 @@ sub SendDigest {
                 $digest->{'list'},
                 $digest->{'messagekey'}
             );
-            Sympa::Log::Database::db_log(
+            Sympa::Monitor::db_log(
                 'robot'        => $digest->{'robot'},
                 'list'         => $digest->{'list'},
                 'action'       => 'SendDigest',
@@ -2146,7 +2146,7 @@ sub SendDigest {
             $logger->do_log(Sympa::Logger::INFO,
                 'Digest of the list %s sent (%d seconds)',
                 $list, time - $start_time);
-            Sympa::Log::Database::db_log(
+            Sympa::Monitor::db_log(
                 'robot'        => $list->{'robot'},
                 'list'         => $list->name,
                 'action'       => 'SendDigest',

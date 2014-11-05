@@ -59,9 +59,9 @@ use Sympa::Fetch;
 use Sympa::Language;
 use Sympa::ListDef;
 use Sympa::Logger;
-use Sympa::Log::Database;
 use Sympa::LockedFile;
 use Sympa::Message;
+use Sympa::Monitor;
 use Sympa::VirtualHost; # FIXME: circular dependency
 use Sympa::Scenario; # FIXME: circular dependency
 use Sympa::Spool::File;
@@ -3286,7 +3286,7 @@ sub delete_list_member {
         $self->delete_list_member_picture($who);
 
         #log in stat_table to make statistics
-        Sympa::Log::Database::db_stat_log(
+        Sympa::Monitor::db_stat_log(
             'robot'     => $self->domain,
             'list'      => $name,
             'operation' => 'del subscriber',
@@ -4840,7 +4840,7 @@ sub add_list_member {
         $new_user->{'included'}   ||= 0;
 
         #Log in stat_table to make statistics
-        Sympa::Log::Database::db_stat_log(
+        Sympa::Monitor::db_stat_log(
             'robot'     => $self->domain,
             'list'      => $self->name,
             'operation' => 'add subscriber',
@@ -10778,7 +10778,7 @@ sub close_list {
     $self->remove_aliases();
 
     #log in stat_table to make staistics
-    Sympa::Log::Database::db_stat_log(
+    Sympa::Monitor::db_stat_log(
         'robot'     => $self->domain,
         'list'      => $self->name,
         'operation' => 'close_list',
@@ -10831,7 +10831,7 @@ sub purge {
     Sympa::Tools::File::remove_dir($self->dir);
 
     #log ind stat table to make statistics
-    Sympa::Log::Database::db_stat_log(
+    Sympa::Monitor::db_stat_log(
         'robot'     => $self->domain,
         'list'      => $self->name,
         'operation' => 'purge list',

@@ -41,8 +41,8 @@ use base qw(Sympa::Message);
 
 use English qw(-no_match_vars);
 
-use Sympa::Log::Database;
 use Sympa::Logger;
+use Sympa::Monitor;
 use Sympa::Site;
 use Sympa::Tracking;
 
@@ -476,7 +476,7 @@ sub delete_bouncer {
                 $self->{'who'},
                 $self->{'list'}
             );
-            Sympa::Log::Database::db_log(
+            Sympa::Monitor::db_log(
                 'robot'        => $self->{'list'}->domain,
                 'list'         => $self->{'list'}->name,
                 'action'       => 'del',
@@ -485,7 +485,7 @@ sub delete_bouncer {
                 'error_type'   => 'welcome_bounced',
                 'daemon'       => 'bounced'
             );
-            Sympa::Log::Database::db_stat_log(
+            Sympa::Monitor::db_stat_log(
                 'robot'     => $self->{'list'}->domain,
                 'list'      => $self->{'list'}->name,
                 'operation' => 'auto_del',
@@ -1198,7 +1198,7 @@ sub update_subscriber_bounce_history {
                 'bounce_address' => $rcpt
             }
         );
-        Sympa::Log::Database::db_log(
+        Sympa::Monitor::db_log(
             'robot'        => $list->domain,
             'list'         => $list->name,
             'action'       => 'get_bounce',
@@ -1214,7 +1214,7 @@ sub update_subscriber_bounce_history {
         $main::logger->do_log(Sympa::Logger::NOTICE,
             'Received bounce for email address %s, list %s',
             $bouncefor, $list);
-        Sympa::Log::Database::db_log(
+        Sympa::Monitor::db_log(
             'robot'        => $list->domain,
             'list'         => $list->name,
             'action'       => 'get_bounce',

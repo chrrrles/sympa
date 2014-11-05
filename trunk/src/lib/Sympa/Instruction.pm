@@ -687,9 +687,9 @@ sub _purge_logs_table {
     $main::logger->do_log(Sympa::Logger::DEBUG2, 'purge_logs_table()');
 
     require Sympa::DatabaseManager;
-    require Sympa::Log::Database;
+    require Sympa::Monitor;
 
-    my $result = Sympa::Log::Database::db_log_del();
+    my $result = Sympa::Monitor::db_log_del();
     croak "Failed to delete logs\n" unless $result;
 
     #-----------Data aggregation, to make statistics-----------------
@@ -722,7 +722,7 @@ sub _purge_logs_table {
     }
 
     for (my $j = 1; $j <= scalar(@slots); $j++) {
-        Sympa::Log::Database::aggregate_data($slots[$j - 1],
+        Sympa::Monitor::aggregate_data($slots[$j - 1],
             ($slots[$j] || $date_end));
     }
 
