@@ -25,25 +25,16 @@
 
 =head1 NAME 
 
-Sympa::Site_r - FIXME
+Sympa::ConfigurableObject - An abstract configurable object
 
 =head1 DESCRIPTION
 
-FIXME
+This class implement an abstract base for objects with an external
+configuration file.
 
 =cut
 
-## This package handles Sympa global site
-## It should :
-##   * provide access to global conf parameters,
-
-####
-#### Site_r package
-####
-#### Don't access to the contents of this class directly.  This class is
-#### used by subclasses such as List to exclude autoloading accessors
-#### from inherited methods.
-package Sympa::Site_r;
+package Sympa::ConfigurableObject;
 
 use strict;
 use warnings;
@@ -808,15 +799,14 @@ sub send_file {
                     bless {'email' => $who, 'lang' => $lang} => 'User';
             } else {
                 $data->{'user'} = Sympa::User->new(
-                    $who,
-                    Sympa::Site->db_additional_user_fields,
-                    'lang' => $lang
+                    email  => $who,
+                    fields => Sympa::Site->db_additional_user_fields,
+                    lang   => $lang
                 );
             }
         } else {
             $data->{'user'} = Sympa::User->new(
-                $data->{user}->{email},
-                Sympa::Site->db_additional_user_fields,
+                fields => Sympa::Site->db_additional_user_fields,
                 %{$data->{'user'}}
             );
         }

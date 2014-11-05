@@ -201,7 +201,8 @@ sub help {
     $data->{'is_owner'}  = 1 if scalar @owner;
     $data->{'is_editor'} = 1 if scalar @editor;
     $data->{'user'}      = Sympa::User->new(
-        $sender, Sympa::Site->db_additional_user_fields
+        email  => $sender,
+        fields => Sympa::Site->db_additional_user_fields
     );
     $language->set_lang($data->{'user'}->lang)
         if $data->{'user'}->lang;
@@ -1065,7 +1066,8 @@ sub subscribe {
 
         if ($Sympa::Site::use_db) {
             my $u = Sympa::User->new(
-                $sender, Sympa::Site->db_additional_user_fields
+                email  => $sender,
+                fields => Sympa::Site->db_additional_user_fields
             );
             $u->lang($list->lang) unless $u->lang;
             $u->save;
@@ -1696,7 +1698,8 @@ sub add {
 
         if ($Sympa::Site::use_db) {
             my $u = Sympa::User->new(
-                $email, Sympa::Site->db_additional_user_fields
+                email  => $email,
+                fields => Sympa::Site->db_additional_user_fields
             );
             $u->lang($list->lang) unless $u->lang;
             $u->save;

@@ -900,7 +900,8 @@ sub add {
         my $u;
         my $defaults = $list->default_user_options;
         my $u2       = Sympa::User->new(
-            $email, Sympa::Site->db_additional_user_fields
+            email  => $email,
+            fields => Sympa::Site->db_additional_user_fields
         );
         %{$u} = %{$defaults};
         $u->{'email'}    = $email;
@@ -1635,7 +1636,8 @@ sub subscribe {
 
         if ($Sympa::Site::use_db) {
             my $u = Sympa::User->new(
-                $sender, Sympa::Site->db_additional_user_fields
+                email  => $sender,
+                fields => Sympa::Site->db_additional_user_fields
             );
             unless ($u->lang) {
                 $u->lang($list->lang);

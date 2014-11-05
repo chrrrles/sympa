@@ -37,7 +37,7 @@ package Sympa::Site;
 
 use strict;
 use warnings;
-use base qw(Sympa::Site_r);
+use base qw(Sympa::ConfigurableObject);
 
 use Carp qw(croak carp);
 

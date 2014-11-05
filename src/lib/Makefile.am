@@ -24,6 +24,7 @@ nobase_modules_DATA = Sympa/Admin.pm \
 		      Sympa/BounceMessage.pm \
 		      Sympa/Bulk.pm \
 		      Sympa/Commands.pm \
+		      Sympa/ConfigurableObject.pm \
 		      Sympa/Conf.pm \
 		      Sympa/ConfDef.pm \
 		      Sympa/Config_XML.pm \
@@ -61,7 +62,6 @@ nobase_modules_DATA = Sympa/Admin.pm \
 		      Sympa/Scenario.pm \
 		      Sympa/SharedDocument.pm \
 		      Sympa/Site.pm \
-		      Sympa/Site_r.pm \
 		      Sympa/Spool.pm \
 		      Sympa/Spool/File.pm \
 		      Sympa/Spool/File/Key.pm \

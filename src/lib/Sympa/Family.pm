@@ -37,7 +37,7 @@ and management of multiple lists at once.
 package Sympa::Family;
 
 use strict;
-use base qw(Sympa::Site_r);
+use base qw(Sympa::ConfigurableObject);
 
 use English qw(-no_match_vars);
 
@@ -2883,8 +2883,6 @@ See L<Site/get_etc_include_path>.
 =back
 
 =cut
-
-## Inherited from Site_r class
 
 =pod
 
