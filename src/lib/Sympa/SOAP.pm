@@ -71,7 +71,7 @@ sub lists {
     my $mode     = shift;
 
     my $sender = $ENV{'USER_EMAIL'};
-    my $robot  = Sympa::Robot->new($ENV{'SYMPA_ROBOT'});
+    my $robot  = Sympa::VirtualHost->new($ENV{'SYMPA_ROBOT'});
 
     $main::logger->do_log(Sympa::Logger::NOTICE, 'lists(%s,%s,%s)', $topic, $subtopic,
         $sender);
@@ -147,7 +147,7 @@ sub login {
     my $passwd = shift;
 
     my $http_host = $ENV{'SERVER_NAME'};
-    my $robot     = Sympa::Robot->new($ENV{'SYMPA_ROBOT'});
+    my $robot     = Sympa::VirtualHost->new($ENV{'SYMPA_ROBOT'});
     $main::logger->do_log(Sympa::Logger::NOTICE, 'login(%s)', $email);
 
     #foreach my  $k (keys %ENV) {
@@ -208,7 +208,7 @@ sub casLogin {
 
     my $http_host = $ENV{'SERVER_NAME'};
     my $sender    = $ENV{'USER_EMAIL'};
-    my $robot     = Sympa::Robot->new($ENV{'SYMPA_ROBOT'});
+    my $robot     = Sympa::VirtualHost->new($ENV{'SYMPA_ROBOT'});
     $main::logger->do_log(Sympa::Logger::NOTICE, 'casLogin(%s)', $proxyTicket);
 
     unless ($http_host and $proxyTicket) {
@@ -301,7 +301,7 @@ sub casLogin {
 ## First parameter is the secret contained in the cookie
 sub authenticateAndRun {
     my ($self, $email, $cookie, $service, $parameters) = @_;
-    my $robot = Sympa::Robot->new($ENV{'SYMPA_ROBOT'});
+    my $robot = Sympa::VirtualHost->new($ENV{'SYMPA_ROBOT'});
     my $session_id;
 
     $main::logger->do_log(Sympa::Logger::NOTICE, 'authenticateAndRun(%s,%s,%s,%s)',
@@ -340,7 +340,7 @@ sub authenticateAndRun {
 ##
 sub getUserEmailByCookie {
     my ($self, $cookie) = @_;
-    my $robot = Sympa::Robot->new($ENV{'SYMPA_ROBOT'});
+    my $robot = Sympa::VirtualHost->new($ENV{'SYMPA_ROBOT'});
 
     $main::logger->do_log(Sympa::Logger::DEBUG3, 'getUserEmailByCookie(%s)', $cookie);
 
@@ -373,7 +373,7 @@ sub getUserEmailByCookie {
 ##   5nd service parameters
 sub authenticateRemoteAppAndRun {
     my ($self, $appname, $apppassword, $vars, $service, $parameters) = @_;
-    my $robot = Sympa::Robot->new($ENV{'SYMPA_ROBOT'});
+    my $robot = Sympa::VirtualHost->new($ENV{'SYMPA_ROBOT'});
 
     $main::logger->do_log(Sympa::Logger::NOTICE,
         'authenticateRemoteAppAndRun(%s,%s,%s,%s)',
@@ -430,7 +430,7 @@ sub authenticateRemoteAppAndRun {
 sub amI {
     my ($class, $listname, $function, $user) = @_;
 
-    my $robot = Sympa::Robot->new($ENV{'SYMPA_ROBOT'});
+    my $robot = Sympa::VirtualHost->new($ENV{'SYMPA_ROBOT'});
 
     $main::logger->do_log(Sympa::Logger::NOTICE, 'amI(%s,%s,%s)', $listname,
         $function, $user);
@@ -470,7 +470,7 @@ sub info {
     my $listname = shift;
 
     my $sender = $ENV{'USER_EMAIL'};
-    my $robot  = Sympa::Robot->new($ENV{'SYMPA_ROBOT'});
+    my $robot  = Sympa::VirtualHost->new($ENV{'SYMPA_ROBOT'});
 
     unless ($sender) {
         die SOAP::Fault->faultcode('Client')
@@ -574,7 +574,7 @@ sub createList {
     my $topics      = shift;
 
     my $sender                  = $ENV{'USER_EMAIL'};
-    my $robot                   = Sympa::Robot->new($ENV{'SYMPA_ROBOT'});
+    my $robot                   = Sympa::VirtualHost->new($ENV{'SYMPA_ROBOT'});
     my $remote_application_name = $ENV{'remote_application_name'};
 
     $main::logger->do_log(
@@ -738,7 +738,7 @@ sub closeList {
     my $listname = shift;
 
     my $sender                  = $ENV{'USER_EMAIL'};
-    my $robot                   = Sympa::Robot->new($ENV{'SYMPA_ROBOT'});
+    my $robot                   = Sympa::VirtualHost->new($ENV{'SYMPA_ROBOT'});
     my $remote_application_name = $ENV{'remote_application_name'};
 
     $main::logger->do_log(Sympa::Logger::INFO,
@@ -803,7 +803,7 @@ sub add {
     my $quiet    = shift;
 
     my $sender                  = $ENV{'USER_EMAIL'};
-    my $robot                   = Sympa::Robot->new($ENV{'SYMPA_ROBOT'});
+    my $robot                   = Sympa::VirtualHost->new($ENV{'SYMPA_ROBOT'});
     my $remote_application_name = $ENV{'remote_application_name'};
 
     $main::logger->do_log(
@@ -964,7 +964,7 @@ sub del {
     my $quiet    = shift;
 
     my $sender                  = $ENV{'USER_EMAIL'};
-    my $robot                   = Sympa::Robot->new($ENV{'SYMPA_ROBOT'});
+    my $robot                   = Sympa::VirtualHost->new($ENV{'SYMPA_ROBOT'});
     my $remote_application_name = $ENV{'remote_application_name'};
 
     $main::logger->do_log(
@@ -1113,7 +1113,7 @@ sub review {
     my $listname = shift;
 
     my $sender = $ENV{'USER_EMAIL'};
-    my $robot  = Sympa::Robot->new($ENV{'SYMPA_ROBOT'});
+    my $robot  = Sympa::VirtualHost->new($ENV{'SYMPA_ROBOT'});
 
     unless ($sender) {
         die SOAP::Fault->faultcode('Client')
@@ -1219,7 +1219,7 @@ sub fullReview {
     my $listname = shift;
 
     my $sender = $ENV{'USER_EMAIL'};
-    my $robot  = Sympa::Robot->new($ENV{'SYMPA_ROBOT'});
+    my $robot  = Sympa::VirtualHost->new($ENV{'SYMPA_ROBOT'});
 
     unless ($sender) {
         die SOAP::Fault->faultcode('Client')
@@ -1331,7 +1331,7 @@ sub signoff {
     my ($class, $listname) = @_;
 
     my $sender = $ENV{'USER_EMAIL'};
-    my $robot  = Sympa::Robot->new($ENV{'SYMPA_ROBOT'});
+    my $robot  = Sympa::VirtualHost->new($ENV{'SYMPA_ROBOT'});
 
     $main::logger->do_log(Sympa::Logger::NOTICE, 'SOAP signoff(%s,%s)',
         $listname, $sender);
@@ -1500,7 +1500,7 @@ sub subscribe {
     my ($class, $listname, $gecos) = @_;
 
     my $sender = $ENV{'USER_EMAIL'};
-    my $robot  = Sympa::Robot->new($ENV{'SYMPA_ROBOT'});
+    my $robot  = Sympa::VirtualHost->new($ENV{'SYMPA_ROBOT'});
 
     $main::logger->do_log(Sympa::Logger::INFO, 'subscribe(%s,%s, %s)',
         $listname, $sender, $gecos);
@@ -1716,7 +1716,7 @@ sub which {
     my @result;
 
     my $sender = $ENV{'USER_EMAIL'};
-    my $robot  = Sympa::Robot->new($ENV{'SYMPA_ROBOT'});
+    my $robot  = Sympa::VirtualHost->new($ENV{'SYMPA_ROBOT'});
 
     $main::logger->do_log(Sympa::Logger::NOTICE, 'which(%s,%s)', $sender, $mode);
 
@@ -1844,7 +1844,7 @@ sub struct_to_soap {
 
 sub get_reason_string {
     my $reason = shift;
-    my $robot  = Sympa::Robot::clean_robot(shift);
+    my $robot  = Sympa::VirtualHost::clean_robot(shift);
 
     my $data = {'reason' => $reason};
     my $string;

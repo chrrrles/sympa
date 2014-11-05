@@ -58,7 +58,6 @@ nobase_modules_DATA = Sympa/Admin.pm \
 		      Sympa/ModDef.pm \
 		      Sympa/Report.pm \
 		      Sympa/Rule.pm \
-		      Sympa/Robot.pm \
 		      Sympa/Scenario.pm \
 		      Sympa/SharedDocument.pm \
 		      Sympa/Site.pm \
@@ -93,7 +92,8 @@ nobase_modules_DATA = Sympa/Admin.pm \
 		      Sympa/Tracking.pm \
 		      Sympa/Template.pm \
 		      Sympa/Upgrade.pm \
-		      Sympa/User.pm
+		      Sympa/User.pm \
+		      Sympa/VirtualHost.pm
 
 EXTRA_DIST = Sympa/Constants.pm.in $(nobase_modules_DATA)
 CLEANFILES = Sympa/Constants.pm

@@ -49,7 +49,7 @@ use Sympa::ConfDef;
 use Sympa::Language;
 use Sympa::List; # FIXME: circular dependency
 use Sympa::Logger;
-use Sympa::Robot;
+use Sympa::VirtualHost;
 use Sympa::Site;
 use Sympa::Tools::Data;
 use Sympa::Tools::Time;
@@ -107,7 +107,7 @@ sub new {
 
     unless ($that eq 'Site'                           or
             (ref $that && $that->isa('Sympa::List'))  or
-            (ref $that && $that->isa('Sympa::Robot'))
+            (ref $that && $that->isa('Sympa::VirtualHost'))
     ) {
         $main::logger->do_log(Sympa::Logger::ERR, 'Invalid that parameter');
         return undef;
@@ -700,7 +700,7 @@ sub verify {
     } elsif ($context->{'robot_object'}) {
         $robot = $context->{'robot_object'};
     } elsif ($context->{'robot_domain'}) {
-        $robot = Sympa::Robot::clean_robot($context->{'robot_domain'});
+        $robot = Sympa::VirtualHost::clean_robot($context->{'robot_domain'});
     }
 
     my $pinfo;
@@ -1497,7 +1497,7 @@ sub _search {
     my $context     = shift;
 
     unless (ref $that and ref $that eq 'Sympa::List') {
-        $that = Sympa::Robot::clean_robot($that, 1);    #FIXME: really may be Site?
+        $that = Sympa::VirtualHost::clean_robot($that, 1);    #FIXME: really may be Site?
     }
 
     my $sender = $context->{'sender'};
@@ -1776,7 +1776,7 @@ sub _verify_custom {
     if (ref $that and ref $that eq 'Sympa::List') {
         $robot = $that->robot;
     } else {
-        $that = Sympa::Robot::clean_robot($that, 1);    #FIXME: really may be Site?
+        $that = Sympa::VirtualHost::clean_robot($that, 1);    #FIXME: really may be Site?
         $robot = $that;
     }
 

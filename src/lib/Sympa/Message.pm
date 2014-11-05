@@ -239,7 +239,7 @@ sub get_list {
 
 =item $message->get_robot()
 
-Gets the robot context of this message, as a L<Sympa::Robot> object.
+Gets the robot context of this message, as a L<Sympa::VirtualHost> object.
 
 =cut
 

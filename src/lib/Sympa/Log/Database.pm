@@ -113,7 +113,7 @@ sub db_log {
     }
 
     my $robot_id;
-    if (ref $robot and ref $robot eq 'Sympa::Robot') {
+    if (ref $robot and ref $robot eq 'Sympa::VirtualHost') {
         $robot_id = $robot->name;
     } else {
         $robot_id = $robot || '';

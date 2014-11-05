@@ -194,7 +194,7 @@ use Sympa::Logger;
 use Sympa::Mailer;
 use Sympa::Message;
 use Sympa::Report;
-use Sympa::Robot;
+use Sympa::VirtualHost;
 use Sympa::Site;
 use Sympa::Spool::File;
 use Sympa::Spool::File::Message;
@@ -295,7 +295,7 @@ $logger->do_log(Sympa::Logger::NOTICE, "sympa started");
 while ($signal ne 'term') {
 
     # load configuration
-    unless (Sympa::Robot::get_robots()) {
+    unless (Sympa::VirtualHost::get_robots()) {
         print STDERR
             "Unable to load Sympa configuration, file %s or any of the virtual host robot.conf files contain errors. Exiting.\n",
             Sympa::Conf::get_sympa_conf();

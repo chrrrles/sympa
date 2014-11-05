@@ -139,7 +139,7 @@ sub create_list_old {
     $main::logger->do_log(Sympa::Logger::DEBUG2, '(%s, %s, %s, %s, %s)', @_);
     my ($param, $template, $robot, $origin, $user_mail) = @_;
 
-    $robot = Sympa::Robot::clean_robot($robot);
+    $robot = Sympa::VirtualHost::clean_robot($robot);
     my $robot_id = $robot->name;
 
     ## obligatory list parameters
@@ -718,7 +718,7 @@ sub rename_list {
     }
 
     my $new_robot_id = $param{'new_robot'};
-    my $new_robot    = Sympa::Robot->new($new_robot_id);
+    my $new_robot    = Sympa::VirtualHost->new($new_robot_id);
 
     unless ($new_robot) {
         $main::logger->do_log(Sympa::Logger::ERR, 'incorrect robot %s',
@@ -1337,7 +1337,7 @@ sub check_owner_defined {
 sub list_check_smtp {
     $main::logger->do_log(Sympa::Logger::DEBUG2, '(%s, %s)', @_);
     my $list  = shift;
-    my $robot = Sympa::Robot::clean_robot(shift);
+    my $robot = Sympa::VirtualHost::clean_robot(shift);
 
     my $conf = '';
     my $smtp;
@@ -1551,7 +1551,7 @@ EOF
 ##OBSOLETED: Use $robot->is_available_topic().
 sub check_topics {
     my $topic = shift;
-    my $robot = Sympa::Robot::clean_robot(shift);
+    my $robot = Sympa::VirtualHost::clean_robot(shift);
     return $robot->is_available_topic($topic);
 }
 
@@ -1577,7 +1577,7 @@ sub change_user_email {
         return undef;
     }
 
-    my $robot = Sympa::Robot::clean_robot($in{'robot'});
+    my $robot = Sympa::VirtualHost::clean_robot($in{'robot'});
 
     ## Change email as list MEMBER
     foreach my $list (

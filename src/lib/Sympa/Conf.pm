@@ -669,7 +669,7 @@ sub checkfiles {
 
     #  create pictures dir if usefull for each robot
     foreach my $robot_id (keys %{$Conf{'robots'}}) {
-        my $robot = Sympa::Robot->new($robot_id);
+        my $robot = Sympa::VirtualHost->new($robot_id);
         my $dir   = $robot->static_content_path;
         if ($dir ne '' && -d $dir) {
             unless (-f $dir . '/index.html') {
@@ -715,7 +715,7 @@ sub checkfiles {
     # create or update static CSS files
     my $css_updated = undef;
     foreach my $robot_id (keys %{$Conf{'robots'}}) {
-        my $robot = Sympa::Robot->new($robot_id);
+        my $robot = Sympa::VirtualHost->new($robot_id);
         my $dir   = $robot->css_path;
 
         ## Get colors for parsing

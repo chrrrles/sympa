@@ -62,7 +62,7 @@ use Sympa::Logger;
 use Sympa::Log::Database;
 use Sympa::LockedFile;
 use Sympa::Message;
-use Sympa::Robot; # FIXME: circular dependency
+use Sympa::VirtualHost; # FIXME: circular dependency
 use Sympa::Scenario; # FIXME: circular dependency
 use Sympa::Spool::File;
 use Sympa::Spool::File::Key;
@@ -590,7 +590,7 @@ sub new {
             $robot = search_list_among_robots($name);
         }
         if ($robot) {
-            $robot = Sympa::Robot::clean_robot($robot, 1);    # May be Site
+            $robot = Sympa::VirtualHost::clean_robot($robot, 1);    # May be Site
         }
 
         unless ($robot) {
@@ -625,7 +625,7 @@ sub new {
             }
         }
     } else {
-        $robot = Sympa::Robot::clean_robot($robot);
+        $robot = Sympa::VirtualHost::clean_robot($robot);
     }
 
     my $status;
@@ -671,7 +671,7 @@ sub search_list_among_robots {
         return undef;
     }
 
-    foreach my $robot (@{Sympa::Robot::get_robots() || []}) {
+    foreach my $robot (@{Sympa::VirtualHost::get_robots() || []}) {
         if (-d $robot->home . '/' . $listname) {
             return $robot;
         }
@@ -991,7 +991,7 @@ sub load {
         $robot = search_list_among_robots($name);
     }
 
-    $robot = Sympa::Robot::clean_robot($robot);
+    $robot = Sympa::VirtualHost::clean_robot($robot);
     unless (ref $robot) {
         $main::logger->do_log(Sympa::Logger::ERR, 'Unknown robot');
         return undef;
@@ -5015,11 +5015,11 @@ sub add_list_admin {
 #XXX sub rename_list_db
 
 ## Is the user listmaster
-## OBSOLETED: Use Sympa::Robot::is_listmaster().
+## OBSOLETED: Use Sympa::VirtualHost::is_listmaster().
 sub is_listmaster {
     my $who   = shift;
     my $robot = shift;
-    return Sympa::Robot->new($robot)->is_listmaster($who);
+    return Sympa::VirtualHost->new($robot)->is_listmaster($who);
 }
 
 ## Does the user have a particular function in the list?
@@ -5073,7 +5073,7 @@ sub am_i {
 ## Initialize internal list cache
 sub init_list_cache {
     $main::logger->do_log(Sympa::Logger::DEBUG2, '()');
-    foreach my $robot (@{Sympa::Robot::get_robots() || []}) {
+    foreach my $robot (@{Sympa::VirtualHost::get_robots() || []}) {
         $robot->init_list_cache();
     }
 }
@@ -8440,11 +8440,11 @@ sub get_lists {
         @robots      = ($that->robot);
         $family_name = $that->name;
     } else {
-        $that = Sympa::Robot::clean_robot($that, 1);
-        if (ref $that and ref $that eq 'Sympa::Robot') {
+        $that = Sympa::VirtualHost::clean_robot($that, 1);
+        if (ref $that and ref $that eq 'Sympa::VirtualHost') {
             @robots = ($that);
         } elsif ($that eq 'Site') {
-            @robots = @{Sympa::Robot::get_robots()};
+            @robots = @{Sympa::VirtualHost::get_robots()};
         } else {
             croak 'bug in logic.  Ask developer';
         }
@@ -8974,11 +8974,11 @@ sub get_lists {
     return \@lists;
 }
 
-## OBSOLETED: Use Sympa::Robot::get_robots().
+## OBSOLETED: Use Sympa::VirtualHost::get_robots().
 sub get_robots {
-    my $robots = Sympa::Robot::get_robots();
+    my $robots = Sympa::VirtualHost::get_robots();
     return undef unless $robots;
-    return map { $_->domain } @{Sympa::Robot::get_robots()};
+    return map { $_->domain } @{Sympa::VirtualHost::get_robots()};
 }
 
 =over 4
@@ -8996,7 +8996,7 @@ function to any list in ROBOT.
 sub get_which {
     $main::logger->do_log(Sympa::Logger::DEBUG2, '(%s, %s, %s)', @_);
     my $email = Sympa::Tools::clean_email(shift);
-    my $robot = Sympa::Robot::clean_robot(shift);
+    my $robot = Sympa::VirtualHost::clean_robot(shift);
     my $role  = shift;
 
     unless ($role eq 'member' or $role eq 'owner' or $role eq 'editor') {
@@ -9179,7 +9179,7 @@ sub lowercase_field {
 ## Loads the list of topics if updated
 ## OBSOLETED: Use $robot->topics().
 sub load_topics {
-    my $robot = Sympa::Robot::clean_robot(shift);
+    my $robot = Sympa::VirtualHost::clean_robot(shift);
     return %{$robot->topics || {}};
 }
 

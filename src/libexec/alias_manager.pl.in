@@ -141,7 +141,7 @@ use Sympa::Conf;
 use Sympa::Constants;
 use Sympa::Logger;
 use Sympa::Logger::Syslog;
-use Sympa::Robot;
+use Sympa::VirtualHost;
 use Sympa::Site;
 use Sympa::Template;
 
@@ -182,7 +182,7 @@ if (($operation !~ /^(add|del)$/) || ($#ARGV < 2)) {
     exit(2);
 }
 
-unless ($robot = Sympa::Robot->new($domain, 'no_db' => 1)) {
+unless ($robot = Sympa::VirtualHost->new($domain, 'no_db' => 1)) {
     printf STDERR "Unknown robot %s\n", $domain;
     exit(16);
 }

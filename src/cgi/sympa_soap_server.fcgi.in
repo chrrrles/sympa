@@ -11,7 +11,7 @@ use English qw(-no_match_vars);
 
 use Sympa::Conf;
 use Sympa::DatabaseManager;
-use Sympa::Robot;
+use Sympa::VirtualHost;
 use Sympa::Logger;
 use Sympa::Logger::Syslog;
 use Sympa::List;
@@ -23,7 +23,7 @@ my $birthday = time;
 my $daemon_name = 'soap';
 
 ## Load sympa config
-unless (defined Sympa::Robot::get_robots()) {
+unless (defined Sympa::VirtualHost::get_robots()) {
     Sympa::Tools::Daemon::terminate_on_expected_error(
         'Unable to load sympa configuration, file %s or one of the virtual host robot.conf files contain errors. Exiting.',
         Sympa::Conf::get_sympa_conf()

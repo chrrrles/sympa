@@ -183,7 +183,7 @@ if ($options{'debug'}) {
 }
 
 # load configuration
-unless (defined Sympa::Robot::get_robots()) {
+unless (defined Sympa::VirtualHost::get_robots()) {
     Sympa::Tools::Daemon::terminate_on_expected_error(
         'Unable to load sympa configuration, file %s has errors.',
         Sympa::Conf::get_sympa_conf()
@@ -268,7 +268,7 @@ Sympa::Tools::Daemon::terminate_on_expected_error($EVAL_ERROR) if $EVAL_ERROR;
 ## Sets the UMASK
 umask(oct(Sympa::Site->umask));
 
-foreach my $robot (@{Sympa::Robot::get_robots()}) {
+foreach my $robot (@{Sympa::VirtualHost::get_robots()}) {
     my $arc_dir = $robot->arc_path;
     ## Create arc_path if required
     if ($arc_dir) {

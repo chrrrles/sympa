@@ -51,7 +51,7 @@ use Sympa::Config_XML;
 use Sympa::Language;
 use Sympa::List; # FIXME: circular dependency
 use Sympa::Logger;
-use Sympa::Robot;
+use Sympa::VirtualHost;
 use Sympa::Site;
 
 my $language = Sympa::Language->instance;
@@ -104,7 +104,7 @@ Returns the list of existing families in the Sympa installation.
 =cut
 
 sub get_families {
-    my $robot = Sympa::Robot::clean_robot(shift);
+    my $robot = Sympa::VirtualHost::clean_robot(shift);
 
     my @families;
 
@@ -203,7 +203,7 @@ sub new {
 
     my $class = shift;
     my $name  = shift;
-    my $robot = Sympa::Robot::clean_robot(shift);
+    my $robot = Sympa::VirtualHost::clean_robot(shift);
 
     my $self = {};
 
@@ -2930,7 +2930,7 @@ sub name {
 }
 
 sub robot {
-    Sympa::Robot->new(shift->domain);
+    Sympa::VirtualHost->new(shift->domain);
 }
 
 sub state {
@@ -2961,7 +2961,7 @@ sub get_id {
 
     return '' unless $self->{'name'} and $self->{'robot'};
     return sprintf '%s@%s',
-        $self->{'name'}, Sympa::Robot->new($self->{'robot'})->get_id;
+        $self->{'name'}, Sympa::VirtualHost->new($self->{'robot'})->get_id;
 }
 
 sub _get_etc_include_path {

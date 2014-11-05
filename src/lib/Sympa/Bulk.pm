@@ -46,7 +46,7 @@ use Sys::Hostname;
 use Sympa::DatabaseManager;
 use Sympa::Logger;
 use Sympa::Log::Database;
-use Sympa::Robot;
+use Sympa::VirtualHost;
 use Sympa::Spool::SQL;
 use Sympa::Tools::Daemon;
 
@@ -182,7 +182,7 @@ sub next {
     my $robot;
 
     if ($robot_id and $robot_id ne '*') {
-        $robot = Sympa::Robot->new($robot_id);
+        $robot = Sympa::VirtualHost->new($robot_id);
     }
     if ($robot) {
         if ($listname and length $listname) {
@@ -228,7 +228,7 @@ sub store {
     my $msg_id   = $message->get_header('Message-Id');
     my $rcpts    = $data{'rcpts'};
     my $from     = $data{'from'};
-    my $robot    = Sympa::Robot::clean_robot($data{'robot'}, 1);  # maybe Site
+    my $robot    = Sympa::VirtualHost::clean_robot($data{'robot'}, 1);  # maybe Site
     my $listname = $data{'listname'};
     my $priority_message = $data{'priority_message'};
     my $priority_packet  = $data{'priority_packet'};

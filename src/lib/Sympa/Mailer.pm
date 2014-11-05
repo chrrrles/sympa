@@ -358,7 +358,7 @@ sub forward_message {
     my $message = $params{'message'};
     my $from    = $params{'from'};
     my $rcpt    = $params{'rctp'};
-    my $robot   = Sympa::Robot::clean_robot($params{'robot'}, 1);    #FIXME: may be Site?
+    my $robot   = Sympa::VirtualHost::clean_robot($params{'robot'}, 1);    #FIXME: may be Site?
 
     unless (ref $message and $message->isa('Sympa::Message')) {
         $main::logger->do_log(Sympa::Logger::ERR, 'Unexpected parameter type: %s',
@@ -480,7 +480,7 @@ sub send_message {
     my $message     = $params{'message'};
     my $rcpt        = $params{'rcpt'};
     my $from        = $params{'from'};
-    my $robot       = Sympa::Robot::clean_robot($params{'robot'}, 1);   # May be Site
+    my $robot       = Sympa::VirtualHost::clean_robot($params{'robot'}, 1);   # May be Site
     my $listname    = $params{'listname'};
     my $sign_mode   = $params{'sign_mode'};
     my $sympa_email = $params{'sympa_email'};
@@ -615,7 +615,7 @@ sub get_sendmail_handle {
 
     my $from      = $params{from};
     my $rcpt      = $params{rcpt};
-    my $robot     = Sympa::Robot::clean_robot($params{robot}, 1);
+    my $robot     = Sympa::VirtualHost::clean_robot($params{robot}, 1);
     my $msgkey    = $params{msgkey};
     my $sign_mode = $params{sign_mode};
 

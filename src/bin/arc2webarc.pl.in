@@ -32,7 +32,7 @@ use Sympa::Constants;
 use Sympa::Conf;
 use Sympa::DatabaseManager;
 use Sympa::List;
-use Sympa::Robot;
+use Sympa::VirtualHost;
 use Sympa::Site;
 
 my %month_idx = qw(jan 1
@@ -98,7 +98,7 @@ chdir Sympa::Site->home;
 
 my $robot;
 my $list;
-unless ($robot = Sympa::Robot->new($robot_id || Sympa::Site->domain)
+unless ($robot = Sympa::VirtualHost->new($robot_id || Sympa::Site->domain)
     and $list = Sympa::List->new($listname, $robot)) {
     die 'Cannot create List object';
 }
