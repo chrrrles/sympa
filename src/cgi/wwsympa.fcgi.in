@@ -1247,6 +1247,7 @@ while ($query = new_loop()) {
     $session = Sympa::Session->new(
         robot  => $robot,
         cookie => Sympa::Session::get_session_cookie($ENV{'HTTP_COOKIE'}),
+        refresh => Sympa::Site->cookie_refresh(),
         action => $in{'action'},
         rss    => $rss,
         ajax   => $ajax
@@ -1258,7 +1259,10 @@ while ($query = new_loop()) {
     unless (defined $session) {
         $robot->send_notify_to_listmaster('failed_to_create_web_session');
         wwslog(Sympa::Logger::INFO, 'Failed to create session');
-        $session = Sympa::Session->new(robot => $robot);
+        $session = Sympa::Session->new(
+            robot => $robot,
+            refresh => Sympa::Site->cookie_refresh(),
+        );
     }
 
     # Retreive oauth_token from session if it exists and if we have a (newly)

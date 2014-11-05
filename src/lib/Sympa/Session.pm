@@ -80,6 +80,8 @@ Parameters:
 
 =item * I<cookie>: FIXME
 
+=item * I<refresh>: FIXME
+
 =item * I<action>: FIXME
 
 =item * I<rss>: FIXME
@@ -93,9 +95,10 @@ Returns a new L<Sympa::Session> object, or I<undef> for failure.
 sub new {
     my ($class, %params) = @_;
     my $robot   = Sympa::VirtualHost::clean_robot($params{'robot'}, 1);   #FIXME: maybe a Site object?
-    my $cookie = $params{'cookie'};
-    my $action = $params{'action'};
-    my $rss    = $params{'rss'};
+    my $cookie  = $params{'cookie'};
+    my $refresh = $params{'refresh'} || 0;
+    my $action  = $params{'action'};
+    my $rss     = $params{'rss'};
     $main::logger->do_log(Sympa::Logger::DEBUG2, '(%s, cookie=%s, action=%s)',
         $robot, $cookie, $action);
 
@@ -425,14 +428,9 @@ sub renew {
     ## simultaneous processes will be prevented renewing cookie.
     my $time        = time;
     my $remote_addr = $ENV{'REMOTE_ADDR'};
-    my $refresh_term;
-    if (Sympa::Site->cookie_refresh == 0) {
-        $refresh_term = $time;
-    } else {
-        my $cookie_refresh = Sympa::Site->cookie_refresh;
-        $refresh_term =
-            int($time - $cookie_refresh * 0.25 - rand($cookie_refresh * 0.5));
-    }
+    my $refresh_term = $self->{refresh} == 0 ?
+        $time                                                              :
+        int($time - $self->{refresh} * 0.25 - rand($self->{refresh} * 0.5));
     unless ($self->{'remote_addr'} ne $remote_addr
         or $self->{'refresh_date'} <= $refresh_term) {
         return 0;
