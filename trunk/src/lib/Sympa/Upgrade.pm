@@ -1619,11 +1619,11 @@ sub md5_encode_password {
 
         if ($password =~ /^crypt.(.*)$/) {
             if ($cipher) {
-                $clear_password = $cipher->decrypt(MIME::Base64::decode($passwd));
+                $clear_password = $cipher->decrypt(MIME::Base64::decode($password));
             } else {
                 $main::logger->do_log(
                     Sympa::Logger::INFO,
-                    'unable to decrypt password from %s, install Crypt::CipherSaber'
+                    'unable to decrypt password from %s, install Crypt::CipherSaber',
                     $user->{'email_user'}
                 );
                 next;
