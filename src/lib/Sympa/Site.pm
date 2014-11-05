@@ -25,11 +25,17 @@
 
 =head1 NAME 
 
-Sympa::Site - FIXME
+Sympa::Site - The Sympa server
 
 =head1 DESCRIPTION
 
-FIXME
+This class implements the global Sympa server. It should :
+
+=over
+
+=item * provide access to global server configuration
+
+=back
 
 =cut
 

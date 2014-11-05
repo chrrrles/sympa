@@ -25,11 +25,11 @@
 
 =head1 NAME
 
-Sympa::List - FIXME
+Sympa::List - A mailing-list
 
 =head1 DESCRIPTION
 
-FIXME
+This class implements a mailing-list.
 
 =cut
 
