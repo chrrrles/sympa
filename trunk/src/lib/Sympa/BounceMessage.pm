@@ -435,7 +435,7 @@ sub update_robot {
 
     $self->change_robotname($new_robotname);
 
-    my $robot = Sympa::Robot->new($self->{'robotname'});
+    my $robot = Sympa::VirtualHost->new($self->{'robotname'});
     unless ($robot) {
         $main::logger->do_log(Sympa::Logger::ERR,
             'Unable to set robot object for unknown robot %s (bounce %s)',

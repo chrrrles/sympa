@@ -508,7 +508,7 @@ sub _load_mime_types {
 
 ## return a hash from the edit_list_conf file
 sub _load_create_list_conf {
-    my $robot = Sympa::Robot::clean_robot(shift);
+    my $robot = Sympa::VirtualHost::clean_robot(shift);
 
     my $file;
     my $conf;
@@ -547,7 +547,7 @@ sub _load_create_list_conf {
 }
 
 sub get_list_list_tpl {
-    my $robot = Sympa::Robot::clean_robot(shift);
+    my $robot = Sympa::VirtualHost::clean_robot(shift);
 
     my $list_conf;
     my $list_templates;

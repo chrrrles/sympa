@@ -64,7 +64,7 @@ use Pod::Usage;
 use Sympa::DatabaseManager;
 use Sympa::List;
 use Sympa::Logger::Stderr;
-use Sympa::Robot;
+use Sympa::VirtualHost;
 use Sympa::Site;
 
 my %options;
@@ -131,7 +131,7 @@ if ($listname) {
     $cert       = $list->dir . '/cert.pem';
     $privatekey = $list->dir . '/private_key';
 } elsif ($robot_id) {
-    my $robot = Sympa::Robot->new($robot_id);
+    my $robot = Sympa::VirtualHost->new($robot_id);
     unless ($robot) {
         printf "unknown robot %s\n", $robot_id;
         die;

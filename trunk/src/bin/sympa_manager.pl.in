@@ -253,7 +253,7 @@ use Sympa::Language;
 use Sympa::List;
 use Sympa::Logger;
 use Sympa::Logger::Stderr;
-use Sympa::Robot;
+use Sympa::VirtualHost;
 use Sympa::Site;
 use Sympa::Spool::SQL;
 use Sympa::Tools;
@@ -386,7 +386,7 @@ sub health_check {
     }
 
     ## Now trying to load full config (including database)
-    unless (Sympa::Site->load() and Sympa::Robot::get_robots()) {
+    unless (Sympa::Site->load() and Sympa::VirtualHost::get_robots()) {
         printf STDERR
             "Unable to load Sympa configuration, file %s or any of the virtual host robot.conf files contain errors. Exiting.\n",
             Sympa::Conf::get_sympa_conf();
@@ -586,7 +586,7 @@ sub change_user_email {
         exit 1;
     }
 
-    foreach my $robot (@{Sympa::Robot::get_robots()}) {
+    foreach my $robot (@{Sympa::VirtualHost::get_robots()}) {
         printf STDOUT "Doing processing for virtual robot %s...\n",
             $robot->name;
         my ($status, $failed_for) = Sympa::Admin::change_user_email(
@@ -1031,7 +1031,7 @@ sub reload_list_config {
     if (length $listname) {
         $logger->do_log(Sympa::Logger::NOTICE, 'Loading list %s...',
             $listname);
-        my $robot = Sympa::Robot->new($robot_id || Sympa::Site->domain);
+        my $robot = Sympa::VirtualHost->new($robot_id || Sympa::Site->domain);
         unless (defined $robot) {
             print STDERR "Error : incorrect robot name '$robot_id'\n";
             exit 1;
@@ -1045,7 +1045,7 @@ sub reload_list_config {
         if ($robot_id) {
             $logger->do_log(Sympa::Logger::NOTICE,
                 'Loading all lists in %s...', $robot_id);
-            $that = Sympa::Robot->new($robot_id);
+            $that = Sympa::VirtualHost->new($robot_id);
             unless (defined $that) {
                 print STDERR "Error : incorrect robot name '$robot_id'\n";
                 exit 1;

@@ -150,7 +150,7 @@ use Sympa::DatabaseManager;
 use Sympa::List;
 use Sympa::Logger;
 use Sympa::Mailer;
-use Sympa::Robot;
+use Sympa::VirtualHost;
 use Sympa::Site;
 use Sympa::Spool::File;
 use Sympa::Tools::Daemon;
@@ -179,7 +179,7 @@ if ($options{'debug'}) {
 }
 
 # load configuration
-unless (defined Sympa::Robot::get_robots()) {
+unless (defined Sympa::VirtualHost::get_robots()) {
     Sympa::Tools::Daemon::terminate_on_expected_error(
         'Unable to load sympa configuration, file %s has errors.',
         Sympa::Conf::get_sympa_conf()

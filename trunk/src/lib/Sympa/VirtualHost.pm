@@ -25,7 +25,7 @@
 
 =head1 NAME
 
-Sympa::Robot - A virtual host
+Sympa::VirtualHost - A virtual host
 
 =head1 DESCRIPTION
 
@@ -43,7 +43,7 @@ This class implements a virtual hosts for Sympa. It should :
 
 =cut
 
-package Sympa::Robot;
+package Sympa::VirtualHost;
 
 use strict;
 use warnings;
@@ -69,7 +69,7 @@ my $language = Sympa::Language->instance;
 
 =over 4
 
-=item Sympa::Robot->new( NAME, [ OPTIONS ] )
+=item Sympa::VirtualHost->new( NAME, [ OPTIONS ] )
 
 Creates a new object named as NAME.
 Returns a Robot object, or undef on errors.
@@ -120,7 +120,7 @@ sub new {
 
 =over
 
-=item $robot->load( NAME, [ KEY => VAL, ... ] )
+=item $vhost->load( NAME, [ KEY => VAL, ... ] )
 
 Loads the indicated robot into the object.
 
@@ -234,12 +234,12 @@ sub load {
     return 1;
 }
 
-=item $robot->get_address ( [ TYPE ] )
+=item $vhost->get_address ( [ TYPE ] )
 
 Returns the robot email address.
 See L<Site/get_address>.
 
-=item $robot->get_id
+=item $vhost->get_id
 
 Get unique name of robot.
 
@@ -250,21 +250,21 @@ sub get_id {
     shift->{'name'} || '';
 }
 
-=item $robot->is_listmaster
+=item $vhost->is_listmaster
 
 See L<Site/is_listmaster>.
 
-=item $robot->get_etc_include_path
+=item $vhost->get_etc_include_path
 
 make an array of include path for tt2 parsing.
 See L<Site/get_etc_include_path>.
 
-=item $robot->send_dsn
+=item $vhost->send_dsn
 
 Sends an delivery status notification (DSN).
 See L<Site/send_dsn>.
 
-=item $robot->send_file ( ... )
+=item $vhost->send_file ( ... )
 
 Send a global (not relative to a list, but relative to a robot)
 message to user(s).
@@ -272,7 +272,7 @@ See L<Site/send_file>.
 
 Note: Sympa::List::send_global_file() was deprecated.
 
-=item $robot->send_notify_to_listmaster ( OPERATION, DATA, CHECKSTACK, PURGE )
+=item $vhost->send_notify_to_listmaster ( OPERATION, DATA, CHECKSTACK, PURGE )
 
 Sends a notice to normal listmaster by parsing
 listmaster_notification.tt2 template
@@ -280,7 +280,7 @@ See L<Site/send_notify_to_listmaster>.
 
 Note: Sympa::List::send_notify_to_listmaster() was deprecated.
 
-=item $robot->is_available_topic ( TOPIC )
+=item $vhost->is_available_topic ( TOPIC )
 
 Check $topic in the $self conf
 
@@ -314,7 +314,7 @@ sub is_available_topic {
     return undef;
 }
 
-=item $robot->split_listname ( MAILBOX )
+=item $vhost->split_listname ( MAILBOX )
 
 XXX @todo doc
 
@@ -373,7 +373,7 @@ sub split_listname {
     }
 }
 
-=item $robot->get_netidtoemail_db
+=item $vhost->get_netidtoemail_db
 
 get idp xref to locally validated email address
 
@@ -419,7 +419,7 @@ sub get_netidtoemail_db {
     return $email;
 }
 
-=item $robot->set_netidtoemail_db
+=item $vhost->set_netidtoemail_db
 
 set idp xref to locally validated email address
 
@@ -460,7 +460,7 @@ sub set_netidtoemail_db {
     return 1;
 }
 
-=item $robot->update_email_netidmap_db
+=item $vhost->update_email_netidmap_db
 
 Update netidmap table when user email address changes
 
@@ -499,7 +499,7 @@ sub update_email_netidmap_db {
     return 1;
 }
 
-=item $robot->families ( [ NAME, [ FAMILY ] ] )
+=item $vhost->families ( [ NAME, [ FAMILY ] ] )
 
 Handles cached information of families on memory.
 
@@ -528,7 +528,7 @@ sub families {
     $self->{'families'}{$name};
 }
 
-=item $robot->init_list_cache
+=item $vhost->init_list_cache
 
 Clear list cache on memory.
 
@@ -540,7 +540,7 @@ sub init_list_cache {
     delete $self->{'lists_ok'};
 }
 
-=item $robot->lists ( [ NAME, [ LIST ] ] )
+=item $vhost->lists ( [ NAME, [ LIST ] ] )
 
 Handles cached information of lists on memory.
 
@@ -579,7 +579,7 @@ sub lists {
     $self->{'lists'}{$name};
 }
 
-=item $robot->lists_ok
+=item $vhost->lists_ok
 
 I<Setter>, I<internal use>.
 XXX @todo doc
@@ -612,7 +612,7 @@ Get profile of robot.
 
 sub DESTROY { }   # "sub DESTROY;" may cause segfault with Perl around 5.10.1.
 
-=item $robot->list_params
+=item $vhost->list_params
 
 I<Getter>.
 Returns hashref to list parameter information.
@@ -631,7 +631,7 @@ sub list_params {
     return $self->{'list_params'} = $pinfo;
 }
 
-=item $robot->topics
+=item $vhost->topics
 
 Get a hashref including information of list topics available on the robot.
 
@@ -836,9 +836,9 @@ sub _add_topic {
     }
 }
 
-=item $robot->request
+=item $vhost->request
 
-=item $robot->sympa
+=item $vhost->sympa
 
 Gets derived config parameters.
 
@@ -847,14 +847,14 @@ See L<Site/request> and L<Site/sympa>.
 
 =cut
 
-=item $robot->listmasters
+=item $vhost->listmasters
 
 In scalar context, returns arrayref of listmasters of robot.
 In array context, returns array of them.
 
 =cut
 
-=item $robot->supported_languages
+=item $vhost->supported_languages
 
 In array context, returns array of supported languages by robot.
 In scalar context, returns arrayref to them.
@@ -894,7 +894,7 @@ sub clean_robot {
         if ($robot and $robot eq '*' and $maybe_site) {
             $robot = 'Site';
         } elsif ($robot and $robot ne '*') {
-            $robot = Sympa::Robot->new($robot);
+            $robot = Sympa::VirtualHost->new($robot);
         } else {
             croak "Illegal robot argument: " . ($robot || '');
         }
@@ -947,7 +947,7 @@ sub get_robots {
         next unless -d $vhost_etc;
         next unless -f $vhost_etc . '/robot.conf';
 
-        if ($robot = Sympa::Robot->new($name, %options)) {
+        if ($robot = Sympa::VirtualHost->new($name, %options)) {
             $got_default = 1 if $robot->domain eq Sympa::Site->domain;
             push @robots, $robot;
             delete $orphan{$robot->domain};
@@ -956,7 +956,7 @@ sub get_robots {
     closedir $dir;
 
     unless ($got_default) {
-        if ($robot = Sympa::Robot->new(Sympa::Site->domain, %options)) {
+        if ($robot = Sympa::VirtualHost->new(Sympa::Site->domain, %options)) {
             push @robots, $robot;
             delete $orphan{$robot->domain};
         }

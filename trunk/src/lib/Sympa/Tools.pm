@@ -533,7 +533,7 @@ sub get_message_id {
     my $domain;
     unless ($robot) {
         $domain = Sympa::Site->domain;
-    } elsif (ref $robot and ref $robot eq 'Sympa::Robot') {
+    } elsif (ref $robot and ref $robot eq 'Sympa::VirtualHost') {
         $domain = $robot->domain;
     } elsif ($robot eq 'Site') {
         $domain = Sympa::Site->domain;

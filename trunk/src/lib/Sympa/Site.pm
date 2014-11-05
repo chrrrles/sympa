@@ -141,7 +141,7 @@ sub AUTOLOAD {
     *{$AUTOLOAD} = sub {
         my $self = shift;
 
-        if (ref $self and ref $self eq 'Sympa::Robot') {
+        if (ref $self and ref $self eq 'Sympa::VirtualHost') {
             if ($type->{'RobotAttribute'}) {
                 ## getter for list attributes.
                 croak "Can't modify \"$attr\" attribute" if scalar @_ > 1;
@@ -149,7 +149,7 @@ sub AUTOLOAD {
             } elsif ($type->{'RobotParameter'}) {
                 ## getters for robot parameters.
                 unless ($self->{'etc'} eq Sympa::Site->etc
-                    or defined Sympa::Robot::get_robots()->{$self->{'name'}}) {
+                    or defined Sympa::VirtualHost::get_robots()->{$self->{'name'}}) {
                     croak "Can't call method \"$attr\" on uninitialized "
                         . (ref $self)
                         . " object";
@@ -157,10 +157,10 @@ sub AUTOLOAD {
                 croak "Can't modify \"$attr\" attribute" if scalar @_;
 
                 if ($self->{'etc'} ne Sympa::Site->etc
-                    and defined Sympa::Robot::get_robots()->{$self->{'name'}}{$attr})
+                    and defined Sympa::VirtualHost::get_robots()->{$self->{'name'}}{$attr})
                 {
                     ##FIXME: Might "exists" be used?
-                    Sympa::Robot::get_robots()->{$self->{'name'}}{$attr};
+                    Sympa::VirtualHost::get_robots()->{$self->{'name'}}{$attr};
                 } else {
                     Sympa::Site->$attr;
                 }
@@ -261,11 +261,11 @@ sub lang {
 
     croak "Can't modify \"lang\" attribute" if scalar @_ > 1;
     if (    ref $self
-        and ref $self eq 'Sympa::Robot'
+        and ref $self eq 'Sympa::VirtualHost'
         and $self->{'etc'} ne Sympa::Site->etc
-        and exists Sympa::Robot::get_robots()->{$self->{'name'}}{'lang'}) {
-        $lang = Sympa::Robot::get_robots()->{$self->{'name'}}{'lang'};
-    } elsif (ref $self and ref $self eq 'Sympa::Robot'
+        and exists Sympa::VirtualHost::get_robots()->{$self->{'name'}}{'lang'}) {
+        $lang = Sympa::VirtualHost::get_robots()->{$self->{'name'}}{'lang'};
+    } elsif (ref $self and ref $self eq 'Sympa::VirtualHost'
         or !ref $self and $self eq 'Site') {
         croak "Can't call method \"lang\" on uninitialized $self class"
             unless $is_initialized;
@@ -302,11 +302,11 @@ sub listmasters {
     my $self = shift;
 
     croak "Can't modify \"listmasters\" attribute" if scalar @_ > 1;
-    if (ref $self and ref $self eq 'Sympa::Robot') {
+    if (ref $self and ref $self eq 'Sympa::VirtualHost') {
         if (wantarray) {
-            @{Sympa::Robot::get_robots()->{$self->domain}{'listmasters'} || []};
+            @{Sympa::VirtualHost::get_robots()->{$self->domain}{'listmasters'} || []};
         } else {
-            Sympa::Robot::get_robots()->{$self->domain}{'listmasters'};
+            Sympa::VirtualHost::get_robots()->{$self->domain}{'listmasters'};
         }
     } elsif ($self eq 'Site') {
         croak "Can't call method \"listmasters\" on uninitialized $self class"

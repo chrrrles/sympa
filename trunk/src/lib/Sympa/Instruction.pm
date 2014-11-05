@@ -757,7 +757,7 @@ sub _purge_tables {
 
     require Sympa::Bulk;
     require Sympa::List;
-    require Sympa::Robot;
+    require Sympa::VirtualHost;
     require Sympa::Tracking;
 
     my $removed = Sympa::Bulk::purge_bulkspool();
@@ -767,7 +767,7 @@ sub _purge_tables {
         $removed);
 
     $removed = 0;
-    foreach my $robot (@{Sympa::Robot::get_robots()}) {
+    foreach my $robot (@{Sympa::VirtualHost::get_robots()}) {
         my $all_lists = Sympa::List::get_lists($robot);
         foreach my $list (@$all_lists) {
             $removed +=
@@ -806,7 +806,7 @@ sub _purge_user_table {
 
     $main::logger->do_log(Sympa::Logger::DEBUG2, 'purge_user_table()');
 
-    require Sympa::Robot;
+    require Sympa::VirtualHost;
     require Sympa::List;
     require Sympa::Site;
     require Sympa::User;
@@ -822,7 +822,7 @@ sub _purge_user_table {
         $known_people{$l} = 1;
     }
 
-    foreach my $robot (@{Sympa::Robot::get_robots()}) {
+    foreach my $robot (@{Sympa::VirtualHost::get_robots()}) {
 
         my $all_lists = Sympa::List::get_lists($robot);
         foreach my $list (@$all_lists) {

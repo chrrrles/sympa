@@ -38,7 +38,7 @@ package Sympa::Report;
 use strict;
 
 use Sympa::Logger;
-use Sympa::Robot;
+use Sympa::VirtualHost;
 
 ### MESSAGE DIFFUSION REPORT ###
 
@@ -89,7 +89,7 @@ sub reject_report_msg {
     if (ref $list and ref $list eq 'Sympa::List') {
         $robot = $list->robot;
     } else {
-        $robot = Sympa::Robot::clean_robot($robot, 1);    #FIXME: really may be Site?
+        $robot = Sympa::VirtualHost::clean_robot($robot, 1);    #FIXME: really may be Site?
     }
     unless ($robot) {
         $main::logger->do_log(Sympa::Logger::ERR,
@@ -215,7 +215,7 @@ sub notice_report_msg {
     if (ref $list and ref $list eq 'Sympa::List') {
         $robot = $list->robot;
     } else {
-        $robot = Sympa::Robot::clean_robot($robot, 1);    #FIXME: really may be Site?
+        $robot = Sympa::VirtualHost::clean_robot($robot, 1);    #FIXME: really may be Site?
     }
     unless ($robot) {
         $main::logger->do_log(Sympa::Logger::ERR,
@@ -327,7 +327,7 @@ sub send_report_cmd {
 
     my $robot = undef;
     if ($robot_id and $robot_id ne '*') {
-        $robot = Sympa::Robot->new($robot_id);
+        $robot = Sympa::VirtualHost->new($robot_id);
     }
 
     unless ($robot) {
@@ -408,7 +408,7 @@ sub global_report_cmd {
 
     my $robot;
     if ($robot_id and $robot_id ne '*') {
-        $robot = Sympa::Robot->new($robot_id);
+        $robot = Sympa::VirtualHost->new($robot_id);
     }
 
     if ($type eq 'intern') {
@@ -492,7 +492,7 @@ sub reject_report_cmd {
     }
 
     if ($type eq 'intern') {
-        $robot = Sympa::Robot::clean_robot($robot, 1);    # Site or Robot
+        $robot = Sympa::VirtualHost::clean_robot($robot, 1);    # Site or Robot
         if ($robot) {
             my $listname;
             if (defined $data->{'listname'}) {
@@ -792,7 +792,7 @@ sub reject_report_web {
     if (ref $list and ref $list eq 'Sympa::List') {
         $robot = $list->robot;
     } elsif ($robot_id and $robot_id ne '*') {
-        $robot = Sympa::Robot->new($robot_id);
+        $robot = Sympa::VirtualHost->new($robot_id);
     }
 
     my $listname;

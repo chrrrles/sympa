@@ -40,7 +40,7 @@ use strict;
 use SOAP::Transport::HTTP;
 
 use Sympa::Logger;
-use Sympa::Robot;
+use Sympa::VirtualHost;
 use Sympa::Session;
 use Sympa::Site;
 
@@ -65,7 +65,7 @@ sub request {
         }
 
         ## Empty list cache of the robot
-        my $robot = Sympa::Robot->new($ENV{'SYMPA_ROBOT'});
+        my $robot = Sympa::VirtualHost->new($ENV{'SYMPA_ROBOT'});
         $robot->init_list_cache();
 
         my $session;

@@ -76,7 +76,7 @@ do not change global hash %Conf if 'return_result' option is set;
 ## we known that's dirty, this proc should be rewritten without this global
 ## var %Conf
 
-NOTE: To load entire robots config, use C<Sympa::Robot::get_robots('force_reload' =E<gt> 1)>.
+NOTE: To load entire robots config, use C<Sympa::VirtualHost::get_robots('force_reload' =E<gt> 1)>.
 
 =back
 
@@ -91,7 +91,7 @@ sub load {
     my $self = shift;
     my %opts = @_;
 
-    if (ref $self and ref $self eq 'Sympa::Robot') {
+    if (ref $self and ref $self eq 'Sympa::VirtualHost') {
         unless ($self->{'name'} and $self->{'etc'}) {
             $main::logger->do_log(Sympa::Logger::ERR,
                 'object %s has not been initialized', $self);
@@ -174,7 +174,7 @@ sub get_address {
         } elsif ($type eq 'unsubscribe') {
             return $self->name . '-unsubscribe' . '@' . $self->host;
         }
-    } elsif (ref $self and ref $self eq 'Sympa::Robot' or $self eq 'Sympa::Site') {
+    } elsif (ref $self and ref $self eq 'Sympa::VirtualHost' or $self eq 'Sympa::Site') {
         unless ($type) {
             return $self->email . '@' . $self->host;
         } elsif ($type eq 'sympa') {    # same as above, for convenience
@@ -218,7 +218,7 @@ sub is_listmaster {
     my $who = Sympa::Tools::clean_email(shift || '');
     return 0 unless $who;
 
-    if (ref $self and ref $self eq 'Sympa::Robot') {
+    if (ref $self and ref $self eq 'Sympa::VirtualHost') {
         foreach my $listmaster (($self->listmasters,)) {
             return 1 if $listmaster eq $who;
         }
@@ -271,7 +271,7 @@ sub best_language {
 
     if (ref $self eq 'Sympa::List') {
         @supported_languages = $self->robot->supported_languages;
-    } elsif (ref $self eq 'Sympa::Robot' or !ref $self and $self eq 'Sympa::Site') {
+    } elsif (ref $self eq 'Sympa::VirtualHost' or !ref $self and $self eq 'Sympa::Site') {
         @supported_languages = $self->supported_languages;
     } else {
         croak 'bug in logic.  Ask developer';
@@ -286,7 +286,7 @@ sub best_language {
         push @langs, $lang
             if $supported_languages{$lang} and !grep { $_ eq $lang } @langs;
     }
-    if (ref $self eq 'Sympa::List' or ref $self eq 'Sympa::Robot') {
+    if (ref $self eq 'Sympa::List' or ref $self eq 'Sympa::VirtualHost') {
         $lang = Sympa::Site->lang;
         push @langs, $lang
             if $supported_languages{$lang} and !grep { $_ eq $lang } @langs;
@@ -326,7 +326,7 @@ sub compute_auth {
 
     if (ref $self and ref $self eq 'Sympa::List') {
         $listname = $self->name;
-    } elsif (ref $self and ref $self eq 'Sympa::Robot') {
+    } elsif (ref $self and ref $self eq 'Sympa::VirtualHost') {
         ## Method excluded from inheritance chain
         croak sprintf 'Can\'t locate object method "%s" via package "%s"',
             'compute_auth', ref $self;
@@ -415,7 +415,7 @@ sub request_auth {
             $data->{'command'} = "auth $keyauth $cmd $listname $param[0]";
             $data->{'type'}    = 'invite';
         }
-    } elsif (ref $self and ref $self eq 'Sympa::Robot') {
+    } elsif (ref $self and ref $self eq 'Sympa::VirtualHost') {
         ## Method excluded from inheritance chain
         croak sprintf 'Can\'t locate object method "%s" via package "%s"',
             'request_auth', ref $self;
@@ -471,7 +471,7 @@ sub get_etc_filename {
 
     unless (ref $self eq 'Sympa::List'
         or ref $self eq 'Sympa::Family'
-        or ref $self eq 'Sympa::Robot'
+        or ref $self eq 'Sympa::VirtualHost'
         or $self     eq 'Sympa::Site') {
         croak 'bug in logic.  Ask developer';
     }
@@ -530,7 +530,7 @@ sub get_etc_filename {
 make an array of include path for tt2 parsing
 
 IN :
-      -$self(+) : ref(List) | ref(Sympa::Family) | ref(Sympa::Robot) | "Site"
+      -$self(+) : ref(List) | ref(Sympa::Family) | ref(Sympa::VirtualHost) | "Site"
       -$dir : directory ending each path
       -$lang : lang
 
@@ -616,7 +616,7 @@ sub send_dsn {
     if (ref $self and ref $self eq 'Sympa::List') {
         $recipient = $self->get_address;
         $status ||= '5.1.1';
-    } elsif (ref $self and ref $self eq 'Sympa::Robot') {
+    } elsif (ref $self and ref $self eq 'Sympa::VirtualHost') {
         if ($param->{'listname'}) {
             if ($param->{'function'}) {
                 $recipient = sprintf '%s-%s@%s', $param->{'listname'},
@@ -727,7 +727,7 @@ certificate
 Note: Sympa::List::send_global_file() was deprecated.
 
 IN :
-      -$self (+): ref(List) | ref(Sympa::Robot) | "Site"
+      -$self (+): ref(List) | ref(Sympa::VirtualHost) | "Site"
       -$tpl (+): template file name (file.tt2),
          without tt2 extension
       -$who (+): SCALAR |ref(ARRAY) - recipient(s)
@@ -764,7 +764,7 @@ sub send_file {
         $list     = $self;
         $robot_id = $self->robot->name;
         $listname = $self->name;
-    } elsif (ref $self and ref $self eq 'Sympa::Robot') {
+    } elsif (ref $self and ref $self eq 'Sympa::VirtualHost') {
         $robot    = $self;
         $list     = '';
         $robot_id = $self->name;
@@ -1019,7 +1019,7 @@ listmaster_notification.tt2 template
 Note: Sympa::List::send_notify_to_listmaster() was deprecated.
 
 IN :
-       -$self (+): ref(Sympa::Robot) | "Site"
+       -$self (+): ref(Sympa::VirtualHost) | "Site"
        -$operation (+): notification type
        -$param(+) : ref(HASH) | ref(ARRAY)
         values for template parsing
@@ -1046,7 +1046,7 @@ sub send_notify_to_listmaster {
         ## Method excluded from inheritance chain
         croak sprintf 'Can\'t locate object method "%s" via package "%s"',
             'send_notify_to_listmaster', ref $self;
-    } elsif (ref $self and ref $self eq 'Sympa::Robot') {
+    } elsif (ref $self and ref $self eq 'Sympa::VirtualHost') {
         $robot_id = $self->name;
     } elsif ($self eq 'Sympa::Site') {
         $robot_id = '*';
@@ -1060,7 +1060,7 @@ sub send_notify_to_listmaster {
             if (!$robot_id or $robot_id eq '*') {
                 $robot = 'Site';
             } else {
-                $robot = Sympa::Robot->new($robot_id);
+                $robot = Sympa::VirtualHost->new($robot_id);
             }
 
             foreach
@@ -1332,7 +1332,7 @@ sub robots {
         my $v = shift;
         unless (defined $v) {
             delete $robots{$name};
-            delete Sympa::Robot::get_robots()->{$name};
+            delete Sympa::VirtualHost::get_robots()->{$name};
         } else {
             $robots{$name} = $v;
         }

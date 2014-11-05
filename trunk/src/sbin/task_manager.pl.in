@@ -153,7 +153,7 @@ if ($options{'debug'}) {
 }
 
 # load configuration
-unless (Sympa::Robot::get_robots()) {
+unless (Sympa::VirtualHost::get_robots()) {
     printf STDERR
         "Unable to load Sympa configuration, file %s or any of the virtual host robot.conf files contain errors. Exiting.\n",
         Sympa::Conf::get_sympa_conf();
@@ -431,7 +431,7 @@ sub create_required_lists_tasks {
         'Creating required tasks from list models');
 
     my @tasks;
-    foreach my $robot (@{Sympa::Robot::get_robots()}) {
+    foreach my $robot (@{Sympa::VirtualHost::get_robots()}) {
         $main::logger->do_log(Sympa::Logger::DEBUG3,
             'creating list task : current bot is %s', $robot);
         my $all_lists = Sympa::List::get_lists($robot);

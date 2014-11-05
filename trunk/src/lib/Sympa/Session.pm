@@ -42,12 +42,12 @@ use CGI::Cookie;
 use Sympa::DatabaseManager;
 use Sympa::Language;
 use Sympa::Logger;
-use Sympa::Robot;
 use Sympa::Site;
 use Sympa::Tools;
 use Sympa::Tools::Data;
 use Sympa::Tools::Password;
 use Sympa::Tools::Time;
+use Sympa::VirtualHost;
 
 # this structure is used to define which session attributes are stored in a
 # dedicated database col where others are compiled in col 'data_session'
@@ -92,7 +92,7 @@ Returns a new L<Sympa::Session> object, or I<undef> for failure.
 
 sub new {
     my ($class, %params) = @_;
-    my $robot   = Sympa::Robot::clean_robot($params{'robot'}, 1);   #FIXME: maybe a Site object?
+    my $robot   = Sympa::VirtualHost::clean_robot($params{'robot'}, 1);   #FIXME: maybe a Site object?
     my $cookie = $params{'cookie'};
     my $action = $params{'action'};
     my $rss    = $params{'rss'};
@@ -507,7 +507,7 @@ sub renew {
 ## delay is a parameter in seconds
 sub purge_old_sessions {
     $main::logger->do_log(Sympa::Logger::DEBUG2, '(%s)', @_);
-    my $robot = Sympa::Robot::clean_robot(shift, 1);
+    my $robot = Sympa::VirtualHost::clean_robot(shift, 1);
 
     my $delay = Sympa::Tools::Time::duration_conv(Sympa::Site->session_table_ttl);
     my $anonymous_delay =
@@ -528,7 +528,7 @@ sub purge_old_sessions {
 
     my $condition = '';
     $condition = sprintf 'robot_session = %s', Sympa::DatabaseManager::quote($robot->name)
-        if ref $robot eq 'Sympa::Robot';
+        if ref $robot eq 'Sympa::VirtualHost';
     my $anonymous_condition = $condition;
 
     $condition .= sprintf '%s%d > date_session',
@@ -593,7 +593,7 @@ sub purge_old_sessions {
 ##
 sub purge_old_tickets {
     $main::logger->do_log(Sympa::Logger::DEBUG2, '(%s)', @_);
-    my $robot = Sympa::Robot::clean_robot(shift, 1);
+    my $robot = Sympa::VirtualHost::clean_robot(shift, 1);
 
     my $delay = Sympa::Tools::Time::duration_conv(Sympa::Site->one_time_ticket_table_ttl);
     unless ($delay) {
@@ -609,7 +609,7 @@ sub purge_old_tickets {
         if $delay;
     $condition .= sprintf '%srobot_one_time_ticket = %s',
         ($condition ? ' AND ' : ''), Sympa::DatabaseManager::quote($robot->name)
-        if ref $robot eq 'Sympa::Robot';
+        if ref $robot eq 'Sympa::VirtualHost';
     $condition = " WHERE $condition"
         if $condition;
 
@@ -644,7 +644,7 @@ sub purge_old_tickets {
 sub list_sessions {
     $main::logger->do_log(Sympa::Logger::DEBUG2, '(%s, %s, %s)', @_);
     my $delay          = shift;
-    my $robot          = Sympa::Robot::clean_robot(shift, 1);
+    my $robot          = Sympa::VirtualHost::clean_robot(shift, 1);
     my $connected_only = shift;
 
     my @sessions;
@@ -653,7 +653,7 @@ sub list_sessions {
 
     my $condition = '';
     $condition = sprintf 'robot_session = %s', Sympa::DatabaseManager::quote($robot->name)
-        if ref $robot eq 'Sympa::Robot';
+        if ref $robot eq 'Sympa::VirtualHost';
     $condition .= sprintf '%s%d < date_session',
         ($condition ? ' AND ' : ''), $time - $delay
         if $delay;

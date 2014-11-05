@@ -382,7 +382,7 @@ sub convert_single_message {
     if (ref $that and ref $that eq 'Sympa::List') {
         $robot    = $that->robot;
         $listname = $that->name;
-    } elsif (ref $that and ref $that eq 'Sympa::Robot') {
+    } elsif (ref $that and ref $that eq 'Sympa::VirtualHost') {
         $robot    = $that;
         $listname = '';
     } else {

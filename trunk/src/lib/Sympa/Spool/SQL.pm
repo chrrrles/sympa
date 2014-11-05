@@ -369,8 +369,8 @@ sub next {
     my $robot;
 
     if ($robot_id and $robot_id ne '*') {
-        require Sympa::Robot;
-        $robot = Sympa::Robot->new($robot_id);
+        require Sympa::VirtualHost;
+        $robot = Sympa::VirtualHost->new($robot_id);
     }
     if ($robot) {
         if ($listname and length $listname) {
@@ -457,7 +457,7 @@ sub get_first_raw_entry {
     $message->{'spoolname'} = $self->{name};
 
     if ($message->{'list'} && $message->{'robot'}) {
-        my $robot = Sympa::Robot->new($message->{'robot'});
+        my $robot = Sympa::VirtualHost->new($message->{'robot'});
         if ($robot) {
             my $list = Sympa::List->new($message->{'list'}, $robot);
             if ($list) {
