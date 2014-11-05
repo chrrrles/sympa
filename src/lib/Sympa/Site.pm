@@ -91,6 +91,9 @@ our $AUTOLOAD;
 sub DESTROY;
 
 sub AUTOLOAD {
+    my ( undef, $file, $line ) = caller;
+    die "Sympa::Site::AUTOLOAD is now verbotten, please fix\n$file:$line\n"
+    , "@_";
     $main::logger->do_log(Sympa::Logger::DEBUG3, 'Autoloading %s', $AUTOLOAD);
     $AUTOLOAD =~ m/^(.*)::(.*)/;
     my $pkg  = $1;

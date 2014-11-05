@@ -65,6 +65,14 @@ use overload
 # Language context
 my $language = Sympa::Language->instance;
 
+sub _ensure_site_is_loaded {
+    my %options = @_;
+    !$Sympa::Site::is_initialized || $options{'force_reload'}
+	or Sympa::Site->load(%options);
+    $Sympa::Site::is_initialized
+    || croak die sprintf q(can't load or reload site config at %s:%s ), (caller)[1,2];
+}
+
 =head1 CLASS METHODS
 
 =over 4
@@ -85,11 +93,7 @@ sub new {
 
     ##XXX$name = '*' unless defined $name and length $name;
 
-    ## load global config if needed
-    Sympa::Site->load(%options)
-        if !$Sympa::Site::is_initialized
-            or $options{'force_reload'};
-    return undef unless $Sympa::Site::is_initialized;
+    _ensure_site_is_loaded %options;
 
     my $robot;
     ## If robot already in memory
@@ -149,11 +153,7 @@ sub load {
             and length $name
             and $name ne '*';
 
-    ## load global config if needed
-    Sympa::Site->load(%options)
-        if !$Sympa::Site::is_initialized
-            or $options{'force_reload'};
-    return undef unless $Sympa::Site::is_initialized;
+    _ensure_site_is_loaded %options;
 
     unless ($self->{'name'} and $self->{'etc'}) {
         my $vhost_etc = Sympa::Site->etc . '/' . $name;
@@ -920,11 +920,7 @@ sub get_robots {
     my $got_default = 0;
     my $dir;
 
-    ## load global config if needed
-    Sympa::Site->load(%options)
-        if !$Sympa::Site::is_initialized
-            or $options{'force_reload'};
-    return undef unless $Sympa::Site::is_initialized;
+    _ensure_site_is_loaded %options;
 
     ## Check memory cache first.
     if (Sympa::Site->robots_ok) {
