@@ -29,7 +29,31 @@ Sympa::User - An identified user
 
 =head1 DESCRIPTION
 
-FIXME
+A L<Sympa::User> object has the following attributes:
+
+=over
+
+=item * email: email address
+
+=item * gecos: full name
+
+=item * password: password
+
+=item * last_login_date: last login date, as a timestamp
+
+=item * last_login_host: last login host
+
+=item * wrong_login_count: failed login attempts count
+
+=item * cookie_delay: FIXME
+
+=item * lang: prefered language
+
+=item * attributes: FIXME
+
+=item * data: FIXME
+
+=back
 
 =cut
 
@@ -130,6 +154,17 @@ sub get_id {
     shift->{'email'} || '';
 }
 
+=item $user->get_email()
+
+Get email attribute.
+
+=cut
+
+sub get_email {
+    my ($self) = @_;
+    return $self->{email};
+}
+
 =item $user->moveto()
 
 Change email of user.
@@ -172,6 +207,204 @@ sub moveto {
     return 1;
 }
 
+=item $user->get_gecos()
+
+Get gecos attribute.
+
+=cut
+
+sub get_gecos {
+    my ($self) = @_;
+    return $self->{gecos};
+}
+
+=item $user->set_gecos()
+
+Set gecos attribute.
+
+=cut
+
+sub set_gecos {
+    my ($self, $value) = @_;
+    $self->{gecos} = $value;
+}
+
+=item $user->get_password()
+
+Get password attribute.
+
+=cut
+
+sub get_password {
+    my ($self) = @_;
+    return $self->{password};
+}
+
+=item $user->set_password()
+
+Set password attribute.
+
+=cut
+
+sub set_password {
+    my ($self, $value) = @_;
+    $self->{password} = $value;
+}
+
+=item $user->get_last_login_date()
+
+Get last_login_date attribute.
+
+=cut
+
+sub get_last_login_date {
+    my ($self) = @_;
+    return $self->{last_login_date};
+}
+
+=item $user->set_last_login_date()
+
+Set last_login_date attribute.
+
+=cut
+
+sub set_last_login_date {
+    my ($self, $value) = @_;
+    $self->{last_login_date} = $value;
+}
+
+=item $user->get_last_login_host()
+
+Get last_login_host attribute.
+
+=cut
+
+sub get_last_login_host {
+    my ($self) = @_;
+    return $self->{last_login_host};
+}
+
+=item $user->set_last_login_host()
+
+Set last_login_host attribute.
+
+=cut
+
+sub set_last_login_host {
+    my ($self, $value) = @_;
+    $self->{last_login_host} = $value;
+}
+
+=item $user->get_wrong_login_count()
+
+Get wrong_login_count attribute.
+
+=cut
+
+sub get_wrong_login_count {
+    my ($self) = @_;
+    return $self->{wrong_login_count};
+}
+
+=item $user->set_wrong_login_count()
+
+Set wrong_login_count attribute.
+
+=cut
+
+sub set_wrong_login_count {
+    my ($self, $value) = @_;
+    $self->{wrong_login_count} = $value;
+}
+
+=item $user->get_cookie_delay()
+
+Get cookie_delay attribute.
+
+=cut
+
+sub get_cookie_delay {
+    my ($self) = @_;
+    return $self->{cookie_delay};
+}
+
+=item $user->set_cookie_delay()
+
+Set cookie_delay attribute.
+
+=cut
+
+sub set_cookie_delay {
+    my ($self, $value) = @_;
+    $self->{cookie_delay} = $value;
+}
+
+=item $user->get_lang()
+
+Get lang attribute.
+
+=cut
+
+sub get_lang {
+    my ($self) = @_;
+    return $self->{lang};
+}
+
+=item $user->set_lang()
+
+Set lang attribute.
+
+=cut
+
+sub set_lang {
+    my ($self, $value) = @_;
+    $self->{lang} = $value;
+}
+
+=item $user->get_attributes()
+
+Get attributes attribute.
+
+=cut
+
+sub get_attributes {
+    my ($self) = @_;
+    return $self->{attributes};
+}
+
+=item $user->set_attributes()
+
+Set attributes attribute.
+
+=cut
+
+sub set_attributes {
+    my ($self, $value) = @_;
+    $self->{attributes} = $value;
+}
+
+=item $user->get_data()
+
+Get data attribute.
+
+=cut
+
+sub get_data {
+    my ($self) = @_;
+    return $self->{data};
+}
+
+=item $user->set_data()
+
+Set data attribute.
+
+=cut
+
+sub set_data {
+    my ($self, $value) = @_;
+    $self->{data} = $value;
+}
+
 =item $user->save()
 
 Save user information to user_table.
@@ -188,60 +421,6 @@ sub save {
     }
 
     return 1;
-}
-
-=item E<lt>attributeE<gt>
-
-=item E<lt>attributeE<gt>C<( VALUE )>
-
-I<Getters/Setters>.
-Get or set user attributes.
-For example C<$user-E<gt>gecos> returns "gecos" parameter of the user,
-and C<$user-E<gt>gecos("foo")> also changes it.
-Basic user profile "email" have only getter,
-so it is read-only.
-
-=cut
-
-our $AUTOLOAD;
-
-sub DESTROY { }   # "sub DESTROY;" may cause segfault with Perl around 5.10.1.
-
-sub AUTOLOAD {
-    $AUTOLOAD =~ m/^(.*)::(.*)/;
-
-    my $attr = $2;
-
-    if (scalar grep { $_ eq $attr } qw(email)) {
-        ## getter for user attribute.
-        no strict "refs";
-        *{$AUTOLOAD} = sub {
-            my $self = shift;
-            croak "Can't call method \"$attr\" on uninitialized "
-                . ref($self)
-                . " object"
-                unless $self->{'email'};
-            croak "Can't modify \"$attr\" attribute"
-                if scalar @_ > 1;
-            $self->{$attr};
-        };
-    } elsif (exists $map_field{$attr}) {
-        ## getter/setter for user attributes.
-        no strict "refs";
-        *{$AUTOLOAD} = sub {
-            my $self = shift;
-            croak "Can't call method \"$attr\" on uninitialized "
-                . ref($self)
-                . " object"
-                unless $self->{'email'};
-            $self->{$attr} = shift
-                if scalar @_ > 1;
-            $self->{$attr};
-        };
-    } else {
-        croak "Can't locate object method \"$2\" via package \"$1\"";
-    }
-    goto &$AUTOLOAD;
 }
 
 =back
