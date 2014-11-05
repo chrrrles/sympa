@@ -47,7 +47,7 @@ package Sympa::VirtualHost;
 
 use strict;
 use warnings;
-use base qw(Sympa::Site);
+use base qw(Sympa::ConfigurableObject);
 
 use Carp qw(carp croak);
 
