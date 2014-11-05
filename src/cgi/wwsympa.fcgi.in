@@ -56,7 +56,7 @@ use Sympa::DatabaseManager;
 use Sympa::Family;
 use Sympa::Language;
 use Sympa::List;
-use Sympa::Log::Database;
+use Sympa::Monitor;
 use Sympa::Logger;
 use Sympa::Logger::Syslog;
 use Sympa::Mailer;
@@ -2087,7 +2087,7 @@ sub web_db_log {
     ## Default email is the user email
     $data->{'target_email'} ||= $data->{'user_email'};
 
-    unless (Sympa::Log::Database::db_log(%$data)) {
+    unless (Sympa::Monitor::db_log(%$data)) {
         wwslog(Sympa::Logger::ERR, 'web_db_log: failed to log in database');
         return undef;
     }
@@ -2107,7 +2107,7 @@ sub web_db_stat_log {
     $data->{'client'} = $param->{'remote_addr'};
     $data->{'robot'} ||= $robot_id;
 
-    unless (Sympa::Log::Database::db_stat_log(%$data)) {
+    unless (Sympa::Monitor::db_stat_log(%$data)) {
         wwslog(Sympa::Logger::ERR, 'web_db_stat_log: failed to log in database');
         return undef;
     }
@@ -22674,7 +22674,7 @@ sub do_stats {
         )
         ) {
         my $raw_data = Sympa::List::get_data($operation, $robot_id, $in{'list'});
-        my $data = Sympa::Log::Database::agregate_daily_data(
+        my $data = Sympa::Monitor::agregate_daily_data(
             'hourly_data' => $raw_data
         );
         my @key_counter = keys %{$data};
@@ -23227,7 +23227,7 @@ sub do_viewlogs {
     $param->{'page'} = int($in{'page'}) || 1;
     $param->{'size'} = int($in{'size'}) || Sympa::Site->viewlogs_page_size;
 
-    my @date = Sympa::Log::Database::get_log_date();
+    my @date = Sympa::Monitor::get_log_date();
     $param->{'date_from_formated'} = $language->gettext_strftime(
         "%Y-%m-%d-%H-%M-%S", localtime($date[0])
     );
@@ -23281,11 +23281,11 @@ sub do_viewlogs {
 
         #sending of search parameters for the query
         my $line =
-            Sympa::Log::Database::get_first_db_log($select, $sortby,
+            Sympa::Monitor::get_first_db_log($select, $sortby,
             $in{'way'});
 
         #display the number of rows of the query.
-        $param->{'total_results'} = Sympa::Log::Database::return_rows_nb();
+        $param->{'total_results'} = Sympa::Monitor::return_rows_nb();
 
         unless ($line and $param->{'total_results'}) {
             ##Sympa::Report::reject_report_web('user','no_logs',{},$param->{'action'});
@@ -23330,7 +23330,7 @@ sub do_viewlogs {
                 );
                 push @{$param->{'log_entries'}}, $line;
             }
-            $line = Sympa::Log::Database::get_next_db_log();
+            $line = Sympa::Monitor::get_next_db_log();
         }
     }
 

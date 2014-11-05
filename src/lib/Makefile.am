@@ -46,7 +46,6 @@ nobase_modules_DATA = Sympa/Admin.pm \
 		      Sympa/List.pm \
 		      Sympa/ListDef.pm \
 		      Sympa/LockedFile.pm \
-		      Sympa/Log/Database.pm \
 		      Sympa/Logger.pm \
 		      Sympa/Logger/Syslog.pm \
 		      Sympa/Logger/Stderr.pm \
@@ -56,6 +55,7 @@ nobase_modules_DATA = Sympa/Admin.pm \
 		      Sympa/Marc/Search.pm \
 		      Sympa/Message.pm \
 		      Sympa/ModDef.pm \
+		      Sympa/Monitor.pm \
 		      Sympa/Report.pm \
 		      Sympa/Rule.pm \
 		      Sympa/Scenario.pm \

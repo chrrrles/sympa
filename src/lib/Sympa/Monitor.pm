@@ -25,15 +25,15 @@
 
 =head1 NAME
 
-Sympa::Log::Database - FIXME
+Sympa::Monitor - An activity recorder
 
 =head1 DESCRIPTION
 
-FIXME
+This class implements an activity recorder, for monitoring purpose.
 
 =cut
 
-package Sympa::Log::Database;
+package Sympa::Monitor;
 
 use strict;
 use English qw(-no_match_vars);

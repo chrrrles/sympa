@@ -45,7 +45,7 @@ use Sys::Hostname;
 
 use Sympa::DatabaseManager;
 use Sympa::Logger;
-use Sympa::Log::Database;
+use Sympa::Monitor;
 use Sympa::VirtualHost;
 use Sympa::Spool::SQL;
 use Sympa::Tools::Daemon;
@@ -307,7 +307,7 @@ sub store {
             unless (index($message_sender, "$listname-request") >= 0) {
 
                 #ignore messages of requests
-                Sympa::Log::Database::db_stat_log(
+                Sympa::Monitor::db_stat_log(
                     'robot'     => $robot->name,
                     'list'      => $listname,
                     'operation' => 'send_mail',

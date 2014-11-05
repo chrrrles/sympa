@@ -151,7 +151,7 @@ use Getopt::Long;
 use Pod::Usage;
 
 use Sympa::List;
-use Sympa::Log::Database;
+use Sympa::Monitor;
 use Sympa::Logger;
 use Sympa::Mailer;
 use Sympa::Message;
@@ -534,7 +534,7 @@ sub remove {
     $logger->do_log(Sympa::Logger::NOTICE, 'Removing %s in list %s section %s',
         $msgid, $adrlist, $arc);
 
-    Sympa::Log::Database::db_stat_log(
+    Sympa::Monitor::db_stat_log(
         'robot'     => $robot,
         'list'      => $adrlist,
         'operation' => 'remove archive',
@@ -544,7 +544,7 @@ sub remove {
     );
 
     unless (
-        Sympa::Log::Database::db_log(
+        Sympa::Monitor::db_log(
             'robot'        => $robot,
             'list'         => $adrlist,
             'action'       => 'remove',
