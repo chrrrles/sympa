@@ -1365,7 +1365,7 @@ sub verify {
         my $val_search;
 
         # we could search in the family if we got ref on Sympa::Family object
-        $val_search = search(($list || $robot), $args[0], $context);
+        $val_search = _search(($list || $robot), $args[0], $context);
         return undef unless defined $val_search;
         if ($val_search == 1) {
             if ($log_it) {
@@ -1420,7 +1420,7 @@ sub verify {
     if ($condition_key =~ /^customcondition::(\w+)/o) {
         my $condition = $1;
 
-        my $res = verify_custom(($list || $robot), $condition, \@args);
+        my $res = _verify_custom(($list || $robot), $condition, \@args);
         unless (defined $res) {
             if ($log_it) {
                 my $args_as_string = '';
@@ -1490,13 +1490,8 @@ sub verify {
     return undef;
 }
 
-=item search( THAT, FILTER_FILE, CONTEXT )
-
-Verify if a given user is part of an LDAP, SQL or TXT search filter
-
-=cut
-
-sub search {
+# Verify if a given user is part of an LDAP, SQL or TXT search filter
+sub _search {
     my $that        = shift || 'Site';
     my $filter_file = shift;
     my $context     = shift;
@@ -1772,7 +1767,7 @@ sub search {
 }
 
 # eval a custom perl module to verify a scenario condition
-sub verify_custom {
+sub _verify_custom {
     my $that      = shift || 'Site';
     my $condition = shift;
     my $args_ref  = shift;
