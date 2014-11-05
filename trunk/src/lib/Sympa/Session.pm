@@ -133,7 +133,7 @@ sub new {
             # start a new session (may be a fake cookie)
             $main::logger->do_log(Sympa::Logger::INFO,
                 'ignoring unknown session cookie "%s"', $cookie);
-            return __PACKAGE__->new($robot);
+            return Sympa::Session->new(robot => $robot);
         }
     } else {
 
