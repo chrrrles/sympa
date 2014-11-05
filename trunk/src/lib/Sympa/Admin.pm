@@ -49,7 +49,6 @@ use Sympa::Logger;
 use Sympa::Site;
 use Sympa::Tools;
 use Sympa::Tools::File;
-use Sympa::User;
 
 my $language = Sympa::Language->instance;
 
@@ -1568,6 +1567,8 @@ sub check_topics {
 #                                   included or for authorization reasons)
 sub change_user_email {
     my %in = @_;
+
+    require Sympa::User;
 
     my @failed_for;
 
