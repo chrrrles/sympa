@@ -94,37 +94,61 @@ foreach my $k (keys %{$db_struct{'user_table'}->{'fields'}}) {
 
 =over 4
 
-=item Sympa::User->new( EMAIL, [ KEY => VAL, ... ])
+=item Sympa::User->new(%parameters)
 
-Create new Sympa::User object.
+Creates a new L<Sympa::User> object.
+
+Parameters:
+
+=over 4
+
+=item * I<email>: email attribute (mandatory)
+
+=item * I<gecos>: gecos attribute
+
+=item * I<lang>: lang attribute
+
+=item * I<password>: password attributes
+
+=item * I<fields>: additional custom fields
+
+=back
+
+Returns a new L<Sympa::User> object, or I<undef> for failure.
 
 =cut
 
 sub new {
-    my $pkg         = shift;
-    my $who         = Sympa::Tools::clean_email(shift || '');
-    my $user_fields = shift;
-    my %values      = @_;
-    my $self;
-    return undef unless $who;
+    my ($class, %params) = @_;
 
-    ## Canonicalize lang if possible
-    $values{'lang'} = Sympa::Language::canonic_lang($values{'lang'})
-        || $values{'lang'}
-        if $values{'lang'};
+    my $email    = Sympa::Tools::clean_email($params{email});
+    my $lang     = Sympa::Language::canonic_lang($params{lang}) ||
+                   $params{lang};
+    my $gecos    = $params{gecos};
+    my $password = $params{password};
+    my $fields   = $params{fields};
 
-    if (!($self = get_global_user($who, $user_fields))) {
-        ## unauthenticated user would not be added to database.
-        $values{'email'} = $who;
-        if (scalar grep { $_ ne 'lang' and $_ ne 'email' } keys %values) {
-            unless (defined add_global_user(\%values)) {
-                return undef;
-            }
-        }
-        $self = \%values;
+    return undef unless $email;
+
+    # try to fetch user from the database
+    my $self = get_global_user($email, $fields);
+
+    if (!$self) {
+        # create a new user
+        $self = {
+            email    => $email,
+            lang     => $lang,
+            gecos    => $gecos,
+            password => $password
+        };
+
+        # try to save it immediatly
+        return undef unless add_global_user($self);
     }
 
-    bless $self => $pkg;
+    bless $self, $class;
+
+    return $self;
 }
 
 =back
