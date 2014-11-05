@@ -352,12 +352,11 @@ sub supported_languages {
     if ($Sympa::Site::is_initialized) {    # configuration loaded.
         my $supported_lang = $self->supported_lang;
 
-        my $language = Sympa::Language->instance;
-        $language->push_lang;
+        $main::language->push_lang;
         @lang_list =
-            grep { $_ and $_ = $language->set_lang($_) }
+            grep { $_ and $_ = $main::language->set_lang($_) }
             split /[\s,]+/, $supported_lang;
-        $language->pop_lang;
+        $main::language->pop_lang;
     }
     @lang_list = ('en') unless @lang_list;
     return @lang_list if wantarray;
@@ -386,22 +385,21 @@ If it is not known, returns default charset.
 =cut
 
 sub get_charset {
-    my $language = Sympa::Language->instance;
-    my $lang     = shift || $language->get_lang;
+    my $lang     = shift || $main::language->get_lang;
 
-    $language->push_lang($lang);
+    $main::language->push_lang($lang);
     my $locale2charset;
     if ($lang and $is_initialized   # configuration loaded
         and $locale2charset = Site->locale2charset
         ) {
         foreach my $l (Sympa::Language::implicated_langs($lang)) {
             if (exists $locale2charset->{$l}) {
-                $language->pop_lang;
+                $main::language->pop_lang;
                 return $locale2charset->{$l};
             }
         }
     }
-    $language->pop_lang;
+    $main::language->pop_lang;
     return 'utf-8';                  # the last resort
 }
 

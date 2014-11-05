@@ -255,7 +255,7 @@ our $logger;
 # signal handlers
 my $signal = 0;
 
-my $language = Sympa::Language->instance;
+our $language = Sympa::Language->new();
 
 # Catch SIGTERM, in order to exit cleanly, whenever possible.
 $SIG{'TERM'} = sub {

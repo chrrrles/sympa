@@ -151,10 +151,11 @@ use Getopt::Long;
 use Pod::Usage;
 
 use Sympa::List;
-use Sympa::Monitor;
+use Sympa::Language;
 use Sympa::Logger;
 use Sympa::Mailer;
 use Sympa::Message;
+use Sympa::Monitor;
 use Sympa::Tools::Daemon;
 use Sympa::Tools::File;
 
@@ -226,7 +227,8 @@ our $mailer = Sympa::Mailer->new(
 );
 
 # initialize i18n subsystem
-Sympa::Language->instance->set_lang(Sympa::Site->lang, 'en');
+our $language = Sympa::Language->new();
+$language->set_lang(Sympa::Site->lang, 'en');
 
 # put ourselves in background if not in debug mode.
 Sympa::Tools::Daemon::daemonize(name => $daemon_name)

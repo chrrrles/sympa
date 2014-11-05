@@ -54,7 +54,6 @@ use POSIX qw();
 use Storable qw(dclone);
 use URI::Escape;
 
-use Sympa::Language;
 use Sympa::Logger;
 use Sympa::Site;
 use Sympa::Template;
@@ -63,9 +62,6 @@ use Sympa::Tools::DKIM;
 use Sympa::Tools::Message;
 use Sympa::Tools::SMIME;
 use Sympa::Tools::WWW;
-
-# Language context
-my $language = Sympa::Language->instance;
 
 my %openssl_errors = (
     1 => 'an error occurred parsing the command options',
@@ -2379,7 +2375,7 @@ sub _urlize_part {
     $parser->output_to_core(1);
     my $new_part;
 
-    my $lang    = $language->get_lang();
+    my $lang    = $main::language->get_lang();
     my $charset = Site->get_charset();
 
     my $tt2_include_path = $list->get_etc_include_path('mail_tt2', $lang);
@@ -2452,9 +2448,8 @@ sub personalize_text {
     my $user = $list->user('member', $rcpt);
     if ($user) {
         $user->{'escaped_email'} = URI::Escape::uri_escape($rcpt);
-        my $language = Sympa::Language->instance;
         $user->{'friendly_date'} =
-            $language->gettext_strftime("%d %b %Y  %H:%M", localtime($user->{'date'}));
+            $main::language->gettext_strftime("%d %b %Y  %H:%M", localtime($user->{'date'}));
     }
 
     # this method as been removed because some users may forward

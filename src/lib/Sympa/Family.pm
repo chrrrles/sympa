@@ -48,13 +48,10 @@ use Term::ProgressBar;
 use Sympa::Admin;
 use Sympa::Constants;
 use Sympa::Config_XML;
-use Sympa::Language;
 use Sympa::List; # FIXME: circular dependency
 use Sympa::Logger;
 use Sympa::VirtualHost;
 use Sympa::Site;
-
-my $language = Sympa::Language->instance;
 
 my @uncompellable_param = (
     'msg_topic.keywords',
@@ -399,7 +396,7 @@ sub add_list {
     $list->latest_instantiation(
         {   'email' => "listmaster\@$host",
             ##FIXME:should be unneccessary
-            'date' => $language->gettext_strftime(
+            'date' => $main::language->gettext_strftime(
                 "%d %b %Y at %H:%M:%S", localtime time
             ),
             'date_epoch' => time
@@ -687,7 +684,7 @@ sub modify_list {
     $list->latest_instantiation(
         {   'email' => "listmaster\@$host",
             ##FIXME:should be unneccessary
-            'date' => $language->gettext_strftime(
+            'date' => $main::language->gettext_strftime(
                 "%d %b %Y at %H:%M:%S", localtime time
             ),
             'date_epoch' => time
@@ -2506,7 +2503,7 @@ sub _end_update_list {
     $list->latest_instantiation(
         {   'email' => "listmaster\@$host",
             ##FIXME:should be unneccessary
-            'date' => $language->gettext_strftime(
+            'date' => $main::language->gettext_strftime(
                 "%d %b %Y at %H:%M:%S", localtime time
             ),
             'date_epoch' => time

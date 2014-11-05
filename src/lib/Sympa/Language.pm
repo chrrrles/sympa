@@ -42,7 +42,6 @@ package Sympa::Language;
 
 use strict;
 use warnings;
-use base qw(Class::Singleton);
 
 use Locale::Messages '1.22';    # virtually same as 1.23.
 use POSIX qw();
@@ -68,11 +67,10 @@ BEGIN {
     Locale::Messages::bind_textdomain_codeset(web_help => 'utf-8');
 }
 
-# Constructor for Class::Singleton.
-sub _new_instance {
+sub new {
     my $class = shift;
-    my $self  = $class->SUPER::_new_instance();
 
+    my $self = bless {}, $class;
     ## Initialize lang/locale.
     $self->set_lang('en');
     return $self;
