@@ -5455,9 +5455,7 @@ sub load_scenario_list {
         $list_of_scenario{$name} ||= $scenario_alias{$name};
     }
 
-    ## Return a copy of the data to prevent unwanted changes in the central
-    ## scenario data structure
-    return Sympa::Tools::Data::dup_var(\%list_of_scenario);
+    return values %list_of_scenario;
 }
 
 =over 4
