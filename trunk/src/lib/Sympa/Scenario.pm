@@ -843,7 +843,7 @@ sub verify {
                 my $val = $list->$param;
                 $value =~ s/\[list\-\>([\w\-]+)\]/$val/;
             } elsif ($param eq 'address') {
-                my $list_address = $list->get_list_address();
+                my $list_address = $list->get_address();
                 $value =~ s/\[list\-\>([\w\-]+)\]/$list_address/;
             } elsif (exists $pinfo->{$param} and !ref($list->$param)) {
                 my $val = $list->$param;

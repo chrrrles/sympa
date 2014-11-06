@@ -397,7 +397,7 @@ while (!$end) {
             unless ($list->am_i('privileged_owner', $sender)
                 || $list->am_i('owner',  $sender)
                 || $list->am_i('editor', $sender)
-                || Sympa::List::is_listmaster($sender, $list->{'domain'})) {
+                || Sympa::VirtualHost->new($list->{'domain'})->is_listmaster($sender);
 
                 # if not list owner or list editor or listmaster,n check if
                 # sender of remove order is sender of the message to remove

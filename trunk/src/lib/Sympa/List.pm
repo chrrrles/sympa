@@ -1658,11 +1658,11 @@ sub distribute_msg {
             my $sender_address = $message->get_header('From');
 
             if ($self->reply_to_header->{'value'} eq 'list') {
-                $reply = $self->get_list_address();
+                $reply = $self->get_address();
             } elsif ($self->reply_to_header->{'value'} eq 'sender') {
                 $reply = $sender_address;
             } elsif ($self->reply_to_header->{'value'} eq 'all') {
-                $reply = $self->get_list_address() . ', ' . $sender_address;
+                $reply = $self->get_address() . ', ' . $sender_address;
             } elsif ($self->reply_to_header->{'value'} eq 'other_email') {
                 $reply = $self->reply_to_header->{'other_email'};
             }
@@ -1674,12 +1674,12 @@ sub distribute_msg {
     ## Add useful headers
     $hdr->add('X-Loop',     $self->get_address());
     $hdr->add('X-Sequence', $sequence);
-    $hdr->add('Errors-to',  $self->get_list_address('return_path'));
+    $hdr->add('Errors-to',  $self->get_address('return_path'));
     $hdr->add('Precedence', 'list');
     $hdr->add('Precedence', 'bulk');
 
     # The Sender: header should be added at least for DKIM compatibility
-    $hdr->add('Sender',       $self->get_list_address('owner'));
+    $hdr->add('Sender',       $self->get_address('owner'));
     $hdr->add('X-no-archive', 'yes');
 
     foreach my $i (@{$self->custom_header}) {
@@ -1778,7 +1778,7 @@ sub get_lists_of_digest_recipients {
     my $param = shift;
     $main::logger->do_log(Sympa::Logger::DEBUG,
         'Getting list of digest recipients for list %s',
-        $self->get_list_id);
+        $self->get_id);
     $self->{'digest'}{'tabrcpt'}        = [];
     $self->{'digest'}{'tabrcptsummary'} = [];
     $self->{'digest'}{'tabrcptplain'}   = [];
@@ -1830,7 +1830,7 @@ sub split_spooled_digest_to_messages {
     my $param = shift;
     $main::logger->do_log(Sympa::Logger::DEBUG2,
         'Splitting spooled digest into message objects for list %s',
-        $self->get_list_id);
+        $self->get_id);
     my $message_in_spool = $param->{'message_in_spool'};
     $self->{'digest'}{'list_of_mail'} = [];
     my $separator = "\n\n" . Sympa::Tools::get_separator() . "\n\n";
@@ -1856,7 +1856,7 @@ sub prepare_messages_for_digest {
     my $param = shift;
     $main::logger->do_log(Sympa::Logger::DEBUG2,
         'Preparing messages for digest for list %s',
-        $self->get_list_id);
+        $self->get_id);
     $self->{'digest'}{'all_msg'} = [];
     return undef unless ($self->{'digest'}{'list_of_mail'});
     foreach my $i (0 .. $#{$self->{'digest'}{'list_of_mail'}}) {
@@ -1902,10 +1902,10 @@ sub prepare_digest_parameters {
     my $param = shift;
     $main::logger->do_log(Sympa::Logger::DEBUG2,
         'Preparing digest parameters for list %s',
-        $self->get_list_id);
+        $self->get_id);
     $self->{'digest'}{'template_params'} = {
-        'replyto'          => $self->get_list_address('owner'),
-        'to'               => $self->get_list_address(),
+        'replyto'          => $self->get_address('owner'),
+        'to'               => $self->get_address(),
         'table_of_content' => $main::language->gettext("Table of contents:"),
         'boundary1'        => '----------=_'
             . Sympa::Tools::get_message_id($self->domain),
@@ -1930,7 +1930,7 @@ sub do_digest_sending {
     my $self = shift;
     $main::logger->do_log(Sympa::Logger::DEBUG2,
         'Actually sending digest for list %s',
-        $self->get_list_id);
+        $self->get_id);
     foreach my $group (@{$self->{'digest'}{'group_of_msg'}}) {
 
         $self->{'digest'}{'template_params'}{'current_group'}++;
@@ -2096,7 +2096,7 @@ sub send_msg {
     }
 
     ## Who is the envelope sender?
-    my $from     = $self->get_list_address('return_path');
+    my $from     = $self->get_address('return_path');
     my $nbr_smtp = 0;
     my $nbr_verp = 0;
 
@@ -2214,7 +2214,7 @@ sub get_list_members_per_mode {
         unless ($user->{'email'}) {
             $main::logger->do_log(Sympa::Logger::ERR,
                 'Skipping user with no email address in list %s',
-                $self->get_list_id);
+                $self->get_id);
             next;
         }
         my $user_data = $self->user('member', $user->{'email'}) || undef;
@@ -2353,7 +2353,7 @@ sub get_list_members_per_mode {
         || @tabrcpt_url_verp) {
         $main::logger->do_log(Sympa::Logger::INFO,
             'No subscriber for sending msg in list %s',
-            $self->get_list_id);
+            $self->get_id);
         return 0;
     }
     $message->{'rcpts_by_mode'}{'mail'}{'noverp'} = \@tabrcpt
@@ -3239,10 +3239,6 @@ See L<Site/get_etc_include_path>.
 
 =cut
 
-## Delete a user in the user_table
-##sub delete_global_user
-## OBSOLETED: Use Sympa::User::delete_global_user() or $user->expire();
-
 ## Delete the indicate list member
 ## IN : - ref to array
 ##      - option exclude
@@ -3399,14 +3395,6 @@ sub get_real_total {
 
     return $self->total($total);
 }
-
-## Returns a hash for a given user
-##sub get_global_user {
-## OBSOLETED: Use Sympa::User::get_global_user() or Sympa::User->new().
-
-## Returns an array of all users in User table hash for a given user
-##sub get_all_global_user {
-## OBSOLETED: Use Sympa::User::get_all_global_user() or Sympa::User::get_users().
 
 ######################################################################
 ###  suspend_subscription                                            #
@@ -4392,10 +4380,6 @@ sub get_total_bouncing {
     return $total;
 }
 
-## Is the person in user table (db only)
-##sub is_global_user {
-## OBSOLETED: Use Sympa::User::is_global_user().
-
 ## Is the indicated person a subscriber to the list?
 sub is_list_member {
     $main::logger->do_log(Sympa::Logger::DEBUG2, '(%s, %s)', @_);
@@ -4755,14 +4739,6 @@ sub update_list_admin {
     return 1;
 }
 
-## Sets new values for the given user in the Database
-##sub update_global_user {
-## OBSOLETED: Use Sympa::User::update_global_user() or $user->save().
-
-## Adds a user to the user_table
-##sub add_global_user {
-## OBSOLETED: Use Sympa::User::add_global_user() or $user->save().
-
 ## Adds a list member ; no overwrite.
 sub add_list_member {
     $main::logger->do_log(Sympa::Logger::DEBUG2, '(%s, ...)', @_);
@@ -5017,14 +4993,6 @@ sub add_list_admin {
 }
 
 #XXX sub rename_list_db
-
-## Is the user listmaster
-## OBSOLETED: Use Sympa::VirtualHost::is_listmaster().
-sub is_listmaster {
-    my $who   = shift;
-    my $robot = shift;
-    return Sympa::VirtualHost->new($robot)->is_listmaster($who);
-}
 
 ## Does the user have a particular function in the list?
 sub am_i {
@@ -8979,13 +8947,6 @@ sub get_lists {
     return \@lists;
 }
 
-## OBSOLETED: Use Sympa::VirtualHost::get_robots().
-sub get_robots {
-    my $robots = Sympa::VirtualHost::get_robots();
-    return undef unless $robots;
-    return map { $_->domain } @{Sympa::VirtualHost::get_robots()};
-}
-
 =over 4
 
 =item get_which ( EMAIL, ROBOT, ROLE )
@@ -9183,16 +9144,6 @@ sub lowercase_field {
     $sth->finish();
 
     return $total;
-}
-
-## Loads the list of topics if updated
-## OBSOLETED: Use $robot->topics().
-sub load_topics {
-    my $robot = shift;
-    croak "missing 'robot' parameter" unless $robot;
-    croak "invalid 'robot' parameter" unless
-        (blessed $robot and $robot->isa('Sympa::VirtualHost'));
-    return %{$robot->topics || {}};
 }
 
 ############ THIS IS RELATED TO NEW LOAD_ADMIN_FILE #############
@@ -10588,7 +10539,7 @@ sub get_arc_size {
     my $self = shift;
     my $dir  = shift;
 
-    return Sympa::Tools::File::get_dir_size($dir . '/' . $self->get_list_id());
+    return Sympa::Tools::File::get_dir_size($dir . '/' . $self->get_id());
 }
 
 # return the date epoch for next delivery planified for a list
@@ -10728,7 +10679,7 @@ sub close_list {
         next unless @{$included_lists};
 
         foreach my $included_list_name (@{$included_lists}) {
-            if ($included_list_name eq $self->get_list_id()
+            if ($included_list_name eq $self->get_id()
                 or (    $included_list_name eq $self->name
                     and $list->domain eq $self->domain)
                 ) {
@@ -10982,7 +10933,7 @@ sub move_message {
     my ($self, $file, $queue) = @_;
 
     my $dir = $queue || Sympa::Site->queuedistribute;
-    my $filename = $self->get_list_id() . '.' . time . '.' . int(rand(999));
+    my $filename = $self->get_id() . '.' . time . '.' . int(rand(999));
 
     unless (open OUT, ">$dir/T.$filename") {
         $main::logger->do_log(Sympa::Logger::ERR, 'Cannot create file %s',
@@ -11025,14 +10976,6 @@ Returns the list email address.
 See L<Site/get_address>.
 
 =back
-
-=cut
-
-sub get_list_address {
-    ##OBSOLETED: Use $list->get_address().
-    my $self = shift;
-    return $self->get_address(@_);
-}
 
 =over 4
 
@@ -11080,9 +11023,6 @@ sub get_id {
     return $self->{'name'} . '@' . $self->{'robot'}->domain;
 }
 
-## OBSOLETED: use get_id()
-sub get_list_id { shift->get_id }
-
 =over 4
 
 =item add_list_header ( HEADER_OBJ, FIELD )
@@ -11127,10 +11067,10 @@ sub add_list_header {
         );
     } elsif ($field eq 'post') {
         $hdr->add('List-Post',
-            sprintf('<mailto:%s>', $self->get_list_address()));
+            sprintf('<mailto:%s>', $self->get_address()));
     } elsif ($field eq 'owner') {
         $hdr->add('List-Owner',
-            sprintf('<mailto:%s>', $self->get_list_address('owner')));
+            sprintf('<mailto:%s>', $self->get_address('owner')));
     } elsif ($field eq 'archive') {
         if (    $self->robot->wwsympa_url
             and $self->is_web_archived()) {

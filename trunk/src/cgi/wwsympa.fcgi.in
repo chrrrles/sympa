@@ -9058,7 +9058,7 @@ sub do_reject {
 
         # clean html view of the message
         Sympa::Tools::File::remove_dir(
-            Sympa::Site->viewmail_dir . '/mod/' . $list->get_list_id() . '/' . $id);
+            Sympa::Site->viewmail_dir . '/mod/' . $list->get_id() . '/' . $id);
 
     }
     web_db_log(
@@ -9190,7 +9190,7 @@ sub do_distribute {
 
         # clean html view of the message
         Sympa::Tools::File::remove_dir(
-            Sympa::Site->viewmail_dir . '/mod/' . $list->get_list_id() . '/' . $id);
+            Sympa::Site->viewmail_dir . '/mod/' . $list->get_id() . '/' . $id);
     }
 
     my $incomingspool = Sympa::Spool::File::Message->new(
@@ -9786,7 +9786,7 @@ sub do_arc {
             unless ($session->{'archive_sniffer'} eq 'false');
     }
 
-    my $arc_path = $robot->arc_path . '/' . $list->get_list_id();
+    my $arc_path = $robot->arc_path . '/' . $list->get_id();
     ## Calendar
     unless (opendir ARC, $arc_path) {
         Sympa::Report::reject_report_web('user', 'empty_archives', {},
@@ -9974,7 +9974,7 @@ sub do_latest_arc {
         $nb_arc = $NB_ARC_MAX;
     }
 
-    my $arc_path = $robot->arc_path . '/' . $list->get_list_id();
+    my $arc_path = $robot->arc_path . '/' . $list->get_id();
     unless (opendir ARC_DIR, $arc_path) {
         Sympa::Report::reject_report_web('user', 'empty_archives', {},
             $param->{'action'}, $list);
@@ -10168,7 +10168,7 @@ sub do_remove_arc {
 
     my $arcpath =
           $robot->arc_path . '/'
-        . $list->get_list_id() . '/'
+        . $list->get_id() . '/'
         . $in{'yyyy'} . '-'
         . $in{'month'};
 
@@ -10253,7 +10253,7 @@ sub do_send_me {
     ##
     my $arcpath =
           $robot->arc_path . '/'
-        . $list->get_list_id() . '/'
+        . $list->get_id() . '/'
         . $in{'yyyy'} . '-'
         . $in{'month'};
 
@@ -10367,7 +10367,7 @@ sub do_view_source {
     ##
     my $arcpath =
           $robot->arc_path . '/'
-        . $list->get_list_id() . '/'
+        . $list->get_id() . '/'
         . $in{'yyyy'} . '-'
         . $in{'month'};
 
@@ -10517,7 +10517,7 @@ sub do_arcsearch_form {
         unless (
         defined check_authz('do_arcsearch_form', 'web_archive.access'));
 
-    my $search_base = $robot->arc_path . '/' . $list->get_list_id();
+    my $search_base = $robot->arc_path . '/' . $list->get_id();
     opendir ARC, "$search_base";
     foreach my $dir (sort { $b cmp $a } grep(!/^\./, readdir ARC)) {
         if ($dir =~ /^(\d{4})-(\d{2})$/) {
@@ -10543,7 +10543,7 @@ sub do_arcsearch {
     use Sympa::Marc::Search;
 
     my $search = Sympa::Marc::Search->new();
-    $search->search_base($robot->arc_path . '/' . $list->get_list_id());
+    $search->search_base($robot->arc_path . '/' . $list->get_id());
     $search->base_href($robot->wwsympa_url . '/arc/' . $param->{'list'});
     $search->archive_name($in{'archive_name'});
 
@@ -10554,7 +10554,7 @@ sub do_arcsearch {
         $archive_name = POSIX::strftime '%Y-%m', localtime(time)
             unless $archive_name =~ /^\d{4}-\d{2}$/;
         my @directories = ();
-        my $search_base = $robot->arc_path . '/' . $list->get_list_id();
+        my $search_base = $robot->arc_path . '/' . $list->get_id();
         opendir ARC, "$search_base";
         foreach my $dir (sort { $b cmp $a } grep(!/^\./, readdir ARC)) {
             if ($dir =~ /^(\d{4})-(\d{2})$/) {
@@ -10690,7 +10690,7 @@ sub do_arcsearch_id {
     use Sympa::Marc::Search;
 
     my $search = Sympa::Marc::Search->new();
-    $search->search_base($robot->arc_path . '/' . $list->get_list_id());
+    $search->search_base($robot->arc_path . '/' . $list->get_id());
     $search->base_href($robot->wwsympa_url . '/arc/' . $param->{'list'});
 
     $search->archive_name($in{'archive_name'});
@@ -13675,7 +13675,7 @@ sub do_close_list {
             Sympa::Report::reject_report_web('intern', 'cannot_close_list', {},
                 $param->{'action'}, $list, $param->{'user'}{'email'},
                 $robot_id);
-            wwslog(Sympa::Logger::ERR, 'Cannot close list %s', $list->get_list_id());
+            wwslog(Sympa::Logger::ERR, 'Cannot close list %s', $list->get_id());
             web_db_log(
                 {   'status'     => 'error',
                     'error_type' => 'unknown'
@@ -21673,7 +21673,7 @@ sub do_compose_mail {
         $in{'to'} =~ s/ /\@/g;
         $param->{'to'} = $in{'to'};
     } else {
-        $param->{'to'} = $list->get_list_address();
+        $param->{'to'} = $list->get_address();
     }
     foreach my $recipient (split(',', $param->{'to'})) {
         (   $param->{'recipients'}{$recipient}{'local_to'},
@@ -21778,7 +21778,7 @@ sub do_send_mail {
                 );
                 return undef;
             }
-            $to = $list->get_list_address();
+            $to = $list->get_address();
         }
     }
 
@@ -22094,7 +22094,7 @@ sub do_request_topic {
         }
     }
 
-    $param->{'to'}      = $list->get_list_address();
+    $param->{'to'}      = $list->get_address();
     $param->{'mailto'}  = Sympa::Tools::WWW::mailto($list, $param->{'to'});
     $param->{'authkey'} = $in{'authkey'};
 
@@ -23768,7 +23768,7 @@ sub do_arc_manage {
         return undef;
     }
 
-    my $search_base = $robot->arc_path . '/' . $list->get_list_id();
+    my $search_base = $robot->arc_path . '/' . $list->get_id();
     opendir ARC, "$search_base";
     foreach my $dir (sort { $b cmp $a } grep(!/^\./, readdir ARC)) {
         if ($dir =~ /^(\d{4})-(\d{2})$/) {
@@ -23826,7 +23826,7 @@ sub do_arc_download {
 
         my $abs_dir =
               $robot->arc_path . '/'
-            . $list->get_list_id() . '/'
+            . $list->get_id() . '/'
             . $dir
             . '/arctxt';
         ##check arc directory
@@ -24080,7 +24080,7 @@ sub do_arc_delete {
 
     foreach my $dir (split /\0/, $in{'directories'}) {
         push(@abs_dirs,
-            $robot->arc_path . '/' . $list->get_list_id() . '/' . $dir);
+            $robot->arc_path . '/' . $list->get_id() . '/' . $dir);
     }
 
     unless (Sympa::Tools::File::remove_dir(@abs_dirs)) {
@@ -24147,7 +24147,7 @@ sub do_rss_request {
     if ($sub_is =~ /reject/) {
         wwslog(Sympa::Logger::INFO,
             'RSS not accessible because list %s is not visible to user %s',
-            $list->get_list_id, $param->{'user'}{'email'});
+            $list->get_id, $param->{'user'}{'email'});
         web_db_log(
             {   'parameters' => $param->{'user'}{'email'},
                 'status'     => 'error',
