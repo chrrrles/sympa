@@ -44,12 +44,12 @@ use File::Spec;
 use List::Util qw(first);
 use Mail::Address;
 use Net::Netmask;
+use Scalar::Util qw(blessed);
 
 use Sympa::ConfDef;
 use Sympa::Language;
 use Sympa::List; # FIXME: circular dependency
 use Sympa::Logger;
-use Sympa::VirtualHost;
 use Sympa::Site;
 use Sympa::Tools::Data;
 use Sympa::Tools::Time;
@@ -700,7 +700,10 @@ sub verify {
     } elsif ($context->{'robot_object'}) {
         $robot = $context->{'robot_object'};
     } elsif ($context->{'robot_domain'}) {
-        $robot = Sympa::VirtualHost::clean_robot($context->{'robot_domain'});
+        $robot = $context->{'robot_domain'};
+        croak "missing 'robot' parameter" unless $robot;
+        croak "invalid 'robot' parameter" unless
+            (blessed $robot and $robot->isa('Sympa::VirtualHost'));
     }
 
     my $pinfo;
@@ -1497,7 +1500,10 @@ sub _search {
     my $context     = shift;
 
     unless (ref $that and ref $that eq 'Sympa::List') {
-        $that = Sympa::VirtualHost::clean_robot($that, 1);    #FIXME: really may be Site?
+        croak "missing 'that' parameter" unless $that;
+        croak "invalid 'that' parameter" unless
+            $that eq '*' or
+            (blessed $that and $that->isa('Sympa::VirtualHost'));
     }
 
     my $sender = $context->{'sender'};
@@ -1776,8 +1782,11 @@ sub _verify_custom {
     if (ref $that and ref $that eq 'Sympa::List') {
         $robot = $that->robot;
     } else {
-        $that = Sympa::VirtualHost::clean_robot($that, 1);    #FIXME: really may be Site?
         $robot = $that;
+        croak "missing 'robot' parameter" unless $robot;
+        croak "invalid 'robot' parameter" unless
+            $robot eq '*' or
+            (blessed $robot and $robot->isa('Sympa::VirtualHost'));
     }
 
     my $timeout = 3600;

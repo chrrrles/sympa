@@ -39,11 +39,12 @@ package Sympa::Family;
 use strict;
 use base qw(Sympa::ConfigurableObject);
 
+use Carp qw(croak);
 use English qw(-no_match_vars);
-
-use XML::LibXML;
 use File::Copy;
+use Scalar::Util qw(blessed);
 use Term::ProgressBar;
+use XML::LibXML;
 
 use Sympa::Admin;
 use Sympa::Constants;
@@ -80,7 +81,11 @@ Return a list of all the robot's families names.
 =cut
 
 sub get_families {
-    my $robot = Sympa::VirtualHost::clean_robot(shift);
+    my $robot = shift;
+
+    croak "missing 'robot' parameter" unless $robot;
+    croak "invalid 'robot' parameter" unless
+        (blessed $robot and $robot->isa('Sympa::VirtualHost'));
 
     my @families;
 
@@ -148,7 +153,10 @@ sub new {
 
     my $class = shift;
     my $name  = shift;
-    my $robot = Sympa::VirtualHost::clean_robot(shift);
+    my $robot = shift;
+    croak "missing 'robot' parameter" unless $robot;
+    croak "invalid 'robot' parameter" unless
+        (blessed $robot and $robot->isa('Sympa::VirtualHost'));
 
     my $self = {};
 

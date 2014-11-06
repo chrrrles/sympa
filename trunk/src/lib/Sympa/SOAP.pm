@@ -25,8 +25,10 @@ package Sympa::SOAP;
 
 use strict;
 
+use Carp;
 use HTTP::Cookies;
 use SOAP::Lite;
+use Scalar::Util qw(blessed);
 
 use Sympa::Auth;
 use Sympa::List;
@@ -1854,7 +1856,11 @@ sub struct_to_soap {
 
 sub get_reason_string {
     my $reason = shift;
-    my $robot  = Sympa::VirtualHost::clean_robot(shift);
+    my $robot  = shift;
+
+    croak "missing 'robot' parameter" unless $robot;
+    croak "invalid 'robot' parameter" unless
+        (blessed $robot and $robot->isa('Sympa::VirtualHost'));
 
     my $data = {'reason' => $reason};
     my $string;

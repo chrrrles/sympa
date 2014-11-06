@@ -43,6 +43,7 @@ use Carp qw(carp croak);
 use English qw(-no_match_vars);
 use IO::Handle;
 use POSIX qw();
+use Scalar::Util qw(blessed);
 
 use Sympa::Constants;
 use Sympa::Logger;
@@ -358,7 +359,12 @@ sub forward_message {
     my $message = $params{'message'};
     my $from    = $params{'from'};
     my $rcpt    = $params{'rctp'};
-    my $robot   = Sympa::VirtualHost::clean_robot($params{'robot'}, 1);    #FIXME: may be Site?
+    my $robot   = $params{'robot'};
+
+    croak "missing 'robot' parameter" unless $robot;
+    croak "invalid 'robot' parameter" unless
+        $robot eq '*' or
+        (blessed $robot and $robot->isa('Sympa::VirtualHost'));
 
     unless (ref $message and $message->isa('Sympa::Message')) {
         $main::logger->do_log(Sympa::Logger::ERR, 'Unexpected parameter type: %s',
@@ -480,12 +486,11 @@ sub send_message {
     my $message     = $params{'message'};
     my $rcpt        = $params{'rcpt'};
     my $from        = $params{'from'};
-    my $robot       = Sympa::VirtualHost::clean_robot($params{'robot'}, 1);   # May be Site
+    my $robot       = $params{'robot'};
     my $listname    = $params{'listname'};
     my $sign_mode   = $params{'sign_mode'};
     my $sympa_email = $params{'sympa_email'};
     my $priority_message = $params{'priority'};
-    my $priority_packet  = $robot->sympa_packet_priority;
     my $delivery_date    = $params{'delivery_date'};
     $delivery_date = time() unless ($delivery_date);
     my $verp        = $params{'verp'};
@@ -493,8 +498,15 @@ sub send_message {
     my $use_bulk    = $params{'use_bulk'};
     my $dkim        = $params{'dkim'};
     my $tag_as_last = $params{'tag_as_last'};
+
+    croak "missing 'robot' parameter" unless $robot;
+    croak "invalid 'robot' parameter" unless
+        $robot eq '*' or
+        (blessed $robot and $robot->isa('Sympa::VirtualHost'));
+
     my $sympa_file;
     my $signed_msg;    # if signing
+    my $priority_packet  = $robot->sympa_packet_priority;
 
     if ($sign_mode and $sign_mode eq 'smime') {
         $main::logger->do_log(Sympa::Logger::DEBUG2, 'Will sign message');
@@ -615,9 +627,14 @@ sub get_sendmail_handle {
 
     my $from      = $params{from};
     my $rcpt      = $params{rcpt};
-    my $robot     = Sympa::VirtualHost::clean_robot($params{robot}, 1);
+    my $robot     = $params{robot};
     my $msgkey    = $params{msgkey};
     my $sign_mode = $params{sign_mode};
+
+    croak "missing 'robot' parameter" unless $robot;
+    croak "invalid 'robot' parameter" unless
+        $robot eq '*' or
+        (blessed $robot and $robot->isa('Sympa::VirtualHost'));
 
     unless ($from) {
         $main::logger->do_log(Sympa::Logger::ERR,

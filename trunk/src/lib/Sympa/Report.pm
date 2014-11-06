@@ -37,6 +37,9 @@ package Sympa::Report;
 
 use strict;
 
+use Carp qw(croak);
+use Scalar::Util qw(blessed);
+
 use Sympa::Logger;
 use Sympa::VirtualHost;
 
@@ -89,7 +92,10 @@ sub reject_report_msg {
     if (ref $list and ref $list eq 'Sympa::List') {
         $robot = $list->robot;
     } else {
-        $robot = Sympa::VirtualHost::clean_robot($robot, 1);    #FIXME: really may be Site?
+        croak "missing 'robot' parameter" unless $robot;
+        croak "invalid 'robot' parameter" unless
+            $robot eq '*' or
+            (blessed $robot and $robot->isa('Sympa::VirtualHost'));
     }
     unless ($robot) {
         $main::logger->do_log(Sympa::Logger::ERR,
@@ -215,7 +221,10 @@ sub notice_report_msg {
     if (ref $list and ref $list eq 'Sympa::List') {
         $robot = $list->robot;
     } else {
-        $robot = Sympa::VirtualHost::clean_robot($robot, 1);    #FIXME: really may be Site?
+        croak "missing 'robot' parameter" unless $robot;
+        croak "invalid 'robot' parameter" unless
+            $robot eq '*' or
+            (blessed $robot and $robot->isa('Sympa::VirtualHost'));
     }
     unless ($robot) {
         $main::logger->do_log(Sympa::Logger::ERR,
@@ -492,7 +501,11 @@ sub reject_report_cmd {
     }
 
     if ($type eq 'intern') {
-        $robot = Sympa::VirtualHost::clean_robot($robot, 1);    # Site or Robot
+        croak "missing 'robot' parameter" unless $robot;
+        croak "invalid 'robot' parameter" unless
+            $robot eq '*' or
+            (blessed $robot and $robot->isa('Sympa::VirtualHost'));
+
         if ($robot) {
             my $listname;
             if (defined $data->{'listname'}) {

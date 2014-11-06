@@ -39,8 +39,10 @@ use strict;
 use warnings;
 use constant MAX => 100_000;
 
+use Carp qw(croak);
 use Digest::MD5;
 use English qw(-no_match_vars);
+use Scalar::Util qw(blessed);
 use Sys::Hostname;
 
 use Sympa::DatabaseManager;
@@ -228,13 +230,19 @@ sub store {
     my $msg_id   = $message->get_header('Message-Id');
     my $rcpts    = $data{'rcpts'};
     my $from     = $data{'from'};
-    my $robot    = Sympa::VirtualHost::clean_robot($data{'robot'}, 1);  # maybe Site
+    my $robot    = $data{'robot'};
     my $listname = $data{'listname'};
     my $priority_message = $data{'priority_message'};
     my $priority_packet  = $data{'priority_packet'};
     my $delivery_date    = $data{'delivery_date'};
     my $verp             = $data{'verp'};
     my $tracking         = $data{'tracking'};
+
+    croak "missing 'robot' parameter" unless $robot;
+    croak "invalid 'robot' parameter" unless
+        $robot eq '*' or
+        (blessed $robot and $robot->isa('Sympa::VirtualHost'));
+
     $tracking = '' unless (($tracking eq 'dsn') || ($tracking eq 'mdn'));
     $verp = 0 unless ($verp);
     my $merge = $data{'merge'};
