@@ -37,13 +37,14 @@ package Sympa::Auth;
 
 use strict;
 
+use Carp qw(croak);
 use Digest::MD5;
 use POSIX qw();
+use Scalar::Util qw(blessed);
 
 use Sympa::DatabaseManager;
 use Sympa::Logger;
 use Sympa::Report;
-use Sympa::VirtualHost;
 use Sympa::Session;
 use Sympa::Site;
 use Sympa::Tools;
@@ -67,9 +68,13 @@ sub password_fingerprint {
 ## authentication : via email or uid
 sub check_auth {
     $main::logger->do_log(Sympa::Logger::DEBUG2, '(%s, %s, ...)', @_);
-    my $robot = Sympa::VirtualHost::clean_robot(shift);
+    my $robot = shift;
     my $auth  = shift;                       ## User email or UID
     my $pwd   = shift;                       ## Password
+
+    croak "missing 'robot' parameter" unless $robot;
+    croak "invalid 'robot' parameter" unless
+        (blessed $robot and $robot->isa('Sympa::VirtualHost'));
 
     my ($canonic, $user);
 
@@ -113,8 +118,12 @@ sub check_auth {
 ## IN : robot, user email
 ## OUT : boolean
 sub may_use_sympa_native_auth {
-    my $robot      = Sympa::VirtualHost::clean_robot(shift);
+    my $robot      = shift;
     my $user_email = shift;
+
+    croak "missing 'robot' parameter" unless $robot;
+    croak "invalid 'robot' parameter" unless
+        (blessed $robot and $robot->isa('Sympa::VirtualHost'));
 
     my $ok = 0;
     ## check each auth.conf paragrpah
@@ -137,9 +146,14 @@ sub may_use_sympa_native_auth {
 
 sub authentication {
     $main::logger->do_log(Sympa::Logger::DEBUG2, '(%s, %s, ...)', @_);
-    my $robot = Sympa::VirtualHost::clean_robot(shift);
+    my $robot = shift;
     my $email = shift;
     my $pwd   = shift;
+
+    croak "missing 'robot' parameter" unless $robot;
+    croak "invalid 'robot' parameter" unless
+        (blessed $robot and $robot->isa('Sympa::VirtualHost'));
+
     my ($user, $canonic);
 
     unless ($user = Sympa::User::get_global_user($email, Sympa::Site->db_additional_user_fields)) {
@@ -217,11 +231,16 @@ sub authentication {
 
 sub ldap_authentication {
     $main::logger->do_log(Sympa::Logger::DEBUG2, '(%s, %s, %s, ...)', @_);
-    my $robot       = Sympa::VirtualHost::clean_robot(shift);
+    my $robot       = shift;
     my $ldap        = shift;
     my $auth        = shift;
     my $pwd         = shift;
     my $whichfilter = shift;
+
+    croak "missing 'robot' parameter" unless $robot;
+    croak "invalid 'robot' parameter" unless
+        (blessed $robot and $robot->isa('Sympa::VirtualHost'));
+
     my ($mesg, $ldap_passwd, $ldap_anonymous);
 
     unless ($robot->get_etc_filename('auth.conf')) {
@@ -360,11 +379,15 @@ sub ldap_authentication {
 # fetch user email using his cas net_id and the paragrapah number in auth.conf
 ## NOTE: This might be moved to Robot package.
 sub get_email_by_net_id {
-    my $robot      = Sympa::VirtualHost::clean_robot(shift);
+    my $robot      = shift;
     my $auth_id    = shift;
     my $attributes = shift;
     $main::logger->do_log(Sympa::Logger::DEBUG2, '(%s, %s, uid=%s)',
         $robot, $auth_id, $attributes->{'uid'});
+
+    croak "missing 'robot' parameter" unless $robot;
+    croak "invalid 'robot' parameter" unless
+        (blessed $robot and $robot->isa('Sympa::VirtualHost'));
 
     if (defined Sympa::Site->auth_services->{$robot->domain}[$auth_id]
         {'internal_email_by_netid'}) {
@@ -428,9 +451,13 @@ sub get_email_by_net_id {
 sub remote_app_check_password {
     my $trusted_application_name = shift;
     my $password                 = shift;
-    my $robot                    = Sympa::VirtualHost::clean_robot(shift);
+    my $robot                    = shift;
     $main::logger->do_log(Sympa::Logger::DEBUG2, '(%s, ..., %s)',
         $trusted_application_name, $robot);
+
+    croak "missing 'robot' parameter" unless $robot;
+    croak "invalid 'robot' parameter" unless
+        (blessed $robot and $robot->isa('Sympa::VirtualHost'));
 
     my $md5 = Digest::MD5::md5_hex($password);
 
@@ -473,10 +500,14 @@ sub remote_app_check_password {
 sub create_one_time_ticket {
     $main::logger->do_log(Sympa::Logger::DEBUG2, '(%s, %s, %s, %s)', @_);
     my $email       = shift;
-    my $robot       = Sympa::VirtualHost::clean_robot(shift);
+    my $robot       = shift;
     my $data_string = shift;
     my $remote_addr = shift;
     ## Value may be 'mail' if the IP address is not known
+
+    croak "missing 'robot' parameter" unless $robot;
+    croak "invalid 'robot' parameter" unless
+        (blessed $robot and $robot->isa('Sympa::VirtualHost'));
 
     my $ticket = Sympa::Session::get_random();
 

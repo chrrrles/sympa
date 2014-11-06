@@ -587,7 +587,10 @@ sub new {
             $robot = search_list_among_robots($name);
         }
         if ($robot) {
-            $robot = Sympa::VirtualHost::clean_robot($robot, 1);    # May be Site
+            croak "missing 'robot' parameter" unless $robot;
+            croak "invalid 'robot' parameter" unless
+                $robot eq '*' or
+                (blessed $robot and $robot->isa('Sympa::VirtualHost'));
         }
 
         unless ($robot) {
@@ -622,7 +625,9 @@ sub new {
             }
         }
     } else {
-        $robot = Sympa::VirtualHost::clean_robot($robot);
+        croak "missing 'robot' parameter" unless $robot;
+        croak "invalid 'robot' parameter" unless
+            (blessed $robot and $robot->isa('Sympa::VirtualHost'));
     }
 
     my $status;
@@ -988,7 +993,9 @@ sub load {
         $robot = search_list_among_robots($name);
     }
 
-    $robot = Sympa::VirtualHost::clean_robot($robot);
+    croak "missing 'robot' parameter" unless $robot;
+    croak "invalid 'robot' parameter" unless
+        (blessed $robot and $robot->isa('Sympa::VirtualHost'));
     unless (ref $robot) {
         $main::logger->do_log(Sympa::Logger::ERR, 'Unknown robot');
         return undef;
@@ -8435,7 +8442,10 @@ sub get_lists {
         @robots      = ($that->robot);
         $family_name = $that->name;
     } else {
-        $that = Sympa::VirtualHost::clean_robot($that, 1);
+        croak "missing 'that' parameter" unless $that;
+        croak "invalid 'robot' parameter" unless
+            $that eq '*' or
+            (blessed $that and $that->isa('Sympa::VirtualHost'));
         if (ref $that and ref $that eq 'Sympa::VirtualHost') {
             @robots = ($that);
         } elsif ($that eq 'Site') {
@@ -8991,8 +9001,12 @@ function to any list in ROBOT.
 sub get_which {
     $main::logger->do_log(Sympa::Logger::DEBUG2, '(%s, %s, %s)', @_);
     my $email = Sympa::Tools::clean_email(shift);
-    my $robot = Sympa::VirtualHost::clean_robot(shift);
+    my $robot = shift;
     my $role  = shift;
+
+    croak "missing 'robot' parameter" unless $robot;
+    croak "invalid 'robot' parameter" unless
+        (blessed $robot and $robot->isa('Sympa::VirtualHost'));
 
     unless ($role eq 'member' or $role eq 'owner' or $role eq 'editor') {
         $main::logger->do_log(Sympa::Logger::ERR,
@@ -9174,7 +9188,10 @@ sub lowercase_field {
 ## Loads the list of topics if updated
 ## OBSOLETED: Use $robot->topics().
 sub load_topics {
-    my $robot = Sympa::VirtualHost::clean_robot(shift);
+    my $robot = shift;
+    croak "missing 'robot' parameter" unless $robot;
+    croak "invalid 'robot' parameter" unless
+        (blessed $robot and $robot->isa('Sympa::VirtualHost'));
     return %{$robot->topics || {}};
 }
 

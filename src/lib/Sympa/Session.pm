@@ -37,7 +37,9 @@ package Sympa::Session;
 
 use strict;
 
+use Carp qw(croak);
 use CGI::Cookie;
+use Scalar::Util qw(blessed);
 
 use Sympa::DatabaseManager;
 use Sympa::Language;
@@ -47,7 +49,6 @@ use Sympa::Tools;
 use Sympa::Tools::Data;
 use Sympa::Tools::Password;
 use Sympa::Tools::Time;
-use Sympa::VirtualHost;
 
 # this structure is used to define which session attributes are stored in a
 # dedicated database col where others are compiled in col 'data_session'
@@ -94,13 +95,18 @@ Returns a new L<Sympa::Session> object, or I<undef> for failure.
 
 sub new {
     my ($class, %params) = @_;
-    my $robot   = Sympa::VirtualHost::clean_robot($params{'robot'}, 1);   #FIXME: maybe a Site object?
+    my $robot   = $params{'robot'};
     my $cookie  = $params{'cookie'};
     my $refresh = $params{'refresh'} || 0;
     my $action  = $params{'action'};
     my $rss     = $params{'rss'};
     $main::logger->do_log(Sympa::Logger::DEBUG2, '(%s, cookie=%s, action=%s)',
         $robot, $cookie, $action);
+
+    croak "missing 'robot' parameter" unless $robot;
+    croak "invalid 'robot' parameter" unless
+        $robot eq '*' or
+        (blessed $robot and $robot->isa('Sympa::VirtualHost'));
 
     my $self = {'robot' => $robot};
     bless $self, $class;
@@ -505,7 +511,12 @@ sub renew {
 ## delay is a parameter in seconds
 sub purge_old_sessions {
     $main::logger->do_log(Sympa::Logger::DEBUG2, '(%s)', @_);
-    my $robot = Sympa::VirtualHost::clean_robot(shift, 1);
+    my ($robot) = @_;
+
+    croak "missing 'robot' parameter" unless $robot;
+    croak "invalid 'robot' parameter" unless
+        $robot eq '*' or
+        (blessed $robot and $robot->isa('Sympa::VirtualHost'));
 
     my $delay = Sympa::Tools::Time::duration_conv(Sympa::Site->session_table_ttl);
     my $anonymous_delay =
@@ -591,7 +602,12 @@ sub purge_old_sessions {
 ##
 sub purge_old_tickets {
     $main::logger->do_log(Sympa::Logger::DEBUG2, '(%s)', @_);
-    my $robot = Sympa::VirtualHost::clean_robot(shift, 1);
+    my ($robot) = @_;
+
+    croak "missing 'robot' parameter" unless $robot;
+    croak "invalid 'robot' parameter" unless
+        $robot eq '*' or
+        (blessed $robot and $robot->isa('Sympa::VirtualHost'));
 
     my $delay = Sympa::Tools::Time::duration_conv(Sympa::Site->one_time_ticket_table_ttl);
     unless ($delay) {
@@ -642,7 +658,7 @@ sub purge_old_tickets {
 sub list_sessions {
     $main::logger->do_log(Sympa::Logger::DEBUG2, '(%s, %s, %s)', @_);
     my $delay          = shift;
-    my $robot          = Sympa::VirtualHost::clean_robot(shift, 1);
+    my $robot          = shift;
     my $connected_only = shift;
 
     my @sessions;

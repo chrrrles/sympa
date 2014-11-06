@@ -37,8 +37,10 @@ package Sympa::Admin;
 
 use strict;
 
+use Carp qw(croak);
 use English qw(-no_match_vars);
 use File::Copy;
+use Scalar::Util qw(blessed);
 
 use Sympa::Conf;
 use Sympa::Constants;
@@ -136,7 +138,9 @@ sub create_list_old {
     $main::logger->do_log(Sympa::Logger::DEBUG2, '(%s, %s, %s, %s, %s)', @_);
     my ($param, $template, $robot, $origin, $user_mail) = @_;
 
-    $robot = Sympa::VirtualHost::clean_robot($robot);
+    croak "missing 'robot' parameter" unless $robot;
+    croak "invalid 'robot' parameter" unless
+        (blessed $robot and $robot->isa('Sympa::VirtualHost'));
     my $robot_id = $robot->name;
 
     ## obligatory list parameters
@@ -1334,7 +1338,11 @@ sub check_owner_defined {
 sub list_check_smtp {
     $main::logger->do_log(Sympa::Logger::DEBUG2, '(%s, %s)', @_);
     my $list  = shift;
-    my $robot = Sympa::VirtualHost::clean_robot(shift);
+    my $robot = shift;
+
+    croak "missing 'robot' parameter" unless $robot;
+    croak "invalid 'robot' parameter" unless
+        (blessed $robot and $robot->isa('Sympa::VirtualHost'));
 
     my $conf = '';
     my $smtp;
@@ -1548,7 +1556,12 @@ EOF
 ##OBSOLETED: Use $robot->is_available_topic().
 sub check_topics {
     my $topic = shift;
-    my $robot = Sympa::VirtualHost::clean_robot(shift);
+    my $robot = shift;
+
+    croak "missing 'robot' parameter" unless $robot;
+    croak "invalid 'robot' parameter" unless
+        (blessed $robot and $robot->isa('Sympa::VirtualHost'));
+
     return $robot->is_available_topic($topic);
 }
 
@@ -1574,7 +1587,10 @@ sub change_user_email {
         return undef;
     }
 
-    my $robot = Sympa::VirtualHost::clean_robot($in{'robot'});
+    my $robot = $in{'robot'};
+    croak "missing 'robot' parameter" unless $robot;
+    croak "invalid 'robot' parameter" unless
+        (blessed $robot and $robot->isa('Sympa::VirtualHost'));
 
     ## Change email as list MEMBER
     foreach my $list (

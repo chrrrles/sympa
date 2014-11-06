@@ -862,43 +862,6 @@ In scalar context, returns arrayref to them.
 
 =over 4
 
-=item clean_robot ( ROBOT_OR_NAME )
-
-I<Function>.
-Warns if the argument is not a Robot object.
-Returns a Robot object, if any.
-
-I<TENTATIVE>.
-This function will be used during transition between old and object-oriented
-styles.  At last modifications have been done, this shall be removed.
-
-=cut
-
-sub clean_robot {
-    my $robot      = shift;
-    my $maybe_site = shift;
-
-    # $main::logger->do_log(Sympa::Logger::DEBUG3, 'robot "%s", maybe_site "%s"',
-    # $robot, $maybe_site);
-    unless (ref $robot
-        or ($maybe_site and !ref $robot and $robot eq 'Site')) {
-        my $level = $Carp::CarpLevel;
-        $Carp::CarpLevel = 1;
-        carp "Deprecated usage: \"$robot\" should be a Robot object"
-            . ($maybe_site ? ' or Site class' : '');
-        $Carp::CarpLevel = $level;
-
-        if ($robot and $robot eq '*' and $maybe_site) {
-            $robot = 'Site';
-        } elsif ($robot and $robot ne '*') {
-            $robot = Sympa::VirtualHost->new($robot);
-        } else {
-            croak "Illegal robot argument: " . ($robot || '');
-        }
-    }
-    $robot;
-}
-
 =item get_robots ( OPT => VALUE, ... )
 
 I<Function>.

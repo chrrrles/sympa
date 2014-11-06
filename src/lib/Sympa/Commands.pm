@@ -38,7 +38,8 @@ package Sympa::Commands;
 use strict;
 use warnings;
 
-use Carp qw(carp);
+use Carp qw(croak);
+use Scalar::Util qw(blessed);
 
 use Sympa::List;
 use Sympa::Logger;
@@ -105,10 +106,14 @@ my $quiet;
 sub parse {
     $main::logger->do_log(Sympa::Logger::DEBUG2, '(%s, %s, %s, %s, %s)', @_);
     $sender = lc(shift);
-    my $robot    = Sympa::VirtualHost::clean_robot(shift);
+    my $robot    = shift;
     my $i        = shift;
     my $sign_mod = shift;
     my $message  = shift;
+
+    croak "missing 'robot' parameter" unless $robot;
+    croak "invalid 'robot' parameter" unless
+        (blessed $robot and $robot->isa('Sympa::VirtualHost'));
 
     my $j;
 
