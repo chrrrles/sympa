@@ -13224,15 +13224,15 @@ sub _prepare_data {
             $p_glob->{'type'} = 'scenario';
             my $list_of_scenario;
 
-            my $tmp_list_of_scenario =
+            my @scenarios =
                 $list->load_scenario_list($struct->{'scenario'});
 
             ## Only get required scenario attributes
-            foreach my $scenario (keys %{$tmp_list_of_scenario}) {
-                $list_of_scenario->{$scenario} = {
-                    'name'      => $tmp_list_of_scenario->{$scenario}{'name'},
-                    'web_title' => $tmp_list_of_scenario->{$scenario}
-                        ->get_current_title()
+            foreach my $scenario (@scenarios) {
+                my $name  = $scenario->{name};
+                $list_of_scenario->{$scenario->{name}} = {
+                    'name'      => $scenario->{name},
+                    'web_title' => $scenario->get_current_title()
                 };
             }
 
@@ -20272,29 +20272,28 @@ sub do_d_control {
 
     my $lang = $param->{'lang'};
 
+    my @scenarios;
     ## Scenario list for READ
-    my $tmp_list_of_scenario = $list->load_scenario_list('d_read');
+    @scenarios = $list->load_scenario_list('d_read');
 
     ## Only get required scenario attributes
-    foreach my $scenario (keys %{$tmp_list_of_scenario}) {
-        $param->{'scenari_read'}{$scenario} = {
-            'name' => $tmp_list_of_scenario->{$scenario}{'name'},
-            'web_title' =>
-                $tmp_list_of_scenario->{$scenario}->get_current_title()
+    foreach my $scenario (@scenarios) {
+        $param->{'scenari_read'}{$scenario->{name}} = {
+            'name'      => $scenario->{name},
+            'web_title' => $scenario->get_current_title()
         };
     }
 
     $param->{'scenari_read'}{$read}{'selected'} = 'selected="selected"';
 
     ## Scenario list for EDIT
-    $tmp_list_of_scenario = $list->load_scenario_list('d_edit');
+    @scenarios = $list->load_scenario_list('d_edit');
 
     ## Only get required scenario attributes
-    foreach my $scenario (keys %{$tmp_list_of_scenario}) {
-        $param->{'scenari_edit'}{$scenario} = {
-            'name' => $tmp_list_of_scenario->{$scenario}{'name'},
-            'web_title' =>
-                $tmp_list_of_scenario->{$scenario}->get_current_title()
+    foreach my $scenario (@scenarios) {
+        $param->{'scenari_edit'}{$scenario->{name}} = {
+            'name'      => $scenario->{'name'},
+            'web_title' => $scenario->get_current_title()
         };
     }
     $param->{'scenari_edit'}{$edit}{'selected'} = 'selected="selected"';
