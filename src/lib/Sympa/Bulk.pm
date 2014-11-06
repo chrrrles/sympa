@@ -48,7 +48,6 @@ use Sys::Hostname;
 use Sympa::DatabaseManager;
 use Sympa::Logger;
 use Sympa::Monitor;
-use Sympa::VirtualHost;
 use Sympa::Spool::SQL;
 use Sympa::Tools::Daemon;
 
@@ -184,6 +183,7 @@ sub next {
     my $robot;
 
     if ($robot_id and $robot_id ne '*') {
+        require Sympa::VirtualHost;
         $robot = Sympa::VirtualHost->new($robot_id);
     }
     if ($robot) {
