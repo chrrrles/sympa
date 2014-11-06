@@ -435,6 +435,7 @@ sub update_robot {
 
     $self->change_robotname($new_robotname);
 
+    require Sympa::VirtualHost;
     my $robot = Sympa::VirtualHost->new($self->{'robotname'});
     unless ($robot) {
         $main::logger->do_log(Sympa::Logger::ERR,
