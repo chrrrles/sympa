@@ -26,7 +26,7 @@ package Sympa::DatabaseDriver;
 use strict;
 use base qw(Sympa::Datasource::SQL);
 
-use Carp;
+use Carp qw(croak);
 
 use Sympa::Logger;
 

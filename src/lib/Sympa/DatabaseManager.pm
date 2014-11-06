@@ -39,7 +39,7 @@ use strict;
 
 use English qw(-no_match_vars);
 
-use Carp;
+use Carp qw(croak);
 
 use Sympa::Conf;
 use Sympa::Constants;

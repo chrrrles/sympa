@@ -49,7 +49,7 @@ use strict;
 use warnings;
 use base qw(Sympa::ConfigurableObject);
 
-use Carp qw(carp croak);
+use Carp qw(croak);
 
 use Sympa::Language;
 use Sympa::ListDef;

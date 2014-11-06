@@ -26,7 +26,7 @@ package Sympa::Datasource::SQL;
 use strict;
 use base qw(Sympa::Datasource);
 
-use Carp;
+use Carp qw(croak);
 use English qw(-no_match_vars);
 
 use Sympa::Logger;

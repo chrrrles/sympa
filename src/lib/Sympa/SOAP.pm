@@ -25,7 +25,7 @@ package Sympa::SOAP;
 
 use strict;
 
-use Carp;
+use Carp qw(croak);
 use HTTP::Cookies;
 use SOAP::Lite;
 use Scalar::Util qw(blessed);

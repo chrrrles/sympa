@@ -37,7 +37,7 @@ package Sympa::Datasource;
 
 use strict;
 
-use Carp;
+use Carp qw(croak);
 use Digest::MD5;
 
 use Sympa::Logger;

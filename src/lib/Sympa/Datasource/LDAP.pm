@@ -26,7 +26,7 @@ package Sympa::Datasource::LDAP;
 use strict;
 use base qw(Sympa::Datasource);
 
-use Carp;
+use Carp qw(croak);
 use Net::LDAP;
 
 use Sympa::Logger;

@@ -18,7 +18,7 @@ package Sympa::Marc;
 
 use strict;
 
-use Carp;
+use Carp qw(croak);
 
 use Sympa::Logger;
 
