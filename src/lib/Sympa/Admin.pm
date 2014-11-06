@@ -1544,27 +1544,6 @@ EOF
     return 1;
 }
 
-#####################################################
-# check_topics
-#####################################################
-# Check $topic in the $robot conf
-#
-# IN  : - $topic : id of the topic
-#       - $robot : the list's robot
-# OUT : - 1 if the topic is in the robot conf or undef
-#####################################################
-##OBSOLETED: Use $robot->is_available_topic().
-sub check_topics {
-    my $topic = shift;
-    my $robot = shift;
-
-    croak "missing 'robot' parameter" unless $robot;
-    croak "invalid 'robot' parameter" unless
-        (blessed $robot and $robot->isa('Sympa::VirtualHost'));
-
-    return $robot->is_available_topic($topic);
-}
-
 # change a user email address for both his memberships and ownerships
 #
 # IN  : - current_email : current user email address

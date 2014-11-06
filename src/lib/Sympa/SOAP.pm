@@ -109,7 +109,7 @@ sub lists {
         next unless ($action eq 'do_it');
 
         ##building result packet
-        $result_item->{'listAddress'} = $list->get_list_address();
+        $result_item->{'listAddress'} = $list->get_address();
         $result_item->{'subject'}     = $list->subject;
         $result_item->{'subject'} =~ s/;/,/g;
         $result_item->{'homepage'} =
@@ -535,7 +535,7 @@ sub info {
 
         $result_item->{'listAddress'} =
             SOAP::Data->name('listAddress')->type('string')
-            ->value($list->get_list_address());
+            ->value($list->get_address());
         $result_item->{'subject'} =
             SOAP::Data->name('subject')->type('string')
             ->value($list->subject);
@@ -1765,7 +1765,7 @@ sub which {
         $action = $result->{'action'} if (ref($result) eq 'HASH');
         next unless ($action =~ /do_it/i);
 
-        $result_item->{'listAddress'} = $list->get_list_address();
+        $result_item->{'listAddress'} = $list->get_address();
         $result_item->{'subject'}     = $list->subject;
         $result_item->{'subject'} =~ s/;/,/g;
         $result_item->{'homepage'} =

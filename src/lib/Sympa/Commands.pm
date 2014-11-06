@@ -3196,7 +3196,7 @@ sub reject {
         'REJECT %s %s from %s accepted (%d seconds)',
         $name, $sender, $key, time - $time_command);
     Sympa::Tools::File::remove_dir(
-        Sympa::Site->viewmail_dir . '/mod/' . $list->get_list_id() . '/' . $key);
+        Sympa::Site->viewmail_dir . '/mod/' . $list->get_id() . '/' . $key);
 
     $modspool->remove({'list' => $list, 'authkey' => $key});
 
