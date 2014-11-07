@@ -78,8 +78,6 @@ B<sympa_manager.pl> B<--rename_list>=I<list[@robot]>
 
 B<sympa_manager.pl> B<--sync_include=>I<list[@robot]>
 
-B<sympa_manager.pl> B<--test_database_message_buffer>
-
 B<sympa_manager.pl> B<--upgrade> [B<--from>=I<X>] [B<--to>=I<Y>]
 
 B<sympa_manager.pl> B<--upgrade_shared> [B<--list>=I<X>] [B<--robot>=I<Y>]
@@ -210,10 +208,6 @@ Renames a list or move it to another virtual robot.
 
 Trigger the list members update.
 
-=item B<--test_database_message_buffer>
-
-Test the database message buffer size.
-
 =item B<--upgrade> [B<--from>=I<X>] [B<--to>=I<Y>]
 
 Runs Sympa maintenance script to upgrade from version I<X> to version I<Y>.
@@ -241,7 +235,6 @@ use lib '--modulesdir--';
 use English qw(-no_match_vars);
 use Getopt::Long;
 use Pod::Usage;
-use Term::ProgressBar;
 
 use Sympa::Admin;
 use Sympa::Conf;
@@ -255,7 +248,6 @@ use Sympa::Logger;
 use Sympa::Logger::Stderr;
 use Sympa::VirtualHost;
 use Sympa::Site;
-use Sympa::Spool::SQL;
 use Sympa::Tools;
 use Sympa::Tools::Daemon;
 use Sympa::Upgrade;
@@ -297,7 +289,6 @@ unless (
         'rename_list=s',
         'robot=s',
         'sync_include=s',
-        'test_database_message_buffer',
         'upgrade',
         'upgrade_shared',
     )
@@ -337,8 +328,6 @@ if ($options{'help'}) {
     purge_list();
 } elsif ($options{'rename_list'}) {
     rename_list();
-} elsif ($options{'test_database_message_buffer'}) {
-    test_database_message_buffer();
 } elsif ($options{'conf_2_db'}) {
     conf_2_db();
 } elsif ($options{'create_list'}) {
@@ -684,88 +673,6 @@ sub rename_list {
     printf STDOUT "List %s has been renamed to %s\@%s\n",
         $options{'rename_list'}, $options{'new_listname'},
         $options{'new_listrobot'};
-}
-
-# test the maximal message size the database will accept
-sub test_database_message_buffer {
-    print
-        "Sympa is going to store messages bigger and bigger to test the limit with its database. This may be very long \n";
-    ## will test message until a 21 Mo message.
-
-    my $value_test     = 21000;
-    my $divider        = 100;
-    my $steps          = 50;
-    my $maxtest        = $value_test / $divider;
-    my $size_increment = $divider * $maxtest / $steps;
-    my $barmax         = $size_increment * $steps * ($steps + 1) / 2;
-    my $even_part      = $barmax / $steps;
-
-    print "maxtest: $maxtest\n";
-    print "barmax: $barmax\n";
-    my $progress = Term::ProgressBar->new(
-        {   name  => 'Total size transfered',
-            count => $barmax,
-            ETA   => 'linear',
-        }
-    );
-
-    my $testing = Sympa::Spool::SQL->new(name => 'msg', status => 'bad');
-
-    my $msg = <<'EOF';
-From: justeatester@host.notadomain
-Message-Id:yep@host.notadomain
-Subject: this a test
-
-EOF
-    $progress->max_update_rate(1);
-    my $next_update = 0;
-    my $total       = 0;
-
-    my $result = 0;
-
-    for (my $z = 1; $z <= $steps; $z++) {
-        for (my $i = 1; $i <= 1024 * $size_increment; $i++) {
-            $msg .= 'a';
-        }
-        my $time = time();
-        $progress->message(
-            sprintf
-                "Test storing and removing of a %5d kB message (step %s out of %s)",
-            $z * $size_increment,
-            $z, $steps
-        );
-
-        #
-        my $messagekey;
-        unless (
-            $messagekey = $testing->store(
-                $msg, {'list' => 'notalist', 'robot' => 'notaboot'}
-            )
-            ) {
-            return (($z - 1) * $size_increment);
-        }
-        $testing->remove({'messagekey' => $messagekey});
-        $total += $z * $size_increment;
-        $progress->message(sprintf ".........[OK. Done in %.2f sec]",
-            time() - $time);
-        $next_update = $progress->update($total + $even_part)
-            if $total > $next_update && $total < $barmax;
-        $result = $z * $size_increment;
-    }
-    $progress->update($barmax)
-        if $barmax >= $next_update;
-
-    my $size = $result;
-
-    if ($size == 21000) {
-        printf
-            "The maximum message size (%d Ko) testing was successful \n",
-            $size;
-    } else {
-        printf
-            "maximum message size that can be stored in database : %d Ko\n",
-            $size;
-    }
 }
 
 sub conf_2_db {
