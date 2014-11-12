@@ -512,10 +512,8 @@ sub purge_old_sessions {
     $main::logger->do_log(Sympa::Logger::DEBUG2, '(%s)', @_);
     my ($robot, $delay, $anonymous_delay) = @_;
 
-    croak "missing 'robot' parameter" unless $robot;
-    croak "invalid 'robot' parameter" unless
-        $robot eq '*' or
-        (blessed $robot and $robot->isa('Sympa::VirtualHost'));
+    croak "invalid 'robot' parameter"
+        if $robot && !(blessed $robot and $robot->isa('Sympa::VirtualHost'));
 
     unless ($delay) {
         $main::logger->do_log(Sympa::Logger::DEBUG3, 'exit with delay null');
@@ -599,10 +597,8 @@ sub purge_old_tickets {
     $main::logger->do_log(Sympa::Logger::DEBUG2, '(%s)', @_);
     my ($robot, $delay) = @_;
 
-    croak "missing 'robot' parameter" unless $robot;
-    croak "invalid 'robot' parameter" unless
-        $robot eq '*' or
-        (blessed $robot and $robot->isa('Sympa::VirtualHost'));
+    croak "invalid 'robot' parameter"
+        if $robot && !(blessed $robot and $robot->isa('Sympa::VirtualHost'));
 
     unless ($delay) {
         $main::logger->do_log(Sympa::Logger::DEBUG3, 'exit with delay null');
