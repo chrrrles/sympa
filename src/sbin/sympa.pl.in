@@ -196,8 +196,9 @@ use Sympa::Message;
 use Sympa::Report;
 use Sympa::VirtualHost;
 use Sympa::Site;
-use Sympa::Spool::File;
+use Sympa::Spool::File::Key;
 use Sympa::Spool::File::Message;
+use Sympa::Spool::File::Subscribe;
 use Sympa::Tools;
 use Sympa::Tools::Daemon;
 use Sympa::Tools::File;
@@ -456,42 +457,42 @@ while ($signal ne 'term') {
         # Process grouped notifications
         Sympa::Site->send_notify_to_listmaster(undef, undef, 1, undef);
 
-        my $bad_msg_spool = Sympa::Spool::File->new(
+        my $bad_msg_spool = Sympa::Spool::File::Message->new(
             name      => 'msg',
             directory => Sympa::Site->queue(),
             status    => 'bad'
         );
-        my $bad_outgoing_spool = Sympa::Spool::File->new(
+        my $bad_outgoing_spool = Sympa::Spool::File::Message->new(
             name      => 'outgoing',
             directory => Sympa::Site->queueoutgoing(),
             status    => 'bad'
         );
-        my $bad_bounce_spool = Sympa::Spool::File->new(
+        my $bad_bounce_spool = Sympa::Spool::File::Message->new(
             name      => 'bounce',
             directory => Sympa::Site->queuebounce(),
             status    => 'bad'
         );
-        my $mod_spool = Sympa::Spool::File->new(
+        my $mod_spool = Sympa::Spool::File::Key->new(
             name      => 'mod',
             directory => Sympa::Site->queuemod()
         );
-        my $auth_spool = Sympa::Spool::File->new(
+        my $auth_spool = Sympa::Spool::File::Key->new(
             name      => 'auth',
             directory => Sympa::Site->queueauth()
         );
-        my $topic_spool = Sympa::Spool::File->new(
+        my $topic_spool = Sympa::Spool::File::Message->new(
             name      => 'topic',
             directory => Sympa::Site->queuetopic()
         );
-        my $subscribe_spool = Sympa::Spool::File->new(
+        my $subscribe_spool = Sympa::Spool::File::Subscribe->new(
             name      => 'subscribe',
             directory => Sympa::Site->queuesubscribe()
         );
-        my $signoff_spool = Sympa::Spool::File->new(
+        my $signoff_spool = Sympa::Spool::File::Message->new(
             name      => 'signoff',
             directory => Sympa::Site->queuesignoff()
         );
-        my $automatic_spool = Sympa::Spool::File->new(
+        my $automatic_spool = Sympa::Spool::File::Message->new(
             name      => 'automatic',
             directory => Sympa::Site->queueautomatic()
         );
@@ -2101,7 +2102,7 @@ sub DoCommand {
 sub SendDigest {
     $logger->do_log(Sympa::Logger::DEBUG2, '()');
 
-    my $digestspool = Sympa::Spool::File->new(
+    my $digestspool = Sympa::Spool::File::Message->new(
         name      => 'digest',
         directory => Sympa::Site->queuedigest()
     );
