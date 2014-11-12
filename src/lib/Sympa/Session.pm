@@ -48,7 +48,6 @@ use Sympa::Site;
 use Sympa::Tools;
 use Sympa::Tools::Data;
 use Sympa::Tools::Password;
-use Sympa::Tools::Time;
 
 # this structure is used to define which session attributes are stored in a
 # dedicated database col where others are compiled in col 'data_session'
@@ -511,16 +510,12 @@ sub renew {
 ## delay is a parameter in seconds
 sub purge_old_sessions {
     $main::logger->do_log(Sympa::Logger::DEBUG2, '(%s)', @_);
-    my ($robot) = @_;
+    my ($robot, $delay, $anonymous_delay) = @_;
 
     croak "missing 'robot' parameter" unless $robot;
     croak "invalid 'robot' parameter" unless
         $robot eq '*' or
         (blessed $robot and $robot->isa('Sympa::VirtualHost'));
-
-    my $delay = Sympa::Tools::Time::duration_conv(Sympa::Site->session_table_ttl);
-    my $anonymous_delay =
-        Sympa::Tools::Time::duration_conv(Sympa::Site->anonymous_session_table_ttl);
 
     unless ($delay) {
         $main::logger->do_log(Sympa::Logger::DEBUG3, 'exit with delay null');
@@ -602,14 +597,13 @@ sub purge_old_sessions {
 ##
 sub purge_old_tickets {
     $main::logger->do_log(Sympa::Logger::DEBUG2, '(%s)', @_);
-    my ($robot) = @_;
+    my ($robot, $delay) = @_;
 
     croak "missing 'robot' parameter" unless $robot;
     croak "invalid 'robot' parameter" unless
         $robot eq '*' or
         (blessed $robot and $robot->isa('Sympa::VirtualHost'));
 
-    my $delay = Sympa::Tools::Time::duration_conv(Sympa::Site->one_time_ticket_table_ttl);
     unless ($delay) {
         $main::logger->do_log(Sympa::Logger::DEBUG3, 'exit with delay null');
         return;
