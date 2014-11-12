@@ -38,6 +38,69 @@ package Sympa::Spool;
 use strict;
 use warnings;
 
+our %spec = (
+    archive => {
+        class     => 'Sympa::Spool::File::Message',
+        parameter => 'queuearchive'
+    },
+    auth => {
+        class     => 'Sympa::Spool::File::Key',
+        parameter => 'queueauth'
+    },
+    automatic => {
+        class     => 'Sympa::Spool::File::Message',
+        parameter => 'queueautomatic'
+    },
+    bounce => {
+        class     => 'Sympa::Spool::File::Message',
+        parameter => 'queuebounce'
+    },
+    bulk => {
+        class     => 'Sympa::Spool::File::Packet',
+        parameter => 'queuebulk'
+    },
+    digest => {
+        class     => 'Sympa::Spool::File::Message',
+        parameter => 'queuedigest'
+    },
+    expire => {
+        class     => 'Sympa::Spool::File::Message',
+        parameter => 'queueexpire'
+    },
+    mod => {
+        class     => 'Sympa::Spool::File::Key',
+        parameter => 'queuemod'
+    },
+    msg => {
+        class     => 'Sympa::Spool::File::Message',
+        parameter => 'queue'
+    },
+    outgoing => {
+        class     => 'Sympa::Spool::File::Message',
+        parameter => 'queueoutgoing'
+    },
+    signoff => {
+        class     => 'Sympa::Spool::File::Message',
+        parameter => 'queuesignoff'
+    },
+    subscribe => {
+        class     => 'Sympa::Spool::File::Subscribe',
+        parameter => 'queuesubscribe'
+    },
+    task => {
+        class     => 'Sympa::Spool::File::Task',
+        parameter => 'queuetask'
+    },
+    topic => {
+        class     => 'Sympa::Spool::File::Message',
+        parameter => 'queuetopic'
+    },
+    validated => {
+        class     => 'Sympa::Spool::File::Message',
+        parameter => 'queuevalidated'
+    },
+);
+
 =head1 INSTANCE METHODS
 
 =over
