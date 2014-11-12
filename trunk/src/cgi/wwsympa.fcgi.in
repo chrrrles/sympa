@@ -10202,8 +10202,9 @@ sub do_remove_arc {
         # Removing tracking should be done by archived.
         Sympa::Tracking::remove_message_by_id($list, $msgid);
     }
-    my $spoolarchive = Sympa::Spool::File->new(
-        name => 'outgoing', directory => Sympa::Site->queueoutgoing()
+    my $spoolarchive = Sympa::Spool::File::Outgoing->new(
+        name      => 'outgoing',
+        directory => Sympa::Site->queueoutgoing()
     );
     $spoolarchive->store($removeorder,
         {'list' => $in{'list'}, 'robot' => $robot_id});
@@ -11784,8 +11785,9 @@ sub do_resetbounce {
 sub do_rebuildarc {
     wwslog(Sympa::Logger::INFO, 'do_rebuildarc(%s, %s)', $param->{'list'}, $in{'month'});
 
-    my $spoolarchive = Sympa::Spool::File->new(
-        name => 'outgoing', directory => Sympa::Site->queueoutgoing()
+    my $spoolarchive = Sympa::Spool::File::Message->new(
+        name      => 'outgoing',
+        directory => Sympa::Site->queueoutgoing()
     );
 
     unless (
@@ -11823,8 +11825,9 @@ sub do_rebuildallarc {
 
     #FIXME: past archives should be rebuilt even if archiving is disabled.
     my $errors = 0;
-    my $spoolarchive = Sympa::Spool::File->new(
-        name => 'outgoing', directory => Sympa::Site->queueoutgoing()
+    my $spoolarchive = Sympa::Spool::File::Message->new(
+        name      => 'outgoing',
+        directory => Sympa::Site->queueoutgoing()
     );
     unless ($spoolarchive) {
         Sympa::Report::reject_report_web('intern', 'cannot fetch archive spool',

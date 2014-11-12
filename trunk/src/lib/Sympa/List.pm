@@ -64,8 +64,8 @@ use Sympa::Message;
 use Sympa::Monitor;
 use Sympa::VirtualHost; # FIXME: circular dependency
 use Sympa::Scenario; # FIXME: circular dependency
-use Sympa::Spool::File;
 use Sympa::Spool::File::Key;
+use Sympa::Spool::File::Message;
 use Sympa::Spool::File::Subscribe;
 use Sympa::Spool::File::Task;
 use Sympa::Spool::SQL;
@@ -1513,8 +1513,9 @@ sub distribute_msg {
 
         # rename update topic content id of the message
         if ($info_msg_topic) {
-            my $topicspool = Sympa::Spool::File->new(
-                name => 'topic', directory => Sympa::Site->queuetopic()
+            my $topicspool = Sympa::Spool::File::Message->new(
+                name      => 'topic',
+                directory => Sympa::Site->queuetopic()
             );
             rename(
                 "$topicspool->{'dir'}/$info_msg_topic->{'filename'}",
@@ -2504,7 +2505,8 @@ sub send_to_editor {
 
         # move message to spool  mod
         my $modspool = Sympa::Spool::File::Key->new(
-            name => 'mod', directory => Sympa::Site->queuemod()
+            name      => 'mod',
+            directory => Sympa::Site->queuemod()
         );
         $modspool->store(
             $message->to_string,    #FIXME: maybe encrypted
@@ -5292,8 +5294,9 @@ sub archive_msg {
                 'Do not archive message with no-archive flag for list %s',
                 $self);
         } else {
-            my $spoolarchive = Sympa::Spool::File->new(
-                name => 'outgoing', directory => Sympa::Site->queueoutgoing()
+            my $spoolarchive = Sympa::Spool::File::Message->new(
+                name      => 'outgoing',
+                directory => Sympa::Site->queueoutgoing()
             );
             unless (
                 $spoolarchive->store(
@@ -8993,7 +8996,8 @@ sub get_mod_spool_size {
     $main::logger->do_log(Sympa::Logger::DEBUG3, 'Sympa::List::get_mod_spool_size()');
 
     my $modspool = Sympa::Spool::File::Key->new(
-        name => 'mod', directory => Sympa::Site->queuemod()
+        name      => 'mod',
+        directory => Sympa::Site->queuemod()
     );
     return $modspool->get_count(
         selector => {
@@ -10008,8 +10012,9 @@ sub tag_topic {
 
     my $topic_item = sprintf "TOPIC   %s\n", $topic_list;
     $topic_item .= sprintf "METHOD  %s\n", $method;
-    my $topicspool = Sympa::Spool::File->new(
-        name => 'topic', directory => Sympa::Site->queuetopic()
+    my $topicspool = Sympa::Spool::File::Message->new(
+        name      => 'topic',
+        directory => Sympa::Site->queuetopic()
     );
 
     return (
@@ -10045,8 +10050,9 @@ sub load_msg_topic {
     $main::logger->do_log(Sympa::Logger::DEBUG2, '(%s, %s)', @_);
     my ($self, $msg_id, $robot) = @_;
 
-    my $topicspool = Sympa::Spool::File->new(
-        name => 'topic', directory => Sympa::Site->queuetopic()
+    my $topicspool = Sympa::Spool::File::Message->new(
+        name      => 'topic',
+        directory => Sympa::Site->queuetopic()
     );
 
     my $topics_from_spool = $topicspool->get_first_raw_entry(
