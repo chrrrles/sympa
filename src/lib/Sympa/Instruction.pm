@@ -747,7 +747,7 @@ sub _purge_session_table {
         Sympa::Tools::Time::duration_conv(Sympa::Site->anonymous_session_table_ttl);
 
     my $removed = Sympa::Session::purge_old_sessions(
-        'Site', $delay, $anonymous_delay
+        undef, $delay, $anonymous_delay
     );
     croak "Failed to remove old sessions\n" unless $removed;
 
@@ -802,7 +802,7 @@ sub _purge_one_time_ticket_table {
     my $delay = Sympa::Tools::Time::duration_conv(
         Sympa::Site->one_time_ticket_table_ttl
     );
-    my $removed = Sympa::Session::purge_old_tickets('Site', $delay);
+    my $removed = Sympa::Session::purge_old_tickets(undef, $delay);
     croak "Failed to remove old tickets\n" unless $removed;
 
     $main::logger->do_log(
