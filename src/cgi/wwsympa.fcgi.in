@@ -67,9 +67,9 @@ use Sympa::Scenario;
 use Sympa::Session;
 use Sympa::SharedDocument;
 use Sympa::Site;
-use Sympa::Spool::File;
+use Sympa::Spool;
 use Sympa::Spool::File::Message;
-use Sympa::Spool::SQL;
+use Sympa::Spool::File::Key;
 use Sympa::Template;
 use Sympa::Tools;
 use Sympa::Tools::Cookie;
@@ -9268,7 +9268,10 @@ sub do_add_frommod {
         unless ($message && $message->has_valid_sender()) {
             ## if the message has been accepted via WWSympa, it's in spool
             ## 'validated'
-            my $validatedspool = Sympa::Spool::SQL->new(name => 'validated');
+            my $validatedspool = Sympa::Spool::File::Message->new(
+                name      => 'validated',
+                directory => Sympa::Site->queuevalidated()
+            );
             $message = $validatedspool->get_first_entry(
                 selector => {
                     'list'    => $list->name,
@@ -11833,7 +11836,7 @@ sub do_rebuildallarc {
         Sympa::Report::reject_report_web('intern', 'cannot fetch archive spool',
             {}, $param->{'action'}, $list, $param->{'user'}{'email'},
             $robot_id);
-        wwslog(Sympa::Logger::ERR, 'error in  Sympa::Spool::SQL->new(archive) ');
+        wwslog(Sympa::Logger::ERR, 'error while creating outgoing spool');
     }
     my $all_lists = Sympa::List::get_lists($robot);
     foreach my $list (@$all_lists) {
@@ -22103,7 +22106,10 @@ sub do_request_topic {
 
     my $listname = $list->name;
 
-    my $authspool = Sympa::Spool::SQL->new(name => 'auth');
+    my $authspool = Sympa::Spool::File::Key->new(
+        name      => 'auth',
+        directory => Sympa::Site->queueauth()
+    );
 
     my $message = $authspool->get_first_entry(
         selector => {
@@ -22160,7 +22166,10 @@ sub do_tag_topic_by_sender {
 
     my $message;
 
-    my $authspool        = Sympa::Spool::SQL->new(name => 'auth');
+    my $authspool = Sympa::Spool::File::Key->new(
+        name      => 'auth',
+        directory => Sympa::Site->queueauth()
+    );
     my $message_in_spool = $authspool->get_first_raw_entry(
         selector => {
             'list'    => $listname,
@@ -23380,8 +23389,19 @@ sub do_viewspools {
         }
     }
 
-    $param->{'global_count_ok'}  = Sympa::Spool::SQL->global_count('ok');
-    $param->{'global_count_bad'} = Sympa::Spool::SQL->global_count('bad');
+    $param->{'global_count_ok'}  = 0;
+    $param->{'global_count_bad'} = 0;
+
+    foreach my $spool_name (keys %Sympa::Spool::spec) {
+        my $spec   = $Sympa::Spool::spec{$spool_name};
+        my $method = $spec->{parameter};
+        my $spool = $spec->{class}->new(
+            name      => $spool_name,
+            directory => Sympa::Site->$method()
+        );
+        $param->{'global_count_ok'}  += $spool->get_count(status => 'ok');
+        $param->{'global_count_bad'} += $spool->get_count(status => 'bad');
+    }
 
     my $spool_page_size;
     if ($in{'spool_page_size'}) {
@@ -23402,10 +23422,13 @@ sub do_viewspools {
         return undef;
     }
 
-    my $spool = Sympa::Spool::SQL->new(
-        name   => $spoolname,
-        status => $spool_status
+    my $spec   = $Sympa::Spool::spec{$spoolname};
+    my $method = $spec->{parameter};
+    my $spool = $spec->{class}->new(
+        name      => $spoolname,
+        directory => Sympa::Site->$method(),
     );
+
     $param->{'total'} = $spool->count;
 
     unless ($param->{'total'}) {
@@ -23518,7 +23541,13 @@ sub do_viewspool_message {
         wwslog(Sympa::Logger::INFO, 'unknown spool', $spoolname, ($status || 'ok'));
         return undef;
     }
-    my $spool = Sympa::Spool::SQL->new(name => $spoolname, status => $status);
+    my $spec   = $Sympa::Spool::spec{$spoolname};
+    my $method = $spec->{parameter};
+    my $spool = $spec->{class}->new(
+        name      => $spoolname,
+        directory => Sympa::Site->$method(),
+        status    => $status
+    );
     my @messages = $spool->get_raw_entries(
         selector  => {'messagekey' => $messagekey},
         selection => '*'
@@ -23610,7 +23639,13 @@ sub do_viewspool_message_dump {
         wwslog(Sympa::Logger::INFO, 'Unknown spool %s/%s', $spoolname, ($status || 'ok'));
         return undef;
     }
-    my $spool = Sympa::Spool::SQL->new(name => $spoolname, status => $status);
+    my $spec   = $Sympa::Spool::spec{$spoolname};
+    my $method = $spec->{parameter};
+    my $spool = $spec->{class}->new(
+        name      => $spoolname,
+        directory => Sympa::Site->$method(),
+        status    => $status
+    );
     my @messages = $spool->get_raw_entries(
         selector  => {'messagekey' => $messagekey},
         selection => '*'
@@ -23670,7 +23705,13 @@ sub do_viewspool_message_remove {
         wwslog(Sympa::Logger::INFO, 'unknown spool %s/%s', $spoolname, ($status || 'ok'));
         return undef;
     }
-    my $spool = Sympa::Spool::SQL->new(name => $spoolname, status => $status);
+    my $spec = $Sympa::Spool::spec{$spoolname};
+    my $method = $spec->{parameter};
+    my $spool = $spec->{class}->new(
+        name      => $spoolname,
+        directory => Sympa::Site->$method(),
+        status    => $status
+    );
     unless (
         $spool->remove(
             {'messagekey' => $messagekey, 'just_try' => 1}
@@ -23738,7 +23779,13 @@ sub do_viewspool_message_mv {
         return undef;
     }
 
-    my $spool = Sympa::Spool::SQL->new(name => $spoolname, status => $status);
+    my $spec   = $Sympa::Spool::spec{$spoolname};
+    my $method = $spec->{parameter};
+    my $spool = $spec->{class}->new(
+        name      => $spoolname,
+        directory => Sympa::Site->$method(),
+        status    => $status
+    );
 
     unless (
         $spool->update(
