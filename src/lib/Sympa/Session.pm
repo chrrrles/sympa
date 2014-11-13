@@ -39,6 +39,7 @@ use strict;
 
 use Carp qw(croak);
 use CGI::Cookie;
+use English qw(-no_match_vars);
 use Scalar::Util qw(blessed);
 
 use Sympa::DatabaseManager;
@@ -835,7 +836,7 @@ sub encrypt_session_id {
 
     eval {
         require Crypt::CipherSaber;
-    }
+    };
     return $id_session if $EVAL_ERROR;
 
     my $cipher = Crypt::CipherSaber->new($key);
@@ -855,7 +856,7 @@ sub decrypt_session_id {
 
     eval {
         require Crypt::CipherSaber;
-    }
+    };
     return $cookie if $EVAL_ERROR;
 
     my $cipher = Crypt::CipherSaber->new($key);
