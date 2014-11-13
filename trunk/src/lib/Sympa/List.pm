@@ -68,7 +68,6 @@ use Sympa::Spool::File::Key;
 use Sympa::Spool::File::Message;
 use Sympa::Spool::File::Subscribe;
 use Sympa::Spool::File::Task;
-use Sympa::Spool::SQL;
 use Sympa::Template; # FIXME: circular dependency
 use Sympa::Tools::Data;
 use Sympa::Tools::File;
@@ -1759,9 +1758,10 @@ sub send_msg_digest {
     ## Create the list of subscribers in various digest modes
     return 0 unless ($self->get_lists_of_digest_recipients());
 
-    my $digestspool = Sympa::Spool::SQL->new(
-        name     => 'digest',
-        selector => {'messagekey' => $messagekey}
+    my $digestspool = Sympa::Spool::File::Message->new(
+        name      => 'digest',
+        directory => Sympa::Site->queuedigest(),
+        selector  => {'messagekey' => $messagekey}
     );
     $self->split_spooled_digest_to_messages(
         {'message_in_spool' => $digestspool->next});
@@ -2671,7 +2671,10 @@ sub send_auth {
     my $authkey = Digest::MD5::md5_hex(join('/', $self->cookie, $messageid));
     chomp $authkey;
 
-    my $spool = Sympa::Spool::SQL->new(name => 'auth');
+    my $spool = Sympa::Spool::File::Key->new(
+        name      => 'auth',
+        directory => Sympa::Site->queueauth()
+    );
     $spool->update(
         {'messagekey' => $message->{'messagekey'}},
         {   "spoolname"   => 'auth',
@@ -8201,8 +8204,9 @@ sub store_digest {
 
     my @now = localtime(time);
 
-    my $digestspool = Sympa::Spool::SQL->new(
-        name     => 'digest', 
+    my $digestspool = Sympa::Spool::File::Message->new(
+        name      => 'digest', 
+        directory => Sympa::Site->queuedigest(),
         selector => {'list' => $self->name, 'robot' => $self->domain}
     );
 
@@ -10417,7 +10421,10 @@ sub store_signoff_request {
     $main::logger->do_log(Sympa::Logger::DEBUG2, '(%s, %s)', @_);
     my ($self, $email) = @_;
 
-    my $signoff_request_spool = Sympa::Spool::SQL->new(name => 'signoff');
+    my $signoff_request_spool = Sympa::Spool::File::Subscribe->new(
+        name       => 'signoff',
+        directory => Sympa::Site->queuesignoff(),
+    );
 
     if ($signoff_request_spool->get_raw_entries(
         selector => {
@@ -10451,7 +10458,10 @@ sub get_signoff_requests {
 
     my %signoffs;
 
-    my $signoff_request_spool = Sympa::Spool::SQL->new(name => 'signoff');
+    my $signoff_request_spool = Sympa::Spool::File::Subscribe->new(
+        name      => 'signoff',
+        directory => Sympa::Site->queuesignoff(), 
+    );
     my @sigrequests           = $signoff_request_spool->get_raw_entries(
         selector  => {'list' => $self->name, 'robot' => $self->domain},
         selection => '*'
@@ -10503,7 +10513,10 @@ sub get_signoff_requests {
 sub get_signoff_request_count {
     my $self = shift;
 
-    my $signoff_request_spool = Sympa::Spool::SQL->new(name => 'signoff');
+    my $signoff_request_spool = Sympa::Spool::File::Subscribe->new(
+        name      => 'signoff',
+        directory => Sympa::Site->queuesignoff(), 
+    );
     return $signoff_request_spool->get_raw_entries(
         selector  => {'list' => $self->name, 'robot' => $self->domain},
         selection => 'count'
@@ -10515,7 +10528,10 @@ sub delete_signoff_request {
     $main::logger->do_log(Sympa::Logger::DEBUG2, '(%s, %s)', $self,
         join(',', @list_of_email));
 
-    my $signoff_request_spool = Sympa::Spool::SQL->new(name => 'signoff');
+    my $signoff_request_spool = Sympa::Spool::File::Subscribe->new(
+        name   => 'signoff',
+        directory => Sympa::Site->queuesignoff(), 
+    );
 
     my $removed = 0;
     foreach my $email (@list_of_email) {
