@@ -233,8 +233,56 @@ sub load {
 
 =item $vhost->get_address ( [ TYPE ] )
 
-Returns the robot email address.
-See L<Site/get_address>.
+returns the site or robot email address of type TYPE: email command address
+(default), "owner" (<sympa-request> address) or "listmaster".
+
+=cut
+
+sub get_address {
+    my ($self, $type) = @_;
+
+    unless ($type) {
+        return $self->email . '@' . $self->host;
+    } elsif ($type eq 'sympa') {    # same as above, for convenience
+        return $self->email . '@' . $self->host;
+    } elsif ($type eq 'owner' or $type eq 'request') {
+        return $self->email . '-request' . '@' . $self->host;
+    } elsif ($type eq 'listmaster') {
+        return $self->listmaster_email . '@' . $self->host;
+    } elsif ($type eq 'return_path') {
+        return
+              $self->email
+            . $self->return_path_suffix . '@'
+            . $self->host;
+    }
+
+    $main::logger->do_log(Sympa::Logger::ERR,
+        'Unknown type of address "%s" for %s.  Ask developer',
+        $type, $self);
+    return undef;
+}
+
+=item $vhost->is_listmaster( WHO )
+
+Is the user listmaster?
+
+=cut
+
+sub is_listmaster {
+    my $self = shift;
+    my $who = Sympa::Tools::clean_email(shift || '');
+    return 0 unless $who;
+
+    foreach my $listmaster (($self->listmasters,)) {
+        return 1 if $listmaster eq $who;
+    }
+
+    foreach my $listmaster ((Sympa::Site->listmasters,)) {
+        return 1 if $listmaster eq $who;
+    }
+
+    return 0;
+}
 
 =item $vhost->get_id
 

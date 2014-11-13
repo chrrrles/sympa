@@ -10978,10 +10978,36 @@ sub get_bounce_dir {
 
 =item get_address ( [ TYPE ] )
 
-Returns the list email address.
-See L<Site/get_address>.
+Returns the list email address of type TYPE: posting address (default),
+"owner", "editor" or (non-VERP) "return_path".
 
-=back
+=cut
+ 
+sub get_address {
+    my ($self, $type) = @_;
+
+    unless ($type) {
+        return $self->name . '@' . $self->host;
+    } elsif ($type eq 'owner') {
+        return $self->name . '-request' . '@' . $self->host;
+    } elsif ($type eq 'editor') {
+        return $self->name . '-editor' . '@' . $self->host;
+    } elsif ($type eq 'return_path') {
+        return
+              $self->name
+            . $self->robot->return_path_suffix . '@'
+            . $self->host;
+    } elsif ($type eq 'subscribe') {
+        return $self->name . '-subscribe' . '@' . $self->host;
+    } elsif ($type eq 'unsubscribe') {
+        return $self->name . '-unsubscribe' . '@' . $self->host;
+    }
+
+    $main::logger->do_log(Sympa::Logger::ERR,
+        'Unknown type of address "%s" for %s.  Ask developer',
+        $type, $self);
+    return undef;
+}
 
 =over 4
 
