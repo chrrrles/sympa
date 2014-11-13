@@ -46,6 +46,7 @@ use Sympa::Logger;
 use Sympa::Report;
 use Sympa::Scenario;
 use Sympa::Site;
+use Sympa::Spool::File::Key;
 use Sympa::Tools;
 use Sympa::Tools::File;
 
@@ -2853,7 +2854,10 @@ sub confirm {
     my $key = $1;
     chomp $key;
 
-    my $spool = Sympa::Spool::SQL->new(name => 'auth');
+    my $spool = Sympa::Spool::File::Key->new(
+        name      => 'auth',
+        directory => Sympa::Site->queueauth(),
+    );
 
     my $message = $spool->get_first_entry(selector => {'authkey' => $key});
     unless ($message) {
