@@ -353,7 +353,7 @@ while (!$end) {
             ## 'bulk_fork_threshold' packets to send in the bulkpacket_table
             ## table
             if ((   my $r_packets =
-                    Sympa::Bulk::there_is_too_much_remaining_packets()
+                    there_is_too_much_remaining_packets()
                 )
                 && ($#remaining_children + 1 < Sympa::Site->bulk_max_count)
                 ) {
@@ -422,7 +422,7 @@ while (!$end) {
     ## number of remaining packets to send is reasonnable).
     if (   ($daemon_usage eq 'DAEMON_SLAVE')
         && (time() - $date_of_last_activity > Sympa::Site->bulk_lazytime)
-        && !(my $r_packets = Sympa::Bulk::there_is_too_much_remaining_packets())) {
+        && !(my $r_packets = there_is_too_much_remaining_packets())) {
         $logger->do_log(Sympa::Logger::INFO,
             "Process %s didn't send any message since %s seconds, exiting.",
             $PID, Sympa::Site->bulk_lazytime);
@@ -705,5 +705,16 @@ sub trace_smime {
     } else {
         $logger->do_log(Sympa::Logger::DEBUG, 'S/MIME signature OK     (%s)',
             $where);
+    }
+}
+
+sub there_is_too_much_remaining_packets {
+    $main::logger->do_log(Sympa::Logger::DEBUG3, '()');
+    my $remaining_packets = Sympa::Bulk::get_remaining_packets_count();
+    if (    $remaining_packets
+        and $remaining_packets > Sympa::Site->bulk_fork_threshold) {
+        return $remaining_packets;
+    } else {
+        return 0;
     }
 }

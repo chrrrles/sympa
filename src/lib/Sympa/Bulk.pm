@@ -501,18 +501,4 @@ sub get_remaining_packets_count {
     return $result[0];
 }
 
-## Returns 1 if the number of remaining packets in the bulkpacket table
-## exceeds
-## the value of the 'bulk_fork_threshold' config parameter.
-sub there_is_too_much_remaining_packets {
-    $main::logger->do_log(Sympa::Logger::DEBUG3, '()');
-    my $remaining_packets = get_remaining_packets_count();
-    if (    $remaining_packets
-        and $remaining_packets > Sympa::Site->bulk_fork_threshold) {
-        return $remaining_packets;
-    } else {
-        return 0;
-    }
-}
-
 1;
