@@ -47,7 +47,6 @@ use Sympa::Logger;
 use Sympa::Site;
 use Sympa::Tools;
 use Sympa::Tools::Data;
-use Sympa::Tools::Password;
 
 # this structure is used to define which session attributes are stored in a
 # dedicated database col where others are compiled in col 'data_session'
@@ -831,9 +830,15 @@ sub is_anonymous {
 sub encrypt_session_id {
     my $id_session = shift;
 
-    return $id_session unless Sympa::Site->cookie;
-    my $cipher = Sympa::Tools::Password::ciphersaber_installed();
-    return $id_session unless $cipher;
+    my $key = Sympa::Site->cookie();
+    return $id_session unless $key;
+
+    eval {
+        require Crypt::CipherSaber;
+    }
+    return $id_session if $EVAL_ERROR;
+
+    my $cipher = Crypt::CipherSaber->new($key);
 
     my $id_session_bin = pack 'nN', ($id_session >> 32),
         $id_session % (1 << 32);
@@ -845,9 +850,15 @@ sub encrypt_session_id {
 sub decrypt_session_id {
     my $cookie = shift;
 
-    return $cookie unless Sympa::Site->cookie;
-    my $cipher = Sympa::Tools::Password::ciphersaber_installed();
-    return $cookie unless $cipher;
+    my $key = Sympa::Site->cookie();
+    return $cookie unless $key;
+
+    eval {
+        require Crypt::CipherSaber;
+    }
+    return $cookie if $EVAL_ERROR;
+
+    my $cipher = Crypt::CipherSaber->new($key);
 
     return undef unless $cookie =~ /\A[0-9a-f]+\z/;
     my $cookie_bin = $cookie;
