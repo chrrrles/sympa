@@ -85,7 +85,6 @@ nobase_modules_DATA = Sympa/Admin.pm \
 		      Sympa/Tools/Daemon.pm \
 		      Sympa/Tools/File.pm \
 		      Sympa/Tools/Message.pm \
-		      Sympa/Tools/Password.pm \
 		      Sympa/Tools/Time.pm \
 		      Sympa/Tools/Text.pm \
 		      Sympa/Tools/WWW.pm \
